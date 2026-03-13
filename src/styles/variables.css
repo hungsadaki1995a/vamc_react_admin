@@ -1,0 +1,67 @@
+:root {
+  /* Layout */
+  --rail-width: 56px;
+  --flyout-width: 220px;
+  --content-header-height: 32px;
+  --tab-bar-height: 36px;
+  --primary-color: #1677ff;
+  --primary-light: rgba(22, 119, 255, 0.08);
+  --primary-glow: rgba(22, 119, 255, 0.4);
+
+  /* Rail (항상 어두운 그라데이션) */
+  --rail-bg-start: #1e1e2e;
+  --rail-bg-end: #13131a;
+  --rail-icon-color: rgba(255, 255, 255, 0.5);
+  --rail-icon-hover: rgba(255, 255, 255, 0.85);
+  --rail-item-hover-bg: rgba(255, 255, 255, 0.06);
+  --rail-item-active-bg: rgba(22, 119, 255, 0.18);
+  --rail-divider-color: rgba(255, 255, 255, 0.08);
+
+  /* Flyout */
+  --flyout-bg: #fff;
+  --flyout-item-hover-bg: #f5f5f5;
+  --flyout-header-bg: #fafafa;
+  --flyout-active-bg: rgba(22, 119, 255, 0.06);
+  --flyout-active-border: var(--primary-color);
+  --flyout-tree-line: #e8e8e8;
+
+  /* Content */
+  --content-header-bg: #fff;
+  --tab-bar-bg: #fafafa;
+  --content-bg: #f0f2f5;
+  --border-color: #e8e8e8;
+  --text-primary: rgba(0, 0, 0, 0.88);
+  --text-secondary: rgba(0, 0, 0, 0.45);
+  --text-tertiary: rgba(0, 0, 0, 0.25);
+  --tab-scroll-hover-bg: rgba(0, 0, 0, 0.04);
+
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.12);
+
+  /* Status */
+  --success-color: #52c41a;
+  --warning-color: #faad14;
+  --error-color: #ff4d4f;
+}
+
+[data-theme="dark"] {
+  --rail-bg-start: #111118;
+  --rail-bg-end: #0a0a0f;
+  --rail-item-active-bg: rgba(22, 119, 255, 0.22);
+  --flyout-bg: #1f1f1f;
+  --flyout-item-hover-bg: #2a2a2a;
+  --flyout-header-bg: #1a1a1a;
+  --flyout-active-bg: rgba(22, 119, 255, 0.12);
+  --flyout-tree-line: #383838;
+  --content-header-bg: #141414;
+  --tab-bar-bg: #1a1a1a;
+  --content-bg: #000;
+  --border-color: #303030;
+  --text-primary: rgba(255, 255, 255, 0.85);
+  --text-secondary: rgba(255, 255, 255, 0.45);
+  --text-tertiary: rgba(255, 255, 255, 0.25);
+  --tab-scroll-hover-bg: rgba(255, 255, 255, 0.08);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+}

@@ -1,0 +1,284 @@
+/* ========================
+   GanttGrid - Left panel
+   ======================== */
+.gantt-grid {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-right: 1px solid var(--border-color);
+  background: var(--content-header-bg);
+  font-size: 12px;
+  height: 100%;
+}
+
+/* Header */
+.gantt-grid-header {
+  flex-shrink: 0;
+  border-bottom: 1px solid var(--border-color);
+  overflow: hidden;
+}
+
+.gantt-grid-header-row {
+  font-weight: 600;
+  color: var(--text-secondary);
+  align-items: center;
+  width: 100%;
+}
+
+/* Header cell */
+.gantt-grid-hcell {
+  position: relative;
+  padding: 0 8px;
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  user-select: none;
+}
+
+/* 헤더 셀 간 구분선 (리사이저가 없는 셀에만 — 리사이저 ::after가 대신 표시) */
+.gantt-grid-hcell--separator::before {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 25%;
+  bottom: 25%;
+  width: 1px;
+  background: var(--border-color, #e0e0e0);
+}
+
+.gantt-grid-hcell--center {
+  justify-content: center;
+}
+
+/* Column resize handle */
+.gantt-grid-col-resizer {
+  position: absolute;
+  right: -2px;
+  top: 0;
+  bottom: 0;
+  width: 5px;
+  cursor: col-resize;
+  z-index: 3;
+  background: transparent;
+}
+
+/* 드래그 가능 표시: 세로 점선 */
+.gantt-grid-col-resizer::after {
+  content: '';
+  position: absolute;
+  right: 2px;
+  top: 25%;
+  bottom: 25%;
+  width: 1px;
+  background: var(--border-color, #e0e0e0);
+}
+
+.gantt-grid-col-resizer:hover,
+.gantt-grid-col-resizer:active {
+  background: rgba(22, 119, 255, 0.4);
+}
+
+.gantt-grid-col-resizer:hover::after,
+.gantt-grid-col-resizer:active::after {
+  background: transparent;
+}
+
+/* Body */
+.gantt-grid-body {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  min-height: 0;
+  /* Hide scrollbar — scroll is synced with gantt timeline */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
+}
+
+.gantt-grid-body::-webkit-scrollbar {
+  display: none; /* Chrome/Safari */
+}
+
+/* Row (grid layout applied inline) */
+.gantt-grid-row {
+  align-items: center;
+  border-bottom: 1px solid var(--border-color);
+  transition: background 0.15s;
+}
+
+.gantt-grid-body .gantt-grid-row {
+  cursor: pointer;
+}
+
+/* 바디 행만 hover (헤더 제외) */
+.gantt-grid-body .gantt-grid-row:hover {
+  background: rgba(22, 119, 255, 0.04);
+}
+
+.gantt-grid-row--selected {
+  background: rgba(22, 119, 255, 0.08);
+}
+
+.gantt-grid-row--hovered {
+  background: rgba(22, 119, 255, 0.06);
+}
+
+.gantt-grid-row--group {
+  font-weight: 600;
+  background: rgba(0, 0, 0, 0.02);
+}
+
+/* Cell */
+.gantt-grid-cell {
+  padding: 0 8px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.gantt-grid-cell--name {
+  min-width: 0;
+}
+
+.gantt-grid-cell--center {
+  text-align: center;
+}
+
+.gantt-grid-cell--date {
+  color: var(--text-secondary);
+}
+
+.gantt-grid-cell--progress {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding-right: 8px;
+}
+
+/* Toggle button */
+.gantt-grid-toggle {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0 4px 0 0;
+  font-size: 10px;
+  color: var(--text-secondary);
+  line-height: 1;
+}
+
+.gantt-grid-toggle:hover {
+  color: var(--text-primary);
+}
+
+/* Group name */
+.gantt-grid-group-name {
+  font-weight: 600;
+}
+
+/* Mini progress bar */
+.gantt-grid-progress {
+  flex: 1;
+  height: 6px;
+  background: rgba(0, 0, 0, 0.06);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.gantt-grid-progress-fill {
+  height: 100%;
+  background: #1677ff;
+  border-radius: 3px;
+  transition: width 0.3s;
+}
+
+.gantt-grid-progress-text {
+  font-size: 11px;
+  color: var(--text-secondary);
+  min-width: 28px;
+  text-align: right;
+}
+
+/* ========================
+   Panel Resizer (between grid & timeline)
+   ======================== */
+.gantt-resizer {
+  width: 4px;
+  cursor: col-resize;
+  background: transparent;
+  flex-shrink: 0;
+  transition: background 0.2s;
+  position: relative;
+  z-index: 2;
+}
+
+.gantt-resizer:hover,
+.gantt-resizer--active {
+  background: #1677ff;
+}
+
+/* ========================
+   Dark theme
+   ======================== */
+.ds-gantt-dark .gantt-grid {
+  border-right-color: #303030;
+  background: #141414;
+}
+
+.ds-gantt-dark .gantt-grid-header {
+  border-bottom-color: #303030;
+}
+
+.ds-gantt-dark .gantt-grid-row {
+  border-bottom-color: #252525;
+}
+
+.ds-gantt-dark .gantt-grid-body .gantt-grid-row:hover {
+  background: rgba(22, 119, 255, 0.08);
+}
+
+.ds-gantt-dark .gantt-grid-row--selected {
+  background: rgba(22, 119, 255, 0.15);
+}
+
+.ds-gantt-dark .gantt-grid-row--hovered {
+  background: rgba(22, 119, 255, 0.1);
+}
+
+.ds-gantt-dark .gantt-grid-row--group {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.ds-gantt-dark .gantt-grid-header-row {
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.ds-gantt-dark .gantt-grid-cell--date {
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.ds-gantt-dark .gantt-grid-toggle {
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.ds-gantt-dark .gantt-grid-toggle:hover {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.ds-gantt-dark .gantt-grid-progress {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.ds-gantt-dark .gantt-grid-progress-text {
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.ds-gantt-dark .gantt-grid-col-resizer::after,
+.ds-gantt-dark .gantt-grid-hcell--separator::before {
+  background: #404040;
+}
+
+.ds-gantt-dark .gantt-grid-col-resizer:hover,
+.ds-gantt-dark .gantt-grid-col-resizer:active {
+  background: rgba(22, 119, 255, 0.6);
+}

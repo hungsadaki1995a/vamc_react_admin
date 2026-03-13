@@ -1,0 +1,881 @@
+@import './variables.css';
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+/* ============================
+   App Layout
+   ============================ */
+.app-layout {
+  height: 100vh;
+  display: flex;
+  overflow: hidden;
+}
+
+/* Sidebar wrapper: icon rail + flyout panel */
+.sidebar-area {
+  display: flex;
+  flex-shrink: 0;
+  position: relative;
+}
+
+/* Toggle button — always visible on the right edge of sidebar */
+.sidebar-toggle-btn {
+  position: absolute;
+  right: -14px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 14px;
+  height: 48px;
+  background: var(--flyout-bg);
+  border: 1px solid var(--border-color);
+  border-left: none;
+  border-radius: 0 8px 8px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--text-secondary);
+  font-size: 9px;
+  z-index: 200;
+  transition: color 0.15s, background 0.15s;
+  box-shadow: 3px 0 8px rgba(0, 0, 0, 0.08);
+}
+
+.sidebar-toggle-btn:hover {
+  color: var(--primary-color);
+  background: var(--flyout-active-bg);
+}
+
+.main-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-width: 0;
+}
+
+/* ============================
+   Icon Rail — Gradient + Pill Active
+   ============================ */
+.icon-rail {
+  width: var(--rail-width);
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(180deg, var(--rail-bg-start) 0%, var(--rail-bg-end) 100%);
+  flex-shrink: 0;
+  z-index: 100;
+  user-select: none;
+}
+
+.icon-rail .rail-logo {
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--primary-color) 0%, #4f46e5 100%);
+  position: relative;
+  flex-shrink: 0;
+}
+
+.icon-rail .rail-logo::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+}
+
+.icon-rail .rail-items {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 8px 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.icon-rail .rail-items::-webkit-scrollbar {
+  width: 0;
+}
+
+.icon-rail .rail-item {
+  width: 40px;
+  height: 40px;
+  margin: 2px auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  position: relative;
+  color: var(--rail-icon-color);
+  border-radius: 12px;
+  transition: all 0.2s ease;
+}
+
+.icon-rail .rail-item:hover {
+  color: var(--rail-icon-hover);
+  background: var(--rail-item-hover-bg);
+}
+
+.icon-rail .rail-item.active {
+  color: #fff;
+  background: var(--rail-item-active-bg);
+}
+
+.icon-rail .rail-item.active::before {
+  content: '';
+  position: absolute;
+  left: -8px;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 20px;
+  width: 3px;
+  background: var(--primary-color);
+  border-radius: 0 3px 3px 0;
+  box-shadow: 0 0 8px var(--primary-glow);
+}
+
+.icon-rail .rail-item.flyout-open {
+  color: var(--primary-color);
+  background: var(--rail-item-active-bg);
+}
+
+.icon-rail .rail-divider {
+  height: 1px;
+  margin: 6px 14px;
+  background: linear-gradient(90deg, transparent, var(--rail-divider-color), transparent);
+  flex-shrink: 0;
+}
+
+.icon-rail .rail-bottom {
+  padding: 8px 0 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* notification badge on rail icon */
+.rail-item .rail-badge {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 8px;
+  height: 8px;
+  background: var(--error-color);
+  border-radius: 50%;
+  border: 1.5px solid var(--rail-bg-end);
+}
+
+
+/* ============================
+   Flyout Panel — Tree Lines + Active State
+   ============================ */
+.flyout-panel {
+  width: 0;
+  height: 100vh;
+  background: var(--flyout-bg);
+  border-right: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  overflow: hidden;
+  transition: width 0.2s ease;
+  position: relative;
+}
+
+.flyout-panel.visible {
+  width: var(--flyout-width);
+}
+
+/* Logo Header */
+.flyout-logo-header {
+  height: 48px;
+  padding: 0 14px;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  min-width: var(--flyout-width);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.flyout-logo-img {
+  height: 20px;
+  width: auto;
+  object-fit: contain;
+}
+
+
+/* Project Selector in Flyout */
+.flyout-project-selector {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border-color);
+  flex-shrink: 0;
+  min-width: var(--flyout-width);
+}
+
+.flyout-project-selector .ant-select {
+  font-size: 13px;
+}
+
+.flyout-project-selector .ant-select-selector {
+  border-radius: 8px !important;
+  height: 36px !important;
+  border-color: var(--border-color) !important;
+  background: var(--flyout-bg) !important;
+}
+
+.flyout-project-selector .ant-select-selection-item {
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 34px !important;
+}
+
+.flyout-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px 0;
+  min-width: var(--flyout-width);
+}
+
+.flyout-body::-webkit-scrollbar {
+  width: 4px;
+}
+.flyout-body::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 4px;
+}
+
+.flyout-menu-item {
+  display: flex;
+  align-items: center;
+  height: 34px;
+  padding-right: 10px;
+  cursor: pointer;
+  font-size: 12.5px;
+  color: var(--text-primary);
+  transition: all 0.15s;
+  position: relative;
+  gap: 6px;
+}
+
+.flyout-menu-item:hover {
+  background: var(--flyout-item-hover-bg);
+}
+
+.flyout-menu-item.leaf {
+  color: var(--text-secondary);
+}
+
+.flyout-menu-item.leaf:hover {
+  color: var(--primary-color);
+  background: var(--flyout-active-bg);
+}
+
+.flyout-menu-item.leaf:hover .flyout-item-icon {
+  color: var(--primary-color);
+}
+
+/* Active leaf menu item */
+.flyout-menu-item.leaf.active {
+  color: var(--primary-color);
+  background: var(--flyout-active-bg);
+  font-weight: 500;
+}
+
+.flyout-menu-item.leaf.active .flyout-item-icon {
+  color: var(--primary-color);
+}
+
+/* Parent with active child */
+.flyout-menu-item.has-children.parent-active {
+  color: var(--primary-color);
+}
+
+.flyout-menu-item.has-children {
+  font-weight: 500;
+}
+
+.flyout-menu-item .flyout-child-count {
+  font-size: 11px;
+  color: var(--text-secondary);
+  background: var(--flyout-item-hover-bg);
+  padding: 0 6px;
+  border-radius: 10px;
+  min-width: 18px;
+  text-align: center;
+  margin-right: 4px;
+}
+
+.flyout-item-icon {
+  font-size: 13px;
+  flex-shrink: 0;
+  color: var(--text-secondary);
+  transition: color 0.15s;
+}
+
+.flyout-item-arrow {
+  font-size: 10px;
+  color: var(--text-secondary);
+  flex-shrink: 0;
+  transition: transform 0.2s;
+  width: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.flyout-item-arrow-placeholder {
+  width: 14px;
+  flex-shrink: 0;
+}
+
+.flyout-item-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+}
+
+
+/* Tree lines for children */
+.flyout-children {
+  position: relative;
+}
+
+.flyout-children::before {
+  content: '';
+  position: absolute;
+  left: 24px;
+  top: 0;
+  bottom: 8px;
+  width: 1px;
+  background: var(--flyout-tree-line);
+}
+
+/* ============================
+   Content Header — Shadow + Enhanced Breadcrumb
+   ============================ */
+.content-header {
+  height: var(--content-header-height);
+  min-height: var(--content-header-height);
+  padding: 0 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--content-header-bg);
+  border-top: 1px solid var(--border-color);
+  box-shadow: none;
+  z-index: 10;
+  position: relative;
+}
+
+.breadcrumb-area {
+  display: flex;
+  align-items: center;
+  font-size: 12px;
+  color: var(--text-secondary);
+  min-width: 0;
+  overflow: hidden;
+  gap: 2px;
+}
+
+.breadcrumb-home {
+  font-size: 13px;
+  cursor: pointer;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  transition: color 0.15s;
+  flex-shrink: 0;
+}
+
+.breadcrumb-home:hover {
+  color: var(--primary-color);
+}
+
+.breadcrumb-item {
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+}
+
+.breadcrumb-separator {
+  font-size: 9px;
+  margin: 0 6px;
+  color: var(--text-secondary);
+  opacity: 0.5;
+}
+
+.breadcrumb-current {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.breadcrumb-parent {
+  cursor: pointer;
+  transition: color 0.15s;
+}
+
+.breadcrumb-parent:hover {
+  color: var(--primary-color);
+}
+
+.breadcrumb-empty {
+  color: var(--text-secondary);
+}
+
+.header-controls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.header-icon-btn {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  cursor: pointer;
+  color: var(--text-secondary);
+  transition: all 0.2s;
+  position: relative;
+}
+
+.header-icon-btn:hover {
+  background: var(--tab-scroll-hover-bg);
+  color: var(--text-primary);
+}
+
+.header-icon-btn .icon-btn-badge {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 6px;
+  height: 6px;
+  background: var(--error-color);
+  border-radius: 50%;
+}
+
+.header-divider {
+  width: 1px;
+  height: 14px;
+  background: var(--border-color);
+  flex-shrink: 0;
+}
+
+/* ── 글로벌 검색 모달 ── */
+.search-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  z-index: 1100;
+}
+.search-modal {
+  position: fixed;
+  top: 20%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(520px, 90vw);
+  background: var(--content-header-bg, #fff);
+  border-radius: 12px;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.2);
+  z-index: 1101;
+  overflow: hidden;
+  animation: searchFadeIn 0.15s ease;
+}
+@keyframes searchFadeIn {
+  from { opacity: 0; transform: translateX(-50%) translateY(-8px); }
+  to { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+.search-modal-input-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border-color, #f0f0f0);
+}
+.search-kbd {
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  border: 1px solid var(--border-color, #d9d9d9);
+  color: var(--text-tertiary, #999);
+  background: var(--tab-scroll-hover-bg, #f5f5f5);
+  font-family: inherit;
+  line-height: 1.4;
+}
+.search-modal-results {
+  max-height: 340px;
+  overflow-y: auto;
+  padding: 4px;
+}
+.search-result-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background 0.12s;
+}
+.search-result-item:hover {
+  background: var(--row-hover-bg, rgba(22, 119, 255, 0.06));
+}
+.search-result-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+.search-result-crumb {
+  font-size: 11px;
+  color: var(--text-tertiary, #999);
+  max-width: 240px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.search-empty {
+  text-align: center;
+  padding: 24px;
+  color: var(--text-tertiary, #999);
+  font-size: 13px;
+}
+
+.project-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 16px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  background: var(--flyout-item-hover-bg);
+}
+
+.project-badge:hover {
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+  background: var(--primary-light);
+}
+
+.project-badge .badge-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--success-color);
+  flex-shrink: 0;
+}
+
+/* ============================
+   Tab Bar
+   ============================ */
+.tab-bar {
+  height: var(--tab-bar-height);
+  min-height: var(--tab-bar-height);
+  display: flex;
+  align-items: center;
+  background: var(--tab-bar-bg);
+  border-bottom: 1px solid var(--border-color);
+  padding: 0;
+  user-select: none;
+}
+
+.tab-scroll-btn {
+  width: 24px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--text-secondary);
+  flex-shrink: 0;
+  transition: all 0.15s;
+}
+
+.tab-scroll-btn:hover {
+  color: var(--text-primary);
+  background: var(--tab-scroll-hover-bg);
+}
+
+.tab-scroll-btn.disabled {
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+.tab-scroll-container {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  gap: 1px;
+  padding: 0 2px;
+}
+
+.tab-manage-btn {
+  width: 32px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--text-secondary);
+  border-left: 1px solid var(--border-color);
+  flex-shrink: 0;
+  transition: all 0.15s;
+}
+
+.tab-manage-btn:hover {
+  color: var(--text-primary);
+  background: var(--tab-scroll-hover-bg);
+}
+
+/* Tab items */
+.tab-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0 10px;
+  height: 28px;
+  border-radius: 6px 6px 0 0;
+  background: var(--tab-scroll-hover-bg);
+  border: 1px solid var(--border-color);
+  border-bottom: none;
+  cursor: pointer;
+  font-size: 12px;
+  white-space: nowrap;
+  user-select: none;
+  transition: all 0.15s;
+  color: var(--text-secondary);
+  flex-shrink: 0;
+}
+
+.tab-item:hover {
+  background: var(--content-header-bg);
+  color: var(--text-primary);
+}
+
+.tab-item.active {
+  background: var(--content-header-bg);
+  color: var(--primary-color);
+  font-weight: 500;
+  border-color: var(--border-color);
+  box-shadow: 0 -2px 0 0 var(--primary-color) inset;
+}
+
+.tab-item.home-tab {
+  color: var(--text-secondary);
+}
+
+.tab-item.home-tab.active {
+  color: var(--primary-color);
+}
+
+.tab-item.drop-target {
+  border-left: 2px solid var(--primary-color);
+}
+
+.tab-item .tab-label {
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tab-item .tab-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  font-size: 9px;
+  color: var(--text-secondary);
+  transition: all 0.15s;
+  opacity: 0;
+}
+
+.tab-item:hover .tab-close,
+.tab-item.active .tab-close {
+  opacity: 1;
+}
+
+.tab-item .tab-close:hover {
+  background: var(--error-color);
+  color: #fff;
+}
+
+.tab-item .tab-pin-icon {
+  font-size: 10px;
+  color: var(--primary-color);
+}
+
+.tab-item .tab-home-icon {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.tab-item.active .tab-home-icon {
+  color: var(--primary-color);
+}
+
+/* ============================
+   Ant Design Tabs — height propagation
+   Ensures that when Tabs has height:100%, the content pane fills the space.
+   Required for grids/gantt inside nested Tabs patterns.
+   ============================ */
+.tab-content-panel .ant-tabs,
+.tab-content-panel .ant-tabs-content-holder,
+.tab-content-panel .ant-tabs-content,
+.tab-content-panel .ant-tabs-tabpane-active {
+  height: 100%;
+}
+
+.tab-content-panel .ant-tabs {
+  display: flex;
+  flex-direction: column;
+}
+
+.tab-content-panel .ant-tabs-content-holder {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* ============================
+   Tab Content
+   ============================ */
+.tab-content-container {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  padding: 6px 8px;
+  background: var(--content-bg);
+}
+
+.tab-content-panel {
+  height: 100%;
+  background: var(--content-header-bg);
+  border-radius: 6px;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+
+/* ============================
+   Page container
+   ============================ */
+.page-container {
+  background: var(--content-header-bg);
+  border-radius: 8px;
+  padding: 14px 12px 12px 16px;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  box-shadow: var(--shadow-sm);
+}
+
+/* Grid/Gantt pages: fixed height so content fills remaining space via flex */
+/* 단, .page-scrollable 클래스가 있으면 스크롤 모드 (가이드/데모 페이지) */
+.tab-content-panel:has(.ds-data-grid):not(:has(.page-scrollable)),
+.tab-content-panel:has(.ds-gantt-view):not(:has(.page-scrollable)) {
+  height: 100%;
+  min-height: auto;
+  overflow: hidden;
+}
+
+.page-container:has(.ds-data-grid):not(.page-scrollable),
+.page-container:has(.ds-gantt-view):not(.page-scrollable) {
+  height: 100%;
+  min-height: auto;
+  overflow: hidden;
+}
+
+/* page-scrollable: natural height so tab-content-panel (overflow:auto) can scroll */
+.tab-content-panel > .page-container.page-scrollable {
+  flex: none;
+  min-height: 100%;
+}
+
+/* Inner tabs that scroll instead of filling fixed height (e.g. PatternDashboard) */
+.tab-content-panel .ds-scrollable-tabs.ant-tabs {
+  height: auto;
+}
+.tab-content-panel .ds-scrollable-tabs .ant-tabs-content-holder {
+  overflow: visible;
+  height: auto;
+  flex: none;
+  min-height: 0;
+}
+.tab-content-panel .ds-scrollable-tabs .ant-tabs-tabpane-active {
+  height: auto;
+}
+
+/* page-container inside tab-content-panel: panel is already the white card */
+.tab-content-panel > .page-container {
+  background: transparent;
+  box-shadow: none;
+  border-radius: 0;
+  padding: 10px 14px;
+  flex: 1;
+  min-height: 0;
+}
+
+
+/* FilterPanel/PageToolbar inside page-container: border-bottom only */
+.tab-content-panel > .page-container .ds-filter-panel,
+.tab-content-panel > .page-container .ds-page-toolbar {
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  border-radius: 0;
+  margin-left: 0;
+  margin-right: 0;
+}
+
+/* DataGrid inside page-container: border-bottom only */
+.tab-content-panel > .page-container .ds-data-grid .ag-root-wrapper {
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  border-bottom: 1px solid var(--border-color);
+  border-radius: 0;
+  box-shadow: none;
+}
+
+/* ds-page-header: full-bleed inside page-container — cancel container's padding */
+.tab-content-panel > .page-container .ds-page-header {
+  margin: -10px -14px 12px;
+}
+
+.page-container .ds-section-header {
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.page-container .ds-section-header h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+}

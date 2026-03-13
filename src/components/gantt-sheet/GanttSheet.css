@@ -1,0 +1,137 @@
+/* ==============================
+   GanttSheet — virtual scroll Gantt
+   ============================== */
+
+.ds-gantt-sheet {
+  width: 100%;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  background: var(--content-header-bg);
+  display: flex;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Timeline header (sticky) */
+.gs-timeline-header {
+  will-change: transform;
+}
+
+/* GPU-accelerated scroll container */
+.ds-gantt-sheet > div[style*="overflow: auto"] {
+  will-change: transform;
+}
+
+/* Today button */
+.ds-gantt-sheet .gs-today-btn {
+  position: absolute;
+  bottom: 16px;
+  right: 24px;
+  z-index: 15;
+  padding: 4px 12px;
+  font-size: 12px;
+  background: var(--content-header-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+}
+
+.ds-gantt-sheet .gs-today-btn:hover {
+  border-color: #1677ff;
+  color: #1677ff;
+}
+
+/* ==============================
+   Priority bar colors (shared with GanttView)
+   ============================== */
+/* (handled via inline styles in GanttSheetBar) */
+
+/* ==============================
+   Dark theme
+   ============================== */
+.ds-gantt-sheet-dark {
+  border-color: #303030;
+  background: #141414;
+
+  --g-row-color: #141414;
+  --g-header-background: #1a1a1a;
+  --g-border-color: #303030;
+  --g-row-border-color: #303030;
+  --g-tick-color: #252525;
+  --g-tick-color-thick: #303030;
+  --g-weekend-highlight-color: #1a1a1a;
+  --g-weekend-label-color: rgba(255, 255, 255, 0.35);
+  --g-today-highlight: rgba(22, 119, 255, 0.12);
+  --g-bar-color: #303030;
+  --g-progress-color: #1677ff;
+  --g-bar-border: #404040;
+  --g-handle-color: #555;
+  --g-arrow-color: rgba(255, 255, 255, 0.3);
+  --g-text-dark: rgba(255, 255, 255, 0.85);
+  --g-text-light: rgba(255, 255, 255, 0.65);
+  --g-text-muted: rgba(255, 255, 255, 0.45);
+}
+
+.ds-gantt-sheet-dark .gs-timeline-header {
+  background: #141414;
+  border-bottom-color: #303030;
+}
+
+.ds-gantt-sheet-dark .gantt-grid {
+  border-right-color: #303030;
+  background: #141414;
+}
+
+.ds-gantt-sheet-dark .gantt-grid-header {
+  border-bottom-color: #303030;
+}
+
+.ds-gantt-sheet-dark .gantt-grid-row {
+  border-bottom-color: #252525;
+}
+
+.ds-gantt-sheet-dark .gantt-grid-body .gantt-grid-row:hover {
+  background: rgba(22, 119, 255, 0.08);
+}
+
+.ds-gantt-sheet-dark .gantt-grid-row--selected {
+  background: rgba(22, 119, 255, 0.15);
+}
+
+.ds-gantt-sheet-dark .gantt-grid-row--hovered {
+  background: rgba(22, 119, 255, 0.1);
+}
+
+.ds-gantt-sheet-dark .gantt-grid-row--group {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.ds-gantt-sheet-dark .gantt-grid-header-row {
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.ds-gantt-sheet-dark .gantt-grid-cell--date {
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.ds-gantt-sheet-dark .gantt-grid-toggle {
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.ds-gantt-sheet-dark .gantt-grid-toggle:hover {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.ds-gantt-sheet-dark .gantt-grid-progress {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.ds-gantt-sheet-dark .gantt-grid-progress-text {
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.ds-gantt-sheet-dark .gantt-grid-col-resizer::after,
+.ds-gantt-sheet-dark .gantt-grid-hcell--separator::before {
+  background: #404040;
+}

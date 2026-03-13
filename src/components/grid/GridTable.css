@@ -1,0 +1,67 @@
+.ds-grid-table {
+  width: 100%;
+  min-height: 0;
+}
+
+/* ── outer wrapper: rounded + shadow ── */
+.ds-grid-table .ag-root-wrapper {
+  border: 1px solid var(--border-color, #e0e0e0);
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+/* ── header ── */
+.ds-grid-table .ag-header {
+  border-bottom: 2px solid var(--border-color, #e0e0e0);
+}
+.ds-grid-table .ag-header-cell-text {
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: var(--text-secondary, #595959);
+  font-size: 12px;
+}
+
+/* ── rows ── */
+.ds-grid-table .ag-row {
+  transition: background-color 0.15s ease;
+}
+
+/* ── pagination panel ── */
+.ds-grid-table .ag-paging-panel {
+  border-top: 1px solid var(--border-color, #e0e0e0);
+  background: var(--content-header-bg, #fafafa);
+  font-size: 12px;
+  min-height: 40px;
+}
+.ds-grid-table .ag-paging-button {
+  cursor: pointer;
+}
+
+/* ── cell focus border ── */
+.ds-grid-table .ag-cell-focus:not(.ag-cell-range-selected) {
+  border-color: #1677ff !important;
+}
+
+/* ── no rows overlay ── */
+.ds-grid-no-rows {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 32px 16px;
+  color: var(--text-secondary, rgba(0,0,0,0.45));
+}
+.ds-grid-no-rows-icon {
+  font-size: 32px;
+  line-height: 1;
+}
+.ds-grid-no-rows-text {
+  font-size: 14px;
+}
+
+/* ── dark mode correction ── */
+.ds-grid-table .ag-root-wrapper {
+  --ag-border-color: var(--border-color, #e0e0e0);
+}

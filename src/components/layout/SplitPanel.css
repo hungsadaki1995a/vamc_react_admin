@@ -1,0 +1,78 @@
+.ds-split-panel {
+  display: flex;
+  height: 100%;
+  overflow: hidden;
+}
+.ds-split-panel.vertical {
+  flex-direction: column;
+}
+.ds-split-panel.horizontal {
+  flex-direction: row;
+}
+.ds-split-panel.dragging {
+  user-select: none;
+  cursor: col-resize;
+}
+.ds-split-panel.vertical.dragging {
+  cursor: row-resize;
+}
+
+.ds-split-primary {
+  overflow: auto;
+  flex-shrink: 0;
+}
+
+.ds-split-secondary {
+  flex: 1;
+  overflow: auto;
+  min-width: 0;
+  min-height: 0;
+}
+
+/* Divider */
+.ds-split-divider {
+  flex-shrink: 0;
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ds-split-panel.horizontal > .ds-split-divider {
+  width: 8px;
+  cursor: col-resize;
+}
+.ds-split-panel.vertical > .ds-split-divider {
+  height: 8px;
+  cursor: row-resize;
+}
+
+.ds-split-divider-line {
+  background: var(--border-color);
+  border-radius: 2px;
+  transition: background 0.15s;
+}
+
+.ds-split-panel.horizontal > .ds-split-divider > .ds-split-divider-line {
+  width: 3px;
+  height: 32px;
+}
+.ds-split-panel.vertical > .ds-split-divider > .ds-split-divider-line {
+  height: 3px;
+  width: 32px;
+}
+
+.ds-split-divider:hover > .ds-split-divider-line,
+.ds-split-divider.active > .ds-split-divider-line {
+  background: var(--primary-color);
+}
+
+.ds-split-panel.horizontal > .ds-split-divider:hover > .ds-split-divider-line,
+.ds-split-panel.horizontal > .ds-split-divider.active > .ds-split-divider-line {
+  height: 48px;
+}
+.ds-split-panel.vertical > .ds-split-divider:hover > .ds-split-divider-line,
+.ds-split-panel.vertical > .ds-split-divider.active > .ds-split-divider-line {
+  width: 48px;
+}

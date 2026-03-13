@@ -1,0 +1,39 @@
+.ds-grid-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: var(--content-header-bg);
+  flex-shrink: 0;
+}
+
+.ds-grid-toolbar-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.ds-grid-toolbar-count {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+.ds-grid-toolbar-count strong {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.ds-grid-toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Standardize button height in toolbar to match FilterPanel (middle = 32px) */
+.ds-grid-toolbar .ant-btn {
+  height: 32px;
+  font-size: 14px;
+}
+.ds-grid-toolbar .ant-btn.ant-btn-icon-only {
+  width: 32px;
+  padding: 0;
+}

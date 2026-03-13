@@ -1,0 +1,186 @@
+/* GanttView wrapper */
+.ds-gantt-view {
+  width: 100%;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  background: var(--content-header-bg);
+  display: flex;
+  overflow: hidden;
+}
+
+/* Grid panel (left) */
+.gantt-grid-panel {
+  flex-shrink: 0;
+  overflow: hidden;
+  height: 100%;
+}
+
+/* Timeline panel (right) */
+.gantt-timeline-panel {
+  flex: 1;
+  min-width: 0;
+  overflow: auto;
+  /* GPU 레이어 승격: 스크롤 합성을 CPU 없이 처리 → 부드러운 스크롤 */
+  will-change: transform;
+}
+
+/* frappe-gantt overrides */
+.ds-gantt-view .gantt-container {
+  overflow: visible;
+}
+
+/* frappe-gantt registers touchstart without passive — suppress scroll-blocking violation
+   via touch-action so the browser doesn't wait for JS before scrolling */
+.ds-gantt-view .bar-wrapper {
+  touch-action: none;
+}
+
+.ds-gantt-view .bar-label {
+  font-size: 12px;
+  font-weight: 500;
+}
+
+/* 현재 월 라벨 sticky 해제 — 좌우 스크롤 시 고정되지 않도록 */
+.ds-gantt-view .upper-text.current-upper {
+  position: absolute !important;
+}
+
+/* Critical path task highlighting */
+.ds-gantt-view .critical-task .bar-progress {
+  fill: #ff4d4f !important;
+}
+
+.ds-gantt-view .critical-task .bar-wrapper {
+  filter: drop-shadow(0 0 3px rgba(255, 77, 79, 0.4));
+}
+
+/* Milestone styling */
+.ds-gantt-view .milestone-task .bar {
+  fill: #722ed1;
+}
+
+/* Group task styling */
+.ds-gantt-view .group-task .bar {
+  opacity: 0.7;
+  rx: 2;
+}
+
+/* Hover highlight — synced with grid row hover */
+.ds-gantt-view .row-hover-overlay {
+  fill: rgba(22, 119, 255, 0.08);
+  pointer-events: none;
+}
+
+.ds-gantt-view .bar-wrapper.bar-hovered .bar {
+  filter: brightness(1.15);
+  stroke: #1677ff;
+  stroke-width: 1.5;
+}
+
+.ds-gantt-view .bar-wrapper.bar-hovered .bar-label {
+  fill: #1677ff;
+  font-weight: 600;
+}
+
+.ds-gantt-dark .row-hover-overlay {
+  fill: rgba(255, 255, 255, 0.04);
+}
+
+/* Today highlight — vertical line & ball */
+.ds-gantt-view .current-highlight {
+  position: absolute;
+  width: 2px;
+  background: #f5222d;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.ds-gantt-view .current-ball-highlight {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #f5222d;
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* Today date label highlight in header */
+.ds-gantt-view .current-date-highlight {
+  color: #f5222d !important;
+  font-weight: 700 !important;
+}
+
+.ds-gantt-dark .current-highlight {
+  background: #ff4d4f;
+}
+
+.ds-gantt-dark .current-ball-highlight {
+  background: #ff4d4f;
+}
+
+/* ==================
+   Dark theme via CSS custom properties
+   ================== */
+.ds-gantt-dark {
+  border-color: #303030;
+  background: #141414;
+
+  --g-row-color: #141414;
+  --g-header-background: #1a1a1a;
+  --g-border-color: #303030;
+  --g-row-border-color: #303030;
+  --g-tick-color: #252525;
+  --g-tick-color-thick: #303030;
+  --g-weekend-highlight-color: #1a1a1a;
+  --g-weekend-label-color: rgba(255, 255, 255, 0.35);
+  --g-today-highlight: rgba(22, 119, 255, 0.12);
+  --g-bar-color: #303030;
+  --g-progress-color: #1677ff;
+  --g-bar-border: #404040;
+  --g-handle-color: #555;
+  --g-arrow-color: rgba(255, 255, 255, 0.3);
+  --g-text-dark: rgba(255, 255, 255, 0.85);
+  --g-text-light: rgba(255, 255, 255, 0.65);
+  --g-text-muted: rgba(255, 255, 255, 0.45);
+  --g-actions-background: #1f1f1f;
+  --g-popup-actions: #303030;
+  --g-expected-progress: #404040;
+}
+
+/* showProgress=false: 진행률 바 숨김 */
+.ds-gantt-no-progress .bar-progress {
+  display: none;
+}
+
+/* 우선순위별 바 색상 */
+.ds-gantt-view .priority-low .bar {
+  fill: #91caff;
+}
+.ds-gantt-view .priority-low .bar-progress {
+  fill: #1677ff;
+}
+.ds-gantt-view .priority-high .bar {
+  fill: #ffd591;
+}
+.ds-gantt-view .priority-high .bar-progress {
+  fill: #fa8c16;
+}
+.ds-gantt-view .priority-critical .bar {
+  fill: #ffccc7;
+}
+.ds-gantt-view .priority-critical .bar-progress {
+  fill: #f5222d;
+}
+
+/* locked-task: 편집 핸들 숨김 */
+.ds-gantt-view .locked-task .handle-group {
+  display: none;
+}
+.ds-gantt-view .locked-task .bar-wrapper {
+  cursor: default;
+}
+.ds-gantt-view .locked-task .bar {
+  opacity: 0.75;
+  stroke-dasharray: 4 2;
+}

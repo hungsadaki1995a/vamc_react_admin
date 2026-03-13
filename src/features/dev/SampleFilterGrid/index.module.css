@@ -1,0 +1,29 @@
+.sample-filter-grid {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.sample-grid-area {
+  flex: 1;
+  overflow: hidden;
+}
+
+.sample-sub-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.sample-sub-table th,
+.sample-sub-table td {
+  padding: 4px 8px;
+  border: 1px solid #f0f0f0;
+  text-align: left;
+}
+
+.sample-sub-table th {
+  background: #fafafa;
+  font-weight: 600;
+}

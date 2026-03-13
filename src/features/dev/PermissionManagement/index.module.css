@@ -1,0 +1,101 @@
+/* Filter bar */
+.permFilterBar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 10px 12px;
+  background: var(--content-header-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  margin-bottom: 8px;
+}
+
+.permFilterItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.permFilterLabel {
+  font-size: 13px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+/* Matrix wrapper */
+.permMatrixWrapper {
+  overflow: auto;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: var(--content-header-bg);
+}
+
+/* Matrix table */
+.permMatrix {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.permMatrix th,
+.permMatrix td {
+  border: 1px solid var(--border-color);
+  padding: 6px 10px;
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* Header styles */
+.permMatrix thead th {
+  background: #f0f5ff;
+  color: var(--text-primary);
+  font-weight: 600;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
+:global([data-theme="dark"]) .permMatrix thead th {
+  background: #1a1f2e;
+}
+
+/* Column widths */
+.permColId {
+  width: 140px;
+  text-align: left;
+}
+
+.permColName {
+  width: 160px;
+  text-align: left;
+  min-width: 160px;
+}
+
+.permColRole {
+  min-width: 100px;
+}
+
+.permColCheck {
+  width: 48px;
+  padding: 4px;
+}
+
+/* Parent row highlight */
+.permRowParent td {
+  background: rgba(22, 119, 255, 0.05);
+}
+
+:global([data-theme="dark"]) .permRowParent td {
+  background: rgba(22, 119, 255, 0.1);
+}
+
+/* Row hover */
+.permMatrix tbody tr:hover td {
+  background: var(--primary-light);
+}
+
+/* Checkbox centering */
+.permMatrix :global(.ant-checkbox-wrapper) {
+  display: flex;
+  justify-content: center;
+}

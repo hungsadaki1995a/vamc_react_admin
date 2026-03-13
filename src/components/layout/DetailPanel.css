@@ -1,0 +1,121 @@
+.ds-detail-panel {
+  display: flex;
+  flex-direction: column;
+  border-top: 2px solid var(--border-color);
+  background: var(--content-header-bg);
+  flex-shrink: 0;
+  overflow: hidden;
+}
+.ds-detail-panel.dragging {
+  user-select: none;
+}
+
+/* Drag handle */
+.ds-detail-drag-handle {
+  height: 6px;
+  cursor: row-resize;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.ds-detail-drag-handle:hover {
+  background: rgba(22, 119, 255, 0.06);
+}
+.ds-detail-drag-bar {
+  width: 40px;
+  height: 3px;
+  background: var(--border-color);
+  border-radius: 2px;
+  transition: background 0.15s;
+}
+.ds-detail-drag-handle:hover .ds-detail-drag-bar {
+  background: var(--primary-color);
+}
+
+/* Header */
+.ds-detail-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 12px;
+  border-bottom: 1px solid var(--border-color);
+  flex-shrink: 0;
+}
+.ds-detail-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.ds-detail-extra {
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 4px;
+  padding: 0 8px;
+  overflow: hidden;
+}
+
+.ds-detail-header-actions {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+}
+.ds-detail-btn {
+  background: none;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--text-secondary);
+  font-size: 11px;
+  transition: all 0.15s;
+}
+.ds-detail-btn:hover {
+  background: var(--primary-light);
+  color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+/* Tabs */
+.ds-detail-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--border-color);
+  padding: 0 12px;
+  gap: 0;
+  flex-shrink: 0;
+}
+.ds-detail-tab {
+  padding: 6px 14px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.15s;
+  user-select: none;
+  display: flex;
+  align-items: center;
+}
+.ds-detail-tab:hover {
+  color: var(--text-primary);
+}
+.ds-detail-tab.active {
+  color: var(--primary-color);
+  border-bottom-color: var(--primary-color);
+  font-weight: 500;
+}
+
+/* Content */
+.ds-detail-content {
+  flex: 1;
+  overflow: auto;
+  padding: 12px;
+}
