@@ -30,6 +30,7 @@ import type { ColDef } from 'ag-grid-community';
 | `editable` | `boolean` | `false` | 전체 셀 편집 |
 | `enableClipboard` | `boolean` | `false` | Ctrl+C/V 클립보드 |
 | `rowSelection` | `'singleRow' \| 'multiRow'` | — | 행 선택 모드 |
+| `checkboxSelection` | `boolean` | `false` | 체크박스 + 헤더 체크박스 활성화 (`rowSelection="multiRow"` 필요) |
 | `pagination` | `boolean` | `true` | 페이지네이션 |
 | `pageSize` | `number` | `20` | 페이지당 행 수 |
 | `height` | `string \| number` | `"100%"` | 그리드 높이 |
@@ -67,6 +68,25 @@ import SelectCellEditor from '@/components/grid/cellEditors/SelectCellEditor';
 import TagsCellEditor from '@/components/grid/cellEditors/TagsCellEditor';
 import UserCellEditor from '@/components/grid/cellEditors/UserCellEditor';
 import ComcdSelectCell, { ComcdSelectCellEditor } from '@/components/grid/ComcdSelectCell';
+import {
+  SearchSelectCellEditor,
+  SearchSelectCellRenderer,
+  searchSelectValueFormatter,
+} from '@/components/grid/SearchSelectCell';
+
+// 검색+선택 셀 (object 값 → GridTable이 valueFormatter 자동 주입)
+// rowData의 해당 필드 값이 { label, value } 형태면 valueFormatter 없이도 경고 안 남
+{ field: 'dept', editable: true,
+  cellRenderer: SearchSelectCellRenderer,
+  cellEditor: SearchSelectCellEditor,
+  cellEditorParams: {
+    fetchOptions: async (kw) => {
+      const list = await getOrgList({ orgNm: kw });
+      return list.map(o => ({ label: o.orgNm, value: o.orgId }));
+    },
+  },
+  // valueFormatter: searchSelectValueFormatter,  ← GridTable이 자동 주입하므로 생략 가능
+}
 
 // 날짜 편집 + 표시
 { field: 'dueDate', editable: true,

@@ -486,7 +486,7 @@ export default function InputComponentsDemo() {
                 <Divider titlePlacement="left">Input 변형</Divider>
                 <Row gutter={[16, 12]}>
                   <Col span={8}><Input placeholder="기본 Input" /></Col>
-                  <Col span={8}><Password placeholder="비밀번호" /></Col>
+                  <Col span={8}><form onSubmit={(e) => e.preventDefault()}><Password placeholder="비밀번호" /></form></Col>
                   <Col span={8}><Search placeholder="검색어 입력" onSearch={(v) => console.log(v)} /></Col>
                   <Col span={8}><InputNumber style={{ width: '100%' }} placeholder="숫자 입력" min={0} max={100} /></Col>
                   <Col span={8}><AutoComplete style={{ width: '100%' }} placeholder="자동완성" options={[{ value: '홍길동' }, { value: '김철수' }]} /></Col>

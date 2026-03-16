@@ -1072,12 +1072,9 @@ function ComcdChainGridDemo() {
   );
 }
 
-// Stable empty array — prevents useSyncExternalStore infinite loop when codes not yet loaded
-const EMPTY_CODES: never[] = [];
-
 function ComcdSearchCellDemo() {
-  const jbcCodes = useComcdStore((s) => s.codes['JBC_CD'] ?? EMPTY_CODES);
-  const gdCodes  = useComcdStore((s) => s.codes['GD_CD']  ?? EMPTY_CODES);
+  const jbcCodes = useComcdStore((s) => s.codes['JBC_CD'] ?? []);
+  const gdCodes  = useComcdStore((s) => s.codes['GD_CD']  ?? []);
 
   const makeInitialRows = useCallback(
     (jbc: typeof jbcCodes, gd: typeof gdCodes): ComcdDemoRow[] => [
@@ -1513,7 +1510,7 @@ export default function GridEditingDemo() {
   ], []);
 
   const selectionCols = useMemo<ColDef<Employee>[]>(() => [
-    { headerCheckboxSelection: true, checkboxSelection: true, width: 50, flex: 0, sortable: false, filter: false },
+    { width: 50, flex: 0, sortable: false, filter: false },
     { field: 'name', headerName: '이름', width: 100, flex: 0 },
     { field: 'department', headerName: '부서', width: 100, flex: 0 },
     { field: 'role', headerName: '역할', width: 90, flex: 0 },
@@ -1903,6 +1900,7 @@ function MyPage() {
                     rowData={basicData}
                     rowKey="id"
                     rowSelection="multiRow"
+                    checkboxSelection
                     pagination={false}
                     onSelectionChanged={setSelectedRows}
                   />
