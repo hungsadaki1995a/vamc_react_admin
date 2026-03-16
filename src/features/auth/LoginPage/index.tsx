@@ -11,7 +11,7 @@ import { useMenuStore } from '@/stores/menuStore';
 import { useSettingsStore } from '@/stores/settingsStore';
 import { menuConfig } from '@/config/menuConfig';
 import { findMenuByKey } from '@/utils/menuUtils';
-import { mockLoadMenus } from '@/mock/services/menuService';
+import { fetchAuthMenuList } from '@/api/menu';
 import { ApiError } from '@/lib/api/error';
 import type { LoginRequest } from '@/lib/api/types';
 import styles from './index.module.css';
@@ -62,7 +62,7 @@ export default function LoginPage() {
 
           // Fetch my projects, then load menus with the auto-selected project's ID
           useProjectStore.getState().fetchMyProjects().then(() => {
-            mockLoadMenus().then(setServerMenus).catch(() => { /* silent */ });
+            fetchAuthMenuList().then(setServerMenus).catch(() => { /* silent */ });
           });
 
           navigate('/app', { replace: true });

@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef, useEffect, useMemo, memo } from 'react';
+import { useState, useCallback, useRef, useEffect, useMemo, memo, startTransition } from 'react';
 import {
   CloseOutlined,
   PushpinFilled,
@@ -136,11 +136,16 @@ export default function TabBar() {
       frame2 = requestAnimationFrame(() => {
         const activeEl = container.querySelector('.tab-item.active') as HTMLElement | null;
         if (activeEl) {
-          const containerRect = container.getBoundingClientRect();
-          const tabRect = activeEl.getBoundingClientRect();
-          // Only scroll if tab is not fully visible
-          if (tabRect.left < containerRect.left || tabRect.right > containerRect.right) {
-            activeEl.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+          // Use offsetLeft/offsetWidth instead of getBoundingClientRect to avoid forced reflow.
+          // Scroll container directly (overflow:hidden container is not a scrollIntoView target).
+          const containerLeft = container.scrollLeft;
+          const containerWidth = container.clientWidth;
+          const tabLeft = activeEl.offsetLeft;
+          const tabRight = tabLeft + activeEl.offsetWidth;
+          if (tabRight > containerLeft + containerWidth) {
+            container.scrollTo({ left: tabRight - containerWidth + 4, behavior: 'smooth' });
+          } else if (tabLeft < containerLeft) {
+            container.scrollTo({ left: tabLeft - 4, behavior: 'smooth' });
           }
         }
       });
@@ -150,6 +155,14 @@ export default function TabBar() {
       cancelAnimationFrame(frame2);
     };
   }, [activeTabKey]);
+
+  // Wrap setActiveTab in startTransition — tab switch triggers expensive AG Grid re-render,
+  // which causes 'click handler took Xms' violations if run synchronously.
+  const handleActivate = useCallback((key: string) => {
+    startTransition(() => {
+      setActiveTab(key);
+    });
+  }, [setActiveTab]);
 
   // Mouse wheel → horizontal scroll
   const handleWheel = useCallback((e: React.WheelEvent) => {
@@ -236,10 +249,10 @@ export default function TabBar() {
     ...tabs.map((t) => ({
       key: `goto-${t.key}`,
       label: t.title,
-      onClick: () => setActiveTab(t.key),
+      onClick: () => startTransition(() => setActiveTab(t.key)),
       style: t.key === activeTabKey ? { fontWeight: 600, color: '#1677ff' } : {},
     })),
-  ], [tabs, activeTabKey, closeTab, closeOtherTabs, closeRightTabs, closeAllTabs, setActiveTab]);
+  ], [tabs, activeTabKey, closeTab, closeOtherTabs, closeRightTabs, closeAllTabs, setActiveTab, handleActivate]);
 
   // Pinned first — memoized (must be before early return to respect Rules of Hooks)
   const sortedTabs = useMemo(() =>
@@ -286,7 +299,7 @@ export default function TabBar() {
               isDropTarget={dropTargetIdx === idx}
               isHome={tab.menuKey === homeMenuKey}
               idx={idx}
-              onActivate={setActiveTab}
+              onActivate={handleActivate}
               onClose={closeTab}
               onContextMenu={handleContextMenu}
               onDragStart={handleDragStart}

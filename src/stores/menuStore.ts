@@ -1,7 +1,12 @@
 import { create } from 'zustand';
 import type { MenuItem } from '@/types/menu';
-import { mockLoadMenus } from '@/mock/services/menuService';
+import { fetchAuthMenuList } from '@/api/menu';
+import { idbGet, idbSet } from '@/lib/cache/idbCache';
+import { useAuthStore } from '@/stores/authStore';
+import { useProjectStore } from '@/stores/projectStore';
 
+/** Cache TTL: 5 minutes. Within TTL, skip background revalidation to avoid extra XHR. */
+const CACHE_TTL_MS = 5 * 60 * 1000;
 
 interface MenuStore {
   activeRailKey: string | null;
@@ -70,10 +75,30 @@ export const useMenuStore = create<MenuStore>((set, get) => ({
 
   loadMenuForProject: async () => {
     if (get().menuLoading) return;
+
+    const userId = useAuthStore.getState().user?.usrId ?? '_';
+    const projectId = useProjectStore.getState().activeProject?.id ?? '_';
+    const cacheKey = `menus:${userId}:${projectId}`;
+
+    const cached = await idbGet<MenuItem[]>(cacheKey);
+    if (cached) {
+      set({ serverMenus: cached.data, menuLoading: false });
+      const isFresh = Date.now() - cached.ts < CACHE_TTL_MS;
+      if (isFresh) return;
+      fetchAuthMenuList()
+        .then((fresh) => {
+          set({ serverMenus: fresh });
+          idbSet(cacheKey, fresh);
+        })
+        .catch(() => { /* keep stale menus on error */ });
+      return;
+    }
+
     set({ menuLoading: true });
     try {
-      const menus = await mockLoadMenus();
+      const menus = await fetchAuthMenuList();
       set({ serverMenus: menus, menuLoading: false });
+      idbSet(cacheKey, menus);
     } catch {
       set({ menuLoading: false });
     }

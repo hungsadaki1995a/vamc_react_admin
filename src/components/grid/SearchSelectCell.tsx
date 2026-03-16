@@ -193,11 +193,11 @@ export function SearchSelectCellEditor({
         options={acOptions.map((o) => ({ label: o.label, value: o.value }))}
         onSearch={handleSearch}
         onSelect={handleSelect}
-        onDropdownVisibleChange={(open) => { dropdownOpenRef.current = open; }}
+        onOpenChange={(open) => { dropdownOpenRef.current = open; }}
         autoFocus
         // Render dropdown into document.body to escape AG Grid's overflow:hidden
         getPopupContainer={() => document.body}
-        dropdownStyle={{ zIndex: 9999 }}
+        styles={{ popup: { root: { zIndex: 9999 } } }}
         style={{ width: '100%' }}
         placeholder="검색어 입력"
       />
