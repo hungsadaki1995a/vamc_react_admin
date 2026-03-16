@@ -1,6 +1,9 @@
 import { useMemo, useCallback, useRef, useEffect } from 'react';
 import { AgGridReact } from 'ag-grid-react';
-import { themeQuartz } from 'ag-grid-community';
+import { AllCommunityModule, ModuleRegistry, themeQuartz } from 'ag-grid-community';
+
+// Register AG Grid modules lazily (executed when first grid page is opened)
+ModuleRegistry.registerModules([AllCommunityModule]);
 import type {
   ColDef,
   GridReadyEvent,
@@ -139,6 +142,8 @@ export interface GridTableProps<TData = any> {
   editable?: boolean;
   enableClipboard?: boolean;
   rowSelection?: 'singleRow' | 'multiRow';
+  /** Enable checkbox column + header checkbox (replaces deprecated colDef.checkboxSelection) */
+  checkboxSelection?: boolean;
   pagination?: boolean;
   pageSize?: number;
   height?: string | number;
@@ -267,6 +272,7 @@ export default function GridTable<TData = any>({
   editable = false,
   enableClipboard = false,
   rowSelection,
+  checkboxSelection = false,
   pagination = true,
   pageSize = 20,
   height = '100%',
@@ -343,6 +349,33 @@ export default function GridTable<TData = any>({
     }),
     [editable, floatingFilter, userDefaultColDef],
   );
+
+  // Auto-inject valueFormatter + valueParser for columns whose data values are objects.
+  // Suppresses AG Grid warning #48: "Cell data type is 'object' but no Value Formatter/Parser".
+  // Detects object-typed columns by sampling the first row; re-runs when data or defs change.
+  // For {label, value} objects (SearchSelectValue), formatter returns label; parser is pass-through.
+  const processedColumnDefs = useMemo<ColDef<TData>[]>(() => {
+    const firstRow = rowData[0];
+    if (!firstRow) return columnDefs;
+    return columnDefs.map((col) => {
+      if (!col.field) return col;
+      const sampleVal = (firstRow as any)[col.field];
+      if (sampleVal === null || sampleVal === undefined || typeof sampleVal !== 'object') return col;
+      const patch: Partial<ColDef<TData>> = {};
+      if (!col.valueFormatter) {
+        patch.valueFormatter = (params) => {
+          const v = params.value;
+          if (v === null || v === undefined) return '';
+          if (typeof v === 'object') return 'label' in v ? String((v as any).label) : '';
+          return String(v);
+        };
+      }
+      if (!col.valueParser) {
+        patch.valueParser = (params) => params.newValue;
+      }
+      return { ...col, ...patch };
+    });
+  }, [columnDefs, rowData]);
 
   const handleGridReady = useCallback(
     (event: GridReadyEvent<TData>) => {
@@ -474,12 +507,12 @@ export default function GridTable<TData = any>({
       <AgGridReact<TData>
         ref={gridRef}
         rowData={rowData}
-        columnDefs={columnDefs}
+        columnDefs={processedColumnDefs}
         defaultColDef={mergedDefaultColDef}
         theme={theme}
         localeText={AG_GRID_LOCALE_KO}
         getRowId={rowKey ? (params) => String((params.data as any)[rowKey]) : undefined}
-        rowSelection={rowSelection ? { mode: rowSelection } : undefined}
+        rowSelection={rowSelection ? { mode: rowSelection, checkboxes: checkboxSelection, headerCheckbox: checkboxSelection && rowSelection === 'multiRow' } : undefined}
         pagination={pagination}
         paginationPageSize={pageSize}
         paginationPageSizeSelector={paginationPageSizeSelector}

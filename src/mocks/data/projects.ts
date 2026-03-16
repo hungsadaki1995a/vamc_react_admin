@@ -1,0 +1,36 @@
+import type { MyProjectResponseDto } from '@/lib/api/types';
+
+export const mockProjects: MyProjectResponseDto[] = [
+  {
+    projId: 'PROJ-001',
+    projNm: 'DS PMS 개발',
+    projType: 'DEV',
+    clnNm: '신한DS',
+    bzDpNm: '개발팀',
+    pmId: 'admin',
+    adminId: 'admin',
+    pnSrDt: '2025-01-01',
+    pnEdDt: '2025-12-31',
+    rltSrDt: '2025-01-01',
+    rltEdDt: '2025-12-31',
+    bigo: null,
+    rgDttm: '2025-01-01T00:00:00',
+    roles: [{ roleId: 'ROLE_ADMIN', roleNm: '관리자' }],
+  },
+  {
+    projId: 'PROJ-002',
+    projNm: '신한DS 운영',
+    projType: 'OPS',
+    clnNm: '신한DS',
+    bzDpNm: '운영팀',
+    pmId: 'admin',
+    adminId: 'admin',
+    pnSrDt: '2025-01-01',
+    pnEdDt: '2025-12-31',
+    rltSrDt: null,
+    rltEdDt: null,
+    bigo: null,
+    rgDttm: '2025-01-01T00:00:00',
+    roles: [{ roleId: 'ROLE_MEMBER', roleNm: '멤버' }],
+  },
+];

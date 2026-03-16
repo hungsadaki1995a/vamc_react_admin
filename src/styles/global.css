@@ -610,7 +610,7 @@ html, body, #root {
   cursor: pointer;
   color: var(--text-secondary);
   flex-shrink: 0;
-  transition: all 0.15s;
+  transition: background-color 0.15s, color 0.15s;
 }
 
 .tab-scroll-btn:hover {
@@ -642,7 +642,7 @@ html, body, #root {
   color: var(--text-secondary);
   border-left: 1px solid var(--border-color);
   flex-shrink: 0;
-  transition: all 0.15s;
+  transition: background-color 0.15s, color 0.15s;
 }
 
 .tab-manage-btn:hover {
@@ -665,7 +665,8 @@ html, body, #root {
   font-size: 12px;
   white-space: nowrap;
   user-select: none;
-  transition: all 0.15s;
+  /* Only transition non-layout properties to prevent neighbor tab positional shift */
+  transition: background-color 0.15s, color 0.15s, box-shadow 0.15s;
   color: var(--text-secondary);
   flex-shrink: 0;
 }
@@ -678,9 +679,13 @@ html, body, #root {
 .tab-item.active {
   background: var(--content-header-bg);
   color: var(--primary-color);
-  font-weight: 500;
   border-color: var(--border-color);
   box-shadow: 0 -2px 0 0 var(--primary-color) inset;
+}
+
+/* Fake-bold via text-shadow: visually heavier without changing glyph width → no layout shift */
+.tab-item.active .tab-label {
+  text-shadow: 0 0 0.5px currentColor;
 }
 
 .tab-item.home-tab {
@@ -710,7 +715,7 @@ html, body, #root {
   border-radius: 4px;
   font-size: 9px;
   color: var(--text-secondary);
-  transition: all 0.15s;
+  transition: background-color 0.15s, color 0.15s, opacity 0.15s;
   opacity: 0;
 }
 

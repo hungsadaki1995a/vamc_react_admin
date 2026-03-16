@@ -1,4 +1,4 @@
-import { useEffect, useRef, useCallback, useState, useMemo } from 'react';
+import { useEffect, useRef, useCallback, useState } from 'react';
 import { RightOutlined, FolderOutlined, FileTextOutlined } from '@ant-design/icons';
 import logoHarmony from '@/assets/logo_harmony.svg';
 import { Select } from 'antd';
@@ -71,12 +71,10 @@ export default function FlyoutPanel() {
   const activeMenuKey = tabs.find((t) => t.key === activeTabKey)?.menuKey ?? null;
 
   // server menus 우선, 없으면 static menuConfig fallback
-  const allMenus = useMemo(() => [...serverMenus, ...menuConfig], [serverMenus]);
-  const activeCategory = useMemo(
-    () => allMenus.find((m) => m.key === activeRailKey) ?? (activeRailKey ? findMenuByKey(allMenus, activeRailKey) : null),
-    [allMenus, activeRailKey]
-  );
-  const flyoutItems = useMemo(() => activeCategory?.children ?? [], [activeCategory]);
+  const allMenus = [...serverMenus, ...menuConfig];
+  const activeCategory = allMenus.find((m) => m.key === activeRailKey)
+    ?? (activeRailKey ? findMenuByKey(allMenus, activeRailKey) : null);
+  const flyoutItems = activeCategory?.children ?? [];
 
   // Auto-expand parent keys when active menu changes (tab switch or menu click).
   useEffect(() => {

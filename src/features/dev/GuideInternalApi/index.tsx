@@ -10,55 +10,60 @@ import { useLocaleStore } from '@/stores/localeStore';
 const { Text } = Typography;
 
 // ─── Stores 목록 ──────────────────────────────────────────────────────────────
-type StoreRow = { name: string; persist: string; lsKey: string; desc: string; key: string };
+type StoreRow = { name: string; persist: string; desc: string; key: string };
 const storeCols: TableColumnsType<StoreRow> = [
   { title: '스토어', dataIndex: 'name', width: 160, render: (v) => <Text code>{v}</Text> },
-  { title: 'persist', dataIndex: 'persist', width: 72, align: 'center', render: (v) => <Tag color={v === '✅' ? 'green' : v === '일부' ? 'orange' : 'default'}>{v}</Tag> },
-  { title: 'localStorage 키', dataIndex: 'lsKey', width: 140, render: (v) => v ? <Text code style={{ fontSize: 11 }}>{v}</Text> : <Text type="secondary">—</Text> },
+  { title: 'persist', dataIndex: 'persist', width: 80, render: (v) => <Tag color={v === '✅' ? 'green' : 'default'}>{v}</Tag> },
   { title: '역할', dataIndex: 'desc' },
 ];
 const storeRows: StoreRow[] = [
-  { key: '1', name: 'authStore',     persist: '일부', lsKey: 'pms-auth',     desc: 'AccessToken(메모리), user/roles(localStorage)' },
-  { key: '2', name: 'tabStore',      persist: '✅',   lsKey: 'pms-tabs',     desc: '탭 목록 + 활성 탭' },
-  { key: '3', name: 'menuStore',     persist: '❌',   lsKey: '',             desc: '레일/플라이아웃 상태 + 서버 메뉴 트리' },
-  { key: '4', name: 'projectStore',  persist: '✅',   lsKey: 'pms-project',  desc: '활성 프로젝트 + 내 프로젝트 목록' },
-  { key: '5', name: 'themeStore',    persist: '✅',   lsKey: 'pms-theme',    desc: 'light/dark 테마' },
-  { key: '6', name: 'localeStore',   persist: '✅',   lsKey: 'pms-locale',   desc: '언어 설정 ko/en/vi' },
-  { key: '7', name: 'labelStore',    persist: '❌',   lsKey: '',             desc: '다국어 라벨 캐시 (매 마운트 시 재로드)' },
-  { key: '8', name: 'comcdStore',    persist: '❌',   lsKey: '',             desc: '공통코드 캐시 (매 마운트 시 재로드)' },
-  { key: '9', name: 'settingsStore', persist: '✅',   lsKey: 'pms-settings', desc: '개인 설정 — homeMenuKey 등' },
+  { key: '1', name: 'authStore',     persist: '일부', desc: 'AccessToken(메모리), user/roles(localStorage)' },
+  { key: '2', name: 'tabStore',      persist: '✅',   desc: '탭 목록 + 활성 탭 (localStorage: pms-tabs)' },
+  { key: '3', name: 'menuStore',     persist: '❌',   desc: '레일/플라이아웃 상태 + 서버 메뉴 트리' },
+  { key: '4', name: 'projectStore',  persist: '✅',   desc: '활성 프로젝트 + 내 프로젝트 목록' },
+  { key: '5', name: 'themeStore',    persist: '✅',   desc: 'light/dark 테마 (localStorage: pms-theme)' },
+  { key: '6', name: 'localeStore',   persist: '✅',   desc: '언어 설정 ko/en/vi (localStorage: pms-locale)' },
+  { key: '7', name: 'labelStore',    persist: '❌',   desc: '다국어 라벨 캐시 (매 마운트 시 재로드)' },
+  { key: '8', name: 'comcdStore',    persist: '❌',   desc: '공통코드 캐시 (매 마운트 시 재로드)' },
+  { key: '9', name: 'settingsStore', persist: '✅',   desc: '개인 설정 — homeMenuKey 등' },
 ];
 
 // ─── Hooks 목록 ──────────────────────────────────────────────────────────────
-type HookRow = { hook: string; returns: string; file: string; desc: string; key: string };
+type HookRow = { hook: string; desc: string; key: string };
 const hookCols: TableColumnsType<HookRow> = [
-  { title: '훅', dataIndex: 'hook', width: 230, render: (v) => <Text code style={{ fontSize: 11 }}>{v}</Text> },
-  { title: '반환', dataIndex: 'returns', width: 200, render: (v) => <Text code style={{ fontSize: 11 }}>{v}</Text> },
-  { title: '파일', dataIndex: 'file', width: 180, render: (v) => <Text type="secondary" style={{ fontSize: 11 }}>{v}</Text> },
+  { title: '훅', dataIndex: 'hook', width: 200, render: (v) => <Text code>{v}</Text> },
   { title: '설명', dataIndex: 'desc' },
 ];
 const hookRows: HookRow[] = [
-  { key: '1', hook: 'useApiQuery(key, fn, opts?)',   returns: 'UseQueryResult<T>',          file: 'hooks/useApiQuery.ts',      desc: 'ApiResponse<T> 자동 언래핑 useQuery 래퍼' },
-  { key: '2', hook: 'useApiMutation(fn, opts?)',      returns: 'UseMutationResult<T>',       file: 'hooks/useApiMutation.ts',   desc: 'ApiResponse<T> 언래핑 + 성공 토스트 useMutation 래퍼' },
-  { key: '3', hook: 'useMenuPermission()',            returns: '{ canRead, canWrite }',       file: 'hooks/useMenuPermission.ts',desc: '현재 활성 탭의 permType → canRead/canWrite' },
-  { key: '4', hook: 'useScreenLabel(sceIdOverride?)',returns: '{ tvt, tvb, tvh, tsg, ... }', file: 'hooks/useScreenLabel.ts',   desc: 'sceId 기반 라벨 단축 함수' },
-  { key: '5', hook: 'useLogout()',                    returns: '() => void',                  file: 'hooks/useLogout.ts',        desc: '로그아웃 확인 모달 + 전체 상태 초기화' },
-  { key: '6', hook: 'useTabRouteSync()',              returns: 'void',                        file: 'hooks/useTabRouteSync.ts',  desc: '탭 ↔ URL 양방향 동기화 (AppLayout 전용)' },
+  { key: '1', hook: 'useApiQuery(key, fn, opts?)',        desc: 'ApiResponse<T> 자동 언래핑 useQuery 래퍼' },
+  { key: '2', hook: 'useApiMutation(fn, opts?)',           desc: 'ApiResponse<T> 언래핑 + 성공 토스트 useMutation 래퍼' },
+  { key: '3', hook: 'useMenuPermission()',                 desc: '현재 활성 탭의 permType → canRead/canWrite' },
+  { key: '4', hook: 'useScreenLabel(sceIdOverride?)',      desc: 'sceId 기반 라벨 단축 함수 (tvt/tvb/tsg/tsm ...)' },
+  { key: '5', hook: 'useLogout()',                         desc: '로그아웃 확인 모달 + 전체 상태 초기화' },
+  { key: '6', hook: 'useTabRouteSync()',                   desc: '탭 ↔ URL 양방향 동기화 (AppLayout 전용)' },
 ];
 
 // ─── Utils 목록 ──────────────────────────────────────────────────────────────
-type UtilRow = { fn: string; sig: string; file: string; desc: string; key: string };
+type UtilRow = { fn: string; sig: string; desc: string; src: string; key: string };
 const utilCols: TableColumnsType<UtilRow> = [
-  { title: '함수', dataIndex: 'fn', width: 210, render: (v) => <Text code style={{ fontSize: 11 }}>{v}</Text> },
+  { title: '함수', dataIndex: 'fn', width: 220, render: (v) => <Text code>{v}</Text> },
   { title: '반환', dataIndex: 'sig', width: 160, render: (v) => <Text code style={{ fontSize: 11 }}>{v}</Text> },
-  { title: '파일', dataIndex: 'file', width: 160, render: (v) => <Text type="secondary" style={{ fontSize: 11 }}>{v}</Text> },
   { title: '설명', dataIndex: 'desc' },
+  { title: '위치', dataIndex: 'src', width: 180, render: (v) => <Text code style={{ fontSize: 11 }}>{v}</Text> },
 ];
 const utilRows: UtilRow[] = [
-  { key: '1', fn: 'findMenuByKey(items, key)',    sig: 'MenuItem | null',   file: 'utils/menuUtils.ts', desc: '메뉴 트리 재귀 탐색' },
-  { key: '2', fn: 'getMenuParentKeys(items, key)',sig: 'string[] | null',   file: 'utils/menuUtils.ts', desc: '모든 상위 키 배열 (openKeys 용)' },
-  { key: '3', fn: 'getMenuBreadcrumb(menus, key)',sig: '{ key, label }[]',  file: 'utils/menuUtils.ts', desc: '브레드크럼 경로' },
-  { key: '4', fn: 'buildAntMenuItems(items)',     sig: 'AntMenuItem[]',     file: 'utils/menuUtils.ts', desc: 'MenuItem → Ant Design Menu items' },
+  { key: '1',  fn: 'findMenuByKey(items, key)',             sig: 'MenuItem | null',         desc: '메뉴 트리 재귀 탐색. key 일치 시 해당 MenuItem 반환, 없으면 null',                               src: 'utils/menuUtils.ts' },
+  { key: '2',  fn: 'getMenuParentKeys(items, key)',         sig: 'string[] | null',         desc: '대상 key의 모든 상위 key 배열 반환. Flyout openKeys(펼침 유지)에 사용',                          src: 'utils/menuUtils.ts' },
+  { key: '3',  fn: 'getMenuBreadcrumb(menus, key)',         sig: '{ key, label }[]',        desc: '루트 → 대상까지 이어지는 브레드크럼 경로 배열. ContentHeader 브레드크럼에 사용',                 src: 'utils/menuUtils.ts' },
+  { key: '4',  fn: 'buildAntMenuItems(items)',              sig: 'AntMenuItem[]',           desc: 'MenuItem[] → Ant Design Menu items 변환. 아이콘 문자열을 React 컴포넌트로 교체, hidden 항목 제거', src: 'utils/menuUtils.ts' },
+  { key: '5',  fn: 'fromList(res, key)',                   sig: 'ApiResponse<T[]>',        desc: '배열이 객체 키로 감싸진 응답 언래핑. { data: { mtxTt: T[] } } → { data: T[] }',                 src: 'lib/api/client.ts' },
+  { key: '6',  fn: 'ApiError.from(err)',                   sig: 'ApiError',                desc: 'unknown 에러를 ApiError로 변환. ApiError 이미 면 그대로, AxiosError 이면 fromAxiosError 위임',   src: 'lib/api/error.ts' },
+  { key: '7',  fn: 'ApiError.fromAxiosError(err)',         sig: 'ApiError',                desc: 'AxiosError → ApiError 변환. response.data가 있으면 서버 메시지 추출, 없으면 상태코드 기반 기본 메시지 사용', src: 'lib/api/error.ts' },
+  { key: '8',  fn: 'err.userMessage',                      sig: 'string',                  desc: 'ApiError 인스턴스 게터. 서버 메시지 → 상태코드 기본 메시지 → 알 수 없는 오류 순으로 폴백',        src: 'lib/api/error.ts' },
+  { key: '9',  fn: 'err.isUnauthorized',                   sig: 'boolean',                 desc: 'statusCode === 401',                                                                                 src: 'lib/api/error.ts' },
+  { key: '10', fn: 'err.isForbidden',                      sig: 'boolean',                 desc: 'statusCode === 403',                                                                                 src: 'lib/api/error.ts' },
+  { key: '11', fn: 'err.isNotFound',                       sig: 'boolean',                 desc: 'statusCode === 404',                                                                                 src: 'lib/api/error.ts' },
+  { key: '12', fn: 'err.isServerError',                    sig: 'boolean',                 desc: 'statusCode >= 500',                                                                                  src: 'lib/api/error.ts' },
 ];
 
 export default function GuideInternalApi() {
@@ -249,8 +254,8 @@ const { homeMenuKey, setHomeMenuKey } = useSettingsStore();
             children: (
               <div className="demo-section">
                 <div className="demo-desc">
-                  <h3>menuUtils — 메뉴 트리 탐색</h3>
-                  <p><Text code>src/utils/menuUtils.ts</Text></p>
+                  <h3>유틸리티 함수 목록</h3>
+                  <p><Text code>utils/menuUtils.ts</Text> · <Text code>lib/api/client.ts</Text> · <Text code>lib/api/error.ts</Text></p>
                 </div>
                 <Table columns={utilCols} dataSource={utilRows} size="small" pagination={false} style={{ marginBottom: 24 }} />
 
