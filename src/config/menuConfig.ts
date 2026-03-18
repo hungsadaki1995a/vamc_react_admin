@@ -16,17 +16,18 @@ export const menuConfig: MenuItem[] = [
     icon: 'ToolOutlined',
     children: [
       {
-        // 우리가 만든/래핑한 커스텀 컴포넌트들의 Props·Events·라이브 데모
-        key: 'dev.component-demo',
-        label: '컴포넌트 데모',
+        // 우리가 만든/래핑한 커스텀 예시들의 Props·Events·라이브 데모
+        key: 'dev.custom-demo',
+        label: '커스텀 예시',
         children: [
-          { key: 'dev.component-demo.layout',  label: '레이아웃 컴포넌트',  componentPath: 'LayoutComponentsDemo' },
-          { key: 'dev.component-demo.input',   label: '입력 컴포넌트',      componentPath: 'InputComponentsDemo' },
-          { key: 'dev.component-demo.icons',   label: '아이콘',            componentPath: 'IconsDemo' },
-          { key: 'dev.component-demo.grid',    label: '그리드 테이블',      componentPath: 'GridEditingDemo' },
-          { key: 'dev.component-demo.editor',  label: '에디터',            componentPath: 'EditorDemo' },
-          { key: 'dev.component-demo.gantt',       label: '간트 차트',          componentPath: 'GanttDemo' },
-          { key: 'dev.component-demo.gantt-sheet', label: '간트 시트 (대용량)',  componentPath: 'GanttSheetDemo' },
+          { key: 'dev.custom-demo.layout',  label: '레이아웃 컴포넌트',  componentPath: 'LayoutComponentsDemo' },
+          { key: 'dev.custom-demo.input',   label: '입력 컴포넌트',      componentPath: 'InputComponentsDemo' },
+          { key: 'dev.custom-demo.icons',   label: '아이콘',            componentPath: 'IconsDemo' },
+          { key: 'dev.custom-demo.grid',    label: '그리드 테이블',      componentPath: 'GridEditingDemo' },
+          { key: 'dev.custom-demo.editor',  label: '에디터',            componentPath: 'EditorDemo' },
+          { key: 'dev.custom-demo.gantt',       label: '간트 차트',          componentPath: 'GanttDemo' },
+          { key: 'dev.custom-demo.gantt-sheet', label: '간트 시트 (대용량)',  componentPath: 'GanttSheetDemo' },
+          { key: 'dev.custom-demo.notify',      label: 'useNotify',          componentPath: 'NotifyDemo' },
         ],
       },
       {
@@ -35,6 +36,7 @@ export const menuConfig: MenuItem[] = [
         label: '화면 패턴',
         children: [
           { key: 'dev.patterns.grid-list',     label: '목록 패턴',      componentPath: 'PatternGridList' },
+          { key: 'dev.patterns.grid-form',     label: '그리드-폼 패턴', componentPath: 'PatternGridForm' },
           { key: 'dev.patterns.master-detail', label: '마스터-디테일',  componentPath: 'PatternMasterDetail' },
           { key: 'dev.patterns.kanban',        label: '칸반 보드',      componentPath: 'KanbanBoard' },
           { key: 'dev.patterns.calendar',      label: '캘린더',         componentPath: 'Calendar' },
@@ -62,6 +64,7 @@ export const menuConfig: MenuItem[] = [
           { key: 'dev.guide.chartjs',       label: 'Chart.js',           componentPath: 'GuideChartJs' },
           { key: 'dev.guide.i18n-perm',    label: '다국어 & 권한',        componentPath: 'GuideI18nPermission' },
           { key: 'dev.guide.internal-api', label: '내부 API 레퍼런스',    componentPath: 'GuideInternalApi' },
+          { key: 'dev.guide.excel',        label: '엑셀 업로드/다운로드', componentPath: 'GuideExcel' },
         ],
       },
     ],

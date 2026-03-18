@@ -500,7 +500,7 @@ export default function GridTable<TData = any>({
   return (
     <div
       ref={containerRef}
-      className={`ds-grid-table ${className ?? ''}`}
+      className={`ds-grid-table ${editable ? 'ds-grid-editable' : ''} ${className ?? ''}`}
       style={autoHeight ? { width: '100%' } : { height, width: '100%', flex: height === '100%' ? 1 : 'none' }}
       tabIndex={-1}
     >
@@ -512,7 +512,13 @@ export default function GridTable<TData = any>({
         theme={theme}
         localeText={AG_GRID_LOCALE_KO}
         getRowId={rowKey ? (params) => String((params.data as any)[rowKey]) : undefined}
-        rowSelection={rowSelection ? { mode: rowSelection, checkboxes: checkboxSelection, headerCheckbox: checkboxSelection && rowSelection === 'multiRow' } : undefined}
+        rowSelection={
+          rowSelection
+            ? { mode: rowSelection, checkboxes: checkboxSelection, headerCheckbox: checkboxSelection && rowSelection === 'multiRow' }
+            : onRowClick
+              ? { mode: 'singleRow', checkboxes: false, enableClickSelection: true }
+              : undefined
+        }
         pagination={pagination}
         paginationPageSize={pageSize}
         paginationPageSizeSelector={paginationPageSizeSelector}
@@ -528,7 +534,7 @@ export default function GridTable<TData = any>({
         isRowSelectable={isRowSelectable}
         suppressRowClickSelection={suppressRowClickSelection}
         rowMultiSelectWithClick={rowMultiSelectWithClick}
-        suppressCellFocus={suppressCellFocus}
+        suppressCellFocus={suppressCellFocus ?? (onRowClick ? true : undefined)}
         suppressMovableColumns={suppressMovableColumns}
         suppressContextMenu={suppressContextMenu || !!getContextMenuItems}
         getContextMenuItems={getContextMenuItems}

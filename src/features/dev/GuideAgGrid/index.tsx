@@ -1533,9 +1533,9 @@ export default function GuideAgGrid() {
           <div style={{ marginTop: 16, padding: 12, background: 'var(--content-header-bg)', borderRadius: 4 }}>
             <strong>📚 참고 페이지</strong>
             <ul style={{ margin: '8px 0 0', paddingLeft: 20, color: 'var(--text-secondary)' }}>
-              <li>Settings &gt; 컴포넌트 데모 &gt; 데이터 그리드 (라이브 데모)</li>
+              <li>Settings &gt; 커스텀 데모 &gt; 데이터 그리드 (라이브 데모)</li>
               <li>업무 관리 &gt; 업무 목록 (실제 사용 예제)</li>
-              <li>Settings &gt; 컴포넌트 데모 &gt; 필터+그리드+상세 (레이아웃 패턴)</li>
+              <li>Settings &gt; 커스텀 데모 &gt; 필터+그리드+상세 (레이아웃 패턴)</li>
             </ul>
           </div>
         </div>

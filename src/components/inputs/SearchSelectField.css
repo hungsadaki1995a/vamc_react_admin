@@ -63,6 +63,19 @@
   text-overflow: ellipsis;
   white-space: nowrap;
   flex-shrink: 1;
+  /* Reserve space on the right for the absolutely-positioned close icon */
+  padding-inline-end: 18px !important;
+}
+
+/* Fix: antd v6 close icon gets clipped by overflow:hidden when text is long.
+   Position it absolutely within the tag's padding area so it's always visible. */
+.ssf-tag-item .ant-tag-close-icon {
+  position: absolute;
+  inset-inline-end: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+  margin-inline-start: 0 !important;
+  line-height: 1;
 }
 
 /* Middle: search button */
