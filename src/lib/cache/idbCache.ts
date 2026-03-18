@@ -3,7 +3,7 @@
  * Stores data as { data, ts } internally so callers can check freshness.
  */
 
-const DB_NAME = 'ds-pms-cache';
+const DB_NAME = 'vamc-cache';
 const DB_VERSION = 1;
 const STORE_NAME = 'kv';
 

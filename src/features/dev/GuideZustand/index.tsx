@@ -152,7 +152,7 @@ const useTabStore = create<TabStore>()(
       },
     }),
     {
-      name: 'ds-pms-tabs', // localStorage key
+      name: 'vamc-tabs', // localStorage key
       partialize: (state) => ({
         tabs: state.tabs,
         activeTabKey: state.activeTabKey,
@@ -273,7 +273,7 @@ useProjectStore.subscribe(
   }
 );`;
 
-const projectStoresCode = `// DS PMS 프로젝트의 스토어 구조
+const projectStoresCode = `// VAMC NPL ADMIN 프로젝트의 스토어 구조
 
 1. tabStore (src/stores/tabStore.ts)
    - 탭 열기/닫기/핀/언핀/재정렬
@@ -410,7 +410,7 @@ export const useTabStore = create<TabStore>()(
       },
     }),
     {
-      name: 'ds-pms-tabs',
+      name: 'vamc-tabs',
       partialize: (state) => ({
         tabs: state.tabs,
         activeTabKey: state.activeTabKey,
@@ -545,7 +545,7 @@ export default function GuideZustand() {
           </div>
 
           <div className="demo-section">
-            <h3>DS PMS 프로젝트 스토어 구조</h3>
+            <h3>VAMC NPL ADMIN 프로젝트 스토어 구조</h3>
             <p style={{ color: 'var(--text-secondary)', marginBottom: 16 }}>
               본 프로젝트는 4개의 도메인별 스토어로 구성되어 있습니다.
             </p>

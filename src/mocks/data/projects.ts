@@ -3,7 +3,7 @@ import type { MyProjectResponseDto } from '@/lib/api/types';
 export const mockProjects: MyProjectResponseDto[] = [
   {
     projId: 'PROJ-001',
-    projNm: 'DS PMS 개발',
+    projNm: 'VAMC NPL ADMIN 개발',
     projType: 'DEV',
     clnNm: '신한DS',
     bzDpNm: '개발팀',

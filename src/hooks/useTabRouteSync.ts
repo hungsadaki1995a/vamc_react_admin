@@ -34,7 +34,7 @@ export function useTabRouteSync() {
   const { tabKey } = useParams<{ tabKey: string }>();
   const navigate = useNavigate();
   const { activeTabKey, tabs, openTab, setActiveTab } = useTabStore();
-  const { setSelectedKey, setActiveRailKey } = useMenuStore();
+  const { setSelectedKey, setActiveRailKey, closeFlyout } = useMenuStore();
 
   const isNavigatingRef = useRef(false);
 
@@ -44,6 +44,14 @@ export function useTabRouteSync() {
   const syncRailFromKey = (key: string) => {
     setSelectedKey(key);
     const staticTopKey = key.split('.')[0];
+
+    // Top-level leaf (e.g. dashboard) → close flyout and clear rail highlight
+    const topLevelItem = menuConfig.find((m) => m.key === staticTopKey);
+    if (topLevelItem && (!topLevelItem.children || topLevelItem.children.length === 0)) {
+      closeFlyout();
+      setActiveRailKey(null);
+      return;
+    }
 
     // Static menu: first segment matches a top-level config item
     if (menuConfig.some((m) => m.key === staticTopKey)) {

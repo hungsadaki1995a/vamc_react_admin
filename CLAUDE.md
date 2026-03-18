@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-DS PMS — 엔터프라이즈 프로젝트 관리 시스템. React + TypeScript SPA.
+VAMC NPL ADMIN — 부실채권 관리 어드민 시스템. React + TypeScript SPA.
 
 **중요**: 모든 외부 라이브러리는 무조건 무료(오픈소스)만 사용. 향후 판매 목적 제품.
 
@@ -12,8 +12,17 @@ DS PMS — 엔터프라이즈 프로젝트 관리 시스템. React + TypeScript 
 
 ```bash
 npm run dev          # Vite dev server (default port 5173)
-npm run build        # Production build → dist/
+npm run dev:mock     # Dev server with MSW mock mode (VITE_MOCK=true)
+npm run build        # TypeScript compile + Vite production build → dist/
+npm run lint         # ESLint
 npx tsc --noEmit     # TypeScript type check (no output)
+```
+
+### Environment
+
+Copy `.env.example` to `.env.local` and set:
+```
+VITE_API_BASE_URL=http://localhost:8080
 ```
 
 ## Tech Stack
@@ -206,8 +215,9 @@ export const getTaskList = async (): Promise<ApiResponse<Task[]>> => {
 ## Backend Server
 
 - **Server**: Spring Boot 3.5.6 + MyBatis + MariaDB at `ds_pms_new/`
-- **API Base**: `http://localhost:8180`
-- **Auth**: JWT (AccessToken in response body, RefreshToken as httpOnly cookie `refresh_token`)
+- **API Base**: `http://localhost:8080` (set via `VITE_API_BASE_URL`)
+- **Auth**: JWT (AccessToken + RefreshToken both in response body; Refresh sent via `Refresh-Token` header)
+- **Local test account**: `admin` / `1q2w3e4r1!` (inserted by `LocalTestDataInitializer` on startup)
 - **CORS**: `http://localhost:5173`, credentials: true
 
 ## Design Docs (`docs/`)

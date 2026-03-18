@@ -1,4 +1,4 @@
-# DS PMS Client — 시스템 아키텍처
+# VAMC NPL ADMIN — 시스템 아키텍처
 
 ## 기술 스택
 

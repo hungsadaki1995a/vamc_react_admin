@@ -34,7 +34,7 @@ export default function Header() {
           icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
           onClick={toggleCollapsed}
         />
-        <span className="logo">DS PMS</span>
+        <span className="logo">VAMC NPL ADMIN</span>
       </div>
       <div className="header-right">
         <Input

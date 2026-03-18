@@ -1,15 +1,53 @@
-import { useEffect, useRef, useCallback, useState } from 'react';
+import { useEffect, useRef, useCallback, useState, useMemo } from 'react';
 import { RightOutlined, FolderOutlined, FileTextOutlined } from '@ant-design/icons';
-import logoHarmony from '@/assets/logo_harmony.svg';
-import { Select } from 'antd';
+import { Tooltip } from 'antd';
+
+/** 펼치기: 동일 레벨 3줄(접힌 메뉴) + 우하단 + 배지 */
+function ExpandAllIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+      <rect x="1" y="2"   width="9" height="1.6" rx="0.8" />
+      <rect x="1" y="6"   width="9" height="1.6" rx="0.8" />
+      <rect x="1" y="10"  width="9" height="1.6" rx="0.8" />
+      {/* + badge */}
+      <rect x="11"   y="9.8"  width="4"   height="1.4" rx="0.7" />
+      <rect x="12.3" y="8.5"  width="1.4" height="4"   rx="0.7" />
+    </svg>
+  );
+}
+
+/** 접기: 들여쓰기 트리 3줄(펼친 메뉴) + 우하단 − 배지 */
+function CollapseAllIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+      <rect x="1"   y="2"  width="9"   height="1.6" rx="0.8" />
+      <rect x="3.5" y="6"  width="6.5" height="1.6" rx="0.8" />
+      <rect x="6"   y="10" width="4"   height="1.6" rx="0.8" />
+      {/* − badge */}
+      <rect x="11" y="9.8" width="4" height="1.4" rx="0.7" />
+    </svg>
+  );
+}
+
 import { menuConfig } from '@/config/menuConfig';
 import { useMenuStore } from '@/stores/menuStore';
 import { findMenuByKey } from '@/utils/menuUtils';
 import { useTabStore } from '@/stores/tabStore';
-import { useProjectStore } from '@/stores/projectStore';
+
 import { useShallow } from 'zustand/react/shallow';
-import { useSettingsStore } from '@/stores/settingsStore';
 import type { MenuItem } from '@/types/menu';
+
+function getAllExpandableKeys(items: MenuItem[]): string[] {
+  const keys: string[] = [];
+  for (const item of items) {
+    if (item.hidden) continue;
+    if (item.children && item.children.length > 0) {
+      keys.push(item.key);
+      keys.push(...getAllExpandableKeys(item.children));
+    }
+  }
+  return keys;
+}
 
 function countLeaves(items: MenuItem[]): number {
   let count = 0;
@@ -36,32 +74,42 @@ function findAncestorKeys(items: MenuItem[], targetKey: string, ancestors: strin
   return null;
 }
 
+// Compute parent keys to expand for the given active menu.
+function getParentKeys(
+  activeMenuKey: string | null,
+  activeRailKey: string | null,
+  flyoutItems: MenuItem[]
+): string[] {
+  if (!activeMenuKey) return [];
+
+  // Static menus: dot-separated key → derive parents from segments
+  if (activeRailKey && activeMenuKey.startsWith(activeRailKey + '.')) {
+    const parts = activeMenuKey.split('.');
+    const keys: string[] = [];
+    for (let i = 1; i < parts.length - 1; i++) {
+      keys.push(parts.slice(0, i + 1).join('.'));
+    }
+    return keys;
+  }
+
+  // Server menus: traverse the tree
+  return findAncestorKeys(flyoutItems, activeMenuKey) ?? [];
+}
+
 export default function FlyoutPanel() {
-  const { activeRailKey, flyoutVisible, closeFlyout, serverMenus, menuLoading, resetNavState, loadMenuForProject } = useMenuStore(
+  const { activeRailKey, flyoutVisible, closeFlyout, serverMenus } = useMenuStore(
     useShallow((s) => ({
       activeRailKey: s.activeRailKey,
       flyoutVisible: s.flyoutVisible,
       closeFlyout: s.closeFlyout,
       serverMenus: s.serverMenus,
-      menuLoading: s.menuLoading,
-      resetNavState: s.resetNavState,
-      loadMenuForProject: s.loadMenuForProject,
     }))
   );
-  const { openTab, resetTabs, tabs, activeTabKey } = useTabStore(
+  const { openTab, tabs, activeTabKey } = useTabStore(
     useShallow((s) => ({
       openTab: s.openTab,
-      resetTabs: s.resetTabs,
       tabs: s.tabs,
       activeTabKey: s.activeTabKey,
-    }))
-  );
-  const homeMenuKey = useSettingsStore((s) => s.homeMenuKey);
-  const { activeProject, setActiveProject, myProjects } = useProjectStore(
-    useShallow((s) => ({
-      activeProject: s.activeProject,
-      setActiveProject: s.setActiveProject,
-      myProjects: s.myProjects,
     }))
   );
   const panelRef = useRef<HTMLDivElement>(null);
@@ -77,29 +125,21 @@ export default function FlyoutPanel() {
   const flyoutItems = activeCategory?.children ?? [];
 
   // Auto-expand parent keys when active menu changes (tab switch or menu click).
+  // Rail change → replace with parent keys of new active menu (fresh start).
+  // Same rail   → merge parent keys so previously expanded siblings stay open.
+  const prevRailKeyRef = useRef<string | null>(null);
   useEffect(() => {
-    if (!activeMenuKey) {
-      setExpandedKeys([]);
-      return;
-    }
+    const parentKeys = getParentKeys(activeMenuKey, activeRailKey, flyoutItems);
 
-    // Static menus use dot-separated keys (e.g. "project.list") → derive parents from key segments
-    if (activeRailKey && activeMenuKey.startsWith(activeRailKey + '.')) {
-      const parts = activeMenuKey.split('.');
-      const parentKeys: string[] = [];
-      for (let i = 1; i < parts.length - 1; i++) {
-        parentKeys.push(parts.slice(0, i + 1).join('.'));
-      }
+    if (prevRailKeyRef.current !== activeRailKey) {
+      prevRailKeyRef.current = activeRailKey;
       setExpandedKeys(parentKeys);
       return;
     }
 
-    // Server menus (no dot separator): traverse the flyout tree to find ancestors
-    const ancestors = findAncestorKeys(flyoutItems, activeMenuKey);
-    if (ancestors !== null) {
-      setExpandedKeys(ancestors);
+    if (parentKeys.length > 0) {
+      setExpandedKeys(prev => [...new Set([...prev, ...parentKeys])]);
     }
-    // If item not found in current flyout, keep existing expanded state
   }, [activeRailKey, activeMenuKey, flyoutItems]);
 
   // Close on Escape
@@ -113,6 +153,12 @@ export default function FlyoutPanel() {
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [flyoutVisible, closeFlyout]);
 
+  const allExpandableKeys = useMemo(() => getAllExpandableKeys(flyoutItems), [flyoutItems]);
+  const isAllExpanded = allExpandableKeys.length > 0 && allExpandableKeys.every((k) => expandedKeys.includes(k));
+  const toggleExpandAll = useCallback(() => {
+    setExpandedKeys(isAllExpanded ? [] : allExpandableKeys);
+  }, [isAllExpanded, allExpandableKeys]);
+
   const toggleExpand = useCallback((key: string) => {
     setExpandedKeys((prev) =>
       prev.includes(key) ? prev.filter((k) => k !== key) : [...prev, key]
@@ -124,32 +170,6 @@ export default function FlyoutPanel() {
       openTab(item);
     },
     [openTab]
-  );
-
-  // Project selector options
-  const projectOptions = myProjects.map((p) => ({
-    value: p.projId,
-    label: p.projNm ?? p.projId,
-  }));
-
-  const handleProjectChange = useCallback(
-    (value: string) => {
-      const proj = myProjects.find((p) => p.projId === value);
-      if (proj) {
-        setActiveProject({ id: proj.projId, name: proj.projNm ?? proj.projId, status: 'active' });
-        // Reset all navigation state (rail, flyout, open keys)
-        resetNavState();
-        setExpandedKeys([]);
-        // Reset tabs and reopen home tab for the new project context
-        resetTabs();
-        const homeMenu = findMenuByKey(menuConfig, homeMenuKey);
-        if (homeMenu) openTab(homeMenu);
-        // Re-fetch menus — setActiveProject above already updated projectStore,
-        // so interceptor will send the new X-Project-Id header
-        loadMenuForProject();
-      }
-    },
-    [myProjects, setActiveProject, resetNavState, resetTabs, openTab, homeMenuKey, loadMenuForProject]
   );
 
   const renderItems = (items: MenuItem[], depth: number) => {
@@ -211,25 +231,15 @@ export default function FlyoutPanel() {
     >
       {/* Logo header — always visible when panel is open */}
       <div className="flyout-logo-header">
-        <img src={logoHarmony} alt="HARMONY" className="flyout-logo-img" />
+        <span className="flyout-logo-text">VAMC NPL ADMIN</span>
+        {allExpandableKeys.length > 0 && (
+          <Tooltip title={isAllExpanded ? '전체 접기' : '전체 펼치기'} placement="bottom">
+            <button className="flyout-expand-all-btn" onClick={toggleExpandAll}>
+              {isAllExpanded ? <CollapseAllIcon /> : <ExpandAllIcon />}
+            </button>
+          </Tooltip>
+        )}
       </div>
-
-      {/* Project Selector */}
-      {myProjects.length > 0 && (
-        <div className="flyout-project-selector">
-          <Select
-            value={activeProject?.id ?? undefined}
-            onChange={handleProjectChange}
-            options={projectOptions}
-            placeholder="프로젝트 선택"
-            style={{ width: '100%' }}
-            size="middle"
-            loading={menuLoading}
-            disabled={menuLoading}
-            popupMatchSelectWidth={false}
-          />
-        </div>
-      )}
 
       {activeCategory && (
         <div className="flyout-body">

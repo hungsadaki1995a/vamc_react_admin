@@ -341,7 +341,7 @@ function MyPage() {
 
                 <CodeSnippet
                   title="동작 원리"
-                  code={`// 서버 응답 (GET /api/mnu/auth-list)
+                  code={`// 서버 응답 (GET /api/common/menus/all)
 //   └─ MnuResponse.permType ('M' | 'S' | '')
 //        └─ buildServerMenuTree() → MenuItem.permType 보존
 //             └─ menuStore.serverMenus에 저장

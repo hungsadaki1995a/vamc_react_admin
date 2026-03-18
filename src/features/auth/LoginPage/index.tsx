@@ -3,9 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { Form, Input, Button, Alert, Checkbox, Typography } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { login } from './api';
-import { getMe } from '@/api/user';
 import { useAuthStore } from '@/stores/authStore';
-import { useProjectStore } from '@/stores/projectStore';
+import { jwtToMeResponse } from '@/utils/jwtUtils';
+
 import { useTabStore } from '@/stores/tabStore';
 import { useMenuStore } from '@/stores/menuStore';
 import { useSettingsStore } from '@/stores/settingsStore';
@@ -15,15 +15,15 @@ import { fetchAuthMenuList } from '@/api/menu';
 import { ApiError } from '@/lib/api/error';
 import type { LoginRequest } from '@/lib/api/types';
 import styles from './index.module.css';
+import vamcLogo from '@/assets/vamc_logo.png';
 
 const { Title, Text } = Typography;
 
-const SAVED_USERNAME_KEY = 'pms-saved-username';
+const SAVED_USERNAME_KEY = 'vamc-saved-username';
 
 export default function LoginPage() {
   const navigate = useNavigate();
   const setAuth = useAuthStore((s) => s.setAuth);
-  const setAccessToken = useAuthStore((s) => s.setAccessToken);
   const { openTab, resetTabs } = useTabStore();
   const { setServerMenus } = useMenuStore();
   const homeMenuKey = useSettingsStore((s) => s.homeMenuKey);
@@ -48,27 +48,18 @@ export default function LoginPage() {
       // Step 1: Login — get accessToken + refreshToken
       const loginRes = await login(loginReq);
       if (loginRes.success && loginRes.data) {
-        setAccessToken(loginRes.data.accessToken);
+        // Step 2: Extract user info from JWT claims (no separate API call needed)
+        const me = jwtToMeResponse(loginRes.data.accessToken);
+        setAuth(loginRes.data.accessToken, me);
 
-        // Step 2: Fetch user info using usrId (= JWT subject = username)
-        const meRes = await getMe(loginReq.username);
-        if (meRes.success && meRes.data) {
-          setAuth(loginRes.data.accessToken, meRes.data, loginRes.data.refreshToken);
+        // Always reset tabs on login and open only the home tab
+        resetTabs();
+        const homeMenu = findMenuByKey(menuConfig, homeMenuKey);
+        if (homeMenu) openTab(homeMenu);
 
-          // Always reset tabs on login and open only the home tab
-          resetTabs();
-          const homeMenu = findMenuByKey(menuConfig, homeMenuKey);
-          if (homeMenu) openTab(homeMenu);
+        fetchAuthMenuList().then(setServerMenus).catch(() => { /* silent */ });
 
-          // Fetch my projects, then load menus with the auto-selected project's ID
-          useProjectStore.getState().fetchMyProjects().then(() => {
-            fetchAuthMenuList().then(setServerMenus).catch(() => { /* silent */ });
-          });
-
-          navigate('/app', { replace: true });
-        } else {
-          setErrorMsg('사용자 정보를 불러오지 못했습니다.');
-        }
+        navigate('/app', { replace: true });
       } else {
         setErrorMsg(loginRes.message || '로그인에 실패했습니다.');
       }
@@ -84,8 +75,9 @@ export default function LoginPage() {
     <div className={styles.container}>
       <div className={styles.card}>
         <div className={styles.header}>
-          <Title level={3} style={{ margin: 0 }}>DS PMS</Title>
-          <Text type="secondary">프로젝트 관리 시스템</Text>
+          <img src={vamcLogo} alt="VAMC" className={styles.logo} />
+          <Title level={3} style={{ margin: 0 }}>VAMC NPL ADMIN</Title>
+          <Text type="secondary">부실채권 관리 어드민</Text>
         </div>
 
         <Form

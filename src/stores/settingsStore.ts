@@ -14,7 +14,7 @@ export const useSettingsStore = create<SettingsStore>()(
       setHomeMenuKey: (key) => set({ homeMenuKey: key }),
     }),
     {
-      name: 'pms-settings',
+      name: 'vamc-settings',
       partialize: (state) => ({
         homeMenuKey: state.homeMenuKey,
       }),

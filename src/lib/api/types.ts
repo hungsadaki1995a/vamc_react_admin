@@ -58,17 +58,16 @@ export interface LoginRequest {
 }
 
 // POST /api/auth/login response — vamc-npl-backend returns raw LoginResponse (no ApiResponse wrapper)
+// Refresh token is set as httpOnly cookie by the backend
 export interface LoginResponse {
   accessToken: string;
-  refreshToken: string;
   tokenType: string;
   expiresIn: number;
 }
 
-// POST /api/auth/refresh response
+// POST /api/auth/refresh response — httpOnly cookie rotation handled by backend
 export interface RefreshResponse {
   accessToken: string;
-  refreshToken?: string;
   tokenType?: string;
   expiresIn?: number;
 }

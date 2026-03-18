@@ -171,10 +171,50 @@ export default function TabBar() {
     el.scrollBy({ left: e.deltaY > 0 ? 120 : -120 });
   }, []);
 
-  const scrollLeft = useCallback(() =>
-    scrollRef.current?.scrollBy({ left: -200, behavior: 'smooth' }), []);
-  const scrollRight = useCallback(() =>
-    scrollRef.current?.scrollBy({ left: 200, behavior: 'smooth' }), []);
+  // Press-and-hold scroll: accelerates from 0 → max smoothly, no initial jump
+  const pressRafRef = useRef<number>(0);
+  const pressActiveRef = useRef(false);
+  const pressStopRef = useRef<() => void>(() => {});
+
+  const stopScroll = useCallback(() => pressStopRef.current(), []);
+
+  const makeScrollPress = useCallback((dir: 1 | -1) => ({
+    onMouseDown: () => {
+      pressActiveRef.current = true;
+      let speed = 0;
+      let totalScrolled = 0;
+
+      pressStopRef.current = () => {
+        pressActiveRef.current = false;
+        cancelAnimationFrame(pressRafRef.current);
+        // Guarantee at least ~200px scrolled on release
+        const remaining = 200 - totalScrolled;
+        if (remaining > 0) {
+          scrollRef.current?.scrollBy({ left: dir * remaining, behavior: 'smooth' });
+        }
+      };
+
+      const tick = () => {
+        if (!pressActiveRef.current) return;
+        const el = scrollRef.current;
+        if (el) {
+          speed = Math.min(speed + 0.6, 18); // 0 → 18px/frame in ~270ms
+          el.scrollLeft += dir * speed;
+          totalScrolled += speed;
+        }
+        pressRafRef.current = requestAnimationFrame(tick);
+      };
+      pressRafRef.current = requestAnimationFrame(tick);
+    },
+    onMouseUp: stopScroll,
+    onMouseLeave: stopScroll,
+  }), [stopScroll]);
+
+  const scrollLeftProps = useMemo(() => makeScrollPress(-1), [makeScrollPress]);
+  const scrollRightProps = useMemo(() => makeScrollPress(1), [makeScrollPress]);
+
+  // Cleanup on unmount
+  useEffect(() => stopScroll, [stopScroll]);
 
   const handleContextMenu = useCallback(
     (e: React.MouseEvent, tabKey: string) => {
@@ -280,7 +320,7 @@ export default function TabBar() {
         {/* Left scroll */}
         <div
           className={`tab-scroll-btn ${!canScrollLeft ? 'disabled' : ''}`}
-          onClick={scrollLeft}
+          {...scrollLeftProps}
         >
           <LeftOutlined style={{ fontSize: 10 }} />
         </div>
@@ -313,7 +353,7 @@ export default function TabBar() {
         {/* Right scroll */}
         <div
           className={`tab-scroll-btn ${!canScrollRight ? 'disabled' : ''}`}
-          onClick={scrollRight}
+          {...scrollRightProps}
         >
           <RightOutlined style={{ fontSize: 10 }} />
         </div>

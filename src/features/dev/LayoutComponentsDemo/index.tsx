@@ -134,7 +134,7 @@ export default function LayoutComponentsDemo() {
       <div className="ds-section-header">
         <h2>레이아웃 컴포넌트</h2>
         <p style={{ color: 'var(--text-secondary)', fontSize: 13, margin: '4px 0 0' }}>
-          DS PMS에서 제공하는 레이아웃 공통 컴포넌트의 사용 예시입니다.
+          VAMC NPL ADMIN에서 제공하는 레이아웃 공통 컴포넌트의 사용 예시입니다.
         </p>
       </div>
 

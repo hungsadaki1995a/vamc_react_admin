@@ -700,7 +700,7 @@ export default function GuideTipTap() {
       children: (
         <div>
           <p style={{ marginBottom: 24, color: 'var(--text-secondary)' }}>
-            DS PMS 프로젝트의 RichTextEditor 컴포넌트 사용법과 라이브 데모입니다.
+            VAMC NPL ADMIN 프로젝트의 RichTextEditor 컴포넌트 사용법과 라이브 데모입니다.
           </p>
 
           <div className="demo-section">

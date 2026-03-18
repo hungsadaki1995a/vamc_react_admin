@@ -7,13 +7,11 @@ import viVN from 'antd/locale/vi_VN';
 import { useThemeStore } from '@/stores/themeStore';
 import { useLocaleStore } from '@/stores/localeStore';
 import { useAuthStore } from '@/stores/authStore';
-import { useProjectStore } from '@/stores/projectStore';
 import { useMenuStore } from '@/stores/menuStore';
-import { useLabelStore } from '@/stores/labelStore';
 import { useComcdStore } from '@/stores/comcdStore';
 import { refreshToken } from '@/features/auth/LoginPage/api';
-import { getMe } from '@/api/user';
 import { apiNotify } from '@/lib/api/apiNotify';
+import { jwtToMeResponse } from '@/utils/jwtUtils';
 import AuthGuard from '@/components/auth/AuthGuard';
 import LoginPage from '@/features/auth/LoginPage';
 import AppLayout from './AppLayout';
@@ -31,10 +29,8 @@ function ApiNotifyBridge() {
 export default function App() {
   const mode = useThemeStore((s) => s.mode);
   const locale = useLocaleStore((s) => s.locale);
-  const activeProjectId = useProjectStore((s) => s.activeProject?.id ?? '');
-
   const antLocale = locale === 'en' ? enUS : locale === 'vi' ? viVN : koKR;
-  const { setLoading, setAccessToken, setAuth, logout } = useAuthStore();
+  const { setLoading, setAuth, logout } = useAuthStore();
 
   // Restore session on app load: refresh_token cookie → new accessToken
   useEffect(() => {
@@ -47,31 +43,18 @@ export default function App() {
 
       setLoading(true);
       try {
-        // Step 1: Refresh token (vamc: reads stored refreshToken from authStore)
+        // Attempt silent refresh using httpOnly cookie (sent automatically by browser)
         const refreshRes = await refreshToken();
         if (refreshRes.success && refreshRes.data?.accessToken) {
-          setAccessToken(refreshRes.data.accessToken);
-
-          // Step 2: Fetch user info — usrId comes from persisted authStore.user
-          const storedUser = useAuthStore.getState().user;
-          if (!storedUser?.usrId) {
-            logout();
-            return;
-          }
-          const meRes = await getMe(storedUser.usrId);
-          if (meRes.success && meRes.data) {
-            setAuth(refreshRes.data.accessToken, meRes.data);
-            // Refresh project list on session restore, then reload menus
-            // projId is sent via X-Project-Id header (axios interceptor reads from projectStore)
-            useProjectStore.getState().fetchMyProjects().then(() => {
-              useMenuStore.getState().loadMenuForProject();
-            });
-          }
+          // Extract user info from new JWT claims (no separate /me API call needed)
+          const me = jwtToMeResponse(refreshRes.data.accessToken);
+          setAuth(refreshRes.data.accessToken, me);
+          useMenuStore.getState().loadMenuForProject();
         } else {
           logout();
         }
       } catch {
-        // refresh_token expired or missing → go to login
+        // refresh token expired, missing, or invalid → go to login
         logout();
       } finally {
         setLoading(false);
@@ -85,13 +68,10 @@ export default function App() {
     document.documentElement.setAttribute('data-theme', mode);
   }, [mode]);
 
-  // Labels + common codes: load on app mount, reload on locale or project change
-  // both endpoints are permitAll — work before login
-  // projId/lclCd sent automatically via X-Project-Id / X-Lang headers (axios interceptor)
+  // Common codes: reload on locale change
   useEffect(() => {
-    useLabelStore.getState().loadLabels();
     useComcdStore.getState().loadCodes();
-  }, [activeProjectId, locale]);
+  }, [locale]);
 
   return (
     <ConfigProvider

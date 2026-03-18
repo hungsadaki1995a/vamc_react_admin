@@ -6,6 +6,7 @@ import {
 import * as Icons from '@ant-design/icons';
 import React from 'react';
 import { CUSTOM_ICON_MAP } from '@/components/icons/CustomIcons';
+import vamcLogo from '@/assets/vamc_logo.png';
 import { menuConfig } from '@/config/menuConfig';
 import { useMenuStore } from '@/stores/menuStore';
 import { useTabStore } from '@/stores/tabStore';
@@ -91,7 +92,7 @@ export default function IconRail() {
     <div className="icon-rail">
       {/* Logo */}
       <div className="rail-logo">
-        <span style={{ color: '#fff', fontWeight: 800, fontSize: 18, letterSpacing: '-0.02em' }}>DS</span>
+        <img src={vamcLogo} alt="VAMC" className="rail-logo-img" />
       </div>
 
       {/* Menu icons */}

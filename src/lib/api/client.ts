@@ -2,7 +2,7 @@ import axios from 'axios';
 import type { AxiosError, InternalAxiosRequestConfig } from 'axios';
 import { ApiError } from './error';
 import { apiNotify } from './apiNotify';
-import type { ApiResponse, LoginResponse } from './types';
+import type { ApiResponse } from './types';
 import { useAuthStore } from '@/stores/authStore';
 import { useProjectStore } from '@/stores/projectStore';
 import { useLocaleStore } from '@/stores/localeStore';
@@ -32,7 +32,7 @@ function processQueue(token: string | null, error: unknown = null): void {
 export const apiClient = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL as string,
   timeout: 30_000,
-  withCredentials: true,
+  withCredentials: true, // required for httpOnly refresh token cookie
   headers: {
     'Content-Type': 'application/json',
     Accept: 'application/json',
@@ -79,7 +79,8 @@ apiClient.interceptors.response.use(
 
     // ── 401: Silent Refresh ────────────────────────────────────────────────
     if (status === 401) {
-      if (config?.url?.includes('/api/auth/refresh')) {
+      // Auth endpoints should never be retried — return error directly
+      if (config?.url?.includes('/api/auth/')) {
         processQueue(null, error);
         useAuthStore.getState().logout();
         return Promise.reject(ApiError.fromAxiosError(error));
@@ -111,14 +112,10 @@ apiClient.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        const storedRefreshToken = useAuthStore.getState().refreshToken;
-        if (!storedRefreshToken) throw new Error('No refresh token stored');
-
-        // vamc-npl-backend: POST /api/auth/refresh with Refresh-Token header, returns raw LoginResponse
-        const { data } = await apiClient.post<LoginResponse>(
+        // httpOnly cookie is sent automatically by the browser (withCredentials: true)
+        const { data } = await apiClient.post<{ accessToken: string }>(
           '/api/auth/refresh',
           {},
-          { _retry: true } as RetryableConfig,
         );
 
         const newToken = data.accessToken;

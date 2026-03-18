@@ -125,7 +125,9 @@ const { tabs, activeTabKey, openTab, setActiveTab } = useTabStore(
   // ── 검색 상태 ──
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchText, setSearchText] = useState('');
+  const [activeIndex, setActiveIndex] = useState(-1);
   const searchInputRef = useRef<any>(null);
+  const activeItemRef = useRef<HTMLDivElement>(null);
 
   // ── 알림 상태 ──
   const [notiOpen, setNotiOpen] = useState(false);
@@ -138,20 +140,31 @@ const { tabs, activeTabKey, openTab, setActiveTab } = useTabStore(
 
   const searchResults = useMemo(() => {
     if (!searchText.trim()) return flatMenus.slice(0, 10);
-    const q = searchText.toLowerCase();
+    const normalize = (s: string) => s.toLowerCase().replace(/\s+/g, '');
+    const q = normalize(searchText);
     return flatMenus
-      .filter((m) => m.label.toLowerCase().includes(q) || m.breadcrumb.toLowerCase().includes(q))
+      .filter((m) => normalize(m.label).includes(q) || normalize(m.breadcrumb).includes(q))
       .slice(0, 10);
   }, [searchText, flatMenus]);
+
+  // 검색 결과 변경 시 activeIndex 리셋
+  useEffect(() => { setActiveIndex(-1); }, [searchResults]);
+
+  // 활성 항목 스크롤
+  useEffect(() => {
+    activeItemRef.current?.scrollIntoView({ block: 'nearest' });
+  }, [activeIndex]);
 
   const handleSearchOpen = useCallback(() => {
     setSearchOpen(true);
     setSearchText('');
+    setActiveIndex(-1);
   }, []);
 
   const handleSearchClose = useCallback(() => {
     setSearchOpen(false);
     setSearchText('');
+    setActiveIndex(-1);
   }, []);
 
   const handleSearchSelect = useCallback(
@@ -161,6 +174,23 @@ const { tabs, activeTabKey, openTab, setActiveTab } = useTabStore(
       handleSearchClose();
     },
     [allMenus, openTab, handleSearchClose],
+  );
+
+  const handleSearchKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        setActiveIndex((prev) => Math.min(prev + 1, searchResults.length - 1));
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        setActiveIndex((prev) => Math.max(prev - 1, -1));
+      } else if (e.key === 'Enter') {
+        e.preventDefault();
+        const idx = activeIndex >= 0 ? activeIndex : 0;
+        if (searchResults[idx]) handleSearchSelect(searchResults[idx].key);
+      }
+    },
+    [activeIndex, searchResults, handleSearchSelect],
   );
 
   // 검색 모달이 열릴 때 Input에 포커스 (rAF: Portal 렌더링 후 레이아웃 완료 시점에 실행)
@@ -446,9 +476,7 @@ const { tabs, activeTabKey, openTab, setActiveTab } = useTabStore(
                 variant="borderless"
                 value={searchText}
                 onChange={(e) => setSearchText(e.target.value)}
-                onPressEnter={() => {
-                  if (searchResults.length > 0) handleSearchSelect(searchResults[0].key);
-                }}
+                onKeyDown={handleSearchKeyDown}
                 style={{ flex: 1 }}
               />
               <kbd className="search-kbd">ESC</kbd>
@@ -457,11 +485,13 @@ const { tabs, activeTabKey, openTab, setActiveTab } = useTabStore(
               {searchResults.length === 0 ? (
                 <div className="search-empty">검색 결과가 없습니다</div>
               ) : (
-                searchResults.map((item) => (
+                searchResults.map((item, idx) => (
                   <div
                     key={item.key}
-                    className="search-result-item"
+                    ref={idx === activeIndex ? activeItemRef : null}
+                    className={`search-result-item${idx === activeIndex ? ' active' : ''}`}
                     onClick={() => handleSearchSelect(item.key)}
+                    onMouseEnter={() => setActiveIndex(idx)}
                   >
                     <span className="search-result-label">{item.label}</span>
                     <span className="search-result-crumb">{item.breadcrumb}</span>

@@ -154,7 +154,7 @@ export const useTabStore = create<TabStore>()(
       },
     }),
     {
-      name: 'pms-tabs',
+      name: 'vamc-tabs',
       partialize: (state) => ({
         tabs: state.tabs,
         activeTabKey: state.activeTabKey,

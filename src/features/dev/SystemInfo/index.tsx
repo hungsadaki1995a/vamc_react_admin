@@ -54,7 +54,7 @@ export default function SystemInfo() {
           <Card size="small" title="프론트엔드">
             <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
               {[
-                ['앱 이름', 'DS PMS Client'],
+                ['앱 이름', 'VAMC NPL ADMIN'],
                 ['빌드 도구', 'Vite 7'],
                 ['런타임', 'React 19 + TypeScript'],
                 ['상태관리', 'Zustand + React Query'],

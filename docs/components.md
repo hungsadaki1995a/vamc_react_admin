@@ -1,4 +1,4 @@
-# DS PMS 공유 컴포넌트 레퍼런스
+# VAMC NPL ADMIN 공유 컴포넌트 레퍼런스
 
 ## GridTable
 

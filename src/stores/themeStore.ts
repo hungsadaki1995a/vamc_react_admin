@@ -13,6 +13,6 @@ export const useThemeStore = create<ThemeStore>()(
       toggleMode: () =>
         set((state) => ({ mode: state.mode === 'light' ? 'dark' : 'light' })),
     }),
-    { name: 'pms-theme' }
+    { name: 'vamc-theme' }
   )
 );

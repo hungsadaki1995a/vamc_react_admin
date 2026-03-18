@@ -1,4 +1,4 @@
-# DS PMS — API 연동 가이드
+# VAMC NPL ADMIN — API 연동 가이드
 
 ## API 클라이언트 설정
 

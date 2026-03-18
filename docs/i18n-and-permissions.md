@@ -1,4 +1,4 @@
-# DS PMS — 다국어(i18n) & 권한(Permission)
+# VAMC NPL ADMIN — 다국어(i18n) & 권한(Permission)
 
 ## 다국어 (i18n)
 

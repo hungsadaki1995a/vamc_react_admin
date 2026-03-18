@@ -14,6 +14,6 @@ export const useLocaleStore = create<LocaleStore>()(
       locale: 'ko',
       setLocale: (locale) => set({ locale }),
     }),
-    { name: 'pms-locale' }
+    { name: 'vamc-locale' }
   )
 );

@@ -5,8 +5,7 @@ import type { UserInfo, MeResponse } from '@/lib/api/types';
 interface AuthState {
   // In-memory only — NOT persisted (security)
   accessToken: string | null;
-  // Refresh token is now stored as httpOnly cookie (managed by browser, not JS)
-  refreshToken: string | null;
+  // Refresh token is managed as httpOnly cookie by the browser — not stored in JS
   isAuthenticated: boolean;
   isLoading: boolean;
 
@@ -16,7 +15,7 @@ interface AuthState {
 }
 
 interface AuthActions {
-  setAuth: (accessToken: string, me: MeResponse, refreshToken?: string) => void;
+  setAuth: (accessToken: string, me: MeResponse) => void;
   setAccessToken: (token: string) => void;
   logout: () => void;
   setLoading: (loading: boolean) => void;
@@ -30,7 +29,6 @@ export const useAuthStore = create<AuthStore>()(
     (set, get) => ({
       // State
       accessToken: null,
-      refreshToken: null,
       isAuthenticated: false,
       isLoading: true,
       user: null,
@@ -38,11 +36,10 @@ export const useAuthStore = create<AuthStore>()(
 
       // Actions
 
-      // Set full auth state after login + getMe
-      setAuth: (accessToken: string, me: MeResponse, refreshToken?: string) => {
+      // Set full auth state after login
+      setAuth: (accessToken: string, me: MeResponse) => {
         set({
           accessToken,
-          ...(refreshToken !== undefined ? { refreshToken } : {}),
           isAuthenticated: true,
           isLoading: false,
           user: {
@@ -65,7 +62,6 @@ export const useAuthStore = create<AuthStore>()(
       logout: () => {
         set({
           accessToken: null,
-          refreshToken: null,
           isAuthenticated: false,
           isLoading: false,
           user: null,
@@ -82,8 +78,8 @@ export const useAuthStore = create<AuthStore>()(
       },
     }),
     {
-      name: 'pms-auth',
-      // Only persist user info — accessToken stays in memory
+      name: 'vamc-auth',
+      // accessToken stays in memory only; refresh token is managed as httpOnly cookie
       partialize: (state) => ({
         user: state.user,
         roles: state.roles,

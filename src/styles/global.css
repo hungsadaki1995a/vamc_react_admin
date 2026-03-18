@@ -83,7 +83,7 @@ html, body, #root {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, var(--primary-color) 0%, #4f46e5 100%);
+  background: #fff;
   position: relative;
   flex-shrink: 0;
 }
@@ -95,7 +95,13 @@ html, body, #root {
   left: 0;
   right: 0;
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+  background: rgba(0, 0, 0, 0.08);
+}
+
+.icon-rail .rail-logo-img {
+  width: 44px;
+  height: auto;
+  object-fit: contain;
 }
 
 .icon-rail .rail-items {
@@ -204,18 +210,40 @@ html, body, #root {
 /* Logo Header */
 .flyout-logo-header {
   height: 48px;
-  padding: 0 14px;
+  padding: 0 8px;
   display: flex;
   align-items: center;
+  justify-content: space-between;
   flex-shrink: 0;
   min-width: var(--flyout-width);
   border-bottom: 1px solid var(--border-color);
 }
 
-.flyout-logo-img {
-  height: 20px;
-  width: auto;
-  object-fit: contain;
+.flyout-logo-text {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+
+.flyout-expand-all-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.flyout-expand-all-btn:hover {
+  background: var(--hover-bg);
+  color: var(--text-primary);
 }
 
 
@@ -535,8 +563,13 @@ html, body, #root {
   border-radius: 8px;
   transition: background 0.12s;
 }
-.search-result-item:hover {
+.search-result-item:hover,
+.search-result-item.active {
   background: var(--row-hover-bg, rgba(22, 119, 255, 0.06));
+}
+.search-result-item.active {
+  outline: 1px solid rgba(22, 119, 255, 0.25);
+  outline-offset: -1px;
 }
 .search-result-label {
   font-size: 14px;

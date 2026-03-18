@@ -1,7 +1,7 @@
-// Pre-seeds pms-auth localStorage before MSW starts.
+// Pre-seeds vamc-auth localStorage before MSW starts.
 // App.tsx restoreSession() checks authStore.user.usrId — if missing, immediately calls logout().
 // Zustand persist format: { state: { user, roles }, version: 0 }
-const PMS_AUTH_KEY = 'pms-auth';
+const PMS_AUTH_KEY = 'vamc-auth';
 
 export function initMockSession(): void {
   if (localStorage.getItem(PMS_AUTH_KEY)) return; // already set from previous session
