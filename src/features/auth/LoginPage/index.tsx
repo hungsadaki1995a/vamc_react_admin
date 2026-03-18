@@ -1,7 +1,6 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Form, Input, Button, Alert, Checkbox, Typography } from 'antd';
-import { UserOutlined, LockOutlined } from '@ant-design/icons';
+import { Form, Input, Button, Alert, Checkbox } from 'antd';
 import { login } from './api';
 import { getMe } from '@/api/user';
 import { useAuthStore } from '@/stores/authStore';
@@ -14,9 +13,8 @@ import { findMenuByKey } from '@/utils/menuUtils';
 import { fetchAuthMenuList } from '@/api/menu';
 import { ApiError } from '@/lib/api/error';
 import type { LoginRequest } from '@/lib/api/types';
+import InitChangePwModal from '@/features/auth/InitChangePwModal';
 import styles from './index.module.css';
-
-const { Title, Text } = Typography;
 
 const SAVED_USERNAME_KEY = 'pms-saved-username';
 
@@ -29,13 +27,33 @@ export default function LoginPage() {
   const homeMenuKey = useSettingsStore((s) => s.homeMenuKey);
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [initPwModal, setInitPwModal] = useState<{ open: boolean; usrId: string }>({
+    open: false,
+    usrId: '',
+  });
 
   const savedUsername = localStorage.getItem(SAVED_USERNAME_KEY);
+
+  // Shared post-login navigation logic (called after login or after initial PW change)
+  const proceedToApp = useCallback(async (accessToken: string, username: string, refreshToken?: string) => {
+    const meRes = await getMe(username);
+    if (meRes.success && meRes.data) {
+      setAuth(accessToken, meRes.data, refreshToken);
+      resetTabs();
+      const homeMenu = findMenuByKey(menuConfig, homeMenuKey);
+      if (homeMenu) openTab(homeMenu);
+      useProjectStore.getState().fetchMyProjects().then(() => {
+        fetchAuthMenuList().then(setServerMenus).catch(() => { /* silent */ });
+      });
+      navigate('/app', { replace: true });
+    } else {
+      setErrorMsg('사용자 정보를 불러오지 못했습니다.');
+    }
+  }, [setAuth, resetTabs, openTab, homeMenuKey, setServerMenus, navigate]);
 
   const onFinish = async (values: LoginRequest & { rememberUsername: boolean }) => {
     const { rememberUsername, ...loginReq } = values;
 
-    // Save or clear remembered username
     if (rememberUsername) {
       localStorage.setItem(SAVED_USERNAME_KEY, loginReq.username);
     } else {
@@ -45,29 +63,15 @@ export default function LoginPage() {
     setLoading(true);
     setErrorMsg(null);
     try {
-      // Step 1: Login — get accessToken + refreshToken
       const loginRes = await login(loginReq);
       if (loginRes.success && loginRes.data) {
         setAccessToken(loginRes.data.accessToken);
 
-        // Step 2: Fetch user info using usrId (= JWT subject = username)
-        const meRes = await getMe(loginReq.username);
-        if (meRes.success && meRes.data) {
-          setAuth(loginRes.data.accessToken, meRes.data, loginRes.data.refreshToken);
-
-          // Always reset tabs on login and open only the home tab
-          resetTabs();
-          const homeMenu = findMenuByKey(menuConfig, homeMenuKey);
-          if (homeMenu) openTab(homeMenu);
-
-          // Fetch my projects, then load menus with the auto-selected project's ID
-          useProjectStore.getState().fetchMyProjects().then(() => {
-            fetchAuthMenuList().then(setServerMenus).catch(() => { /* silent */ });
-          });
-
-          navigate('/app', { replace: true });
+        if (loginRes.data.mustChangePassword) {
+          // Initial login — show password change modal before proceeding
+          setInitPwModal({ open: true, usrId: loginReq.username });
         } else {
-          setErrorMsg('사용자 정보를 불러오지 못했습니다.');
+          await proceedToApp(loginRes.data.accessToken, loginReq.username, loginRes.data.refreshToken);
         }
       } else {
         setErrorMsg(loginRes.message || '로그인에 실패했습니다.');
@@ -80,61 +84,81 @@ export default function LoginPage() {
     }
   };
 
+  const handleInitPwSuccess = useCallback(() => {
+    setInitPwModal({ open: false, usrId: '' });
+    setAccessToken('');
+    setErrorMsg(null);
+  }, [setAccessToken]);
+
   return (
     <div className={styles.container}>
-      <div className={styles.card}>
-        <div className={styles.header}>
-          <Title level={3} style={{ margin: 0 }}>DS PMS</Title>
-          <Text type="secondary">프로젝트 관리 시스템</Text>
+      <div className={styles.inner}>
+        {/* Left: illustration */}
+        <div className={styles.illustration}>
+          <img src="/login_sol_friends.png" alt="One Shinhan" />
         </div>
 
-        <Form
-          name="login"
-          onFinish={onFinish}
-          autoComplete="off"
-          size="large"
-          layout="vertical"
-          initialValues={{
-            username: savedUsername ?? '',
-            rememberUsername: !!savedUsername,
-          }}
-        >
-          <Form.Item
-            name="username"
-            rules={[{ required: true, message: '아이디를 입력해 주세요.' }]}
+        {/* Right: login card */}
+        <div className={styles.card}>
+          <div className={styles.logo}>
+            <img src="/logo_harmony.svg" alt="HARMONY" />
+          </div>
+
+          <Form
+            name="login"
+            onFinish={onFinish}
+            autoComplete="off"
+            layout="vertical"
+            initialValues={{
+              username: savedUsername ?? '',
+              rememberUsername: !!savedUsername,
+            }}
           >
-            <Input prefix={<UserOutlined />} placeholder="아이디" />
-          </Form.Item>
-
-          <Form.Item
-            name="password"
-            rules={[{ required: true, message: '비밀번호를 입력해 주세요.' }]}
-          >
-            <Input.Password prefix={<LockOutlined />} placeholder="비밀번호" />
-          </Form.Item>
-
-          <Form.Item name="rememberUsername" valuePropName="checked" style={{ marginBottom: 12 }}>
-            <Checkbox>아이디 저장</Checkbox>
-          </Form.Item>
-
-          {errorMsg && (
-            <Form.Item>
-              <Alert type="error" title={errorMsg} showIcon />
-            </Form.Item>
-          )}
-
-          <Form.Item>
-            <Button
-              type="primary"
-              htmlType="submit"
-              block
-              loading={loading}
+            <Form.Item
+              name="username"
+              style={{ marginBottom: 14 }}
+              rules={[{ required: true, message: '아이디를 입력해 주세요.' }]}
             >
-              로그인
-            </Button>
-          </Form.Item>
-        </Form>
+              <Input placeholder="아이디" />
+            </Form.Item>
+
+            <Form.Item
+              name="password"
+              style={{ marginBottom: 14 }}
+              rules={[{ required: true, message: '비밀번호를 입력해 주세요.' }]}
+            >
+              <Input.Password placeholder="비밀번호" />
+            </Form.Item>
+
+            <Form.Item name="rememberUsername" valuePropName="checked" style={{ marginBottom: 14 }}>
+              <Checkbox>아이디 저장</Checkbox>
+            </Form.Item>
+
+            {errorMsg && (
+              <Form.Item style={{ marginBottom: 14 }}>
+                <Alert type="error" title={errorMsg} showIcon />
+              </Form.Item>
+            )}
+
+            <Form.Item style={{ marginBottom: 0 }}>
+              <Button
+                type="primary"
+                htmlType="submit"
+                block
+                loading={loading}
+              >
+                로그인
+              </Button>
+            </Form.Item>
+          </Form>
+        </div>
       </div>
+
+      <InitChangePwModal
+        open={initPwModal.open}
+        usrId={initPwModal.usrId}
+        onSuccess={handleInitPwSuccess}
+      />
     </div>
   );
 }

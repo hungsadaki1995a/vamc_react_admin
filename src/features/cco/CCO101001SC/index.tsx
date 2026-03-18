@@ -1,7 +1,9 @@
-﻿import { useState, useMemo, useCallback } from 'react';
-import { Input, Button, Form, InputNumber, App, Row, Col, Space, Divider } from 'antd';
+import { useState, useMemo, useCallback, useRef } from 'react';
+import type { AgGridReact } from 'ag-grid-react';
+import { Input, Button, Form, InputNumber, Row, Col, Space } from 'antd';
 import { DownloadOutlined, UploadOutlined } from '@ant-design/icons';
 import GridPanel from '@/components/grid/GridPanel';
+import VerticalDivider from '@/components/layout/VerticalDivider';
 import { ComcdSelectCellRenderer } from '@/components/grid/ComcdSelectCell';
 import FilterPanel from '@/components/layout/FilterPanel';
 import FormPanel from '@/components/layout/FormPanel';
@@ -10,9 +12,11 @@ import ComcdSelect from '@/components/inputs/ComcdSelect';
 import { useScreenLabel } from '@/hooks/useScreenLabel';
 import { useApiQuery } from '@/hooks/useApiQuery';
 import { useApiMutation } from '@/hooks/useApiMutation';
-import { getUsrList, saveUsr, deleteUsr, resetPwdErrCnt, resetPwd, unlockUsr } from '@/api/usr';
+import { getUsrList, saveUsr, deleteUsr, resetPwdErrCnt, resetPwd, unlockUsr } from './api';
 import type { ColDef } from 'ag-grid-community';
 import type { User, UserFormValues } from './types';
+import { useNotify } from '@/hooks/useNotify';
+import CCO1010011P from '@/features/cco/CCO1010011P';
 
 // ── Module-level constants ─────────────────────────────────────────────────────
 
@@ -22,15 +26,19 @@ const stdCostFormatter = (v: number | string | undefined) =>
 // ── Main Component ─────────────────────────────────────────────────────────────
 
 export default function CCO101001SC() {
-  const { message, modal } = App.useApp();
-  const { tvt, tvb, tsg, tsm } = useScreenLabel();
+  const { toast: _toast, notify, dialog } = useNotify();
+  const { tvt, tvb, tsg, tsm, tmc, tmi, labels } = useScreenLabel();
   const [filterEmpNo, setFilterEmpNo] = useState('');
   const [filterEmpNm, setFilterEmpNm] = useState('');
   // Snapshot of applied filter (only changes on Search click)
   const [appliedFilter, setAppliedFilter] = useState({ usrId: '', usrNm: '' });
+  // Controls whether the query runs — false until user clicks Search
+  const [hasSearched, setHasSearched] = useState(false);
   const [formCollapsed, setFormCollapsed] = useState(false);
   const [selectedRow, setSelectedRow] = useState<User | null>(null);
   const [form] = Form.useForm<UserFormValues>();
+  const [pwChangeOpen, setPwChangeOpen] = useState(false);
+  const gridRef = useRef<AgGridReact<User>>(null);
 
   const isEditMode = selectedRow !== null;
 
@@ -39,10 +47,11 @@ export default function CCO101001SC() {
   const { data: usrList = [], isLoading, refetch } = useApiQuery<User[]>(
     ['usr', 'list', appliedFilter],
     () => getUsrList(appliedFilter),
+    { enabled: hasSearched },
   );
 
-  const saveMutation = useApiMutation<void, User>(saveUsr);
-  const deleteMutation = useApiMutation<void, string>(deleteUsr);
+  const saveMutation    = useApiMutation<void, User>(saveUsr);
+  const deleteMutation  = useApiMutation<void, string>(deleteUsr);
   const pwErrResetMutation = useApiMutation<void, string>(resetPwdErrCnt);
   const pwResetMutation    = useApiMutation<void, string>(resetPwd);
   const unlockMutation     = useApiMutation<void, string>(unlockUsr);
@@ -50,29 +59,28 @@ export default function CCO101001SC() {
   // ── Column definitions ────────────────────────────────────────────────────
 
   const columnDefs = useMemo<ColDef<User>[]>(() => [
-    { field: 'usrId',  headerName: tsg('usrId'),  width: 130, flex: 0 },
-    { field: 'usrNm',  headerName: tsg('usrNm'),  width: 140, flex: 0 },
-    { field: 'jbcCd',  headerName: tsg('jbcCd'),  width: 100, flex: 0, cellRenderer: ComcdSelectCellRenderer, cellRendererParams: { cdDmnId: 'JBC_CD' } },
-    { field: 'dpNm',   headerName: tsg('orgNm'),   width: 130, flex: 0 },
-    { field: 'gdCd',   headerName: tsg('gdCd'),   width: 90,  flex: 0, cellRenderer: ComcdSelectCellRenderer, cellRendererParams: { cdDmnId: 'GD_CD' } },
-    { field: 'stdCost',headerName: tsg('stdCost'),width: 110, flex: 0 },
-    { field: 'grpNm',  headerName: tsg('grpNm'),  width: 140, flex: 0 },
-    { field: 'phnNo',  headerName: tsg('phnNo'),  width: 150, flex: 0 },
-    { field: 'email',  headerName: tsg('emailAddr'), minWidth: 200 },
-    { field: 'usrIp',  headerName: tsg('usrIp'),  width: 150, flex: 0 },
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  ], []);
+    { field: 'usrId',   headerName: tsg('usrId'),    width: 130, flex: 0 },
+    { field: 'usrNm',   headerName: tsg('usrNm'),    width: 140, flex: 0 },
+    { field: 'jbcCd',   headerName: tsg('jbcCd'),    width: 100, flex: 0, cellRenderer: ComcdSelectCellRenderer, cellRendererParams: { cdDmnId: 'JBC_CD' } },
+    { field: 'dpNm',    headerName: tsg('orgNm'),    width: 130, flex: 0 },
+    { field: 'gdCd',    headerName: tsg('gdCd'),     width: 90,  flex: 0, cellRenderer: ComcdSelectCellRenderer, cellRendererParams: { cdDmnId: 'GD_CD' } },
+    { field: 'stdCost', headerName: tsg('stdCost'),  width: 110, flex: 0 },
+    { field: 'grpNm',   headerName: tsg('grpNm'),    width: 140, flex: 0 },
+    { field: 'phnNo',   headerName: tsg('phnNo'),    width: 150, flex: 0 },
+    { field: 'email',   headerName: tsg('emailAddr'), minWidth: 200 },
+    { field: 'usrIp',   headerName: tsg('usrIp'),    width: 150, flex: 0 },
+  ], [labels]);
 
   // ── Handlers ──────────────────────────────────────────────────────────────
 
   const handleSearch = useCallback(() => {
+    setHasSearched(true);
     setAppliedFilter({ usrId: filterEmpNo, usrNm: filterEmpNm });
   }, [filterEmpNo, filterEmpNm]);
 
   const handleRowClick = useCallback((user: User) => {
     setSelectedRow(user);
     // Single setFieldsValue (no resetFields) to avoid double form re-render.
-    // All fields are explicitly set so stale values are overwritten.
     form.setFieldsValue({
       usrId:   user.usrId,
       usrNm:   user.usrNm,
@@ -94,9 +102,11 @@ export default function CCO101001SC() {
   const handleReset = useCallback(() => {
     setSelectedRow(null);
     form.resetFields();
+    gridRef.current?.api?.deselectAll();
     setFilterEmpNo('');
     setFilterEmpNm('');
     setAppliedFilter({ usrId: '', usrNm: '' });
+    setHasSearched(false);
   }, [form]);
 
   // Filter-only reset (FilterPanel reset button — does not clear the form/selection)
@@ -104,32 +114,39 @@ export default function CCO101001SC() {
     setFilterEmpNo('');
     setFilterEmpNm('');
     setAppliedFilter({ usrId: '', usrNm: '' });
+    setHasSearched(false);
   }, []);
 
   const handleSave = useCallback(() => {
     form.validateFields().then((values) => {
-      // Convert dpNm SearchSelectValue back to flat string fields for the API
       const payload = {
         ...values,
         dpNm: values.dpNm?.label ?? '',
         dpCd: values.dpNm?.value ?? '',
       } as User;
-      saveMutation.mutate(payload, {
-        onSuccess: () => {
-          message.success(isEditMode ? tsm('updateSuccess') : tsm('regSuccess'));
-          handleReset();
-          refetch();
+      dialog.confirm({
+        content: isEditMode ? tmc('C100002') : tmc('C100001'),
+        onOk: () => {
+          saveMutation.mutate(payload, {
+            onSuccess: () => {
+              notify.success(isEditMode ? tmi('I100003') : tmi('I100002'));
+              handleReset();
+              refetch();
+            },
+            onError: (err) => {
+              notify.error(err.message);
+            },
+          });
         },
       });
     }).catch(() => {
-      message.error(tsm('requiredCheck'));
+      notify.error(tsm('requiredCheck'));
     });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [form, saveMutation, isEditMode, message, tsm, refetch]);
+  }, [form, dialog, saveMutation, isEditMode, notify, tmc, tmi, tsm, handleReset, refetch]);
 
   const handleDelete = useCallback(() => {
     if (!selectedRow) return;
-    modal.confirm({
+    dialog.confirm({
       title: tsm('deleteConfirmTitle'),
       content: `${selectedRow.usrNm}(${selectedRow.usrId}) ${tsm('deleteConfirmBody')}`,
       okText: tvb('delete'),
@@ -138,28 +155,54 @@ export default function CCO101001SC() {
       onOk: () => {
         deleteMutation.mutate(selectedRow.usrId, {
           onSuccess: () => {
-            message.success(tsm('deleteSuccess'));
+            notify.success(tmi('I100004'));
             handleReset();
             refetch();
+          },
+          onError: (err) => {
+            notify.error(err.message);
           },
         });
       },
     });
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedRow, modal, deleteMutation, message, tsm, tvb, refetch]);
+  }, [selectedRow, dialog, deleteMutation, notify, tmi, tsm, tvb, refetch]);
 
   const handlePwAction = useCallback((action: 'pwErrReset' | 'pwReset' | 'unlock') => {
     if (!selectedRow) return;
     const id = selectedRow.usrId;
-    const onSuccess = () => { message.success(tsm('processed')); };
-    if (action === 'pwErrReset') pwErrResetMutation.mutate(id, { onSuccess });
-    else if (action === 'pwReset') pwResetMutation.mutate(id, { onSuccess });
-    else unlockMutation.mutate(id, { onSuccess });
-  }, [selectedRow, pwErrResetMutation, pwResetMutation, unlockMutation, message, tsm]);
+    const onError = (err: { message: string }) => notify.error(err.message);
+    if (action === 'pwErrReset') {
+      pwErrResetMutation.mutate(id, {
+        onSuccess: () => notify.success(tmi('I100008')),
+        onError,
+      });
+    } else if (action === 'pwReset') {
+      pwResetMutation.mutate(id, {
+        onSuccess: () => notify.success(tmi('I100008')),
+        onError,
+      });
+    } else {
+      unlockMutation.mutate(id, {
+        onSuccess: () => notify.success(tmi('I100035')),
+        onError,
+      });
+    }
+  }, [selectedRow, pwErrResetMutation, pwResetMutation, unlockMutation, notify, tmi]);
 
-  const handlePwErrReset = useCallback(() => handlePwAction('pwErrReset'), [handlePwAction]);
-  const handlePwReset    = useCallback(() => handlePwAction('pwReset'),    [handlePwAction]);
-  const handleUnlock     = useCallback(() => handlePwAction('unlock'),     [handlePwAction]);
+  const handlePwReset = useCallback(() => {
+    dialog.confirm({
+      content: tmc('C100007'),
+      onOk: async () => { handlePwAction('pwReset'); },
+    });
+  }, [handlePwAction, dialog, tmc]);
+
+  const handleUnlock = useCallback(() => {
+    dialog.confirm({
+      content: tmc('C100022'),
+      onOk: async () => { handlePwAction('unlock'); },
+    });
+  }, [handlePwAction, dialog, tmc]);
 
   // ── Render ────────────────────────────────────────────────────────────────
 
@@ -204,13 +247,14 @@ export default function CCO101001SC() {
               <Button icon={<UploadOutlined />}>{tvb('btnExcelUpload')}</Button>
             </Space>
           }
+          gridRef={gridRef}
           columnDefs={columnDefs}
-          rowData={usrList}
+          rowData={hasSearched ? usrList : []}
           rowKey="usrId"
           onRowClick={handleRowClick}
           pagination={false}
           height="100%"
-          loading={isLoading}
+          loading={hasSearched && isLoading}
           defaultColDef={{ suppressHeaderMenuButton: true, suppressHeaderFilterButton: true }}
         />
       </div>
@@ -224,20 +268,23 @@ export default function CCO101001SC() {
         actions={
           <Space size={4} align="center">
             <Button size="middle" onClick={handleReset}>{tvb('btnInit2')}</Button>
-            <Divider orientation="vertical" />
-            <Button size="middle" disabled={!isEditMode} onClick={handlePwErrReset}>
+            <VerticalDivider />
+            {/* <Button size="middle" disabled={!isEditMode} onClick={handlePwErrReset}>
               {tvb('setPasswdErCntEarCnvrs')}
-            </Button>
+            </Button> */}
             <Button size="middle" disabled={!isEditMode} onClick={handlePwReset}>
               {tvb('setUsrPasswdEarCnvrs')}
             </Button>
             <Button size="middle" disabled={!isEditMode} onClick={handleUnlock}>
               {tvb('setLoginUnlock')}
             </Button>
-            <Divider orientation="vertical" />
+            <Button size="middle" disabled={!isEditMode} onClick={() => setPwChangeOpen(true)}>
+              {tvb('btnChg')}
+            </Button>
+            <VerticalDivider />
             <Button size="middle" type="primary" onClick={handleSave}>{tvb('btnMer')}</Button>
             <Button size="middle" danger disabled={!isEditMode} onClick={handleDelete}>{tvb('btnDel')}</Button>
-            <Divider orientation="vertical" />
+            <VerticalDivider />
           </Space>
         }
       >
@@ -308,6 +355,16 @@ export default function CCO101001SC() {
           </Row>
         </Form>
       </FormPanel>
+
+      {/* ── 패스워드 변경 팝업 (CCO1010011P) */}
+      {selectedRow && (
+        <CCO1010011P
+          open={pwChangeOpen}
+          usrId={selectedRow.usrId}
+          usrNm={selectedRow.usrNm}
+          onClose={() => setPwChangeOpen(false)}
+        />
+      )}
     </div>
   );
 }

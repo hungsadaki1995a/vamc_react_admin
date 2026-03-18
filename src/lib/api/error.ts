@@ -1,5 +1,6 @@
 import type { AxiosError } from 'axios';
 import type { ApiErrorResponse } from './types';
+import { useLabelStore } from '@/stores/labelStore';
 
 const DEFAULT_MESSAGES: Record<number, string> = {
   400: '잘못된 요청입니다.',
@@ -19,6 +20,10 @@ export class ApiError extends Error {
   path: string;
   timestamp: string;
   originalResponse: ApiErrorResponse;
+  /** DB label key code (e.g. "E100040") */
+  errorCode?: string;
+  /** Label substitution args for $1, $2, ... */
+  errorArgs?: string[];
 
   constructor(response: ApiErrorResponse) {
     super(response.message || DEFAULT_MESSAGES[response.statusCode] || '알 수 없는 오류가 발생했습니다.');
@@ -27,9 +32,27 @@ export class ApiError extends Error {
     this.path = response.path || '';
     this.timestamp = response.timestamp || new Date().toISOString();
     this.originalResponse = response;
+    this.errorCode = response.errorCode;
+    this.errorArgs = response.errorArgs;
   }
 
   get userMessage(): string {
+    // 1순위: DB 라벨에서 errorCode로 조회
+    if (this.errorCode) {
+      const { t } = useLabelStore.getState();
+      const key = `MESSAGE.ERROR.TEXT_${this.errorCode}`;
+      let msg = t(key);
+      // 키 그대로 반환되면 DB 미등록 → fallback
+      if (msg !== key) {
+        if (this.errorArgs?.length) {
+          this.errorArgs.forEach((arg, i) => {
+            msg = msg.replace(`$${i + 1}`, arg);
+          });
+        }
+        return msg;
+      }
+    }
+    // 2순위: 서버 메시지 → HTTP 기본 메시지 → 폴백
     return this.originalResponse.message
       || DEFAULT_MESSAGES[this.statusCode]
       || '알 수 없는 오류가 발생했습니다.';
@@ -55,9 +78,11 @@ export class ApiError extends Error {
     const response = error.response;
 
     if (response?.data && typeof response.data === 'object') {
-      const data = response.data as Partial<ApiErrorResponse>;
+      const data = response.data as Partial<ApiErrorResponse> & { errorCode?: string; errorArgs?: string[] };
       return new ApiError({
         code: data.code ?? 'E' + response.status,
+        errorCode: data.errorCode,
+        errorArgs: data.errorArgs,
         data: null,
         message: data.message || DEFAULT_MESSAGES[response.status] || '오류가 발생했습니다.',
         statusCode: data.statusCode ?? response.status,

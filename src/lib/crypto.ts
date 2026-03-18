@@ -1,4 +1,16 @@
 /**
+ * SHA-512 hash using Web Crypto API (SubtleCrypto).
+ * Returns lowercase hex string (128 chars).
+ */
+export async function sha512(input: string): Promise<string> {
+  const encoded = new TextEncoder().encode(input);
+  const hashBuffer = await window.crypto.subtle.digest('SHA-512', encoded);
+  return Array.from(new Uint8Array(hashBuffer))
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('');
+}
+
+/**
  * RSA-OAEP password encryption using Web Crypto API (no external library).
  *
  * Flow:

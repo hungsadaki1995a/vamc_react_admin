@@ -1,7 +1,7 @@
 ﻿import { Tabs, Tag, Space, Card, Alert, Table, Typography } from 'antd';
 import type { TableColumnsType } from 'antd';
 import CodeSnippet from '@/components/common/CodeSnippet';
-import { useLabelStore } from '@/stores/labelStore';
+import { useScreenLabel } from '@/hooks/useScreenLabel';
 import { useMenuPermission } from '@/hooks/useMenuPermission';
 import { useLocaleStore } from '@/stores/localeStore';
 
@@ -25,6 +25,10 @@ const helperRows = [
   { fn: 'tsb(field)', context: 'SCRIPT', pattern: '{sceId}.SCRIPT.BTN_{field}', desc: '다이얼로그 버튼' },
   { fn: 'tss(field)', context: 'SCRIPT', pattern: '{sceId}.SCRIPT.STATUS_{field}', desc: '상태 레이블 (그리드 태그, 뱃지)' },
   { fn: 'tsr(field)', context: 'SCRIPT', pattern: '{sceId}.SCRIPT.RULE_{field}', desc: '유효성 검사 오류 메시지' },
+  { fn: 'tmc(code)', context: 'MESSAGE', pattern: 'MESSAGE.CONFIRM.TEXT_{code}', desc: '전역 확인 메시지 (화면 무관)' },
+  { fn: 'tmi(code)', context: 'MESSAGE', pattern: 'MESSAGE.INFO.TEXT_{code}', desc: '전역 정보 메시지 (화면 무관)' },
+  { fn: 'tme(code)', context: 'MESSAGE', pattern: 'MESSAGE.ERROR.TEXT_{code}', desc: '전역 에러 메시지 (화면 무관)' },
+  { fn: 't(key)', context: '—', pattern: '(full key)', desc: '전체 키 직접 조회 (폴백: key 자체 반환)' },
   { fn: 'labels', context: '—', pattern: '—', desc: 'useMemo deps 전용 — 언어 변경 시 재계산 트리거' },
 ];
 
@@ -44,7 +48,7 @@ const exampleRows = [
 ];
 
 export default function GuideI18nPermission() {
-  const t = useLabelStore((s) => s.t);
+  const { t } = useScreenLabel();
   const { permType, canRead, canWrite } = useMenuPermission();
   const { locale } = useLocaleStore();
 
@@ -81,7 +85,8 @@ export default function GuideI18nPermission() {
                   code={`import { useScreenLabel } from '@/hooks/useScreenLabel';
 
 export default function CCO101001SC() {
-  const { tvt, tvb, tvh, tsg, tsm, tsb, labels } = useScreenLabel();
+  // 모든 라벨 헬퍼를 단일 훅 호출로 사용
+  const { t, tvt, tvb, tvh, tsg, tsm, tsb, tmc, tmi, tme, labels } = useScreenLabel();
   // sceId는 TabContext에서 자동 파생 → 'CCO101001SC'
 
   // JSX 레이블
@@ -109,7 +114,7 @@ const columnDefs = useMemo<ColDef<Employee>[]>(() => [
 
                 <CodeSnippet
                   title="메시지 / 다이얼로그 (이벤트 핸들러)"
-                  code={`const { tsm, tsb } = useScreenLabel();
+                  code={`const { tsm, tsb, tmc, tme } = useScreenLabel();
 const { message, modal } = App.useApp();
 
 const handleSave = useCallback(() => {
@@ -123,12 +128,16 @@ const handleSave = useCallback(() => {
 const handleDelete = useCallback(() => {
   modal.confirm({
     title: tsm('deleteConfirmTitle'),
-    content: tsm('deleteConfirmBody'),
-    okText: tsb('delete'),                  // SCRIPT.BTN_delete
+    content: tmc('C100007'),               // MESSAGE.CONFIRM.TEXT_C100007 (전역)
+    okText: tsb('delete'),                 // SCRIPT.BTN_delete
     cancelText: tsb('cancel'),
     onOk: () => { /* ... */ },
   });
-}, [modal, tsm, tsb]);`}
+}, [modal, tsm, tsb, tmc]);
+
+// 전역 메시지 예시
+message.info(tmi('I100008'));    // MESSAGE.INFO.TEXT_I100008
+message.error(tme('E100001'));   // MESSAGE.ERROR.TEXT_E100001`}
                 />
 
                 <CodeSnippet
@@ -145,10 +154,10 @@ const { tvt } = useScreenLabel('CCO101001SC');`}
             children: (
               <div className="demo-section">
                 <div className="demo-desc">
-                  <h3>labelStore (t 함수)</h3>
+                  <h3>labelStore</h3>
                   <p>
-                    서버에서 라벨을 일괄 로드해 메모리에 보관. <code>t(key)</code>로 라벨 조회.
-                    키가 없으면 key 자체를 반환하므로 빈 화면이 생기지 않음.
+                    서버에서 라벨을 일괄 로드해 메모리에 보관. 컴포넌트에서는 <code>useScreenLabel()</code>을 통해
+                    <code>t</code>를 비롯한 모든 헬퍼를 사용. 키가 없으면 key 자체를 반환하므로 빈 화면이 생기지 않음.
                   </p>
                 </div>
 
@@ -169,18 +178,22 @@ const { tvt } = useScreenLabel('CCO101001SC');`}
                 </Card>
 
                 <CodeSnippet
-                  title="labelStore 직접 사용 (단순 키)"
-                  code={`// 화면 공통 단순 키 (SAVE, CANCEL 등) — 직접 사용 가능
-import { useLabelStore } from '@/stores/labelStore';
+                  title="useScreenLabel — 단일 훅으로 모든 라벨 접근"
+                  code={`import { useScreenLabel } from '@/hooks/useScreenLabel';
 
 function MyComponent() {
-  const t = useLabelStore((s) => s.t);
+  // t, tmc/tmi/tme, tvt/tvb/tsg/tsm 등 모두 여기서
+  const { t, tmc, tmi, tme, tvt, tsm } = useScreenLabel();
 
   return <Button>{t('SAVE')}</Button>;
 }
 
 // 키 없을 때 폴백: key 자체 반환 (빈 문자열 아님)
-t('NON_EXISTENT') // → 'NON_EXISTENT'`}
+t('NON_EXISTENT') // → 'NON_EXISTENT'
+
+// 비 React 컨텍스트 (axios 인터셉터, 유틸 함수 등)
+import { useLabelStore } from '@/stores/labelStore';
+useLabelStore.getState().tme('E100001')`}
                 />
 
                 <CodeSnippet
@@ -324,7 +337,7 @@ function MyPage() {
                   title="입력 폼 읽기 전용 처리"
                   code={`function MyPage() {
   const { canWrite } = useMenuPermission();
-  const { tvt, tvb } = useScreenLabel();
+  const { tvt, tvb } = useScreenLabel(); // 또는 필요한 것만 구조분해
 
   return (
     <Form>

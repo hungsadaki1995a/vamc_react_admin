@@ -159,30 +159,60 @@ const SpreadSheet = forwardRef<SpreadSheetRef, SpreadSheetProps>(function Spread
   const themeMode = useThemeStore((s) => s.mode);
 
   useEffect(() => {
-    if (!containerRef.current) return;
+    const container = containerRef.current;
+    if (!container) return;
 
-    // @univerjs/core를 직접 사용 (Pro 의존성 없음)
-    const univer = new Univer({
-      logLevel: LogLevel.WARN,
-      locale: LocaleType.KO_KR,
-      locales: {
-        [LocaleType.KO_KR]: mergeLocales(sheetsCoreKoKR),
-      },
-    });
+    let disposed = false;
 
-    // preset-sheets-core 플러그인 등록
-    const { plugins } = UniverSheetsCorePreset({ container: containerRef.current });
-    plugins.forEach((plugin) => {
-      const [Plugin, options] = Array.isArray(plugin) ? plugin : [plugin, undefined];
-      univer.registerPlugin(Plugin, options);
-    });
+    const initUniver = () => {
+      if (disposed || univerAPIRef.current) return;
 
-    const univerAPI = FUniver.newAPI(univer);
-    univerAPIRef.current = univerAPI;
-    univerAPI.createWorkbook(data ?? {});
+      // @univerjs/core를 직접 사용 (Pro 의존성 없음)
+      const univer = new Univer({
+        logLevel: LogLevel.WARN,
+        locale: LocaleType.KO_KR,
+        locales: {
+          [LocaleType.KO_KR]: mergeLocales(sheetsCoreKoKR),
+        },
+      });
+
+      // preset-sheets-core 플러그인 등록
+      const { plugins } = UniverSheetsCorePreset({ container });
+      plugins.forEach((plugin) => {
+        const [Plugin, options] = Array.isArray(plugin) ? plugin : [plugin, undefined];
+        univer.registerPlugin(Plugin, options);
+      });
+
+      const univerAPI = FUniver.newAPI(univer);
+      univerAPIRef.current = univerAPI;
+      univerAPI.createWorkbook(data ?? {});
+    };
+
+    // Wait until container has a non-zero width (tab may be hidden via display:none on mount)
+    if (container.offsetWidth > 0) {
+      initUniver();
+    } else {
+      const ro = new ResizeObserver((entries) => {
+        for (const entry of entries) {
+          if (entry.contentRect.width > 0) {
+            ro.disconnect();
+            initUniver();
+            break;
+          }
+        }
+      });
+      ro.observe(container);
+      return () => {
+        disposed = true;
+        ro.disconnect();
+        univerAPIRef.current?.dispose();
+        univerAPIRef.current = null;
+      };
+    }
 
     return () => {
-      univerAPI.dispose();
+      disposed = true;
+      univerAPIRef.current?.dispose();
       univerAPIRef.current = null;
     };
   }, []);
