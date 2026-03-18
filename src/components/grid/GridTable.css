@@ -38,8 +38,11 @@
   cursor: pointer;
 }
 
-/* ── cell focus border ── */
+/* ── cell focus border: hide by default, show only in editable grids ── */
 .ds-grid-table .ag-cell-focus:not(.ag-cell-range-selected) {
+  border-color: transparent !important;
+}
+.ds-grid-table.ds-grid-editable .ag-cell-focus:not(.ag-cell-range-selected) {
   border-color: #1677ff !important;
 }
 

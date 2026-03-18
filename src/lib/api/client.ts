@@ -79,6 +79,11 @@ apiClient.interceptors.response.use(
 
     // ── 401: Silent Refresh ────────────────────────────────────────────────
     if (status === 401) {
+      // Login failure — pass original error through without attempting refresh
+      if (config?.url?.includes('/api/auth/login')) {
+        return Promise.reject(ApiError.fromAxiosError(error));
+      }
+
       if (config?.url?.includes('/api/auth/refresh')) {
         processQueue(null, error);
         useAuthStore.getState().logout();
@@ -142,14 +147,16 @@ apiClient.interceptors.response.use(
 
     // ── 403: Forbidden ────────────────────────────────────────────────────
     if (status === 403) {
-      queueMicrotask(() => apiNotify.error('접근 권한이 없습니다.'));
-      return Promise.reject(ApiError.fromAxiosError(error));
+      const apiErr = ApiError.fromAxiosError(error);
+      queueMicrotask(() => apiNotify.error(apiErr.userMessage));
+      return Promise.reject(apiErr);
     }
 
     // ── 500+: Server error ────────────────────────────────────────────────
     if (status >= 500) {
-      queueMicrotask(() => apiNotify.error('서버 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.'));
-      return Promise.reject(ApiError.fromAxiosError(error));
+      const apiErr = ApiError.fromAxiosError(error);
+      queueMicrotask(() => apiNotify.error(apiErr.userMessage));
+      return Promise.reject(apiErr);
     }
 
     return Promise.reject(ApiError.fromAxiosError(error));

@@ -17,6 +17,10 @@ import { useTabContext } from '@/contexts/TabContext';
  *   tsm(field) → {sceId}.SCRIPT.MSG_{field}       (success/error/confirm messages)
  *   tsb(field) → {sceId}.SCRIPT.BTN_{field}       (dialog button text)
  *
+ * Global MESSAGE context (cross-screen messages):
+ *   tm(type, code) → MESSAGE.{type}.TEXT_{code}
+ *   type: 'CONFIRM' | 'INFO' | 'ERROR'
+ *
  * `sceId` is auto-derived from TabContext (tab.sceId → tab.componentKey).
  * Pass an explicit `sceId` only when the component is rendered outside a TabPanel.
  *
@@ -24,7 +28,7 @@ import { useTabContext } from '@/contexts/TabContext';
  *
  * @example
  * // Auto sceId from TabContext:
- * const { tvt, tvb, tsg, tsm, tsb, labels } = useScreenLabel();
+ * const { tvt, tvb, tsg, tsm, tsb, tm, labels } = useScreenLabel();
  *
  * // Explicit sceId (outside TabPanel):
  * const { tvt } = useScreenLabel('CCO101001SC');
@@ -39,6 +43,11 @@ import { useTabContext } from '@/contexts/TabContext';
  * // Handler:
  * tsm('updateSuccess')   // → CCO101001SC.SCRIPT.MSG_updateSuccess
  * tsb('cancel')          // → CCO101001SC.SCRIPT.BTN_cancel
+ *
+ * // Global message (cross-screen):
+ * tmc('C100007')   // → MESSAGE.CONFIRM.TEXT_C100007
+ * tmi('I100008')   // → MESSAGE.INFO.TEXT_I100008
+ * tme('E100001')   // → MESSAGE.ERROR.TEXT_E100001
  */
 export function useScreenLabel(sceIdOverride?: string) {
   const ctx = useTabContext();
@@ -47,48 +56,61 @@ export function useScreenLabel(sceIdOverride?: string) {
   // a reference to the entire labels map in every useCallback closure.
   const labelsVersion = useLabelStore((s) => s.labelsVersion);
   const t = useLabelStore((s) => s.t);
+  const tmc = useLabelStore((s) => s.tmc);
+  const tmi = useLabelStore((s) => s.tmi);
+  const tme = useLabelStore((s) => s.tme);
 
   // Priority: explicit override > tab.sceId > tab.componentKey (= sceId fallback)
   const sceId = sceIdOverride ?? ctx?.tab.sceId ?? ctx?.tab.componentKey ?? '';
 
+  // Resolve helper: returns label value if found, defaultText if provided, otherwise key.
+  const resolve = useCallback(
+    (key: string, defaultText?: string) => {
+      const val = t(key);
+      return val !== key ? val : (defaultText ?? key);
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [labelsVersion],
+  );
+
   // VIEW — field/form text labels
   const tvt = useCallback(
-    (field: string) => t(`${sceId}.VIEW.TEXT_${field}`),
+    (field: string, defaultText?: string) => resolve(`${sceId}.VIEW.TEXT_${field}`, defaultText),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [labelsVersion, sceId],
   );
 
   // VIEW — button labels
   const tvb = useCallback(
-    (field: string) => t(`${sceId}.VIEW.BTN_${field}`),
+    (field: string, defaultText?: string) => resolve(`${sceId}.VIEW.BTN_${field}`, defaultText),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [labelsVersion, sceId],
   );
 
   // VIEW — title/heading labels
   const tvh = useCallback(
-    (field: string) => t(`${sceId}.VIEW.TITLE_${field}`),
+    (field: string, defaultText?: string) => resolve(`${sceId}.VIEW.TITLE_${field}`, defaultText),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [labelsVersion, sceId],
   );
 
   // SCRIPT — grid column header labels
   const tsg = useCallback(
-    (field: string) => t(`${sceId}.SCRIPT.GRID_${field}`),
+    (field: string, defaultText?: string) => resolve(`${sceId}.SCRIPT.GRID_${field}`, defaultText),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [labelsVersion, sceId],
   );
 
   // SCRIPT — message labels (success/error/confirm)
   const tsm = useCallback(
-    (field: string) => t(`${sceId}.SCRIPT.MSG_${field}`),
+    (field: string, defaultText?: string) => resolve(`${sceId}.SCRIPT.MSG_${field}`, defaultText),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [labelsVersion, sceId],
   );
 
   // SCRIPT — button labels used inside dialogs/handlers
   const tsb = useCallback(
-    (field: string) => t(`${sceId}.SCRIPT.BTN_${field}`),
+    (field: string, defaultText?: string) => resolve(`${sceId}.SCRIPT.BTN_${field}`, defaultText),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [labelsVersion, sceId],
   );
@@ -97,5 +119,5 @@ export function useScreenLabel(sceIdOverride?: string) {
   // already re-renders via labelsVersion, so getState() always returns current value here).
   const labels = useLabelStore.getState().labels;
 
-  return { tvt, tvb, tvh, tsg, tsm, tsb, labels, sceId };
+  return { t, tvt, tvb, tvh, tsg, tsm, tsb, tmc, tmi, tme, labels, sceId };
 }

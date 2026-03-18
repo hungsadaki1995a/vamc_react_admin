@@ -5,20 +5,12 @@ import { queryClient } from '@/lib/api/queryClient';
 import App from '@/app/App';
 import '@/styles/global.css';
 
-async function prepare(): Promise<void> {
+async function bootstrap() {
   if (import.meta.env.VITE_MOCK === 'true') {
-    // All three imports are dynamic — excluded from production bundle when VITE_MOCK !== 'true'
-    const { initMockSession } = await import('./mocks/initMockSession');
-    const { clearMockCache } = await import('./mocks/clearMockCache');
-    const { worker } = await import('./mocks/browser');
-
-    initMockSession();
-    await clearMockCache();
-    await worker.start({ onUnhandledRequest: 'bypass' });
+    const { setupMocks } = await import('@/mocks/setup');
+    setupMocks();
   }
-}
 
-prepare().then(() => {
   createRoot(document.getElementById('root')!).render(
     // <StrictMode>
       <QueryClientProvider client={queryClient}>
@@ -26,4 +18,6 @@ prepare().then(() => {
       </QueryClientProvider>
     // </StrictMode>
   );
-});
+}
+
+bootstrap();

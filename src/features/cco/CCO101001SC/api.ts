@@ -1,12 +1,36 @@
 import { apiClient } from '@/lib/api/client';
 import type { ApiResponse } from '@/lib/api/types';
-import type { User } from '@/features/cco/CCO101001SC/types';
+import { encryptPassword } from '@/lib/crypto';
+import type { SearchSelectValue } from '@/components/inputs/SearchSelectField';
+
+export interface User {
+  usrId: string;
+  usrNm: string;
+  cpNm: string;
+  email: string;
+  dpCd: string;
+  dpNm: string;
+  jbtCd: string;
+  jbcCd: string;
+  gdCd: string;
+  stdCost: string;
+  phnNo: string;
+  usrIp: string;
+  mrCont: string;
+  grpNm: string;
+}
+
+/** Form-layer type: dpNm holds a SearchSelectValue for DeptSelectField binding */
+export interface UserFormValues extends Omit<User, 'dpNm' | 'dpCd'> {
+  dpNm: SearchSelectValue | null;
+}
 
 interface VamcResp<T> { status: number; message: string; data: T | null }
 
 function toApiResp<T>(r: VamcResp<T>): ApiResponse<T> {
-  return r.status === 200 && r.data !== null
-    ? { success: true,  message: r.message, data: r.data }
+  // Only check status — void endpoints return data:null (omitted by @JsonInclude(NON_NULL))
+  return r.status === 200
+    ? { success: true,  message: r.message, data: r.data as T }
     : { success: false, message: r.message, data: null };
 }
 
@@ -41,5 +65,16 @@ export async function resetPwd(usrId: string): Promise<ApiResponse<void>> {
 
 export async function unlockUsr(usrId: string): Promise<ApiResponse<void>> {
   const { data } = await apiClient.post<VamcResp<void>>(`/api/usr/${usrId}/unlock`);
+  return toApiResp(data);
+}
+
+export async function changePwd(usrId: string, newPswd: string): Promise<ApiResponse<void>> {
+  const { data: keyData } = await apiClient.get<{ data: { publicKey: string } }>('/api/auth/public-key');
+  const publicKey = keyData.data?.publicKey ?? (keyData as any).publicKey;
+  const [encUsrId, encChgPasswd] = await Promise.all([
+    encryptPassword(publicKey, usrId),
+    encryptPassword(publicKey, newPswd),
+  ]);
+  const { data } = await apiClient.post<VamcResp<void>>('/api/usr/change-password', { usrId: encUsrId, encChgPasswd });
   return toApiResp(data);
 }

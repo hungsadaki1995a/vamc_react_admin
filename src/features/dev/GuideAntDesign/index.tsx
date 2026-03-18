@@ -1150,11 +1150,11 @@ import { UserOutlined, SettingOutlined } from '@ant-design/icons';
 
 <Divider />
 <Divider>텍스트 포함</Divider>
-<Divider orientation="left">Left Text</Divider>
-<Divider orientation="right">Right Text</Divider>
+<Divider titlePlacement="left">Left Text</Divider>
+<Divider titlePlacement="right">Right Text</Divider>
 
 // Vertical
-<Space split={<Divider type="vertical" />}>
+<Space split={<Divider orientation="vertical" />}>
   <span>Link 1</span>
   <span>Link 2</span>
   <span>Link 3</span>

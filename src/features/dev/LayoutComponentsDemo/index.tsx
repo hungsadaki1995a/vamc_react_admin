@@ -25,10 +25,10 @@ const [formCollapsed, setFormCollapsed] = useState(false);
   actions={
     <>
       <Button onClick={handleReset}>초기화</Button>
-      <Divider type="vertical" />
+      <Divider orientation="vertical" />
       <Button type="primary" onClick={handleSave}>저장</Button>
       <Button danger disabled={!isEditMode} onClick={handleDelete}>삭제</Button>
-      <Divider type="vertical" />
+      <Divider orientation="vertical" />
     </>
   }
 >

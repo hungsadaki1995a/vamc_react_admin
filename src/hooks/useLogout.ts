@@ -1,13 +1,13 @@
-import { App } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { logout as logoutApi } from '@/features/auth/LoginPage/api';
 import { useAuthStore } from '@/stores/authStore';
 import { useProjectStore } from '@/stores/projectStore';
 import { useTabStore } from '@/stores/tabStore';
 import { useMenuStore } from '@/stores/menuStore';
-
+import { App } from 'antd';
 export function useLogout() {
   const { modal } = App.useApp();
+
   const navigate = useNavigate();
   const logoutStore = useAuthStore((s) => s.logout);
   const { clearProjects } = useProjectStore();

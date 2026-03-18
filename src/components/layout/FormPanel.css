@@ -30,7 +30,7 @@
 }
 
 /* Vertical dividers inside header */
-.ds-form-panel-header :global(.ant-divider-vertical) {
+.ds-form-panel-header .ant-divider-vertical {
   height: 16px;
   border-color: var(--border-color);
   margin: 0 2px;
@@ -39,4 +39,9 @@
 /* ── Body ── */
 .ds-form-panel-body {
   padding: 12px 16px 10px;
+}
+
+/* Form label font size inside FormPanel */
+.ds-form-panel-body .ant-form-item-label > label {
+  font-size: 12px;
 }
