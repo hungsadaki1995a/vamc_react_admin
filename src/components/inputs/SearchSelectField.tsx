@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect, useMemo, useRef } from 'react';
-import { AutoComplete, Input, Button, Modal, Table, Tag, Space, Spin } from 'antd';
+import { AutoComplete, Input, Button, Modal, Table, Tag, Space, Spin, Tooltip } from 'antd';
 import { SearchOutlined, CloseCircleFilled } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
 import type { TableRowSelection } from 'antd/es/table/interface';
@@ -276,15 +276,15 @@ export default function SearchSelectField({
           style={{ flex: `0 0 ${nameWidth}px` }}
         >
           {selectedItems.map((item) => (
-            <Tag
-              key={item.value}
-              closable={!disabled}
-              onClose={() => removeItem(item.value)}
-              closeIcon={<CloseCircleFilled style={{ fontSize: 10 }} />}
-              className="ssf-tag-item"
-            >
-              {item.label}
-            </Tag>
+            <Tooltip key={item.value} title={item.label} placement="topLeft" mouseEnterDelay={0.4}>
+              <Tag
+                closeIcon={disabled ? null : <CloseCircleFilled style={{ fontSize: 10 }} />}
+                onClose={() => removeItem(item.value)}
+                className="ssf-tag-item"
+              >
+                {item.label}
+              </Tag>
+            </Tooltip>
           ))}
           {selectedItems.length === 0 && (
             <span className="ssf-placeholder">{placeholder}</span>
@@ -316,14 +316,16 @@ export default function SearchSelectField({
       />
 
       {/* Right: code (read-only) — fills remaining space, resizes with container */}
-      <Input
-        value={codeDisplay}
-        readOnly
-        className="ssf-code-input"
-        placeholder="코드"
-        tabIndex={-1}
-        style={{ minWidth: 50 }}
-      />
+      <Tooltip title={codeDisplay || undefined} placement="topLeft" mouseEnterDelay={0.4}>
+        <Input
+          value={codeDisplay}
+          readOnly
+          className="ssf-code-input"
+          placeholder="코드"
+          tabIndex={-1}
+          style={{ minWidth: 50 }}
+        />
+      </Tooltip>
 
       {/* ── Search Modal (portal → document.body) ─────────────────────── */}
       <Modal
@@ -337,41 +339,45 @@ export default function SearchSelectField({
         destroyOnHidden
         styles={{ body: { paddingTop: 12 } }}
       >
-        {/* Built-in search bar (Level 2: showModalSearch) */}
-        {showModalSearch && !renderModalContent && (
-          <Space style={{ marginBottom: 10, width: '100%' }}>
-            <Input
-              prefix={<SearchOutlined />}
-              value={modalSearch}
-              onChange={(e) => setModalSearch(e.target.value)}
-              placeholder="검색어 입력"
-              allowClear
-              style={{ width: 300 }}
-            />
-          </Space>
-        )}
+        {/* Wrap in Fragment so Modal receives a single ReactNode (not an array),
+            preventing React 19 key warnings when antd passes children through. */}
+        <>
+          {/* Built-in search bar (Level 2: showModalSearch) */}
+          {showModalSearch && !renderModalContent && (
+            <Space style={{ marginBottom: 10, width: '100%' }}>
+              <Input
+                prefix={<SearchOutlined />}
+                value={modalSearch}
+                onChange={(e) => setModalSearch(e.target.value)}
+                placeholder="검색어 입력"
+                allowClear
+                style={{ width: 300 }}
+              />
+            </Space>
+          )}
 
-        {/* Level 3: fully custom body */}
-        {renderModalContent ? (
-          renderModalContent(modalContentCtx)
-        ) : (
-          /* Level 1: default Table with configurable columns */
-          <Spin spinning={modalLoading}>
-            <Table<SearchSelectOption>
-              dataSource={modalFilteredOptions}
-              columns={resolvedColumns}
-              rowKey="value"
-              rowSelection={rowSelection}
-              size="small"
-              pagination={{ pageSize: 10, showSizeChanger: false, showTotal: (t) => `총 ${t}건` }}
-              onRow={(record) => ({
-                onClick: () => handleModalRowClick(record),
-                style: { cursor: 'pointer' },
-              })}
-              scroll={{ y: 280 }}
-            />
-          </Spin>
-        )}
+          {/* Level 3: fully custom body */}
+          {renderModalContent ? (
+            renderModalContent(modalContentCtx)
+          ) : (
+            /* Level 1: default Table with configurable columns */
+            <Spin spinning={modalLoading}>
+              <Table<SearchSelectOption>
+                dataSource={modalFilteredOptions}
+                columns={resolvedColumns}
+                rowKey="value"
+                rowSelection={rowSelection}
+                size="small"
+                pagination={{ pageSize: 10, showSizeChanger: false, showTotal: (t) => `총 ${t}건` }}
+                onRow={(record) => ({
+                  onClick: () => handleModalRowClick(record),
+                  style: { cursor: 'pointer' },
+                })}
+                scroll={{ y: 280 }}
+              />
+            </Spin>
+          )}
+        </>
       </Modal>
     </div>
   );

@@ -1,6 +1,7 @@
-﻿import { Tabs, Tag, Space, Card, Alert, Table, Typography } from 'antd';
+﻿import { Tabs, Tag, Space, Card, Alert, Table, Typography, Button, Divider } from 'antd';
 import type { TableColumnsType } from 'antd';
 import CodeSnippet from '@/components/common/CodeSnippet';
+import { useNotify } from '@/hooks/useNotify';
 import { useAuthStore } from '@/stores/authStore';
 import { useTabStore } from '@/stores/tabStore';
 import { useProjectStore } from '@/stores/projectStore';
@@ -29,44 +30,53 @@ const storeRows: StoreRow[] = [
 ];
 
 // ─── Hooks 목록 ──────────────────────────────────────────────────────────────
-type HookRow = { hook: string; desc: string; key: string };
+type HookRow = { hook: string; returns: string; desc: string; src: string; key: string };
 const hookCols: TableColumnsType<HookRow> = [
-  { title: '훅', dataIndex: 'hook', width: 200, render: (v) => <Text code>{v}</Text> },
-  { title: '설명', dataIndex: 'desc' },
+  { title: '훅',     dataIndex: 'hook',    width: 220, render: (v) => <Text code style={{ fontSize: 12 }}>{v}</Text> },
+  { title: '반환값', dataIndex: 'returns', width: 200, render: (v) => <Text code style={{ fontSize: 11 }}>{v}</Text> },
+  { title: '설명',   dataIndex: 'desc' },
+  { title: '위치',   dataIndex: 'src',     width: 190, render: (v) => <Text code style={{ fontSize: 11 }}>{v}</Text> },
 ];
 const hookRows: HookRow[] = [
-  { key: '1', hook: 'useApiQuery(key, fn, opts?)',        desc: 'ApiResponse<T> 자동 언래핑 useQuery 래퍼' },
-  { key: '2', hook: 'useApiMutation(fn, opts?)',           desc: 'ApiResponse<T> 언래핑 + 성공 토스트 useMutation 래퍼' },
-  { key: '3', hook: 'useMenuPermission()',                 desc: '현재 활성 탭의 permType → canRead/canWrite' },
-  { key: '4', hook: 'useScreenLabel(sceIdOverride?)',      desc: 'sceId 기반 라벨 단축 함수 (tvt/tvb/tsg/tsm ...)' },
-  { key: '5', hook: 'useLogout()',                         desc: '로그아웃 확인 모달 + 전체 상태 초기화' },
-  { key: '6', hook: 'useTabRouteSync()',                   desc: '탭 ↔ URL 양방향 동기화 (AppLayout 전용)' },
+  { key: '1', hook: 'useApiQuery(key, fn, opts?)',   returns: 'UseQueryResult<T>',                    desc: 'ApiResponse<T> 자동 언래핑 useQuery 래퍼. enabled/staleTime 등 옵션 전달 가능',                              src: 'hooks/useApiQuery.ts' },
+  { key: '2', hook: 'useApiMutation(fn, opts?)',      returns: 'UseMutationResult<T>',                 desc: 'ApiResponse<T> 언래핑 + 성공 토스트 useMutation 래퍼. successMessage / onSuccess / onError 옵션 지원',       src: 'hooks/useApiMutation.ts' },
+  { key: '3', hook: 'useMenuPermission()',             returns: '{ canRead, canWrite }',                desc: '현재 활성 탭의 permType → canRead(S|M) / canWrite(M만). 버튼 노출 제어에 사용',                              src: 'hooks/useMenuPermission.ts' },
+  { key: '4', hook: 'useScreenLabel(sceIdOverride?)', returns: '{ t, tvt, tvb, tvh, tsg, tsm, tsb, tmc, tmi, tme, labels, sceId }', desc: 'sceId 기반 라벨 단축 함수. TabContext에서 sceId 자동 추출. 명시적 override 가능', src: 'hooks/useScreenLabel.ts' },
+  { key: '5', hook: 'useLogout()',                     returns: '() => void',                           desc: '로그아웃 확인 모달 → 전체 스토어 초기화 → /login 리다이렉트',                                               src: 'hooks/useLogout.ts' },
+  { key: '6', hook: 'useNotify()',                     returns: '{ toast, notify, dialog }',            desc: 'antd message / notification / modal 통합 훅. dialog는 타입별 i18n 기본값 자동 적용',                         src: 'hooks/useNotify.ts' },
+  { key: '7', hook: 'useTabRouteSync()',               returns: 'void',                                 desc: '탭 ↔ URL 양방향 동기화. AppLayout 전용 — 페이지 컴포넌트에서 직접 호출 금지',                               src: 'hooks/useTabRouteSync.ts' },
 ];
 
 // ─── Utils 목록 ──────────────────────────────────────────────────────────────
-type UtilRow = { fn: string; sig: string; desc: string; src: string; key: string };
+type UtilCategory = '메뉴' | 'API' | '에러';
+const UTIL_CATEGORY_COLOR: Record<UtilCategory, string> = { '메뉴': 'blue', 'API': 'green', '에러': 'red' };
+
+type UtilRow = { fn: string; params: string; sig: string; desc: string; src: string; category: UtilCategory; key: string };
 const utilCols: TableColumnsType<UtilRow> = [
-  { title: '함수', dataIndex: 'fn', width: 220, render: (v) => <Text code>{v}</Text> },
-  { title: '반환', dataIndex: 'sig', width: 160, render: (v) => <Text code style={{ fontSize: 11 }}>{v}</Text> },
-  { title: '설명', dataIndex: 'desc' },
-  { title: '위치', dataIndex: 'src', width: 180, render: (v) => <Text code style={{ fontSize: 11 }}>{v}</Text> },
+  { title: '분류',   dataIndex: 'category', width: 60,  render: (v: UtilCategory) => <Tag color={UTIL_CATEGORY_COLOR[v]}>{v}</Tag> },
+  { title: '함수',   dataIndex: 'fn',       width: 210, render: (v) => <Text code style={{ fontSize: 12 }}>{v}</Text> },
+  { title: '파라미터', dataIndex: 'params', width: 200, render: (v) => <Text code style={{ fontSize: 11 }}>{v}</Text> },
+  { title: '반환',   dataIndex: 'sig',      width: 150, render: (v) => <Text code style={{ fontSize: 11 }}>{v}</Text> },
+  { title: '설명',   dataIndex: 'desc' },
+  { title: '위치',   dataIndex: 'src',      width: 175, render: (v) => <Text code style={{ fontSize: 11 }}>{v}</Text> },
 ];
 const utilRows: UtilRow[] = [
-  { key: '1',  fn: 'findMenuByKey(items, key)',             sig: 'MenuItem | null',         desc: '메뉴 트리 재귀 탐색. key 일치 시 해당 MenuItem 반환, 없으면 null',                               src: 'utils/menuUtils.ts' },
-  { key: '2',  fn: 'getMenuParentKeys(items, key)',         sig: 'string[] | null',         desc: '대상 key의 모든 상위 key 배열 반환. Flyout openKeys(펼침 유지)에 사용',                          src: 'utils/menuUtils.ts' },
-  { key: '3',  fn: 'getMenuBreadcrumb(menus, key)',         sig: '{ key, label }[]',        desc: '루트 → 대상까지 이어지는 브레드크럼 경로 배열. ContentHeader 브레드크럼에 사용',                 src: 'utils/menuUtils.ts' },
-  { key: '4',  fn: 'buildAntMenuItems(items)',              sig: 'AntMenuItem[]',           desc: 'MenuItem[] → Ant Design Menu items 변환. 아이콘 문자열을 React 컴포넌트로 교체, hidden 항목 제거', src: 'utils/menuUtils.ts' },
-  { key: '5',  fn: 'fromList(res, key)',                   sig: 'ApiResponse<T[]>',        desc: '배열이 객체 키로 감싸진 응답 언래핑. { data: { mtxTt: T[] } } → { data: T[] }',                 src: 'lib/api/client.ts' },
-  { key: '6',  fn: 'ApiError.from(err)',                   sig: 'ApiError',                desc: 'unknown 에러를 ApiError로 변환. ApiError 이미 면 그대로, AxiosError 이면 fromAxiosError 위임',   src: 'lib/api/error.ts' },
-  { key: '7',  fn: 'ApiError.fromAxiosError(err)',         sig: 'ApiError',                desc: 'AxiosError → ApiError 변환. response.data가 있으면 서버 메시지 추출, 없으면 상태코드 기반 기본 메시지 사용', src: 'lib/api/error.ts' },
-  { key: '8',  fn: 'err.userMessage',                      sig: 'string',                  desc: 'ApiError 인스턴스 게터. 서버 메시지 → 상태코드 기본 메시지 → 알 수 없는 오류 순으로 폴백',        src: 'lib/api/error.ts' },
-  { key: '9',  fn: 'err.isUnauthorized',                   sig: 'boolean',                 desc: 'statusCode === 401',                                                                                 src: 'lib/api/error.ts' },
-  { key: '10', fn: 'err.isForbidden',                      sig: 'boolean',                 desc: 'statusCode === 403',                                                                                 src: 'lib/api/error.ts' },
-  { key: '11', fn: 'err.isNotFound',                       sig: 'boolean',                 desc: 'statusCode === 404',                                                                                 src: 'lib/api/error.ts' },
-  { key: '12', fn: 'err.isServerError',                    sig: 'boolean',                 desc: 'statusCode >= 500',                                                                                  src: 'lib/api/error.ts' },
+  { key: '1',  category: '메뉴', fn: 'findMenuByKey',       params: '(items: MenuItem[], key: string)',          sig: 'MenuItem | null',   desc: '메뉴 트리 재귀 탐색. key 일치 시 해당 MenuItem 반환, 없으면 null',                                    src: 'utils/menuUtils.ts' },
+  { key: '2',  category: '메뉴', fn: 'getMenuParentKeys',   params: '(items: MenuItem[], key: string)',          sig: 'string[] | null',   desc: '대상 key의 모든 상위 key 배열 반환. Flyout openKeys(펼침 유지)에 사용',                               src: 'utils/menuUtils.ts' },
+  { key: '3',  category: '메뉴', fn: 'getMenuBreadcrumb',   params: '(menus: MenuItem[], key: string)',          sig: '{ key, label }[]',  desc: '루트 → 대상까지 이어지는 브레드크럼 경로 배열. ContentHeader 브레드크럼에 사용',                      src: 'utils/menuUtils.ts' },
+  { key: '4',  category: '메뉴', fn: 'buildAntMenuItems',   params: '(items: MenuItem[])',                       sig: 'AntMenuItem[]',     desc: 'MenuItem[] → Ant Design Menu items 변환. 아이콘 문자열을 React 컴포넌트로 교체, hidden 항목 제거',     src: 'utils/menuUtils.ts' },
+  { key: '5',  category: 'API',  fn: 'fromList',            params: '(res: ApiResponse<R>, key: keyof R)',       sig: 'ApiResponse<T[]>',  desc: '배열이 객체 키로 감싸진 응답 언래핑. { data: { mtxTt: T[] } } → { data: T[] }',                      src: 'lib/api/client.ts' },
+  { key: '6',  category: '에러', fn: 'ApiError.from',       params: '(err: unknown)',                            sig: 'ApiError',          desc: 'unknown 에러를 ApiError로 변환. ApiError면 그대로, AxiosError면 fromAxiosError 위임',                 src: 'lib/api/error.ts' },
+  { key: '7',  category: '에러', fn: 'ApiError.fromAxiosError', params: '(err: AxiosError)',                     sig: 'ApiError',          desc: 'AxiosError → ApiError 변환. response.data가 있으면 서버 메시지 추출, 없으면 상태코드 기반 기본 메시지', src: 'lib/api/error.ts' },
+  { key: '8',  category: '에러', fn: 'err.userMessage',     params: '(getter)',                                  sig: 'string',            desc: '서버 메시지 → 상태코드 기본 메시지 → 알 수 없는 오류 순으로 폴백',                                    src: 'lib/api/error.ts' },
+  { key: '9',  category: '에러', fn: 'err.isUnauthorized',  params: '(getter)',                                  sig: 'boolean',           desc: 'statusCode === 401',                                                                                  src: 'lib/api/error.ts' },
+  { key: '10', category: '에러', fn: 'err.isForbidden',     params: '(getter)',                                  sig: 'boolean',           desc: 'statusCode === 403',                                                                                  src: 'lib/api/error.ts' },
+  { key: '11', category: '에러', fn: 'err.isNotFound',      params: '(getter)',                                  sig: 'boolean',           desc: 'statusCode === 404',                                                                                  src: 'lib/api/error.ts' },
+  { key: '12', category: '에러', fn: 'err.isServerError',   params: '(getter)',                                  sig: 'boolean',           desc: 'statusCode >= 500',                                                                                   src: 'lib/api/error.ts' },
 ];
 
 export default function GuideInternalApi() {
+  const { toast, notify, dialog } = useNotify();
   const { user, isAuthenticated } = useAuthStore();
   const { tabs, activeTabKey } = useTabStore();
   const { activeProject } = useProjectStore();
@@ -141,11 +151,12 @@ function MyPage() {
   );
 }`} />
 
-                <CodeSnippet title="useScreenLabel — 화면별 i18n" code={`import { useScreenLabel } from '@/hooks/useScreenLabel';
+                <CodeSnippet title="useScreenLabel — 단일 훅으로 모든 라벨 접근" code={`import { useScreenLabel } from '@/hooks/useScreenLabel';
 
 function MyPage() {
+  // t, tmc/tmi/tme(전역 메시지), tvt/tvb/tsg/tsm 등 모두 여기서
+  const { t, tvt, tvb, tvh, tsg, tsm, tsb, tmc, tmi, tme, labels } = useScreenLabel();
   // sceId는 TabContext에서 자동 추출
-  const { tvt, tvb, tvh, tsg, tsm, tsb, labels } = useScreenLabel();
 
   const columnDefs = useMemo(() => [
     { field: 'usrId', headerName: tsg('usrId') },  // SCRIPT.GRID_usrId
@@ -165,6 +176,119 @@ function MyComponent() {
   // 클릭 시 확인 모달 → 전체 상태 초기화 → /login 이동
   return <Button onClick={confirmLogout}>로그아웃</Button>;
 }`} />
+
+                <Divider />
+
+                {/* ── useNotify 데모 ── */}
+                <div className="demo-desc">
+                  <h3>useNotify — 통합 알림 훅</h3>
+                  <p style={{ fontSize: 13, color: 'var(--text-secondary)' }}>
+                    antd <Text code>message</Text> / <Text code>notification</Text> / <Text code>modal</Text> 을 하나의 훅으로 제공합니다.
+                    dialog는 타입별 i18n 기본값(title / okText / cancelText / danger)이 자동 적용됩니다.
+                  </p>
+                </div>
+
+                <Card size="small" title="toast — 자동 사라지는 메시지" style={{ marginBottom: 12 }}>
+                  <Space wrap>
+                    <Button size="small" type="primary"  onClick={() => toast.success('저장됐습니다.')}>success</Button>
+                    <Button size="small" danger          onClick={() => toast.error('오류가 발생했습니다.')}>error</Button>
+                    <Button size="small"                 onClick={() => toast.warning('주의가 필요합니다.')}>warning</Button>
+                    <Button size="small"                 onClick={() => toast.info('참고 안내입니다.')}>info</Button>
+                    <Button size="small"                 onClick={() => toast.loading('처리 중...')}>loading</Button>
+                  </Space>
+                </Card>
+
+                <Card size="small" title="notify — 우측 알림 패널" style={{ marginBottom: 12 }}>
+                  <Space wrap>
+                    <Button size="small" type="primary"
+                      onClick={() => notify.success('변경 사항이 저장됐습니다.')}>
+                      string 단축형
+                    </Button>
+                    <Button size="small" danger
+                      onClick={() => notify.error({ title: '커스텀 제목', description: '서버 오류가 발생했습니다.', placement: 'topRight' })}>
+                      객체 형식
+                    </Button>
+                    <Button size="small" onClick={() => notify.warning('권한이 곧 만료됩니다.')}>warning</Button>
+                    <Button size="small" onClick={() => notify.info('새 공지사항이 등록됐습니다.')}>info</Button>
+                  </Space>
+                </Card>
+
+                <Card size="small" title="dialog — 모달 (i18n 기본값 자동 적용)" style={{ marginBottom: 16 }}>
+                  <Space wrap>
+                    <Button size="small"
+                      onClick={() => dialog.confirm({ content: '저장하시겠습니까?', onOk: () => toast.success('저장됐습니다.') })}>
+                      confirm
+                    </Button>
+                    <Button size="small"
+                      onClick={() => dialog.info({ content: '이것은 정보 다이얼로그입니다.' })}>
+                      info
+                    </Button>
+                    <Button size="small"
+                      onClick={() => dialog.warning({ content: '이 작업은 되돌릴 수 없습니다.', onOk: () => toast.warning('계속 진행합니다.') })}>
+                      warning
+                    </Button>
+                    <Button size="small" danger
+                      onClick={() => dialog.error({ content: '서버 오류가 발생했습니다.' })}>
+                      error
+                    </Button>
+                    <Button size="small"
+                      onClick={() => dialog.warning({ title: '데이터 삭제', content: '삭제 후 복구할 수 없습니다.', okText: '삭제', onOk: () => toast.success('삭제됐습니다.') })}>
+                      title/okText 오버라이드
+                    </Button>
+                  </Space>
+                </Card>
+
+                <CodeSnippet title="useNotify — 기본 사용법" code={`import { useNotify } from '@/hooks/useNotify';
+
+function MyPage() {
+  const { toast, notify, dialog } = useNotify();
+
+  const handleSave = () => {
+    saveMutation.mutate(payload, {
+      onSuccess: () => toast.success('저장됐습니다.'),
+      onError:   () => toast.error('저장에 실패했습니다.'),
+    });
+  };
+
+  const handleDelete = () => {
+    dialog.warning({
+      title:   '데이터 삭제',           // 기본값: i18n DIALOG.WARNING.TITLE
+      content: '삭제 후 복구 불가',
+      okText:  '삭제',                  // 기본값: i18n DIALOG.OK_TEXT
+      onOk: () => {
+        deleteMutation.mutate(id, {
+          onSuccess: () => notify.success('삭제됐습니다.'), // title 자동(i18n)
+        });
+      },
+    });
+  };
+
+  const handleNotify = () => {
+    // 문자열 → description 자동 매핑 (title은 i18n 기본값)
+    notify.success('변경 사항이 저장됐습니다.');
+
+    // 객체 형식 → 그대로 전달
+    notify.error({ title: '커스텀 제목', description: '상세 내용', placement: 'topRight' });
+  };
+}`} />
+
+                <CodeSnippet title="useNotify — dialog 타입별 기본값" code={`// dialog 타입별 i18n 기본값 (DB에 라벨 키 등록 시 자동 다국어)
+// confirm  → title: MESSAGE.SCRIPT.TEXT_confirm  | danger: false
+// info     → title: MESSAGE.SCRIPT.TEXT_info     | danger: false
+// warning  → title: MESSAGE.SCRIPT.TEXT_warning  | danger: true
+// error    → title: MESSAGE.SCRIPT.TEXT_error    | danger: true
+// okText   → MESSAGE.SCRIPT.BTN_confirm
+// cancelText → MESSAGE.SCRIPT.BTN_cancel
+
+// 모든 기본값은 per-call 오버라이드 가능
+dialog.confirm({
+  title:         '커스텀 제목',          // DIALOG 기본값 override
+  content:       '진행하시겠습니까?',
+  okText:        '진행',                 // DIALOG.OK_TEXT override
+  cancelText:    '돌아가기',             // DIALOG.CANCEL_TEXT override
+  okButtonProps: { danger: true },       // confirm 기본 danger:false → override
+  onOk: handleAction,
+});`} />
               </div>
             ),
           },

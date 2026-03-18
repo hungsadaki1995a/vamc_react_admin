@@ -24,6 +24,10 @@ export interface PaginatedResponse<T> extends ApiResponse<T[]> {
 // Internal error response shape (used by ApiError class)
 export interface ApiErrorResponse {
   code: string;
+  /** Business error code matching DB label key (e.g. "E100040") */
+  errorCode?: string;
+  /** i18n label substitution values for $1, $2, ... */
+  errorArgs?: string[];
   data: null;
   message: string;
   statusCode: number;
@@ -63,6 +67,7 @@ export interface LoginResponse {
   accessToken: string;
   tokenType: string;
   expiresIn: number;
+  mustChangePassword?: boolean;
 }
 
 // POST /api/auth/refresh response — httpOnly cookie rotation handled by backend

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Tooltip, Space } from 'antd';
 import { StarOutlined, StarFilled } from '@ant-design/icons';
 import { useTabContext } from '@/contexts/TabContext';
-import { useLabelStore } from '@/stores/labelStore';
+import { useScreenLabel } from '@/hooks/useScreenLabel';
 import './PageHeader.css';
 
 interface PageHeaderProps {
@@ -17,7 +17,7 @@ interface PageHeaderProps {
 export default function PageHeader({ code, title, children }: PageHeaderProps) {
   const [favorite, setFavorite] = useState(false);
   const ctx = useTabContext();
-  const t = useLabelStore((s) => s.t);
+  const { t } = useScreenLabel();
 
   // code: explicit prop > tab.sceId > tab.componentKey
   const resolvedCode = code ?? ctx?.tab.sceId ?? ctx?.tab.componentKey;
