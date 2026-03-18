@@ -30,7 +30,11 @@ const autoRegistry: Record<string, ComponentType> = Object.fromEntries(
 //
 // Example — remap server scrId to local file:
 //   'PMS301001SC': lazy(() => import('@/features/task/pages/KanbanBoard/index')),
-const overrides: Record<string, ComponentType> = {};
+const overrides: Record<string, ComponentType> = {
+  // Server menuUrlAddr → local component mapping
+  // (when server's menuUrlAddr path ≠ folder name under src/features/)
+  '/admin/system/admin/menu': lazy(() => import('@/features/admin/AdminMenuManagement/index')),
+};
 
 export const componentRegistry: Record<string, ComponentType> = {
   ...autoRegistry,

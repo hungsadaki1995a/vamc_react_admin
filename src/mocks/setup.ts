@@ -14,6 +14,7 @@ import {
   MOCK_CODES,
   MOCK_PUBLIC_KEY,
 } from './data';
+import { getMockMenus } from './handlers/menu';
 
 export function setupMocks(): void {
   // passThrough: false → unmatched routes return 404 (no real network calls)
@@ -81,6 +82,14 @@ export function setupMocks(): void {
 
   // ── Menu ──────────────────────────────────────────────────────────────────
 
+  // GET /api/common/menus/all (AdminMenuManagement)
+  mock.onGet('/api/common/menus/all').reply(200, {
+    status: 200,
+    success: true,
+    message: 'success',
+    data: getMockMenus(),
+  });
+
   // GET /api/mnu/auth-list
   mock.onGet('/api/mnu/auth-list').reply(200, {
     status: 200,
@@ -108,7 +117,7 @@ export function setupMocks(): void {
   });
 
   // GET /api/comcd/codes
-  mock.onGet('/api/comcd/codes').reply((config) => {
+  mock.onGet('/api/comcd/codes').reply((config: { params?: Record<string, string> }) => {
     const cdDmnId = config.params?.cdDmnId as string | undefined;
     const filtered = cdDmnId ? MOCK_CODES.filter((c) => c.cdDmnId === cdDmnId) : MOCK_CODES;
     return [200, { status: 200, success: true, message: 'success', data: filtered }];

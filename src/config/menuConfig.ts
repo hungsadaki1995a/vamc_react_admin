@@ -11,6 +11,24 @@ export const menuConfig: MenuItem[] = [
     componentPath: 'Dashboard',
   },
   {
+    key: 'admin',
+    label: '어드민',
+    icon: 'SettingOutlined',
+    children: [
+      {
+        key: 'admin.system',
+        label: '시스템',
+        children: [
+          {
+            key: 'admin.system.menu',
+            label: '메뉴 관리',
+            componentPath: 'AdminMenuManagement',
+          },
+        ],
+      },
+    ],
+  },
+  {
     key: 'dev',
     label: '개발 도구',
     icon: 'ToolOutlined',

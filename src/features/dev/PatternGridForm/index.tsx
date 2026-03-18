@@ -294,7 +294,7 @@ export default function PatternGridForm() {
           onRowClick={handleRowClick}
           pagination={false}
           height="100%"
-          defaultColDef={{ suppressHeaderMenuButton: true, suppressHeaderFilterButton: true }}
+          defaultColDef={{ suppressHeaderMenuButton: false, suppressHeaderFilterButton: false }}
         />
       </div>
 
