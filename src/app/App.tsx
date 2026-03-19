@@ -17,6 +17,7 @@ import { apiNotify } from '@/lib/api/apiNotify';
 import AuthGuard from '@/components/auth/AuthGuard';
 import LoginPage from '@/features/auth/LoginPage';
 import AppLayout from './AppLayout';
+import GlobalLoadingBar from '@/components/common/GlobalLoadingBar';
 
 // Registers axios interceptor error messages into the antd message context.
 // Must be rendered inside <AntApp> to access App.useApp().
@@ -39,8 +40,8 @@ export default function App() {
   // Restore session on app load: refresh_token cookie → new accessToken
   useEffect(() => {
     async function restoreSession() {
-      // Skip session restore on login page — no need to call refresh
-      if (window.location.pathname === '/login') {
+      // Skip session restore if no stored user (logged out) or on login page
+      if (window.location.pathname === '/login' || !useAuthStore.getState().user) {
         setLoading(false);
         return;
       }
@@ -108,6 +109,7 @@ export default function App() {
       }}
     >
       <AntApp>
+        <GlobalLoadingBar />
         <ApiNotifyBridge />
         <BrowserRouter>
           <Routes>

@@ -55,13 +55,13 @@ export interface UserInfo {
   phnNo?: string;
 }
 
-// POST /api/auth/login request body — vamc-npl-backend uses { username, password }
+// POST /api/auth/login request body — ds_pms_server uses { username, password }
 export interface LoginRequest {
   username: string;
   password: string;
 }
 
-// POST /api/auth/login response — vamc-npl-backend returns raw LoginResponse (no ApiResponse wrapper)
+// POST /api/auth/login response — ds_pms_server returns raw LoginResponse (no ApiResponse wrapper)
 export interface LoginResponse {
   accessToken: string;
   refreshToken: string;

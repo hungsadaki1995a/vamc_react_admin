@@ -15,7 +15,7 @@ const statusConfig: Record<ProjectStatus, { label: string; color: string }> = {
 function StatusRenderer(params: ICellRendererParams<Project, ProjectStatus>) {
   if (!params.value) return null;
   const cfg = statusConfig[params.value];
-  return <Badge status={cfg.color as any} text={cfg.label} />;
+  return <Badge status={cfg.color as import('antd').BadgeProps['status']} text={cfg.label} />;
 }
 
 function ProgressRenderer(params: ICellRendererParams<Project, number>) {

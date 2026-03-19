@@ -1,3 +1,5 @@
+/* eslint-disable react-refresh/only-export-components */
+// searchSelectValueFormatter and SearchSelectCellRenderer are co-located with editor intentionally
 import { useState, useEffect, useRef } from 'react';
 import { AutoComplete } from 'antd';
 import type { ICellRendererParams, ValueFormatterParams } from 'ag-grid-community';

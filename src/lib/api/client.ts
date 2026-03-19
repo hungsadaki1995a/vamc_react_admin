@@ -6,6 +6,8 @@ import type { ApiResponse, LoginResponse } from './types';
 import { useAuthStore } from '@/stores/authStore';
 import { useProjectStore } from '@/stores/projectStore';
 import { useLocaleStore } from '@/stores/localeStore';
+import { useLoadingStore } from '@/stores/loadingStore';
+import { IS_MOCK_MODE } from '@/mocks';
 
 // Extend config type to support retry flag
 interface RetryableConfig extends InternalAxiosRequestConfig {
@@ -39,7 +41,7 @@ export const apiClient = axios.create({
   },
 });
 
-// ─── Request interceptor: inject Access Token ─────────────────────────────────
+// ─── Request interceptor: inject Access Token + loading ───────────────────────
 apiClient.interceptors.request.use((config) => {
   const accessToken = useAuthStore.getState().accessToken;
   const activeProject = useProjectStore.getState().activeProject;
@@ -59,14 +61,20 @@ apiClient.interceptors.request.use((config) => {
     delete config.headers['Content-Type'];
   }
 
+  useLoadingStore.getState().increment();
+
   return config;
 });
 
 // ─── Response interceptor ─────────────────────────────────────────────────────
 apiClient.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    useLoadingStore.getState().decrement();
+    return response;
+  },
 
   async (error: AxiosError) => {
+    useLoadingStore.getState().decrement();
     const config = error.config as RetryableConfig | undefined;
 
     if (!error.response) {
@@ -78,6 +86,10 @@ apiClient.interceptors.response.use(
     const { status } = error.response;
 
     // ── 401: Silent Refresh ────────────────────────────────────────────────
+    if (status === 401 && IS_MOCK_MODE) {
+      return Promise.reject(ApiError.fromAxiosError(error));
+    }
+
     if (status === 401) {
       // Login failure — pass original error through without attempting refresh
       if (config?.url?.includes('/api/auth/login')) {
@@ -119,7 +131,7 @@ apiClient.interceptors.response.use(
         const storedRefreshToken = useAuthStore.getState().refreshToken;
         if (!storedRefreshToken) throw new Error('No refresh token stored');
 
-        // vamc-npl-backend: POST /api/auth/refresh with Refresh-Token header, returns raw LoginResponse
+        // ds_pms_server: POST /api/auth/refresh with Refresh-Token header, returns raw LoginResponse
         const { data } = await apiClient.post<LoginResponse>(
           '/api/auth/refresh',
           {},

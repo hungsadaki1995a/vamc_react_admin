@@ -23,7 +23,7 @@ export function useApiQuery<T>(
     queryKey,
     queryFn: async () => {
       const response = await queryFn();
-      if (!response.success || response.data === null) {
+      if (!response.success || response.data == null) {
         throw new ApiError({
           code: 'E_API',
           data: null,

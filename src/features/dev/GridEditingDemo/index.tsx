@@ -1,11 +1,13 @@
-﻿import { useState, useMemo, useCallback, useEffect } from 'react';
+﻿/* eslint-disable @typescript-eslint/no-explicit-any */
+import { useState, useMemo, useCallback, useEffect } from 'react';
 import { Tabs, Tag, Card, Alert, Divider, Button, App } from 'antd';
 import { PlusOutlined, DeleteOutlined } from '@ant-design/icons';
 import { AgGridReact } from 'ag-grid-react';
 import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
-import type { ColDef, ColGroupDef, CellValueChangedEvent } from 'ag-grid-community';
+import type { ColDef, ColGroupDef, CellValueChangedEvent, CellClassParams, CellStyle } from 'ag-grid-community';
 import GridTable, { lightTheme, darkTheme } from '@/components/grid/GridTable';
 import GridPanel from '@/components/grid/GridPanel';
+import GridToolbar from '@/components/layout/GridToolbar';
 import DateCellEditor, { DateCellRenderer } from '@/components/grid/cellEditors/DateCellEditor';
 import SelectCellEditor from '@/components/grid/cellEditors/SelectCellEditor';
 import { useTreeGrid } from '@/components/grid/useTreeGrid';
@@ -18,6 +20,8 @@ import type { SearchSelectOption } from '@/components/inputs/SearchSelectField';
 import CodeSnippet from '@/components/common/CodeSnippet';
 import { useThemeStore } from '@/stores/themeStore';
 import { useComcdStore } from '@/stores/comcdStore';
+
+const EMPTY_CODES: import('@/api/common').CodeDetail[] = [];
 import styles from './index.module.css';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
@@ -648,6 +652,48 @@ useEffect(() => {
   return () => document.removeEventListener('keydown', handleKeyDown, true);
 }, [enableClipboard, columnDefs, editable]);`;
 
+const contextMenuBasicCode = `// getContextMenuItems prop으로 우클릭 메뉴를 커스터마이징합니다.
+import GridTable from '@/components/grid/GridTable';
+import type { GetContextMenuItemsParams } from 'ag-grid-community';
+
+<GridTable
+  columnDefs={columnDefs}
+  rowData={rowData}
+  rowKey="id"
+  getContextMenuItems={(params: GetContextMenuItemsParams) => [
+    {
+      name: \`"\${params.node?.data?.name}" 상세보기\`,
+      action: () => openDetail(params.node?.data),
+      icon: '<span>🔍</span>',
+    },
+    {
+      name: '수정',
+      disabled: !canWrite,
+      action: () => openEdit(params.node?.data),
+      icon: '<span>✏️</span>',
+    },
+    'separator',
+    {
+      name: '삭제',
+      disabled: !canWrite,
+      action: () => handleDelete(params.node?.data?.id),
+      icon: '<span>🗑️</span>',
+    },
+    'separator',
+    'copy',           // AG Grid 기본 제공 항목
+    'copyWithHeaders',
+  ]}
+/>`;
+
+const contextMenuBuiltinCode = `// AG Grid 기본 제공 항목 (문자열로 지정)
+// 'copy' | 'copyWithHeaders' | 'cut' | 'paste' | 'export' | 'separator'
+
+// 기본 항목만 유지하는 예시
+getContextMenuItems={() => ['copy', 'copyWithHeaders', 'separator', 'export']}
+
+// 완전히 비활성화
+<GridTable suppressContextMenu={true} ... />`;
+
 /* ─── Mock data (existing) ─── */
 interface Employee {
   id: string;
@@ -1073,8 +1119,8 @@ function ComcdChainGridDemo() {
 }
 
 function ComcdSearchCellDemo() {
-  const jbcCodes = useComcdStore((s) => s.codes['JBC_CD'] ?? []);
-  const gdCodes  = useComcdStore((s) => s.codes['GD_CD']  ?? []);
+  const jbcCodes = useComcdStore((s) => s.codes['JBC_CD'] ?? EMPTY_CODES);
+  const gdCodes  = useComcdStore((s) => s.codes['GD_CD']  ?? EMPTY_CODES);
 
   const makeInitialRows = useCallback(
     (jbc: typeof jbcCodes, gd: typeof gdCodes): ComcdDemoRow[] => [
@@ -1151,6 +1197,21 @@ function ComcdSearchCellDemo() {
 
   return (
     <div className={styles.demoSection}>
+      <table className={styles.demoPropsTable} style={{ marginBottom: 24 }}>
+        <thead><tr><th style={{ width: 240 }}>컴포넌트 / Prop</th><th>타입</th><th>설명</th></tr></thead>
+        <tbody>
+          <tr><td><code>ComcdSelectCellRenderer</code></td><td>cellRenderer</td><td>comcdStore에서 코드명 조회 후 표시 (cdDmnId 필수)</td></tr>
+          <tr><td><code>ComcdSelectCellEditor</code></td><td>cellEditor</td><td>공통코드 드롭다운 팝업 에디터 (cdDmnId 필수)</td></tr>
+          <tr><td><code>cellRendererParams.cdDmnId</code></td><td><code>string</code></td><td>조회할 공통코드 도메인 ID (예: 'JBC_CD')</td></tr>
+          <tr><td><code>cellEditorParams.cdDmnId</code></td><td><code>string</code></td><td>에디터에서 조회할 공통코드 도메인 ID</td></tr>
+          <tr><td><code>cellEditorParams.filterFn</code></td><td><code>(codes, row) =&gt; codes</code></td><td>다른 컬럼값 기반 코드 필터링 (체이닝)</td></tr>
+          <tr><td><code>SearchSelectCellRenderer</code></td><td>cellRenderer</td><td>{'{label, value}'} 또는 string에서 label 표시</td></tr>
+          <tr><td><code>SearchSelectCellEditor</code></td><td>cellEditor</td><td>AutoComplete 방식 검색 에디터</td></tr>
+          <tr><td><code>cellEditorParams.staticOptions</code></td><td><code>Option[]</code></td><td>정적 옵션 배열</td></tr>
+          <tr><td><code>cellEditorParams.fetchOptions</code></td><td><code>(kw) =&gt; Promise&lt;Option[]&gt;</code></td><td>키워드 기반 서버 조회 함수</td></tr>
+        </tbody>
+      </table>
+
       <h3>ComcdSelectCell — 공통코드 셀 렌더러/에디터</h3>
       <p className={styles.demoDesc}>
         <code>ComcdSelectCellRenderer</code>는 comcdStore에서 코드명을 조회해 표시합니다.
@@ -1260,6 +1321,16 @@ function DateCellDemo() {
 
   return (
     <div className={styles.demoSection}>
+      <table className={styles.demoPropsTable} style={{ marginBottom: 24 }}>
+        <thead><tr><th style={{ width: 260 }}>컴포넌트 / Prop</th><th>타입</th><th>설명</th></tr></thead>
+        <tbody>
+          <tr><td><code>DateCellRenderer</code></td><td>cellRenderer</td><td>날짜 값을 지정 포맷으로 표시하는 렌더러</td></tr>
+          <tr><td><code>cellRendererParams.format</code></td><td><code>string</code></td><td>표시 포맷 (기본: <code>'YYYY-MM-DD'</code>)</td></tr>
+          <tr><td><code>DateCellEditor</code></td><td>cellEditor</td><td>Ant Design DatePicker 팝업 에디터. 날짜 선택 즉시 편집 종료</td></tr>
+          <tr><td><code>cellEditorParams.format</code></td><td><code>string</code></td><td>에디터 내 DatePicker 포맷 (기본: <code>'YYYY-MM-DD'</code>)</td></tr>
+        </tbody>
+      </table>
+
       <h3>DateCellEditor + DateCellRenderer</h3>
       <p className={styles.demoDesc}>
         셀을 클릭하면 Ant Design <code>DatePicker</code>가 팝업으로 열립니다.
@@ -1342,6 +1413,23 @@ function TreeDemo() {
 
   return (
     <div className={styles.demoSection}>
+      <table className={styles.demoPropsTable} style={{ marginBottom: 24 }}>
+        <thead><tr><th style={{ width: 260 }}>훅 / 컴포넌트 / Prop</th><th>타입</th><th>설명</th></tr></thead>
+        <tbody>
+          <tr><td><code>useTreeGrid(options)</code></td><td>Hook</td><td>flat 데이터를 DFS 순 트리 행으로 변환. Enterprise 불필요</td></tr>
+          <tr><td><code>options.data</code></td><td><code>T[]</code></td><td>원본 flat 데이터 배열</td></tr>
+          <tr><td><code>options.idField</code></td><td><code>string</code></td><td>고유 ID 필드명 (기본: <code>'id'</code>)</td></tr>
+          <tr><td><code>options.parentField</code></td><td><code>string</code></td><td>부모 ID 필드명 (기본: <code>'parentId'</code>)</td></tr>
+          <tr><td><code>options.defaultExpanded</code></td><td><code>boolean</code></td><td>초기 전체 펼침 여부 (기본: <code>true</code>)</td></tr>
+          <tr><td><code>returns.treeData</code></td><td><code>TreeRow&lt;T&gt;[]</code></td><td>GridTable rowData에 전달할 처리된 트리 행 배열</td></tr>
+          <tr><td><code>returns.toggleExpand(id)</code></td><td><code>fn</code></td><td>노드 접기/펼치기 토글</td></tr>
+          <tr><td><code>returns.expandAll / collapseAll</code></td><td><code>fn</code></td><td>전체 펼치기 / 전체 접기</td></tr>
+          <tr><td><code>TreeCellRenderer</code></td><td>cellRenderer</td><td>들여쓰기 + 토글 아이콘이 있는 계층 셀 렌더러</td></tr>
+          <tr><td><code>cellRendererParams.onToggle</code></td><td><code>(id) =&gt; void</code></td><td>toggleExpand 함수 전달 (필수)</td></tr>
+          <tr><td><code>cellRendererParams.indentSize</code></td><td><code>number</code></td><td>레벨당 들여쓰기 px (기본: 18)</td></tr>
+        </tbody>
+      </table>
+
       <h3>Tree 구조 — useTreeGrid + TreeCellRenderer</h3>
       <p className={styles.demoDesc}>
         AG Grid Community Edition 제약을 우회하여, flat 데이터를 DFS 순서로 재배치하고
@@ -1452,6 +1540,44 @@ function ToolbarActionDemo() {
       onSelectionChanged={setSelected}
       pagination={false}
       height={220}
+    />
+  );
+}
+
+// ── ClipboardDemo ──────────────────────────────────────────────────────────────
+
+interface ClipboardRow { id: number; name: string; dept: string; score: number; }
+
+const clipboardDemoData: ClipboardRow[] = [
+  { id: 1, name: '김영수', dept: '개발팀', score: 92 },
+  { id: 2, name: '이미영', dept: '기획팀', score: 85 },
+  { id: 3, name: '박정호', dept: '개발팀', score: 78 },
+  { id: 4, name: '최수진', dept: 'QA팀',   score: 95 },
+];
+
+const clipboardColDefs: ColDef<ClipboardRow>[] = [
+  { field: 'name',  headerName: '이름', width: 100, editable: false },
+  { field: 'dept',  headerName: '부서', width: 100, editable: false },
+  { field: 'score', headerName: '점수 (편집 가능)', width: 160, editable: true },
+];
+
+function ClipboardDemo() {
+  const [rows, setRows] = useState<ClipboardRow[]>(clipboardDemoData);
+  return (
+    <GridPanel
+      totalCount={rows.length}
+      columnDefs={clipboardColDefs}
+      rowData={rows}
+      rowKey="id"
+      rowSelection="multiRow"
+      checkboxSelection
+      rowMultiSelectWithClick
+      enableClipboard
+      pagination={false}
+      height={210}
+      onCellValueChanged={(e) =>
+        setRows((prev) => prev.map((r) => r.id === (e.data as ClipboardRow).id ? { ...r, ...(e.data as ClipboardRow) } : r))
+      }
     />
   );
 }
@@ -1640,13 +1766,13 @@ export default function GridEditingDemo() {
     return params.value ?? '';
   }, [groupedRowData]);
 
-  const groupCellStyle = useCallback((params: { data?: SpanDemoRow; node?: { rowPinned?: string | null; rowIndex: number | null } }) => {
-    const base: Record<string, string> = {};
+  const groupCellStyle = useCallback((params: CellClassParams<SpanDemoRow>) => {
+    const base: CellStyle = {};
     if (params.data?.category?.includes('소계') || params.node?.rowPinned) {
       base.fontWeight = 'bold';
       base.backgroundColor = 'var(--content-header-bg, #f0f0f0)';
     }
-    if (isGroupFirstRow(params as any) && !params.data?.category?.includes('소계')) {
+    if (isGroupFirstRow(params) && !params.data?.category?.includes('소계')) {
       base.borderTop = '2px solid var(--border-color, #d9d9d9)';
     }
     return Object.keys(base).length > 0 ? base : undefined;
@@ -1657,7 +1783,7 @@ export default function GridEditingDemo() {
       field: 'category', headerName: '구분', width: 120,
       colSpan: (params) => params.data?.category?.includes('소계') || params.data?.category === '총 합계' ? 2 : 1,
       valueFormatter: categoryValueFormatter as any,
-      cellStyle: groupCellStyle as any,
+      cellStyle: groupCellStyle,
     },
     {
       field: 'item', headerName: '항목', width: 120,
@@ -1702,39 +1828,119 @@ export default function GridEditingDemo() {
             label: 'GridToolbar',
             children: (
               <div className={styles.demoSection}>
-                <div className={styles.demoDesc}>
-                  <h3>GridToolbar</h3>
-                  <p>데이터 건수 표시 + 액션 버튼을 제공하는 도구 모음입니다. FilterPanel 아래, GridTable 위에 배치합니다.</p>
-                  <table className={styles.demoPropsTable}>
-                    <thead><tr><th>Prop</th><th>타입</th><th>설명</th></tr></thead>
-                    <tbody>
-                      <tr><td><code>totalCount</code></td><td>number</td><td>건수 표시</td></tr>
-                      <tr><td><code>countLabel</code></td><td>string</td><td>건수 라벨 (기본: "전체")</td></tr>
-                      <tr><td><code>left</code></td><td>ReactNode</td><td>좌측 추가 요소</td></tr>
-                      <tr><td><code>actions</code></td><td>ReactNode</td><td>우측 액션 버튼들</td></tr>
-                    </tbody>
-                  </table>
-                  <h3 style={{ marginTop: 24 }}>GridPanel</h3>
-                  <p>GridToolbar + GridTable을 하나로 묶은 편의 컴포넌트입니다. GridTable의 모든 props를 그대로 지원합니다.</p>
-                  <table className={styles.demoPropsTable}>
-                    <thead><tr><th>Prop</th><th>타입</th><th>설명</th></tr></thead>
-                    <tbody>
-                      <tr><td><code>totalCount</code></td><td>number</td><td>툴바 건수 표시</td></tr>
-                      <tr><td><code>countLabel</code></td><td>string</td><td>툴바 건수 라벨</td></tr>
-                      <tr><td><code>toolbarLeft</code></td><td>ReactNode</td><td>툴바 좌측 추가 요소</td></tr>
-                      <tr><td><code>actions</code></td><td>ReactNode</td><td>툴바 우측 액션 버튼들</td></tr>
-                      <tr><td colSpan={3} style={{ color: 'var(--text-secondary)', fontSize: 12 }}>+ GridTable의 모든 props (columnDefs, rowData, ...)</td></tr>
-                    </tbody>
-                  </table>
-                </div>
-                <div className={styles.demoPreview}>
+                <h3>GridToolbar</h3>
+                <p className={styles.demoDesc}>
+                  데이터 건수 표시 + 액션 버튼을 제공하는 도구 모음입니다. FilterPanel 아래, GridTable 위에 단독으로 사용하거나
+                  GridPanel을 통해 GridTable과 함께 사용합니다.
+                </p>
+                <table className={styles.demoPropsTable} style={{ marginBottom: 24 }}>
+                  <thead><tr><th style={{ width: 140 }}>Prop</th><th>타입</th><th>설명</th></tr></thead>
+                  <tbody>
+                    <tr><td><code>totalCount</code></td><td><code>number</code></td><td>건수 표시 (예: "전체 102건")</td></tr>
+                    <tr><td><code>countLabel</code></td><td><code>string</code></td><td>건수 앞 라벨 (기본: "전체")</td></tr>
+                    <tr><td><code>left</code></td><td><code>ReactNode</code></td><td>좌측 추가 요소 (검색어, 필터 태그 등)</td></tr>
+                    <tr><td><code>actions</code></td><td><code>ReactNode</code></td><td>우측 액션 버튼들 (등록/삭제/엑셀 등)</td></tr>
+                  </tbody>
+                </table>
+
+                <Card title="라이브 데모" style={{ marginBottom: 24 }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                    <div>
+                      <p style={{ fontSize: 12, color: 'var(--text-secondary)', margin: '0 0 6px' }}>기본 (건수 + 버튼)</p>
+                      <GridToolbar
+                        totalCount={102}
+                        actions={
+                          <>
+                            <Button icon={<PlusOutlined />} type="primary">등록</Button>
+                            <Button icon={<DeleteOutlined />} danger disabled>삭제</Button>
+                          </>
+                        }
+                      />
+                    </div>
+                    <Divider style={{ margin: '0' }} />
+                    <div>
+                      <p style={{ fontSize: 12, color: 'var(--text-secondary)', margin: '0 0 6px' }}>countLabel 변경 + left 슬롯</p>
+                      <GridToolbar
+                        totalCount={25}
+                        countLabel="조회 결과"
+                        left={<span style={{ fontSize: 13, color: 'var(--text-secondary)' }}>검색어: <strong>김영수</strong></span>}
+                        actions={<Button>엑셀 다운로드</Button>}
+                      />
+                    </div>
+                    <Divider style={{ margin: '0' }} />
+                    <div>
+                      <p style={{ fontSize: 12, color: 'var(--text-secondary)', margin: '0 0 6px' }}>건수 없이 버튼만</p>
+                      <GridToolbar
+                        actions={
+                          <>
+                            <Button icon={<PlusOutlined />} type="primary">행 추가</Button>
+                            <Button>저장</Button>
+                          </>
+                        }
+                      />
+                    </div>
+                  </div>
+                </Card>
+
+                <CodeSnippet code={`import GridToolbar from '@/components/layout/GridToolbar';
+import { Button } from 'antd';
+import { PlusOutlined, DeleteOutlined } from '@ant-design/icons';
+
+// 기본 사용
+<GridToolbar
+  totalCount={data.length}
+  actions={
+    <>
+      <Button type="primary" icon={<PlusOutlined />}>등록</Button>
+      <Button danger icon={<DeleteOutlined />} disabled={selected.length === 0}>
+        삭제 {selected.length > 0 && \`(\${selected.length})\`}
+      </Button>
+    </>
+  }
+/>
+
+// left 슬롯 활용
+<GridToolbar
+  totalCount={25}
+  countLabel="조회 결과"
+  left={<span>검색어: <strong>{keyword}</strong></span>}
+  actions={<Button>엑셀 다운로드</Button>}
+/>`} title="GridToolbar 기본 사용" />
+              </div>
+            ),
+          },
+
+          /* ── GridPanel ── */
+          {
+            key: 'grid-panel',
+            label: 'GridPanel',
+            children: (
+              <div className={styles.demoSection}>
+                <h3>GridPanel</h3>
+                <p className={styles.demoDesc}>
+                  <code>GridToolbar + GridTable</code>을 하나로 묶은 편의 컴포넌트입니다.
+                  GridTable의 모든 props를 그대로 지원하며, 추가로 툴바 관련 props를 제공합니다.
+                </p>
+                <table className={styles.demoPropsTable} style={{ marginBottom: 24 }}>
+                  <thead><tr><th style={{ width: 160 }}>Prop</th><th>타입</th><th>설명</th></tr></thead>
+                  <tbody>
+                    <tr><td><code>totalCount</code></td><td><code>number</code></td><td>툴바 건수 표시 (예: "전체 102건")</td></tr>
+                    <tr><td><code>countLabel</code></td><td><code>string</code></td><td>건수 앞 라벨 (기본: "전체")</td></tr>
+                    <tr><td><code>toolbarLeft</code></td><td><code>ReactNode</code></td><td>툴바 좌측 추가 요소</td></tr>
+                    <tr><td><code>actions</code></td><td><code>ReactNode</code></td><td>툴바 우측 액션 버튼들</td></tr>
+                    <tr><td colSpan={3} style={{ color: 'var(--text-secondary)', fontSize: 12 }}>+ GridTable의 모든 props (columnDefs, rowData, rowSelection, onSelectionChanged, ...)</td></tr>
+                  </tbody>
+                </table>
+
+                <Card title="라이브 데모 — 등록/삭제 버튼 + 건수 표시" style={{ marginBottom: 24 }}>
                   <p style={{ fontSize: 13, color: 'var(--text-secondary)', marginBottom: 8 }}>
                     행을 선택하면 삭제 버튼이 활성화됩니다.
                   </p>
                   <App>
                     <ToolbarActionDemo />
                   </App>
-                </div>
+                </Card>
+
                 <CodeSnippet code={`import { useState } from 'react';
 import { App, Button } from 'antd';
 import { PlusOutlined, DeleteOutlined } from '@ant-design/icons';
@@ -1744,11 +1950,6 @@ function MyPage() {
   const { message, modal } = App.useApp();
   const [data, setData] = useState<MyRow[]>(initialData);
   const [selected, setSelected] = useState<MyRow[]>([]);
-
-  const handleAdd = () => {
-    // 등록 처리
-    message.success('등록됐습니다.');
-  };
 
   const handleDelete = () => {
     modal.confirm({
@@ -1770,12 +1971,10 @@ function MyPage() {
       totalCount={data.length}
       actions={
         <>
-          <Button type="primary" icon={<PlusOutlined />} onClick={handleAdd}>
-            등록
-          </Button>
+          <Button type="primary" icon={<PlusOutlined />}>등록</Button>
           <Button danger icon={<DeleteOutlined />}
+            disabled={selected.length === 0}
             onClick={handleDelete}
-            disabled={selected.length === 0}           // 선택 없으면 비활성화
           >
             삭제 {selected.length > 0 && \`(\${selected.length})\`}
           </Button>
@@ -1783,11 +1982,22 @@ function MyPage() {
       }
       columnDefs={columnDefs}
       rowData={data}
+      rowKey="id"
       rowSelection="multiRow"
-      onSelectionChanged={setSelected}               // 선택 행 추적
+      onSelectionChanged={setSelected}
     />
   );
-}`} />
+}`} title="GridPanel 기본 사용 패턴" />
+
+                <div style={{ marginTop: 16, padding: 12, background: 'var(--content-header-bg)', borderRadius: 4 }}>
+                  <strong>핵심 정리</strong>
+                  <ul style={{ margin: '8px 0 0', paddingLeft: 20, color: 'var(--text-secondary)' }}>
+                    <li><code>totalCount={'{data.length}'}</code>: 데이터 변경 시 자동 업데이트</li>
+                    <li><code>actions</code>: 등록/삭제/엑셀 등 버튼을 ReactNode로 자유롭게 구성</li>
+                    <li><code>onSelectionChanged</code>: 선택된 행 배열 → 삭제 버튼 활성화 제어에 활용</li>
+                    <li>GridTable props 전체 지원: <code>rowSelection</code>, <code>editable</code>, <code>pagination</code>, <code>getContextMenuItems</code> 등</li>
+                  </ul>
+                </div>
               </div>
             ),
           },
@@ -1795,7 +2005,7 @@ function MyPage() {
           /* ── 기본 그리드 ── */
           {
             key: 'basic',
-            label: '기본 그리드',
+            label: 'GridTable',
             children: (
               <div className={styles.demoSection}>
                 <div className={styles.demoDesc}>
@@ -1916,6 +2126,57 @@ function MyPage() {
             label: '셀 렌더러/포맷터',
             children: (
               <div className={styles.demoSection}>
+                <h3>셀 렌더러 / 포맷터</h3>
+                <p className={styles.demoDesc}>ColDef에 valueFormatter, cellRenderer, cellStyle, cellClass 등을 지정하여 셀 표시를 커스터마이징합니다.</p>
+
+                <table className={styles.demoPropsTable} style={{ marginBottom: 24 }}>
+                  <thead><tr><th style={{ width: 200 }}>ColDef 옵션</th><th>타입</th><th>설명</th></tr></thead>
+                  <tbody>
+                    <tr><td><code>valueFormatter</code></td><td><code>(params) =&gt; string</code></td><td>표시 값 변환. 원본 데이터는 유지되며 화면/클립보드 표시만 변경</td></tr>
+                    <tr><td><code>cellRenderer</code></td><td><code>Component | string</code></td><td>커스텀 React 컴포넌트로 셀 렌더링 (Tag, Avatar 등)</td></tr>
+                    <tr><td><code>cellRendererParams</code></td><td><code>object</code></td><td>cellRenderer에 전달할 추가 파라미터</td></tr>
+                    <tr><td><code>cellStyle</code></td><td><code>CSSProperties | (params) =&gt; CSSProperties</code></td><td>셀 인라인 스타일 (조건부 가능)</td></tr>
+                    <tr><td><code>cellClass</code></td><td><code>string | (params) =&gt; string</code></td><td>셀 CSS 클래스 동적 지정</td></tr>
+                    <tr><td><code>tooltipField</code></td><td><code>string</code></td><td>마우스 호버 시 해당 필드값을 툴팁으로 표시</td></tr>
+                    <tr><td><code>tooltipValueGetter</code></td><td><code>(params) =&gt; string</code></td><td>커스텀 툴팁 텍스트 계산 함수</td></tr>
+                  </tbody>
+                </table>
+
+                <Card title="라이브 데모 — valueFormatter / cellStyle / cellRenderer" style={{ marginBottom: 24 }}>
+                  <div style={{ height: 260 }}>
+                    <GridTable<Employee>
+                      columnDefs={[
+                        { field: 'name', headerName: '이름', width: 100, tooltipField: 'email' },
+                        { field: 'department', headerName: '부서', width: 110 },
+                        {
+                          field: 'role', headerName: '직급', width: 90,
+                          cellStyle: (p) => {
+                            const map: Record<string, CellStyle> = {
+                              '팀장': { background: '#e6f4ff', color: '#0958d9' },
+                              '선임': { background: '#f6ffed', color: '#389e0d' },
+                              '사원': { background: '#f5f5f5', color: '#595959' },
+                            };
+                            return map[p.value] ?? {};
+                          },
+                        },
+                        {
+                          field: 'joinDate', headerName: '입사일', width: 120,
+                          valueFormatter: (p) => p.value ? p.value.replace(/-/g, '.') : '',
+                        },
+                        {
+                          field: 'email', headerName: '상태', width: 100,
+                          valueFormatter: () => '',
+                          cellRenderer: () => <Tag color="green">활성</Tag>,
+                        },
+                      ]}
+                      rowData={basicData.slice(0, 6)}
+                      rowKey="id"
+                      pagination={false}
+                      height={260}
+                    />
+                  </div>
+                </Card>
+
                 <h3>valueFormatter</h3>
                 <p className={styles.demoDesc}>셀 값의 표시 형식을 변경합니다. 원본 데이터는 유지되며 화면 표시만 변경됩니다.</p>
                 <CodeSnippet code={formatterCode} title="값 포맷팅" />
@@ -1940,6 +2201,42 @@ function MyPage() {
             label: '셀 에디터 가이드',
             children: (
               <div className={styles.demoSection}>
+                <h3>셀 에디터</h3>
+                <p className={styles.demoDesc}>ColDef의 <code>editable</code>과 <code>cellEditor</code>로 셀 편집 방식을 제어합니다. AG Grid 내장 에디터와 커스텀 React 에디터를 모두 지원합니다.</p>
+
+                <table className={styles.demoPropsTable} style={{ marginBottom: 24 }}>
+                  <thead><tr><th style={{ width: 200 }}>ColDef 옵션</th><th>타입</th><th>설명</th></tr></thead>
+                  <tbody>
+                    <tr><td><code>editable</code></td><td><code>boolean | (params) =&gt; boolean</code></td><td>셀 편집 활성화. 함수형으로 조건부 제어 가능</td></tr>
+                    <tr><td><code>cellEditor</code></td><td><code>Component | string</code></td><td>에디터 컴포넌트. 기본값: agTextCellEditor</td></tr>
+                    <tr><td><code>cellEditorParams</code></td><td><code>object | (params) =&gt; object</code></td><td>에디터에 전달할 파라미터. 함수형으로 행 데이터 기반 동적 설정 가능</td></tr>
+                    <tr><td><code>cellEditorPopup</code></td><td><code>boolean</code></td><td>팝업 모드 에디터 (텍스트 에어리어, DatePicker 등)</td></tr>
+                    <tr><td><code>singleClickEdit</code></td><td><code>boolean</code></td><td>더블클릭 대신 싱글클릭으로 편집 시작</td></tr>
+                    <tr><td><code>onCellValueChanged</code></td><td><code>(event) =&gt; void</code></td><td>셀 값 변경 완료 시 콜백. event.oldValue / event.newValue 제공</td></tr>
+                  </tbody>
+                </table>
+
+                <Card title="라이브 데모 — 내장 에디터 (더블클릭으로 편집)" style={{ marginBottom: 24 }}>
+                  <div style={{ height: 220 }}>
+                    <GridTable<MemberRow>
+                      columnDefs={[
+                        { field: 'name', headerName: '이름', editable: true, width: 110 },
+                        {
+                          field: 'role', headerName: '역할', editable: true, width: 120,
+                          cellEditor: 'agSelectCellEditor',
+                          cellEditorParams: { values: ['개발자', 'PM', '디자이너', 'QA'] },
+                        },
+                        { field: 'team', headerName: '팀', editable: true, flex: 1 },
+                      ]}
+                      rowData={memberData}
+                      rowKey="id"
+                      editable={false}
+                      pagination={false}
+                      height={220}
+                    />
+                  </div>
+                </Card>
+
                 <h3>내장 셀 에디터</h3>
                 <p className={styles.demoDesc}>AG Grid는 텍스트, 숫자, 대형 텍스트, 선택 등 기본 에디터를 제공합니다.</p>
                 <CodeSnippet code={cellEditorBasicCode} title="내장 에디터 사용" />
@@ -1958,7 +2255,6 @@ function MyPage() {
                     <li>cellEditorParams로 에디터에 추가 설정 전달</li>
                     <li>onCellValueChanged로 값 변경 시 로직 처리</li>
                     <li>cellEditorPopup: true로 팝업 에디터 모드 사용 가능</li>
-                    <li>라이브 데모는 "셀 편집" 탭에서 확인하세요.</li>
                   </ul>
                 </div>
               </div>
@@ -1980,9 +2276,20 @@ function MyPage() {
               <div className={styles.demoSection}>
                 <h3>컬럼 헤더 그룹</h3>
                 <p className={styles.demoDesc}>
-                  <code>children</code> 배열을 사용해 관련 컬럼을 그룹으로 묶을 수 있습니다.
-                  그룹 헤더는 다단(중첩)으로 구성할 수 있으며, Community 에디션에서 지원됩니다.
+                  <code>ColGroupDef.children</code> 배열로 관련 컬럼을 묶어 다단 헤더를 구성합니다. Community 에디션에서 지원됩니다.
                 </p>
+
+                <table className={styles.demoPropsTable} style={{ marginBottom: 24 }}>
+                  <thead><tr><th style={{ width: 200 }}>ColGroupDef 옵션</th><th>타입</th><th>설명</th></tr></thead>
+                  <tbody>
+                    <tr><td><code>headerName</code></td><td><code>string</code></td><td>그룹 헤더 표시명</td></tr>
+                    <tr><td><code>children</code> <span style={{ color: '#ff4d4f' }}>*</span></td><td><code>(ColDef | ColGroupDef)[]</code></td><td>그룹에 속한 컬럼/하위 그룹 (있으면 자동으로 그룹으로 처리)</td></tr>
+                    <tr><td><code>openByDefault</code></td><td><code>boolean</code></td><td>초기 그룹 펼침 여부 (기본: false)</td></tr>
+                    <tr><td><code>marryChildren</code></td><td><code>boolean</code></td><td>true이면 그룹 내 컬럼을 그룹 밖으로 이동 불가</td></tr>
+                    <tr><td><code>columnGroupShow</code></td><td><code>'open' | 'closed'</code></td><td>그룹이 열렸을 때 / 닫혔을 때만 표시할 컬럼 지정</td></tr>
+                    <tr><td><code>headerGroupComponent</code></td><td><code>Component</code></td><td>커스텀 그룹 헤더 컴포넌트</td></tr>
+                  </tbody>
+                </table>
 
                 <Card title="라이브 데모 - 헤더 그룹핑" style={{ marginBottom: 24 }}>
                   <div className="ds-data-grid" style={{ height: 280 }}>
@@ -2238,12 +2545,11 @@ function MyPage() {
                   </table>
                 </Card>
 
-                <Alert
-                  type="info"
-                  showIcon
-                  title="라이브 데모는 '셀 편집' 탭에서 확인하세요. enableClipboard + editable + rowSelection='multiRow'가 활성화되어 있습니다."
-                  style={{ marginBottom: 16 }}
-                />
+                <Card title="라이브 데모 — 행 선택 후 Ctrl+C, 점수 셀 더블클릭 후 수정 → Ctrl+V" style={{ marginBottom: 16 }}>
+                  <App>
+                    <ClipboardDemo />
+                  </App>
+                </Card>
 
                 <CodeSnippet code={clipboardBasicCode} title="GridTable 클립보드 사용법" />
 
@@ -2261,6 +2567,132 @@ function MyPage() {
                     <li><strong>Ctrl+C</strong>: 선택 행 → 헤더 + 데이터를 탭 구분 텍스트로 복사 (엑셀 호환)</li>
                     <li><strong>Ctrl+V</strong>: 포커스 셀부터 클립보드 데이터 파싱 → 셀 값 입력 (편집 모드 전용)</li>
                     <li>캡처 페이즈(<code>true</code>)로 등록하여 AG Grid 이벤트 차단 우회</li>
+                  </ul>
+                </div>
+              </div>
+            ),
+          },
+
+          /* ── 우클릭 메뉴 ── */
+          {
+            key: 'context-menu',
+            label: '우클릭 메뉴',
+            children: (
+              <div className={styles.demoSection}>
+                <h3>Context Menu (우클릭 메뉴)</h3>
+                <p className={styles.demoDesc}>
+                  <code>getContextMenuItems</code> prop으로 셀 우클릭 시 표시할 메뉴 항목을 커스터마이징합니다.
+                  AG Grid Context Menu는 Enterprise 전용이므로 GridTable에서 자체 구현합니다.{' '}
+                  <Tag color="blue">커스텀 구현</Tag>
+                </p>
+
+                <table className={styles.demoPropsTable} style={{ marginBottom: 16 }}>
+                  <thead><tr><th style={{ width: 220 }}>Prop / 옵션</th><th>타입</th><th>설명</th></tr></thead>
+                  <tbody>
+                    <tr><td><code>getContextMenuItems</code></td><td><code>(params) =&gt; MenuItem[]</code></td><td>우클릭 시 표시할 메뉴 항목 반환. 미지정 시 메뉴 없음</td></tr>
+                    <tr><td><code>suppressContextMenu</code></td><td><code>boolean</code></td><td>컨텍스트 메뉴 완전 비활성화</td></tr>
+                    <tr><td><code>MenuItemDef.name</code></td><td><code>string</code></td><td>메뉴 항목 표시명</td></tr>
+                    <tr><td><code>MenuItemDef.action</code></td><td><code>() =&gt; void</code></td><td>항목 클릭 시 실행 함수</td></tr>
+                    <tr><td><code>MenuItemDef.icon</code></td><td><code>string</code></td><td>아이콘 HTML 문자열 (예: <code>{'<span>🔍</span>'}</code>)</td></tr>
+                    <tr><td><code>MenuItemDef.disabled</code></td><td><code>boolean</code></td><td>항목 비활성화</td></tr>
+                    <tr><td><code>'separator'</code></td><td><code>string</code></td><td>구분선. 항목 배열에 문자열 <code>'separator'</code>로 삽입</td></tr>
+                    <tr><td><code>'copy' | 'copyWithHeaders'</code></td><td><code>string</code></td><td>기본 제공 항목 (클립보드 복사)</td></tr>
+                  </tbody>
+                </table>
+
+                <Alert
+                  type="info"
+                  showIcon
+                  title="팝업 렌더링 위치"
+                  description="GridTable은 popupParent={document.body}를 기본 적용합니다. overflow:hidden 컨테이너에서도 메뉴가 정상 표시됩니다."
+                  style={{ marginBottom: 16 }}
+                />
+
+                <Card title="라이브 데모 — 셀을 우클릭해 보세요" style={{ marginBottom: 24 }}>
+                  <div style={{ display: 'flex', gap: 16, alignItems: 'flex-start' }}>
+                    <div style={{ flex: 1, height: 240 }}>
+                      <GridTable
+                        columnDefs={[
+                          { field: 'id',         headerName: 'ID',   width: 80,  flex: 0 },
+                          { field: 'name',       headerName: '이름', width: 120, flex: 0 },
+                          { field: 'department', headerName: '부서', flex: 1 },
+                          { field: 'role',       headerName: '직급', width: 100, flex: 0 },
+                          { field: 'email',      headerName: '이메일', flex: 1 },
+                        ]}
+                        rowData={basicData.slice(0, 6)}
+                        rowKey="id"
+                        pagination={false}
+                        height={240}
+                        getContextMenuItems={(params) => [
+                          {
+                            name: `"${params.node?.data?.name}" 상세보기`,
+                            action: () => alert(`상세보기:\n${JSON.stringify(params.node?.data, null, 2)}`),
+                            icon: '<span>🔍</span>',
+                          },
+                          {
+                            name: '이메일 복사',
+                            action: () => navigator.clipboard.writeText(params.node?.data?.email ?? ''),
+                            icon: '<span>📧</span>',
+                          },
+                          'separator',
+                          'copy',
+                          'copyWithHeaders',
+                        ]}
+                      />
+                    </div>
+                    {/* Always-visible context menu preview */}
+                    <div style={{ width: 200, flexShrink: 0 }}>
+                      <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginBottom: 6 }}>메뉴 미리보기</div>
+                      <div style={{
+                        border: '1px solid var(--border-color)',
+                        borderRadius: 4,
+                        background: 'var(--component-background, #fff)',
+                        boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+                        overflow: 'hidden',
+                        fontSize: 13,
+                      }}>
+                        {[
+                          { icon: '🔍', label: '"김영수" 상세보기' },
+                          { icon: '📧', label: '이메일 복사' },
+                          null,
+                          { icon: null, label: 'Copy' },
+                          { icon: null, label: 'Copy with Headers' },
+                        ].map((item, i) =>
+                          item === null ? (
+                            <div key={i} style={{ height: 1, background: 'var(--border-color)', margin: '2px 0' }} />
+                          ) : (
+                            <div key={i} style={{
+                              display: 'flex', alignItems: 'center', gap: 8,
+                              padding: '6px 12px',
+                              cursor: 'default',
+                              color: 'var(--text-color)',
+                            }}>
+                              {item.icon && <span style={{ width: 16, textAlign: 'center' }}>{item.icon}</span>}
+                              {!item.icon && <span style={{ width: 16 }} />}
+                              <span>{item.label}</span>
+                            </div>
+                          )
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </Card>
+
+                <h3>기본 사용법</h3>
+                <CodeSnippet code={contextMenuBasicCode} title="getContextMenuItems 기본 사용 (GridTable)" />
+
+                <h3 style={{ marginTop: 24 }}>기본 제공 항목 / 비활성화</h3>
+                <CodeSnippet code={contextMenuBuiltinCode} title="기본 항목 문자열 및 비활성화" />
+
+                <div style={{ marginTop: 16, padding: 12, background: 'var(--content-header-bg)', borderRadius: 4 }}>
+                  <strong>핵심 정리</strong>
+                  <ul style={{ margin: '8px 0 0', paddingLeft: 20, color: 'var(--text-secondary)' }}>
+                    <li><code>getContextMenuItems</code> 미지정 → AG Grid 기본 메뉴 표시</li>
+                    <li><code>suppressContextMenu={'{true}'}</code> → 컨텍스트 메뉴 완전 비활성화</li>
+                    <li>문자열 항목: <code>'copy' | 'copyWithHeaders' | 'cut' | 'paste' | 'export' | 'separator'</code></li>
+                    <li>커스텀 항목: <code>{'{ name, action, icon, disabled, cssClasses }'}</code></li>
+                    <li><code>params.node?.data</code>: 우클릭한 행의 데이터 / <code>params.value</code>: 셀 값</li>
+                    <li>헤더 우클릭은 <code>suppressHeaderContextMenu</code>(defaultColDef)로 별도 제어</li>
                   </ul>
                 </div>
               </div>

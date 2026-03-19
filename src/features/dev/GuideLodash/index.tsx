@@ -1,6 +1,6 @@
 import { Typography, Card, Divider, Table } from 'antd';
 import type { TableColumnsType } from 'antd';
-import * as _ from 'lodash';
+import _ from 'lodash';
 import { menuConfig } from '@/config/menuConfig';
 import type { MenuItem } from '@/types/menu';
 

@@ -38,7 +38,7 @@ export default function PatternGridList() {
     { field: 'name',     headerName: '프로젝트명', minWidth: 180 },
     { field: 'status',   headerName: '상태',      width: 100, flex: 0,
       cellRenderer: (p: ICellRendererParams<Project, ProjectStatus>) =>
-        p.value ? <Badge status={projStatusCfg[p.value].color as any} text={projStatusCfg[p.value].label} /> : null,
+        p.value ? <Badge status={projStatusCfg[p.value].color as import('antd').BadgeProps['status']} text={projStatusCfg[p.value].label} /> : null,
     },
     { field: 'progress', headerName: '진행률',    width: 150, flex: 0, filter: false,
       cellRenderer: (p: ICellRendererParams<Project, number>) =>

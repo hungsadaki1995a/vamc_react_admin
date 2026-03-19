@@ -37,6 +37,7 @@ export interface CachedEntry<T> {
 
 /** Returns { data, ts } so callers can determine freshness. */
 export async function idbGet<T>(key: string): Promise<CachedEntry<T> | undefined> {
+  if (import.meta.env.DEV) return undefined;
   try {
     const db = await getDB();
     return new Promise<CachedEntry<T> | undefined>((resolve, reject) => {
@@ -51,6 +52,7 @@ export async function idbGet<T>(key: string): Promise<CachedEntry<T> | undefined
 
 /** Store value with current timestamp. */
 export async function idbSet<T>(key: string, data: T): Promise<void> {
+  if (import.meta.env.DEV) return;
   try {
     const db = await getDB();
     const entry: CachedEntry<T> = { data, ts: Date.now() };

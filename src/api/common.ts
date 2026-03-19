@@ -1,5 +1,6 @@
 import { apiClient } from '@/lib/api/client';
 import type { ApiResponse } from '@/lib/api/types';
+import { IS_MOCK_MODE, mockGetAllCodeList } from '@/mocks';
 
 // Matches com.vamc.vamcnplbackend.common.code.dto.CodeDomainResponse
 export interface CodeDomain {
@@ -31,6 +32,8 @@ export const getCodeList = async (projId: string, cdDmnId: string): Promise<Code
 // GET /api/comcd/all — all code details for frontend bulk-cache (no auth required)
 // X-Project-Id and X-Lang headers are injected automatically by the axios interceptor
 export const getAllCodeList = async (): Promise<CodeDetail[]> => {
+  if (IS_MOCK_MODE) return mockGetAllCodeList();
+
   const { data } = await apiClient.get<ApiResponse<CodeDetail[]>>('/api/comcd/all');
   return data.data ?? [];
 };
