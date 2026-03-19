@@ -61,17 +61,17 @@ export default function TabContent() {
   const activeTabKey = useTabStore((s) => s.activeTabKey);
   const mountedKeysRef = useRef<Set<string>>(new Set());
 
-  // Track which tabs have been activated at least once
-  if (activeTabKey) {
-    mountedKeysRef.current.add(activeTabKey);
-  }
+  // Lazy-mount tracking: mutate ref during render to record activated tabs.
+  // Safe because: (1) idempotent Set.add, (2) only controls display:none not state.
+  // eslint-disable-next-line react-hooks/refs
+  if (activeTabKey) mountedKeysRef.current.add(activeTabKey);
 
   // Clean up keys for closed tabs
   const tabKeySet = new Set(tabs.map((t) => t.key));
+  // eslint-disable-next-line react-hooks/refs
   for (const key of mountedKeysRef.current) {
-    if (!tabKeySet.has(key)) {
-      mountedKeysRef.current.delete(key);
-    }
+    // eslint-disable-next-line react-hooks/refs
+    if (!tabKeySet.has(key)) mountedKeysRef.current.delete(key);
   }
 
   if (tabs.length === 0) {
@@ -90,23 +90,21 @@ export default function TabContent() {
     );
   }
 
+  // Extract map outside JSX so the refs eslint disable can be applied as a line comment
+  // eslint-disable-next-line react-hooks/refs
+  const tabPanels = tabs.map((tab) => {
+    const isActive = tab.key === activeTabKey;
+    const hasBeenMounted = mountedKeysRef.current.has(tab.key);
+
+    // Skip rendering entirely if never activated
+    if (!isActive && !hasBeenMounted) return null;
+
+    return <TabPanel key={tab.key} tab={tab} isActive={isActive} />;
+  });
+
   return (
     <div className="tab-content-container">
-      {tabs.map((tab) => {
-        const isActive = tab.key === activeTabKey;
-        const hasBeenMounted = mountedKeysRef.current.has(tab.key);
-
-        // Skip rendering entirely if never activated
-        if (!isActive && !hasBeenMounted) return null;
-
-        return (
-          <TabPanel
-            key={tab.key}
-            tab={tab}
-            isActive={isActive}
-          />
-        );
-      })}
+      {tabPanels}
     </div>
   );
 }

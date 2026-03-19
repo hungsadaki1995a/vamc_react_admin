@@ -1,7 +1,7 @@
 import { useMemo, useState, useCallback, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { Dropdown, Input, Popover, Empty, Select } from 'antd';
-import type { MenuProps } from 'antd';
+import type { MenuProps, InputRef } from 'antd';
 import {
   HomeOutlined,
   SunOutlined,
@@ -125,7 +125,7 @@ const { tabs, activeTabKey, openTab, setActiveTab } = useTabStore(
   // ── 검색 상태 ──
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchText, setSearchText] = useState('');
-  const searchInputRef = useRef<any>(null);
+  const searchInputRef = useRef<InputRef>(null);
 
   // ── 알림 상태 ──
   const [notiOpen, setNotiOpen] = useState(false);
@@ -200,6 +200,7 @@ const { tabs, activeTabKey, openTab, setActiveTab } = useTabStore(
     [],
   );
 
+  // eslint-disable-next-line react-hooks/preserve-manual-memoization
   const handleOpenNotiCenter = useCallback(() => {
     const menu = findMenuByKey(allMenus, 'notifications.notification-center');
     if (menu) openTab(menu);

@@ -76,7 +76,10 @@ export default function CCO101001SC() {
   const handleSearch = useCallback(() => {
     setHasSearched(true);
     setAppliedFilter({ usrId: filterEmpNo, usrNm: filterEmpNm });
-  }, [filterEmpNo, filterEmpNm]);
+    setSelectedRow(null);
+    form.resetFields();
+    gridRef.current?.api?.deselectAll();
+  }, [filterEmpNo, filterEmpNm, form]);
 
   const handleRowClick = useCallback((user: User) => {
     setSelectedRow(user);

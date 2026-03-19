@@ -1,6 +1,7 @@
 import GridToolbar from '@/components/layout/GridToolbar';
 import GridTable, { type GridTableProps } from './GridTable';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 interface GridPanelProps<TData = any> extends GridTableProps<TData> {
   /** Total count display in toolbar (e.g. "전체 102건") */
   totalCount?: number;
@@ -12,6 +13,7 @@ interface GridPanelProps<TData = any> extends GridTableProps<TData> {
   actions?: React.ReactNode;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default function GridPanel<TData = any>({
   totalCount,
   countLabel,

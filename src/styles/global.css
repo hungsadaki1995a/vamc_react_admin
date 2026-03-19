@@ -841,7 +841,7 @@ html, body, #root {
   background: transparent;
   box-shadow: none;
   border-radius: 0;
-  padding: 10px 14px;
+  padding: 0px 14px 4px 14px;
   flex: 1;
   min-height: 0;
 }

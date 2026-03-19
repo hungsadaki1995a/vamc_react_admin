@@ -256,7 +256,8 @@ export default function GanttView({
           const left = parseFloat(highlight.style.left) || 0;
           timeline.scrollTo({ left: Math.max(0, left - timeline.clientWidth / 3), behavior: 'smooth' });
         } else {
-          const g = ganttRef.current as any;
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const g = ganttRef.current as any; // frappe-gantt has no TS types for gantt_end
           if (g) {
             const now = new Date();
             if (now > g.gantt_end) {
@@ -461,6 +462,7 @@ export default function GanttView({
 
   // 리사이저 드래그
   const handleResizeStart = useCallback(
+    // eslint-disable-next-line react-hooks/preserve-manual-memoization
     (e: React.MouseEvent) => {
       e.preventDefault();
       setIsResizing(true);

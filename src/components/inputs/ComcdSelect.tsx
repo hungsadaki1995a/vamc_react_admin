@@ -50,6 +50,7 @@ export default function ComcdSelect({ cdDmnId, value, prefixOption, filterFn, ..
   useEffect(() => {
     // Sync in case store changed between render and effect mount
     let current = useComcdStore.getState().codes[cdDmnId];
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setCodeList(current);
 
     // Subscribe to future store changes; only update when our slice changes

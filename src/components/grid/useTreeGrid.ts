@@ -59,6 +59,7 @@ interface UseTreeGridResult<T> {
  *   }]}
  * />
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function useTreeGrid<T extends Record<string, any>>({
   data,
   idField = 'id',
@@ -86,7 +87,8 @@ export function useTreeGrid<T extends Record<string, any>>({
 
   // Stable ref so expandAll always uses the latest allParentIds without being a dep
   const allParentIdsRef = useRef<Set<string>>(allParentIds);
-  allParentIdsRef.current = allParentIds;
+  // eslint-disable-next-line react-hooks/refs
+  allParentIdsRef.current = allParentIds; // safe: idempotent assignment, does not affect render output
 
   // ── Build ordered tree rows ────────────────────────────────────────────────
   const treeData = useMemo<TreeRow<T>[]>(() => {

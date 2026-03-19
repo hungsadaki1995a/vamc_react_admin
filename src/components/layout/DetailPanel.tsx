@@ -1,4 +1,4 @@
-import { useRef, useState, useCallback, useEffect } from 'react';
+import { useRef, useState, useCallback, useEffect, useMemo } from 'react';
 import { Badge } from 'antd';
 import { CloseOutlined, MinusOutlined } from '@ant-design/icons';
 import './DetailPanel.css';
@@ -38,12 +38,11 @@ export default function DetailPanel({
   const [isDragging, setIsDragging] = useState(false);
   const startRef = useRef({ y: 0, height: 0 });
 
-  // Update active tab when tabs change
-  useEffect(() => {
-    if (tabs && tabs.length > 0 && !tabs.find((t) => t.key === activeTab)) {
-      setActiveTab(tabs[0].key);
-    }
-  }, [tabs, activeTab]);
+  // Derived: fall back to first tab if current activeTab is no longer in tabs
+  const resolvedActiveTab = useMemo(
+    () => (tabs && tabs.length > 0 && !tabs.find((t) => t.key === activeTab) ? tabs[0].key : activeTab),
+    [tabs, activeTab],
+  );
 
   const handleDragStart = useCallback(
     (e: React.MouseEvent) => {
@@ -74,7 +73,7 @@ export default function DetailPanel({
 
   if (!visible) return null;
 
-  const currentTabContent = tabs?.find((t) => t.key === activeTab)?.children;
+  const currentTabContent = tabs?.find((t) => t.key === resolvedActiveTab)?.children;
 
   return (
     <div
@@ -110,7 +109,7 @@ export default function DetailPanel({
           {tabs.map((tab) => (
             <div
               key={tab.key}
-              className={`ds-detail-tab ${activeTab === tab.key ? 'active' : ''}`}
+              className={`ds-detail-tab ${resolvedActiveTab === tab.key ? 'active' : ''}`}
               onClick={() => setActiveTab(tab.key)}
             >
               <span>{tab.label}</span>

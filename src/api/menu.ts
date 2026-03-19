@@ -1,8 +1,9 @@
 import { apiClient } from '@/lib/api/client';
 import type { ApiResponse } from '@/lib/api/types';
 import type { MenuItem } from '@/types/menu';
+import { IS_MOCK_MODE, mockFetchAuthMenuList } from '@/mocks';
 
-// ── vamc-npl-backend MnuResponse ──────────────────────────────────────────────
+// ── ds_pms_server MnuResponse ──────────────────────────────────────────────
 // Matches com.vamc.vamcnplbackend.common.mnu.dto.MnuResponse
 
 export interface MnuResponse {
@@ -113,6 +114,8 @@ function buildServerMenuTree(items: MnuResponse[]): MenuItem[] {
 // (reads from projectStore.activeProject.id — set on login and project change)
 
 export async function fetchAuthMenuList(): Promise<MenuItem[]> {
+  if (IS_MOCK_MODE) return mockFetchAuthMenuList();
+
   const { data } = await apiClient.get<ApiResponse<MnuResponse[]>>('/api/mnu/auth-list');
 
   if (data.status !== 200 || !data.data) return [];
