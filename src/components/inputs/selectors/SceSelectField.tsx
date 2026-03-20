@@ -38,7 +38,7 @@ export default function SceSelectField({ value, onChange, ...rest }: SceSelectFi
   return (
     <SearchSelectField
       value={value}
-      onChange={onChange as SearchSelectFieldProps['onChange']}
+      onChange={(val) => onChange?.(Array.isArray(val) ? (val[0] ?? null) : val)}
       fetchOptions={fetchOptions}
       modalTitle="화면 검색"
       modalWidth={600}

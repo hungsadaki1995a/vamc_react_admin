@@ -9,6 +9,8 @@ import type { CodeDetail } from '@/api/common';
 
 export interface ComcdCellRendererParams extends ICellRendererParams {
   cdDmnId: string;
+  /** Shown when value is '' (same as ComcdSelect.prefixOption) */
+  prefixOption?: string;
 }
 
 /**
@@ -26,15 +28,17 @@ export interface ComcdCellRendererParams extends ICellRendererParams {
  *   cellRendererParams: { cdDmnId: 'JBC_CD' },
  * }
  */
-export function ComcdSelectCellRenderer({ value, cdDmnId }: ComcdCellRendererParams) {
+export function ComcdSelectCellRenderer({ value, cdDmnId, prefixOption }: ComcdCellRendererParams) {
   const [label, setLabel] = useState(() => {
-    if (!value) return '';
+    if (value === '' || value === null || value === undefined) return prefixOption ?? '';
     return useComcdStore.getState().getCodeName(cdDmnId, value);
   });
 
   useEffect(() => {
-    if (!value) { setLabel(''); return; }
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    if (value === '' || value === null || value === undefined) { setLabel(prefixOption ?? ''); return; }
 
+    // Catch up on changes that occurred between render and effect mount
     setLabel(useComcdStore.getState().getCodeName(cdDmnId, value));
 
     let current = useComcdStore.getState().codes[cdDmnId];
@@ -45,7 +49,7 @@ export function ComcdSelectCellRenderer({ value, cdDmnId }: ComcdCellRendererPar
         setLabel(state.getCodeName(cdDmnId, value));
       }
     });
-  }, [cdDmnId, value]);
+  }, [cdDmnId, value, prefixOption]);
 
   return <span>{label}</span>;
 }
@@ -54,6 +58,11 @@ export function ComcdSelectCellRenderer({ value, cdDmnId }: ComcdCellRendererPar
 
 interface ComcdCellEditorProps extends CustomCellEditorProps {
   cdDmnId: string;
+  /**
+   * Prepend a blank option at the top of the list (same as ComcdSelect.prefixOption).
+   * Value is always ''. Pass the label text: '전체', '선택', or '' for blank.
+   */
+  prefixOption?: string;
   /**
    * Optional filter for cascading cell editors.
    * Use via cellEditorParams as a function to access row data:
@@ -88,6 +97,7 @@ export function ComcdSelectCellEditor({
   onValueChange,
   stopEditing,
   cdDmnId,
+  prefixOption,
   filterFn,
 }: ComcdCellEditorProps) {
   const handleChange = (v: unknown) => {
@@ -100,6 +110,7 @@ export function ComcdSelectCellEditor({
       cdDmnId={cdDmnId}
       value={value ?? undefined}
       onChange={handleChange}
+      prefixOption={prefixOption}
       filterFn={filterFn}
       autoFocus
       defaultOpen

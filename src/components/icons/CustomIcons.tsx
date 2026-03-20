@@ -1,3 +1,5 @@
+/* eslint-disable react-refresh/only-export-components */
+// CUSTOM_ICON_MAP is a registry constant co-located with icon components intentionally
 import React from 'react';
 
 // Custom SVG icon components — use currentColor so rail active/hover styles apply.

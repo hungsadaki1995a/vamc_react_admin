@@ -187,7 +187,7 @@ src/
 // ds_pms_new (Spring Boot 레거시)
 ApiResponse<T> = { success: boolean; message: string; data: T | null }
 
-// vamc-npl-backend (현재 서버)
+// ds_pms_server (현재 서버)
 VamcApiResponse<T> = { status: number; message: string; data: T | null }
 ```
 

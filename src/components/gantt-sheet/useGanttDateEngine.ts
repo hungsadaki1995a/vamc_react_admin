@@ -194,7 +194,7 @@ export function useGanttDateEngine(
       const pad = getPaddingMs(viewMode);
 
       ganttStart = snapToUnitStart(new Date(minTime - pad), viewMode);
-      let rawEnd = new Date(maxTime + pad);
+      const rawEnd = new Date(maxTime + pad);
       ganttEnd = snapToUnitStart(rawEnd, viewMode);
       if (ganttEnd.getTime() <= rawEnd.getTime()) {
         ganttEnd = addUnits(ganttEnd, viewMode);

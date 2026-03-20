@@ -136,9 +136,8 @@ export default function TabBar() {
     const container = scrollRef.current;
     if (!container || !activeTabKey) return;
     // Double rAF: first frame waits for React render, second ensures layout is computed
-    let frame1: number;
     let frame2: number;
-    frame1 = requestAnimationFrame(() => {
+    const frame1 = requestAnimationFrame(() => {
       frame2 = requestAnimationFrame(() => {
         const activeEl = container.querySelector('.tab-item.active') as HTMLElement | null;
         if (activeEl) {

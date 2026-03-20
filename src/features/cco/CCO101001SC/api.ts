@@ -70,7 +70,7 @@ export async function unlockUsr(usrId: string): Promise<ApiResponse<void>> {
 
 export async function changePwd(usrId: string, newPswd: string): Promise<ApiResponse<void>> {
   const { data: keyData } = await apiClient.get<{ data: { publicKey: string } }>('/api/auth/public-key');
-  const publicKey = keyData.data?.publicKey ?? (keyData as any).publicKey;
+  const publicKey = keyData.data?.publicKey ?? (keyData as Record<string, unknown>).publicKey as string;
   const [encUsrId, encChgPasswd] = await Promise.all([
     encryptPassword(publicKey, usrId),
     encryptPassword(publicKey, newPswd),

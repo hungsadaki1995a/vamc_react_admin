@@ -1,6 +1,7 @@
 import { apiClient } from '@/lib/api/client';
 import type { ApiResponse } from '@/lib/api/types';
 import type { MenuItem } from '@/types/menu';
+import { IS_MOCK_MODE, mockFetchAuthMenuList } from '@/mocks';
 
 // ── vamc-npl-backend MnuResponse ──────────────────────────────────────────────
 // Matches /api/common/menus/all response item

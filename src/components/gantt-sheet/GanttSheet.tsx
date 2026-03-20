@@ -167,7 +167,7 @@ export default function GanttSheet({
 
   const dependencyLines = useMemo(() => {
     if (!criticalPath) {
-      const lines: Array<{ fromId: string; toId: string; type: any; isCritical: boolean }> = [];
+      const lines: Array<{ fromId: string; toId: string; type: string; isCritical: boolean }> = [];
       for (const task of visibleTasks) {
         for (const depId of task.dependencies ?? []) {
           lines.push({ fromId: depId, toId: task.id, type: task.dependencyTypes?.[depId] ?? 'FS', isCritical: false });
