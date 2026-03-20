@@ -8,6 +8,7 @@ import FilterPanel from '@/components/layout/FilterPanel';
 import FormPanel from '@/components/layout/FormPanel';
 import TipInput from '@/components/inputs/TipInput';
 import { useNotify } from '@/hooks/useNotify';
+import { useMenuStore } from '@/stores/menuStore';
 import { apiClient } from '@/lib/api/client';
 import type { ApiResponse } from '@/lib/api/types';
 import type { MnuResponse } from '@/api/menu';
@@ -23,7 +24,6 @@ type FormValues = {
   menuDpth: number | string;
   menuUrlAddr: string;
   lblCd: string;
-  sortPath: string;
 };
 
 // ── API ──────────────────────────────────────────────────────────────────────
@@ -84,7 +84,6 @@ export default function AdminMenuManagement() {
     { field: 'menuDpth',      headerName: '메뉴레벨',   width: 90,  flex: 0 },
     { field: 'menuUrlAddr',   headerName: '컴포넌트경로', minWidth: 180 },
     { field: 'lblCd',         headerName: '라벨코드',   minWidth: 220 },
-    { field: 'sortPath',      headerName: '정렬경로',   width: 120, flex: 0 },
   ], []);
 
   // ── Handlers ─────────────────────────────────────────────────────────────
@@ -111,7 +110,6 @@ export default function AdminMenuManagement() {
       menuDpth:     row.menuDpth,
       menuUrlAddr:  row.menuUrlAddr ?? '',
       lblCd:        row.lblCd ?? '',
-      sortPath:     row.sortPath ?? '',
     });
     if (formCollapsed) setFormCollapsed(false);
   }, [form, formCollapsed]);
@@ -129,6 +127,7 @@ export default function AdminMenuManagement() {
         onOk: () => {
           // TODO: POST/PUT /api/common/menus
           notify.success(isEditMode ? '수정되었습니다.' : '등록되었습니다.');
+          useMenuStore.getState().invalidateMenuCache();
           if (!isEditMode) handleFormReset();
         },
       });
@@ -145,6 +144,7 @@ export default function AdminMenuManagement() {
       onOk: () => {
         // TODO: DELETE /api/common/menus/{menuCd}
         notify.success('삭제되었습니다.');
+        useMenuStore.getState().invalidateMenuCache();
         handleFormReset();
       },
     });
@@ -293,15 +293,6 @@ export default function AdminMenuManagement() {
                 style={{ margin: '0 0 8px' }}
               >
                 <TipInput maxLength={200} />
-              </Form.Item>
-            </Col>
-            <Col span={6}>
-              <Form.Item
-                label="정렬경로"
-                name="sortPath"
-                style={{ margin: 0 }}
-              >
-                <TipInput readOnly style={{ background: 'var(--tab-bar-bg)', cursor: 'not-allowed' }} />
               </Form.Item>
             </Col>
           </Row>

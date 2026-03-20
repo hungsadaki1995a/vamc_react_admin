@@ -1,12 +1,9 @@
 import { create } from 'zustand';
 import type { MenuItem } from '@/types/menu';
 import { fetchAuthMenuList } from '@/api/menu';
-import { idbGet, idbSet } from '@/lib/cache/idbCache';
+import { idbGet, idbSet, idbDelete } from '@/lib/cache/idbCache';
 import { useAuthStore } from '@/stores/authStore';
 import { useProjectStore } from '@/stores/projectStore';
-
-/** Cache TTL: 5 minutes. Within TTL, skip background revalidation to avoid extra XHR. */
-const CACHE_TTL_MS = 5 * 60 * 1000;
 
 interface MenuStore {
   activeRailKey: string | null;
@@ -26,12 +23,14 @@ interface MenuStore {
   clearServerMenus: () => void;
   resetNavState: () => void;
   /**
-   * Load menus with TTL-based IndexedDB cache.
-   * - Cache hit (fresh < 5min): serve immediately, no network request.
-   * - Cache hit (stale ≥ 5min): serve immediately + background revalidation.
-   * - Cache miss: fetch from server, persist to IDB.
+   * SWR: 캐시 있으면 즉시 표시 → 항상 백그라운드 재검증
+   * 캐시 없으면 서버 fetch 후 IDB 저장
    */
   loadMenuForProject: () => Promise<void>;
+  /**
+   * 메뉴 저장/삭제 후 IDB 캐시를 삭제하고 즉시 재fetch
+   */
+  invalidateMenuCache: () => Promise<void>;
 }
 
 export const useMenuStore = create<MenuStore>((set, get) => ({
@@ -76,24 +75,25 @@ export const useMenuStore = create<MenuStore>((set, get) => ({
   loadMenuForProject: async () => {
     if (get().menuLoading) return;
 
-    const userId = useAuthStore.getState().user?.usrId ?? '_';
+    const userId    = useAuthStore.getState().user?.usrId ?? '_';
     const projectId = useProjectStore.getState().activeProject?.id ?? '_';
-    const cacheKey = `menus:${userId}:${projectId}`;
+    const cacheKey  = `menus:${userId}:${projectId}`;
 
     const cached = await idbGet<MenuItem[]>(cacheKey);
     if (cached) {
-      set({ serverMenus: cached.data, menuLoading: false });
-      const isFresh = Date.now() - cached.ts < CACHE_TTL_MS;
-      if (isFresh) return;
+      // 캐시 즉시 반영 — 로딩 없이 바로 표시
+      set({ serverMenus: cached.data });
+      // 항상 백그라운드 재검증 (SWR)
       fetchAuthMenuList()
         .then((fresh) => {
           set({ serverMenus: fresh });
           idbSet(cacheKey, fresh);
         })
-        .catch(() => { /* keep stale menus on error */ });
+        .catch(() => { /* 오류 시 캐시 유지 */ });
       return;
     }
 
+    // 캐시 없음: 로딩 표시 후 서버 fetch
     set({ menuLoading: true });
     try {
       const menus = await fetchAuthMenuList();
@@ -102,5 +102,15 @@ export const useMenuStore = create<MenuStore>((set, get) => ({
     } catch {
       set({ menuLoading: false });
     }
+  },
+
+  invalidateMenuCache: async () => {
+    const userId    = useAuthStore.getState().user?.usrId ?? '_';
+    const projectId = useProjectStore.getState().activeProject?.id ?? '_';
+    const cacheKey  = `menus:${userId}:${projectId}`;
+    await idbDelete(cacheKey);
+    // menuLoading 가드 초기화 후 즉시 재fetch
+    set({ menuLoading: false });
+    get().loadMenuForProject();
   },
 }));

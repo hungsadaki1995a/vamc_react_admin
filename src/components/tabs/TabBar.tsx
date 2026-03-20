@@ -46,6 +46,12 @@ const TabItem = memo(function TabItem({
     <div
       className={`tab-item ${isActive ? 'active' : ''} ${isDropTarget ? 'drop-target' : ''} ${isHome ? 'home-tab' : ''}`}
       onClick={() => onActivate(tab.key)}
+      onMouseDown={(e) => {
+        if (e.button === 1 && tab.closable) {
+          e.preventDefault(); // 브라우저 자동 스크롤 방지
+          onClose(tab.key);
+        }
+      }}
       onContextMenu={(e) => onContextMenu(e, tab.key)}
       draggable
       onDragStart={(e) => onDragStart(e, idx)}
