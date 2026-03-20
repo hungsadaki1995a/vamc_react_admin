@@ -1,0 +1,76 @@
+/* Left/Right split container */
+.splitBody {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  gap: 8px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.leftPane {
+  width: 60%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.rightPane {
+  width: 40%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.paneTitleRow {
+  flex-shrink: 0;
+  padding: 4px 12px;
+  background: var(--content-header-bg);
+  border-bottom: 1px solid var(--border-color, #e8e8e8);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary, #333);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 32px;
+}
+
+.paneTitleLabel {
+  flex: 1;
+  white-space: nowrap;
+}
+
+.paneProjArea {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  padding-left: 10px;
+  border-left: 1px solid var(--border-color, #e0e0e0);
+}
+
+.paneProjLabel {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--text-secondary, #666);
+  white-space: nowrap;
+}
+
+.paneProjSelector {
+  width: 160px;
+}
+
+/* GridPanel을 감싸는 flex 컨테이너 — paneTitleRow 이후 남은 높이를 GridPanel에 위임 */
+.gridWrapper {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 좌우 toolbar 높이 통일 — 한쪽에만 버튼이 있어도 같은 높이 유지 */
+.gridWrapper :global(.ds-grid-toolbar) {
+  min-height: 48px;
+}

@@ -4,6 +4,21 @@ import path from 'path'
 
 export default defineConfig({
   plugins: [react()],
+  server: {
+    watch: {
+      usePolling: true,
+    },
+  },
+  // Pre-bundle frequently-used deps so dev server transforms them once at startup,
+  // not on every first request. Eliminates the 3s+ waterfall on cold load.
+  optimizeDeps: {
+    include: [
+      'react', 'react-dom', 'react-router-dom',
+      'antd', '@ant-design/icons',
+      'zustand', '@tanstack/react-query', 'axios',
+      'ag-grid-community', 'ag-grid-react',
+    ],
+  },
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),

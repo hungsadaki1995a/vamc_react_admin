@@ -51,6 +51,7 @@ export function useExcel({
   const download = async () => {
     if (!downloadUrl) return;
     setDownloading(true);
+    let url: string | null = null;
     try {
       const response = await apiClient.post(
         downloadUrl,
@@ -58,15 +59,15 @@ export function useExcel({
         { responseType: 'blob', timeout: 120_000 }, // 5만건 대응 타임아웃
       );
 
-      const url  = window.URL.createObjectURL(new Blob([response.data as BlobPart]));
+      url = window.URL.createObjectURL(new Blob([response.data as BlobPart]));
       const link = document.createElement('a');
       link.href  = url;
       link.setAttribute('download', `${fileName}.xlsx`);
       document.body.appendChild(link);
       link.click();
       link.remove();
-      window.URL.revokeObjectURL(url);
     } finally {
+      if (url) window.URL.revokeObjectURL(url);
       setDownloading(false);
     }
   };
@@ -95,7 +96,7 @@ export function useExcel({
 
       const { data } = await apiClient.post(uploadUrl, formData, { timeout: 120_000 });
 
-      // vamc-npl-backend wraps response: { status, message, data: ExcelUploadResult }
+      // ds_pms_server wraps response: { status, message, data: ExcelUploadResult }
       const result: ExcelUploadResult = (data as { data?: ExcelUploadResult }).data ?? data;
 
       if (result.success) {
@@ -112,6 +113,7 @@ export function useExcel({
   /** Download empty template excel from /api/excel/template */
   const downloadTemplate = async () => {
     setDownloading(true);
+    let url: string | null = null;
     try {
       const response = await apiClient.post(
         '/api/excel/template',
@@ -119,15 +121,15 @@ export function useExcel({
         { responseType: 'blob' },
       );
 
-      const url  = window.URL.createObjectURL(new Blob([response.data as BlobPart]));
+      url = window.URL.createObjectURL(new Blob([response.data as BlobPart]));
       const link = document.createElement('a');
       link.href  = url;
       link.setAttribute('download', `${fileName}_템플릿.xlsx`);
       document.body.appendChild(link);
       link.click();
       link.remove();
-      window.URL.revokeObjectURL(url);
     } finally {
+      if (url) window.URL.revokeObjectURL(url);
       setDownloading(false);
     }
   };

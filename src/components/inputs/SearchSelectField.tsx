@@ -114,6 +114,9 @@ export default function SearchSelectField({
   const [allOptions, setAllOptions] = useState<SearchSelectOption[]>(staticOptions ?? []);
   const [pendingKeys, setPendingKeys] = useState<React.Key[]>([]);
   const acSearchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // Always-current ref — avoids JSON.stringify in useCallback deps
+  const selectedItemsRef = useRef<SearchSelectValue[]>(selectedItems);
+  selectedItemsRef.current = selectedItems;
 
   // Sync acText with external value (single mode)
   useEffect(() => {
@@ -145,11 +148,10 @@ export default function SearchSelectField({
 
   const openModal = useCallback(async () => {
     setModalSearch('');
-    setPendingKeys(selectedItems.map((i) => i.value));
+    setPendingKeys(selectedItemsRef.current.map((i) => i.value));
     setModalOpen(true);
     await loadOptions('');
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [loadOptions, JSON.stringify(selectedItems)]);
+  }, [loadOptions]);
 
   const handleModalOk = useCallback(() => {
     const chosen = allOptions.filter((o) => pendingKeys.includes(o.value));
@@ -230,10 +232,9 @@ export default function SearchSelectField({
   // ── Tag removal (multiple mode) ────────────────────────────────────────────
 
   const removeItem = useCallback((val: string) => {
-    const next = selectedItems.filter((i) => i.value !== val);
+    const next = selectedItemsRef.current.filter((i) => i.value !== val);
     onChange?.(next.length ? next : []);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [JSON.stringify(selectedItems), onChange]);
+  }, [onChange]);
 
   // ── Modal table row selection ──────────────────────────────────────────────
 

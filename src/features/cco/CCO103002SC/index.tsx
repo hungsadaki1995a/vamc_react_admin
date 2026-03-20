@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/preserve-manual-memoization */
 import { useState, useMemo, useCallback, useRef } from 'react';
 import type { AgGridReact } from 'ag-grid-react';
 import { Input, Button, Form, Row, Col, Space } from 'antd';
@@ -88,7 +89,10 @@ export default function CCO103002SC() {
   const handleSearch = useCallback(() => {
     setSearched(true);
     setAppliedFilter({ bzLrgCzCd: filterBzLrgCzCd, mnuId: filterMnuId, mnuNm: filterMnuNm });
-  }, [filterBzLrgCzCd, filterMnuId, filterMnuNm]);
+    setSelectedRow(null);
+    form.resetFields();
+    gridRef.current?.api?.deselectAll();
+  }, [filterBzLrgCzCd, filterMnuId, filterMnuNm, form]);
 
   const handleFilterReset = useCallback(() => {
     setFilterBzLrgCzCd('');

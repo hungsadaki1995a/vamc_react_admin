@@ -2,7 +2,7 @@
 import { Tabs, Card, Tag } from 'antd';
 import { AgGridReact } from 'ag-grid-react';
 import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
-import type { ColDef, ColGroupDef } from 'ag-grid-community';
+import type { ColDef, ColGroupDef, CellClassParams, CellStyle } from 'ag-grid-community';
 import CodeSnippet from '@/components/common/CodeSnippet';
 import { lightTheme, darkTheme } from '@/components/grid/GridTable';
 import { useThemeStore } from '@/stores/themeStore';
@@ -521,162 +521,6 @@ const [quickFilter, setQuickFilter] = useState('');
   {...props}
 />`;
 
-const GridTableWrapperCode = `// GridTable 래퍼 컴포넌트 사용 (src/components/grid/GridTable.tsx)
-
-import GridTable from '@/components/grid/GridTable';
-import type { ColDef } from 'ag-grid-community';
-
-interface Employee {
-  id: number;
-  name: string;
-  department: string;
-  position: string;
-  hireDate: string;
-  salary: number;
-}
-
-export default function EmployeeList() {
-  const [rowData] = useState<Employee[]>([...]);
-  const [selectedRows, setSelectedRows] = useState<Employee[]>([]);
-
-  const columnDefs: ColDef<Employee>[] = [
-    {
-      field: 'name',
-      headerName: '이름',
-      width: 120,
-      checkboxSelection: true,
-      headerCheckboxSelection: true,
-    },
-    { field: 'department', headerName: '부서', flex: 1 },
-    { field: 'position', headerName: '직급', width: 100 },
-    {
-      field: 'hireDate',
-      headerName: '입사일',
-      width: 120,
-      valueFormatter: (p) => new Date(p.value).toLocaleDateString('ko-KR'),
-    },
-    {
-      field: 'salary',
-      headerName: '급여',
-      width: 130,
-      valueFormatter: (p) => p.value.toLocaleString('ko-KR') + '원',
-    },
-  ];
-
-  const handleRowClick = (row: Employee) => {
-    console.log('클릭된 행:', row);
-  };
-
-  const handleSelectionChanged = (rows: Employee[]) => {
-    setSelectedRows(rows);
-  };
-
-  return (
-    <div className="page-container">
-      <GridTable
-        columnDefs={columnDefs}
-        rowData={rowData}
-        height={600}
-        rowSelection="multiple"
-        onRowClick={handleRowClick}
-        onSelectionChanged={handleSelectionChanged}
-        pagination={true}
-        paginationPageSize={20}
-      />
-    </div>
-  );
-}`;
-
-const GridTablePropsCode = `// GridTable Props
-
-interface GridTableProps<T = any> {
-  columnDefs: ColDef<T>[];
-  rowData: T[];
-  height?: number;
-  rowSelection?: 'single' | 'multiple';
-  onRowClick?: (data: T) => void;
-  onSelectionChanged?: (rows: T[]) => void;
-  onCellValueChanged?: (event: CellValueChangedEvent<T>) => void;
-  pagination?: boolean;
-  paginationPageSize?: number;
-  className?: string;
-}
-
-// 주요 기능
-// - 테마 자동 연동 (다크/라이트)
-// - ag-theme-quartz / ag-theme-quartz-dark 자동 적용
-// - 기본 defaultColDef 설정 (sortable, filter, resizable)
-// - 간소화된 Props 인터페이스`;
-
-const GridTableWithEditorsCode = `// GridTable + 커스텀 셀 에디터
-
-import GridTable from '@/components/grid/GridTable';
-import DateCellEditor from '@/components/grid/cellEditors/DateCellEditor';
-import SelectCellEditor from '@/components/grid/cellEditors/SelectCellEditor';
-import TagsCellEditor from '@/components/grid/cellEditors/TagsCellEditor';
-import UserCellEditor from '@/components/grid/cellEditors/UserCellEditor';
-
-const columnDefs: ColDef<Task>[] = [
-  {
-    field: 'title',
-    headerName: '업무명',
-    flex: 1,
-    editable: true,
-  },
-  {
-    field: 'status',
-    headerName: '상태',
-    width: 120,
-    editable: true,
-    cellEditor: SelectCellEditor,
-    cellEditorParams: {
-      values: ['todo', 'inprogress', 'done', 'hold'],
-      valueLabels: {
-        todo: '예정',
-        inprogress: '진행중',
-        done: '완료',
-        hold: '보류',
-      },
-    },
-  },
-  {
-    field: 'assignee',
-    headerName: '담당자',
-    width: 150,
-    editable: true,
-    cellEditor: UserCellEditor,
-  },
-  {
-    field: 'dueDate',
-    headerName: '완료일',
-    width: 120,
-    editable: true,
-    cellEditor: DateCellEditor,
-    cellEditorParams: {
-      format: 'YYYY-MM-DD',
-    },
-  },
-  {
-    field: 'tags',
-    headerName: '태그',
-    width: 200,
-    editable: true,
-    cellEditor: TagsCellEditor,
-    cellEditorParams: {
-      presetTags: ['긴급', '중요', '검토필요', '보류', '승인대기'],
-    },
-  },
-];
-
-<GridTable
-  columnDefs={columnDefs}
-  rowData={tasks}
-  height={500}
-  onCellValueChanged={(event) => {
-    console.log('변경:', event.colDef.field, event.oldValue, '->', event.newValue);
-    // 서버 저장 로직
-  }}
-/>`;
 
 // ── 헤더 그룹핑 코드 스니펫 ──
 
@@ -1297,13 +1141,13 @@ export default function GuideAgGrid() {
   }, []);
 
   // 소계/그룹 스타일
-  const groupCellStyle = useCallback((params: { data?: SpanDemoRow; node?: { rowPinned?: string | null; rowIndex: number | null } }) => {
-    const base: Record<string, string> = {};
+  const groupCellStyle = useCallback((params: CellClassParams<SpanDemoRow>) => {
+    const base: CellStyle = {};
     if (params.data?.category?.includes('소계') || params.node?.rowPinned) {
       base.fontWeight = 'bold';
       base.backgroundColor = 'var(--content-header-bg, #f0f0f0)';
     }
-    if (isGroupFirstRow(params as any) && !params.data?.category?.includes('소계')) {
+    if (isGroupFirstRow(params) && !params.data?.category?.includes('소계')) {
       base.borderTop = '2px solid var(--border-color, #d9d9d9)';
     }
     return Object.keys(base).length > 0 ? base : undefined;
@@ -1312,8 +1156,9 @@ export default function GuideAgGrid() {
   const groupColDefs = useMemo<ColDef<SpanDemoRow>[]>(() => [
     { field: 'category', headerName: '구분', width: 120,
       colSpan: (params) => params.data?.category?.includes('소계') || params.data?.category === '총 합계' ? 2 : 1,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       valueFormatter: categoryValueFormatter as any,
-      cellStyle: groupCellStyle as any,
+      cellStyle: groupCellStyle,
     },
     { field: 'item', headerName: '항목', width: 120,
       cellStyle: (params) => params.data?.category?.includes('소계') ? { fontWeight: 'bold', backgroundColor: 'var(--content-header-bg, #f0f0f0)' } : undefined,
@@ -1493,49 +1338,6 @@ export default function GuideAgGrid() {
               <li>floatingFilter: true로 헤더 아래 인라인 필터 표시</li>
               <li>quickFilterText로 모든 컬럼을 대상으로 빠른 검색</li>
               <li>suppressRowClickSelection: true로 체크박스만 선택 가능하게 설정</li>
-            </ul>
-          </div>
-        </div>
-      ),
-    },
-    {
-      key: '5',
-      label: '본 프로젝트 GridTable',
-      children: (
-        <div className="demo-section">
-          <h3>GridTable 래퍼 컴포넌트</h3>
-          <p style={{ color: 'var(--text-secondary)', marginBottom: 16 }}>
-            <code>src/components/grid/GridTable.tsx</code>는 AG Grid를 래핑한 컴포넌트로,
-            테마 자동 연동 및 간소화된 Props를 제공합니다.
-          </p>
-          <CodeSnippet code={GridTablePropsCode} title="GridTable Props" />
-
-          <h3 style={{ marginTop: 24 }}>기본 사용 예제</h3>
-          <CodeSnippet code={GridTableWrapperCode} title="GridTable 사용" />
-
-          <h3 style={{ marginTop: 24 }}>커스텀 에디터 통합</h3>
-          <p style={{ color: 'var(--text-secondary)', marginBottom: 16 }}>
-            프로젝트의 커스텀 셀 에디터를 GridTable와 함께 사용하는 방법입니다.
-          </p>
-          <CodeSnippet code={GridTableWithEditorsCode} title="GridTable + 커스텀 에디터" />
-
-          <div style={{ marginTop: 16, padding: 12, background: 'var(--content-header-bg)', borderRadius: 4 }}>
-            <strong>✅ GridTable 특징</strong>
-            <ul style={{ margin: '8px 0 0', paddingLeft: 20, color: 'var(--text-secondary)' }}>
-              <li>themeStore를 통한 다크/라이트 모드 자동 연동</li>
-              <li>기본 defaultColDef 설정 (sortable, filter, resizable)</li>
-              <li>타입 안전한 제네릭 인터페이스</li>
-              <li>onRowClick, onSelectionChanged 등 간소화된 이벤트 핸들러</li>
-              <li>pagination 자동 설정</li>
-            </ul>
-          </div>
-
-          <div style={{ marginTop: 16, padding: 12, background: 'var(--content-header-bg)', borderRadius: 4 }}>
-            <strong>📚 참고 페이지</strong>
-            <ul style={{ margin: '8px 0 0', paddingLeft: 20, color: 'var(--text-secondary)' }}>
-              <li>Settings &gt; 커스텀 데모 &gt; 데이터 그리드 (라이브 데모)</li>
-              <li>업무 관리 &gt; 업무 목록 (실제 사용 예제)</li>
-              <li>Settings &gt; 커스텀 데모 &gt; 필터+그리드+상세 (레이아웃 패턴)</li>
             </ul>
           </div>
         </div>

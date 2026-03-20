@@ -79,6 +79,7 @@ export default function FlyoutPanel() {
   // Auto-expand parent keys when active menu changes (tab switch or menu click).
   useEffect(() => {
     if (!activeMenuKey) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setExpandedKeys([]);
       return;
     }
