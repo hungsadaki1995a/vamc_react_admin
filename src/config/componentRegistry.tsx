@@ -33,6 +33,7 @@ const autoRegistry: Record<string, ComponentType> = Object.fromEntries(
 const overrides: Record<string, ComponentType> = {
   // Server menuUrlAddr → local component mapping
   // (when server's menuUrlAddr path ≠ folder name under src/features/)
+  '/admin/system/admin/menu': lazy(() => import('@/features/admin/AdminMenuManagement/index')),
 };
 
 export const componentRegistry: Record<string, ComponentType> = {
