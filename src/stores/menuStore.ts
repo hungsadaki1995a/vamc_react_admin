@@ -4,6 +4,7 @@ import { fetchAuthMenuList } from '@/api/menu';
 import { idbGet, idbSet, idbDelete } from '@/lib/cache/idbCache';
 import { useAuthStore } from '@/stores/authStore';
 import { useProjectStore } from '@/stores/projectStore';
+import { useLocaleStore } from '@/stores/localeStore';
 
 interface MenuStore {
   activeRailKey: string | null;
@@ -77,7 +78,8 @@ export const useMenuStore = create<MenuStore>((set, get) => ({
 
     const userId    = useAuthStore.getState().user?.usrId ?? '_';
     const projectId = useProjectStore.getState().activeProject?.id ?? '_';
-    const cacheKey  = `menus:${userId}:${projectId}`;
+    const locale    = useLocaleStore.getState().locale;
+    const cacheKey  = `menus:${userId}:${projectId}:${locale}`;
 
     const cached = await idbGet<MenuItem[]>(cacheKey);
     if (cached) {
@@ -107,7 +109,8 @@ export const useMenuStore = create<MenuStore>((set, get) => ({
   invalidateMenuCache: async () => {
     const userId    = useAuthStore.getState().user?.usrId ?? '_';
     const projectId = useProjectStore.getState().activeProject?.id ?? '_';
-    const cacheKey  = `menus:${userId}:${projectId}`;
+    const locale    = useLocaleStore.getState().locale;
+    const cacheKey  = `menus:${userId}:${projectId}:${locale}`;
     await idbDelete(cacheKey);
     // menuLoading 가드 초기화 후 즉시 재fetch
     set({ menuLoading: false });

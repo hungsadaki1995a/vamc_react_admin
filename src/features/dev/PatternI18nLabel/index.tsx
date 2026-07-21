@@ -71,32 +71,32 @@ const MOCK_TRANSLATIONS: Record<string, LblTrnItem[]> = {
   'CCO102003SC.GRID.TEXT_lblId': [
     { lblId: 'CCO102003SC.GRID.TEXT_lblId', lclCd: 'ko', lblTxt: '라벨 키',   _rowId: 'ko' },
     { lblId: 'CCO102003SC.GRID.TEXT_lblId', lclCd: 'en', lblTxt: 'Label Key', _rowId: 'en' },
-    { lblId: 'CCO102003SC.GRID.TEXT_lblId', lclCd: 'vi', lblTxt: 'Mã nhãn',   _rowId: 'vi' },
+    { lblId: 'CCO102003SC.GRID.TEXT_lblId', lclCd: 'vn', lblTxt: 'Mã nhãn',   _rowId: 'vn' },
   ],
   'CCO102003SC.GRID.TEXT_mrCont': [
     { lblId: 'CCO102003SC.GRID.TEXT_mrCont', lclCd: 'ko', lblTxt: '기본 텍스트',    _rowId: 'ko' },
     { lblId: 'CCO102003SC.GRID.TEXT_mrCont', lclCd: 'en', lblTxt: 'Default Text',  _rowId: 'en' },
-    { lblId: 'CCO102003SC.GRID.TEXT_mrCont', lclCd: 'vi', lblTxt: 'Văn bản mặc định', _rowId: 'vi' },
+    { lblId: 'CCO102003SC.GRID.TEXT_mrCont', lclCd: 'vn', lblTxt: 'Văn bản mặc định', _rowId: 'vn' },
   ],
   'CCO102003SC.BUTTON.TEXT_save': [
     { lblId: 'CCO102003SC.BUTTON.TEXT_save', lclCd: 'ko', lblTxt: '저장', _rowId: 'ko' },
     { lblId: 'CCO102003SC.BUTTON.TEXT_save', lclCd: 'en', lblTxt: 'Save', _rowId: 'en' },
-    { lblId: 'CCO102003SC.BUTTON.TEXT_save', lclCd: 'vi', lblTxt: 'Lưu',  _rowId: 'vi' },
+    { lblId: 'CCO102003SC.BUTTON.TEXT_save', lclCd: 'vn', lblTxt: 'Lưu',  _rowId: 'vn' },
   ],
   'CCO102003SC.BUTTON.TEXT_delete': [
     { lblId: 'CCO102003SC.BUTTON.TEXT_delete', lclCd: 'ko', lblTxt: '삭제',   _rowId: 'ko' },
     { lblId: 'CCO102003SC.BUTTON.TEXT_delete', lclCd: 'en', lblTxt: 'Delete', _rowId: 'en' },
-    { lblId: 'CCO102003SC.BUTTON.TEXT_delete', lclCd: 'vi', lblTxt: 'Xóa',    _rowId: 'vi' },
+    { lblId: 'CCO102003SC.BUTTON.TEXT_delete', lclCd: 'vn', lblTxt: 'Xóa',    _rowId: 'vn' },
   ],
   'MESSAGE.INFO.TEXT_I100002': [
     { lblId: 'MESSAGE.INFO.TEXT_I100002', lclCd: 'ko', lblTxt: '등록되었습니다.',     _rowId: 'ko' },
     { lblId: 'MESSAGE.INFO.TEXT_I100002', lclCd: 'en', lblTxt: 'Registered.',        _rowId: 'en' },
-    { lblId: 'MESSAGE.INFO.TEXT_I100002', lclCd: 'vi', lblTxt: 'Đã đăng ký.',        _rowId: 'vi' },
+    { lblId: 'MESSAGE.INFO.TEXT_I100002', lclCd: 'vn', lblTxt: 'Đã đăng ký.',        _rowId: 'vn' },
   ],
   'MESSAGE.CONFIRM.TEXT_C100001': [
     { lblId: 'MESSAGE.CONFIRM.TEXT_C100001', lclCd: 'ko', lblTxt: '저장하시겠습니까?',     _rowId: 'ko' },
     { lblId: 'MESSAGE.CONFIRM.TEXT_C100001', lclCd: 'en', lblTxt: 'Do you want to save?', _rowId: 'en' },
-    { lblId: 'MESSAGE.CONFIRM.TEXT_C100001', lclCd: 'vi', lblTxt: 'Bạn có muốn lưu?',    _rowId: 'vi' },
+    { lblId: 'MESSAGE.CONFIRM.TEXT_C100001', lclCd: 'vn', lblTxt: 'Bạn có muốn lưu?',    _rowId: 'vn' },
   ],
 };
 
@@ -120,10 +120,10 @@ const MOCK_PROJECTS = [
 const LANG_OPTIONS = [
   { value: 'ko', label: '한국어 (ko)' },
   { value: 'en', label: '영어 (en)' },
-  { value: 'vi', label: '베트남어 (vi)' },
+  { value: 'vn', label: '베트남어 (vn)' },
 ];
 
-const LANG_LABELS: Record<string, string> = { ko: '한국어', en: '영어', vi: '베트남어' };
+const LANG_LABELS: Record<string, string> = { ko: '한국어', en: '영어', vn: '베트남어' };
 
 const SECTION_OPTIONS = [
   { value: 'GRID',   label: '그리드 (GRID)' },
@@ -289,7 +289,7 @@ export default function PatternI18nLabel() {
 
   // ── 핸들러 — 라벨 저장 (mock: 토스트만)
   const handleSave = useCallback(() => {
-    form.validateFields().then((values) => {
+    form.validateFields().then((_values) => {
       confirm(
         isEditMode ? '수정하시겠습니까?' : '등록하시겠습니까?',
         () => {

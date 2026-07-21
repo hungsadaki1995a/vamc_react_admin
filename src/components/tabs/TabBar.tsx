@@ -11,12 +11,16 @@ import { Dropdown } from 'antd';
 import type { MenuProps } from 'antd';
 import { useTabStore } from '@/stores/tabStore';
 import { useSettingsStore } from '@/stores/settingsStore';
+import { useMenuStore } from '@/stores/menuStore';
+import { menuConfig } from '@/config/menuConfig';
+import { findMenuByKey } from '@/utils/menuUtils';
 import TabContextMenu from './TabContextMenu';
 import type { Tab } from '@/types/tab';
 
 /** Memoized individual tab item to prevent unnecessary re-renders */
 const TabItem = memo(function TabItem({
   tab,
+  label,
   isActive,
   isDropTarget,
   isHome,
@@ -30,6 +34,7 @@ const TabItem = memo(function TabItem({
   onDrop,
 }: {
   tab: Tab;
+  label: string;
   isActive: boolean;
   isDropTarget: boolean;
   isHome: boolean;
@@ -61,7 +66,7 @@ const TabItem = memo(function TabItem({
     >
       {isHome && <HomeOutlined className="tab-home-icon" />}
       {!isHome && tab.pinned && <PushpinFilled className="tab-pin-icon" />}
-      <span className="tab-label">{tab.title}</span>
+      <span className="tab-label">{label}</span>
       {tab.closable && (
         <span
           className="tab-close"
@@ -90,6 +95,14 @@ export default function TabBar() {
   } = useTabStore();
 
   const homeMenuKey = useSettingsStore((s) => s.homeMenuKey);
+  const serverMenus = useMenuStore((s) => s.serverMenus);
+
+  // Live menu label: re-derives from server menus on locale change so tabs always show current language
+  const allMenus = useMemo(() => [...serverMenus, ...menuConfig], [serverMenus]);
+  const getTabLabel = useCallback(
+    (tab: Tab) => findMenuByKey(allMenus, tab.menuKey)?.label ?? tab.title,
+    [allMenus]
+  );
 
   const [contextMenu, setContextMenu] = useState<{
     visible: boolean;
@@ -293,11 +306,11 @@ export default function TabBar() {
     { type: 'divider' as const },
     ...tabs.map((t) => ({
       key: `goto-${t.key}`,
-      label: t.title,
+      label: getTabLabel(t),
       onClick: () => startTransition(() => setActiveTab(t.key)),
       style: t.key === activeTabKey ? { fontWeight: 600, color: '#1677ff' } : {},
     })),
-  ], [tabs, activeTabKey, closeTab, closeOtherTabs, closeRightTabs, closeAllTabs, setActiveTab, handleActivate]);
+  ], [tabs, activeTabKey, closeTab, closeOtherTabs, closeRightTabs, closeAllTabs, setActiveTab, handleActivate, getTabLabel]);
 
   // Pinned first — memoized (must be before early return to respect Rules of Hooks)
   const sortedTabs = useMemo(() =>
@@ -340,6 +353,7 @@ export default function TabBar() {
             <TabItem
               key={tab.key}
               tab={tab}
+              label={getTabLabel(tab)}
               isActive={tab.key === activeTabKey}
               isDropTarget={dropTargetIdx === idx}
               isHome={tab.menuKey === homeMenuKey}

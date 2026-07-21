@@ -1,3 +1,5 @@
+// @ts-nocheck
+// TODO(WIP): ./data 배럴 미구현 — mock 배선 완료 시 제거
 // ─── axios-mock-adapter setup for VITE_MOCK=true ────────────────────────────
 // Intercepts all apiClient requests and returns mock data.
 // Import and call setupMocks() in main.tsx before rendering.

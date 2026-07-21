@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-export type LocaleKey = 'ko' | 'en' | 'vi';
+export type LocaleKey = 'ko' | 'en' | 'vn';
 
 interface LocaleStore {
   locale: LocaleKey;

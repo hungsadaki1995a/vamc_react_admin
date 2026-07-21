@@ -13,14 +13,13 @@ import type { CodeDetail } from '@/api/common';
 // Any username + any password is accepted in mock mode.
 
 // ─── Mock login ───────────────────────────────────────────────────────────────
-export async function mockLogin(username: string): Promise<ApiResponse<LoginResponse>> {
+export async function mockLogin(_username: string): Promise<ApiResponse<LoginResponse>> {
   await delay(300);
   return {
     success: true,
     message: 'success',
     data: {
       accessToken: 'mock-access-token',
-      refreshToken: 'mock-refresh-token',
       tokenType: 'Bearer',
       expiresIn: 3600,
       mustChangePassword: false,

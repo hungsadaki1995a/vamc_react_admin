@@ -23,7 +23,7 @@ const storeRows: StoreRow[] = [
   { key: '3', name: 'menuStore',     persist: '❌',   desc: '레일/플라이아웃 상태 + 서버 메뉴 트리' },
   { key: '4', name: 'projectStore',  persist: '✅',   desc: '활성 프로젝트 + 내 프로젝트 목록' },
   { key: '5', name: 'themeStore',    persist: '✅',   desc: 'light/dark 테마 (localStorage: vamc-theme)' },
-  { key: '6', name: 'localeStore',   persist: '✅',   desc: '언어 설정 ko/en/vi (localStorage: vamc-locale)' },
+  { key: '6', name: 'localeStore',   persist: '✅',   desc: '언어 설정 ko/en/vn (localStorage: vamc-locale)' },
   { key: '7', name: 'labelStore',    persist: '❌',   desc: '다국어 라벨 캐시 (매 마운트 시 재로드)' },
   { key: '8', name: 'comcdStore',    persist: '❌',   desc: '공통코드 캐시 (매 마운트 시 재로드)' },
   { key: '9', name: 'settingsStore', persist: '✅',   desc: '개인 설정 — homeMenuKey 등' },

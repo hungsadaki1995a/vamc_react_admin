@@ -1,7 +1,7 @@
 import { useState, useMemo, useCallback, useRef } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import type { AgGridReact } from 'ag-grid-react';
-import { Input, Button, Form, Row, Col, Space } from 'antd';
+import { Input, Button, Form, Row, Col, Space, Select } from 'antd';
 import GridPanel from '@/components/grid/GridPanel';
 import VerticalDivider from '@/components/layout/VerticalDivider';
 import FilterPanel from '@/components/layout/FilterPanel';
@@ -14,11 +14,22 @@ import type { ApiResponse } from '@/lib/api/types';
 import type { MnuResponse } from '@/api/menu';
 import type { ColDef } from 'ag-grid-community';
 
+// ── Constants ────────────────────────────────────────────────────────────────
+
+type LangCd = 'ko' | 'en' | 'vn';
+
+const LANG_OPTIONS: { value: LangCd; label: string }[] = [
+  { value: 'ko', label: '한국어 (KO)' },
+  { value: 'en', label: 'English (EN)' },
+  { value: 'vn', label: 'Tiếng Việt (VN)' },
+];
+
 // ── Types ────────────────────────────────────────────────────────────────────
 
 type FormValues = {
   menuCd: string;
   menuNmDisplay: string;
+  menuLblVal: string;
   upMenuCd: string;
   menuSeq: number | string;
   menuDpth: number | string;
@@ -28,8 +39,10 @@ type FormValues = {
 
 // ── API ──────────────────────────────────────────────────────────────────────
 
-async function fetchAllMenus(): Promise<MnuResponse[]> {
-  const { data } = await apiClient.get<ApiResponse<MnuResponse[]>>('/api/common/menus/all');
+async function fetchAllMenus(langCd: LangCd): Promise<MnuResponse[]> {
+  const { data } = await apiClient.get<ApiResponse<MnuResponse[]>>('/api/common/menus/all', {
+    params: { langCd },
+  });
   if (data.status !== 200 || !data.data) return [];
   return data.data;
 }
@@ -39,17 +52,18 @@ async function fetchAllMenus(): Promise<MnuResponse[]> {
 export default function AdminMenuManagement() {
   const { notify, dialog } = useNotify();
 
-  // ── Server data ──────────────────────────────────────────────────────────
-  const { data: allMenus = [], isLoading } = useQuery({
-    queryKey: ['admin', 'menus', 'all'],
-    queryFn: fetchAllMenus,
-  });
-
   // ── Filter state ─────────────────────────────────────────────────────────
   const [filterMenuCd, setFilterMenuCd]   = useState('');
   const [filterMenuNm, setFilterMenuNm]   = useState('');
-  const [appliedFilter, setAppliedFilter] = useState({ menuCd: '', menuNm: '' });
+  const [filterLangCd, setFilterLangCd]   = useState<LangCd>('en');
+  const [appliedFilter, setAppliedFilter] = useState({ menuCd: '', menuNm: '', langCd: 'en' as LangCd });
   const [hasSearched, setHasSearched]     = useState(true);
+
+  // ── Server data ──────────────────────────────────────────────────────────
+  const { data: allMenus = [], isLoading } = useQuery({
+    queryKey: ['admin', 'menus', 'all', appliedFilter.langCd],
+    queryFn: () => fetchAllMenus(appliedFilter.langCd),
+  });
 
   // ── Form state ───────────────────────────────────────────────────────────
   const [formCollapsed, setFormCollapsed] = useState(false);
@@ -65,51 +79,61 @@ export default function AdminMenuManagement() {
     if (!hasSearched) return [];
     return allMenus.filter((item) => {
       if (appliedFilter.menuCd && !item.menuCd.includes(appliedFilter.menuCd)) return false;
-      if (appliedFilter.menuNm && !item.menuNmDisplay.trim().includes(appliedFilter.menuNm)) return false;
+      if (appliedFilter.menuNm) {
+        const nm = item.menuNmDisplay.trim();
+        const lbl = item.menuLblVal?.trim() ?? '';
+        if (!nm.includes(appliedFilter.menuNm) && !lbl.includes(appliedFilter.menuNm)) return false;
+      }
       return true;
     });
   }, [hasSearched, allMenus, appliedFilter]);
 
   // ── Column definitions ───────────────────────────────────────────────────
 
-  const columnDefs = useMemo<ColDef<MnuResponse>[]>(() => [
-    { field: 'menuCd',        headerName: '메뉴코드',   width: 130, flex: 0 },
-    {
-      field: 'menuNmDisplay', headerName: '메뉴명', minWidth: 200,
-      valueFormatter: ({ data }) =>
-        data ? '\u00A0'.repeat(((data.menuDpth ?? 1) - 1) * 4) + (data.menuNmDisplay?.trim() ?? '') : '',
-    },
-    { field: 'upMenuCd',      headerName: '상위메뉴코드', width: 130, flex: 0 },
-    { field: 'menuSeq',       headerName: '메뉴순서',   width: 90,  flex: 0 },
-    { field: 'menuDpth',      headerName: '메뉴레벨',   width: 90,  flex: 0 },
-    { field: 'menuUrlAddr',   headerName: '컴포넌트경로', minWidth: 180 },
-    { field: 'lblCd',         headerName: '라벨코드',   minWidth: 220 },
-  ], []);
+  const columnDefs = useMemo<ColDef<MnuResponse>[]>(() => {
+    const langLabel = LANG_OPTIONS.find((o) => o.value === appliedFilter.langCd)?.label ?? appliedFilter.langCd.toUpperCase();
+    return [
+      { field: 'menuCd',        headerName: '메뉴코드',     width: 130, flex: 0 },
+      {
+        field: 'menuNmDisplay', headerName: '메뉴명(KR)', minWidth: 180,
+        valueFormatter: ({ data }) =>
+          data ? '\u00A0'.repeat(((data.menuDpth ?? 1) - 1) * 4) + (data.menuNmDisplay?.trim() ?? '') : '',
+      },
+      { field: 'menuLblVal',    headerName: `다국어 메뉴명 (${langLabel})`, minWidth: 200 },
+      { field: 'upMenuCd',      headerName: '상위메뉴코드', width: 130, flex: 0 },
+      { field: 'menuSeq',       headerName: '메뉴순서',     width: 90,  flex: 0 },
+      { field: 'menuDpth',      headerName: '메뉴레벨',     width: 90,  flex: 0 },
+      { field: 'menuUrlAddr',   headerName: '컴포넌트경로',  minWidth: 180 },
+      { field: 'lblCd',         headerName: '라벨코드',     minWidth: 220 },
+    ];
+  }, [appliedFilter.langCd]);
 
   // ── Handlers ─────────────────────────────────────────────────────────────
 
   const handleSearch = useCallback(() => {
     setHasSearched(true);
-    setAppliedFilter({ menuCd: filterMenuCd, menuNm: filterMenuNm });
-  }, [filterMenuCd, filterMenuNm]);
+    setAppliedFilter({ menuCd: filterMenuCd, menuNm: filterMenuNm, langCd: filterLangCd });
+  }, [filterMenuCd, filterMenuNm, filterLangCd]);
 
   const handleFilterReset = useCallback(() => {
     setFilterMenuCd('');
     setFilterMenuNm('');
-    setAppliedFilter({ menuCd: '', menuNm: '' });
+    setFilterLangCd('en');
+    setAppliedFilter({ menuCd: '', menuNm: '', langCd: 'en' });
     setHasSearched(false);
   }, []);
 
   const handleRowClick = useCallback((row: MnuResponse) => {
     setSelectedRow(row);
     form.setFieldsValue({
-      menuCd:       row.menuCd,
+      menuCd:        row.menuCd,
       menuNmDisplay: row.menuNmDisplay?.trim(),
-      upMenuCd:     row.upMenuCd ?? '',
-      menuSeq:      row.menuSeq,
-      menuDpth:     row.menuDpth,
-      menuUrlAddr:  row.menuUrlAddr ?? '',
-      lblCd:        row.lblCd ?? '',
+      menuLblVal:    row.menuLblVal ?? '',
+      upMenuCd:      row.upMenuCd ?? '',
+      menuSeq:       row.menuSeq,
+      menuDpth:      row.menuDpth,
+      menuUrlAddr:   row.menuUrlAddr ?? '',
+      lblCd:         row.lblCd ?? '',
     });
     if (formCollapsed) setFormCollapsed(false);
   }, [form, formCollapsed]);
@@ -161,6 +185,18 @@ export default function AdminMenuManagement() {
         onReset={handleFilterReset}
         activeFilterCount={[filterMenuCd, filterMenuNm].filter(Boolean).length}
       >
+        <div className="ds-filter-field" style={{ minWidth: 180 }}>
+          <span className="ds-filter-field-label" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>
+            언어 <span style={{ color: 'red' }}>*</span>
+          </span>
+          <Select<LangCd>
+            value={filterLangCd}
+            onChange={setFilterLangCd}
+            options={LANG_OPTIONS}
+            style={{ width: '100%' }}
+            allowClear={false}
+          />
+        </div>
         <div className="ds-filter-field">
           <span className="ds-filter-field-label">메뉴코드</span>
           <Input
@@ -219,6 +255,7 @@ export default function AdminMenuManagement() {
           labelCol={{ style: { width: 96, flexShrink: 0, textAlign: 'right', whiteSpace: 'nowrap' } }}
           wrapperCol={{ style: { flex: 1, minWidth: 0 } }}
         >
+          {/* Row 1: 메뉴코드 / 메뉴명(KR) / 다국어 메뉴명 / 상위메뉴코드 */}
           <Row gutter={[12, 4]}>
             <Col span={6}>
               <Form.Item
@@ -236,12 +273,25 @@ export default function AdminMenuManagement() {
             </Col>
             <Col span={6}>
               <Form.Item
-                label="메뉴명"
+                label="메뉴명(KR)"
                 name="menuNmDisplay"
                 rules={[{ required: true, message: '' }]}
                 style={{ margin: '0 0 8px' }}
               >
                 <TipInput maxLength={100} />
+              </Form.Item>
+            </Col>
+            <Col span={6}>
+              <Form.Item
+                label="다국어 메뉴명"
+                name="menuLblVal"
+                style={{ margin: '0 0 8px' }}
+              >
+                <TipInput
+                  readOnly
+                  style={{ background: 'var(--tab-bar-bg)', cursor: 'not-allowed' }}
+                  placeholder="라벨 테이블에서 자동 조회"
+                />
               </Form.Item>
             </Col>
             <Col span={6}>
@@ -253,6 +303,9 @@ export default function AdminMenuManagement() {
                 <TipInput maxLength={20} />
               </Form.Item>
             </Col>
+          </Row>
+          {/* Row 2: 메뉴순서 / 메뉴레벨 / 컴포넌트경로 / 라벨코드 */}
+          <Row gutter={[12, 4]}>
             <Col span={6}>
               <Form.Item
                 label="메뉴순서"
@@ -266,8 +319,6 @@ export default function AdminMenuManagement() {
                 />
               </Form.Item>
             </Col>
-          </Row>
-          <Row gutter={[12, 4]}>
             <Col span={6}>
               <Form.Item
                 label="메뉴레벨"

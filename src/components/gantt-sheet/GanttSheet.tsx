@@ -14,7 +14,7 @@ import GanttSheetGridPanel from './GanttSheetGridPanel';
 import GanttSheetTimelineHeader from './GanttSheetTimelineHeader';
 import GanttSheetBar from './GanttSheetBar';
 import GanttSheetArrows from './GanttSheetArrows';
-import type { GanttTask, GanttViewMode, CriticalPathResult } from './ganttTypes';
+import type { GanttTask, GanttViewMode, CriticalPathResult, DependencyType } from './ganttTypes';
 import type { DragState } from './useGanttDrag';
 import './GanttSheet.css';
 import '../gantt/GanttGrid.css';
@@ -167,7 +167,7 @@ export default function GanttSheet({
 
   const dependencyLines = useMemo(() => {
     if (!criticalPath) {
-      const lines: Array<{ fromId: string; toId: string; type: string; isCritical: boolean }> = [];
+      const lines: Array<{ fromId: string; toId: string; type: DependencyType; isCritical: boolean }> = [];
       for (const task of visibleTasks) {
         for (const depId of task.dependencies ?? []) {
           lines.push({ fromId: depId, toId: task.id, type: task.dependencyTypes?.[depId] ?? 'FS', isCritical: false });
@@ -461,7 +461,7 @@ export default function GanttSheet({
             body.scrollTo({ left: Math.max(0, dateEngine.todayX - body.clientWidth / 3), behavior: 'smooth' });
           }}
         >
-          {language === 'en' ? 'Today' : language === 'vi' ? 'Hôm nay' : '오늘'}
+          {language === 'en' ? 'Today' : language === 'vn' ? 'Hôm nay' : '오늘'}
         </button>
       )}
     </div>

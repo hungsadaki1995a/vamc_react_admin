@@ -30,7 +30,7 @@ function ApiNotifyBridge() {
 export default function App() {
   const mode = useThemeStore((s) => s.mode);
   const locale = useLocaleStore((s) => s.locale);
-  const antLocale = locale === 'en' ? enUS : locale === 'vi' ? viVN : koKR;
+  const antLocale = locale === 'en' ? enUS : locale === 'vn' ? viVN : koKR;
   const { setLoading, setAuth, logout } = useAuthStore();
 
   // Restore session on app load: refresh_token cookie → new accessToken
@@ -69,9 +69,10 @@ export default function App() {
     document.documentElement.setAttribute('data-theme', mode);
   }, [mode]);
 
-  // Common codes: reload on locale change
+  // Common codes + menu: reload on locale change
   useEffect(() => {
     useComcdStore.getState().loadCodes();
+    useMenuStore.getState().loadMenuForProject();
   }, [locale]);
 
   return (

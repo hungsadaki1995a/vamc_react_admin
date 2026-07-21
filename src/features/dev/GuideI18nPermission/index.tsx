@@ -470,7 +470,7 @@ function LocaleSelector() {
       options={[
         { label: '한국어', value: 'ko' },
         { label: 'English', value: 'en' },
-        { label: 'Tiếng Việt', value: 'vi' },
+        { label: 'Tiếng Việt', value: 'vn' },
       ]}
     />
   );

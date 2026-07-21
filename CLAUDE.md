@@ -11,8 +11,7 @@ VAMC NPL ADMIN — 부실채권 관리 어드민 시스템. React + TypeScript S
 ## Commands
 
 ```bash
-npm run dev          # Vite dev server (default port 5173)
-npm run dev:mock     # Dev server with MSW mock mode (VITE_MOCK=true)
+npm run dev          # Vite dev server (port 3000, strictPort)
 npm run build        # TypeScript compile + Vite production build → dist/
 npm run lint         # ESLint
 npx tsc --noEmit     # TypeScript type check (no output)
@@ -20,9 +19,10 @@ npx tsc --noEmit     # TypeScript type check (no output)
 
 ### Environment
 
-Copy `.env.example` to `.env.local` and set:
+`.env.local`에서 `VITE_API_BASE_URL`을 **빈 값**으로 두면 Vite dev 프록시가 `/api` 요청을 `http://127.0.0.1:8080`으로 전달합니다 (CORS 우회, vite.config.ts 참조). 백엔드를 직접 호출하려면 URL을 지정하세요:
 ```
-VITE_API_BASE_URL=http://localhost:8080
+VITE_API_BASE_URL=          # 개발 기본값 (Vite 프록시 사용)
+VITE_API_BASE_URL=http://localhost:8080   # 직접 호출 시
 ```
 
 ## Tech Stack
@@ -178,7 +178,7 @@ src/
 ## API Client
 
 `apiClient` 하나만 사용 (`src/lib/api/client.ts`).
-- **baseURL**: `VITE_API_BASE_URL` (예: `http://localhost:8180`)
+- **baseURL**: `VITE_API_BASE_URL` — 개발 시 빈 값(Vite 프록시 `/api` → `http://127.0.0.1:8080`)
 - 인터셉터: Bearer 토큰 주입, Silent Refresh (401), X-Project-Id / X-Lang 헤더 자동 주입
 
 ### 응답 포맷
@@ -214,11 +214,12 @@ export const getTaskList = async (): Promise<ApiResponse<Task[]>> => {
 
 ## Backend Server
 
-- **Server**: Spring Boot 3.5.6 + MyBatis + MariaDB at `ds_pms_new/`
-- **API Base**: `http://localhost:8080` (set via `VITE_API_BASE_URL`)
-- **Auth**: JWT (AccessToken + RefreshToken both in response body; Refresh sent via `Refresh-Token` header)
+- **Server**: Spring Boot 3.5.9 + MyBatis + MariaDB + Redis at `../vamc-npl-backend/` (아키텍처/컨벤션은 해당 프로젝트 README.md 참조)
+- **Run**: `cd ../vamc-npl-backend && ./mvnw spring-boot:run` (port 8080, Swagger: `/swagger-ui.html`)
+- **API Base**: 개발 시 Vite 프록시 경유 (`/api` → `http://127.0.0.1:8080`)
+- **Auth**: JWT (AccessToken + RefreshToken both in response body; Refresh sent via `Refresh-Token` header, Redis 기반 토큰 로테이션)
 - **Local test account**: `admin` / `1q2w3e4r1!` (inserted by `LocalTestDataInitializer` on startup)
-- **CORS**: `http://localhost:5173`, credentials: true
+- **CORS**: `http://localhost:3000`, `http://localhost:8080` (local/dev 프로파일 `cors.allowed-origins`)
 
 ## Design Docs (`docs/`)
 

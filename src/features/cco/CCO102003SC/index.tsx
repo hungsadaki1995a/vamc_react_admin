@@ -2,10 +2,8 @@ import { useState, useMemo, useCallback, useRef, useSyncExternalStore } from 're
 import type { AgGridReact } from 'ag-grid-react';
 import type { ColDef, CellValueChangedEvent, CellEditingStartedEvent } from 'ag-grid-community';
 import { Button, Form, Row, Col, Space, Input, Select } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
 import GridPanel from '@/components/grid/GridPanel';
 import FilterPanel from '@/components/layout/FilterPanel';
-import { useProjectStore } from '@/stores/projectStore';
 import { useComcdStore } from '@/stores/comcdStore';
 import FormPanel from '@/components/layout/FormPanel';
 import VerticalDivider from '@/components/layout/VerticalDivider';
@@ -15,6 +13,8 @@ import {
   ComcdSelectCellEditor,
 } from '@/components/grid/ComcdSelectCell';
 import type { CodeDetail } from '@/api/common';
+import { getMyProjects } from '@/api/project';
+import type { MyProjectResponseDto } from '@/lib/api/types';
 import { useScreenLabel } from '@/hooks/useScreenLabel';
 import { useApiQuery } from '@/hooks/useApiQuery';
 import { useApiMutation } from '@/hooks/useApiMutation';
@@ -88,7 +88,11 @@ export default function CCO102003SC() {
   const [selectedProj, setSelectedProj] = useState<string>('PJ000');
   const selectedProjRef = useRef(selectedProj);
   selectedProjRef.current = selectedProj;
-  const myProjects = useProjectStore((s) => s.myProjects);
+  // projectStore no longer exposes a myProjects list (post-merge) — fetch directly, same as ProjSelectField
+  const { data: myProjects = [] } = useApiQuery<MyProjectResponseDto[]>(
+    ['proj', 'my'],
+    () => getMyProjects(),
+  );
 
   // ── Form state
   const [form]           = Form.useForm<FormFields>();

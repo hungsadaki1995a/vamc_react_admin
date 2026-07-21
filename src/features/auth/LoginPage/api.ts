@@ -1,6 +1,5 @@
 import { apiClient } from '@/lib/api/client';
 import type { ApiResponse, LoginRequest, LoginResponse, RefreshResponse } from '@/lib/api/types';
-import { IS_MOCK_MODE, mockLogin } from '@/mocks';
 
 // POST /api/auth/login — plain credentials (no RSA encryption)
 // vamc-npl-backend returns raw LoginResponse (no ApiResponse wrapper)

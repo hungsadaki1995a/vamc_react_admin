@@ -1,7 +1,7 @@
 import { useMemo, useState, useCallback, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { Dropdown, Input, Popover, Empty, Select } from 'antd';
-import type { MenuProps, InputRef } from 'antd';
+import type { MenuProps } from 'antd';
 import {
   HomeOutlined,
   SunOutlined,
@@ -109,7 +109,7 @@ const { tabs, activeTabKey, openTab, setActiveTab } = useTabStore(
   const localeOptions: { value: LocaleKey; label: string }[] = [
     { value: 'ko', label: '한국어' },
     { value: 'en', label: 'English' },
-    { value: 'vi', label: 'Tiếng Việt' },
+    { value: 'vn', label: 'Tiếng Việt' },
   ];
 
   const userMenuItems: MenuProps['items'] = [

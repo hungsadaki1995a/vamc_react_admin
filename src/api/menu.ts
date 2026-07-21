@@ -1,7 +1,7 @@
 import { apiClient } from '@/lib/api/client';
 import type { ApiResponse } from '@/lib/api/types';
 import type { MenuItem } from '@/types/menu';
-import { IS_MOCK_MODE, mockFetchAuthMenuList } from '@/mocks';
+import { useLocaleStore } from '@/stores/localeStore';
 
 // ── vamc-npl-backend MnuResponse ──────────────────────────────────────────────
 // Matches /api/common/menus/all response item
@@ -12,7 +12,8 @@ export interface MnuResponse {
   lblCd: string;            // i18n label code
   menuSeq: number;          // sequence
   menuDpth: number;         // depth (1 = top-level, 2 = sub, 3 = leaf)
-  menuNmDisplay: string;    // display name (may have leading spaces — trim before use)
+  menuNmDisplay: string;    // display name in Korean (may have leading spaces — trim before use)
+  menuLblVal?: string;      // multilingual label value from label table (locale-dependent via X-Lang)
   menuUrlAddr?: string;     // URL path for leaf menus (absent on parent menus)
   sortPath: string;         // sort order string (e.g. "001-001")
   children: MnuResponse[];  // always empty from server — tree built client-side
@@ -57,7 +58,7 @@ function buildServerMenuTree(items: MnuResponse[]): MenuItem[] {
   for (const item of sorted) {
     map.set(item.menuCd, {
       key: item.menuCd,
-      label: item.menuNmDisplay.trim(),
+      label: item.menuLblVal?.trim() || item.menuNmDisplay.trim(),
       componentPath: item.menuUrlAddr ?? undefined,
       labelKey: item.lblCd ?? undefined,
     });
@@ -87,7 +88,12 @@ function buildServerMenuTree(items: MnuResponse[]): MenuItem[] {
 // (reads from projectStore.activeProject.id — set on login and project change)
 
 export async function fetchAuthMenuList(): Promise<MenuItem[]> {
-  const { data } = await apiClient.get<ApiResponse<MnuResponse[]>>('/api/common/menus/all');
+  // Pass langCd as query param — backend uses this (not X-Lang header) to resolve MENU_LBL_VAL.
+  // DB stores lang codes in uppercase (KO/EN/VN), backend toUpperCase()s the value automatically.
+  const locale = useLocaleStore.getState().locale;
+  const { data } = await apiClient.get<ApiResponse<MnuResponse[]>>('/api/common/menus/all', {
+    params: { langCd: locale },
+  });
 
   if (data.status !== 200 || !data.data) return [];
 
