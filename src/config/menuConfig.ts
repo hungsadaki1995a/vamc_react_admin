@@ -3,36 +3,16 @@ import type { MenuItem } from '@/types/menu';
 // Business menus are loaded from server after login.
 // Only dashboard (home) and use menus are hardcoded here.
 // componentPath = filename under src/features/*/pages/ (without .tsx)
-export const menuConfig: MenuItem[] = [
-  {
-    key: 'dashboard',
-    label: '대시보드',
-    icon: 'DashboardOutlined',
-    componentPath: 'Dashboard',
-  },
-  {
-    key: 'admin',
-    label: '어드민',
-    icon: 'SettingOutlined',
-    children: [
-      {
-        key: 'admin.system',
-        label: '시스템',
-        children: [
-          {
-            key: 'admin.system.menu',
-            label: '메뉴 관리',
-            componentPath: 'AdminMenuManagement',
-          },
-        ],
-      },
-    ],
-  },
-  {
-    key: 'dev',
-    label: '개발 도구',
-    icon: 'ToolOutlined',
-    children: [
+
+// Dev-only menu tree — must NEVER ship to production (info disclosure: GuideInternalApi, SystemInfo, etc.).
+// Excluded from the array below when `import.meta.env.PROD` is true; Vite statically
+// replaces that constant, so this whole object (and its component imports via
+// componentRegistry.tsx's glob) tree-shakes out of the production bundle.
+const devMenu: MenuItem = {
+  key: 'dev',
+  label: '개발 도구',
+  icon: 'ToolOutlined',
+  children: [
       {
         // 우리가 만든/래핑한 커스텀 예시들의 Props·Events·라이브 데모
         key: 'dev.custom-demo',
@@ -85,7 +65,35 @@ export const menuConfig: MenuItem[] = [
           { key: 'dev.guide.internal-api', label: '내부 API 레퍼런스',    componentPath: 'GuideInternalApi' },
           { key: 'dev.guide.excel',        label: '엑셀 업로드/다운로드', componentPath: 'GuideExcel' },
         ],
+    },
+  ],
+};
+
+export const menuConfig: MenuItem[] = [
+  {
+    key: 'dashboard',
+    label: '대시보드',
+    icon: 'DashboardOutlined',
+    componentPath: 'Dashboard',
+  },
+  {
+    key: 'admin',
+    label: '어드민',
+    icon: 'SettingOutlined',
+    children: [
+      {
+        key: 'admin.system',
+        label: '시스템',
+        children: [
+          {
+            key: 'admin.system.menu',
+            label: '메뉴 관리',
+            componentPath: 'AdminMenuManagement',
+          },
+        ],
       },
     ],
   },
+  // Dev tools menu — local dev only, stripped from production builds.
+  ...(import.meta.env.PROD ? [] : [devMenu]),
 ];

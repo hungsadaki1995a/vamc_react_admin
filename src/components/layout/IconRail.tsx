@@ -14,6 +14,8 @@ import { useLogout } from '@/hooks/useLogout';
 import { useShallow } from 'zustand/react/shallow';
 
 // dev(개발 도구)는 rail-bottom에 고정 배치
+// production 빌드에서는 menuConfig에 'dev' 항목이 없으므로 bottomRailMenu는 undefined —
+// 아래 렌더링부(`{bottomRailMenu && ...}`)가 이미 그 경우를 가드한다.
 const BOTTOM_RAIL_KEY = 'dev';
 const bottomRailMenu = menuConfig.find((m) => m.key === BOTTOM_RAIL_KEY);
 

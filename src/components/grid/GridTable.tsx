@@ -42,6 +42,7 @@ import type {
 } from 'ag-grid-community';
 import type { AgGridReactProps } from 'ag-grid-react';
 import { App } from 'antd';
+import DOMPurify from 'dompurify';
 import { useThemeStore } from '@/stores/themeStore';
 import { AG_GRID_LOCALE_KO } from './agGridLocaleKo';
 import { ComcdSelectCellEditor, ComcdSelectCellRenderer } from './ComcdSelectCell';
@@ -815,8 +816,14 @@ export default function GridTable<TData = any>({
               }}
             >
               {item.icon
-                ? <span style={{ width: 16, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-                    dangerouslySetInnerHTML={{ __html: typeof item.icon === 'string' ? item.icon : '' }} />
+                ? <span
+                    style={{ width: 16, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                    // eslint-disable-next-line react/no-danger -- sanitized via DOMPurify (html+svg profile) below
+                    dangerouslySetInnerHTML={{
+                      __html: typeof item.icon === 'string'
+                        ? DOMPurify.sanitize(item.icon, { USE_PROFILES: { html: true, svg: true } })
+                        : '',
+                    }} />
                 : <span style={{ width: 16 }} />}
               <span>{item.name}</span>
             </div>

@@ -5,10 +5,23 @@ import type { ComponentType } from 'react';
 // componentPath convention = immediate parent folder name (PascalCase)
 // e.g., src/features/dev/KanbanBoard/index.tsx → 'KanbanBoard'
 //       src/features/cco/CCO101001SC/index.tsx      → 'CCO101001SC'
-const pageModules = import.meta.glob('../features/*/*/index.tsx') as Record<
-  string,
-  () => Promise<{ default: ComponentType }>
->;
+//
+// src/features/dev/** (demo/guide screens, incl. GuideInternalApi which exposes
+// internal API/auth-store details) is excluded from the glob below and only
+// re-added when NOT a production build — keeps dev-only pages out of the prod
+// bundle entirely (see menuConfig.ts for the matching menu-tree gate).
+type PageLoader = () => Promise<{ default: ComponentType }>;
+
+const baseModules = import.meta.glob([
+  '../features/*/*/index.tsx',
+  '!../features/dev/**',
+]) as Record<string, PageLoader>;
+
+const devModules = (
+  import.meta.env.PROD ? {} : import.meta.glob('../features/dev/*/index.tsx')
+) as Record<string, PageLoader>;
+
+const pageModules: Record<string, PageLoader> = { ...baseModules, ...devModules };
 
 const autoRegistry: Record<string, ComponentType> = Object.fromEntries(
   Object.entries(pageModules).map(([path, loader]) => {

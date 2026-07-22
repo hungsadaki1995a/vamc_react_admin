@@ -79,9 +79,16 @@ export const useAuthStore = create<AuthStore>()(
     }),
     {
       name: 'vamc-auth',
-      // accessToken stays in memory only; refresh token is managed as httpOnly cookie
+      // accessToken stays in memory only; refresh token is managed as httpOnly cookie.
+      // Persisted `user` is trimmed to non-PII display fields (usrId/usrNm) only —
+      // email/phnNo/dpCd/usrCCd must NOT hit localStorage. The full in-memory `user`
+      // (set via setAuth) is unaffected; App.tsx's restoreSession() re-fetches it via
+      // refreshToken()/JWT claims on every app load, so the persisted copy only needs
+      // to survive the brief window before that refresh completes.
       partialize: (state) => ({
-        user: state.user,
+        user: state.user
+          ? { usrId: state.user.usrId, usrNm: state.user.usrNm }
+          : null,
         roles: state.roles,
       }),
     },
