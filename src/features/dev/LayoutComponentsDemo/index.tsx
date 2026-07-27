@@ -9,7 +9,22 @@ import FormPanel from '@/components/layout/FormPanel';
 import SplitPanel from '@/components/layout/SplitPanel';
 import DetailPanel from '@/components/layout/DetailPanel';
 import CodeSnippet from '@/components/common/CodeSnippet';
+import ActionButton from '@/components/common/ActionButton';
+import ActionButtonGroup from '@/components/common/ActionButtonGroup';
 import styles from './index.module.css';
+
+const actionButtonCode = `import ActionButton from '@/components/common/ActionButton';
+import ActionButtonGroup from '@/components/common/ActionButtonGroup';
+import { useMenuPermission } from '@/hooks/useMenuPermission';
+
+const { canWrite } = useMenuPermission();
+
+<ActionButtonGroup preset="gridEdit" canWrite={canWrite}>
+  <ActionButton action="excelDownload">엑셀다운로드</ActionButton>
+  <ActionButton action="addRow">행추가</ActionButton>
+  <ActionButton action="deleteRow">행삭제</ActionButton>
+  <ActionButton action="saveChanges">저장</ActionButton>
+</ActionButtonGroup>`;
 
 /* ─── Code snippets ─── */
 const formPanelCode = `import FormPanel from '@/components/layout/FormPanel';
@@ -422,6 +437,47 @@ export default function LayoutComponentsDemo() {
                   />
                 </div>
                 <CodeSnippet code={detailPanelCode} />
+              </div>
+            ),
+          },
+
+          /* ── ActionButton ── */
+          {
+            key: 'actionButton',
+            label: 'ActionButton',
+            children: (
+              <div className={styles.demoSection}>
+                <div className={styles.demoDesc}>
+                  <h3>ActionButton / ActionButtonGroup</h3>
+                  <p>
+                    표준 액션(조회/저장/삭제/엑셀 등) 버튼과 프리셋 정렬 그룹입니다 (PMS 백포트).
+                    <code>canWrite</code>가 false면 쓰기 계열 버튼이 자동 비활성화됩니다.
+                  </p>
+                </div>
+                <div className={styles.demoPreview}>
+                  <Space direction="vertical" size={16} style={{ width: '100%' }}>
+                    <ActionButtonGroup preset="search" justify="start">
+                      <ActionButton action="reset">초기화</ActionButton>
+                      <ActionButton action="search">조회</ActionButton>
+                    </ActionButtonGroup>
+                    <ActionButtonGroup preset="gridEdit">
+                      <ActionButton action="excelDownload">엑셀다운로드</ActionButton>
+                      <ActionButton action="addRow">행추가</ActionButton>
+                      <ActionButton action="deleteRow">행삭제</ActionButton>
+                      <ActionButton action="saveChanges">저장</ActionButton>
+                    </ActionButtonGroup>
+                    <div>
+                      <p style={{ fontSize: 12, color: 'var(--text-secondary)', margin: '0 0 8px' }}>canWrite=false (읽기 전용 화면)</p>
+                      <ActionButtonGroup preset="gridEdit" canWrite={false}>
+                        <ActionButton action="excelDownload">엑셀다운로드</ActionButton>
+                        <ActionButton action="addRow">행추가</ActionButton>
+                        <ActionButton action="deleteRow">행삭제</ActionButton>
+                        <ActionButton action="saveChanges">저장</ActionButton>
+                      </ActionButtonGroup>
+                    </div>
+                  </Space>
+                </div>
+                <CodeSnippet code={actionButtonCode} />
               </div>
             ),
           },
