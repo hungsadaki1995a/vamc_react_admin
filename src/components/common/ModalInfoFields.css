@@ -1,0 +1,120 @@
+.ds-modal-info-fields {
+  display: grid;
+  grid-template-columns: repeat(var(--ds-modal-info-columns, 1), minmax(0, 1fr));
+  gap: 10px 24px;
+  min-width: 0;
+}
+
+.ds-modal-info-field {
+  min-width: 0;
+}
+
+.ds-modal-info-field--full {
+  grid-column: 1 / -1;
+}
+
+.ds-modal-info-fields--field .ds-modal-info-field {
+  display: grid;
+  grid-template-columns: var(--ds-modal-info-label-width, 120px) minmax(0, 1fr);
+  align-items: center;
+  column-gap: 16px;
+}
+
+.ds-modal-info-field__label {
+  min-width: 0;
+  color: #111827;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 20px;
+  word-break: keep-all;
+}
+
+.ds-modal-info-field__value {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  min-height: 32px;
+  padding: 0 12px;
+  border: 1px solid #cfd5df;
+  border-radius: 6px;
+  background: #fff;
+  color: #111827;
+  font-size: 13px;
+  line-height: 20px;
+}
+
+.ds-modal-info-fields--card {
+  gap: 8px;
+}
+
+.ds-modal-info-fields--card .ds-modal-info-field {
+  display: flex;
+  min-height: 54px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 12px;
+  border: 1px solid #d6dde8;
+  border-radius: 6px;
+  background: #fff;
+  text-align: center;
+}
+
+.ds-modal-info-fields--card .ds-modal-info-field__label {
+  max-width: 100%;
+  overflow: hidden;
+  color: #6b7280;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 16px;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ds-modal-info-fields--card .ds-modal-info-field__value {
+  justify-content: center;
+  width: 100%;
+  min-height: auto;
+  margin-top: 5px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 18px;
+  text-align: center;
+}
+
+.ds-modal-info-field__value-text {
+  display: block;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ds-modal-info-fields--field .ds-modal-info-field__value--wrap {
+  align-items: flex-start;
+  height: auto;
+  padding-top: 6px;
+  padding-bottom: 6px;
+}
+
+.ds-modal-info-field__value--wrap .ds-modal-info-field__value-text {
+  overflow: visible;
+  text-overflow: clip;
+  white-space: normal;
+  word-break: break-word;
+}
+
+@media (max-width: 720px) {
+  .ds-modal-info-fields {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .ds-modal-info-field {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 6px;
+  }
+}
