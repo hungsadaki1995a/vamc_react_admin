@@ -1,9 +1,10 @@
 import { create } from 'zustand';
+import { fetchBulkLabels } from '@/api/lbl';
 
 interface LabelStore {
   labels: Record<string, string>;
   labelsVersion: number;
-  /** No-op — label API not used in this project. t() returns key as fallback. */
+  /** GET /api/lbl/bulk — 현재 로케일(X-Lang) 기준 전체 라벨 로드. 실패 시 기존 라벨 유지 */
   loadLabels: () => Promise<void>;
   /** Translate a label key. Falls back to defaultText, then the key itself. */
   t: (key: string, defaultText?: string) => string;
@@ -15,11 +16,20 @@ interface LabelStore {
   tme: (code: string) => string;
 }
 
-export const useLabelStore = create<LabelStore>()((_set, get) => ({
+export const useLabelStore = create<LabelStore>()((set, get) => ({
   labels: {},
   labelsVersion: 0,
 
-  loadLabels: async () => { /* label API not available */ },
+  loadLabels: async () => {
+    try {
+      const labels = await fetchBulkLabels();
+      if (Object.keys(labels).length > 0) {
+        set((s) => ({ labels, labelsVersion: s.labelsVersion + 1 }));
+      }
+    } catch {
+      // 라벨 로드 실패 시 기존 라벨/키 폴백 유지 (치명적 아님)
+    }
+  },
 
   t: (key, defaultText) => get().labels[key] ?? defaultText ?? key,
   tmc: (code) => get().labels[`MESSAGE.CONFIRM.TEXT_${code}`] ?? `MESSAGE.CONFIRM.TEXT_${code}`,

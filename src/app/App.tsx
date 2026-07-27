@@ -9,6 +9,7 @@ import { useLocaleStore } from '@/stores/localeStore';
 import { useAuthStore } from '@/stores/authStore';
 import { useMenuStore } from '@/stores/menuStore';
 import { useComcdStore } from '@/stores/comcdStore';
+import { useLabelStore } from '@/stores/labelStore';
 import { refreshToken } from '@/features/auth/LoginPage/api';
 import { apiNotify } from '@/lib/api/apiNotify';
 import { jwtToMeResponse } from '@/utils/jwtUtils';
@@ -69,10 +70,11 @@ export default function App() {
     document.documentElement.setAttribute('data-theme', mode);
   }, [mode]);
 
-  // Common codes + menu: reload on locale change
+  // Common codes + menu + labels: reload on locale change
   useEffect(() => {
     useComcdStore.getState().loadCodes();
     useMenuStore.getState().loadMenuForProject();
+    useLabelStore.getState().loadLabels();
   }, [locale]);
 
   return (
