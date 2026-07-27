@@ -49,7 +49,7 @@ export function ExternalWindow({
   const resolvedTitle = title ?? getLocaleText(locale, {
     ko: '팝업',
     en: 'Popup',
-    vi: 'Cửa sổ bật lên',
+    vn: 'Cửa sổ bật lên',
   });
 
   useEffect(() => {
@@ -71,7 +71,7 @@ export function ExternalWindow({
           getLocaleText(locale, {
             ko: '팝업이 차단되었습니다. 브라우저 주소창에서 팝업을 허용한 후 다시 시도해 주세요.',
             en: 'The popup was blocked. Allow popups in your browser and try again.',
-            vi: 'Cửa sổ bật lên đã bị chặn. Hãy cho phép cửa sổ bật lên trong trình duyệt rồi thử lại.',
+            vn: 'Cửa sổ bật lên đã bị chặn. Hãy cho phép cửa sổ bật lên trong trình duyệt rồi thử lại.',
           }),
         ),
       );
@@ -141,7 +141,7 @@ export function ExternalWindow({
 
   if (!container) return null;
 
-  const antLocale = locale === 'en' ? enUS : locale === 'vi' ? viVN : koKR;
+  const antLocale = locale === 'en' ? enUS : locale === 'vn' ? viVN : koKR;
 
   return createPortal(
     <QueryClientProvider client={queryClient}>

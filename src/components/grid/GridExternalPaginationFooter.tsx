@@ -40,7 +40,7 @@ export default function GridExternalPaginationFooter({
   const totalTemplate = useMemo(() => {
     const fallback = locale === 'en'
       ? 'Total {0} items'
-      : locale === 'vi'
+      : locale === 'vn'
         ? 'Tổng {0} mục'
         : '전체 {0}건';
     return t('COMPONENT.VIEW.TEXT_gridTotal', fallback);

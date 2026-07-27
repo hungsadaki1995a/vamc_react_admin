@@ -10,7 +10,7 @@ import {
 } from '@ant-design/icons';
 import type { ICellRendererParams } from 'ag-grid-community';
 import AppModal from '@/components/common/AppModal';
-import GridTable, { type ColDef as ColDefEx } from '@/components/grid/GridTable';
+import GridTable, { type ColDefEx } from '@/components/grid/GridTable';
 import { useLabelStore } from '@/stores/labelStore';
 import type { ExcelProcessResult, ExcelRowError, ExcelUploadResult } from '@/types/excel';
 import styles from './ExcelUploadModal.module.css';
