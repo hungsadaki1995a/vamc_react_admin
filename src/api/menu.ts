@@ -15,8 +15,9 @@ export interface MnuResponse {
   menuNmDisplay: string;    // display name in Korean (may have leading spaces — trim before use)
   menuLblVal?: string;      // multilingual label value from label table (locale-dependent via X-Lang)
   menuUrlAddr?: string;     // URL path for leaf menus (absent on parent menus)
+  menuAuthrt?: string;      // 역할별 권한 (M=읽기+쓰기, S=읽기) — /my 응답에만 존재
   sortPath: string;         // sort order string (e.g. "001-001")
-  children: MnuResponse[];  // always empty from server — tree built client-side
+  children: MnuResponse[];  // /my는 중첩 트리, /all은 빈 배열
 }
 
 // ── Menu name → Ant Design icon name mapping ──────────────────────────────────
@@ -61,6 +62,7 @@ function buildServerMenuTree(items: MnuResponse[]): MenuItem[] {
       label: item.menuLblVal?.trim() || item.menuNmDisplay.trim(),
       componentPath: item.menuUrlAddr ?? undefined,
       labelKey: item.lblCd ?? undefined,
+      permType: item.menuAuthrt ?? undefined,
     });
   }
 
@@ -87,15 +89,20 @@ function buildServerMenuTree(items: MnuResponse[]): MenuItem[] {
 // X-Project-Id header is injected automatically by the axios request interceptor
 // (reads from projectStore.activeProject.id — set on login and project change)
 
+// /my 응답은 children이 중첩된 트리 — buildServerMenuTree(flat 가정) 재사용을 위해 평탄화
+function flattenMenuTree(items: MnuResponse[]): MnuResponse[] {
+  return items.flatMap((i) => [i, ...flattenMenuTree(i.children ?? [])]);
+}
+
 export async function fetchAuthMenuList(): Promise<MenuItem[]> {
   // Pass langCd as query param — backend uses this (not X-Lang header) to resolve MENU_LBL_VAL.
-  // DB stores lang codes in uppercase (KO/EN/VN), backend toUpperCase()s the value automatically.
+  // DB LANG_CD는 KR/EN/VN — 서버 resolveLangCd가 ko→KR 보정.
   const locale = useLocaleStore.getState().locale;
-  const { data } = await apiClient.get<ApiResponse<MnuResponse[]>>('/api/common/menus/all', {
+  const { data } = await apiClient.get<ApiResponse<MnuResponse[]>>('/api/common/menus/my', {
     params: { langCd: locale },
   });
 
   if (data.status !== 200 || !data.data) return [];
 
-  return buildServerMenuTree(data.data);
+  return buildServerMenuTree(flattenMenuTree(data.data));
 }
