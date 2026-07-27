@@ -18,8 +18,8 @@ import { useLabelStore } from '@/stores/labelStore';
 
 const get = () => useLabelStore.getState();
 
-/** Full key lookup. Returns key itself if not found. */
-export const t = (key: string) => get().t(key);
+/** Full key lookup. Falls back to defaultText, then the key itself. */
+export const t = (key: string, defaultText?: string) => get().t(key, defaultText);
 
 /** MESSAGE.CONFIRM.TEXT_{code} */
 export const tmc = (code: string) => get().tmc(code);
