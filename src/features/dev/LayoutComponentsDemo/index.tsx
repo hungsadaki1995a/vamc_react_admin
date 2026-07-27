@@ -482,7 +482,7 @@ export default function LayoutComponentsDemo() {
                   </p>
                 </div>
                 <div className={styles.demoPreview}>
-                  <Space direction="vertical" size={16} style={{ width: '100%' }}>
+                  <Space orientation="vertical" size={16} style={{ width: '100%' }}>
                     <ActionButtonGroup preset="search" justify="start">
                       <ActionButton action="reset">초기화</ActionButton>
                       <ActionButton action="search">조회</ActionButton>
