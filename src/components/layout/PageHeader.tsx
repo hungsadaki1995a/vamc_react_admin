@@ -12,9 +12,22 @@ interface PageHeaderProps {
   title?: string;
   /** Optional right-side slot */
   children?: React.ReactNode;
+  /** usePageHeaderSlot로 등록되는 우측 액션 영역 (PageHeaderSlotContext) */
+  actions?: React.ReactNode;
+  /** usePageHeaderSlot로 등록되는 인라인 필터 영역 */
+  inlineFilters?: React.ReactNode;
+  /** 타이틀 우측 부가 요소 */
+  titleExtra?: React.ReactNode;
 }
 
-export default function PageHeader({ code, title, children }: PageHeaderProps) {
+export default function PageHeader({
+  code,
+  title,
+  children,
+  actions,
+  inlineFilters,
+  titleExtra,
+}: PageHeaderProps) {
   const [favorite, setFavorite] = useState(false);
   const ctx = useTabContext();
   const { t } = useScreenLabel();
@@ -39,8 +52,15 @@ export default function PageHeader({ code, title, children }: PageHeaderProps) {
         </Tooltip>
         {resolvedCode && <span className="ds-page-header-code">[{resolvedCode}]</span>}
         <span className="ds-page-header-title">{resolvedTitle}</span>
+        {titleExtra && <span className="ds-page-header-title-extra">{titleExtra}</span>}
       </Space>
-      {children && <div className="ds-page-header-right">{children}</div>}
+      {(children || actions || inlineFilters) && (
+        <div className="ds-page-header-right">
+          {inlineFilters}
+          {actions}
+          {children}
+        </div>
+      )}
     </div>
   );
 }

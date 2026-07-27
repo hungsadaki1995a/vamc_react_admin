@@ -1,9 +1,10 @@
-import { Suspense, useRef, memo } from 'react';
+import { Suspense, useRef, useState, memo } from 'react';
 import { Spin } from 'antd';
 import { useTabStore } from '@/stores/tabStore';
 import { componentRegistry } from '@/config/componentRegistry';
 import { TabContext } from '@/contexts/TabContext';
 import PageHeader from '@/components/layout/PageHeader';
+import { PageHeaderSlotContext, type PageHeaderSlot } from '@/components/layout/PageHeaderSlotContext';
 import type { ComponentType } from 'react';
 import type { Tab } from '@/types/tab';
 
@@ -19,6 +20,8 @@ const TabPanel = memo(function TabPanel({
   isActive: boolean;
 }) {
   const Component: ComponentType | undefined = componentRegistry[tab.componentKey];
+  // 탭별 헤더 슬롯 — 페이지가 usePageHeaderSlot로 등록 (PMS 백포트)
+  const [headerSlot, setHeaderSlot] = useState<PageHeaderSlot | null>(null);
 
   return (
     <div
@@ -26,22 +29,28 @@ const TabPanel = memo(function TabPanel({
       style={isActive ? undefined : { display: 'none' }}
     >
       <TabContext.Provider value={{ tab }}>
-        <PageHeader />
-        {Component ? (
-          <Suspense
-            fallback={
-              <div style={{ textAlign: 'center', padding: 60 }}>
-                <Spin size="large" />
-              </div>
-            }
-          >
-            <Component />
-          </Suspense>
-        ) : (
-          <div style={{ padding: 20, color: '#999' }}>
-            컴포넌트를 찾을 수 없습니다: {tab.componentKey}
-          </div>
-        )}
+        <PageHeaderSlotContext.Provider value={setHeaderSlot}>
+          <PageHeader
+            actions={headerSlot?.actions}
+            inlineFilters={headerSlot?.inlineFilters}
+            titleExtra={headerSlot?.titleExtra}
+          />
+          {Component ? (
+            <Suspense
+              fallback={
+                <div style={{ textAlign: 'center', padding: 60 }}>
+                  <Spin size="large" />
+                </div>
+              }
+            >
+              <Component />
+            </Suspense>
+          ) : (
+            <div style={{ padding: 20, color: '#999' }}>
+              컴포넌트를 찾을 수 없습니다: {tab.componentKey}
+            </div>
+          )}
+        </PageHeaderSlotContext.Provider>
       </TabContext.Provider>
     </div>
   );

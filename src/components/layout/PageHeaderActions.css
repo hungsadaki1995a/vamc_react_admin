@@ -1,0 +1,33 @@
+.ds-page-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.ds-page-header-actions .ant-btn {
+  height: 36px;
+  border-color: #a9b0ba;
+  border-radius: var(--ds-radius-surface);
+  box-shadow: none;
+  color: #24272d;
+  font-size: 16px;
+  font-weight: 400;
+  padding-inline: 16px;
+}
+
+.ds-page-header-actions .ant-btn-icon-only {
+  width: 36px;
+  padding-inline: 0;
+}
+
+.ds-page-header-actions__reset {
+  min-width: 99px;
+}
+
+.ds-page-header-actions__search {
+  min-width: 84px;
+}
+
+.ds-page-header-actions__collapse {
+  margin-left: 10px;
+}
