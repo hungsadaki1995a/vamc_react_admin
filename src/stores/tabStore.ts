@@ -10,7 +10,7 @@ interface TabStore {
   activeTabKey: string | null;
   maxTabs: number;
 
-  openTab: (menuItem: MenuItem) => void;
+  openTab: (menuItem: MenuItem, params?: Record<string, unknown>) => void;
   closeTab: (key: string) => void;
   closeOtherTabs: (key: string) => void;
   closeRightTabs: (key: string) => void;
@@ -29,12 +29,18 @@ export const useTabStore = create<TabStore>()(
       activeTabKey: null,
       maxTabs: 20,
 
-      openTab: (menuItem: MenuItem) => {
+      openTab: (menuItem: MenuItem, params?: Record<string, unknown>) => {
         const { tabs, maxTabs } = get();
         const existingTab = tabs.find((t) => t.menuKey === menuItem.key);
 
         if (existingTab) {
-          set({ activeTabKey: existingTab.key });
+          // 이미 열린 탭이면 활성화 + 전달된 params 갱신
+          set({
+            activeTabKey: existingTab.key,
+            ...(params
+              ? { tabs: tabs.map((t) => (t.key === existingTab.key ? { ...t, params } : t)) }
+              : {}),
+          });
           return;
         }
 
@@ -50,6 +56,7 @@ export const useTabStore = create<TabStore>()(
           componentKey: menuItem.componentPath ?? '',
           sceId: menuItem.sceId,
           labelKey: menuItem.labelKey,
+          params,
           pinned: isHome,
           closable: !isHome,
         };
