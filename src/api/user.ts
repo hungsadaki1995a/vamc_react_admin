@@ -1,6 +1,5 @@
 import { apiClient } from '@/lib/api/client';
 import type { ApiResponse, MeResponse } from '@/lib/api/types';
-import { IS_MOCK_MODE, mockGetMe } from '@/mocks';
 
 interface UsrResponse {
   usrId: string;
@@ -17,8 +16,6 @@ interface UsrResponse {
 
 // GET /api/usr/{usrId} — ds_pms_server (replaces legacy /users/me)
 export async function getMe(usrId: string): Promise<ApiResponse<MeResponse>> {
-  if (IS_MOCK_MODE) return mockGetMe(usrId);
-
   const { data } = await apiClient.get<ApiResponse<UsrResponse>>(`/api/usr/${usrId}`);
   if (data.status !== 200 || !data.data) {
     return { success: false, message: data.message, data: null };

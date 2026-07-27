@@ -9,7 +9,6 @@ import { useLocaleStore } from '@/stores/localeStore';
 import { useLoadingStore } from '@/stores/loadingStore';
 import { useTabStore } from '@/stores/tabStore';
 import { registerTabRequest, unregisterTabRequest } from './tabRequestRegistry';
-import { IS_MOCK_MODE } from '@/mocks';
 
 // Extend config type to support retry flag + tab binding + toast opt-out
 interface RetryableConfig extends InternalAxiosRequestConfig {
@@ -139,10 +138,6 @@ apiClient.interceptors.response.use(
     const { status } = error.response;
 
     // ── 401: Silent Refresh ────────────────────────────────────────────────
-    if (status === 401 && IS_MOCK_MODE) {
-      return Promise.reject(ApiError.fromAxiosError(error));
-    }
-
     if (status === 401) {
       // Login failure — pass original error through without attempting refresh
       if (config?.url?.includes('/api/auth/login')) {
