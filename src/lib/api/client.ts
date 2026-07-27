@@ -7,11 +7,39 @@ import { useAuthStore } from '@/stores/authStore';
 import { useProjectStore } from '@/stores/projectStore';
 import { useLocaleStore } from '@/stores/localeStore';
 import { useLoadingStore } from '@/stores/loadingStore';
+import { useTabStore } from '@/stores/tabStore';
+import { registerTabRequest, unregisterTabRequest } from './tabRequestRegistry';
 import { IS_MOCK_MODE } from '@/mocks';
 
-// Extend config type to support retry flag
+// Extend config type to support retry flag + tab binding + toast opt-out
 interface RetryableConfig extends InternalAxiosRequestConfig {
   _retry?: boolean;
+  __tabKey?: string;
+  __tabCtrl?: AbortController;
+  skipErrorToast?: boolean;
+}
+
+declare module 'axios' {
+  interface AxiosRequestConfig {
+    skipErrorToast?: boolean;
+  }
+}
+
+// 탭 수명과 무관한 전역 API는 바인딩 제외
+const TAB_BIND_DENYLIST = ['/api/auth/', '/api/mnu', '/api/common/menus', '/api/lbl', '/api/comcd'];
+
+function shouldBindToTab(url?: string): boolean {
+  if (!url) return false;
+  return !TAB_BIND_DENYLIST.some((path) => url.includes(path));
+}
+
+function cleanupTabBinding(config?: InternalAxiosRequestConfig): void {
+  const cfg = config as RetryableConfig | undefined;
+  if (cfg?.__tabKey && cfg.__tabCtrl) {
+    unregisterTabRequest(cfg.__tabKey, cfg.__tabCtrl);
+    cfg.__tabKey = undefined;
+    cfg.__tabCtrl = undefined;
+  }
 }
 
 // ─── Silent refresh queue ─────────────────────────────────────────────────────
@@ -63,23 +91,48 @@ apiClient.interceptors.request.use((config) => {
 
   useLoadingStore.getState().increment();
 
+  // 탭 귀속: 활성 탭의 요청을 레지스트리에 등록해 탭 닫기 시 일괄 취소 가능하게 한다
+  const cfg = config as RetryableConfig;
+  if (!cfg.__tabKey) {
+    const tabKey = useTabStore.getState().activeTabKey;
+    if (tabKey && shouldBindToTab(config.url)) {
+      const ctrl = new AbortController();
+      cfg.__tabKey = tabKey;
+      cfg.__tabCtrl = ctrl;
+      registerTabRequest(tabKey, ctrl);
+      config.signal =
+        config.signal && typeof AbortSignal.any === 'function'
+          ? AbortSignal.any([config.signal as AbortSignal, ctrl.signal])
+          : (config.signal ?? ctrl.signal);
+    }
+  }
+
   return config;
 });
 
 // ─── Response interceptor ─────────────────────────────────────────────────────
 apiClient.interceptors.response.use(
   (response) => {
+    cleanupTabBinding(response.config);
     useLoadingStore.getState().decrement();
     return response;
   },
 
   async (error: AxiosError) => {
+    cleanupTabBinding(error.config);
     useLoadingStore.getState().decrement();
     const config = error.config as RetryableConfig | undefined;
 
+    // 탭 닫기 등으로 취소된 요청은 조용히 통과 (토스트/변환 없음)
+    if (axios.isCancel(error) || error.code === 'ERR_CANCELED') {
+      return Promise.reject(error);
+    }
+
     if (!error.response) {
       // Defer toast render to next microtask — keeps current error-handling chain lean
-      queueMicrotask(() => apiNotify.error('네트워크 연결을 확인해 주세요.'));
+      if (!config?.skipErrorToast) {
+        queueMicrotask(() => apiNotify.error('네트워크 연결을 확인해 주세요.'));
+      }
       return Promise.reject(ApiError.fromAxiosError(error));
     }
 
@@ -156,14 +209,18 @@ apiClient.interceptors.response.use(
     // ── 403: Forbidden ────────────────────────────────────────────────────
     if (status === 403) {
       const apiErr = ApiError.fromAxiosError(error);
-      queueMicrotask(() => apiNotify.error(apiErr.userMessage));
+      if (!config?.skipErrorToast) {
+        queueMicrotask(() => apiNotify.error(apiErr.userMessage));
+      }
       return Promise.reject(apiErr);
     }
 
     // ── 500+: Server error ────────────────────────────────────────────────
     if (status >= 500) {
       const apiErr = ApiError.fromAxiosError(error);
-      queueMicrotask(() => apiNotify.error(apiErr.userMessage));
+      if (!config?.skipErrorToast) {
+        queueMicrotask(() => apiNotify.error(apiErr.userMessage));
+      }
       return Promise.reject(apiErr);
     }
 
