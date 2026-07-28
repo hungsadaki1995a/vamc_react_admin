@@ -47,6 +47,7 @@ const overrides: Record<string, ComponentType> = {
   // Server menuUrlAddr → local component mapping
   // (when server's menuUrlAddr path ≠ folder name under src/features/)
   '/admin/system/admin/menu': lazy(() => import('@/features/admin/AdminMenuManagement/index')),
+  '/admin/system/admin/test': lazy(() => import('@/features/admin/AdminTestPage/index')),
 };
 
 export const componentRegistry: Record<string, ComponentType> = {

@@ -215,8 +215,8 @@ export const getTaskList = async (): Promise<ApiResponse<Task[]>> => {
 ## PMS 백포트 공통 기능 (2026-07 도입 — 신규 화면 필수 규칙)
 
 ### 권한 (permType 종단 배선)
-- 서버 메뉴(`/api/common/menus/my`)가 `menuAuthrt`('M'=읽기+쓰기, 'S'=읽기)를 내려주고 `MenuItem.permType`으로 매핑됨.
-- **신규 화면은 `useMenuPermission().canWrite`로 쓰기 버튼을 제어**한다. 정적 메뉴(dashboard/dev)는 'M' 폴백.
+- 서버 메뉴(`/api/common/menus/my`)가 `menuAuthrt`를 내려주고 `MenuItem.permType`으로 매핑됨. 도메인은 DB `MENU_ROLE_MPNG.MENU_AUTHRT` 기준 — **`RD`(읽기) / `WT`(쓰기) / `AL`(전체)**, 쓰기는 읽기를 포함한다(canRead: RD·WT·AL, canWrite: WT·AL).
+- **신규 화면은 `useMenuPermission().canWrite`로 쓰기 버튼을 제어**한다. 정적 메뉴(dashboard/dev)는 `AL` 폴백.
 - 서버 쓰기 API는 `PermissionGuard.assertMenuWrite(auth, menuCd)` 적용 (백엔드 규칙).
 
 ### 표준 UI 컴포넌트
