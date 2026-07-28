@@ -15,7 +15,7 @@ export interface MnuResponse {
   menuNmDisplay: string;    // display name in Korean (may have leading spaces — trim before use)
   menuLblVal?: string;      // multilingual label value from label table (locale-dependent via X-Lang)
   menuUrlAddr?: string;     // URL path for leaf menus (absent on parent menus)
-  menuAuthrt?: string;      // 역할별 권한 (M=읽기+쓰기, S=읽기) — /my 응답에만 존재
+  menuAuthrt?: string;      // 역할별 권한 (RD=읽기, WT=쓰기, AL=전체) — /my 응답에만 존재
   sortPath: string;         // sort order string (e.g. "001-001")
   children: MnuResponse[];  // /my는 중첩 트리, /all은 빈 배열
 }
