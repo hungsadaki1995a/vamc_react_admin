@@ -1,0 +1,22 @@
+.ds-excel-download-button.ant-btn {
+  height: 34px;
+  border-color: #d5d9e0;
+  border-radius: var(--ds-radius-control);
+  background: #fff;
+  color: #24272d;
+  padding-inline: 12px;
+  font-size: 13px;
+  font-weight: 400;
+  box-shadow: none;
+}
+
+.ds-excel-download-button.ant-btn:hover,
+.ds-excel-download-button.ant-btn:focus-visible {
+  border-color: #a9b0ba;
+  color: #111827;
+  background: #fff;
+}
+
+.ds-excel-download-button .anticon {
+  color: #1fa463;
+}

@@ -1,0 +1,221 @@
+.uploadView {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.uploadDropzone {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 132px;
+  border: 1px dashed var(--border-color);
+  border-radius: 8px;
+  background: var(--content-card-bg);
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+.uploadIcon {
+  color: var(--primary-color);
+  font-size: 24px;
+  line-height: 1;
+}
+
+.uploadTitle {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.uploadDescription {
+  margin-top: 4px;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.resultWrap {
+  padding: 4px 2px 2px;
+}
+
+.resultHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  margin-bottom: 16px;
+  border-radius: 10px;
+}
+
+.resultHeaderSuccess {
+  background: rgba(82, 196, 26, 0.10);
+}
+
+.resultHeaderConfirm {
+  background: var(--primary-light);
+}
+
+.resultHeaderPending {
+  background: rgba(250, 173, 20, 0.12);
+}
+
+.resultHeaderIcon {
+  display: inline-flex;
+  flex-shrink: 0;
+  font-size: 26px;
+  line-height: 1;
+}
+
+.resultHeaderSuccess .resultHeaderIcon {
+  color: var(--success-color);
+}
+
+.resultHeaderConfirm .resultHeaderIcon {
+  color: var(--primary-color);
+}
+
+.resultHeaderPending .resultHeaderIcon {
+  color: var(--warning-color);
+}
+
+.resultHeaderTitle {
+  color: var(--text-primary);
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.resultHeaderSub {
+  margin-top: 2px;
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.resultHeaderSub strong {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.resultCards {
+  display: flex;
+  gap: 10px;
+}
+
+.resultCard {
+  flex: 1;
+  padding: 14px 8px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--content-card-bg);
+  box-shadow: var(--shadow-sm);
+  text-align: center;
+}
+
+.resultCardLabel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  margin-bottom: 8px;
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.resultCardIcon {
+  display: inline-flex;
+  font-size: 13px;
+}
+
+.resultCardValue {
+  color: var(--text-primary);
+  font-size: 23px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.resultCardZero .resultCardLabel,
+.resultCardZero .resultCardValue {
+  color: var(--text-tertiary);
+}
+
+.resultCardSuccess {
+  border-color: rgba(82, 196, 26, 0.45);
+  background: rgba(82, 196, 26, 0.06);
+}
+
+.resultCardSuccess .resultCardValue,
+.resultCardSuccess .resultCardIcon {
+  color: var(--success-color);
+}
+
+.resultCardPrimary {
+  border-color: rgba(0, 93, 249, 0.45);
+  background: var(--primary-light);
+}
+
+.resultCardPrimary .resultCardValue,
+.resultCardPrimary .resultCardIcon {
+  color: var(--primary-color);
+}
+
+.resultCardError {
+  border-color: rgba(255, 77, 79, 0.45);
+  background: rgba(255, 77, 79, 0.06);
+}
+
+.resultCardError .resultCardValue,
+.resultCardError .resultCardIcon {
+  color: var(--error-color);
+}
+
+.resultNote {
+  margin: 14px 2px 0;
+  color: var(--text-secondary);
+  font-size: 12px;
+  text-align: center;
+}
+
+.errorWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 0;
+}
+
+.errorSummary {
+  color: var(--text-primary);
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.errorSummary strong {
+  font-weight: 700;
+}
+
+.errorIntro {
+  margin: 0;
+  color: var(--text-secondary);
+}
+
+.errorCapped {
+  margin: 0;
+  color: var(--warning-color);
+}
+
+.errorValue {
+  font-family: monospace;
+}
+
+.errorEmptyValue {
+  color: var(--error-color);
+  font-weight: 600;
+}
+
+.errorGrid {
+  margin-top: 6px;
+  min-height: 0;
+  height: 300px;
+}

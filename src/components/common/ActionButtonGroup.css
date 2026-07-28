@@ -1,0 +1,20 @@
+.ds-action-button-group {
+  min-width: 0;
+}
+
+.ds-action-button-group--justify-start {
+  justify-content: flex-start;
+}
+
+.ds-action-button-group--justify-center {
+  justify-content: center;
+}
+
+.ds-action-button-group--justify-end {
+  justify-content: flex-end;
+}
+
+.ds-action-button-group--justify-between {
+  justify-content: space-between;
+  width: 100%;
+}

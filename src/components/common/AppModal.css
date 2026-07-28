@@ -1,0 +1,574 @@
+/* Suppress antd's built-in close-button hover/active background.
+   Each icon inside AppModal has its own per-icon hover handled via JS. */
+.app-modal .ant-modal-close:hover,
+.app-modal .ant-modal-close:active {
+  background-color: transparent !important;
+}
+
+.app-modal .ant-modal-container {
+  display: flex;
+  max-height: calc(100vh - 40px);
+  flex-direction: column;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.ant-modal.app-modal .ant-modal-content {
+  padding: 0;
+}
+
+.app-modal .ant-modal-header {
+  flex: 0 0 auto;
+  min-height: 56px;
+  display: flex;
+  align-items: center;
+  margin-bottom: 0;
+  padding: 0 30px;
+  border-bottom: 1px solid #e5e9f0;
+}
+
+.app-modal .ant-modal-title {
+  color: #111827;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.app-modal .ant-modal-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding: 28px 30px 24px;
+}
+
+.app-modal--body-content-scroll .ant-modal-body {
+  overflow: hidden;
+}
+
+.app-modal-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 180px;
+  width: 100%;
+}
+
+.app-modal--content-gap .ant-modal-body > :where(* + *) {
+  margin-top: var(--app-modal-content-gap, 28px);
+}
+
+.app-modal--content-gap .ant-modal-body > :where(.ant-form) > :where(.ds-filter-panel + *, * + .ds-filter-panel) {
+  margin-top: var(--app-modal-content-gap, 28px);
+}
+
+.app-modal .ant-modal-footer {
+  flex: 0 0 auto;
+  margin-top: 0;
+  padding: 15px 30px;
+  border-top: 1px solid #e5e9f0;
+}
+
+.app-modal .ant-modal-footer .ant-btn {
+  min-width: 80px;
+  height: 36px;
+  padding: 0 18px;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.app-modal .ant-modal-footer .ant-btn-primary {
+  font-weight: 600;
+}
+
+.app-modal--search .ant-modal-body {
+  padding-top: 24px;
+  padding-bottom: 24px;
+}
+
+.app-modal--grid .ant-modal-body {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.app-modal-search-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  margin: 0 0 24px;
+}
+
+.app-modal-search-row--no-label {
+  display: block;
+}
+
+.app-modal-search-label {
+  flex: 0 0 76px;
+  color: var(--text-primary, #111827);
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 32px;
+  white-space: nowrap;
+}
+
+.app-modal-search-control {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.app-modal-search-control .ant-input-affix-wrapper,
+.app-modal-search-row--no-label .ant-input-affix-wrapper {
+  width: 100%;
+}
+
+.app-modal-search-fields {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  margin: 0 0 14px;
+}
+
+.app-modal-search-field {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.app-modal-search-field .app-modal-search-label {
+  flex: 0 0 auto;
+  min-width: 48px;
+}
+
+.app-modal-search-field .app-modal-search-control {
+  flex: 0 0 160px;
+  width: 160px;
+}
+
+.app-modal-search-actions {
+  flex: 0 0 auto;
+  margin-left: auto;
+}
+
+.app-modal-grid-body {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  max-height: 100%;
+  overflow: hidden;
+}
+
+.app-modal-grid-body--sm {
+  height: clamp(180px, calc(100vh - 260px), 300px);
+}
+
+.app-modal-grid-body--md {
+  height: clamp(220px, calc(100vh - 260px), 400px);
+}
+
+.app-modal-grid-body--lg {
+  height: clamp(260px, calc(100vh - 260px), 520px);
+}
+
+.app-modal-footer-split {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 12px;
+}
+
+.app-modal-footer-split__right {
+  margin-left: auto;
+}
+
+.app-modal-form {
+  padding: 0;
+}
+
+.app-modal-form .ant-form-item {
+  margin-bottom: 10px;
+}
+
+.app-modal-form .ant-form-item-row {
+  align-items: center;
+  min-height: 32px;
+}
+
+.app-modal-form .ant-form-item-label {
+  display: flex;
+  align-items: center;
+  height: 32px;
+  padding: 0 !important;
+  line-height: 32px;
+}
+
+.app-modal-form .ant-form-item-label > label {
+  position: relative;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: flex-start;
+  height: 32px !important;
+  min-height: 32px !important;
+  max-height: 32px !important;
+  padding: 0 !important;
+  overflow: visible !important;
+  color: #111827;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 32px !important;
+  white-space: nowrap !important;
+  word-break: keep-all;
+}
+
+.app-modal-form .ant-form-item-label > label.ant-form-item-required::before {
+  display: none !important;
+  content: none !important;
+}
+
+.app-modal-form .ant-form-item-label > label.ant-form-item-required {
+  padding-right: 10px !important;
+}
+
+.app-modal-form .ant-form-item-label > label.ant-form-item-required::after {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  display: block !important;
+  height: auto;
+  margin: 0 !important;
+  color: #ff4d4f;
+  font-family: SimSun, sans-serif;
+  font-size: 13px;
+  line-height: 1 !important;
+  content: '*' !important;
+  transform: translateY(-50%);
+}
+
+.app-modal-form .ant-form-item-label > label:not(.ant-form-item-required)::after {
+  margin: 0 !important;
+  content: none !important;
+}
+
+.app-modal-form .ant-form-item-control {
+  min-height: 32px;
+}
+
+.app-modal-form .ant-form-item-control-input {
+  display: flex;
+  align-items: center;
+  min-height: 32px;
+}
+
+.app-modal-form .ant-form-item-control-input-content {
+  min-height: 32px;
+}
+
+.app-modal-form .ant-radio-group {
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+}
+
+.app-modal-form .ant-radio-wrapper {
+  align-items: center;
+  line-height: 32px;
+}
+
+.app-modal-form .ant-input,
+.app-modal-form .ant-picker,
+.app-modal-form .ant-select-selector,
+.app-modal-form .ant-input-number,
+.app-modal-form .ant-input-number-group-wrapper,
+.app-modal-form .ant-input-number-wrapper,
+.app-modal-form .ant-input-affix-wrapper {
+  border-color: #cfd5df !important;
+  border-radius: 6px !important;
+}
+
+.app-modal-form .ant-input,
+.app-modal-form .ant-picker,
+.app-modal-form .ant-input-number,
+.app-modal-form .ant-input-number-group-wrapper,
+.app-modal-form .ant-input-affix-wrapper {
+  height: 32px;
+  min-height: 32px;
+}
+
+.app-modal-form .ant-input-number .ant-input-number-input {
+  height: 30px;
+}
+
+.app-modal-form .ant-input-number-group-wrapper .ant-input-number,
+.app-modal-form .ant-input-number-group-wrapper .ant-input-number-group-addon {
+  height: 32px;
+}
+
+.app-modal-form .ant-input-number-group-wrapper .ant-input-number {
+  border-start-end-radius: 0 !important;
+  border-end-end-radius: 0 !important;
+  border-top-right-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+}
+
+.app-modal-form .ant-input-number-group-wrapper .ant-input-number-group-addon {
+  line-height: 30px;
+  border-start-start-radius: 0 !important;
+  border-end-start-radius: 0 !important;
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+}
+
+.app-modal-form .ant-input-affix-wrapper > input.ant-input {
+  height: 20px;
+  min-height: 20px;
+}
+
+.app-modal-form .ant-picker .ant-picker-input > input {
+  line-height: 20px;
+}
+
+.app-modal-form .ant-select-selector {
+  height: 32px !important;
+  min-height: 32px;
+}
+
+.app-modal-form .ant-select-single {
+  height: 32px;
+}
+
+.app-modal-form .ant-select-single .ant-select-selector .ant-select-selection-item,
+.app-modal-form .ant-select-single .ant-select-selector .ant-select-selection-placeholder {
+  line-height: 30px;
+}
+
+.app-modal-form--compact-controls {
+  --app-modal-compact-control-width: 280px;
+}
+
+/* .ant-picker(DateField)도 포함 — 누락 시 날짜 필드만 width:100%로 늘어나
+   다른 컨트롤(280px cap)과 우측 끝선이 어긋난다 */
+.app-modal-form--compact-controls .ant-form-item-control-input-content > .ant-select,
+.app-modal-form--compact-controls .ant-form-item-control-input-content > .ant-picker,
+.app-modal-form--compact-controls .ant-form-item-control-input-content > .ssf-wrap {
+  width: var(--app-modal-compact-control-width) !important;
+  max-width: 100%;
+}
+
+.app-modal-form--compact-controls .ant-form-item-control-input-content > .ant-select {
+  min-width: min(var(--app-modal-compact-control-width), 100%);
+}
+
+.app-modal-form--compact-controls .ant-space-compact {
+  max-width: 100%;
+}
+
+.app-modal-form--compact-controls .ant-space-compact > .ssf-wrap {
+  flex: 1 1 auto !important;
+  width: auto !important;
+  min-width: 0;
+}
+
+.app-modal-form-title-field {
+  margin-top: 8px;
+  margin-bottom: 0 !important;
+  padding-top: 8px;
+  border-top: 1px solid #e5e9f0;
+}
+
+.app-modal-form-title-field .ant-form-item-row,
+.app-modal-form-editor-field .ant-form-item-row,
+.app-modal-form-file-field .ant-form-item-row {
+  display: block;
+}
+
+.app-modal-form-title-field .ant-form-item-label,
+.app-modal-form-editor-field .ant-form-item-label,
+.app-modal-form-file-field .ant-form-item-label {
+  display: none;
+}
+
+.app-modal-form-title-field .ant-input {
+  height: 40px;
+  padding: 0;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: #111827;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 40px;
+}
+
+.app-modal-form-title-field .ant-input::placeholder {
+  color: #9aa3b1;
+  font-size: 16px;
+  font-weight: 500;
+  opacity: 1;
+}
+
+.app-modal-form-editor-field,
+.app-modal-form-file-field {
+  margin-bottom: 20px !important;
+}
+
+.app-modal-form-section-title {
+  margin: 16px 0 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #e5e9f0;
+  color: #111827;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.app-modal-editor-body {
+  min-width: 0;
+  min-height: 0;
+}
+
+.app-modal-editor-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 180px;
+  padding: 32px 0;
+}
+
+.app-modal .ant-modal-close {
+  top: 28px;
+  right: 22px;
+  width: auto;
+  height: 28px;
+  padding: 0;
+  line-height: 1;
+  transform: translateY(-50%);
+}
+
+.app-modal .ant-modal-close .ant-modal-close-x {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: auto;
+  height: 28px;
+  line-height: 1;
+}
+
+.app-modal .app-modal-header-icon {
+  flex: 0 0 auto;
+  line-height: 1;
+}
+
+.app-modal-header-icon__image {
+  display: block;
+  width: 14px;
+  height: 14px;
+  object-fit: contain;
+  opacity: 0.45;
+  transition: opacity 0.15s;
+}
+
+.app-modal-header-icon:hover .app-modal-header-icon__image {
+  opacity: 0.88;
+}
+
+.app-modal--resizable {
+  --app-modal-resize-hit-size: 24px;
+  --app-modal-resize-visible-size: 16px;
+}
+
+.app-modal-resize-frame {
+  position: relative;
+  width: 100%;
+  max-width: none;
+}
+
+.app-modal-resize-handle {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  z-index: 30;
+  width: var(--app-modal-resize-hit-size);
+  height: var(--app-modal-resize-hit-size);
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: nwse-resize;
+  pointer-events: auto;
+  touch-action: none;
+  clip-path: polygon(100% 0, 100% 100%, 0 100%);
+}
+
+.app-modal-resize-handle::before {
+  content: '';
+  position: absolute;
+  right: 4px;
+  bottom: 4px;
+  width: var(--app-modal-resize-visible-size);
+  height: var(--app-modal-resize-visible-size);
+  background:
+    linear-gradient(135deg, transparent 0 52%, rgba(120, 127, 140, 0.55) 52% 60%, transparent 60%),
+    linear-gradient(135deg, transparent 0 70%, rgba(120, 127, 140, 0.8) 70% 78%, transparent 78%);
+  pointer-events: none;
+}
+
+.app-modal-resize-handle:hover::before,
+.app-modal-resize-handle:focus-visible::before {
+  background:
+    linear-gradient(135deg, transparent 0 52%, rgba(75, 84, 99, 0.7) 52% 60%, transparent 60%),
+    linear-gradient(135deg, transparent 0 70%, rgba(75, 84, 99, 0.95) 70% 78%, transparent 78%);
+}
+
+.app-modal-resize-handle:focus {
+  outline: none;
+}
+
+.app-modal--resizable .ant-modal-container {
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden;
+}
+
+.app-modal--resizable .ant-modal-body {
+  min-height: 0 !important;
+}
+
+.app-modal--resizable .ant-modal-footer {
+  flex: 0 0 auto;
+}
+
+/* Fullscreen: ant-modal-container is the white box in antd v6 */
+.app-modal--fs .ant-modal-container {
+  height: 100% !important;
+  max-height: 100vh !important;
+  border-radius: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+/* Fullscreen: body takes all space between header and footer */
+.app-modal--fs .ant-modal-body {
+  flex: 1 !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  overflow-y: auto !important;
+}
+
+.app-modal--body-overlay-scroll .ant-modal-body {
+  overflow-y: auto !important;
+}
+
+@supports (overflow: overlay) {
+  .app-modal--body-overlay-scroll .ant-modal-body {
+    overflow-y: overlay !important;
+  }
+}
+
+.grid-file-modal .ant-modal-body {
+  min-height: 190px;
+}

@@ -17,6 +17,9 @@ import { Color } from '@tiptap/extension-color';
 import { TextStyle } from '@tiptap/extension-text-style';
 import { CodeBlockLowlight } from '@tiptap/extension-code-block-lowlight';
 import { Youtube } from '@tiptap/extension-youtube';
+import Subscript from '@tiptap/extension-subscript';
+import Superscript from '@tiptap/extension-superscript';
+import ParagraphIndent from './ParagraphIndent';
 import { common, createLowlight } from 'lowlight';
 import {
   BoldOutlined,
@@ -146,6 +149,9 @@ export default function RichTextEditor({
       Highlight.configure({ multicolor: true }),
       Color,
       TextStyle,
+      Subscript,
+      Superscript,
+      ParagraphIndent,
       CodeBlockLowlight.configure({ lowlight }),
       Youtube.configure({ controls: true, nocookie: true }),
     ],

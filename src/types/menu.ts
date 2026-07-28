@@ -8,5 +8,5 @@ export interface MenuItem {
   children?: MenuItem[];
   hidden?: boolean;
   permissions?: string[];
-  permType?: string;     // M(읽기+수정) | S(읽기만) | '' | undefined
+  permType?: string;     // RD(읽기) | WT(쓰기) | AL(전체) | '' | undefined
 }

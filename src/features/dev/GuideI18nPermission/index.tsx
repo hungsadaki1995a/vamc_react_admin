@@ -291,7 +291,7 @@ VALUES ('CCO101001SC.VIEW.TEXT_usrId', 'PJ001', 'ko', '직원ID');`}
 
                 <Card title="현재 탭 권한" size="small" style={{ marginBottom: 16 }}>
                   <Space>
-                    <Text>permType: <Tag color={permType === 'M' ? 'green' : permType === 'S' ? 'blue' : 'default'}>{permType || '없음'}</Tag></Text>
+                    <Text>permType: <Tag color={permType === 'AL' ? 'green' : permType === 'WT' ? 'cyan' : permType === 'RD' ? 'blue' : 'default'}>{permType || '없음'}</Tag></Text>
                     <Text>canRead: <Tag color={canRead ? 'green' : 'red'}>{String(canRead)}</Tag></Text>
                     <Text>canWrite: <Tag color={canWrite ? 'green' : 'red'}>{String(canWrite)}</Tag></Text>
                   </Space>
@@ -303,8 +303,9 @@ VALUES ('CCO101001SC.VIEW.TEXT_usrId', 'PJ001', 'ko', '직원ID');`}
                       <tr><th>permType</th><th>의미</th><th>canRead</th><th>canWrite</th></tr>
                     </thead>
                     <tbody>
-                      <tr><td><Tag color="green">M</Tag></td><td>읽기 + 수정</td><td>✅</td><td>✅</td></tr>
-                      <tr><td><Tag color="blue">S</Tag></td><td>읽기만</td><td>✅</td><td>❌</td></tr>
+                      <tr><td><Tag color="green">AL</Tag></td><td>전체(읽기 + 수정)</td><td>✅</td><td>✅</td></tr>
+                      <tr><td><Tag color="cyan">WT</Tag></td><td>쓰기 (읽기 포함)</td><td>✅</td><td>✅</td></tr>
+                      <tr><td><Tag color="blue">RD</Tag></td><td>읽기만</td><td>✅</td><td>❌</td></tr>
                       <tr><td><Tag>없음</Tag></td><td>권한 없음</td><td>❌</td><td>❌</td></tr>
                     </tbody>
                   </table>
@@ -367,8 +368,8 @@ const permType     = menu?.permType ?? '';
 
 return {
   permType,
-  canRead:  permType === 'S' || permType === 'M',
-  canWrite: permType === 'M',
+  canRead:  ['RD', 'WT', 'AL'].includes(permType),
+  canWrite: ['WT', 'AL'].includes(permType),
 };`}
                 />
               </div>

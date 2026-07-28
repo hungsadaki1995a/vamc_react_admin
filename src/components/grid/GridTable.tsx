@@ -48,6 +48,25 @@ import { AG_GRID_LOCALE_KO } from './agGridLocaleKo';
 import { ComcdSelectCellEditor, ComcdSelectCellRenderer } from './ComcdSelectCell';
 import './GridTable.css';
 
+export type GridCellAlign = 'left' | 'center' | 'right';
+
+/**
+ * Extended ColDef — stores grid metadata in `context` to avoid AG Grid unknown-property warnings.
+ * Paired fields (e.g. ickId alongside ickNm) are included in revert comparison without a hidden column.
+ * (PMS 백포트 — gridRowUtils/ExcelUploadModal 등이 사용하는 타입 계약)
+ */
+export type ColDefEx<T> = ColDef<T> & {
+  context?: {
+    pairedFields?: (keyof T)[];
+    /** Applies the shared bold cell style when true. */
+    bold?: boolean;
+    /** Applies the shared body-cell text alignment. */
+    align?: GridCellAlign;
+    /** Shows this text when the cell value is empty. */
+    placeholder?: string;
+  };
+};
+
 export const lightTheme = themeQuartz.withParams({
   backgroundColor: '#ffffff',
   headerBackgroundColor: '#f0f2f5',

@@ -19,6 +19,33 @@ export function findMenuByKey(
   return null;
 }
 
+/** componentPath(=sceId)로 메뉴 검색 — useNavigateTab용 */
+export function findMenuByComponentPath(
+  menus: MenuItem[],
+  componentPath: string
+): MenuItem | null {
+  for (const m of menus) {
+    if (m.componentPath === componentPath) return m;
+    if (m.children) {
+      const found = findMenuByComponentPath(m.children, componentPath);
+      if (found) return found;
+    }
+  }
+  return null;
+}
+
+/** targetKey가 속한 최상위(1Depth) 메뉴 key — IconRail 활성화용 */
+export function findTopLevelMenuKey(
+  menus: MenuItem[],
+  targetKey: string
+): string | null {
+  for (const top of menus) {
+    if (top.key === targetKey) return top.key;
+    if (top.children && findMenuByKey(top.children, targetKey)) return top.key;
+  }
+  return null;
+}
+
 export function getMenuParentKeys(
   items: MenuItem[],
   targetKey: string,

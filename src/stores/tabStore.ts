@@ -3,13 +3,14 @@ import { persist } from 'zustand/middleware';
 import type { Tab } from '@/types/tab';
 import type { MenuItem } from '@/types/menu';
 import { useSettingsStore } from './settingsStore';
+import { abortTabRequests } from '@/lib/api/tabRequestRegistry';
 
 interface TabStore {
   tabs: Tab[];
   activeTabKey: string | null;
   maxTabs: number;
 
-  openTab: (menuItem: MenuItem) => void;
+  openTab: (menuItem: MenuItem, params?: Record<string, unknown>) => void;
   closeTab: (key: string) => void;
   closeOtherTabs: (key: string) => void;
   closeRightTabs: (key: string) => void;
@@ -28,12 +29,18 @@ export const useTabStore = create<TabStore>()(
       activeTabKey: null,
       maxTabs: 20,
 
-      openTab: (menuItem: MenuItem) => {
+      openTab: (menuItem: MenuItem, params?: Record<string, unknown>) => {
         const { tabs, maxTabs } = get();
         const existingTab = tabs.find((t) => t.menuKey === menuItem.key);
 
         if (existingTab) {
-          set({ activeTabKey: existingTab.key });
+          // 이미 열린 탭이면 활성화 + 전달된 params 갱신
+          set({
+            activeTabKey: existingTab.key,
+            ...(params
+              ? { tabs: tabs.map((t) => (t.key === existingTab.key ? { ...t, params } : t)) }
+              : {}),
+          });
           return;
         }
 
@@ -49,6 +56,7 @@ export const useTabStore = create<TabStore>()(
           componentKey: menuItem.componentPath ?? '',
           sceId: menuItem.sceId,
           labelKey: menuItem.labelKey,
+          params,
           pinned: isHome,
           closable: !isHome,
         };
@@ -74,6 +82,8 @@ export const useTabStore = create<TabStore>()(
         const tab = tabs[idx];
         if (tab.pinned) return;
 
+        abortTabRequests(key);
+
         const newTabs = tabs.filter((t) => t.key !== key);
         let newActiveKey = activeTabKey;
 
@@ -92,6 +102,9 @@ export const useTabStore = create<TabStore>()(
       closeOtherTabs: (key: string) => {
         const { tabs } = get();
         const newTabs = tabs.filter((t) => t.key === key || t.pinned);
+        tabs
+          .filter((t) => !(t.key === key || t.pinned))
+          .forEach((t) => abortTabRequests(t.key));
         set({ tabs: newTabs, activeTabKey: key });
       },
 
@@ -103,6 +116,9 @@ export const useTabStore = create<TabStore>()(
         const newTabs = tabs.filter(
           (t, i) => i <= idx || t.pinned
         );
+        tabs
+          .filter((t, i) => !(i <= idx || t.pinned))
+          .forEach((t) => abortTabRequests(t.key));
         const activeStillExists = newTabs.some((t) => t.key === activeTabKey);
         set({
           tabs: newTabs,
@@ -113,6 +129,7 @@ export const useTabStore = create<TabStore>()(
       closeAllTabs: () => {
         const { tabs } = get();
         const pinnedTabs = tabs.filter((t) => t.pinned);
+        tabs.filter((t) => !t.pinned).forEach((t) => abortTabRequests(t.key));
         set({
           tabs: pinnedTabs,
           activeTabKey: pinnedTabs.length > 0 ? pinnedTabs[0].key : null,
