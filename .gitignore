@@ -12,6 +12,11 @@ dist
 dist-ssr
 *.local
 
+# 비밀값 — 커밋 금지 (.env.example 템플릿만 커밋한다)
+.env
+.env.*
+!.env.example
+
 # Tool/IDE generated files
 .claude-plugin/
 .playwright-mcp/
