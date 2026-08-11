@@ -4,10 +4,19 @@ import type { MenuItem } from '@/types/menu';
 // Only dashboard (home) and use menus are hardcoded here.
 // componentPath = filename under src/features/*/pages/ (without .tsx)
 
-// Dev-only menu tree — must NEVER ship to production (info disclosure: GuideInternalApi 등).
-// Excluded from the array below when `import.meta.env.PROD` is true; Vite statically
-// replaces that constant, so this whole object (and its component imports via
-// componentRegistry.tsx's glob) tree-shakes out of the production bundle.
+// 개발 도구 노출 여부.
+// - `npm run dev` (import.meta.env.DEV) → 항상 노출
+// - 빌드 산출물 → VITE_ENABLE_DEV_TOOLS=true 로 빌드한 경우에만 노출
+//
+// Vite 가 두 상수를 모두 빌드 시점에 리터럴로 치환하므로 false 로 접히면
+// devMenu 객체와 dev 화면 import(componentRegistry.tsx 의 glob)가 통째로 트리셰이킹된다.
+//
+// 운영 이미지에는 절대 켜지 말 것 — GuideInternalApi 가 내부 API/스토어 구조를 노출한다.
+// componentRegistry.tsx 에 동일한 플래그가 있으니 값을 바꿀 땐 함께 수정한다.
+export const DEV_TOOLS_ENABLED =
+  import.meta.env.DEV || import.meta.env.VITE_ENABLE_DEV_TOOLS === 'true';
+
+// Dev-only menu tree.
 const devMenu: MenuItem = {
   key: 'dev',
   label: '개발 도구',
@@ -107,6 +116,6 @@ export const menuConfig: MenuItem[] = [
       },
     ],
   },
-  // Dev tools menu — local dev only, stripped from production builds.
-  ...(import.meta.env.PROD ? [] : [devMenu]),
+  // 개발 도구 — DEV_TOOLS_ENABLED 가 false 인 빌드에서는 트리셰이킹으로 사라진다.
+  ...(DEV_TOOLS_ENABLED ? [devMenu] : []),
 ];

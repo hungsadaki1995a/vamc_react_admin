@@ -25,6 +25,27 @@ VITE_API_BASE_URL=          # 개발 기본값 (Vite 프록시 사용)
 VITE_API_BASE_URL=http://localhost:8080   # 직접 호출 시
 ```
 
+### 개발 도구 노출 (`VITE_ENABLE_DEV_TOOLS`)
+
+좌측 레일 최하단 🔧 **개발 도구** 메뉴는 빌드 산출물에서 기본적으로 제외됩니다.
+`GuideInternalApi`가 내부 API 경로·authStore 구조를 노출하기 때문입니다.
+
+| 실행 방식 | 노출 여부 |
+|---|---|
+| `npm run dev` | **항상 노출** (플래그 무관) |
+| `npm run build` (기본) | 제외 — 번들에서 트리셰이킹 |
+| `VITE_ENABLE_DEV_TOOLS=true npm run build` | 포함 |
+
+Docker 빌드는 build arg로 전달합니다. **운영 이미지에는 켜지 마세요.**
+```bash
+docker build --build-arg VITE_ENABLE_DEV_TOOLS=true .   # 개발/스테이징 전용
+```
+배포 스택(`deploy/docker-compose.yml`)에서는 `.env`의 `ENABLE_DEV_TOOLS`가 이 값을 결정합니다.
+
+게이트는 `menuConfig.ts`의 `DEV_TOOLS_ENABLED` 하나이고, `componentRegistry.tsx`가
+이를 import해 dev 화면 glob에 같은 조건을 겁니다. **둘은 항상 같은 값을 써야 합니다** —
+메뉴만 숨기고 컴포넌트가 번들에 남으면 게이트의 의미가 없습니다.
+
 ## Tech Stack
 
 - **React 19** + **TypeScript** + **Vite 7**

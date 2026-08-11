@@ -1,5 +1,6 @@
 import { lazy } from 'react';
 import type { ComponentType } from 'react';
+import { DEV_TOOLS_ENABLED } from './menuConfig';
 
 // Auto-discover all page components under src/features/*/*/index.tsx
 // componentPath convention = immediate parent folder name (PascalCase)
@@ -7,9 +8,9 @@ import type { ComponentType } from 'react';
 //       src/features/cco/CCO101001SC/index.tsx      → 'CCO101001SC'
 //
 // src/features/dev/** (demo/guide screens, incl. GuideInternalApi which exposes
-// internal API/auth-store details) is excluded from the glob below and only
-// re-added when NOT a production build — keeps dev-only pages out of the prod
-// bundle entirely (see menuConfig.ts for the matching menu-tree gate).
+// internal API/auth-store details) is excluded from the base glob and only
+// re-added when DEV_TOOLS_ENABLED — keeps dev-only pages out of the bundle
+// entirely (menuConfig.ts 의 메뉴 트리 게이트와 같은 플래그를 쓴다).
 type PageLoader = () => Promise<{ default: ComponentType }>;
 
 const baseModules = import.meta.glob([
@@ -18,7 +19,7 @@ const baseModules = import.meta.glob([
 ]) as Record<string, PageLoader>;
 
 const devModules = (
-  import.meta.env.PROD ? {} : import.meta.glob('../features/dev/*/index.tsx')
+  DEV_TOOLS_ENABLED ? import.meta.glob('../features/dev/*/index.tsx') : {}
 ) as Record<string, PageLoader>;
 
 const pageModules: Record<string, PageLoader> = { ...baseModules, ...devModules };
