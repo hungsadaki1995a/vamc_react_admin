@@ -5,7 +5,7 @@
  * - FilterPanel + splitBody(좌 60% 라벨목록 / 우 40% 번역그리드) + FormPanel
  * - API 없음, 로컬 상태만 사용
  */
-import { useState, useMemo, useCallback, useRef } from 'react';
+import { useState, useMemo, useCallback, useRef, useEffect } from 'react';
 import type { AgGridReact } from 'ag-grid-react';
 import type { ColDef, CellValueChangedEvent, CellEditingStartedEvent } from 'ag-grid-community';
 import { Button, Form, Row, Col, Space, Input, Select, message, Modal } from 'antd';
@@ -112,9 +112,9 @@ const MOCK_PROJ_TRN: Record<string, Record<string, Partial<Record<string, string
 };
 
 const MOCK_PROJECTS = [
-  { projId: 'PJ000', projNm: '하모니' },
-  { projId: 'PJ001', projNm: '신한DS PMS' },
-  { projId: 'PJ002', projNm: '모바일뱅킹' },
+  { projId: 'PJ000', projNm: 'VAMC NPL 플랫폼' },
+  { projId: 'PJ001', projNm: 'VAMC NPL 어드민' },
+  { projId: 'PJ002', projNm: '채권 정산' },
 ];
 
 const LANG_OPTIONS = [
@@ -183,8 +183,12 @@ export default function PatternI18nLabel() {
 
   // ── 프로젝트 선택
   const [selectedProj, setSelectedProj] = useState<string>('PJ000');
+  // 콜백/cellStyle 에서 최신 값을 읽기 위한 미러. 즉시성이 필요한 지점(handleProjChange,
+  // 초기화)에서는 직접 대입하고, 그 외 변경은 이 effect 가 동기화한다.
   const selectedProjRef = useRef(selectedProj);
-  selectedProjRef.current = selectedProj;
+  useEffect(() => {
+    selectedProjRef.current = selectedProj;
+  }, [selectedProj]);
 
   // ── 폼
   const [form] = Form.useForm<FormFields>();

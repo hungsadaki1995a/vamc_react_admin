@@ -205,7 +205,7 @@ useEffect(() => {
 
 // fetchBulkLabels 내부 (src/api/lbl.ts)
 export async function fetchBulkLabels(): Promise<Record<string, string>> {
-  const { data } = await apiClient.get<VamcApiResponse<Record<string, string>>>('/api/lbl/bulk');
+  const { data } = await apiClient.get<ApiResponse<Record<string, string>>>('/api/lbl/bulk');
   if (data.status !== 200 || !data.data) return {};
   return data.data;
 }`}

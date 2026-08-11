@@ -15,7 +15,6 @@ interface IconBtnCellRendererParams<TData = unknown> extends ICellRendererParams
 /**
  * AG Grid cell renderer — 아이콘 버튼 표시.
  *
- * 레거시 slickCustomFormatter.regButton 대응 공통 컴포넌트.
  * PlusCircleOutlined 아이콘을 기본으로 표시하며, icon/disabled 파라미터로 커스터마이즈 가능.
  *
  * @example

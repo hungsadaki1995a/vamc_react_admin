@@ -90,7 +90,7 @@ All open tab components stay mounted simultaneously. Active tab gets `display:bl
 | `src/stores/localeStore.ts` | Locale setting ko/en/vi, persisted |
 | `src/stores/settingsStore.ts` | Personal settings (homeMenuKey), persisted |
 | `src/lib/api/client.ts` | Axios instance + auth interceptors + silent refresh |
-| `src/lib/api/types.ts` | ApiResponse, VamcApiResponse, auth types, project types |
+| `src/lib/api/types.ts` | ApiResponse, auth types, project types |
 | `src/lib/api/error.ts` | ApiError class with Korean messages |
 | `src/lib/api/queryClient.ts` | QueryClient instance (staleTime 5m, no retry on 401/403/404) |
 | `src/lib/api/apiNotify.ts` | Toast bridge for non-React contexts (axios interceptors) |
@@ -128,7 +128,7 @@ src/
 ├── contexts/               # TabContext
 ├── features/
 │   ├── auth/               # LoginPage
-│   ├── cco/                # CCO101001SC (사용자관리) 등 레거시 화면
+│   ├── cco/                # CCO101001SC(사용자관리) 등 공통 업무 화면
 │   ├── dashboard/          # Dashboard
 │   └── dev/                # 개발 도구, 데모, 가이드 페이지
 ├── hooks/                  # 공통 훅
@@ -151,7 +151,6 @@ src/
 | `page-master` | 그리드/폼 화면 — 고정 높이, 내부 스크롤 없음 |
 | `page-container` | 스크롤 화면 — 흰 카드, overflow 부모 위임 |
 | `page-container page-scrollable` | 스크롤 필요한 가이드/데모 화면 |
-| `page-legacy` | 레거시 스타일 — padding 0, 배경 흰색 |
 
 ### CSS 규칙
 - `src/features/` 하위: **CSS Modules** 사용 (`index.module.css`)
@@ -183,36 +182,46 @@ src/
 
 ### 응답 포맷
 
-```typescript
-// ds_pms_new (Spring Boot 레거시)
-ApiResponse<T> = { success: boolean; message: string; data: T | null }
+타입은 `src/lib/api/types.ts`의 `ApiResponse<T>` **하나뿐**입니다.
 
-// ds_pms_server (현재 서버)
-VamcApiResponse<T> = { status: number; message: string; data: T | null }
+```typescript
+interface ApiResponse<T = unknown> {
+  status?: number;   // 서버가 실제로 내려주는 필드
+  success: boolean;  // 서버는 내려주지 않음 — API 함수가 status로부터 만들어 채운다
+  message: string;
+  data: T | null | undefined;
+}
 ```
+
+**중요**: vamc-npl-backend는 `{ status, message, data }`만 내려주고 `success` 필드가 없습니다.
+`useApiQuery` / `useApiMutation`은 `success === true` 기준으로 성공/실패를 판단하므로,
+API 함수에서 `status → success` 변환을 반드시 해줘야 합니다. 빠뜨리면 `success`가
+`undefined`(falsy)라 정상 응답도 실패로 처리됩니다.
 
 ### API 함수 패턴
 
 ```typescript
-import { apiClient, fromList } from '@/lib/api/client';
+import { apiClient } from '@/lib/api/client';
 import type { ApiResponse } from '@/lib/api/types';
 
-// 단건 조회
-export const getTask = async (id: string): Promise<ApiResponse<Task>> => {
-  const { data } = await apiClient.get<ApiResponse<Task>>(`/tasks/${id}`);
-  return data;
-};
+// 서버 DTO 와 1:1 대응하는 타입은 이 파일에 코로케이트 (src/api/common.ts 참고).
+// 여러 도메인이 공유하는 타입만 @/lib/api/types 로 올린다.
+export interface Task { taskId: string; taskNm: string; }
 
-// 목록 (배열이 data.mtxTt 키로 감싸진 경우)
-export const getTaskList = async (): Promise<ApiResponse<Task[]>> => {
-  const { data } = await apiClient.get<ApiResponse<{ mtxTt: Task[] }>>('/tasks/list');
-  return fromList(data, 'mtxTt');
-};
+// baseURL 이 빈 값이므로 경로에 /api 접두를 반드시 포함한다 (Vite 프록시 → :8080)
+export async function getTaskList(): Promise<ApiResponse<Task[]>> {
+  const { data } = await apiClient.get<ApiResponse<Task[]>>('/api/task/list');
+  return {
+    success: data.status === 200,
+    message: data.message,
+    data: data.data ?? [],
+  };
+}
 ```
 
-`useApiQuery` / `useApiMutation` 훅은 `success === true` 기준으로 성공/실패를 판단합니다.
+실제 구현 예시는 `src/api/project.ts`(`getMyProjects`), `src/api/menu.ts`(`fetchAuthMenuList`)를 참고하세요.
 
-## PMS 백포트 공통 기능 (2026-07 도입 — 신규 화면 필수 규칙)
+## 신규 화면 필수 규칙
 
 ### 권한 (permType 종단 배선)
 - 서버 메뉴(`/api/common/menus/my`)가 `menuAuthrt`를 내려주고 `MenuItem.permType`으로 매핑됨. 도메인은 DB `MENU_ROLE_MPNG.MENU_AUTHRT` 기준 — **`RD`(읽기) / `WT`(쓰기) / `AL`(전체)**, 쓰기는 읽기를 포함한다(canRead: RD·WT·AL, canWrite: WT·AL).

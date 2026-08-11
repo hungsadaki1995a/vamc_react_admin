@@ -9,7 +9,6 @@ interface StatusDotCellRendererParams extends ICellRendererParams {
 /**
  * AG Grid cell renderer — 상태 dot 표시.
  *
- * 레거시 slickCustomFormatter.progressIcon 대응 공통 컴포넌트.
  * colorMap을 cellRendererParams로 주입받아 화면별 상태 코드 체계에 대응.
  *
  * @example

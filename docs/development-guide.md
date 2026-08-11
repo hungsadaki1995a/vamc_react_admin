@@ -73,30 +73,33 @@ export default function MyGuide() {
 
 ### API 함수 작성
 
+서버는 `{ status, message, data }` 만 내려주고 `success` 필드가 없습니다.
+`useApiQuery` / `useApiMutation` 은 `success === true` 로 성공을 판정하므로
+**API 함수에서 `status → success` 변환이 필수**입니다. (자세한 내용은 `docs/api-integration.md`)
+
 ```typescript
-// src/features/myFeature/api/myFeatureApi.ts
-import { apiClient, fromList } from '@/lib/api/client';
+// src/api/task.ts
+import { apiClient } from '@/lib/api/client';
 import type { ApiResponse } from '@/lib/api/types';
 
-export interface Task { id: string; name: string; }
+// 서버 DTO 와 1:1 대응하는 타입은 이 파일에 코로케이트 (src/api/common.ts 참고)
+export interface Task { taskId: string; taskNm: string; }
 
-// 단건 조회
-export const getTask = async (id: string): Promise<ApiResponse<Task>> => {
-  const { data } = await apiClient.get<ApiResponse<Task>>(`/tasks/${id}`);
-  return data;
-};
+// baseURL 이 빈 값이므로 경로에 /api 접두를 반드시 포함한다 (Vite 프록시 → :8080)
+export async function getTask(id: string): Promise<ApiResponse<Task>> {
+  const { data } = await apiClient.get<ApiResponse<Task>>(`/api/task/${id}`);
+  return { success: data.status === 200, message: data.message, data: data.data };
+}
 
-// 목록 조회 (배열이 data.mtxTt 키로 감싸진 경우)
-export const getTaskList = async (): Promise<ApiResponse<Task[]>> => {
-  const { data } = await apiClient.get<ApiResponse<{ mtxTt: Task[] }>>('/tasks/list');
-  return fromList(data, 'mtxTt');
-};
+export async function getTaskList(): Promise<ApiResponse<Task[]>> {
+  const { data } = await apiClient.get<ApiResponse<Task[]>>('/api/task/list');
+  return { success: data.status === 200, message: data.message, data: data.data ?? [] };
+}
 
-// 저장
-export const saveTask = async (payload: Partial<Task>): Promise<ApiResponse<Task>> => {
-  const { data } = await apiClient.post<ApiResponse<Task>>('/tasks', payload);
-  return data;
-};
+export async function saveTask(payload: Partial<Task>): Promise<ApiResponse<Task>> {
+  const { data } = await apiClient.post<ApiResponse<Task>>('/api/task', payload);
+  return { success: data.status === 200, message: data.message, data: data.data };
+}
 ```
 
 ### useApiQuery — 데이터 조회
@@ -220,7 +223,6 @@ import styles from './index.module.css';
 | `page-container` | 기본 페이지 컨테이너 | 흰색 카드, padding, 내부 overflow hidden |
 | `page-master` | 그리드/목록 전용 | 고정 높이, 내부 스크롤 없음 (GridPanel/GanttView와 조합) |
 | `page-container page-scrollable` | 스크롤 페이지 | 가이드/데모/폼 화면, 세로 스크롤 활성화 |
-| `page-legacy` | 레거시 스타일 화면 | padding 0, 배경 흰색 |
 
 `page-container` + GridPanel/GridTable/GanttView 사용 시 CSS가 자동으로 `overflow: hidden` 처리하여 내부 스크롤 없이 그리드가 컨테이너를 채움. 이 동작이 필요 없으면 `page-scrollable` 추가.
 

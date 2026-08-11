@@ -55,7 +55,7 @@ export interface UserInfo {
   phnNo?: string;
 }
 
-// POST /api/auth/login request body — ds_pms_server uses { username, password }
+// POST /api/auth/login request body
 export interface LoginRequest {
   username: string;
   password: string;

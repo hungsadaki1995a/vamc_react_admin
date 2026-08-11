@@ -477,7 +477,7 @@ export default function LayoutComponentsDemo() {
                 <div className={styles.demoDesc}>
                   <h3>ActionButton / ActionButtonGroup</h3>
                   <p>
-                    표준 액션(조회/저장/삭제/엑셀 등) 버튼과 프리셋 정렬 그룹입니다 (PMS 백포트).
+                    표준 액션(조회/저장/삭제/엑셀 등) 버튼과 프리셋 정렬 그룹입니다.
                     <code>canWrite</code>가 false면 쓰기 계열 버튼이 자동 비활성화됩니다.
                   </p>
                 </div>
@@ -518,7 +518,7 @@ export default function LayoutComponentsDemo() {
                 <div className={styles.demoDesc}>
                   <h3>AppModal / ModalInfoFields</h3>
                   <p>
-                    리사이즈·전체화면 토글을 지원하는 표준 모달과 라벨-값 필드 그리드입니다 (PMS 백포트).
+                    리사이즈·전체화면 토글을 지원하는 표준 모달과 라벨-값 필드 그리드입니다.
                   </p>
                 </div>
                 <div className={styles.demoPreview}>

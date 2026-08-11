@@ -14,7 +14,7 @@ interface UsrResponse {
   lgnLockYn: string;
 }
 
-// GET /api/usr/{usrId} — ds_pms_server (replaces legacy /users/me)
+// GET /api/usr/{usrId} — 로그인 사용자 상세
 export async function getMe(usrId: string): Promise<ApiResponse<MeResponse>> {
   const { data } = await apiClient.get<ApiResponse<UsrResponse>>(`/api/usr/${usrId}`);
   if (data.status !== 200 || !data.data) {

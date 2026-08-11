@@ -73,7 +73,13 @@ export default function App() {
   // Common codes + menu + labels: reload on locale change
   useEffect(() => {
     useComcdStore.getState().loadCodes();
-    useMenuStore.getState().loadMenuForProject();
+    // 메뉴만 인증 필요 — 토큰 없이 호출하면 401 → 인터셉터가 silent refresh(/api/auth/refresh)까지
+    // 시도하고 그것도 401로 끝난다. 로그인 화면에서 무의미한 왕복 2회가 발생하므로 가드한다.
+    // (로그인 성공 시점과 restoreSession() 성공 시점에 각각 loadMenuForProject를 호출하므로
+    //  이 가드로 인해 메뉴 로딩이 누락되지는 않는다.)
+    if (useAuthStore.getState().accessToken) {
+      useMenuStore.getState().loadMenuForProject();
+    }
     useLabelStore.getState().loadLabels();
   }, [locale]);
 

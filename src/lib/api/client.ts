@@ -2,7 +2,6 @@ import axios from 'axios';
 import type { AxiosError, InternalAxiosRequestConfig } from 'axios';
 import { ApiError } from './error';
 import { apiNotify } from './apiNotify';
-import type { ApiResponse } from './types';
 import { useAuthStore } from '@/stores/authStore';
 import { useProjectStore } from '@/stores/projectStore';
 import { useLocaleStore } from '@/stores/localeStore';
@@ -222,20 +221,3 @@ apiClient.interceptors.response.use(
     return Promise.reject(ApiError.fromAxiosError(error));
   },
 );
-
-// ─── List response helper ──────────────────────────────────────────────────────
-// Extract array from list responses where data is wrapped: { code, message, data: { [key]: T[] } }
-//
-// @example
-// const res = await apiClient.get<ApiResponse<{ mtxTt: Task[] }>>('/tasks/list');
-// return fromList(res.data, 'mtxTt'); // → ApiResponse<Task[]>
-export function fromList<T, K extends string = string>(
-  res: ApiResponse<Record<K, T[]>>,
-  key: K,
-): ApiResponse<T[]> {
-  return {
-    success: res.success,
-    message: res.message,
-    data: res.success ? (res.data?.[key] ?? []) : null,
-  };
-}

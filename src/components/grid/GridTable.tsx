@@ -53,7 +53,7 @@ export type GridCellAlign = 'left' | 'center' | 'right';
 /**
  * Extended ColDef — stores grid metadata in `context` to avoid AG Grid unknown-property warnings.
  * Paired fields (e.g. ickId alongside ickNm) are included in revert comparison without a hidden column.
- * (PMS 백포트 — gridRowUtils/ExcelUploadModal 등이 사용하는 타입 계약)
+ * gridRowUtils/ExcelUploadModal 등이 사용하는 타입 계약.
  */
 export type ColDefEx<T> = ColDef<T> & {
   context?: {

@@ -25,9 +25,10 @@ export interface UserFormValues extends Omit<User, 'dpNm' | 'dpCd'> {
   dpNm: SearchSelectValue | null;
 }
 
-interface VamcResp<T> { status: number; message: string; data: T | null }
+// 서버 응답은 { status, message, data } — success 로 판정하는 ApiResponse 로 변환한다
+interface RawResp<T> { status: number; message: string; data: T | null }
 
-function toApiResp<T>(r: VamcResp<T>): ApiResponse<T> {
+function toApiResp<T>(r: RawResp<T>): ApiResponse<T> {
   // Only check status — void endpoints return data:null (omitted by @JsonInclude(NON_NULL))
   return r.status === 200
     ? { success: true,  message: r.message, data: r.data as T }
@@ -37,34 +38,34 @@ function toApiResp<T>(r: VamcResp<T>): ApiResponse<T> {
 export async function getUsrList(
   params: { usrId?: string; usrNm?: string; dpCd?: string },
 ): Promise<ApiResponse<User[]>> {
-  const { data } = await apiClient.get<VamcResp<User[]>>('/api/usr', { params });
+  const { data } = await apiClient.get<RawResp<User[]>>('/api/usr', { params });
   return toApiResp(data);
 }
 
 export async function saveUsr(req: User): Promise<ApiResponse<void>> {
   // map frontend 'email' field to backend 'emailAddr', exclude output-only fields
   const { email, dpNm: _dpNm, grpNm: _grpNm, ...rest } = req;
-  const { data } = await apiClient.post<VamcResp<void>>('/api/usr', { ...rest, emailAddr: email });
+  const { data } = await apiClient.post<RawResp<void>>('/api/usr', { ...rest, emailAddr: email });
   return toApiResp(data);
 }
 
 export async function deleteUsr(usrId: string): Promise<ApiResponse<void>> {
-  const { data } = await apiClient.delete<VamcResp<void>>(`/api/usr/${usrId}`);
+  const { data } = await apiClient.delete<RawResp<void>>(`/api/usr/${usrId}`);
   return toApiResp(data);
 }
 
 export async function resetPwdErrCnt(usrId: string): Promise<ApiResponse<void>> {
-  const { data } = await apiClient.post<VamcResp<void>>(`/api/usr/${usrId}/reset-error-count`);
+  const { data } = await apiClient.post<RawResp<void>>(`/api/usr/${usrId}/reset-error-count`);
   return toApiResp(data);
 }
 
 export async function resetPwd(usrId: string): Promise<ApiResponse<void>> {
-  const { data } = await apiClient.post<VamcResp<void>>(`/api/usr/${usrId}/reset-password`);
+  const { data } = await apiClient.post<RawResp<void>>(`/api/usr/${usrId}/reset-password`);
   return toApiResp(data);
 }
 
 export async function unlockUsr(usrId: string): Promise<ApiResponse<void>> {
-  const { data } = await apiClient.post<VamcResp<void>>(`/api/usr/${usrId}/unlock`);
+  const { data } = await apiClient.post<RawResp<void>>(`/api/usr/${usrId}/unlock`);
   return toApiResp(data);
 }
 
@@ -75,6 +76,6 @@ export async function changePwd(usrId: string, newPswd: string): Promise<ApiResp
     encryptPassword(publicKey, usrId),
     encryptPassword(publicKey, newPswd),
   ]);
-  const { data } = await apiClient.post<VamcResp<void>>('/api/usr/change-password', { usrId: encUsrId, encChgPasswd });
+  const { data } = await apiClient.post<RawResp<void>>('/api/usr/change-password', { usrId: encUsrId, encChgPasswd });
   return toApiResp(data);
 }

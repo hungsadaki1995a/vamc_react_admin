@@ -65,7 +65,6 @@ const utilRows: UtilRow[] = [
   { key: '2',  category: '메뉴', fn: 'getMenuParentKeys',   params: '(items: MenuItem[], key: string)',          sig: 'string[] | null',   desc: '대상 key의 모든 상위 key 배열 반환. Flyout openKeys(펼침 유지)에 사용',                               src: 'utils/menuUtils.ts' },
   { key: '3',  category: '메뉴', fn: 'getMenuBreadcrumb',   params: '(menus: MenuItem[], key: string)',          sig: '{ key, label }[]',  desc: '루트 → 대상까지 이어지는 브레드크럼 경로 배열. ContentHeader 브레드크럼에 사용',                      src: 'utils/menuUtils.ts' },
   { key: '4',  category: '메뉴', fn: 'buildAntMenuItems',   params: '(items: MenuItem[])',                       sig: 'AntMenuItem[]',     desc: 'MenuItem[] → Ant Design Menu items 변환. 아이콘 문자열을 React 컴포넌트로 교체, hidden 항목 제거',     src: 'utils/menuUtils.ts' },
-  { key: '5',  category: 'API',  fn: 'fromList',            params: '(res: ApiResponse<R>, key: keyof R)',       sig: 'ApiResponse<T[]>',  desc: '배열이 객체 키로 감싸진 응답 언래핑. { data: { mtxTt: T[] } } → { data: T[] }',                      src: 'lib/api/client.ts' },
   { key: '6',  category: '에러', fn: 'ApiError.from',       params: '(err: unknown)',                            sig: 'ApiError',          desc: 'unknown 에러를 ApiError로 변환. ApiError면 그대로, AxiosError면 fromAxiosError 위임',                 src: 'lib/api/error.ts' },
   { key: '7',  category: '에러', fn: 'ApiError.fromAxiosError', params: '(err: AxiosError)',                     sig: 'ApiError',          desc: 'AxiosError → ApiError 변환. response.data가 있으면 서버 메시지 추출, 없으면 상태코드 기반 기본 메시지', src: 'lib/api/error.ts' },
   { key: '8',  category: '에러', fn: 'err.userMessage',     params: '(getter)',                                  sig: 'string',            desc: '서버 메시지 → 상태코드 기본 메시지 → 알 수 없는 오류 순으로 폴백',                                    src: 'lib/api/error.ts' },
@@ -508,7 +507,7 @@ interface MenuItem {
 
 // 새 메뉴 추가 예시 (src/config/menuConfig.ts)
 {
-  key: 'dev.guide.my-guide',
+  key: 'dev.lib.my-guide',
   label: '내 가이드',
   componentPath: 'MyGuidePage',  // src/features/dev/pages/MyGuidePage/index.tsx
 }`} />
@@ -523,32 +522,32 @@ interface MenuItem {
             children: (
               <div className="demo-section">
                 <div className="demo-desc">
-                  <h3>apiClient + fromList</h3>
+                  <h3>apiClient</h3>
                   <p><Text code>src/lib/api/client.ts</Text></p>
                 </div>
 
-                <CodeSnippet title="API 함수 작성 패턴" code={`import { apiClient, fromList } from '@/lib/api/client';
+                <CodeSnippet title="API 함수 작성 패턴" code={`import { apiClient } from '@/lib/api/client';
 import type { ApiResponse } from '@/lib/api/types';
 
-export interface Task { id: string; name: string; }
+// 서버 DTO 와 1:1 대응하는 타입은 이 파일에 코로케이트한다 (src/api/common.ts 참고)
+export interface Task { taskId: string; taskNm: string; }
 
-// 단건 조회
-export const getTask = async (id: string): Promise<ApiResponse<Task>> => {
-  const { data } = await apiClient.get<ApiResponse<Task>>(\`/tasks/\${id}\`);
-  return data;
-};
+// 서버 응답은 { status, message, data } — useApiQuery 는 success 로 성공을 판정하므로
+// API 함수에서 status → success 로 변환해 준다. baseURL 이 빈 값이라 경로에 /api 를 포함한다.
+export async function getTask(id: string): Promise<ApiResponse<Task>> {
+  const { data } = await apiClient.get<ApiResponse<Task>>(\`/api/task/\${id}\`);
+  return { success: data.status === 200, message: data.message, data: data.data };
+}
 
-// 목록 (배열이 data.mtxTt 키로 감싸진 경우)
-export const getTaskList = async (): Promise<ApiResponse<Task[]>> => {
-  const { data } = await apiClient.get<ApiResponse<{ mtxTt: Task[] }>>('/tasks/list');
-  return fromList(data, 'mtxTt'); // → ApiResponse<Task[]>
-};
+export async function getTaskList(): Promise<ApiResponse<Task[]>> {
+  const { data } = await apiClient.get<ApiResponse<Task[]>>('/api/task/list');
+  return { success: data.status === 200, message: data.message, data: data.data ?? [] };
+}
 
-// 저장
-export const saveTask = async (payload: Partial<Task>): Promise<ApiResponse<Task>> => {
-  const { data } = await apiClient.post<ApiResponse<Task>>('/tasks', payload);
-  return data;
-};`} />
+export async function saveTask(payload: Partial<Task>): Promise<ApiResponse<Task>> {
+  const { data } = await apiClient.post<ApiResponse<Task>>('/api/task', payload);
+  return { success: data.status === 200, message: data.message, data: data.data };
+}`} />
 
                 <div className="demo-desc" style={{ marginTop: 24 }}>
                   <h3>ApiError</h3>
@@ -595,8 +594,7 @@ queryClient.setQueryData(['tasks'], (old: Task[]) => [...old, newTask]);
                 </div>
 
                 <CodeSnippet title="주요 타입 (src/lib/api/types.ts)" code={`import type {
-  ApiResponse,       // { success, message, data } — ds_pms_new
-  VamcApiResponse,   // { status, message, data } — vamc-npl-backend
+  ApiResponse,       // { status?, success, message, data } — status 는 서버가, success 는 API 함수가 채운다
   PaginatedResponse, // ApiResponse<T[]> + { meta: { page, size, total, totalPages } }
   UserInfo,          // { usrId, usrNm, email, dpCd, usrCCd, phnNo }
   LoginResponse,     // { accessToken, refreshToken, tokenType, expiresIn }

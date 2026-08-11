@@ -34,64 +34,52 @@ FormData 전송 시 `Content-Type` 헤더 자동 제거.
 
 ## 응답 포맷
 
-### ds_pms_new (Spring Boot 레거시)
+프론트 타입은 `src/lib/api/types.ts`의 `ApiResponse<T>` 하나뿐입니다.
 
 ```typescript
-interface ApiResponse<T> {
-  success: boolean;
+interface ApiResponse<T = unknown> {
+  status?: number;   // 서버가 실제로 내려주는 필드 (200 = 성공)
+  success: boolean;  // 서버는 내려주지 않음 — API 함수가 status로부터 채운다
   message: string;
-  data: T | null;
+  data: T | null | undefined;
 }
 ```
 
-`success === true` → 정상, `false` → 오류.
-
-리스트 응답은 `data` 안에 단일 키로 배열이 감싸짐:
-```json
-{ "success": true, "data": { "mtxTt": [...] } }
-```
-
-### vamc-npl-backend (현재 서버)
-
-```typescript
-interface VamcApiResponse<T> {
-  status: number;   // 200 = 성공
-  message: string;
-  data: T | null;
-}
-```
+`useApiQuery` / `useApiMutation`은 **`success === true`** 로 성공/실패를 판단합니다.
+반면 vamc-npl-backend가 실제로 내려주는 바디는 `{ status, message, data }` 뿐입니다.
+따라서 **API 함수에서 `status → success` 변환이 필수**입니다. 빠뜨리면 `success`가
+`undefined`(falsy)라 정상 응답도 실패로 처리됩니다.
 
 ---
 
 ## API 함수 작성
 
 ```typescript
-// src/features/myFeature/api/myFeatureApi.ts
-import { apiClient, fromList } from '@/lib/api/client';
+// src/api/task.ts
+import { apiClient } from '@/lib/api/client';
 import type { ApiResponse } from '@/lib/api/types';
 
-export interface Task { id: string; name: string; }
+// 서버 DTO 와 1:1 대응하는 타입은 이 파일에 코로케이트 (src/api/common.ts 참고)
+export interface Task { taskId: string; taskNm: string; }
 
-// 단건 조회
-export const getTask = async (id: string): Promise<ApiResponse<Task>> => {
-  const { data } = await apiClient.get<ApiResponse<Task>>(`/tasks/${id}`);
-  return data;
-};
+// baseURL 이 빈 값이므로 경로에 /api 접두를 반드시 포함한다 (Vite 프록시 → :8080)
+export async function getTask(id: string): Promise<ApiResponse<Task>> {
+  const { data } = await apiClient.get<ApiResponse<Task>>(`/api/task/${id}`);
+  return { success: data.status === 200, message: data.message, data: data.data };
+}
 
-// 목록 조회 (배열이 data.mtxTt 키로 감싸진 경우)
-export const getTaskList = async (): Promise<ApiResponse<Task[]>> => {
-  const { data } = await apiClient.get<ApiResponse<{ mtxTt: Task[] }>>('/tasks/list');
-  return fromList(data, 'mtxTt');
-};
+export async function getTaskList(): Promise<ApiResponse<Task[]>> {
+  const { data } = await apiClient.get<ApiResponse<Task[]>>('/api/task/list');
+  return { success: data.status === 200, message: data.message, data: data.data ?? [] };
+}
 
-// 저장
-export const saveTask = async (payload: Partial<Task>): Promise<ApiResponse<Task>> => {
-  const { data } = await apiClient.post<ApiResponse<Task>>('/tasks', payload);
-  return data;
-};
+export async function saveTask(payload: Partial<Task>): Promise<ApiResponse<Task>> {
+  const { data } = await apiClient.post<ApiResponse<Task>>('/api/task', payload);
+  return { success: data.status === 200, message: data.message, data: data.data };
+}
 ```
 
-`fromList(res, key)` — 배열이 키로 감싸진 응답을 `ApiResponse<T[]>` 형태로 변환.
+실제 구현은 `src/api/project.ts`(`getMyProjects`), `src/api/menu.ts`(`fetchAuthMenuList`) 참고.
 
 ---
 

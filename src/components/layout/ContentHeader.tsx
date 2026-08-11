@@ -1,7 +1,7 @@
 import { useMemo, useState, useCallback, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { Dropdown, Input, Popover, Empty, Select } from 'antd';
-import type { MenuProps } from 'antd';
+import type { MenuProps, InputRef } from 'antd';
 import {
   HomeOutlined,
   SunOutlined,
@@ -126,7 +126,7 @@ const { tabs, activeTabKey, openTab, setActiveTab } = useTabStore(
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchText, setSearchText] = useState('');
   const [activeIndex, setActiveIndex] = useState(-1);
-  const searchInputRef = useRef<any>(null);
+  const searchInputRef = useRef<InputRef>(null);
   const activeItemRef = useRef<HTMLDivElement>(null);
 
   // ── 알림 상태 ──
@@ -147,8 +147,12 @@ const { tabs, activeTabKey, openTab, setActiveTab } = useTabStore(
       .slice(0, 10);
   }, [searchText, flatMenus]);
 
-  // 검색 결과 변경 시 activeIndex 리셋
-  useEffect(() => { setActiveIndex(-1); }, [searchResults]);
+  // 검색 결과 변경 시 activeIndex 리셋 — 렌더 중 조정(effect 미사용)이라 추가 리렌더가 없다
+  const [prevSearchResults, setPrevSearchResults] = useState(searchResults);
+  if (prevSearchResults !== searchResults) {
+    setPrevSearchResults(searchResults);
+    setActiveIndex(-1);
+  }
 
   // 활성 항목 스크롤
   useEffect(() => {

@@ -112,22 +112,30 @@ export default function AppModal({
   useLabelStore((s) => s.labelsVersion);
   const resizeHandleLabel = t('COMPONENT.VIEW.TEXT_appModalResizeHandle', '모달 크기 조절');
 
-  useEffect(() => {
+  // prop 변경에 따른 상태 리셋 — effect 대신 렌더 중 조정.
+  // effect 로 하면 이전 상태가 한 번 그려진 뒤 리렌더되어 모달이 깜빡인다.
+  const [prevOpen, setPrevOpen] = useState(rest.open);
+  if (prevOpen !== rest.open) {
+    setPrevOpen(rest.open);
     if (!rest.open) {
       setIsFullscreen(false);
       setResizeSize(null);
     }
-  }, [rest.open]);
+  }
 
-  useEffect(() => {
+  const [prevWidth, setPrevWidth] = useState(width);
+  if (prevWidth !== width) {
+    setPrevWidth(width);
     setResizeSize(null);
-  }, [width]);
+  }
 
-  useEffect(() => {
+  const [prevShowFullscreenToggle, setPrevShowFullscreenToggle] = useState(showFullscreenToggle);
+  if (prevShowFullscreenToggle !== showFullscreenToggle) {
+    setPrevShowFullscreenToggle(showFullscreenToggle);
     if (!showFullscreenToggle) {
       setIsFullscreen(false);
     }
-  }, [showFullscreenToggle]);
+  }
 
   useEffect(() => () => {
     cleanupResizeRef.current?.();

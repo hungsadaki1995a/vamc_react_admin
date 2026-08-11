@@ -399,7 +399,7 @@ export default function CCO102003SC() {
     );
   }, []);
 
-  // ── GRID1 컬럼 (레거시 기준)
+  // ── GRID1 컬럼
   const grid1Cols = useMemo<ColDef<LblItem>[]>(() => [
     {
       headerName: tsg('lblId', '라벨 키'),
@@ -437,7 +437,7 @@ export default function CCO102003SC() {
     },
   ], [labels, tsg]);
 
-  // ── GRID2 컬럼 (레거시 기준)
+  // ── GRID2 컬럼
   const grid2Cols = useMemo<ColDef<LblTrnItem>[]>(() => [
     {
       field: 'lclCd',

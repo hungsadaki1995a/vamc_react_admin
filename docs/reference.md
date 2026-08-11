@@ -441,17 +441,14 @@ interface MenuItem {
 ### apiClient (`src/lib/api/client.ts`)
 
 ```typescript
-import { apiClient, fromList } from '@/lib/api/client';
+import { apiClient } from '@/lib/api/client';
 
-// GET
-const { data } = await apiClient.get<ApiResponse<Task>>('/tasks/1');
+// baseURL 이 빈 값이므로 경로에 /api 접두를 포함한다 (Vite 프록시 → :8080)
+const { data } = await apiClient.get<ApiResponse<Task>>('/api/task/1');
+const { data } = await apiClient.post<ApiResponse<Task>>('/api/task', payload);
 
-// POST
-const { data } = await apiClient.post<ApiResponse<Task>>('/tasks', payload);
-
-// 리스트 응답 언래핑
-const { data: raw } = await apiClient.get<ApiResponse<{ mtxTt: Task[] }>>('/tasks/list');
-const result = fromList(raw, 'mtxTt'); // → ApiResponse<Task[]>
+// 서버는 success 필드를 안 내려준다 — API 함수에서 status → success 변환 필수
+return { success: data.status === 200, message: data.message, data: data.data };
 ```
 
 자동 주입 헤더: `Authorization`, `X-Project-Id`, `X-Lang`.
@@ -526,8 +523,7 @@ apiNotify.warning('경고 메시지');
 
 | 타입 | 설명 |
 |------|------|
-| `ApiResponse<T>` | `{ success, message, data }` — ds_pms_new 응답 |
-| `VamcApiResponse<T>` | `{ status, message, data }` — vamc-npl-backend 응답 |
+| `ApiResponse<T>` | `{ status?, success, message, data }` — 서버는 `status` 만 주고 `success` 는 API 함수가 채운다 |
 | `PaginatedResponse<T>` | `ApiResponse<T[]> + meta` |
 | `UserInfo` | 사용자 기본 정보 |
 | `LoginRequest` | `{ username, password }` |

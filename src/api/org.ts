@@ -1,7 +1,7 @@
 import { apiClient } from '@/lib/api/client';
 import type { ApiResponse } from '@/lib/api/types';
 
-// Matches OrgMapper.xml / OrgResponse.java (ds_pms_server)
+// Matches OrgMapper.xml / OrgResponse.java
 // DB: T_CCO_ORG_M (ORG_ID, ORG_NM, UP_ORG_ID, ORG_LEV_NO, DEPT_SEQ)
 export interface OrgItem {
   orgId: string;      // ORG_ID (PK, dept code)

@@ -119,28 +119,32 @@ export default function FlyoutPanel() {
   const activeMenuKey = tabs.find((t) => t.key === activeTabKey)?.menuKey ?? null;
 
   // server menus 우선, 없으면 static menuConfig fallback
-  const allMenus = [...serverMenus, ...menuConfig];
-  const activeCategory = allMenus.find((m) => m.key === activeRailKey)
-    ?? (activeRailKey ? findMenuByKey(allMenus, activeRailKey) : null);
-  const flyoutItems = activeCategory?.children ?? [];
+  const activeCategory = useMemo(() => {
+    const allMenus = [...serverMenus, ...menuConfig];
+    return allMenus.find((m) => m.key === activeRailKey)
+      ?? (activeRailKey ? findMenuByKey(allMenus, activeRailKey) : null);
+  }, [serverMenus, activeRailKey]);
+  // `?? []` 를 렌더마다 새로 만들면 하위 useMemo 의존성이 매번 바뀌므로 메모이즈한다.
+  const flyoutItems = useMemo(() => activeCategory?.children ?? [], [activeCategory]);
 
   // Auto-expand parent keys when active menu changes (tab switch or menu click).
   // Rail change → replace with parent keys of new active menu (fresh start).
   // Same rail   → merge parent keys so previously expanded siblings stay open.
-  const prevRailKeyRef = useRef<string | null>(null);
-  useEffect(() => {
+  // effect 대신 렌더 중 조정 — 펼침 상태가 한 박자 늦게 반영되어 깜빡이는 것을 막는다.
+  const [prevRailKey, setPrevRailKey] = useState<string | null>(null);
+  const [prevMenuKey, setPrevMenuKey] = useState<string | null>(null);
+  if (prevRailKey !== activeRailKey || prevMenuKey !== activeMenuKey) {
     const parentKeys = getParentKeys(activeMenuKey, activeRailKey, flyoutItems);
+    const railChanged = prevRailKey !== activeRailKey;
+    setPrevRailKey(activeRailKey);
+    setPrevMenuKey(activeMenuKey);
 
-    if (prevRailKeyRef.current !== activeRailKey) {
-      prevRailKeyRef.current = activeRailKey;
+    if (railChanged) {
       setExpandedKeys(parentKeys);
-      return;
-    }
-
-    if (parentKeys.length > 0) {
+    } else if (parentKeys.length > 0) {
       setExpandedKeys(prev => [...new Set([...prev, ...parentKeys])]);
     }
-  }, [activeRailKey, activeMenuKey, flyoutItems]);
+  }
 
   // Close on Escape
   useEffect(() => {

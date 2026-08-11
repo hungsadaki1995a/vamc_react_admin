@@ -1371,7 +1371,7 @@ interface OrgNode {
 }
 
 const orgRawData: OrgNode[] = [
-  { id: '001', name: '(주)신한DS', type: '회사', headcount: 1200, parentId: null },
+  { id: '001', name: 'VAMC', type: '회사', headcount: 1200, parentId: null },
   { id: '010', name: '개발본부', type: '본부', headcount: 480, parentId: '001' },
   { id: '011', name: '프론트엔드팀', type: '팀', headcount: 120, parentId: '010' },
   { id: '012', name: '백엔드팀', type: '팀', headcount: 150, parentId: '010' },
@@ -2052,7 +2052,7 @@ function MyPage() {
                       <tr><td><code>DateCellEditor</code></td><td>날짜 선택 (DatePicker)</td><td>format="YYYY-MM-DD"</td></tr>
                       <tr><td><code>SelectCellEditor</code></td><td>드롭다운 선택</td><td>values, valueLabels</td></tr>
                       <tr><td><code>TagsCellEditor</code></td><td>다중 태그 입력</td><td>presetTags</td></tr>
-                      <tr><td><code>UserCellEditor</code></td><td>사용자 선택 (검색)</td><td>mockUsers 연동</td></tr>
+                      <tr><td><code>UserCellEditor</code></td><td>사용자 선택 (검색)</td><td>getUsrSimpleList (GET /api/usr) 연동</td></tr>
                     </tbody>
                   </table>
                 </div>

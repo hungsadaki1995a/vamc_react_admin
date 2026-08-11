@@ -96,7 +96,7 @@ export function useExcel({
 
       const { data } = await apiClient.post(uploadUrl, formData, { timeout: 120_000 });
 
-      // ds_pms_server wraps response: { status, message, data: ExcelUploadResult }
+      // 서버 응답 래핑: { status, message, data: ExcelUploadResult }
       const result: ExcelUploadResult = (data as { data?: ExcelUploadResult }).data ?? data;
 
       if (result.success) {
