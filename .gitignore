@@ -39,3 +39,6 @@ views.json
 *.njsproj
 *.sln
 *.sw?
+
+# 로컬 전용 AI 어시스턴트 지침 — 저장소에 올리지 않는다
+CLAUDE.md
