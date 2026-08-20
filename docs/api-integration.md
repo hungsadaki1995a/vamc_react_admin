@@ -5,7 +5,7 @@
 `apiClient` 하나만 사용 (`src/lib/api/client.ts`):
 
 ```
-baseURL: VITE_API_BASE_URL  (예: http://localhost:8180)
+baseURL: VITE_API_BASE_URL  (예: http://localhost:8080)
 timeout: 30,000ms
 withCredentials: true       (RefreshToken 쿠키 전송)
 Content-Type: application/json
@@ -13,7 +13,7 @@ Content-Type: application/json
 
 환경 변수 (`.env.local`):
 ```
-VITE_API_BASE_URL=http://localhost:8180
+VITE_API_BASE_URL=http://localhost:8080
 ```
 
 ---

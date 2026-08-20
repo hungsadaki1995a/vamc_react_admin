@@ -150,12 +150,23 @@ src/
 ## 빌드 / 실행
 
 ```bash
-npm run dev          # Vite 개발 서버 (포트 5173)
+npm install
+npm run dev          # Vite 개발 서버 (포트 3000, strictPort)
 npm run build        # tsc -b && vite build → dist/
+npm run lint         # ESLint
 npx tsc --noEmit     # 타입 체크만
 ```
 
-**환경 변수** (`.env.local`):
+**환경 변수** — `cp .env.example .env.local` 후 값을 확인한다.
 ```
-VITE_API_BASE_URL=http://localhost:8180
+VITE_API_BASE_URL=http://localhost:8080
+VITE_ENABLE_DEV_TOOLS=false
 ```
+
+> 포트는 `vite.config.ts`에 `strictPort: true`로 고정돼 있어, 3000이 사용 중이면
+> 다른 포트로 넘어가지 않고 **기동이 실패한다.**
+>
+> `VITE_API_BASE_URL`을 **빈 값**으로 두면 상대경로 `/api`로 호출하고, Vite dev 프록시가
+> `http://127.0.0.1:8080`(사용자/관리자 백엔드)으로 전달한다. 배포에서는 nginx가 프록시한다.
+>
+> ⚠️ 백엔드(`vamc-npl-admin-backend`)를 `local` 프로파일로 함께 띄워야 로그인이 된다.
