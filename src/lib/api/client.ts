@@ -26,6 +26,10 @@ declare module 'axios' {
 // 탭 수명과 무관한 전역 API는 바인딩 제외
 const TAB_BIND_DENYLIST = ['/api/auth/', '/api/mnu', '/api/common/menus', '/api/lbl', '/api/comcd'];
 
+// AUDIT_LOG.MENU_CD(CHAR(9), MENU_MNG.MENU_CD 참조) 적재용 — 서버 메뉴에서 온 키만 보낸다.
+// 정적 메뉴(dashboard, dev.*)의 키는 메뉴코드가 아니므로 이 패턴에서 걸러진다.
+const MENU_CD_PATTERN = /^[A-Z][A-Z0-9]{8}$/;
+
 function shouldBindToTab(url?: string): boolean {
   if (!url) return false;
   return !TAB_BIND_DENYLIST.some((path) => url.includes(path));
@@ -82,6 +86,13 @@ apiClient.interceptors.request.use((config) => {
   }
 
   config.headers['X-Lang'] = locale;
+
+  // 현재 화면(활성 탭)의 메뉴코드. 부트스트랩 호출(로그인·라벨·메뉴)은 활성 탭이 없어 생략된다 —
+  // 메뉴 컨텍스트가 없는 행위이므로 서버에서 MENU_CD 는 NULL 이 된다.
+  const activeTabKey = useTabStore.getState().activeTabKey;
+  if (activeTabKey && MENU_CD_PATTERN.test(activeTabKey)) {
+    config.headers['X-Menu-Cd'] = activeTabKey;
+  }
 
   if (config.data instanceof FormData) {
     delete config.headers['Content-Type'];
