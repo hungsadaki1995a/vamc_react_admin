@@ -45,6 +45,7 @@ import { App } from 'antd';
 import DOMPurify from 'dompurify';
 import { useThemeStore } from '@/stores/themeStore';
 import { useLocaleStore } from '@/stores/localeStore';
+import { useComponentLabel } from '@/hooks/useComponentLabel';
 import { getAgGridLocale } from './agGridLocale';
 import { ComcdSelectCellEditor, ComcdSelectCellRenderer } from './ComcdSelectCell';
 import './GridTable.css';
@@ -322,7 +323,7 @@ export default function GridTable<TData = any>({
   headerHeight = 38,
   className,
   loading = false,
-  noRowsMessage = '데이터가 없습니다.',
+  noRowsMessage,
   getRowClass,
   getRowStyle,
   isRowSelectable,
@@ -382,6 +383,11 @@ export default function GridTable<TData = any>({
   // 종전에는 한국어 상수가 고정돼 있어 언어를 바꿔도 이 부분만 한국어로 남았다.
   const locale = useLocaleStore((s) => s.locale);
   const localeText = useMemo(() => getAgGridLocale(locale), [locale]);
+
+  // 빈 데이터 문구는 AG Grid 의 noRowsToShow 가 아니라 커스텀 오버레이(NoRowsOverlay)가 그린다.
+  // 그래서 로케일 상수로는 바뀌지 않는다 — 라벨 테이블에서 가져온다.
+  const { tvt } = useComponentLabel();
+  const resolvedNoRowsMessage = noRowsMessage ?? tvt('noRowsToShow', '데이터가 없습니다.');
 
   const mergedDefaultColDef = useMemo<ColDef<TData>>(
     () => ({
@@ -737,7 +743,7 @@ export default function GridTable<TData = any>({
         // ── overlays
         loading={loading}
         noRowsOverlayComponent={NoRowsOverlay}
-        noRowsOverlayComponentParams={{ message: noRowsMessage }}
+        noRowsOverlayComponentParams={{ message: resolvedNoRowsMessage }}
         // ── events: grid lifecycle
         onGridReady={handleGridReady}
         onRowDataUpdated={handleRowDataUpdated}
