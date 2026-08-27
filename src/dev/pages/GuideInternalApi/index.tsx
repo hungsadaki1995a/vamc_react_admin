@@ -478,15 +478,13 @@ function TabPanel({ tab, visible }) {
 
                 <CodeSnippet title="componentRegistry 동작 원리" code={`// src/config/componentRegistry.tsx
 // import.meta.glob으로 자동 발견 (수정 불필요)
-const modules = import.meta.glob('../features/*/pages/*.tsx');
+const baseModules = import.meta.glob('../features/*/*/index.tsx');   // 업무 화면
+const devModules  = import.meta.glob('../dev/pages/*/index.tsx');    // 데모/가이드/샘플 (DEV_TOOLS_ENABLED 일 때만)
 
-// 결과: { '../features/dev/GuideInternalApi/index.tsx': () => import(...) }
-// 키에서 폴더명 추출 → componentPath로 사용
+// 결과: { '../features/cco/CCO102003SC/index.tsx': () => import(...) }
+// 키에서 **바로 위 폴더명** 추출 → 레지스트리 키(= 화면ID = sceId)로 사용
 
-// scrId ≠ 폴더명인 경우만 overrides 맵에 추가
-const overrides: Record<string, string> = {
-  'MY001001SC': 'MyCustomFolderName', // scrId → 폴더명
-};`} />
+// 원칙은 DB 의 MENU_URL_ADDR 을 폴더명(화면ID)에 맞추는 것이고, overrides 는 예외 수단이다`} />
 
                 <div className="demo-desc" style={{ marginTop: 24 }}>
                   <h3>menuConfig — 정적 메뉴 트리</h3>
@@ -509,7 +507,7 @@ interface MenuItem {
 {
   key: 'dev.lib.my-guide',
   label: '내 가이드',
-  componentPath: 'MyGuidePage',  // src/features/dev/pages/MyGuidePage/index.tsx
+  componentPath: 'MyGuidePage',  // src/dev/pages/MyGuidePage/index.tsx
 }`} />
               </div>
             ),

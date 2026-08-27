@@ -66,7 +66,7 @@ const CHAIN_CHILD_OPTIONS: ChainChildOption[] = [
 ];
 
 const comcdChainCode = `import ComcdSelect from '@/components/inputs/ComcdSelect';
-import type { CodeDetail } from '@/api/common';
+import type { CodeDetail } from '@/api/common/code';
 
 // ─ 폼에서 체이닝 ──────────────────────────────────────────
 const [parentVal, setParentVal] = useState('');

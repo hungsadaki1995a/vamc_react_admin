@@ -11,7 +11,7 @@ import { useMenuStore } from '@/stores/menuStore';
 import { useSettingsStore } from '@/stores/settingsStore';
 import { menuConfig } from '@/config/menuConfig';
 import { findMenuByKey } from '@/utils/menuUtils';
-import { fetchAuthMenuList } from '@/api/menu';
+import { fetchAuthMenuList } from '@/api/common/menu';
 import { ApiError } from '@/lib/api/error';
 import type { LoginRequest } from '@/lib/api/types';
 import styles from './index.module.css';

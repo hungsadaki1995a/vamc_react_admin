@@ -21,7 +21,7 @@ import CodeSnippet from '@/components/common/CodeSnippet';
 import { useThemeStore } from '@/stores/themeStore';
 import { useComcdStore } from '@/stores/comcdStore';
 
-const EMPTY_CODES: import('@/api/common').CodeDetail[] = [];
+const EMPTY_CODES: import('@/api/common/code').CodeDetail[] = [];
 import styles from './index.module.css';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
@@ -894,7 +894,7 @@ const columnDefs: ColDef[] = [
 // ── Code snippets (ComcdSelect 체이닝) ────────────────────────────────────────
 
 const comcdChainCellCode = `import { ComcdSelectCellRenderer, ComcdSelectCellEditor } from '@/components/grid/ComcdSelectCell';
-import type { CodeDetail } from '@/api/common';
+import type { CodeDetail } from '@/api/common/code';
 
 // cellEditorParams를 함수로 지정하면 params.data (행 데이터)에 접근 가능
 // → 같은 행의 다른 컬럼값으로 자식 셀렉트 옵션 필터링
@@ -951,7 +951,7 @@ const columnDefs: ColDef[] = [
 ];`;
 
 const searchCellCode = `import { SearchSelectCellRenderer, SearchSelectCellEditor, searchSelectValueFormatter } from '@/components/grid/SearchSelectCell';
-import { getOrgList } from '@/api/org';
+import { getOrgList } from '@/api/sys/org';
 
 // cellRenderer:    { label, value } 또는 plain string에서 명칭(label)만 표시
 // valueFormatter:  AG Grid warning #48 억제 + 클립보드/CSV 텍스트 변환

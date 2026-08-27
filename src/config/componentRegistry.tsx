@@ -2,24 +2,23 @@ import { lazy } from 'react';
 import type { ComponentType } from 'react';
 import { DEV_TOOLS_ENABLED } from './menuConfig';
 
-// Auto-discover all page components under src/features/*/*/index.tsx
-// componentPath convention = immediate parent folder name (PascalCase)
-// e.g., src/features/dev/KanbanBoard/index.tsx → 'KanbanBoard'
-//       src/features/cco/CCO101001SC/index.tsx      → 'CCO101001SC'
+// 업무 화면 자동 발견 — src/features/{도메인}/{화면ID}/index.tsx
+// 레지스트리 키 = **바로 위 폴더명** (= 화면ID = MENU_MNG.MENU_URL_ADDR = sceId)
+//   예) src/features/cco/CCO102003SC/index.tsx → 'CCO102003SC'
 //
-// src/features/dev/** (demo/guide screens, incl. GuideInternalApi which exposes
-// internal API/auth-store details) is excluded from the base glob and only
-// re-added when DEV_TOOLS_ENABLED — keeps dev-only pages out of the bundle
-// entirely (menuConfig.ts 의 메뉴 트리 게이트와 같은 플래그를 쓴다).
+// 팝업은 부모 화면의 자식 폴더에 둔다(…/CCO101001SC/CCO1010011P/index.tsx).
+// 글롭이 2단계 고정이라 자식 폴더는 걸리지 않는다 — 메뉴로 열지 않는 화면을
+// 레지스트리에서 제외하려는 의도다.
+//
+// 데모·가이드·이관 샘플은 src/dev/pages/ 로 분리했고 DEV_TOOLS_ENABLED 일 때만
+// 글롭에 포함한다 — 운영 번들에서 통째로 빠진다
+// (menuConfig.ts 의 메뉴 트리 게이트와 같은 플래그를 쓴다).
 type PageLoader = () => Promise<{ default: ComponentType }>;
 
-const baseModules = import.meta.glob([
-  '../features/*/*/index.tsx',
-  '!../features/dev/**',
-]) as Record<string, PageLoader>;
+const baseModules = import.meta.glob('../features/*/*/index.tsx') as Record<string, PageLoader>;
 
 const devModules = (
-  DEV_TOOLS_ENABLED ? import.meta.glob('../features/dev/*/index.tsx') : {}
+  DEV_TOOLS_ENABLED ? import.meta.glob('../dev/pages/*/index.tsx') : {}
 ) as Record<string, PageLoader>;
 
 const pageModules: Record<string, PageLoader> = { ...baseModules, ...devModules };
@@ -32,21 +31,19 @@ const autoRegistry: Record<string, ComponentType> = Object.fromEntries(
   }),
 );
 
-// ── Manual overrides ───────────────────────────────────────────────────────────
-// Use when: server scrId ≠ filename, or same file needs different props.
+// ── 수동 등록 ─────────────────────────────────────────────────────────────────
+// 원칙은 DB 의 MENU_URL_ADDR 을 화면ID(폴더명)로 맞추는 것이고, override 는 예외 수단이다.
+// 경로 문자열을 남긴 채 여기서 매핑하면 sceId 가 경로가 되어 라벨 키가 어긋난다.
 //
-// Example — wrap with props:
-//   'ProjectListActive': lazy(() =>
-//     import('@/features/project/pages/ProjectList/index').then((m) => ({
+// 예외가 정당한 경우 — 같은 파일을 다른 props 로 두 메뉴에 걸 때:
+//   'SYS030102SC': lazy(() =>
+//     import('@/features/sys/SYS030101SC/index').then((m) => ({
 //       default: () => <m.default filterStatus="active" />,
 //     }))
 //   ),
-//
-// Example — remap server scrId to local file:
-//   'PMS301001SC': lazy(() => import('@/features/task/pages/KanbanBoard/index')),
 const overrides: Record<string, ComponentType> = {
-  // Server menuUrlAddr → local component mapping
-  // (when server's menuUrlAddr path ≠ folder name under src/features/)
+  // ⚠️ 임시 — DB 의 MENU_URL_ADDR 이 아직 경로 문자열인 메뉴들.
+  //    화면ID 채번(권고안) 적용 시 DB 를 고치고 이 두 줄은 삭제한다.
   '/admin/system/admin/menu': lazy(() => import('@/features/admin/AdminMenuManagement/index')),
   '/admin/system/admin/test': lazy(() => import('@/features/admin/AdminTestPage/index')),
 };

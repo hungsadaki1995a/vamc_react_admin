@@ -30,12 +30,10 @@ export interface LblMaster {
   trsl:     Record<string, string>;    // langCd → 번역문자
 }
 
-/** 사용 언어 1건 — LANG_MNG */
-export interface LangItem {
-  langCd:   string;
-  langNm:   string;
-  sortSeq?: number;
-}
+// 사용 언어 목록(LangItem / getLanguages)은 메뉴 설정 화면도 쓰므로
+// 공용 API `@/api/common/lbl` 로 승격했다. 화면 코드가 그대로 쓰도록 여기서 재노출한다.
+export type { LangItem } from '@/api/common/lbl';
+export { getLanguages } from '@/api/common/lbl';
 
 /** 라벨 PK 3개 */
 export interface LblKey {
@@ -84,16 +82,6 @@ export interface LblRowsParams {
 /** 라벨-번역 목록 조회 */
 export async function getLabelRows(params: LblRowsParams): Promise<ApiResponse<LblRow[]>> {
   const { data } = await apiClient.get<ApiResponse<LblRow[]>>('/api/lbl/rows', { params });
-  return {
-    success: data.status === 200,
-    message: data.message,
-    data: data.data ?? [],
-  };
-}
-
-/** 사용 언어 목록 조회 (LANG_MNG) */
-export async function getLanguages(): Promise<ApiResponse<LangItem[]>> {
-  const { data } = await apiClient.get<ApiResponse<LangItem[]>>('/api/lbl/languages');
   return {
     success: data.status === 200,
     message: data.message,

@@ -1,7 +1,12 @@
 import { apiClient } from '@/lib/api/client';
 import type { ApiResponse } from '@/lib/api/types';
-import { encryptPassword } from '@/lib/crypto';
 import type { SearchSelectValue } from '@/components/inputs/SearchSelectField';
+
+/**
+ * 화면 전용 API — 이 화면(과 자식 팝업)만 쓰는 호출을 모은다.
+ * 두 화면 이상이 쓰는 호출은 `src/api/{도메인}/` 으로 승격한다.
+ * 예: 비밀번호 변경은 로그인 직후 모달도 쓰므로 `@/api/sys/usr` 의 changePwd 로 올렸다.
+ */
 
 export interface User {
   usrId: string;
@@ -66,16 +71,5 @@ export async function resetPwd(usrId: string): Promise<ApiResponse<void>> {
 
 export async function unlockUsr(usrId: string): Promise<ApiResponse<void>> {
   const { data } = await apiClient.post<RawResp<void>>(`/api/usr/${usrId}/unlock`);
-  return toApiResp(data);
-}
-
-export async function changePwd(usrId: string, newPswd: string): Promise<ApiResponse<void>> {
-  const { data: keyData } = await apiClient.get<{ data: { publicKey: string } }>('/api/auth/public-key');
-  const publicKey = keyData.data?.publicKey ?? (keyData as Record<string, unknown>).publicKey as string;
-  const [encUsrId, encChgPasswd] = await Promise.all([
-    encryptPassword(publicKey, usrId),
-    encryptPassword(publicKey, newPswd),
-  ]);
-  const { data } = await apiClient.post<RawResp<void>>('/api/usr/change-password', { usrId: encUsrId, encChgPasswd });
   return toApiResp(data);
 }

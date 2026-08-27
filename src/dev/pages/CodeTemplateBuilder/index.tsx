@@ -21,11 +21,14 @@ function buildTemplate(kind: TemplateKind, name: string): string {
     case 'api':
       // 서버는 { status, message, data } 만 내려주고 success 필드가 없다.
       // useApiQuery / useApiMutation 은 success 로 성공을 판정하므로 여기서 status → success 로
-      // 변환해 준다. (src/api/project.ts 의 getMyProjects 와 동일한 형태)
-      return `import { apiClient } from '@/lib/api/client';
+      // 변환해 준다. (src/api/sys/proj.ts 의 getMyProjects 와 동일한 형태)
+      return `// 저장 위치: src/api/{도메인}/${camel}.ts
+//   도메인 = common(전역 부트스트랩) | sys(시스템 운영 관리) — 새 업무 도메인은 폴더를 추가한다.
+//   한 화면만 쓰는 호출이면 여기가 아니라 화면 폴더의 api.ts 에 둔다.
+import { apiClient } from '@/lib/api/client';
 import type { ApiResponse } from '@/lib/api/types';
 
-// 서버 DTO 와 1:1 대응 — 타입은 이 파일에 코로케이트한다 (src/api/common.ts 참고)
+// 서버 DTO 와 1:1 대응 — 타입은 이 파일에 코로케이트한다 (src/api/common/code.ts 참고)
 export interface ${Pascal} {
   ${camel}Id: string;
   ${camel}Nm: string;
@@ -43,7 +46,7 @@ export async function get${Pascal}List(): Promise<ApiResponse<${Pascal}[]>> {
 
     case 'query':
       return `import { useApiQuery } from '@/hooks/useApiQuery';
-import { get${Pascal}List } from '@/api/${camel}';
+import { get${Pascal}List } from '@/api/sys/${camel}';   // 도메인 패키지 아래에 둔다
 
 // useApiQuery 는 ApiResponse.success 로 성공을 판정하고 data 를 언래핑해 반환한다.
 

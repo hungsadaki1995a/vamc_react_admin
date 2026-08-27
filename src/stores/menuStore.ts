@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import type { MenuItem } from '@/types/menu';
-import { fetchAuthMenuList } from '@/api/menu';
+import { fetchAuthMenuList } from '@/api/common/menu';
 import { idbGet, idbSet, idbDelete } from '@/lib/cache/idbCache';
 import { useAuthStore } from '@/stores/authStore';
 import { useProjectStore } from '@/stores/projectStore';

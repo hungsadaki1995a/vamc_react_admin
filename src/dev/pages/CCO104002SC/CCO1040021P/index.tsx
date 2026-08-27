@@ -4,7 +4,7 @@ import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 import type { AgGridReact } from 'ag-grid-react';
 import GridPanel from '@/components/grid/GridPanel';
 import type { ColDef } from 'ag-grid-community';
-import { getAddChildProjList } from '@/features/cco/CCO104002SC/api';
+import { getAddChildProjList } from '../api';
 
 const { Text } = Typography;
 

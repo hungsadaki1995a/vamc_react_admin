@@ -2,7 +2,7 @@ import { useCallback, useMemo } from 'react';
 import type { ColumnsType } from 'antd/es/table';
 import SearchSelectField from '@/components/inputs/SearchSelectField';
 import type { SearchSelectOption, SearchSelectFieldProps } from '@/components/inputs/SearchSelectField';
-import { getUsrSimpleList } from '@/api/usr';
+import { getUsrSimpleList } from '@/api/sys/usr';
 import { useComponentLabel } from '@/hooks/useComponentLabel';
 
 // ── Modal table columns ────────────────────────────────────────────────────────

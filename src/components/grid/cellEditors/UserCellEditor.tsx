@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { Select, Space } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 import type { CustomCellEditorProps } from 'ag-grid-react';
-import { getUsrSimpleList } from '@/api/usr';
+import { getUsrSimpleList } from '@/api/sys/usr';
 
 export default function UserCellEditor({ value, onValueChange }: CustomCellEditorProps) {
   const [options, setOptions] = useState<{ label: React.ReactNode; value: string }[]>([]);
