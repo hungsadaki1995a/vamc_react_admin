@@ -29,26 +29,28 @@ import styles from './index.module.css';
 // ─────────────────────────────────────────────────────────────────────────────
 
 /**
- * 라벨구분코드(LBL_SE_CD) 후보.
+ * 라벨구분코드(LBL_SE_CD) 후보와 설명 라벨 키.
  *
  * 공통코드(COM_CD)에 라벨 구분 도메인이 아직 없고 전체 코드 조회(`/api/comcd/all`)도
- * 미구현이라(`src/api/common.ts`) 규약 값을 화면 상수로 둔다. 공통코드가 등록되면
+ * 미구현이라(`src/api/common.ts`) 값 목록을 화면 상수로 둔다. 공통코드가 등록되면
  * `ComcdSelect` 로 교체한다. MENU / CODE 는 기존 적재 데이터(메뉴·공통코드 라벨)의 값이다.
+ *
+ * 설명 문구는 라벨 테이블에서 가져온다 — 상수에 한국어를 박아두면 언어를 바꿔도 남는다.
  */
-const LBL_SE_OPTIONS = [
-  { value: 'TEXT',  label: 'TEXT — 화면 텍스트' },
-  { value: 'BTN',   label: 'BTN — 버튼' },
-  { value: 'TITLE', label: 'TITLE — 제목' },
-  { value: 'GRID',  label: 'GRID — 그리드 헤더' },
-  { value: 'MSG',   label: 'MSG — 메시지' },
-  { value: 'MENU',  label: 'MENU — 메뉴' },
-  { value: 'CODE',  label: 'CODE — 공통코드' },
+const LBL_SE_VALUES: { value: string; field: string; ko: string }[] = [
+  { value: 'TEXT',  field: 'seText',  ko: '화면 텍스트' },
+  { value: 'BTN',   field: 'seBtn',   ko: '버튼' },
+  { value: 'TITLE', field: 'seTitle', ko: '제목' },
+  { value: 'GRID',  field: 'seGrid',  ko: '그리드 헤더' },
+  { value: 'MSG',   field: 'seMsg',   ko: '메시지' },
+  { value: 'MENU',  field: 'seMenu',  ko: '메뉴' },
+  { value: 'CODE',  field: 'seCode',  ko: '공통코드' },
 ];
 
 /** 라벨 키의 두 번째 마디 — `{화면ID}.{섹션}.{구분}_{세부}` */
-const SECTION_OPTIONS = [
-  { value: 'VIEW',   label: 'VIEW — 화면 템플릿' },
-  { value: 'SCRIPT', label: 'SCRIPT — 이벤트 핸들러' },
+const SECTION_VALUES: { value: string; field: string; ko: string }[] = [
+  { value: 'VIEW',   field: 'sectionView',   ko: '화면 템플릿' },
+  { value: 'SCRIPT', field: 'sectionScript', ko: '이벤트 핸들러' },
 ];
 
 interface FormFields {
@@ -289,6 +291,16 @@ export default function CCO102003SC() {
     { headerName: tsg('trslLtr', '번역문자'), field: 'trslLtr', minWidth: 200, editable: canWrite },
   ], [tsg, canWrite]);
 
+  // 셀렉트 표시 문구는 "코드 — 설명" 형태다. 코드는 그대로 두고 설명만 번역한다.
+  const lblSeOptions = useMemo(
+    () => LBL_SE_VALUES.map((o) => ({ value: o.value, label: `${o.value} — ${tvt(o.field, o.ko)}` })),
+    [tvt],
+  );
+  const sectionOptions = useMemo(
+    () => SECTION_VALUES.map((o) => ({ value: o.value, label: `${o.value} — ${tvt(o.field, o.ko)}` })),
+    [tvt],
+  );
+
   const activeFilterCount =
     (filterScrnId ? 1 : 0) + (filterLblCd ? 1 : 0) + (filterLblSeCd ? 1 : 0);
 
@@ -324,7 +336,7 @@ export default function CCO102003SC() {
           <Select
             value={filterLblSeCd}
             onChange={setFilterLblSeCd}
-            options={LBL_SE_OPTIONS}
+            options={lblSeOptions}
             placeholder={tvt('all', '전체')}
             allowClear
             style={{ width: '100%' }}
@@ -437,7 +449,7 @@ export default function CCO102003SC() {
                     rules={[{ required: !isEditMode, message: '' }]}
                     style={{ margin: '0 0 6px' }}
                   >
-                    <Select options={SECTION_OPTIONS} disabled={isEditMode} style={{ width: '100%' }} />
+                    <Select options={sectionOptions} disabled={isEditMode} style={{ width: '100%' }} />
                   </Form.Item>
                 </Col>
                 <Col span={8}>
@@ -447,7 +459,7 @@ export default function CCO102003SC() {
                     rules={[{ required: true, message: '' }]}
                     style={{ margin: '0 0 6px' }}
                   >
-                    <Select options={LBL_SE_OPTIONS} disabled={isEditMode} style={{ width: '100%' }} />
+                    <Select options={lblSeOptions} disabled={isEditMode} style={{ width: '100%' }} />
                   </Form.Item>
                 </Col>
               </Row>

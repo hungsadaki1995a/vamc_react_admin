@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { Tooltip } from 'antd';
 import {
   LogoutOutlined,
@@ -12,6 +13,7 @@ import { useMenuStore } from '@/stores/menuStore';
 import { useTabStore } from '@/stores/tabStore';
 import { useLogout } from '@/hooks/useLogout';
 import { useShallow } from 'zustand/react/shallow';
+import { findTopLevelMenuKey } from '@/utils/menuUtils';
 
 // dev(개발 도구)는 rail-bottom에 고정 배치
 // production 빌드에서는 menuConfig에 'dev' 항목이 없으므로 bottomRailMenu는 undefined —
@@ -61,15 +63,27 @@ export default function IconRail() {
   );
 
   // Static leaf items (dashboard) + server business menus
-  const staticLeafItems = menuConfig.filter(
-    (m) => m.key !== BOTTOM_RAIL_KEY && !EXCLUDED_RAIL_KEYS.has(m.key) && (!m.children || m.children.length === 0)
-  );
-  const mainRailItems = [...staticLeafItems, ...serverMenus];
+  const mainRailItems = useMemo(() => {
+    const staticLeafItems = menuConfig.filter(
+      (m) => m.key !== BOTTOM_RAIL_KEY && !EXCLUDED_RAIL_KEYS.has(m.key) && (!m.children || m.children.length === 0)
+    );
+    return [...staticLeafItems, ...serverMenus];
+  }, [serverMenus]);
   const confirmLogout = useLogout();
 
-  // 현재 활성 탭의 1단 카테고리
+  // 현재 활성 탭이 속한 1단 카테고리(레일 아이콘).
+  //
+  // 정적 메뉴는 점 구분 키('dev.overview')라 첫 마디가 곧 레일 키지만,
+  // 서버 메뉴는 'A06040400' 처럼 계층이 키에 드러나지 않아 트리를 타야 한다.
+  // 종전에는 split('.')[0] 만 써서 서버 메뉴 화면에서는 아이콘이 켜지지 않았다.
   const activeTab = tabs.find((t) => t.key === activeTabKey);
-  const activeTopKey = activeTab?.menuKey.split('.')[0] ?? null;
+  const activeTopKey = useMemo(() => {
+    const key = activeTab?.menuKey;
+    if (!key) return null;
+    const staticTop = key.split('.')[0];
+    if (mainRailItems.some((m) => m.key === staticTop)) return staticTop;
+    return findTopLevelMenuKey(mainRailItems, key);
+  }, [activeTab?.menuKey, mainRailItems]);
 
   const handleRailClick = (item: typeof menuConfig[number]) => {
     // leaf 아이콘 (대시보드 등 children 없음) → 직접 탭 열기 + Flyout 닫기
