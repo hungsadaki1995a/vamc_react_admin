@@ -67,7 +67,7 @@ GET /api/lbl/bulk
   응답: { status: 200, data: { "BTN_SAVE": "저장", ... } }
 ```
 
-`fetchBulkLabels()` 함수는 `src/api/lbl.ts`에 위치합니다.
+`fetchBulkLabels()` 함수는 `src/api/common/lbl.ts`에 위치합니다.
 
 ---
 

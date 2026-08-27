@@ -16,7 +16,7 @@ import { getUsrList, saveUsr, deleteUsr, resetPwdErrCnt, resetPwd, unlockUsr } f
 import type { ColDef } from 'ag-grid-community';
 import type { User, UserFormValues } from './types';
 import { useNotify } from '@/hooks/useNotify';
-import CCO1010011P from '@/features/cco/CCO1010011P';
+import CCO1010011P from './CCO1010011P';
 
 // ── Module-level constants ─────────────────────────────────────────────────────
 

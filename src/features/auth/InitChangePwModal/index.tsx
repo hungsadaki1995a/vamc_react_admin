@@ -1,6 +1,6 @@
 import { Form, Input, Modal, Typography } from 'antd';
 import { useApiMutation } from '@/hooks/useApiMutation';
-import { changePwd } from '@/features/cco/CCO101001SC/api';
+import { changePwd } from '@/api/sys/usr';
 
 const { Text } = Typography;
 

@@ -18,8 +18,10 @@
 ### 2단계: 페이지 컴포넌트 생성
 
 ```
-src/features/myFeature/pages/MyFeatureList/
-  └── index.tsx
+src/features/{도메인}/{화면ID}/
+  ├── index.tsx          # 화면 컴포넌트
+  ├── api.ts             # 이 화면 전용 API (두 화면 이상이 쓰면 src/api/{도메인}/ 으로 승격)
+  └── {화면ID}1P/        # 이 화면에서만 여는 팝업 — 자식 폴더로 코로케이트
 ```
 
 컴포넌트 레지스트리가 자동 발견 (`import.meta.glob`) — 수동 등록 불필요.
@@ -78,11 +80,11 @@ export default function MyGuide() {
 **API 함수에서 `status → success` 변환이 필수**입니다. (자세한 내용은 `docs/api-integration.md`)
 
 ```typescript
-// src/api/task.ts
+// src/api/{도메인}/task.ts  — 예: src/api/sys/task.ts
 import { apiClient } from '@/lib/api/client';
 import type { ApiResponse } from '@/lib/api/types';
 
-// 서버 DTO 와 1:1 대응하는 타입은 이 파일에 코로케이트 (src/api/common.ts 참고)
+// 서버 DTO 와 1:1 대응하는 타입은 이 파일에 코로케이트 (src/api/common/code.ts 참고)
 export interface Task { taskId: string; taskNm: string; }
 
 // baseURL 이 빈 값이므로 경로에 /api 접두를 반드시 포함한다 (Vite 프록시 → :8080)

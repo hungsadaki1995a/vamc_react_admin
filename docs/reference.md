@@ -400,12 +400,12 @@ tab.closable     // 닫기 가능 여부
 페이지 컴포넌트 자동 발견 및 lazy import.
 
 ```typescript
-// 자동 발견: src/features/*/pages/*.tsx
-// 파일명(PascalCase) = componentPath
+// 자동 발견: src/features/*/*/index.tsx  +  src/dev/pages/*/index.tsx
+// 폴더명 = componentPath = 화면ID(sceId)
 
-// 수동 매핑 (scrId ≠ 폴더명인 경우만)
-const overrides: Record<string, string> = {
-  'MY001001SC': 'MyCustomFolderName',
+// 수동 매핑은 예외 수단 — 원칙은 DB 의 MENU_URL_ADDR 을 폴더명에 맞추는 것
+const overrides: Record<string, ComponentType> = {
+  '/admin/system/admin/menu': lazy(() => import('@/features/admin/AdminMenuManagement/index')),
 };
 ```
 

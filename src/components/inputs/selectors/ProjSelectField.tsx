@@ -6,7 +6,7 @@ import type {
   SearchSelectFieldProps,
   SearchSelectValue,
 } from '@/components/inputs/SearchSelectField';
-import { getMyProjects } from '@/api/project';
+import { getMyProjects } from '@/api/sys/proj';
 import { useComponentLabel } from '@/hooks/useComponentLabel';
 
 // ── Modal table columns ────────────────────────────────────────────────────────

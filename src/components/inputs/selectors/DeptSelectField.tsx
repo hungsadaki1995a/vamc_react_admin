@@ -5,7 +5,7 @@ import type {
   SearchSelectOption,
   SearchSelectFieldProps,
 } from '@/components/inputs/SearchSelectField';
-import { getOrgTree, getOrgList } from '@/api/org';
+import { getOrgTree, getOrgList } from '@/api/sys/org';
 import { useComponentLabel } from '@/hooks/useComponentLabel';
 
 // ── Modal table columns ────────────────────────────────────────────────────────

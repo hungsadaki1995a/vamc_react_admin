@@ -1,6 +1,10 @@
 import { apiClient } from '@/lib/api/client';
 import type { ApiResponse } from '@/lib/api/types';
 
+/**
+ * 조직(ORG) API — 시스템 운영 관리 도메인.
+ * ⚠️ 서버 미구현: `/api/org/**` 컨트롤러가 양 백엔드에 없다(2026-08-27 실측). 호출하면 404 다.
+ */
 // Matches OrgMapper.xml / OrgResponse.java
 // DB: T_CCO_ORG_M (ORG_ID, ORG_NM, UP_ORG_ID, ORG_LEV_NO, DEPT_SEQ)
 export interface OrgItem {

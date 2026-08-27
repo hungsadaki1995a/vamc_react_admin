@@ -16,13 +16,11 @@ interface BuilderForm {
 }
 
 // src/features/ 하위 실제 도메인 폴더 — 새 폴더를 만들면 여기에 추가한다.
-// (auth/dashboard/dev 는 프레임워크·데모용이라 신규 업무화면 대상이 아니지만,
-//  실재하는 선택지이므로 목록에는 남겨 둔다)
+// 데모·가이드·이관 샘플은 features 가 아니라 src/dev/pages/ 에 있으므로 선택지에서 뺐다.
 const DOMAIN_OPTIONS = [
   { value: 'admin', label: 'admin — 어드민/시스템 관리' },
   { value: 'cco', label: 'cco — 공통 업무 화면' },
   { value: 'dashboard', label: 'dashboard — 대시보드' },
-  { value: 'dev', label: 'dev — 개발 도구/데모' },
 ];
 
 const LAYOUT_OPTIONS: { value: LayoutKind; label: string; desc: string }[] = [

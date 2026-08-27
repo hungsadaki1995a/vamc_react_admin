@@ -59,7 +59,7 @@ interface ApiResponse<T = unknown> {
 import { apiClient } from '@/lib/api/client';
 import type { ApiResponse } from '@/lib/api/types';
 
-// 서버 DTO 와 1:1 대응하는 타입은 이 파일에 코로케이트 (src/api/common.ts 참고)
+// 서버 DTO 와 1:1 대응하는 타입은 이 파일에 코로케이트 (src/api/common/code.ts 참고)
 export interface Task { taskId: string; taskNm: string; }
 
 // baseURL 이 빈 값이므로 경로에 /api 접두를 반드시 포함한다 (Vite 프록시 → :8080)
@@ -79,7 +79,8 @@ export async function saveTask(payload: Partial<Task>): Promise<ApiResponse<Task
 }
 ```
 
-실제 구현은 `src/api/project.ts`(`getMyProjects`), `src/api/menu.ts`(`fetchAuthMenuList`) 참고.
+실제 구현은 `src/api/sys/proj.ts`(`getMyProjects`), `src/api/common/menu.ts`(`fetchAuthMenuList`) 참고.
+API 파일은 도메인 패키지 아래에 둔다 — `common/`(전역 부트스트랩) · `sys/`(시스템 운영 관리).
 
 ---
 

@@ -2,7 +2,7 @@ import { Form, Input, Modal } from 'antd';
 import { useApiMutation } from '@/hooks/useApiMutation';
 import { useNotify } from '@/hooks/useNotify';
 import { useScreenLabel } from '@/hooks/useScreenLabel';
-import { changePwd } from '@/features/cco/CCO101001SC/api';
+import { changePwd } from '@/api/sys/usr';
 
 interface Props {
   open: boolean;

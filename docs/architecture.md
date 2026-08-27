@@ -84,12 +84,14 @@ FlyoutPanel 리프 메뉴 클릭
 
 ```tsx
 // src/config/componentRegistry.tsx
-import.meta.glob('../features/*/pages/*.tsx')
+import.meta.glob('../features/*/*/index.tsx')   // 업무 화면
+import.meta.glob('../dev/pages/*/index.tsx')    // 데모/가이드/샘플 (DEV_TOOLS_ENABLED 일 때만)
 ```
 
-- `src/features/{도메인}/pages/{ComponentName}/index.tsx` 파일명(PascalCase)이 곧 `componentPath`
-- 수동 등록 불필요
-- `overrides` 맵: 서버 scrId ≠ 로컬 폴더명일 때만 매핑
+- `src/features/{도메인}/{화면ID}/index.tsx` 의 **폴더명**이 곧 `componentPath`
+  (= `MENU_MNG.MENU_URL_ADDR` = 탭의 `componentKey` = 라벨 키의 `sceId`)
+- 글롭이 2단계 고정이라 **팝업을 부모 화면의 자식 폴더**에 두면 레지스트리에 등록되지 않는다
+- 수동 등록 불필요. `overrides` 맵은 예외 수단 — 원칙은 DB 의 URL 을 폴더명에 맞추는 것이다
 
 ---
 
@@ -132,11 +134,15 @@ src/
 ├── config/
 │   ├── menuConfig.ts    # 메뉴 트리 (하드코딩 + 서버 동적 로드)
 │   └── componentRegistry.tsx
-├── features/            # 도메인별 페이지
+├── api/                 # 서버 API 호출 — 도메인 패키지로 구분
+│   ├── common/          # code.ts, menu.ts, lbl.ts — 전역 부트스트랩
+│   └── sys/             # usr.ts, org.ts, sce.ts, proj.ts — 시스템 운영 관리
+├── features/            # 업무 화면 (도메인 / 화면ID)
+│   ├── admin/
 │   ├── auth/
 │   ├── cco/
-│   ├── dashboard/
-│   └── dev/             # 개발도구, 가이드, 데모
+│   └── dashboard/
+├── dev/pages/           # 개발도구·가이드·데모·이관 샘플 (운영 번들 제외)
 ├── hooks/               # useApiQuery, useApiMutation, useMenuPermission, ...
 ├── lib/api/             # Axios 클라이언트, 인터셉터, 타입
 ├── mock/                # 로컬 목데이터

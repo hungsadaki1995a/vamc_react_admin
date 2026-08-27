@@ -12,12 +12,12 @@ import { useScreenLabel } from '@/hooks/useScreenLabel';
 import { useApiQuery } from '@/hooks/useApiQuery';
 import { useLocaleStore } from '@/stores/localeStore';
 import { useMenuStore } from '@/stores/menuStore';
-import { getLanguages } from '@/features/cco/CCO102003SC/api';
-import type { LangItem } from '@/features/cco/CCO102003SC/api';
+import { getLanguages } from '@/api/common/lbl';
+import type { LangItem } from '@/api/common/lbl';
 import { formatLabel } from '@/lib/i18n/formatLabel';
 import { apiClient } from '@/lib/api/client';
 import type { ApiResponse } from '@/lib/api/types';
-import type { MnuResponse } from '@/api/menu';
+import type { MnuResponse } from '@/api/common/menu';
 import type { ColDef } from 'ag-grid-community';
 
 // ── Constants ────────────────────────────────────────────────────────────────
