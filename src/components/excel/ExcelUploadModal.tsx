@@ -14,6 +14,7 @@ import GridTable, { type ColDefEx } from '@/components/grid/GridTable';
 import { useLabelStore } from '@/stores/labelStore';
 import type { ExcelProcessResult, ExcelRowError, ExcelUploadResult } from '@/types/excel';
 import styles from './ExcelUploadModal.module.css';
+import { formatLabel } from '@/lib/i18n/formatLabel';
 
 export type ExcelUploadModalMode = 'upload' | 'confirm' | 'success' | 'error';
 
@@ -83,13 +84,6 @@ function formatCount(value: number) {
   return value.toLocaleString();
 }
 
-function formatLabelTemplate(template: string, values: Array<string | number>): string {
-  return values.reduce<string>(
-    (text, value, index) => text.replace(new RegExp(`\\{${index}\\}`, 'g'), String(value)),
-    template,
-  );
-}
-
 function createErrorColumns(labels: ExcelUploadLabels): ColDefEx<ExcelErrorGridRow>[] {
   return [
     {
@@ -137,13 +131,13 @@ function ResultView({
         className: styles.resultHeaderSuccess,
         icon: <CheckCircleFilled />,
         title: labels.successTitle,
-        sub: formatLabelTemplate(labels.successSummary, [total]),
+        sub: formatLabel(labels.successSummary, total),
       }
     : {
         className: styles.resultHeaderConfirm,
         icon: <CloudUploadOutlined />,
         title: labels.confirmTitle,
-        sub: formatLabelTemplate(labels.confirmSummary, [total]),
+        sub: formatLabel(labels.confirmSummary, total),
       };
   const stats: ResultStat[] = [
     { key: 'new', label: labels.newLabel, value: result.cntNew, icon: <PlusCircleOutlined />, tone: 'success' },
@@ -229,10 +223,11 @@ function ErrorView({
     ...row,
     errorId: `${row.row}-${row.col ?? row.header ?? 'cell'}-${index}`,
   }));
-  const summary = formatLabelTemplate(labels.errorSummary, [
+  const summary = formatLabel(
+    labels.errorSummary,
     formatCount(result.totalRows),
     formatCount(result.failRows),
-  ]);
+  );
 
   return (
     <div className={styles.errorWrap}>

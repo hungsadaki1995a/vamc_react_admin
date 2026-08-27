@@ -4,6 +4,7 @@ import { DownloadOutlined, FileExcelOutlined, UploadOutlined } from '@ant-design
 import { useExcel } from '@/hooks/useExcel';
 import { ExcelErrorModal } from './ExcelErrorModal';
 import type { ExcelColumnDef } from '@/types/excel';
+import { useComponentLabel } from '@/hooks/useComponentLabel';
 
 interface Props {
   columns: ExcelColumnDef[];
@@ -60,16 +61,17 @@ export function ExcelButton({
     errorModalProps,
   } = useExcel({ columns, downloadUrl, uploadUrl, fileName, queryParams, onUploadSuccess });
 
+  const { tvb } = useComponentLabel();
   const busy = downloading || uploading;
 
   const items: MenuProps['items'] = [
     downloadUrl
-      ? { key: 'download', icon: <DownloadOutlined />, label: '엑셀 다운로드', onClick: download }
+      ? { key: 'download', icon: <DownloadOutlined />, label: tvb('excelDownload', '엑셀 다운로드'), onClick: download }
       : null,
     uploadUrl
-      ? { key: 'upload', icon: <UploadOutlined />, label: '엑셀 업로드', onClick: triggerUpload }
+      ? { key: 'upload', icon: <UploadOutlined />, label: tvb('excelUpload', '엑셀 업로드'), onClick: triggerUpload }
       : null,
-    { key: 'template', icon: <FileExcelOutlined />, label: '템플릿 다운로드', onClick: downloadTemplate },
+    { key: 'template', icon: <FileExcelOutlined />, label: tvb('excelTemplate', '템플릿 다운로드'), onClick: downloadTemplate },
   ].filter(Boolean) as MenuProps['items'];
 
   return (
@@ -85,7 +87,7 @@ export function ExcelButton({
 
       <Dropdown menu={{ items }} disabled={disabled || busy}>
         <Button icon={<FileExcelOutlined />} loading={busy}>
-          엑셀
+          {tvb('excel', '엑셀')}
         </Button>
       </Dropdown>
 

@@ -3,7 +3,8 @@ import { DownOutlined, LeftOutlined, RightOutlined } from '@ant-design/icons';
 import { Dropdown } from 'antd';
 import type { MenuProps } from 'antd';
 import { useLabelStore } from '@/stores/labelStore';
-import { useLocaleStore } from '@/stores/localeStore';
+import { useTotalCountLabel } from '@/hooks/useTotalCountLabel';
+import { formatLabel } from '@/lib/i18n/formatLabel';
 import './GridExternalPaginationFooter.css';
 
 interface GridExternalPaginationFooterProps {
@@ -35,26 +36,16 @@ export default function GridExternalPaginationFooter({
 }: GridExternalPaginationFooterProps) {
   const t = useLabelStore((s) => s.t);
   const labelsVersion = useLabelStore((s) => s.labelsVersion);
-  const locale = useLocaleStore((s) => s.locale);
+  // 건수 문구는 그리드 툴바와 같은 라벨을 쓴다 (useTotalCountLabel 이 폴백까지 들고 있다).
+  const { format: formatTotalLabel } = useTotalCountLabel();
   const totalPages = Math.max(1, totalPagesProp ?? Math.ceil(totalCount / pageSize));
-  const totalTemplate = useMemo(() => {
-    const fallback = locale === 'en'
-      ? 'Total {0} items'
-      : locale === 'vn'
-        ? 'Tổng {0} mục'
-        : '전체 {0}건';
-    return t('COMPONENT.VIEW.TEXT_gridTotal', fallback);
-    // labelsVersion: t는 안정 참조라 로케일 변경 시 이 값으로만 재계산을 유발(의도적 의존성).
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [locale, t, labelsVersion]);
   const pageSizeTemplate = useMemo(
     () => t('COMPONENT.VIEW.TEXT_gridPageSize', '{0}개씩 보기'),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [t, labelsVersion],
   );
   const normalizedCurrentPage = Math.min(Math.max(1, currentPage), totalPages);
-  const formatTotalLabel = (count: number) => totalTemplate.replace('{0}', String(count));
-  const formatPageSizeLabel = (size: number) => pageSizeTemplate.replace('{0}', String(size));
+  const formatPageSizeLabel = (size: number) => formatLabel(pageSizeTemplate, size);
   const visiblePages = (() => {
     if (totalPages <= maxVisiblePages + 1) {
       return Array.from({ length: totalPages }, (_, index) => index + 1);

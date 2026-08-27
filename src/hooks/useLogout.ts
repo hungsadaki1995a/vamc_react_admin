@@ -4,9 +4,11 @@ import { useAuthStore } from '@/stores/authStore';
 import { useProjectStore } from '@/stores/projectStore';
 import { useTabStore } from '@/stores/tabStore';
 import { useMenuStore } from '@/stores/menuStore';
+import { useComponentLabel } from '@/hooks/useComponentLabel';
 import { App } from 'antd';
 export function useLogout() {
   const { modal } = App.useApp();
+  const { tvh, tvb, tsm } = useComponentLabel();
 
   const navigate = useNavigate();
   const logoutStore = useAuthStore((s) => s.logout);
@@ -17,10 +19,10 @@ export function useLogout() {
   const confirmLogout = () => {
     setTimeout(() => {
       modal.confirm({
-        title: '로그아웃',
-        content: '로그아웃 하시겠습니까?',
-        okText: '로그아웃',
-        cancelText: '취소',
+        title: tvh('logout', '로그아웃'),
+        content: tsm('logoutConfirm', '로그아웃 하시겠습니까?'),
+        okText: tvb('logout', '로그아웃'),
+        cancelText: tvb('cancel', '취소'),
         okButtonProps: { danger: true },
         onOk: async () => {
           try { await logoutApi(); } catch { /* ignore */ }

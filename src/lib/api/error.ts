@@ -15,6 +15,28 @@ const DEFAULT_MESSAGES: Record<number, string> = {
   503: '서비스를 일시적으로 사용할 수 없습니다.',
 };
 
+const UNKNOWN_ERROR = '알 수 없는 오류가 발생했습니다.';
+
+/**
+ * HTTP 상태 기본 메시지 — 라벨 테이블 우선, 미등록이면 위 한국어 상수.
+ *
+ * <p>React 밖(axios 인터셉터)에서도 불리므로 훅이 아니라 `getState()` 로 읽는다.
+ * 라벨은 로케일이 바뀔 때 통째로 갈리므로 매번 읽어도 항상 현재 언어다.</p>
+ */
+function httpMessage(statusCode: number | undefined): string | undefined {
+  if (statusCode === undefined) return undefined;
+  const fallback = DEFAULT_MESSAGES[statusCode];
+  const key = `MESSAGE.ERROR.TEXT_HTTP${statusCode}`;
+  const msg = useLabelStore.getState().t(key, fallback);
+  // 라벨도 없고 폴백도 없는 상태코드면 키 문자열이 돌아온다 — 그건 메시지가 아니다.
+  return msg === key ? fallback : msg;
+}
+
+/** 어디에도 문구가 없을 때의 최종 폴백 */
+function unknownMessage(): string {
+  return useLabelStore.getState().t('MESSAGE.ERROR.TEXT_UNKNOWN', UNKNOWN_ERROR);
+}
+
 export class ApiError extends Error {
   statusCode: number;
   path: string;
@@ -26,7 +48,7 @@ export class ApiError extends Error {
   errorArgs?: string[];
 
   constructor(response: ApiErrorResponse) {
-    super(response.message || DEFAULT_MESSAGES[response.statusCode] || '알 수 없는 오류가 발생했습니다.');
+    super(response.message || httpMessage(response.statusCode) || unknownMessage());
     this.name = 'ApiError';
     this.statusCode = response.statusCode;
     this.path = response.path || '';
@@ -54,8 +76,8 @@ export class ApiError extends Error {
     }
     // 2순위: 서버 메시지 → HTTP 기본 메시지 → 폴백
     return this.originalResponse.message
-      || DEFAULT_MESSAGES[this.statusCode]
-      || '알 수 없는 오류가 발생했습니다.';
+      || httpMessage(this.statusCode)
+      || unknownMessage();
   }
 
   get isUnauthorized(): boolean {
@@ -84,7 +106,7 @@ export class ApiError extends Error {
         errorCode: data.errorCode,
         errorArgs: data.errorArgs,
         data: null,
-        message: data.message || DEFAULT_MESSAGES[response.status] || '오류가 발생했습니다.',
+        message: data.message || httpMessage(response.status) || unknownMessage(),
         statusCode: data.statusCode ?? response.status,
         timestamp: data.timestamp || new Date().toISOString(),
         path: data.path || error.config?.url || '',
@@ -94,7 +116,7 @@ export class ApiError extends Error {
     return new ApiError({
       code: 'E' + (response?.status ?? '000'),
       data: null,
-      message: DEFAULT_MESSAGES[response?.status ?? 0] || '오류가 발생했습니다.',
+      message: httpMessage(response?.status) || unknownMessage(),
       statusCode: response?.status ?? 0,
       timestamp: new Date().toISOString(),
       path: error.config?.url || '',
@@ -111,7 +133,7 @@ export class ApiError extends Error {
     return new ApiError({
       code: 'E000',
       data: null,
-      message: error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다.',
+      message: error instanceof Error ? error.message : unknownMessage(),
       statusCode: 0,
       timestamp: new Date().toISOString(),
       path: '',

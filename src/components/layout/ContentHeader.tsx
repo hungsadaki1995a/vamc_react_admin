@@ -19,7 +19,8 @@ import {
   LogoutOutlined,
   GlobalOutlined,
 } from '@ant-design/icons';
-import { menuConfig } from '@/config/menuConfig';
+import { useAllMenus } from '@/hooks/useAllMenus';
+import { useComponentLabel } from '@/hooks/useComponentLabel';
 import { useTabStore } from '@/stores/tabStore';
 import { useThemeStore } from '@/stores/themeStore';
 import { useSettingsStore } from '@/stores/settingsStore';
@@ -95,13 +96,12 @@ const { tabs, activeTabKey, openTab, setActiveTab } = useTabStore(
     }))
   );
   const { mode, toggleMode } = useThemeStore();
-  const { toggleFlyout, serverMenus } = useMenuStore(
-    useShallow((s) => ({ toggleFlyout: s.toggleFlyout, serverMenus: s.serverMenus }))
-  );
+  const toggleFlyout = useMenuStore((s) => s.toggleFlyout);
   const homeMenuKey = useSettingsStore((s) => s.homeMenuKey);
+  const { tvt, tvb, tvh } = useComponentLabel();
 
-  // Merged menus: server business menus + static menuConfig
-  const allMenus = useMemo(() => [...serverMenus, ...menuConfig], [serverMenus]);
+  // Merged menus: server business menus + static menuConfig (정적 메뉴는 로케일 라벨로 치환됨)
+  const allMenus = useAllMenus();
   const user = useAuthStore((s) => s.user);
   const handleLogout = useLogout();
   const { locale, setLocale } = useLocaleStore();
@@ -116,7 +116,7 @@ const { tabs, activeTabKey, openTab, setActiveTab } = useTabStore(
     {
       key: 'logout',
       icon: <LogoutOutlined />,
-      label: '로그아웃',
+      label: tvb('logout', '로그아웃'),
       danger: true,
       onClick: handleLogout,
     },
@@ -234,12 +234,11 @@ const { tabs, activeTabKey, openTab, setActiveTab } = useTabStore(
     [],
   );
 
-  // eslint-disable-next-line react-hooks/preserve-manual-memoization
   const handleOpenNotiCenter = useCallback(() => {
     const menu = findMenuByKey(allMenus, 'notifications.notification-center');
     if (menu) openTab(menu);
     setNotiOpen(false);
-  }, [openTab]);
+  }, [allMenus, openTab]);
 
   // Breadcrumb from active tab
   const breadcrumb = useMemo(() => {
@@ -278,20 +277,20 @@ const { tabs, activeTabKey, openTab, setActiveTab } = useTabStore(
           marginBottom: 4,
         }}
       >
-        <span style={{ fontWeight: 600, fontSize: 14 }}>알림</span>
+        <span style={{ fontWeight: 600, fontSize: 14 }}>{tvh('notifications', '알림')}</span>
         {unreadCount > 0 && (
           <span
             onClick={handleMarkAllRead}
             style={{ color: '#1677ff', cursor: 'pointer', fontSize: 12 }}
           >
             <CheckOutlined style={{ marginRight: 4 }} />
-            모두 읽음
+            {tvb('markAllRead', '모두 읽음')}
           </span>
         )}
       </div>
       <div style={{ maxHeight: 320, overflowY: 'auto' }}>
         {notifications.length === 0 ? (
-          <Empty description="알림이 없습니다" image={Empty.PRESENTED_IMAGE_SIMPLE} />
+          <Empty description={tvt('noNotifications', '알림이 없습니다')} image={Empty.PRESENTED_IMAGE_SIMPLE} />
         ) : (
           notifications.map((noti) => {
             const iconInfo = notificationIconMap[noti.type];
@@ -365,7 +364,7 @@ const { tabs, activeTabKey, openTab, setActiveTab } = useTabStore(
           onClick={handleOpenNotiCenter}
           style={{ color: '#1677ff', cursor: 'pointer', fontSize: 13 }}
         >
-          알림 센터 열기
+          {tvb('openNotiCenter', '알림 센터 열기')}
         </span>
       </div>
     </div>
@@ -375,7 +374,7 @@ const { tabs, activeTabKey, openTab, setActiveTab } = useTabStore(
     <div className="content-header">
       {/* Breadcrumb */}
       <div className="breadcrumb-area">
-        <span className="breadcrumb-home" onClick={goHome} title="홈으로">
+        <span className="breadcrumb-home" onClick={goHome} title={tvt('goHome', '홈으로')}>
           <HomeOutlined />
         </span>
         {breadcrumb.map((item, idx) => (
@@ -407,7 +406,7 @@ const { tabs, activeTabKey, openTab, setActiveTab } = useTabStore(
       {/* Controls */}
       <div className="header-controls">
         {/* Search */}
-        <div className="header-icon-btn" title="검색 (Ctrl+K)" onClick={handleSearchOpen}>
+        <div className="header-icon-btn" title={tvt('searchShortcut', '검색 (Ctrl+K)')} onClick={handleSearchOpen}>
           <SearchOutlined style={{ fontSize: 13 }} />
         </div>
 
@@ -420,7 +419,7 @@ const { tabs, activeTabKey, openTab, setActiveTab } = useTabStore(
           placement="bottomRight"
           arrow={false}
         >
-          <div className="header-icon-btn" title="알림">
+          <div className="header-icon-btn" title={tvh('notifications', '알림')}>
             <BellOutlined style={{ fontSize: 13 }} />
             {unreadCount > 0 && <span className="icon-btn-badge" />}
           </div>
@@ -432,7 +431,7 @@ const { tabs, activeTabKey, openTab, setActiveTab } = useTabStore(
         <div
           className="header-icon-btn"
           onClick={toggleMode}
-          title={mode === 'dark' ? '라이트 모드' : '다크 모드'}
+          title={mode === 'dark' ? tvt('lightMode', '라이트 모드') : tvt('darkMode', '다크 모드')}
         >
           {mode === 'dark' ? (
             <SunOutlined style={{ fontSize: 13 }} />
@@ -463,7 +462,7 @@ const { tabs, activeTabKey, openTab, setActiveTab } = useTabStore(
         <Dropdown menu={{ items: userMenuItems }} trigger={['click']} placement="bottomRight">
           <div className="user-badge" style={{ display: 'flex', alignItems: 'center', gap: 4, cursor: 'pointer', padding: '1px 4px', borderRadius: 4 }}>
             <UserOutlined style={{ fontSize: 12 }} />
-            <span style={{ fontSize: 12 }}>{user?.usrNm ?? '사용자'}</span>
+            <span style={{ fontSize: 12 }}>{user?.usrNm ?? tvt('user', '사용자')}</span>
           </div>
         </Dropdown>
       </div>
@@ -477,7 +476,7 @@ const { tabs, activeTabKey, openTab, setActiveTab } = useTabStore(
               <SearchOutlined style={{ color: 'var(--text-tertiary, #999)', fontSize: 16 }} />
               <Input
                 ref={searchInputRef}
-                placeholder="메뉴 검색... (Ctrl+K)"
+                placeholder={tvt('menuSearchPlaceholder', '메뉴 검색... (Ctrl+K)')}
                 variant="borderless"
                 value={searchText}
                 onChange={(e) => setSearchText(e.target.value)}
@@ -488,7 +487,7 @@ const { tabs, activeTabKey, openTab, setActiveTab } = useTabStore(
             </div>
             <div className="search-modal-results">
               {searchResults.length === 0 ? (
-                <div className="search-empty">검색 결과가 없습니다</div>
+                <div className="search-empty">{tvt('noSearchResult', '검색 결과가 없습니다')}</div>
               ) : (
                 searchResults.map((item, idx) => (
                   <div

@@ -44,7 +44,8 @@ import type { AgGridReactProps } from 'ag-grid-react';
 import { App } from 'antd';
 import DOMPurify from 'dompurify';
 import { useThemeStore } from '@/stores/themeStore';
-import { AG_GRID_LOCALE_KO } from './agGridLocaleKo';
+import { useLocaleStore } from '@/stores/localeStore';
+import { getAgGridLocale } from './agGridLocale';
 import { ComcdSelectCellEditor, ComcdSelectCellRenderer } from './ComcdSelectCell';
 import './GridTable.css';
 
@@ -377,6 +378,11 @@ export default function GridTable<TData = any>({
     [themeMode],
   );
 
+  // 그리드 내부 문구(필터·컬럼 메뉴·페이지네이션 등)는 로케일 상수에서 온다.
+  // 종전에는 한국어 상수가 고정돼 있어 언어를 바꿔도 이 부분만 한국어로 남았다.
+  const locale = useLocaleStore((s) => s.locale);
+  const localeText = useMemo(() => getAgGridLocale(locale), [locale]);
+
   const mergedDefaultColDef = useMemo<ColDef<TData>>(
     () => ({
       flex: 1,
@@ -681,7 +687,7 @@ export default function GridTable<TData = any>({
         columnDefs={processedColumnDefs}
         defaultColDef={mergedDefaultColDef}
         theme={theme}
-        localeText={AG_GRID_LOCALE_KO}
+        localeText={localeText}
         getRowId={rowKey
           ? (params) => typeof rowKey === 'function'
             ? rowKey(params.data)

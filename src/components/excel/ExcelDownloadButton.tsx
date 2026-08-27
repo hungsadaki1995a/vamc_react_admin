@@ -8,7 +8,7 @@ export function ExcelDownloadButton({ children, className, ...props }: ButtonPro
   useLabelStore((s) => s.labelsVersion);
 
   const rootClassName = ['ds-excel-download-button', className].filter(Boolean).join(' ');
-  const resolvedChildren = children ?? t('COMPONENT.VIEW.BTN_excelDownload', '엑셀다운로드');
+  const resolvedChildren = children ?? t('COMPONENT.VIEW.BTN_excelDownload', '엑셀 다운로드');
 
   return (
     <ActionButton

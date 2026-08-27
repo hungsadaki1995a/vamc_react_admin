@@ -11,8 +11,7 @@ import { Dropdown } from 'antd';
 import type { MenuProps } from 'antd';
 import { useTabStore } from '@/stores/tabStore';
 import { useSettingsStore } from '@/stores/settingsStore';
-import { useMenuStore } from '@/stores/menuStore';
-import { menuConfig } from '@/config/menuConfig';
+import { useAllMenus } from '@/hooks/useAllMenus';
 import { findMenuByKey } from '@/utils/menuUtils';
 import TabContextMenu from './TabContextMenu';
 import type { Tab } from '@/types/tab';
@@ -95,10 +94,10 @@ export default function TabBar() {
   } = useTabStore();
 
   const homeMenuKey = useSettingsStore((s) => s.homeMenuKey);
-  const serverMenus = useMenuStore((s) => s.serverMenus);
 
-  // Live menu label: re-derives from server menus on locale change so tabs always show current language
-  const allMenus = useMemo(() => [...serverMenus, ...menuConfig], [serverMenus]);
+  // Live menu label: re-derives on locale change so tabs always show current language
+  // (서버 메뉴는 menuLblVal, 정적 메뉴는 labelKey → 라벨 테이블)
+  const allMenus = useAllMenus();
   const getTabLabel = useCallback(
     (tab: Tab) => findMenuByKey(allMenus, tab.menuKey)?.label ?? tab.title,
     [allMenus]
