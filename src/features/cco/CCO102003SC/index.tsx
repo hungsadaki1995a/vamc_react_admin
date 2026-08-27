@@ -1,483 +1,296 @@
-import { useState, useMemo, useCallback, useRef, useSyncExternalStore } from 'react';
+import { useState, useMemo, useCallback, useRef } from 'react';
 import type { AgGridReact } from 'ag-grid-react';
-import type { ColDef, CellValueChangedEvent, CellEditingStartedEvent } from 'ag-grid-community';
+import type { ColDef, CellValueChangedEvent } from 'ag-grid-community';
 import { Button, Form, Row, Col, Space, Input, Select } from 'antd';
 import GridPanel from '@/components/grid/GridPanel';
 import FilterPanel from '@/components/layout/FilterPanel';
-import { useComcdStore } from '@/stores/comcdStore';
 import FormPanel from '@/components/layout/FormPanel';
 import VerticalDivider from '@/components/layout/VerticalDivider';
-import ComcdSelect from '@/components/inputs/ComcdSelect';
-import {
-  ComcdSelectCellRenderer,
-  ComcdSelectCellEditor,
-} from '@/components/grid/ComcdSelectCell';
-import type { CodeDetail } from '@/api/common';
-import { getMyProjects } from '@/api/project';
-import type { MyProjectResponseDto } from '@/lib/api/types';
 import { useScreenLabel } from '@/hooks/useScreenLabel';
 import { useApiQuery } from '@/hooks/useApiQuery';
 import { useApiMutation } from '@/hooks/useApiMutation';
 import { useNotify } from '@/hooks/useNotify';
 import { useMenuPermission } from '@/hooks/useMenuPermission';
+import { useLabelStore } from '@/stores/labelStore';
 import {
-  getLblList, getLblTrnList, saveLbl, deleteLbl,
-  getProjLblTrnList, saveLblTrnBatch, deleteLblTrnBatch,
+  getLabelRows, getLanguages, saveLabelBatch, deleteLabel, groupLabelRows,
 } from './api';
-import type { LblItem, LblTrnItem } from './api';
+import type { LblRow, LblMaster, LangItem, LblKey } from './api';
 import styles from './index.module.css';
 
-// ── Local form fields type ──────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
+// 다국어 라벨 관리 (A06040400)
+//
+// LANG_LBL 의 PK 는 (LBL_CD, SCRN_ID, LBL_SE_CD) 3개다. 화면 전체가 이 3개를 하나의
+// 식별자로 다루며, 단일 키(lblId)로 줄여 부르지 않는다 — LBL_CD 만으로는 행이 특정되지 않는다.
+//
+// 번역 언어는 LANG_MNG 가 정한다. 우측 그리드는 조회된 언어 수만큼 행을 만들므로
+// 언어가 늘어나면 DB 한 줄로 화면이 따라온다.
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * 라벨구분코드(LBL_SE_CD) 후보.
+ *
+ * 공통코드(COM_CD)에 라벨 구분 도메인이 아직 없고 전체 코드 조회(`/api/comcd/all`)도
+ * 미구현이라(`src/api/common.ts`) 규약 값을 화면 상수로 둔다. 공통코드가 등록되면
+ * `ComcdSelect` 로 교체한다. MENU / CODE 는 기존 적재 데이터(메뉴·공통코드 라벨)의 값이다.
+ */
+const LBL_SE_OPTIONS = [
+  { value: 'TEXT',  label: 'TEXT — 화면 텍스트' },
+  { value: 'BTN',   label: 'BTN — 버튼' },
+  { value: 'TITLE', label: 'TITLE — 제목' },
+  { value: 'GRID',  label: 'GRID — 그리드 헤더' },
+  { value: 'MSG',   label: 'MSG — 메시지' },
+  { value: 'MENU',  label: 'MENU — 메뉴' },
+  { value: 'CODE',  label: 'CODE — 공통코드' },
+];
+
+/** 라벨 키의 두 번째 마디 — `{화면ID}.{섹션}.{구분}_{세부}` */
+const SECTION_OPTIONS = [
+  { value: 'VIEW',   label: 'VIEW — 화면 템플릿' },
+  { value: 'SCRIPT', label: 'SCRIPT — 이벤트 핸들러' },
+];
 
 interface FormFields {
-  screenId: string;
+  scrnId:   string;
   section:  string;
-  type:     string;   // key-building type (LBL_TYPE_CD), e.g. TEXT / BTN / MSG
+  lblSeCd:  string;
   detail:   string;
-  lblId:    string;   // auto-generated readonly
-  mrCont:   string;
+  lblCd:    string;   // 신규 등록 시 자동 생성 (readonly)
+  lblExpln: string;
 }
 
-// ── Helper: parse lblId → parts ─────────────────────────────────────────────
-// lblId format: {screenId}.{section}.{type}_{detail}
-
-function parseLblId(lblId: string) {
-  const i1 = lblId.indexOf('.');
-  const i2 = i1 >= 0 ? lblId.indexOf('.', i1 + 1) : -1;
-  if (i1 < 0) return { screenId: lblId, section: '', type: '', detail: '' };
-  const screenId = lblId.substring(0, i1);
-  if (i2 < 0) return { screenId, section: lblId.substring(i1 + 1), type: '', detail: '' };
-  const section = lblId.substring(i1 + 1, i2);
-  const td = lblId.substring(i2 + 1);
-  const u = td.indexOf('_');
-  return u < 0
-    ? { screenId, section, type: td, detail: '' }
-    : { screenId, section, type: td.substring(0, u), detail: td.substring(u + 1) };
+/** 우측 번역 그리드 1행 */
+interface TrnRow {
+  langCd:  string;
+  langNm:  string;
+  trslLtr: string;
+  _dirty?: boolean;
 }
 
-function buildLblId(screenId: string, section: string, type: string, detail: string) {
-  if (!screenId && !section && !type && !detail) return '';
-  return `${screenId}.${section}.${type}_${detail}`;
+function buildLblCd(scrnId: string, section: string, lblSeCd: string, detail: string) {
+  if (!scrnId && !section && !lblSeCd && !detail) return '';
+  return `${scrnId}.${section}.${lblSeCd}_${detail}`;
 }
-
-// ── Component ────────────────────────────────────────────────────────────────
 
 export default function CCO102003SC() {
   const { toast, notify, dialog } = useNotify();
-  const { tvt, tvb, tsg, tmi, labels } = useScreenLabel();
+  const { tvt, tvb, tsg, tmi } = useScreenLabel();
   const { canWrite } = useMenuPermission();
 
-  // ── Filter state
-  const [filterLblId, setFilterLblId]   = useState('');
-  const [filterMrCont, setFilterMrCont] = useState('');
-  const [appliedLblId, setAppliedLblId]   = useState('');
-  const [appliedMrCont, setAppliedMrCont] = useState('');
-  const [appliedTpCd, setAppliedTpCd]     = useState<string | undefined>(undefined);
-  const [searched, setSearched]           = useState(false);
+  // ── 검색 조건
+  const [filterScrnId, setFilterScrnId]   = useState('');
+  const [filterLblCd, setFilterLblCd]     = useState('');
+  const [filterLblSeCd, setFilterLblSeCd] = useState<string | undefined>(undefined);
+  const [applied, setApplied] = useState<{ scrnId?: string; lblCd?: string; lblSeCd?: string } | null>(null);
 
-  // ── GRID1 state
-  const grid1Ref  = useRef<AgGridReact<LblItem>>(null);
-  const [selectedLbl, setSelectedLbl] = useState<LblItem | null>(null);
+  // ── 좌측 그리드
+  const grid1Ref = useRef<AgGridReact<LblMaster>>(null);
+  const [selected, setSelected] = useState<LblMaster | null>(null);
 
-  // ── GRID2 state
-  const grid2Ref    = useRef<AgGridReact<LblTrnItem>>(null);
-  const [trnRows, setTrnRows]     = useState<LblTrnItem[]>([]);
-  const [trnLoading, setTrnLoading] = useState(false);
+  // ── 우측 그리드
+  const grid2Ref = useRef<AgGridReact<TrnRow>>(null);
+  const [trnRows, setTrnRows] = useState<TrnRow[]>([]);
 
-  // ── 프로젝트 선택 state (다국어 설정 우측 패널) — PJ000(공통) 기본
-  const [selectedProj, setSelectedProj] = useState<string>('PJ000');
-  const selectedProjRef = useRef(selectedProj);
-  selectedProjRef.current = selectedProj;
-  // projectStore no longer exposes a myProjects list (post-merge) — fetch directly, same as ProjSelectField
-  const { data: myProjects = [] } = useApiQuery<MyProjectResponseDto[]>(
-    ['proj', 'my'],
-    () => getMyProjects(),
-  );
-
-  // ── Form state
-  const [form]           = Form.useForm<FormFields>();
+  // ── 입력 폼
+  const [form] = Form.useForm<FormFields>();
   const [formCollapsed, setFormCollapsed] = useState(false);
-  const isEditMode       = selectedLbl !== null;
+  const isEditMode = selected !== null;
 
-  // ── API ──────────────────────────────────────────────────────────────────
+  // ── 조회 ──────────────────────────────────────────────────────────────────
 
-  const { data: lblList = [], isLoading, refetch } = useApiQuery<LblItem[]>(
-    ['lbl', 'list', appliedTpCd],
-    () => getLblList(appliedTpCd),
-    { enabled: searched },
+  const { data: languages = [] } = useApiQuery<LangItem[]>(
+    ['lbl', 'languages'],
+    () => getLanguages(),
   );
 
-  // client-side filter by lblId / mrCont
-  const filteredList = useMemo(() => {
-    if (!searched) return [];
-    let result = lblList;
-    if (appliedLblId.trim()) {
-      const kw = appliedLblId.trim().toLowerCase();
-      result = result.filter((r) => r.lblId.toLowerCase().includes(kw));
-    }
-    if (appliedMrCont.trim()) {
-      const kw = appliedMrCont.trim().toLowerCase();
-      result = result.filter((r) => (r.mrCont ?? '').toLowerCase().includes(kw));
-    }
-    return result;
-  }, [lblList, appliedLblId, appliedMrCont, searched]);
-
-  const saveMutation   = useApiMutation<void, Parameters<typeof saveLbl>[0]>(saveLbl);
-  const deleteMutation = useApiMutation<void, string>(deleteLbl);
-
-  // ── 번역 목록 로드
-  const loadTrnList = useCallback(async (lblId: string) => {
-    setTrnLoading(true);
-    try {
-      const rows = await getLblTrnList(lblId);
-      setTrnRows(rows.map((r) => ({ ...r, _rowId: r.lclCd })));
-    } catch (e: unknown) {
-      notify.error(e instanceof Error ? e.message : '번역 조회 실패');
-      setTrnRows([]);
-    } finally {
-      setTrnLoading(false);
-    }
-  }, [notify]);
-
-  // ── 프로젝트별 번역 로드 → trnRows의 projTxt 필드 병합
-  const loadProjTrnList = useCallback(async (projId: string, lblId: string) => {
-    try {
-      const projRows = await getProjLblTrnList(projId, lblId);
-      const map: Record<string, string> = {};
-      for (const r of projRows) map[r.lclCd] = r.lblTxt;
-      setTrnRows((prev) => prev.map((r) => ({ ...r, projTxt: map[r.lclCd] ?? '', _isProjDirty: false })));
-    } catch {
-      // 프로젝트 번역이 없으면 빈값으로 초기화
-      setTrnRows((prev) => prev.map((r) => ({ ...r, projTxt: '', _isProjDirty: false })));
-    }
-  }, []);
-
-  // ── 프로젝트 선택 변경 (PJ000=공통이면 프로젝트 텍스트 초기화)
-  const handleProjChange = useCallback((val: string | undefined) => {
-    const proj = val ?? 'PJ000';
-    selectedProjRef.current = proj;  // re-render 전에 ref 먼저 갱신
-    setSelectedProj(proj);
-    // cellStyle 즉시 반영
-    setTimeout(() => grid2Ref.current?.api?.refreshCells({ force: true }), 0);
-    if (proj !== 'PJ000' && selectedLbl) {
-      loadProjTrnList(proj, selectedLbl.lblId);
-    } else {
-      setTrnRows((prev) => prev.map((r) => ({ ...r, projTxt: '', _isProjDirty: false })));
-    }
-  }, [selectedLbl, loadProjTrnList]);
-
-  // ── 폼 필드 변경 → 라벨 키 자동 생성
-  const handleValuesChange = useCallback(
-    (changed: Partial<FormFields>, all: FormFields) => {
-      if ('screenId' in changed || 'section' in changed || 'type' in changed || 'detail' in changed) {
-        form.setFieldValue('lblId', buildLblId(all.screenId ?? '', all.section ?? '', all.type ?? '', all.detail ?? ''));
-      }
-    },
-    [form],
+  const { data: rows = [], isLoading, refetch } = useApiQuery<LblRow[]>(
+    ['lbl', 'rows', applied],
+    () => getLabelRows(applied ?? {}),
+    { enabled: applied !== null },
   );
 
-  // ── 핸들러 — 검색
-  const handleSearch = useCallback(() => {
-    setSearched(true);
-    setAppliedTpCd(undefined);    // type filter removed (key-type vs lblTpCd conflict)
-    setAppliedLblId(filterLblId);
-    setAppliedMrCont(filterMrCont);
-    setSelectedLbl(null);
-    setTrnRows([]);
-    form.resetFields();
-    grid1Ref.current?.api?.deselectAll();
-  }, [filterLblId, filterMrCont, form]);
+  const masters = useMemo(() => (applied === null ? [] : groupLabelRows(rows)), [rows, applied]);
 
-  // ── 핸들러 — 필터 초기화 (검색 조건만, 그리드/폼 상태 유지)
-  const handleFilterReset = useCallback(() => {
-    setFilterLblId('');
-    setFilterMrCont('');
-  }, []);
+  // 라벨을 고치면 앱 전체가 쓰는 라벨 맵도 다시 받아야 한다.
+  // 서버 캐시는 저장 시 evict 되지만 클라이언트 캐시(IndexedDB, TTL 5분)는 강제로 비운다.
+  const refreshAppLabels = () => { void useLabelStore.getState().loadLabels(true); };
 
-  // ── 핸들러 — GRID1 행 클릭
-  const handleRowClick = useCallback(async (row: LblItem) => {
-    setSelectedLbl(row);
-    const parts = parseLblId(row.lblId);
-    form.setFieldsValue({
-      screenId: parts.screenId,
-      section:  parts.section,
-      type:     parts.type,
-      detail:   parts.detail,
-      lblId:    row.lblId,
-      mrCont:   row.mrCont,
-    });
-    if (formCollapsed) setFormCollapsed(false);
-    await loadTrnList(row.lblId);
-    if (selectedProj !== 'PJ000') {
-      loadProjTrnList(selectedProj, row.lblId);
-    }
-  }, [form, formCollapsed, loadTrnList, selectedProj, loadProjTrnList]);
+  const saveMutation   = useApiMutation<void, LblRow[]>(saveLabelBatch);
+  const deleteMutation = useApiMutation<void, LblKey>(deleteLabel);
 
-  // ── 핸들러 — 폼 초기화
-  const handleFormReset = useCallback(() => {
-    setSelectedLbl(null);
+  /** 선택된 라벨 + 언어 목록 → 우측 그리드 행 (언어 수만큼 항상 채운다) */
+  const buildTrnRows = useCallback(
+    (master: LblMaster): TrnRow[] =>
+      languages.map((l) => ({
+        langCd:  l.langCd,
+        langNm:  l.langNm,
+        trslLtr: master.trsl[l.langCd] ?? '',
+      })),
+    [languages],
+  );
+
+  // ── 핸들러 ────────────────────────────────────────────────────────────────
+
+  const clearSelection = useCallback(() => {
+    setSelected(null);
     setTrnRows([]);
     form.resetFields();
     grid1Ref.current?.api?.deselectAll();
   }, [form]);
 
-  // ── 핸들러 — 라벨 저장
+  const handleSearch = useCallback(() => {
+    setApplied({
+      scrnId:  filterScrnId.trim()  || undefined,
+      lblCd:   filterLblCd.trim()   || undefined,
+      lblSeCd: filterLblSeCd        || undefined,
+    });
+    clearSelection();
+  }, [filterScrnId, filterLblCd, filterLblSeCd, clearSelection]);
+
+  /** 검색 조건만 비운다 — 그리드/폼 상태는 유지 */
+  const handleFilterReset = useCallback(() => {
+    setFilterScrnId('');
+    setFilterLblCd('');
+    setFilterLblSeCd(undefined);
+  }, []);
+
+  const handleRowClick = useCallback((row: LblMaster) => {
+    setSelected(row);
+    // 기존 적재분(lbl.menu.* 등)은 키 조립 규약을 따르지 않으므로 역파싱하지 않는다.
+    // 편집 모드에서는 PK 3개를 있는 그대로 보여주고 라벨설명만 수정한다.
+    form.setFieldsValue({
+      scrnId:   row.scrnId,
+      section:  '',
+      lblSeCd:  row.lblSeCd,
+      detail:   '',
+      lblCd:    row.lblCd,
+      lblExpln: row.lblExpln,
+    });
+    setTrnRows(buildTrnRows(row));
+    if (formCollapsed) setFormCollapsed(false);
+  }, [form, formCollapsed, buildTrnRows]);
+
+  /** 신규 등록 모드에서만 키를 자동 조립한다 */
+  const handleValuesChange = useCallback(
+    (changed: Partial<FormFields>, all: FormFields) => {
+      if (isEditMode) return;
+      if ('scrnId' in changed || 'section' in changed || 'lblSeCd' in changed || 'detail' in changed) {
+        form.setFieldValue(
+          'lblCd',
+          buildLblCd(all.scrnId ?? '', all.section ?? '', all.lblSeCd ?? '', all.detail ?? ''),
+        );
+      }
+    },
+    [form, isEditMode],
+  );
+
+  /** 라벨 저장 — 번역 없이 LANG_LBL 만 upsert */
   const handleSave = useCallback(() => {
     form.validateFields().then((values) => {
       dialog.confirm({
         content: isEditMode ? '수정하시겠습니까?' : '등록하시겠습니까?',
         onOk: () => {
-          saveMutation.mutate(
-            { lblId: values.lblId, mrCont: values.mrCont },
-            {
-              onSuccess: () => {
-                notify.success(isEditMode ? tmi('I100003') : tmi('I100002'));
-                if (!isEditMode) handleFormReset();
-                refetch();
-              },
-              onError: (err) => notify.error(err.message),
+          const item: LblRow = {
+            lblCd:    values.lblCd,
+            scrnId:   values.scrnId,
+            lblSeCd:  values.lblSeCd,
+            lblExpln: values.lblExpln ?? '',
+          };
+          saveMutation.mutate([item], {
+            onSuccess: () => {
+              notify.success(isEditMode ? tmi('I100003') : tmi('I100002'));
+              if (!isEditMode) clearSelection();
+              refetch();
+              refreshAppLabels();
             },
-          );
+            onError: (err) => notify.error(err.message),
+          });
         },
       });
     }).catch(() => {
       notify.error('필수 항목을 입력해 주세요.');
     });
-  }, [form, isEditMode, dialog, saveMutation, selectedLbl, notify, tmi, handleFormReset, refetch]);
+  }, [form, isEditMode, dialog, saveMutation, notify, tmi, clearSelection, refetch]);
 
-  // ── 핸들러 — 라벨 삭제
+  /** 라벨 삭제 — 번역까지 함께 지워진다 */
   const handleDelete = useCallback(() => {
-    if (!selectedLbl) return;
+    if (!selected) return;
     dialog.confirm({
-      content: '삭제하시겠습니까?',
+      content: '라벨과 번역이 함께 삭제됩니다. 삭제하시겠습니까?',
       okButtonProps: { danger: true },
       onOk: () => {
-        deleteMutation.mutate(selectedLbl.lblId, {
+        deleteMutation.mutate(
+          { lblCd: selected.lblCd, scrnId: selected.scrnId, lblSeCd: selected.lblSeCd },
+          {
+            onSuccess: () => {
+              notify.success(tmi('I100004'));
+              clearSelection();
+              refetch();
+              refreshAppLabels();
+            },
+            onError: (err) => notify.error(err.message),
+          },
+        );
+      },
+    });
+  }, [selected, dialog, deleteMutation, notify, tmi, clearSelection, refetch]);
+
+  /** 번역 저장 — 변경된 언어 행만 전송 */
+  const handleTrnSave = useCallback(() => {
+    if (!selected) return;
+    const dirty = trnRows.filter((r) => r._dirty);
+    if (dirty.length === 0) { toast.warning('변경된 내용이 없습니다.'); return; }
+
+    dialog.confirm({
+      content: `번역 ${dirty.length}건을 저장하시겠습니까?`,
+      onOk: () => {
+        // lblExpln 을 함께 보내지 않으면 서버의 라벨 upsert 가 라벨설명을 빈값으로 덮어쓴다.
+        const items: LblRow[] = dirty.map((r) => ({
+          lblCd:    selected.lblCd,
+          scrnId:   selected.scrnId,
+          lblSeCd:  selected.lblSeCd,
+          lblExpln: selected.lblExpln,
+          langCd:   r.langCd,
+          trslLtr:  r.trslLtr,
+        }));
+        saveMutation.mutate(items, {
           onSuccess: () => {
-            notify.success(tmi('I100004'));
-            selectedProjRef.current = 'PJ000';
-            setSelectedProj('PJ000');
-            handleFormReset();
+            notify.success(tmi('I100003'));
+            setTrnRows((prev) => prev.map((r) => ({ ...r, _dirty: false })));
             refetch();
+            refreshAppLabels();
           },
           onError: (err) => notify.error(err.message),
         });
       },
     });
-  }, [selectedLbl, dialog, deleteMutation, notify, tmi, handleFormReset, refetch]);
+  }, [selected, trnRows, dialog, toast, saveMutation, notify, tmi, refetch]);
 
-  // ── 핸들러 — GRID2 번역 추가 (언어 코드 총 갯수 초과 방지)
-  const handleTrnAdd = useCallback(() => {
-    if (!selectedLbl) return;
-    const maxLang = useComcdStore.getState().codes['LBL_LANG_CD']?.length ?? 0;
-    if (maxLang > 0 && trnRows.length >= maxLang) {
-      toast.warning(`언어 코드는 최대 ${maxLang}개까지 추가할 수 있습니다.`);
-      return;
-    }
-    setTrnRows((prev) => [
-      ...prev,
-      { lblId: selectedLbl.lblId, lclCd: '', lblTxt: '', _isNew: true, _rowId: `new_${Date.now()}_${Math.random()}` },
-    ]);
-  }, [selectedLbl, trnRows.length, toast]);
-
-  // ── 핸들러 — GRID2 번역 행 삭제
-  const handleTrnDelete = useCallback(async () => {
-    const api = grid2Ref.current?.api;
-    if (!api) return;
-    const selected = api.getSelectedRows() as LblTrnItem[];
-    if (selected.length === 0) { toast.warning('삭제할 행을 선택하세요.'); return; }
-
-    const newRows   = selected.filter((r) => r._isNew);
-    const savedRows = selected.filter((r) => !r._isNew);
-
-    dialog.confirm({
-      content: `선택한 ${selected.length}건을 삭제하시겠습니까?`,
-      okButtonProps: { danger: true },
-      onOk: async () => {
-        // 신규 행 로컬 제거
-        if (newRows.length > 0) {
-          setTrnRows((prev) => prev.filter((r) => !newRows.some((n) => n._rowId === r._rowId)));
-        }
-        // 저장된 행 API 삭제
-        if (savedRows.length > 0) {
-          try {
-            const projId = selectedProjRef.current !== 'PJ000' ? selectedProjRef.current : undefined;
-            const res = await deleteLblTrnBatch(
-              savedRows[0].lblId,
-              savedRows.map((r) => r.lclCd),
-              projId,
-            );
-            if (!res.success) throw new Error(res.message ?? '삭제 실패');
-            notify.success(`${savedRows.length}건 삭제되었습니다.`);
-            await loadTrnList(savedRows[0].lblId);
-            if (projId) loadProjTrnList(projId, savedRows[0].lblId);
-          } catch (e: unknown) {
-            notify.error(e instanceof Error ? e.message : '삭제 오류');
-          }
-        }
-      },
-    });
-  }, [toast, dialog, notify, loadTrnList, loadProjTrnList]);
-
-  // ── 핸들러 — GRID2 번역 저장 (선택 행 일괄 트랜잭션)
-  const handleTrnSave = useCallback(async () => {
-    if (!selectedLbl) return;
-
-    const selected = (grid2Ref.current?.api?.getSelectedRows() ?? []) as LblTrnItem[];
-    if (selected.length === 0) { toast.warning('저장할 행을 선택하세요.'); return; }
-
-    // ── 사전 검증 (API 호출 전 전체 확인)
-    if (selected.some((r) => !r.lclCd)) {
-      toast.warning('언어 코드를 선택하세요.');
-      return;
-    }
-    const emptyTxt = selected.find((r) => (r._isNew || r._isDirty) && !r.lblTxt?.trim());
-    if (emptyTxt) {
-      toast.warning(`[${emptyTxt.lclCd}] 공통 번역 텍스트를 입력하세요.`);
-      return;
-    }
-    const allCodes = selected.map((r) => r.lclCd);
-    if (allCodes.some((c, i) => allCodes.indexOf(c) !== i)) {
-      toast.warning('중복된 언어 코드가 있습니다.');
-      return;
-    }
-
-    // ── batch 저장 목록 구성 (행당 1개 — common + project 통합)
-    const projId = selectedProj !== 'PJ000' ? selectedProj : null;
-    const batchItems: { lblId: string; lclCd: string; lblTxt: string; saveCommon: boolean; projId?: string; projTxt?: string }[] = [];
-
-    for (const row of selected) {
-      const saveCommon = !!(row._isNew || row._isDirty);
-      const saveProjTxt = !!(projId && row._isProjDirty);
-      if (saveCommon || saveProjTxt) {
-        batchItems.push({
-          lblId: row.lblId,
-          lclCd: row.lclCd,
-          lblTxt: row.lblTxt,
-          saveCommon,
-          ...(saveProjTxt && { projId: projId!, projTxt: row.projTxt ?? '' }),
-        });
-      }
-    }
-
-    if (batchItems.length === 0) { toast.warning('변경된 내용이 없습니다.'); return; }
-
-    dialog.confirm({
-      content: `선택한 ${selected.length}건을 저장하시겠습니까?`,
-      onOk: async () => {
-        try {
-          const res = await saveLblTrnBatch(batchItems);
-          if (!res.success) throw new Error(res.message ?? '저장 실패');
-          notify.success(`${selected.length}건 저장되었습니다.`);
-          grid2Ref.current?.api?.deselectAll();
-          await loadTrnList(selectedLbl.lblId);
-          if (projId) loadProjTrnList(projId, selectedLbl.lblId);
-        } catch (e: unknown) {
-          notify.error(`저장 실패 (전체 롤백): ${e instanceof Error ? e.message : '오류'}`);
-        }
-      },
-    });
-  }, [selectedLbl, selectedProj, dialog, notify, toast, loadTrnList, loadProjTrnList]);
-
-  // ── GRID2 편집 시작 — PJ000(공통) 선택 시 projTxt 편집 차단
-  const handleCellEditingStarted = useCallback((e: CellEditingStartedEvent<LblTrnItem>) => {
-    if (e.column.getColId() === 'projTxt' && selectedProjRef.current === 'PJ000') {
-      e.api.stopEditing(true);
-    }
-  }, []);
-
-  // ── GRID2 onCellValueChanged
-  const handleCellValueChanged = useCallback((e: CellValueChangedEvent<LblTrnItem>) => {
-    const isProj = e.colDef.field === 'projTxt';
+  const handleCellValueChanged = useCallback((e: CellValueChangedEvent<TrnRow>) => {
     setTrnRows((prev) =>
-      prev.map((r) => {
-        if (r._rowId !== e.data._rowId) return r;
-        if (isProj) return { ...r, projTxt: e.newValue as string, _isProjDirty: true };
-        if (!r._isNew) return { ...r, _isDirty: true };
-        return r;
-      }),
+      prev.map((r) => (r.langCd === e.data.langCd ? { ...r, trslLtr: e.data.trslLtr, _dirty: true } : r)),
     );
   }, []);
 
-  // ── GRID1 컬럼
-  const grid1Cols = useMemo<ColDef<LblItem>[]>(() => [
-    {
-      headerName: tsg('lblId', '라벨 키'),
-      field: 'lblId',
-      minWidth: 250,
-    },
-    {
-      headerName: tsg('screenId', '화면ID'),
-      valueGetter: (p) => p.data ? parseLblId(p.data.lblId).screenId : '',
-      minWidth: 120,
-    },
-    {
-      headerName: tsg('section', '섹션'),
-      valueGetter: (p) => p.data ? parseLblId(p.data.lblId).section : '',
-      width: 90, flex: 0,
-      cellRenderer: ComcdSelectCellRenderer,
-      cellRendererParams: { cdDmnId: 'LBL_SEC_CD' },
-    },
-    {
-      headerName: tsg('type', '타입'),
-      valueGetter: (p) => p.data ? parseLblId(p.data.lblId).type : '',
-      width: 90, flex: 0,
-      cellRenderer: ComcdSelectCellRenderer,
-      cellRendererParams: { cdDmnId: 'LBL_TYPE_CD' },
-    },
-    {
-      headerName: tsg('detail', '세부코드'),
-      valueGetter: (p) => p.data ? parseLblId(p.data.lblId).detail : '',
-      minWidth: 120,
-    },
-    {
-      headerName: tsg('mrCont', '기본 텍스트'),
-      field: 'mrCont',
-      minWidth: 180,
-    },
-  ], [labels, tsg]);
+  // ── 컬럼 ──────────────────────────────────────────────────────────────────
 
-  // ── GRID2 컬럼
-  const grid2Cols = useMemo<ColDef<LblTrnItem>[]>(() => [
-    {
-      field: 'lclCd',
-      headerName: tsg('lclCd', '언어'),
-      width: 130, flex: 0,
-      editable: (params) => Boolean(params.data?._isNew),
-      cellRenderer: ComcdSelectCellRenderer,
-      cellRendererParams: { cdDmnId: 'LBL_LANG_CD', prefixOption: '선택' },
-      cellEditor: ComcdSelectCellEditor,
-      cellEditorParams: (params: { data?: LblTrnItem }) => ({
-        cdDmnId: 'LBL_LANG_CD',
-        prefixOption: '선택',
-        filterFn: (code: CodeDetail) =>
-          !trnRows.some((r) => r.lclCd === code.cd && r._rowId !== params.data?._rowId),
-      }),
-    },
-    {
-      field: 'lblTxt',
-      headerName: tsg('lblTxt', '공통 텍스트'),
-      minWidth: 185,
-      editable: true,
-      cellEditor: 'agTextCellEditor',
-    },
-    {
-      field: 'projTxt',
-      headerName: tsg('projTranslatedText', '프로젝트별 텍스트'),
-      minWidth: 185,
-      cellEditor: 'agTextCellEditor',
-      cellStyle: () => selectedProjRef.current !== 'PJ000'
-        ? { color: '', pointerEvents: '' }
-        : { color: 'var(--text-secondary, #999)', pointerEvents: 'none' },
-    },
-  ], [labels, tsg, trnRows, canWrite, selectedProj]);
+  const grid1Cols = useMemo<ColDef<LblMaster>[]>(() => [
+    { headerName: tsg('lblCd',    '라벨코드'),   field: 'lblCd',    minWidth: 260 },
+    { headerName: tsg('scrnId',   '화면ID'),     field: 'scrnId',   width: 140, flex: 0 },
+    { headerName: tsg('lblSeCd',  '라벨구분'),   field: 'lblSeCd',  width: 110, flex: 0 },
+    { headerName: tsg('lblExpln', '라벨설명'),   field: 'lblExpln', minWidth: 200 },
+  // tsg 는 labelsVersion 이 바뀔 때만 새 함수가 되므로(useScreenLabel), 이것만 의존하면 충분하다.
+  ], [tsg]);
 
-  const activeFilterCount = (filterLblId ? 1 : 0) + (filterMrCont ? 1 : 0);
-  const langCount = useSyncExternalStore(
-    useComcdStore.subscribe,
-    () => useComcdStore.getState().codes['LBL_LANG_CD']?.length ?? 0,
-  );
-  const trnAddDisabled = !selectedLbl || (langCount > 0 && trnRows.length >= langCount);
+  const grid2Cols = useMemo<ColDef<TrnRow>[]>(() => [
+    { headerName: tsg('langCd',  '언어코드'), field: 'langCd',  width: 90,  flex: 0 },
+    { headerName: tsg('langNm',  '언어'),     field: 'langNm',  width: 110, flex: 0 },
+    { headerName: tsg('trslLtr', '번역문자'), field: 'trslLtr', minWidth: 200, editable: canWrite },
+  ], [tsg, canWrite]);
+
+  const activeFilterCount =
+    (filterScrnId ? 1 : 0) + (filterLblCd ? 1 : 0) + (filterLblSeCd ? 1 : 0);
 
   return (
     <div className="page-container">
@@ -489,21 +302,32 @@ export default function CCO102003SC() {
         activeFilterCount={activeFilterCount}
       >
         <div className="ds-filter-field">
-          <span className="ds-filter-field-label">{tvt('lblId', '라벨 키')}</span>
+          <span className="ds-filter-field-label">{tvt('scrnId', '화면ID')}</span>
           <Input
-            value={filterLblId}
-            onChange={(e) => setFilterLblId(e.target.value)}
+            value={filterScrnId}
+            onChange={(e) => setFilterScrnId(e.target.value)}
             onPressEnter={handleSearch}
             allowClear
           />
         </div>
         <div className="ds-filter-field">
-          <span className="ds-filter-field-label">{tvt('mrCont', '기본 텍스트')}</span>
+          <span className="ds-filter-field-label">{tvt('lblCd', '라벨코드')}</span>
           <Input
-            value={filterMrCont}
-            onChange={(e) => setFilterMrCont(e.target.value)}
+            value={filterLblCd}
+            onChange={(e) => setFilterLblCd(e.target.value)}
             onPressEnter={handleSearch}
             allowClear
+          />
+        </div>
+        <div className="ds-filter-field">
+          <span className="ds-filter-field-label">{tvt('lblSeCd', '라벨구분')}</span>
+          <Select
+            value={filterLblSeCd}
+            onChange={setFilterLblSeCd}
+            options={LBL_SE_OPTIONS}
+            placeholder={tvt('all', '전체')}
+            allowClear
+            style={{ width: '100%' }}
           />
         </div>
       </FilterPanel>
@@ -511,15 +335,15 @@ export default function CCO102003SC() {
       {/* ── 좌우 분할 그리드 */}
       <div className={styles.splitBody}>
 
-        {/* 좌: 라벨 키 목록 */}
+        {/* 좌: 라벨 목록 */}
         <div className={styles.leftPane}>
-          {tvt('lblList', '라벨 키 목록') && <div className={styles.paneTitleRow}>{tvt('lblList', '라벨 키 목록')}</div>}
+          <div className={styles.paneTitleRow}>{tvt('lblList', '라벨 목록')}</div>
           <div className={styles.gridWrapper}>
-            <GridPanel<LblItem>
-              totalCount={filteredList.length}
+            <GridPanel<LblMaster>
+              totalCount={masters.length}
               columnDefs={grid1Cols}
-              rowData={filteredList}
-              rowKey="lblId"
+              rowData={masters}
+              rowKey="rowId"
               gridRef={grid1Ref}
               onRowClick={handleRowClick}
               loading={isLoading}
@@ -530,59 +354,34 @@ export default function CCO102003SC() {
           </div>
         </div>
 
-        {/* 우: 다국어 설정 */}
+        {/* 우: 언어별 번역 */}
         <div className={styles.rightPane}>
           <div className={styles.paneTitleRow}>
-            <span className={styles.paneTitleLabel}>{tvt('trnList', '다국어 설정')}</span>
-            <div className={styles.paneProjArea}>
-              <span className={styles.paneProjLabel}>프로젝트</span>
-              <Select
-                value={selectedProj}
-                onChange={handleProjChange}
-                size="small"
-                className={styles.paneProjSelector}
-                options={[...myProjects]
-                  .sort((a, b) => (a.projId === 'PJ000' ? -1 : b.projId === 'PJ000' ? 1 : 0))
-                  .map((p) => ({ label: p.projNm ?? p.projId, value: p.projId }))}
-              />
-            </div>
+            <span className={styles.paneTitleLabel}>{tvt('trnList', '언어별 번역')}</span>
           </div>
           <div className={styles.gridWrapper}>
-            <GridPanel<LblTrnItem>
+            <GridPanel<TrnRow>
               totalCount={trnRows.length}
               columnDefs={grid2Cols}
               rowData={trnRows}
-              rowKey={(r) => r._rowId ?? r.lclCd}
+              rowKey="langCd"
               gridRef={grid2Ref}
-              loading={trnLoading}
               height="100%"
               pagination={false}
-              rowSelection="multiRow"
-              checkboxSelection={canWrite}
               editable={canWrite}
               onCellValueChanged={handleCellValueChanged}
-              onCellEditingStarted={handleCellEditingStarted}
               defaultColDef={{ suppressHeaderMenuButton: true, suppressHeaderFilterButton: true }}
               actions={canWrite ? (
-                <div style={{ display: 'flex', width: '100%', gap: 4 }}>
-                  <Button size="middle" onClick={handleTrnAdd} disabled={trnAddDisabled}>
-                    {tvb('btnAdd', '추가')}
-                  </Button>
-                  <div style={{ flex: 1 }} />
-                  <Button size="middle" type="primary" onClick={handleTrnSave} disabled={!selectedLbl}>
-                    {tvb('btnSave', '저장')}
-                  </Button>
-                  <Button size="middle" danger onClick={handleTrnDelete} disabled={!selectedLbl}>
-                    {tvb('btnDel', '삭제')}
-                  </Button>
-                </div>
+                <Button size="middle" type="primary" onClick={handleTrnSave} disabled={!selected}>
+                  {tvb('btnSave', '저장')}
+                </Button>
               ) : undefined}
             />
           </div>
         </div>
       </div>
 
-      {/* ── 하단 입력 폼 (라벨 등록) */}
+      {/* ── 하단 입력 폼 (라벨 등록/수정) */}
       <FormPanel
         title={tvt('input', '라벨 등록')}
         editMode={isEditMode}
@@ -590,7 +389,7 @@ export default function CCO102003SC() {
         onCollapsedChange={setFormCollapsed}
         actions={
           <Space size={4} align="center">
-            <Button size="middle" onClick={handleFormReset}>{tvb('btnInit2', '초기화')}</Button>
+            <Button size="middle" onClick={clearSelection}>{tvb('btnInit2', '초기화')}</Button>
             <VerticalDivider />
             {canWrite && (
               <>
@@ -609,23 +408,23 @@ export default function CCO102003SC() {
           layout="horizontal"
           labelCol={{ style: { width: 72, textAlign: 'right' } }}
           wrapperCol={{ style: { flex: 1, minWidth: 0 } }}
-          initialValues={{ section: '', type: '' }}
+          initialValues={{ section: 'VIEW', lblSeCd: 'TEXT' }}
           onValuesChange={handleValuesChange}
         >
           <Row gutter={[12, 0]}>
-            {/* 좌: 화면ID / 섹션 / 타입 / 세부코드 / 라벨 키 */}
+            {/* 좌: 화면ID / 섹션 / 라벨구분 / 세부코드 / 라벨코드 */}
             <Col span={15}>
               <Row gutter={[12, 0]}>
                 <Col span={8}>
                   <Form.Item
-                    label={tvt('screenId', '화면ID')}
-                    name="screenId"
-                    rules={[{ required: true, message: '' }]}
+                    label={tvt('scrnId', '화면ID')}
+                    name="scrnId"
+                    rules={[{ required: true, message: '' }, { max: 20, message: '' }]}
                     style={{ margin: '0 0 6px' }}
                   >
                     <Input
                       readOnly={isEditMode}
-                      maxLength={30}
+                      maxLength={20}
                       placeholder="CCO102003SC"
                       style={isEditMode ? { background: 'var(--tab-bar-bg)', cursor: 'not-allowed' } : undefined}
                     />
@@ -635,30 +434,20 @@ export default function CCO102003SC() {
                   <Form.Item
                     label={tvt('section', '섹션')}
                     name="section"
-                    rules={[{ required: true, message: '' }]}
+                    rules={[{ required: !isEditMode, message: '' }]}
                     style={{ margin: '0 0 6px' }}
                   >
-                    <ComcdSelect
-                      cdDmnId="LBL_SEC_CD"
-                      prefixOption="선택"
-                      style={{ width: '100%' }}
-                      disabled={isEditMode}
-                    />
+                    <Select options={SECTION_OPTIONS} disabled={isEditMode} style={{ width: '100%' }} />
                   </Form.Item>
                 </Col>
                 <Col span={8}>
                   <Form.Item
-                    label={tvt('type', '타입')}
-                    name="type"
+                    label={tvt('lblSeCd', '라벨구분')}
+                    name="lblSeCd"
                     rules={[{ required: true, message: '' }]}
                     style={{ margin: '0 0 6px' }}
                   >
-                    <ComcdSelect
-                      cdDmnId="LBL_TYPE_CD"
-                      prefixOption="선택"
-                      style={{ width: '100%' }}
-                      disabled={isEditMode}
-                    />
+                    <Select options={LBL_SE_OPTIONS} disabled={isEditMode} style={{ width: '100%' }} />
                   </Form.Item>
                 </Col>
               </Row>
@@ -667,26 +456,27 @@ export default function CCO102003SC() {
                   <Form.Item
                     label={tvt('detail', '세부코드')}
                     name="detail"
-                    rules={[{ required: true, message: '' }]}
+                    rules={[{ required: !isEditMode, message: '' }]}
                     style={{ margin: 0 }}
                   >
                     <Input
                       readOnly={isEditMode}
-                      maxLength={160}
+                      maxLength={60}
+                      placeholder="usrId"
                       style={isEditMode ? { background: 'var(--tab-bar-bg)', cursor: 'not-allowed' } : undefined}
                     />
                   </Form.Item>
                 </Col>
                 <Col span={16}>
                   <Form.Item
-                    label={tvt('lblId', '라벨 키')}
-                    name="lblId"
-                    rules={[{ required: true, message: '' }]}
+                    label={tvt('lblCd', '라벨코드')}
+                    name="lblCd"
+                    rules={[{ required: true, message: '' }, { max: 100, message: '' }]}
                     style={{ margin: 0 }}
                   >
                     <Input
                       readOnly
-                      maxLength={160}
+                      maxLength={100}
                       style={{ background: 'var(--tab-bar-bg)', cursor: 'not-allowed' }}
                     />
                   </Form.Item>
@@ -694,11 +484,11 @@ export default function CCO102003SC() {
               </Row>
             </Col>
 
-            {/* 우: 기본 텍스트 (두 행에 걸쳐 표시) */}
+            {/* 우: 라벨설명 (두 행에 걸쳐 표시) */}
             <Col span={9}>
               <Form.Item
-                label={tvt('mrCont', '기본 텍스트')}
-                name="mrCont"
+                label={tvt('lblExpln', '라벨설명')}
+                name="lblExpln"
                 style={{ margin: 0, height: '100%' }}
               >
                 <Input.TextArea

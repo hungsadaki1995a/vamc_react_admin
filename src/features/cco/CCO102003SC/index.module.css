@@ -41,26 +41,6 @@
   white-space: nowrap;
 }
 
-.paneProjArea {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  flex-shrink: 0;
-  padding-left: 10px;
-  border-left: 1px solid var(--border-color, #e0e0e0);
-}
-
-.paneProjLabel {
-  font-size: 12px;
-  font-weight: 400;
-  color: var(--text-secondary, #666);
-  white-space: nowrap;
-}
-
-.paneProjSelector {
-  width: 160px;
-}
-
 /* GridPanel을 감싸는 flex 컨테이너 — paneTitleRow 이후 남은 높이를 GridPanel에 위임 */
 .gridWrapper {
   flex: 1;
