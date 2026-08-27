@@ -91,25 +91,33 @@ const devMenu: MenuItem = {
   ],
 };
 
+// 정적 메뉴의 labelKey 는 서버 메뉴와 같은 네임스페이스(`lbl.menu.*`)를 쓴다 —
+// DB 에서도 같은 SCRN_ID('AD_MN_00000') / LBL_SE_CD('MENU') 로 관리된다.
+// labelKey 가 있는 항목만 useAllMenus() 가 로케일 라벨로 치환하고,
+// 없으면 아래 label 이 그대로 쓰인다 (개발 도구 트리는 번역 대상이 아니라 두지 않는다).
 export const menuConfig: MenuItem[] = [
   {
     key: 'dashboard',
     label: '대시보드',
+    labelKey: 'lbl.menu.dashboard',
     icon: 'DashboardOutlined',
     componentPath: 'Dashboard',
   },
   {
     key: 'admin',
     label: '어드민',
+    labelKey: 'lbl.menu.admin',
     icon: 'SettingOutlined',
     children: [
       {
         key: 'admin.system',
         label: '시스템',
+        labelKey: 'lbl.menu.admin.system',
         children: [
           {
             key: 'admin.system.menu',
             label: '메뉴 관리',
+            labelKey: 'lbl.menu.admin.system.menu',
             componentPath: 'AdminMenuManagement',
           },
         ],

@@ -216,7 +216,7 @@ export default function CCO104002SC() {
           filterPmId, filterAdminId, filterDateRange].filter(Boolean).length}
       >
         <div className="ds-filter-field">
-          <span className="ds-filter-field-label">{tvt('projNm') || '프로젝트명'}</span>
+          <span className="ds-filter-field-label">{tvt('projNm', '프로젝트명')}</span>
           <Input
             value={filterProjNm}
             onChange={(e) => setFilterProjNm(e.target.value)}
@@ -225,7 +225,7 @@ export default function CCO104002SC() {
           />
         </div>
         <div className="ds-filter-field">
-          <span className="ds-filter-field-label">{tvt('clnNm') || '고객'}</span>
+          <span className="ds-filter-field-label">{tvt('clnNm', '고객')}</span>
           <Input
             value={filterClnNm}
             onChange={(e) => setFilterClnNm(e.target.value)}
@@ -234,7 +234,7 @@ export default function CCO104002SC() {
           />
         </div>
         <div className="ds-filter-field">
-          <span className="ds-filter-field-label">{tvt('bzDpNm') || '사업부서'}</span>
+          <span className="ds-filter-field-label">{tvt('bzDpNm', '사업부서')}</span>
           <Input
             value={filterBzDpNm}
             onChange={(e) => setFilterBzDpNm(e.target.value)}
@@ -243,7 +243,7 @@ export default function CCO104002SC() {
           />
         </div>
         <div className="ds-filter-field">
-          <span className="ds-filter-field-label">{tvt('pnSrDt') || '계획시작일'}</span>
+          <span className="ds-filter-field-label">{tvt('pnSrDt', '계획시작일')}</span>
           <DateField.RangePicker
             value={filterDateRange ?? undefined}
             onChange={(dates) => setFilterDateRange(dates as [Dayjs | null, Dayjs | null] | null)}
@@ -251,7 +251,7 @@ export default function CCO104002SC() {
           />
         </div>
         <div className="ds-filter-field">
-          <span className="ds-filter-field-label">{tvt('pmNm') || 'PM'}</span>
+          <span className="ds-filter-field-label">{tvt('pmNm', 'PM')}</span>
           <UsrSelectField
             value={filterPmId}
             onChange={(v) => setFilterPmId(v as SearchSelectValue | null)}
@@ -259,7 +259,7 @@ export default function CCO104002SC() {
           />
         </div>
         <div className="ds-filter-field">
-          <span className="ds-filter-field-label">{tvt('adminNm') || '관리자'}</span>
+          <span className="ds-filter-field-label">{tvt('adminNm', '관리자')}</span>
           <UsrSelectField
             value={filterAdminId}
             onChange={(v) => setFilterAdminId(v as SearchSelectValue | null)}
@@ -286,16 +286,16 @@ export default function CCO104002SC() {
 
       {/* ── 하단 입력 폼 패널 */}
       <FormPanel
-        title={tvt('input') || '입력값'}
+        title={tvt('input', '입력값')}
         editMode={isEditMode}
         collapsed={formCollapsed}
         onCollapsedChange={setFormCollapsed}
         actions={
           <Space size={4} align="center">
-            <Button size="middle" onClick={handleFormReset}>{tvb('btnInit2') || '초기화'}</Button>
+            <Button size="middle" onClick={handleFormReset}>{tvb('btnInit2', '초기화')}</Button>
             <VerticalDivider />
-            <Button size="middle" type="primary" onClick={handleSave}>{tvb('btnMer') || '저장'}</Button>
-            <Button size="middle" danger disabled={!isEditMode} onClick={handleDelete}>{tvb('btnDel') || '삭제'}</Button>
+            <Button size="middle" type="primary" onClick={handleSave}>{tvb('btnMer', '저장')}</Button>
+            <Button size="middle" danger disabled={!isEditMode} onClick={handleDelete}>{tvb('btnDel', '삭제')}</Button>
             <VerticalDivider />
           </Space>
         }
@@ -309,7 +309,7 @@ export default function CCO104002SC() {
           {/* Row 1: 프로젝트ID / 프로젝트명 / 사업부서 / PM */}
           <Row gutter={[12, 4]}>
             <Col span={6}>
-              <Form.Item label={tvt('projId') || '프로젝트 ID'} name="projId" style={{ margin: '0 0 8px' }}>
+              <Form.Item label={tvt('projId', '프로젝트 ID')} name="projId" style={{ margin: '0 0 8px' }}>
                 <Input
                   readOnly
                   placeholder="자동 생성"
@@ -318,17 +318,17 @@ export default function CCO104002SC() {
               </Form.Item>
             </Col>
             <Col span={6}>
-              <Form.Item label={tvt('projNm') || '프로젝트명'} name="projNm" rules={[{ required: true, message: '' }]} style={{ margin: '0 0 8px' }}>
+              <Form.Item label={tvt('projNm', '프로젝트명')} name="projNm" rules={[{ required: true, message: '' }]} style={{ margin: '0 0 8px' }}>
                 <Input />
               </Form.Item>
             </Col>
             <Col span={6}>
-              <Form.Item label={tvt('bzDpNm') || '사업부서'} name="bzDpNm" rules={[{ required: true, message: '' }]} style={{ margin: '0 0 8px' }}>
+              <Form.Item label={tvt('bzDpNm', '사업부서')} name="bzDpNm" rules={[{ required: true, message: '' }]} style={{ margin: '0 0 8px' }}>
                 <Input />
               </Form.Item>
             </Col>
             <Col span={6}>
-              <Form.Item label={tvt('pmNm') || 'PM'} name="pmNm" rules={[{ required: true, message: '' }]} style={{ margin: '0 0 8px' }}>
+              <Form.Item label={tvt('pmNm', 'PM')} name="pmNm" rules={[{ required: true, message: '' }]} style={{ margin: '0 0 8px' }}>
                 <UsrSelectField placeholder="PM 검색" />
               </Form.Item>
             </Col>
@@ -337,22 +337,22 @@ export default function CCO104002SC() {
           {/* Row 2: 고객 / 계획시작일 / 계획종료일 / 관리자 */}
           <Row gutter={[12, 4]}>
             <Col span={6}>
-              <Form.Item label={tvt('clnNm') || '고객'} name="clnNm" rules={[{ required: true, message: '' }]} style={{ margin: '0 0 8px' }}>
+              <Form.Item label={tvt('clnNm', '고객')} name="clnNm" rules={[{ required: true, message: '' }]} style={{ margin: '0 0 8px' }}>
                 <Input />
               </Form.Item>
             </Col>
             <Col span={6}>
-              <Form.Item label={tvt('pnSrDt') || '계획시작일'} name="pnSrDt" style={{ margin: '0 0 8px' }}>
+              <Form.Item label={tvt('pnSrDt', '계획시작일')} name="pnSrDt" style={{ margin: '0 0 8px' }}>
                 <DateField style={{ width: '100%' }} />
               </Form.Item>
             </Col>
             <Col span={6}>
-              <Form.Item label={tvt('pnEdDt') || '계획종료일'} name="pnEdDt" style={{ margin: '0 0 8px' }}>
+              <Form.Item label={tvt('pnEdDt', '계획종료일')} name="pnEdDt" style={{ margin: '0 0 8px' }}>
                 <DateField style={{ width: '100%' }} />
               </Form.Item>
             </Col>
             <Col span={6}>
-              <Form.Item label={tvt('adminNm') || '관리자'} name="adminNm" rules={[{ required: true, message: ' ' }]} style={{ margin: '0 0 8px' }}>
+              <Form.Item label={tvt('adminNm', '관리자')} name="adminNm" rules={[{ required: true, message: ' ' }]} style={{ margin: '0 0 8px' }}>
                 <UsrSelectField placeholder="관리자 검색" />
               </Form.Item>
             </Col>
@@ -361,12 +361,12 @@ export default function CCO104002SC() {
           {/* Row 3: 홈 화면 / 운영담당자노출여부 / 유형 */}
           <Row gutter={[12, 4]}>
             <Col span={6}>
-              <Form.Item label={tvt('mainSceId') || '홈 화면'} name="mainSceId" style={{ margin: '0 0 8px' }}>
+              <Form.Item label={tvt('mainSceId', '홈 화면')} name="mainSceId" style={{ margin: '0 0 8px' }}>
                 <SceSelectField placeholder="화면 검색" />
               </Form.Item>
             </Col>
             <Col span={6}>
-              <Form.Item label={tvt('showYn') || '운영 담당자 노출 여부'} name="showYn" style={{ margin: '0 0 8px' }} labelCol={{ style: { whiteSpace: 'normal', lineHeight: '1.3' } }}>
+              <Form.Item label={tvt('showYn', '운영 담당자 노출 여부')} name="showYn" style={{ margin: '0 0 8px' }} labelCol={{ style: { whiteSpace: 'normal', lineHeight: '1.3' } }}>
                 <ComcdSelect cdDmnId="YN" style={{ width: '100%' }} />
               </Form.Item>
             </Col>

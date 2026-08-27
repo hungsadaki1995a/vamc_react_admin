@@ -29,7 +29,7 @@ function CollapseAllIcon() {
   );
 }
 
-import { menuConfig } from '@/config/menuConfig';
+import { useAllMenus } from '@/hooks/useAllMenus';
 import { useMenuStore } from '@/stores/menuStore';
 import { findMenuByKey } from '@/utils/menuUtils';
 import { useTabStore } from '@/stores/tabStore';
@@ -97,12 +97,11 @@ function getParentKeys(
 }
 
 export default function FlyoutPanel() {
-  const { activeRailKey, flyoutVisible, closeFlyout, serverMenus } = useMenuStore(
+  const { activeRailKey, flyoutVisible, closeFlyout } = useMenuStore(
     useShallow((s) => ({
       activeRailKey: s.activeRailKey,
       flyoutVisible: s.flyoutVisible,
       closeFlyout: s.closeFlyout,
-      serverMenus: s.serverMenus,
     }))
   );
   const { openTab, tabs, activeTabKey } = useTabStore(
@@ -119,11 +118,11 @@ export default function FlyoutPanel() {
   const activeMenuKey = tabs.find((t) => t.key === activeTabKey)?.menuKey ?? null;
 
   // server menus 우선, 없으면 static menuConfig fallback
+  const allMenus = useAllMenus();
   const activeCategory = useMemo(() => {
-    const allMenus = [...serverMenus, ...menuConfig];
     return allMenus.find((m) => m.key === activeRailKey)
       ?? (activeRailKey ? findMenuByKey(allMenus, activeRailKey) : null);
-  }, [serverMenus, activeRailKey]);
+  }, [allMenus, activeRailKey]);
   // `?? []` 를 렌더마다 새로 만들면 하위 useMemo 의존성이 매번 바뀌므로 메모이즈한다.
   const flyoutItems = useMemo(() => activeCategory?.children ?? [], [activeCategory]);
 

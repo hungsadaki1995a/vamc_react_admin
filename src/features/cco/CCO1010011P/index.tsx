@@ -44,7 +44,7 @@ export default function CCO1010011P({ open, usrId, usrNm, onClose }: Props) {
 
   return (
     <Modal
-      title={`${tvt('title') || '패스워드 변경'} — ${usrNm}(${usrId})`}
+      title={`${tvt('title', '패스워드 변경')} — ${usrNm}(${usrId})`}
       open={open}
       onOk={handleOk}
       onCancel={handleCancel}
@@ -58,20 +58,20 @@ export default function CCO1010011P({ open, usrId, usrNm, onClose }: Props) {
         style={{ marginTop: 16 }}
       >
         <Form.Item
-          label={tvt('chgPasswd') || '새 비밀번호'}
+          label={tvt('chgPasswd', '새 비밀번호')}
           name="chgPasswd"
           rules={[
             { required: true, message: '새 비밀번호를 입력하세요.' },
             {
               pattern: /^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@!%*#?&])[A-Za-z\d$@!%*#?&]{8,20}$/,
-              message: tvt('phPasswd'),
+              message: tvt('phPasswd', '새 비밀번호를 입력해 주세요.'),
             },
           ]}
         >
           <Input.Password autoComplete="new-password" />
         </Form.Item>
         <Form.Item
-          label={tvt('chgPasswdChk') || '비밀번호 확인'}
+          label={tvt('chgPasswdChk', '비밀번호 확인')}
           name="chgPasswdChk"
           dependencies={['chgPasswd']}
           rules={[

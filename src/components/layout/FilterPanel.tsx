@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Button, Badge } from 'antd';
 import { SearchOutlined, UndoOutlined, UpOutlined, DownOutlined } from '@ant-design/icons';
+import { useComponentLabel } from '@/hooks/useComponentLabel';
 import './FilterPanel.css';
 
 interface FilterPanelProps {
@@ -28,6 +29,7 @@ export default function FilterPanel({
 }: FilterPanelProps) {
   const [internalCollapsed, setInternalCollapsed] = useState(false);
   const collapsed = controlledCollapsed ?? internalCollapsed;
+  const { tvt, tvb } = useComponentLabel();
 
   const toggle = () => {
     const next = !collapsed;
@@ -39,7 +41,7 @@ export default function FilterPanel({
     <div className={`ds-filter-panel ${collapsed ? 'collapsed' : ''}`}>
       <div className="ds-filter-header">
         <div className="ds-filter-header-left">
-          <span className="ds-filter-header-title">검색 조건</span>
+          <span className="ds-filter-header-title">{tvt('filterTitle', '검색 조건')}</span>
           {collapsed && activeFilterCount > 0 && (
             <Badge count={activeFilterCount} size="small" style={{ marginLeft: 4 }} />
           )}
@@ -47,12 +49,12 @@ export default function FilterPanel({
         <div className="ds-filter-header-actions">
           {onReset && (
             <Button size="middle" icon={<UndoOutlined />} onClick={onReset}>
-              초기화
+              {tvb('reset', '초기화')}
             </Button>
           )}
           {onSearch && (
             <Button size="middle" type="primary" icon={<SearchOutlined />} onClick={onSearch}>
-              검색
+              {tvb('search', '검색')}
             </Button>
           )}
           <Button size="middle" icon={collapsed ? <DownOutlined /> : <UpOutlined />} onClick={toggle} />

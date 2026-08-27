@@ -8,7 +8,13 @@ import FilterPanel from '@/components/layout/FilterPanel';
 import FormPanel from '@/components/layout/FormPanel';
 import TipInput from '@/components/inputs/TipInput';
 import { useNotify } from '@/hooks/useNotify';
+import { useScreenLabel } from '@/hooks/useScreenLabel';
+import { useApiQuery } from '@/hooks/useApiQuery';
+import { useLocaleStore } from '@/stores/localeStore';
 import { useMenuStore } from '@/stores/menuStore';
+import { getLanguages } from '@/features/cco/CCO102003SC/api';
+import type { LangItem } from '@/features/cco/CCO102003SC/api';
+import { formatLabel } from '@/lib/i18n/formatLabel';
 import { apiClient } from '@/lib/api/client';
 import type { ApiResponse } from '@/lib/api/types';
 import type { MnuResponse } from '@/api/menu';
@@ -16,13 +22,13 @@ import type { ColDef } from 'ag-grid-community';
 
 // ── Constants ────────────────────────────────────────────────────────────────
 
-type LangCd = 'ko' | 'en' | 'vn';
+/** DB 언어코드 (LANG_MNG.LANG_CD) — KR / EN / VN */
+type LangCd = string;
 
-const LANG_OPTIONS: { value: LangCd; label: string }[] = [
-  { value: 'ko', label: '한국어 (KO)' },
-  { value: 'en', label: 'English (EN)' },
-  { value: 'vn', label: 'Tiếng Việt (VN)' },
-];
+/** 프론트 로케일(ko/en/vn) → DB 언어코드(KR/EN/VN). 서버 LangCdResolver 와 같은 보정이다. */
+function toDbLangCd(locale: string): LangCd {
+  return locale === 'ko' ? 'KR' : locale.toUpperCase();
+}
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -51,12 +57,23 @@ async function fetchAllMenus(langCd: LangCd): Promise<MnuResponse[]> {
 
 export default function AdminMenuManagement() {
   const { notify, dialog } = useNotify();
+  const { tvt, tvb, tvh, tsg, tsm, tmc, tmi, tme } = useScreenLabel();
+
+  // 조회 대상 언어의 기본값은 화면 로케일을 따른다 — 한국어로 보면서 영어 라벨만 나오던 문제.
+  const defaultLangCd = toDbLangCd(useLocaleStore((s) => s.locale));
+
+  // 언어 목록은 LANG_MNG 가 정한다 (화면에 하드코딩하지 않는다).
+  const { data: languages = [] } = useApiQuery<LangItem[]>(['lbl', 'languages'], () => getLanguages());
+  const langOptions = useMemo(
+    () => languages.map((l) => ({ value: l.langCd, label: `${l.langNm} (${l.langCd})` })),
+    [languages],
+  );
 
   // ── Filter state ─────────────────────────────────────────────────────────
   const [filterMenuCd, setFilterMenuCd]   = useState('');
   const [filterMenuNm, setFilterMenuNm]   = useState('');
-  const [filterLangCd, setFilterLangCd]   = useState<LangCd>('en');
-  const [appliedFilter, setAppliedFilter] = useState({ menuCd: '', menuNm: '', langCd: 'en' as LangCd });
+  const [filterLangCd, setFilterLangCd]   = useState<LangCd>(defaultLangCd);
+  const [appliedFilter, setAppliedFilter] = useState({ menuCd: '', menuNm: '', langCd: defaultLangCd });
   const [hasSearched, setHasSearched]     = useState(true);
 
   // ── Server data ──────────────────────────────────────────────────────────
@@ -91,22 +108,25 @@ export default function AdminMenuManagement() {
   // ── Column definitions ───────────────────────────────────────────────────
 
   const columnDefs = useMemo<ColDef<MnuResponse>[]>(() => {
-    const langLabel = LANG_OPTIONS.find((o) => o.value === appliedFilter.langCd)?.label ?? appliedFilter.langCd.toUpperCase();
+    const langLabel = langOptions.find((o) => o.value === appliedFilter.langCd)?.label
+      ?? appliedFilter.langCd;
     return [
-      { field: 'menuCd',        headerName: '메뉴코드',     width: 130, flex: 0 },
+      { field: 'menuCd',        headerName: tsg('menuCd', '메뉴코드'),   width: 130, flex: 0 },
       {
-        field: 'menuNmDisplay', headerName: '메뉴명(KR)', minWidth: 180,
+        // 메뉴명(KR) 은 원본 언어 데이터를 그대로 보여주는 컬럼이다 — 값은 번역 대상이 아니고
+        // 헤더만 번역한다. 오른쪽 '다국어 메뉴명' 컬럼이 선택 언어의 번역을 보여준다.
+        field: 'menuNmDisplay', headerName: tsg('menuNmDisplay', '메뉴명(KR)'), minWidth: 180,
         valueFormatter: ({ data }) =>
           data ? '\u00A0'.repeat(((data.menuDpth ?? 1) - 1) * 4) + (data.menuNmDisplay?.trim() ?? '') : '',
       },
-      { field: 'menuLblVal',    headerName: `다국어 메뉴명 (${langLabel})`, minWidth: 200 },
-      { field: 'upMenuCd',      headerName: '상위메뉴코드', width: 130, flex: 0 },
-      { field: 'menuSeq',       headerName: '메뉴순서',     width: 90,  flex: 0 },
-      { field: 'menuDpth',      headerName: '메뉴레벨',     width: 90,  flex: 0 },
-      { field: 'menuUrlAddr',   headerName: '컴포넌트경로',  minWidth: 180 },
-      { field: 'lblCd',         headerName: '라벨코드',     minWidth: 220 },
+      { field: 'menuLblVal',    headerName: formatLabel(tsg('menuLblVal', '다국어 메뉴명 ({0})'), langLabel), minWidth: 200 },
+      { field: 'upMenuCd',      headerName: tsg('upMenuCd', '상위메뉴코드'),  width: 130, flex: 0 },
+      { field: 'menuSeq',       headerName: tsg('menuSeq', '메뉴순서'),      width: 90,  flex: 0 },
+      { field: 'menuDpth',      headerName: tsg('menuDpth', '메뉴레벨'),      width: 90,  flex: 0 },
+      { field: 'menuUrlAddr',   headerName: tsg('menuUrlAddr', '컴포넌트경로'), minWidth: 180 },
+      { field: 'lblCd',         headerName: tsg('lblCd', '라벨코드'),        minWidth: 220 },
     ];
-  }, [appliedFilter.langCd]);
+  }, [appliedFilter.langCd, langOptions, tsg]);
 
   // ── Handlers ─────────────────────────────────────────────────────────────
 
@@ -118,10 +138,10 @@ export default function AdminMenuManagement() {
   const handleFilterReset = useCallback(() => {
     setFilterMenuCd('');
     setFilterMenuNm('');
-    setFilterLangCd('en');
-    setAppliedFilter({ menuCd: '', menuNm: '', langCd: 'en' });
+    setFilterLangCd(defaultLangCd);
+    setAppliedFilter({ menuCd: '', menuNm: '', langCd: defaultLangCd });
     setHasSearched(false);
-  }, []);
+  }, [defaultLangCd]);
 
   const handleRowClick = useCallback((row: MnuResponse) => {
     setSelectedRow(row);
@@ -147,32 +167,36 @@ export default function AdminMenuManagement() {
   const handleSave = useCallback(() => {
     form.validateFields().then(() => {
       dialog.confirm({
-        content: isEditMode ? '수정하시겠습니까?' : '등록하시겠습니까?',
+        content: isEditMode ? tmc('C100002') : tmc('C100001'),
         onOk: () => {
           // TODO: POST/PUT /api/common/menus
-          notify.success(isEditMode ? '수정되었습니다.' : '등록되었습니다.');
+          notify.success(isEditMode ? tmi('I100003') : tmi('I100002'));
           useMenuStore.getState().invalidateMenuCache();
           if (!isEditMode) handleFormReset();
         },
       });
     }).catch(() => {
-      notify.error('필수 항목을 입력해 주세요.');
+      notify.error(tme('E100001'));
     });
-  }, [form, isEditMode, dialog, notify, handleFormReset]);
+  }, [form, isEditMode, dialog, notify, handleFormReset, tmc, tmi, tme]);
 
   const handleDelete = useCallback(() => {
     if (!selectedRow) return;
     dialog.confirm({
-      content: `${selectedRow.menuNmDisplay.trim()}(${selectedRow.menuCd})을(를) 삭제하시겠습니까?`,
+      content: formatLabel(
+        tsm('deleteConfirm', '{0}({1})을(를) 삭제하시겠습니까?'),
+        selectedRow.menuNmDisplay.trim(),
+        selectedRow.menuCd,
+      ),
       okButtonProps: { danger: true },
       onOk: () => {
         // TODO: DELETE /api/common/menus/{menuCd}
-        notify.success('삭제되었습니다.');
+        notify.success(tmi('I100004'));
         useMenuStore.getState().invalidateMenuCache();
         handleFormReset();
       },
     });
-  }, [selectedRow, dialog, notify, handleFormReset]);
+  }, [selectedRow, dialog, notify, handleFormReset, tsm, tmi]);
 
   // ── Render ────────────────────────────────────────────────────────────────
 
@@ -187,18 +211,18 @@ export default function AdminMenuManagement() {
       >
         <div className="ds-filter-field" style={{ minWidth: 180 }}>
           <span className="ds-filter-field-label" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>
-            언어 <span style={{ color: 'red' }}>*</span>
+            {tvt('lang', '언어')} <span style={{ color: 'red' }}>*</span>
           </span>
           <Select<LangCd>
             value={filterLangCd}
             onChange={setFilterLangCd}
-            options={LANG_OPTIONS}
+            options={langOptions}
             style={{ width: '100%' }}
             allowClear={false}
           />
         </div>
         <div className="ds-filter-field">
-          <span className="ds-filter-field-label">메뉴코드</span>
+          <span className="ds-filter-field-label">{tvt('menuCd', '메뉴코드')}</span>
           <Input
             value={filterMenuCd}
             onChange={(e) => setFilterMenuCd(e.target.value)}
@@ -207,7 +231,7 @@ export default function AdminMenuManagement() {
           />
         </div>
         <div className="ds-filter-field">
-          <span className="ds-filter-field-label">메뉴명</span>
+          <span className="ds-filter-field-label">{tvt('menuNm', '메뉴명')}</span>
           <Input
             value={filterMenuNm}
             onChange={(e) => setFilterMenuNm(e.target.value)}
@@ -235,16 +259,16 @@ export default function AdminMenuManagement() {
 
       {/* ── 하단 입력 폼 패널 */}
       <FormPanel
-        title="메뉴 정보"
+        title={tvh('menuInfo', '메뉴 정보')}
         editMode={isEditMode}
         collapsed={formCollapsed}
         onCollapsedChange={setFormCollapsed}
         actions={
           <Space size={4} align="center">
-            <Button size="middle" onClick={handleFormReset}>초기화</Button>
+            <Button size="middle" onClick={handleFormReset}>{tvb('reset', '초기화')}</Button>
             <VerticalDivider />
-            <Button size="middle" type="primary" onClick={handleSave}>저장</Button>
-            <Button size="middle" danger disabled={!isEditMode} onClick={handleDelete}>삭제</Button>
+            <Button size="middle" type="primary" onClick={handleSave}>{tvb('save', '저장')}</Button>
+            <Button size="middle" danger disabled={!isEditMode} onClick={handleDelete}>{tvb('delete', '삭제')}</Button>
             <VerticalDivider />
           </Space>
         }
@@ -259,7 +283,7 @@ export default function AdminMenuManagement() {
           <Row gutter={[12, 4]}>
             <Col span={6}>
               <Form.Item
-                label="메뉴코드"
+                label={tvt('menuCd', '메뉴코드')}
                 name="menuCd"
                 rules={[{ required: true, message: '' }]}
                 style={{ margin: '0 0 8px' }}
@@ -273,7 +297,7 @@ export default function AdminMenuManagement() {
             </Col>
             <Col span={6}>
               <Form.Item
-                label="메뉴명(KR)"
+                label={tvt('menuNmDisplay', '메뉴명(KR)')}
                 name="menuNmDisplay"
                 rules={[{ required: true, message: '' }]}
                 style={{ margin: '0 0 8px' }}
@@ -283,20 +307,20 @@ export default function AdminMenuManagement() {
             </Col>
             <Col span={6}>
               <Form.Item
-                label="다국어 메뉴명"
+                label={tvt('menuLblValLabel', '다국어 메뉴명')}
                 name="menuLblVal"
                 style={{ margin: '0 0 8px' }}
               >
                 <TipInput
                   readOnly
                   style={{ background: 'var(--tab-bar-bg)', cursor: 'not-allowed' }}
-                  placeholder="라벨 테이블에서 자동 조회"
+                  placeholder={tvt('phMenuLblVal', '라벨 테이블에서 자동 조회')}
                 />
               </Form.Item>
             </Col>
             <Col span={6}>
               <Form.Item
-                label="상위메뉴코드"
+                label={tvt('upMenuCd', '상위메뉴코드')}
                 name="upMenuCd"
                 style={{ margin: '0 0 8px' }}
               >
@@ -308,7 +332,7 @@ export default function AdminMenuManagement() {
           <Row gutter={[12, 4]}>
             <Col span={6}>
               <Form.Item
-                label="메뉴순서"
+                label={tvt('menuSeq', '메뉴순서')}
                 name="menuSeq"
                 rules={[{ required: true, message: '' }]}
                 style={{ margin: '0 0 8px' }}
@@ -321,7 +345,7 @@ export default function AdminMenuManagement() {
             </Col>
             <Col span={6}>
               <Form.Item
-                label="메뉴레벨"
+                label={tvt('menuDpth', '메뉴레벨')}
                 name="menuDpth"
                 style={{ margin: '0 0 8px' }}
               >
@@ -330,16 +354,16 @@ export default function AdminMenuManagement() {
             </Col>
             <Col span={6}>
               <Form.Item
-                label="컴포넌트경로"
+                label={tvt('menuUrlAddr', '컴포넌트경로')}
                 name="menuUrlAddr"
                 style={{ margin: '0 0 8px' }}
               >
-                <TipInput maxLength={200} placeholder="예: AdminMenuManagement" />
+                <TipInput maxLength={200} placeholder={tvt('phMenuUrlAddr', '예: AdminMenuManagement')} />
               </Form.Item>
             </Col>
             <Col span={6}>
               <Form.Item
-                label="라벨코드"
+                label={tvt('lblCd', '라벨코드')}
                 name="lblCd"
                 style={{ margin: '0 0 8px' }}
               >

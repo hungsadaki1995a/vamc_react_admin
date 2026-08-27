@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useTabStore } from '@/stores/tabStore';
+import { useComponentLabel } from '@/hooks/useComponentLabel';
 
 interface TabContextMenuProps {
   visible: boolean;
@@ -33,6 +34,7 @@ function TabContextMenuInner({
   onClose: () => void;
 }) {
   const ref = useRef<HTMLDivElement>(null);
+  const { tvb } = useComponentLabel();
   const { tabs, closeTab, closeOtherTabs, closeRightTabs, closeAllTabs, pinTab, unpinTab } =
     useTabStore();
 
@@ -46,12 +48,15 @@ function TabContextMenuInner({
   }, [onClose]);
 
   const menuItems = [
-    { label: isPinned ? '고정 해제' : '탭 고정', action: () => isPinned ? unpinTab(tabKey) : pinTab(tabKey) },
-    { label: '닫기', action: () => closeTab(tabKey), disabled: isPinned },
+    {
+      label: isPinned ? tvb('tabUnpin', '고정 해제') : tvb('tabPin', '탭 고정'),
+      action: () => isPinned ? unpinTab(tabKey) : pinTab(tabKey),
+    },
+    { label: tvb('tabClose', '닫기'), action: () => closeTab(tabKey), disabled: isPinned },
     { divider: true },
-    { label: '다른 탭 모두 닫기', action: () => closeOtherTabs(tabKey) },
-    { label: '오른쪽 탭 닫기', action: () => closeRightTabs(tabKey) },
-    { label: '모든 탭 닫기', action: () => closeAllTabs() },
+    { label: tvb('tabCloseOthers', '다른 탭 모두 닫기'), action: () => closeOtherTabs(tabKey) },
+    { label: tvb('tabCloseRight', '오른쪽 탭 닫기'), action: () => closeRightTabs(tabKey) },
+    { label: tvb('tabCloseAll', '모든 탭 닫기'), action: () => closeAllTabs() },
   ];
 
   return (

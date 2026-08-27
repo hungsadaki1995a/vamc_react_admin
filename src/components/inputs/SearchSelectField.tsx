@@ -4,6 +4,7 @@ import { SearchOutlined, CloseCircleFilled } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
 import type { TableRowSelection } from 'antd/es/table/interface';
 import './SearchSelectField.css';
+import { useComponentLabel } from '@/hooks/useComponentLabel';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -41,7 +42,7 @@ export interface SearchSelectFieldProps {
   placeholder?: string;
   disabled?: boolean;
   style?: React.CSSProperties;
-  /** Modal title (default: '검색') */
+  /** Modal title (기본값: 공통 라벨 `COMPONENT.VIEW.TEXT_search` → '검색') */
   modalTitle?: string;
   /** Modal width (default: 560) */
   modalWidth?: number;
@@ -74,10 +75,13 @@ export interface SearchSelectFieldProps {
 
 // ── Default columns ────────────────────────────────────────────────────────────
 
-const DEFAULT_COLUMNS: ColumnsType<SearchSelectOption> = [
-  { title: '명칭', dataIndex: 'label', key: 'label', ellipsis: true },
-  { title: '코드', dataIndex: 'value', key: 'value', width: 120 },
-];
+/** 기본 컬럼 — 헤더 문구는 컴포넌트 안에서 라벨로 채운다(훅은 컴포넌트 밖에서 못 쓴다) */
+function defaultColumns(nameTitle: string, codeTitle: string): ColumnsType<SearchSelectOption> {
+  return [
+    { title: nameTitle, dataIndex: 'label', key: 'label', ellipsis: true },
+    { title: codeTitle, dataIndex: 'value', key: 'value', width: 120 },
+  ];
+}
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
@@ -87,10 +91,10 @@ export default function SearchSelectField({
   options: staticOptions,
   fetchOptions,
   multiple = false,
-  placeholder = '검색어 입력',
+  placeholder,
   disabled = false,
   style,
-  modalTitle = '검색',
+  modalTitle,
   modalWidth = 560,
   columns,
   showModalSearch = true,
@@ -99,6 +103,7 @@ export default function SearchSelectField({
   codeWidth: _codeWidth = 110,
   nameWidth = 120,
 }: SearchSelectFieldProps) {
+  const { tvt, tvb, tsg } = useComponentLabel();
   // Normalize incoming value to array
   const selectedItems: SearchSelectValue[] = value
     ? (Array.isArray(value) ? value : [value])
@@ -258,7 +263,11 @@ export default function SearchSelectField({
   // ── Derived display ────────────────────────────────────────────────────────
 
   const codeDisplay = selectedItems.map((i) => i.value).join(', ');
-  const resolvedColumns = columns ?? DEFAULT_COLUMNS;
+  // 미지정 props 는 공통 라벨로 채운다 — 호출부가 넘긴 값이 있으면 그것을 우선한다.
+  const resolvedPlaceholder = placeholder ?? tvt('searchPlaceholder', '검색어 입력');
+  const resolvedModalTitle = modalTitle ?? tvt('search', '검색');
+  const resolvedColumns = columns
+    ?? defaultColumns(tsg('name', '명칭'), tsg('code', '코드'));
 
   // ── Render ─────────────────────────────────────────────────────────────────
 
@@ -288,7 +297,7 @@ export default function SearchSelectField({
             </Tooltip>
           ))}
           {selectedItems.length === 0 && (
-            <span className="ssf-placeholder">{placeholder}</span>
+            <span className="ssf-placeholder">{resolvedPlaceholder}</span>
           )}
         </div>
       ) : (
@@ -303,7 +312,7 @@ export default function SearchSelectField({
           allowClear={!!acText}
           style={{ flex: `0 0 ${nameWidth}px` }}
           getPopupContainer={() => document.body}
-          placeholder={placeholder}
+          placeholder={resolvedPlaceholder}
         />
       )}
 
@@ -322,7 +331,7 @@ export default function SearchSelectField({
           value={codeDisplay}
           readOnly
           className="ssf-code-input"
-          placeholder="코드"
+          placeholder={tvt('code', '코드')}
           tabIndex={-1}
           style={{ minWidth: 50 }}
         />
@@ -330,12 +339,12 @@ export default function SearchSelectField({
 
       {/* ── Search Modal (portal → document.body) ─────────────────────── */}
       <Modal
-        title={modalTitle}
+        title={resolvedModalTitle}
         open={modalOpen}
         onOk={handleModalOk}
         onCancel={() => setModalOpen(false)}
-        okText="확인"
-        cancelText="취소"
+        okText={tvb('ok', '확인')}
+        cancelText={tvb('cancel', '취소')}
         width={modalWidth}
         destroyOnHidden
         styles={{ body: { paddingTop: 12 } }}
@@ -350,7 +359,7 @@ export default function SearchSelectField({
                 prefix={<SearchOutlined />}
                 value={modalSearch}
                 onChange={(e) => setModalSearch(e.target.value)}
-                placeholder="검색어 입력"
+                placeholder={resolvedPlaceholder}
                 allowClear
                 style={{ width: 300 }}
               />
