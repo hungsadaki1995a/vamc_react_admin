@@ -56,20 +56,20 @@ export default function CCO103001SC() {
 
   const columnDefs = useMemo<ColDef<Sce>[]>(() => [
     {
-      field: 'bzLrgCzCd', headerName: tsg('bzLrgCzCd'), width: 120, flex: 0,
+      field: 'bzLrgCzCd', headerName: tsg('bzLrgCzCd', '업무'), width: 120, flex: 0,
       cellRenderer: ComcdSelectCellRenderer,
       cellRendererParams: { cdDmnId: 'BZ_LRG_CZ_CD' },
     },
-    { field: 'sceId',   headerName: tsg('sceId'),    width: 150, flex: 0 },
-    { field: 'sceNm',   headerName: tsg('sceNm'),    minWidth: 200 },
-    { field: 'labelNm', headerName: tsg('labelNm'),  minWidth: 200 },
-    { field: 'labelKey',headerName: tsg('labelKey'), minWidth: 250 },
+    { field: 'sceId',   headerName: tsg('sceId', '화면ID'),    width: 150, flex: 0 },
+    { field: 'sceNm',   headerName: tsg('sceNm', '화면명'),    minWidth: 200 },
+    { field: 'labelNm', headerName: tsg('labelNm', '라벨명'),  minWidth: 200 },
+    { field: 'labelKey',headerName: tsg('labelKey', '라벨키'), minWidth: 250 },
     {
-      field: 'popupYn', headerName: tsg('popupYn'), width: 90, flex: 0,
+      field: 'popupYn', headerName: tsg('popupYn', '팝업여부'), width: 90, flex: 0,
       cellRenderer: ComcdSelectCellRenderer,
       cellRendererParams: { cdDmnId: 'YN' },
     },
-    { field: 'mrCont', headerName: tsg('mrCont'), minWidth: 200 },
+    { field: 'mrCont', headerName: tsg('mrCont', '비고'), minWidth: 200 },
   ], [labels]);
 
   // ── Handlers ─────────────────────────────────────────────────────────────

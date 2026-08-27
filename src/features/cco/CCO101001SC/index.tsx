@@ -59,16 +59,16 @@ export default function CCO101001SC() {
   // ── Column definitions ────────────────────────────────────────────────────
 
   const columnDefs = useMemo<ColDef<User>[]>(() => [
-    { field: 'usrId',   headerName: tsg('usrId'),    width: 130, flex: 0 },
-    { field: 'usrNm',   headerName: tsg('usrNm'),    width: 140, flex: 0 },
-    { field: 'jbcCd',   headerName: tsg('jbcCd'),    width: 100, flex: 0, cellRenderer: ComcdSelectCellRenderer, cellRendererParams: { cdDmnId: 'JBC_CD' } },
-    { field: 'dpNm',    headerName: tsg('orgNm'),    width: 130, flex: 0 },
-    { field: 'gdCd',    headerName: tsg('gdCd'),     width: 90,  flex: 0, cellRenderer: ComcdSelectCellRenderer, cellRendererParams: { cdDmnId: 'GD_CD' } },
-    { field: 'stdCost', headerName: tsg('stdCost'),  width: 110, flex: 0 },
-    { field: 'grpNm',   headerName: tsg('grpNm'),    width: 140, flex: 0 },
-    { field: 'phnNo',   headerName: tsg('phnNo'),    width: 150, flex: 0 },
-    { field: 'email',   headerName: tsg('emailAddr'), minWidth: 200 },
-    { field: 'usrIp',   headerName: tsg('usrIp'),    width: 150, flex: 0 },
+    { field: 'usrId',   headerName: tsg('usrId', '사용자ID'),    width: 130, flex: 0 },
+    { field: 'usrNm',   headerName: tsg('usrNm', '사용자명'),    width: 140, flex: 0 },
+    { field: 'jbcCd',   headerName: tsg('jbcCd', '직급'),    width: 100, flex: 0, cellRenderer: ComcdSelectCellRenderer, cellRendererParams: { cdDmnId: 'JBC_CD' } },
+    { field: 'dpNm',    headerName: tsg('orgNm', '부서명'),    width: 130, flex: 0 },
+    { field: 'gdCd',    headerName: tsg('gdCd', '등급'),     width: 90,  flex: 0, cellRenderer: ComcdSelectCellRenderer, cellRendererParams: { cdDmnId: 'GD_CD' } },
+    { field: 'stdCost', headerName: tsg('stdCost', '표준단가'),  width: 110, flex: 0 },
+    { field: 'grpNm',   headerName: tsg('grpNm', '그룹명'),    width: 140, flex: 0 },
+    { field: 'phnNo',   headerName: tsg('phnNo', '전화번호'),    width: 150, flex: 0 },
+    { field: 'email',   headerName: tsg('emailAddr', '이메일'), minWidth: 200 },
+    { field: 'usrIp',   headerName: tsg('usrIp', '사용자IP'),    width: 150, flex: 0 },
   ], [labels]);
 
   // ── Handlers ──────────────────────────────────────────────────────────────
@@ -143,18 +143,18 @@ export default function CCO101001SC() {
         },
       });
     }).catch(() => {
-      notify.error(tsm('requiredCheck'));
+      notify.error(tsm('requiredCheck', '필수 항목을 입력해 주세요.'));
     });
   }, [form, dialog, saveMutation, isEditMode, notify, tmc, tmi, tsm, handleReset, refetch]);
 
   const handleDelete = useCallback(() => {
     if (!selectedRow) return;
     dialog.confirm({
-      title: tsm('deleteConfirmTitle'),
-      content: `${selectedRow.usrNm}(${selectedRow.usrId}) ${tsm('deleteConfirmBody')}`,
-      okText: tvb('delete'),
+      title: tsm('deleteConfirmTitle', '사용자 삭제'),
+      content: `${selectedRow.usrNm}(${selectedRow.usrId}) ${tsm('deleteConfirmBody', '사용자를 삭제하시겠습니까?')}`,
+      okText: tvb('delete', '삭제'),
       okButtonProps: { danger: true },
-      cancelText: tvb('cancel'),
+      cancelText: tvb('cancel', '취소'),
       onOk: () => {
         deleteMutation.mutate(selectedRow.usrId, {
           onSuccess: () => {
@@ -219,7 +219,7 @@ export default function CCO101001SC() {
         activeFilterCount={[filterEmpNo, filterEmpNm].filter(Boolean).length}
       >
         <div className="ds-filter-field">
-          <span className="ds-filter-field-label">{tvt('usrId')}</span>
+          <span className="ds-filter-field-label">{tvt('usrId', '사용자ID')}</span>
           <Input
             value={filterEmpNo}
             onChange={(e) => setFilterEmpNo(e.target.value)}
@@ -228,7 +228,7 @@ export default function CCO101001SC() {
           />
         </div>
         <div className="ds-filter-field">
-          <span className="ds-filter-field-label">{tvt('usrNm')}</span>
+          <span className="ds-filter-field-label">{tvt('usrNm', '사용자명')}</span>
           <Input
             value={filterEmpNm}
             onChange={(e) => setFilterEmpNm(e.target.value)}
@@ -245,9 +245,9 @@ export default function CCO101001SC() {
           actions={
             <Space size={6}>
               <Button icon={<DownloadOutlined />} style={{ color: '#52c41a' }}>
-                {tvb('exceldown')}
+                {tvb('exceldown', '엑셀 다운로드')}
               </Button>
-              <Button icon={<UploadOutlined />}>{tvb('btnExcelUpload')}</Button>
+              <Button icon={<UploadOutlined />}>{tvb('btnExcelUpload', '엑셀 업로드')}</Button>
             </Space>
           }
           gridRef={gridRef}
@@ -264,29 +264,29 @@ export default function CCO101001SC() {
 
       {/* ── 하단 입력 폼 패널 */}
       <FormPanel
-        title={tvt('input')}
+        title={tvt('input', '입력 정보')}
         editMode={isEditMode}
         collapsed={formCollapsed}
         onCollapsedChange={setFormCollapsed}
         actions={
           <Space size={4} align="center">
-            <Button size="middle" onClick={handleReset}>{tvb('btnInit2')}</Button>
+            <Button size="middle" onClick={handleReset}>{tvb('btnInit2', '초기화')}</Button>
             <VerticalDivider />
             {/* <Button size="middle" disabled={!isEditMode} onClick={handlePwErrReset}>
-              {tvb('setPasswdErCntEarCnvrs')}
+              {tvb('setPasswdErCntEarCnvrs', '비밀번호 오류횟수 초기화')}
             </Button> */}
             <Button size="middle" disabled={!isEditMode} onClick={handlePwReset}>
-              {tvb('setUsrPasswdEarCnvrs')}
+              {tvb('setUsrPasswdEarCnvrs', '비밀번호 초기화')}
             </Button>
             <Button size="middle" disabled={!isEditMode} onClick={handleUnlock}>
-              {tvb('setLoginUnlock')}
+              {tvb('setLoginUnlock', '로그인 잠금 해제')}
             </Button>
             <Button size="middle" disabled={!isEditMode} onClick={() => setPwChangeOpen(true)}>
-              {tvb('btnChg')}
+              {tvb('btnChg', '비밀번호 변경')}
             </Button>
             <VerticalDivider />
-            <Button size="middle" type="primary" onClick={handleSave}>{tvb('btnMer')}</Button>
-            <Button size="middle" danger disabled={!isEditMode} onClick={handleDelete}>{tvb('btnDel')}</Button>
+            <Button size="middle" type="primary" onClick={handleSave}>{tvb('btnMer', '저장')}</Button>
+            <Button size="middle" danger disabled={!isEditMode} onClick={handleDelete}>{tvb('btnDel', '삭제')}</Button>
             <VerticalDivider />
           </Space>
         }
@@ -300,7 +300,7 @@ export default function CCO101001SC() {
           {/* Row 1: 사용자ID / 사용자명 / 직급 / 소속부서 */}
           <Row gutter={[12, 4]}>
             <Col span={6}>
-              <Form.Item label={tvt('usrId')} name="usrId" rules={[{ required: true, message: '' }]} style={{ margin: '0 0 8px' }}>
+              <Form.Item label={tvt('usrId', '사용자ID')} name="usrId" rules={[{ required: true, message: '' }]} style={{ margin: '0 0 8px' }}>
                 <Input
                   readOnly={isEditMode}
                   style={isEditMode ? { background: 'var(--tab-bar-bg)', cursor: 'not-allowed' } : undefined}
@@ -308,17 +308,17 @@ export default function CCO101001SC() {
               </Form.Item>
             </Col>
             <Col span={6}>
-              <Form.Item label={tvt('usrNm')} name="usrNm" rules={[{ required: true, message: '' }]} style={{ margin: '0 0 8px' }}>
+              <Form.Item label={tvt('usrNm', '사용자명')} name="usrNm" rules={[{ required: true, message: '' }]} style={{ margin: '0 0 8px' }}>
                 <Input />
               </Form.Item>
             </Col>
             <Col span={6}>
-              <Form.Item label={tvt('jbcCd')} name="jbcCd" rules={[{ required: true, message: '' }]} style={{ margin: '0 0 8px' }}>
+              <Form.Item label={tvt('jbcCd', '직급')} name="jbcCd" rules={[{ required: true, message: '' }]} style={{ margin: '0 0 8px' }}>
                 <ComcdSelect cdDmnId="JBC_CD" style={{ width: '100%' }} />
               </Form.Item>
             </Col>
             <Col span={6}>
-              <Form.Item label={tvt('org')} name="dpNm" rules={[{ required: true, message: '' }]} style={{ margin: '0 0 8px' }}>
+              <Form.Item label={tvt('org', '소속부서')} name="dpNm" rules={[{ required: true, message: '' }]} style={{ margin: '0 0 8px' }}>
                 <DeptSelectField placeholder="부서명 검색" />
               </Form.Item>
             </Col>
@@ -327,22 +327,22 @@ export default function CCO101001SC() {
           {/* Row 2: 등급 / 표준단가 / 전화번호 / 이메일 */}
           <Row gutter={[12, 4]}>
             <Col span={6}>
-              <Form.Item label={tvt('gdCd')} name="gdCd" style={{ margin: '0 0 8px' }}>
+              <Form.Item label={tvt('gdCd', '등급')} name="gdCd" style={{ margin: '0 0 8px' }}>
                 <ComcdSelect cdDmnId="GD_CD" style={{ width: '100%' }} />
               </Form.Item>
             </Col>
             <Col span={6}>
-              <Form.Item label={tvt('stdCost')} name="stdCost" style={{ margin: '0 0 8px' }}>
+              <Form.Item label={tvt('stdCost', '표준단가')} name="stdCost" style={{ margin: '0 0 8px' }}>
                 <InputNumber style={{ width: '100%' }} min={0} formatter={stdCostFormatter} />
               </Form.Item>
             </Col>
             <Col span={6}>
-              <Form.Item label={tvt('phnNo')} name="phnNo" style={{ margin: '0 0 8px' }}>
+              <Form.Item label={tvt('phnNo', '전화번호')} name="phnNo" style={{ margin: '0 0 8px' }}>
                 <Input placeholder="000-0000-0000" />
               </Form.Item>
             </Col>
             <Col span={6}>
-              <Form.Item label={tvt('emailAddr')} name="email" rules={[{ type: 'email', message: '' }]} style={{ margin: '0 0 8px' }}>
+              <Form.Item label={tvt('emailAddr', '이메일')} name="email" rules={[{ type: 'email', message: '' }]} style={{ margin: '0 0 8px' }}>
                 <Input placeholder="example@shinhan.com" />
               </Form.Item>
             </Col>
@@ -351,7 +351,7 @@ export default function CCO101001SC() {
           {/* Row 3: 사용자IP */}
           <Row gutter={[12, 4]}>
             <Col span={6}>
-              <Form.Item label={tvt('usrIp')} name="usrIp" style={{ margin: 0 }}>
+              <Form.Item label={tvt('usrIp', '사용자IP')} name="usrIp" style={{ margin: 0 }}>
                 <Input />
               </Form.Item>
             </Col>
