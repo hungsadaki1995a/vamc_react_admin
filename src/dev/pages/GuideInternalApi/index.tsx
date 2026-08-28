@@ -472,7 +472,7 @@ function TabPanel({ tab, visible }) {
 
                 <Alert
                   type="info"
-                  description="src/features/*/pages/*.tsx 파일명(PascalCase)이 componentPath가 됩니다. 수동 등록 불필요."
+                  description="src/features/*/*/index.tsx (업무 화면) · src/dev/pages/*/index.tsx (데모·샘플) 의 폴더명이 componentPath 가 됩니다. 수동 등록 불필요."
                   style={{ marginBottom: 16 }}
                 />
 
@@ -527,7 +527,7 @@ interface MenuItem {
                 <CodeSnippet title="API 함수 작성 패턴" code={`import { apiClient } from '@/lib/api/client';
 import type { ApiResponse } from '@/lib/api/types';
 
-// 서버 DTO 와 1:1 대응하는 타입은 이 파일에 코로케이트한다 (src/api/common.ts 참고)
+// 서버 DTO 와 1:1 대응하는 타입은 이 파일에 코로케이트한다 (src/api/common/code.ts 참고)
 export interface Task { taskId: string; taskNm: string; }
 
 // 서버 응답은 { status, message, data } — useApiQuery 는 success 로 성공을 판정하므로

@@ -32,7 +32,7 @@ import styles from './index.module.css';
  * 라벨구분코드(LBL_SE_CD) 후보와 설명 라벨 키.
  *
  * 공통코드(COM_CD)에 라벨 구분 도메인이 아직 없고 전체 코드 조회(`/api/comcd/all`)도
- * 미구현이라(`src/api/common.ts`) 값 목록을 화면 상수로 둔다. 공통코드가 등록되면
+ * 미구현이라(`src/api/common/code.ts`) 값 목록을 화면 상수로 둔다. 공통코드가 등록되면
  * `ComcdSelect` 로 교체한다. MENU / CODE 는 기존 적재 데이터(메뉴·공통코드 라벨)의 값이다.
  *
  * 설명 문구는 라벨 테이블에서 가져온다 — 상수에 한국어를 박아두면 언어를 바꿔도 남는다.
