@@ -36,7 +36,7 @@ export function useTabRouteSync() {
 
   // Sync Rail active icon from a tab key.
   // Static menus use dot-separated keys (e.g. 'dev.overview') → first segment is the rail key.
-  // Server menus use raw IDs (e.g. 'A06040400') → search the serverMenus tree.
+  // Server menus use raw IDs (e.g. 'A06050300') → search the serverMenus tree.
   const syncRailFromKey = useCallback((key: string) => {
     setSelectedKey(key);
     const staticTopKey = key.split('.')[0];

@@ -25,6 +25,8 @@ const devMenu: MenuItem = {
   children: [
     // 개발 도구 전체 안내 — 1단 leaf (폴더 없음)
     { key: 'dev.overview', label: '개발가이드', componentPath: 'DevGuideHome' },
+    // Jenkins 배포 파이프라인 확인용. IA 에 해당 메뉴가 없어 서버 메뉴가 아니라 여기에 둔다.
+    { key: 'dev.deploy-check', label: '배포 확인', componentPath: 'AdminTestPage' },
     {
       // 우리가 만든/래핑한 공통 컴포넌트의 Props·Events·라이브 데모
       key: 'dev.components',
@@ -117,27 +119,8 @@ export const menuConfig: MenuItem[] = [
     icon: 'DashboardOutlined',
     componentPath: 'Dashboard',
   },
-  {
-    key: 'admin',
-    label: '어드민',
-    labelKey: 'lbl.menu.admin',
-    icon: 'SettingOutlined',
-    children: [
-      {
-        key: 'admin.system',
-        label: '시스템',
-        labelKey: 'lbl.menu.admin.system',
-        children: [
-          {
-            key: 'admin.system.menu',
-            label: '메뉴 관리',
-            labelKey: 'lbl.menu.admin.system.menu',
-            componentPath: 'AdminMenuManagement',
-          },
-        ],
-      },
-    ],
-  },
+  // 업무 메뉴는 여기 두지 않는다 — 서버(MENU_MNG)가 IA 기준 트리를 내려준다.
+  // 정적으로 중복 정의하면 같은 화면이 좌측 레일에 두 번 나온다.
   // 개발 도구 — DEV_TOOLS_ENABLED 가 false 인 빌드에서는 트리셰이킹으로 사라진다.
   ...(DEV_TOOLS_ENABLED ? [devMenu] : []),
 ];

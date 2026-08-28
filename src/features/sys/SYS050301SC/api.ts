@@ -2,7 +2,7 @@ import { apiClient } from '@/lib/api/client';
 import type { ApiResponse } from '@/lib/api/types';
 
 // ─────────────────────────────────────────────────────────────────────────────
-// 다국어 라벨 관리 (A06040400) API
+// 다국어 라벨 관리 (A06050300) API
 //
 // 서버 계약은 LANG_LBL / LANG_LBL_TRSL 스키마를 그대로 따른다.
 //   · 라벨 식별자는 단일 키가 아니라 PK 3개 (LBL_CD, SCRN_ID, LBL_SE_CD) 다.

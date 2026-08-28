@@ -55,7 +55,7 @@ async function fetchAllMenus(langCd: LangCd): Promise<MnuResponse[]> {
 
 // ── Main Component ────────────────────────────────────────────────────────────
 
-export default function AdminMenuManagement() {
+export default function SYS030101SC() {
   const { notify, dialog } = useNotify();
   const { tvt, tvb, tvh, tsg, tsm, tmc, tmi, tme } = useScreenLabel();
 
@@ -358,7 +358,7 @@ export default function AdminMenuManagement() {
                 name="menuUrlAddr"
                 style={{ margin: '0 0 8px' }}
               >
-                <TipInput maxLength={200} placeholder={tvt('phMenuUrlAddr', '예: AdminMenuManagement')} />
+                <TipInput maxLength={200} placeholder={tvt('phMenuUrlAddr', '예: SYS030101SC')} />
               </Form.Item>
             </Col>
             <Col span={6}>

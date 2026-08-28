@@ -29,6 +29,7 @@ const MENU_ICON_RULES: Array<{ keywords: string[]; icon: string }> = [
   { keywords: ['NPL', 'npl', '채권', '담보', '채무', '채권자'],               icon: 'BankOutlined' },
   { keywords: ['컨텐츠', '공지', '뉴스', '공고', '문의', 'FAQ', '배너'],      icon: 'ReadOutlined' },
   { keywords: ['통계'],                                                        icon: 'BarChartOutlined' },
+  { keywords: ['경매', '입찰'],                                                icon: 'ShoppingOutlined' },
   { keywords: ['시스템', '운영'],                                              icon: 'SettingOutlined' },
   { keywords: ['대시보드', '홈', '메인'],                                      icon: 'DashboardOutlined' },
   { keywords: ['사용자', '관리자'],                                             icon: 'TeamOutlined' },

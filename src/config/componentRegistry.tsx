@@ -4,7 +4,7 @@ import { DEV_TOOLS_ENABLED } from './menuConfig';
 
 // 업무 화면 자동 발견 — src/features/{도메인}/{화면ID}/index.tsx
 // 레지스트리 키 = **바로 위 폴더명** (= 화면ID = MENU_MNG.MENU_URL_ADDR = sceId)
-//   예) src/features/cco/CCO102003SC/index.tsx → 'CCO102003SC'
+//   예) src/features/sys/SYS050301SC/index.tsx → 'SYS050301SC'
 //
 // 팝업은 부모 화면의 자식 폴더에 둔다(…/CCO101001SC/CCO1010011P/index.tsx).
 // 글롭이 2단계 고정이라 자식 폴더는 걸리지 않는다 — 메뉴로 열지 않는 화면을
@@ -42,10 +42,7 @@ const autoRegistry: Record<string, ComponentType> = Object.fromEntries(
 //     }))
 //   ),
 const overrides: Record<string, ComponentType> = {
-  // ⚠️ 임시 — DB 의 MENU_URL_ADDR 이 아직 경로 문자열인 메뉴들.
-  //    화면ID 채번(권고안) 적용 시 DB 를 고치고 이 두 줄은 삭제한다.
-  '/admin/system/admin/menu': lazy(() => import('@/features/admin/AdminMenuManagement/index')),
-  '/admin/system/admin/test': lazy(() => import('@/features/admin/AdminTestPage/index')),
+  // 현재 없음 — 모든 메뉴가 MENU_URL_ADDR 에 화면ID(폴더명)를 담고 있어 자동 발견으로 해결된다.
 };
 
 export const componentRegistry: Record<string, ComponentType> = {
