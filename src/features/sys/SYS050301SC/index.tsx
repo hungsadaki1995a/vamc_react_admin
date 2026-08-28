@@ -19,7 +19,7 @@ import type { LblRow, LblMaster, LangItem, LblKey } from './api';
 import styles from './index.module.css';
 
 // ─────────────────────────────────────────────────────────────────────────────
-// 다국어 라벨 관리 (A06040400)
+// 다국어 라벨 관리 (A06050300)
 //
 // LANG_LBL 의 PK 는 (LBL_CD, SCRN_ID, LBL_SE_CD) 3개다. 화면 전체가 이 3개를 하나의
 // 식별자로 다루며, 단일 키(lblId)로 줄여 부르지 않는다 — LBL_CD 만으로는 행이 특정되지 않는다.
@@ -75,7 +75,7 @@ function buildLblCd(scrnId: string, section: string, lblSeCd: string, detail: st
   return `${scrnId}.${section}.${lblSeCd}_${detail}`;
 }
 
-export default function CCO102003SC() {
+export default function SYS050301SC() {
   const { toast, notify, dialog } = useNotify();
   const { tvt, tvb, tsg, tmi } = useScreenLabel();
   const { canWrite } = useMenuPermission();
@@ -437,7 +437,7 @@ export default function CCO102003SC() {
                     <Input
                       readOnly={isEditMode}
                       maxLength={20}
-                      placeholder="CCO102003SC"
+                      placeholder="SYS050301SC"
                       style={isEditMode ? { background: 'var(--tab-bar-bg)', cursor: 'not-allowed' } : undefined}
                     />
                   </Form.Item>

@@ -403,10 +403,9 @@ tab.closable     // 닫기 가능 여부
 // 자동 발견: src/features/*/*/index.tsx  +  src/dev/pages/*/index.tsx
 // 폴더명 = componentPath = 화면ID(sceId)
 
-// 수동 매핑은 예외 수단 — 원칙은 DB 의 MENU_URL_ADDR 을 폴더명에 맞추는 것
-const overrides: Record<string, ComponentType> = {
-  '/admin/system/admin/menu': lazy(() => import('@/features/admin/AdminMenuManagement/index')),
-};
+// 수동 매핑은 예외 수단 — 원칙은 DB 의 MENU_URL_ADDR 을 폴더명(화면ID)에 맞추는 것.
+// 현재 overrides 는 비어 있다.
+const overrides: Record<string, ComponentType> = {};
 ```
 
 새 페이지 추가 시 별도 등록 불필요. 파일 생성만으로 자동 인식.

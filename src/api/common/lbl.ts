@@ -3,7 +3,7 @@ import type { ApiResponse } from '@/lib/api/types';
 
 /**
  * 다국어 라벨(LBL) 공용 API — 여러 화면이 공유하는 호출만 둔다.
- * 라벨 관리 화면 전용 CRUD 는 `src/features/cco/CCO102003SC/api.ts` 에 있다.
+ * 라벨 관리 화면 전용 CRUD 는 `src/features/sys/SYS050301SC/api.ts` 에 있다.
  */
 
 /** 사용 언어 목록 1건 (LANG_MNG) */
