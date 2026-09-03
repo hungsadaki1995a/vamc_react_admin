@@ -79,7 +79,7 @@ import { useScreenLabel } from '@/hooks/useScreenLabel';
 const { tvt, tvb, tvh, tsg, tsm, tsb } = useScreenLabel();
 
 // 명시적 sceId (TabContent 외부 컴포넌트)
-const { tvt } = useScreenLabel('CCO101001SC');
+const { tvt } = useScreenLabel('SYS030101SC');
 ```
 
 | 함수 | 키 패턴 | 용도 |
@@ -384,7 +384,7 @@ const tab: Tab | undefined = ctx?.tab;
 tab.key          // tabKey (menuItem.key)
 tab.title        // 탭 표시 제목
 tab.componentKey // componentPath (페이지 컴포넌트 폴더명)
-tab.sceId        // 서버 화면 ID (예: 'CCO101001SC')
+tab.sceId        // 서버 화면 ID (예: 'SYS030101SC')
 tab.pinned       // 고정 여부
 tab.closable     // 닫기 가능 여부
 ```

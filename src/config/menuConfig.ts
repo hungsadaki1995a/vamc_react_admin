@@ -3,7 +3,7 @@ import type { MenuItem } from '@/types/menu';
 // Business menus are loaded from server after login.
 // Only dashboard (home) and use menus are hardcoded here.
 // componentPath = 화면 폴더명 — 업무 화면은 src/features/{도메인}/{폴더}/index.tsx,
-//                  데모·가이드·이관 샘플은 src/dev/pages/{폴더}/index.tsx
+//                  데모·가이드는 src/dev/pages/{폴더}/index.tsx
 
 // 개발 도구 노출 여부.
 // - `npm run dev` (import.meta.env.DEV) → 항상 노출
@@ -25,8 +25,6 @@ const devMenu: MenuItem = {
   children: [
     // 개발 도구 전체 안내 — 1단 leaf (폴더 없음)
     { key: 'dev.overview', label: '개발가이드', componentPath: 'DevGuideHome' },
-    // Jenkins 배포 파이프라인 확인용. IA 에 해당 메뉴가 없어 서버 메뉴가 아니라 여기에 둔다.
-    { key: 'dev.deploy-check', label: '배포 확인', componentPath: 'AdminTestPage' },
     {
       // 우리가 만든/래핑한 공통 컴포넌트의 Props·Events·라이브 데모
       key: 'dev.components',
@@ -68,19 +66,6 @@ const devMenu: MenuItem = {
         { key: 'dev.patterns.dashboard',     label: '대시보드',        componentPath: 'PatternDashboard' },
         { key: 'dev.patterns.admin',         label: '관리/폼',         componentPath: 'PatternAdmin' },
         { key: 'dev.patterns.i18n-label',    label: '다국어 라벨 관리', componentPath: 'PatternI18nLabel' },
-      ],
-    },
-    {
-      // 이전 프로젝트(PMS 계열)에서 이관된 완성형 업무 화면.
-      // ⚠️ 호출하는 서버 API(/api/usr, /api/sce, /api/mnu, /api/proj)가 양 백엔드에 없어
-      //    조회하면 404 다. 동작하는 화면이 아니라 **배선 패턴의 실물 예제**로만 남긴다.
-      key: 'dev.samples',
-      label: '이관 샘플 화면',
-      children: [
-        { key: 'dev.samples.usr',  label: '사용자 관리 (샘플)',   componentPath: 'CCO101001SC' },
-        { key: 'dev.samples.sce',  label: '화면 관리 (샘플)',     componentPath: 'CCO103001SC' },
-        { key: 'dev.samples.mnu',  label: '메뉴 관리 (샘플)',     componentPath: 'CCO103002SC' },
-        { key: 'dev.samples.proj', label: '프로젝트 관리 (샘플)', componentPath: 'CCO104002SC' },
       ],
     },
     {

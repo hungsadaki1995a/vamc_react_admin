@@ -3,7 +3,7 @@ import type { ICellRendererParams } from 'ag-grid-community';
 import type { CustomCellEditorProps } from 'ag-grid-react';
 import ComcdSelect from '@/components/inputs/ComcdSelect';
 import { useComcdStore } from '@/stores/comcdStore';
-import type { CodeDetail } from '@/api/common/code';
+import type { CodeDetail } from '@/api/common/comCdApi';
 
 // ── Cell Renderer ─────────────────────────────────────────────────────────────
 

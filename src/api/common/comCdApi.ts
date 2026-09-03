@@ -1,6 +1,13 @@
 import { apiClient } from '@/lib/api/client';
 import type { ApiResponse } from '@/lib/api/types';
 
+// ─────────────────────────────────────────────────────────────────────────────
+// 공통코드(COM_CD) 조회 API — 전역 도메인.
+//
+// 코드 도메인(CD_DMN)과 그 하위 코드 목록을 읽어 comcdStore 캐시에 적재한다.
+// ComcdSelect / ComcdSelectCell 이 이 캐시를 본다. 쓰기(공통코드 관리 화면)는 없다.
+// ─────────────────────────────────────────────────────────────────────────────
+
 // Matches com.vamc.vamcnplbackend.common.code.dto.CodeDomainResponse
 export interface CodeDomain {
   projId: string;

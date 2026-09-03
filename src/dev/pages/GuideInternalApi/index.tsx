@@ -443,7 +443,7 @@ function MyComponent() {
   ctx?.tab.key           // tabKey (= menuItem.key)
   ctx?.tab.title         // 탭 표시 제목
   ctx?.tab.componentKey  // 페이지 컴포넌트 폴더명
-  ctx?.tab.sceId         // 서버 화면 ID (예: 'CCO101001SC')
+  ctx?.tab.sceId         // 서버 화면 ID (예: 'SYS030101SC')
   ctx?.tab.pinned        // 고정 여부
   ctx?.tab.closable      // 닫기 가능 여부
 }`} />
@@ -481,7 +481,7 @@ function TabPanel({ tab, visible }) {
 const baseModules = import.meta.glob('../features/*/*/index.tsx');   // 업무 화면
 const devModules  = import.meta.glob('../dev/pages/*/index.tsx');    // 데모/가이드/샘플 (DEV_TOOLS_ENABLED 일 때만)
 
-// 결과: { '../features/cco/CCO102003SC/index.tsx': () => import(...) }
+// 결과: { '../features/sys/SYS050301SC/index.tsx': () => import(...) }
 // 키에서 **바로 위 폴더명** 추출 → 레지스트리 키(= 화면ID = sceId)로 사용
 
 // 원칙은 DB 의 MENU_URL_ADDR 을 폴더명(화면ID)에 맞추는 것이고, overrides 는 예외 수단이다`} />
@@ -527,7 +527,7 @@ interface MenuItem {
                 <CodeSnippet title="API 함수 작성 패턴" code={`import { apiClient } from '@/lib/api/client';
 import type { ApiResponse } from '@/lib/api/types';
 
-// 서버 DTO 와 1:1 대응하는 타입은 이 파일에 코로케이트한다 (src/api/common/code.ts 참고)
+// 서버 DTO 와 1:1 대응하는 타입은 이 파일에 코로케이트한다 (src/api/common/comCdApi.ts 참고)
 export interface Task { taskId: string; taskNm: string; }
 
 // 서버 응답은 { status, message, data } — useApiQuery 는 success 로 성공을 판정하므로

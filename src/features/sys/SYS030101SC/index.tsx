@@ -1,5 +1,4 @@
 import { useState, useMemo, useCallback, useRef } from 'react';
-import { useQuery } from '@tanstack/react-query';
 import type { AgGridReact } from 'ag-grid-react';
 import { Input, Button, Form, Row, Col, Space, Select } from 'antd';
 import GridPanel from '@/components/grid/GridPanel';
@@ -12,12 +11,11 @@ import { useScreenLabel } from '@/hooks/useScreenLabel';
 import { useApiQuery } from '@/hooks/useApiQuery';
 import { useLocaleStore } from '@/stores/localeStore';
 import { useMenuStore } from '@/stores/menuStore';
-import { getLanguages } from '@/api/common/lbl';
-import type { LangItem } from '@/api/common/lbl';
+import { getLanguages } from '@/api/common/lblBulkApi';
+import type { LangItem } from '@/api/common/lblBulkApi';
 import { formatLabel } from '@/lib/i18n/formatLabel';
-import { apiClient } from '@/lib/api/client';
-import type { ApiResponse } from '@/lib/api/types';
-import type { MnuResponse } from '@/api/common/menu';
+import { getAllMenus } from '@/api/sys/menuMngApi';
+import type { MnuResponse } from '@/api/sys/menuMngApi';
 import type { ColDef } from 'ag-grid-community';
 
 // ── Constants ────────────────────────────────────────────────────────────────
@@ -43,16 +41,6 @@ type FormValues = {
   lblCd: string;
 };
 
-// ── API ──────────────────────────────────────────────────────────────────────
-
-async function fetchAllMenus(langCd: LangCd): Promise<MnuResponse[]> {
-  const { data } = await apiClient.get<ApiResponse<MnuResponse[]>>('/api/common/menus/all', {
-    params: { langCd },
-  });
-  if (data.status !== 200 || !data.data) return [];
-  return data.data;
-}
-
 // ── Main Component ────────────────────────────────────────────────────────────
 
 export default function SYS030101SC() {
@@ -77,10 +65,10 @@ export default function SYS030101SC() {
   const [hasSearched, setHasSearched]     = useState(true);
 
   // ── Server data ──────────────────────────────────────────────────────────
-  const { data: allMenus = [], isLoading } = useQuery({
-    queryKey: ['admin', 'menus', 'all', appliedFilter.langCd],
-    queryFn: () => fetchAllMenus(appliedFilter.langCd),
-  });
+  const { data: allMenus = [], isLoading } = useApiQuery<MnuResponse[]>(
+    ['admin', 'menus', 'all', appliedFilter.langCd],
+    () => getAllMenus(appliedFilter.langCd),
+  );
 
   // ── Form state ───────────────────────────────────────────────────────────
   const [formCollapsed, setFormCollapsed] = useState(false);

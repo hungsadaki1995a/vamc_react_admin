@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { logout as logoutApi } from '@/features/auth/LoginPage/api';
+import { logout as logoutApi } from '@/api/common/authApi';
 import { useAuthStore } from '@/stores/authStore';
 import { useProjectStore } from '@/stores/projectStore';
 import { useTabStore } from '@/stores/tabStore';

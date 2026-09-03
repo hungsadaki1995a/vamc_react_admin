@@ -39,12 +39,12 @@ const exampleCols: TableColumnsType<{ key: string; ko: string; en: string }> = [
   { title: '영어', dataIndex: 'en', key: 'en' },
 ];
 const exampleRows = [
-  { key: 'CCO101001SC.VIEW.TEXT_usrId', ko: '사용자ID', en: 'User ID' },
-  { key: 'CCO101001SC.VIEW.BTN_save', ko: '저장', en: 'Save' },
-  { key: 'CCO101001SC.VIEW.TITLE_inputPanel', ko: '입력 패널', en: 'Input Panel' },
-  { key: 'CCO101001SC.SCRIPT.GRID_usrId', ko: '사용자ID', en: 'User ID' },
-  { key: 'CCO101001SC.SCRIPT.MSG_updateSuccess', ko: '수정되었습니다.', en: 'Updated successfully.' },
-  { key: 'CCO101001SC.SCRIPT.BTN_delete', ko: '삭제', en: 'Delete' },
+  { key: 'SYS030101SC.VIEW.TEXT_usrId', ko: '사용자ID', en: 'User ID' },
+  { key: 'SYS030101SC.VIEW.BTN_save', ko: '저장', en: 'Save' },
+  { key: 'SYS030101SC.VIEW.TITLE_inputPanel', ko: '입력 패널', en: 'Input Panel' },
+  { key: 'SYS030101SC.SCRIPT.GRID_usrId', ko: '사용자ID', en: 'User ID' },
+  { key: 'SYS030101SC.SCRIPT.MSG_updateSuccess', ko: '수정되었습니다.', en: 'Updated successfully.' },
+  { key: 'SYS030101SC.SCRIPT.BTN_delete', ko: '삭제', en: 'Delete' },
 ];
 
 export default function GuideI18nPermission() {
@@ -84,17 +84,17 @@ export default function GuideI18nPermission() {
                   title="기본 사용"
                   code={`import { useScreenLabel } from '@/hooks/useScreenLabel';
 
-export default function CCO101001SC() {
+export default function SYS030101SC() {
   // 모든 라벨 헬퍼를 단일 훅 호출로 사용
   const { t, tvt, tvb, tvh, tsg, tsm, tsb, tmc, tmi, tme, labels } = useScreenLabel();
-  // sceId는 TabContext에서 자동 파생 → 'CCO101001SC'
+  // sceId는 TabContext에서 자동 파생 → 'SYS030101SC'
 
   // JSX 레이블
   return (
-    <Form.Item label={tvt('usrId')}>   {/* CCO101001SC.VIEW.TEXT_usrId */}
+    <Form.Item label={tvt('usrId')}>   {/* SYS030101SC.VIEW.TEXT_usrId */}
       <Input />
     </Form.Item>
-    <Button>{tvb('save')}</Button>      {/* CCO101001SC.VIEW.BTN_save */}
+    <Button>{tvb('save')}</Button>      {/* SYS030101SC.VIEW.BTN_save */}
   );
 }`}
                 />
@@ -143,7 +143,7 @@ message.error(tme('E100001'));   // MESSAGE.ERROR.TEXT_E100001`}
                 <CodeSnippet
                   title="TabPanel 외부 (sceId 명시)"
                   code={`// TabContext가 없는 환경에서는 sceId를 직접 전달
-const { tvt } = useScreenLabel('CCO101001SC');`}
+const { tvt } = useScreenLabel('SYS030101SC');`}
                 />
               </div>
             ),
@@ -229,7 +229,7 @@ export async function fetchBulkLabels(): Promise<Record<string, string>> {
                   title="키 구조"
                   code={`{sceId}.{CONTEXT}.{TYPE}_{field}
 
-sceId   : 화면 ID          e.g. CCO101001SC
+sceId   : 화면 ID          e.g. SYS030101SC
 CONTEXT : VIEW | SCRIPT
   VIEW   → JSX 템플릿 안 (label, button text, title)
   SCRIPT → 이벤트 핸들러, 그리드 헤더 (JS 코드 안)
@@ -262,19 +262,19 @@ okText: tsb('confirm'),              // ← SCRIPT.BTN_confirm`}
                   title="DB 라벨 등록 (t_cco_lbl_m + t_cco_lbl_trn)"
                   code={`-- 마스터 등록
 INSERT INTO t_cco_lbl_m (LABEL_KEY, SCREEN_ID, SECTION, TYPE, DETAIL, DEFAULT_TEXT)
-VALUES ('CCO101001SC.VIEW.TEXT_usrId', 'CCO101001SC', 'VIEW', 'TEXT', 'usrId', '사용자ID');
+VALUES ('SYS030101SC.VIEW.TEXT_usrId', 'SYS030101SC', 'VIEW', 'TEXT', 'usrId', '사용자ID');
 
 -- 한국어 번역
 INSERT INTO t_cco_lbl_trn (LABEL_KEY, LANG_CODE, TRANSLATED_TEXT)
-VALUES ('CCO101001SC.VIEW.TEXT_usrId', 'ko', '사용자ID');
+VALUES ('SYS030101SC.VIEW.TEXT_usrId', 'ko', '사용자ID');
 
 -- 영어 번역
 INSERT INTO t_cco_lbl_trn (LABEL_KEY, LANG_CODE, TRANSLATED_TEXT)
-VALUES ('CCO101001SC.VIEW.TEXT_usrId', 'en', 'User ID');
+VALUES ('SYS030101SC.VIEW.TEXT_usrId', 'en', 'User ID');
 
 -- 프로젝트 오버라이드 (특정 프로젝트에서만 다른 번역)
 INSERT INTO t_cco_lbl_prj_trn (LABEL_KEY, PROJECT_ID, LANG_CODE, TRANSLATED_TEXT)
-VALUES ('CCO101001SC.VIEW.TEXT_usrId', 'PJ001', 'ko', '직원ID');`}
+VALUES ('SYS030101SC.VIEW.TEXT_usrId', 'PJ001', 'ko', '직원ID');`}
                 />
               </div>
             ),
@@ -401,7 +401,7 @@ return {
 
 function MyComponent() {
   const ctx = useTabContext(); // null if rendered outside TabPanel
-  const sceId = ctx?.tab.sceId;        // e.g. 'CCO101001SC'
+  const sceId = ctx?.tab.sceId;        // e.g. 'SYS030101SC'
   const title = ctx?.tab.title;        // 탭 제목
   const labelKey = ctx?.tab.labelKey;  // 다국어 키
 }`}
@@ -420,7 +420,7 @@ function TabPanel({ tab, visible }) {
 }
 
 // PageHeader가 표시하는 정보
-// [CCO101001SC] 사용자관리
+// [SYS030101SC] 사용자관리
 //  └─ tab.sceId → tab.componentKey  : [코드]
 //  └─ t(tab.labelKey) → tab.title   : 제목`}
                 />

@@ -6,11 +6,11 @@ import { DEV_TOOLS_ENABLED } from './menuConfig';
 // 레지스트리 키 = **바로 위 폴더명** (= 화면ID = MENU_MNG.MENU_URL_ADDR = sceId)
 //   예) src/features/sys/SYS050301SC/index.tsx → 'SYS050301SC'
 //
-// 팝업은 부모 화면의 자식 폴더에 둔다(…/CCO101001SC/CCO1010011P/index.tsx).
+// 팝업은 부모 화면의 자식 폴더에 둔다(…/{화면ID}/{화면ID}1P/index.tsx).
 // 글롭이 2단계 고정이라 자식 폴더는 걸리지 않는다 — 메뉴로 열지 않는 화면을
 // 레지스트리에서 제외하려는 의도다.
 //
-// 데모·가이드·이관 샘플은 src/dev/pages/ 로 분리했고 DEV_TOOLS_ENABLED 일 때만
+// 데모·가이드는 src/dev/pages/ 로 분리했고 DEV_TOOLS_ENABLED 일 때만
 // 글롭에 포함한다 — 운영 번들에서 통째로 빠진다
 // (menuConfig.ts 의 메뉴 트리 게이트와 같은 플래그를 쓴다).
 type PageLoader = () => Promise<{ default: ComponentType }>;

@@ -67,7 +67,7 @@ GET /api/lbl/bulk
   응답: { status: 200, data: { "BTN_SAVE": "저장", ... } }
 ```
 
-`fetchBulkLabels()` 함수는 `src/api/common/lbl.ts`에 위치합니다.
+`fetchBulkLabels()` 함수는 `src/api/common/lblBulkApi.ts`에 위치합니다.
 
 ---
 
@@ -97,8 +97,8 @@ GET /api/lbl/bulk
 
 | 부분 | DB 컬럼 | 값 |
 |------|---------|-----|
-| 전체 키 | `LBL_CD` | `CCO101001SC.VIEW.TEXT_usrId` |
-| 화면ID | `SCRN_ID` | `CCO101001SC` (공통은 `COMMON`) |
+| 전체 키 | `LBL_CD` | `SYS030101SC.VIEW.TEXT_usrId` |
+| 화면ID | `SCRN_ID` | `SYS030101SC` (공통은 `COMMON`) |
 | 섹션 | (키의 2번째 마디) | `VIEW`(화면 템플릿) / `SCRIPT`(이벤트 핸들러) |
 | 구분 | `LBL_SE_CD` | `TEXT` / `BTN` / `TITLE` / `GRID` / `MSG` |
 

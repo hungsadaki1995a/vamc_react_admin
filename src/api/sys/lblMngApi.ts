@@ -2,12 +2,15 @@ import { apiClient } from '@/lib/api/client';
 import type { ApiResponse } from '@/lib/api/types';
 
 // ─────────────────────────────────────────────────────────────────────────────
-// 다국어 라벨 관리 (A06050300) API
+// 다국어 라벨 관리 API — 시스템 운영 관리 도메인 (메뉴 A06050300 / 화면 SYS050301SC)
 //
 // 서버 계약은 LANG_LBL / LANG_LBL_TRSL 스키마를 그대로 따른다.
 //   · 라벨 식별자는 단일 키가 아니라 PK 3개 (LBL_CD, SCRN_ID, LBL_SE_CD) 다.
 //   · 번역은 라벨의 속성이며 (LANG_CD + 위 3개) 로 식별된다.
 // 화면에서 쓰던 lblId / lclCd / lblTxt / projTxt (PMS 유래) 는 대응 테이블이 없어 폐기했다.
+//
+// ⚠️ 부트스트랩용 라벨 조회(`/api/lbl/bulk`)와 사용 언어 목록(`/api/lbl/languages`)은
+//    전 화면이 공유하므로 `@/api/common/lblBulkApi` 에 있다. 여기에는 관리 화면 전용 CRUD 만 둔다.
 // ─────────────────────────────────────────────────────────────────────────────
 
 /** 라벨-번역 1행 — 서버 LblSaveItem 과 1:1. 번역이 없는 라벨은 langCd/trslLtr 가 비어서 온다. */
@@ -29,11 +32,6 @@ export interface LblMaster {
   lblExpln: string;
   trsl:     Record<string, string>;    // langCd → 번역문자
 }
-
-// 사용 언어 목록(LangItem / getLanguages)은 메뉴 설정 화면도 쓰므로
-// 공용 API `@/api/common/lbl` 로 승격했다. 화면 코드가 그대로 쓰도록 여기서 재노출한다.
-export type { LangItem } from '@/api/common/lbl';
-export { getLanguages } from '@/api/common/lbl';
 
 /** 라벨 PK 3개 */
 export interface LblKey {
@@ -79,7 +77,7 @@ export interface LblRowsParams {
   lblSeCd?: string;
 }
 
-/** 라벨-번역 목록 조회 */
+/** GET /api/lbl/rows — 라벨-번역 목록 조회 */
 export async function getLabelRows(params: LblRowsParams): Promise<ApiResponse<LblRow[]>> {
   const { data } = await apiClient.get<ApiResponse<LblRow[]>>('/api/lbl/rows', { params });
   return {
@@ -90,7 +88,7 @@ export async function getLabelRows(params: LblRowsParams): Promise<ApiResponse<L
 }
 
 /**
- * 라벨/번역 배치 저장 (upsert).
+ * POST /api/lbl/batch — 라벨/번역 배치 저장 (upsert).
  *
  * 서버는 항목마다 LANG_LBL 을 upsert 한 뒤 langCd/trslLtr 가 있으면 LANG_LBL_TRSL 도 upsert 한다.
  * 따라서 번역만 저장할 때도 **lblExpln 을 반드시 실어 보내야 한다** — 비우면 라벨설명이 지워진다.
@@ -100,7 +98,7 @@ export async function saveLabelBatch(items: LblRow[]): Promise<ApiResponse<void>
   return { success: data.status === 200, message: data.message, data: null };
 }
 
-/** 라벨 삭제 — 번역까지 함께 삭제된다 */
+/** DELETE /api/lbl — 라벨 삭제. 번역까지 함께 삭제된다 */
 export async function deleteLabel(key: LblKey): Promise<ApiResponse<void>> {
   const { data } = await apiClient.delete<ApiResponse<void>>('/api/lbl', { params: key });
   return { success: data.status === 200, message: data.message, data: null };

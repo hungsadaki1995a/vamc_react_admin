@@ -31,18 +31,18 @@ import { useTabContext } from '@/contexts/TabContext';
  * const { tvt, tvb, tsg, tsm, tsb, tm, labels } = useScreenLabel();
  *
  * // Explicit sceId (outside TabPanel):
- * const { tvt } = useScreenLabel('CCO101001SC');
+ * const { tvt } = useScreenLabel('SYS030101SC');
  *
  * // JSX:
- * {tvt('usrId')}         // → CCO101001SC.VIEW.TEXT_usrId
- * {tvb('save')}          // → CCO101001SC.VIEW.BTN_save
+ * {tvt('usrId')}         // → SYS030101SC.VIEW.TEXT_usrId
+ * {tvb('save')}          // → SYS030101SC.VIEW.BTN_save
  *
  * // Grid header:
- * tsg('dpNm')            // → CCO101001SC.SCRIPT.GRID_dpNm
+ * tsg('dpNm')            // → SYS030101SC.SCRIPT.GRID_dpNm
  *
  * // Handler:
- * tsm('updateSuccess')   // → CCO101001SC.SCRIPT.MSG_updateSuccess
- * tsb('cancel')          // → CCO101001SC.SCRIPT.BTN_cancel
+ * tsm('updateSuccess')   // → SYS030101SC.SCRIPT.MSG_updateSuccess
+ * tsb('cancel')          // → SYS030101SC.SCRIPT.BTN_cancel
  *
  * // Global message (cross-screen):
  * tmc('C100007')   // → MESSAGE.CONFIRM.TEXT_C100007

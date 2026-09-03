@@ -6,12 +6,12 @@ import { findMenuByKey, findMenuByComponentPath, findTopLevelMenuKey } from '@/u
 /**
  * Returns a `navigateTab(key, params?)` function that finds a menu item by key
  * from the dynamic server menu tree and opens it as a tab with optional params.
- * Accepts either a menu key (menuCd) or componentPath (e.g. "CCO101001SC").
+ * Accepts either a menu key (menuCd) or componentPath (e.g. "SYS030101SC").
  *
  * Usage:
  * ```tsx
  * const navigateTab = useNavigateTab();
- * navigateTab('CCO101001SC', { usrId: row.usrId });
+ * navigateTab('SYS030101SC', { usrId: row.usrId });
  * ```
  *
  * In the target page, read params via:

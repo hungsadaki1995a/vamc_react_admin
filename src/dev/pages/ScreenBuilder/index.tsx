@@ -15,13 +15,27 @@ interface BuilderForm {
   menuKey: string;
 }
 
-// src/features/ 하위 실제 도메인 폴더 — 새 폴더를 만들면 여기에 추가한다.
-// 데모·가이드·이관 샘플은 features 가 아니라 src/dev/pages/ 에 있으므로 선택지에서 뺐다.
+// 업무 도메인 — 메뉴 IA 의 대분류 7개와 1:1 이다.
+// 폴더명(소문자)이 화면ID 접두 3자(대문자)와 같은 값이라 둘이 어긋날 일이 없다.
+//   src/features/sys/SYS030101SC/  ←→  메뉴코드 A06030100
+//
+// `auth`(로그인 등 메뉴 밖 화면)와 `dashboard`(정적 메뉴)는 화면ID 채번 규칙 대상이 아니라 뺐다.
+// 데모·가이드는 features 가 아니라 src/dev/pages/ 에 있으므로 역시 선택지에 없다.
 const DOMAIN_OPTIONS = [
-  { value: 'admin', label: 'admin — 어드민/시스템 관리' },
-  { value: 'cco', label: 'cco — 공통 업무 화면' },
-  { value: 'dashboard', label: 'dashboard — 대시보드' },
+  { value: 'mbr', label: 'mbr — 회원 관리 (A01)' },
+  { value: 'trd', label: 'trd — 거래 관리 (A02)' },
+  { value: 'npl', label: 'npl — NPL정보 관리 (A03)' },
+  { value: 'cnt', label: 'cnt — 컨텐츠 관리 (A04)' },
+  { value: 'stt', label: 'stt — 통계 (A05)' },
+  { value: 'sys', label: 'sys — 시스템 운영 관리 (A06)' },
+  { value: 'auc', label: 'auc — 경매 관리 (A07)' },
 ];
+
+/** 화면ID 형식 — {도메인3}{중분류2}{소분류2}{일련2}{유형2}. 유형은 SC(화면) / 1P·2P(팝업) */
+const SCREEN_ID_PATTERN = /^[A-Z]{3}\d{6}(SC|\dP)$/;
+
+/** 메뉴코드 형식 — MENU_MNG.MENU_CD. 대분류 1자 + 숫자 8자 (예: A06030100) */
+const MENU_CD_PATTERN = /^[A-Z]\d{8}$/;
 
 const LAYOUT_OPTIONS: { value: LayoutKind; label: string; desc: string }[] = [
   { value: 'grid-list', label: '목록', desc: 'FilterPanel + GridTable' },
@@ -32,9 +46,13 @@ const LAYOUT_OPTIONS: { value: LayoutKind; label: string; desc: string }[] = [
 
 /**
  * 화면 생성기 — 뼈대(skeleton).
- * 입력값을 받아 `src/features/{domain}/{ScreenId}/index.tsx` 스캐폴드와
- * `menuConfig` 항목을 생성하는 것이 목표. 현재는 UI 폼만 배치돼 있고
- * 실제 생성 로직은 미구현입니다.
+ *
+ * 입력값을 받아 `src/features/{domain}/{화면ID}/index.tsx` 스캐폴드를 만드는 것이 목표.
+ * 현재는 UI 폼만 배치돼 있고 실제 생성 로직은 미구현입니다.
+ *
+ * ⚠️ 서버 메뉴로 여는 화면은 `menuConfig` 에 넣지 않는다 — `MENU_MNG.MENU_URL_ADDR` 에
+ *    화면ID를 넣으면 `componentRegistry` 가 폴더를 자동 발견한다. `menuConfig` 는
+ *    정적 메뉴(대시보드·개발 도구)만 담는다.
  */
 export default function ScreenBuilder() {
   const { toast } = useNotify();
@@ -45,7 +63,7 @@ export default function ScreenBuilder() {
       <div className="ds-section-header">
         <h2>화면 생성기</h2>
         <p style={{ color: 'var(--text-secondary)', fontSize: 13, margin: '4px 0 0' }}>
-          레이아웃 패턴을 선택해 화면 컴포넌트와 <Text code>menuConfig</Text> 항목의 스캐폴드를 생성합니다.
+          레이아웃 패턴을 선택해 <Text code>src/features/{'{도메인}'}/{'{화면ID}'}/index.tsx</Text> 스캐폴드를 생성합니다.
         </p>
       </div>
 
@@ -64,10 +82,18 @@ export default function ScreenBuilder() {
               form={form}
               layout="vertical"
               size="small"
-              initialValues={{ layout: 'grid-list', domain: 'cco' }}
+              initialValues={{ layout: 'grid-list', domain: 'sys' }}
             >
-              <Form.Item name="screenId" label="화면 ID (컴포넌트 폴더명)" rules={[{ required: true }]}>
-                <Input placeholder="예: AdminMenuManagement" />
+              <Form.Item
+                name="screenId"
+                label="화면 ID (폴더명 = componentPath = MENU_URL_ADDR = sceId)"
+                extra="{도메인3}{중분류2}{소분류2}{일련2}{유형2} — 11자. 유형은 SC(화면) / 1P·2P(팝업). 한 번 부여하면 불변."
+                rules={[
+                  { required: true },
+                  { pattern: SCREEN_ID_PATTERN, message: '형식이 맞지 않습니다 (예: NPL010101SC)' },
+                ]}
+              >
+                <Input placeholder="예: NPL010101SC" style={{ textTransform: 'uppercase' }} />
               </Form.Item>
               <Form.Item name="screenName" label="화면명" rules={[{ required: true }]}>
                 <Input placeholder="예: 채권 목록" />
@@ -75,8 +101,13 @@ export default function ScreenBuilder() {
               <Form.Item name="domain" label="도메인 (src/features 하위 폴더)">
                 <Select options={DOMAIN_OPTIONS} />
               </Form.Item>
-              <Form.Item name="menuKey" label="메뉴 키">
-                <Input placeholder="예: admin.system.menu" />
+              <Form.Item
+                name="menuKey"
+                label="메뉴 코드 (MENU_MNG.MENU_CD)"
+                extra="이 메뉴의 MENU_URL_ADDR 에 위 화면ID를 넣어야 화면이 열린다. 라벨 키는 lbl.menu.{메뉴코드}."
+                rules={[{ pattern: MENU_CD_PATTERN, message: '형식이 맞지 않습니다 (예: A03010100)' }]}
+              >
+                <Input placeholder="예: A03010100" style={{ textTransform: 'uppercase' }} />
               </Form.Item>
               <Form.Item name="layout" label="레이아웃 패턴">
                 <Radio.Group>

@@ -3,6 +3,16 @@ import type { ApiResponse } from '@/lib/api/types';
 import type { MenuItem } from '@/types/menu';
 import { useLocaleStore } from '@/stores/localeStore';
 
+// ─────────────────────────────────────────────────────────────────────────────
+// 내 권한 메뉴(MENU_MNG) 조회 API — 전역 도메인.
+//
+// 로그인 사용자가 볼 수 있는 메뉴 트리(`GET /api/common/menus/my`)를 읽어
+// 좌측 레일·플라이아웃을 그린다. 권한(permType)도 이 응답이 정한다.
+//
+// ⚠️ 메뉴를 **관리**하는 화면(SYS030101SC)의 호출은 `src/api/sys/menuMngApi.ts` 다.
+//    응답 DTO(MnuResponse)만 이 파일 것을 공유한다.
+// ─────────────────────────────────────────────────────────────────────────────
+
 // ── vamc-npl-backend MnuResponse ──────────────────────────────────────────────
 // Matches /api/common/menus/all response item
 
