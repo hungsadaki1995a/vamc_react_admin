@@ -81,8 +81,8 @@ interface SearchSelectCellEditorProps extends CustomCellEditorProps {
  *   cellEditor: SearchSelectCellEditor,
  *   cellEditorParams: {
  *     fetchOptions: async (kw) => {
- *       const list = await getOrgList({ orgNm: kw });
- *       return list.map(o => ({ label: o.orgNm, value: o.orgId }));
+ *       const res = await getOrgList({ orgNm: kw });   // src/api/{도메인}/org.ts
+ *       return (res.data ?? []).map(o => ({ label: o.orgNm, value: o.orgId }));
  *     },
  *   },
  * }

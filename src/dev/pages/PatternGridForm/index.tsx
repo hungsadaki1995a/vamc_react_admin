@@ -48,9 +48,9 @@ const YN_OPTIONS = [
 
 // Mock 화면 목록 — SceSelectField 대신 정적 옵션으로 사용
 const MOCK_SCREENS: SearchSelectOption[] = [
-  { value: 'CCO101001SC', label: '사용자관리',   bzLrgCzCd: 'SYS' },
-  { value: 'CCO102001SC', label: '공통코드관리', bzLrgCzCd: 'SYS' },
-  { value: 'CCO103002SC', label: '메뉴관리',    bzLrgCzCd: 'SYS' },
+  { value: 'SYS010101SC', label: '사용자관리',   bzLrgCzCd: 'SYS' },
+  { value: 'SYS010201SC', label: '공통코드관리', bzLrgCzCd: 'SYS' },
+  { value: 'SYS030101SC', label: '메뉴관리',    bzLrgCzCd: 'SYS' },
   { value: 'PRJ101001SC', label: '프로젝트목록', bzLrgCzCd: 'PRJ' },
   { value: 'PRJ102001SC', label: '업무관리',    bzLrgCzCd: 'PRJ' },
   { value: 'PRJ103001SC', label: '일정관리',    bzLrgCzCd: 'PRJ' },
@@ -68,9 +68,9 @@ const SCE_COLUMNS: ColumnsType<SearchSelectOption> = [
 
 const INITIAL_DATA: MockMnu[] = [
   { mnuId: '100000', mnuNm: '시스템 관리',   upMnuId: '',       mnuRank: 1, sceId: '',            sceNm: '',        mnuLevRank: 1, sceXrsYn: 'N', mnuXrsYn: 'Y', labelKey: 'MNU.SYS.TITLE', bzLrgCzCd: 'SYS' },
-  { mnuId: '100100', mnuNm: '사용자 관리',   upMnuId: '100000', mnuRank: 1, sceId: 'CCO101001SC', sceNm: '사용자관리',  mnuLevRank: 2, sceXrsYn: 'Y', mnuXrsYn: 'Y', labelKey: 'MNU.SYS.USR',   bzLrgCzCd: 'SYS' },
-  { mnuId: '100200', mnuNm: '메뉴 관리',     upMnuId: '100000', mnuRank: 2, sceId: 'CCO103002SC', sceNm: '메뉴관리',   mnuLevRank: 2, sceXrsYn: 'Y', mnuXrsYn: 'Y', labelKey: 'MNU.SYS.MNU',   bzLrgCzCd: 'SYS' },
-  { mnuId: '100300', mnuNm: '공통코드 관리', upMnuId: '100000', mnuRank: 3, sceId: 'CCO102001SC', sceNm: '공통코드관리', mnuLevRank: 2, sceXrsYn: 'Y', mnuXrsYn: 'Y', labelKey: 'MNU.SYS.CD',    bzLrgCzCd: 'SYS' },
+  { mnuId: '100100', mnuNm: '사용자 관리',   upMnuId: '100000', mnuRank: 1, sceId: 'SYS010101SC', sceNm: '사용자관리',  mnuLevRank: 2, sceXrsYn: 'Y', mnuXrsYn: 'Y', labelKey: 'MNU.SYS.USR',   bzLrgCzCd: 'SYS' },
+  { mnuId: '100200', mnuNm: '메뉴 관리',     upMnuId: '100000', mnuRank: 2, sceId: 'SYS030101SC', sceNm: '메뉴관리',   mnuLevRank: 2, sceXrsYn: 'Y', mnuXrsYn: 'Y', labelKey: 'MNU.SYS.MNU',   bzLrgCzCd: 'SYS' },
+  { mnuId: '100300', mnuNm: '공통코드 관리', upMnuId: '100000', mnuRank: 3, sceId: 'SYS010201SC', sceNm: '공통코드관리', mnuLevRank: 2, sceXrsYn: 'Y', mnuXrsYn: 'Y', labelKey: 'MNU.SYS.CD',    bzLrgCzCd: 'SYS' },
   { mnuId: '200000', mnuNm: '프로젝트 관리', upMnuId: '',       mnuRank: 2, sceId: '',            sceNm: '',        mnuLevRank: 1, sceXrsYn: 'N', mnuXrsYn: 'Y', labelKey: 'MNU.PRJ.TITLE', bzLrgCzCd: 'PRJ' },
   { mnuId: '200100', mnuNm: '프로젝트 목록', upMnuId: '200000', mnuRank: 1, sceId: 'PRJ101001SC', sceNm: '프로젝트목록', mnuLevRank: 2, sceXrsYn: 'Y', mnuXrsYn: 'Y', labelKey: 'MNU.PRJ.LIST',  bzLrgCzCd: 'PRJ' },
   { mnuId: '200200', mnuNm: '업무 관리',     upMnuId: '200000', mnuRank: 2, sceId: 'PRJ102001SC', sceNm: '업무관리',   mnuLevRank: 2, sceXrsYn: 'Y', mnuXrsYn: 'Y', labelKey: 'MNU.PRJ.TASK',  bzLrgCzCd: 'PRJ' },

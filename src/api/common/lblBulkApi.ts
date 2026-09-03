@@ -1,10 +1,14 @@
 import { apiClient } from '@/lib/api/client';
 import type { ApiResponse } from '@/lib/api/types';
 
-/**
- * 다국어 라벨(LBL) 공용 API — 여러 화면이 공유하는 호출만 둔다.
- * 라벨 관리 화면 전용 CRUD 는 `src/features/sys/SYS050301SC/api.ts` 에 있다.
- */
+// ─────────────────────────────────────────────────────────────────────────────
+// 다국어 라벨(LANG_LBL) 일괄 조회 API — 전역 도메인.
+//
+// 앱 부트스트랩 시 현재 로케일의 라벨 전체를 한 번에 받아 labelStore 캐시에 넣는다.
+// 사용 언어 목록(LANG_MNG)도 여러 화면이 공유하므로 여기 둔다.
+//
+// ⚠️ 라벨을 **관리**하는 화면(SYS050301SC)의 CRUD 는 `src/api/sys/lblMngApi.ts` 다.
+// ─────────────────────────────────────────────────────────────────────────────
 
 /** 사용 언어 목록 1건 (LANG_MNG) */
 export interface LangItem {

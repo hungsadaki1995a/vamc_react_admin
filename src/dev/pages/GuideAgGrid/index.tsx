@@ -343,7 +343,7 @@ const projectEditorsCode = `// 본 프로젝트 커스텀 에디터 (src/compone
 import DateCellEditor from '@/components/grid/cellEditors/DateCellEditor';
 import SelectCellEditor from '@/components/grid/cellEditors/SelectCellEditor';
 import TagsCellEditor from '@/components/grid/cellEditors/TagsCellEditor';
-import UserCellEditor from '@/components/grid/cellEditors/UserCellEditor';
+import NumberCellEditor from '@/components/grid/cellEditors/NumberCellEditor';
 
 const columnDefs: ColDef[] = [
   {
@@ -375,10 +375,11 @@ const columnDefs: ColDef[] = [
     },
   },
   {
-    field: 'assignee',
-    headerName: '담당자',
+    field: 'manDay',
+    headerName: '공수(MD)',
     editable: true,
-    cellEditor: UserCellEditor,
+    cellEditor: NumberCellEditor,
+    cellEditorParams: { min: 0, precision: 1 },
   },
 ];
 
@@ -1292,7 +1293,7 @@ export default function GuideAgGrid() {
 
           <h3 style={{ marginTop: 24 }}>본 프로젝트 에디터</h3>
           <p style={{ color: 'var(--text-secondary)', marginBottom: 16 }}>
-            4가지 커스텀 에디터를 제공합니다: DateCellEditor, SelectCellEditor, TagsCellEditor, UserCellEditor
+            5가지 커스텀 에디터를 제공합니다: DateCellEditor, SelectCellEditor, NumberCellEditor, TagsCellEditor, TextAreaCellEditor
           </p>
           <CodeSnippet code={projectEditorsCode} title="프로젝트 커스텀 에디터 사용" />
 

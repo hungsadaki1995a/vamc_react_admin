@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { fetchBulkLabels } from '@/api/common/lbl';
+import { fetchBulkLabels } from '@/api/common/lblBulkApi';
 import { idbGet, idbSet } from '@/lib/cache/idbCache';
 import { useLocaleStore } from '@/stores/localeStore';
 

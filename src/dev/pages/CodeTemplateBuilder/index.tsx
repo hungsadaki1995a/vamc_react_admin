@@ -21,14 +21,14 @@ function buildTemplate(kind: TemplateKind, name: string): string {
     case 'api':
       // 서버는 { status, message, data } 만 내려주고 success 필드가 없다.
       // useApiQuery / useApiMutation 은 success 로 성공을 판정하므로 여기서 status → success 로
-      // 변환해 준다. (src/api/sys/proj.ts 의 getMyProjects 와 동일한 형태)
+      // 변환해 준다. (src/api/sys/lblMngApi.ts 의 getLabelRows 와 동일한 형태)
       return `// 저장 위치: src/api/{도메인}/${camel}.ts
 //   도메인 = common(전역 부트스트랩) | sys(시스템 운영 관리) — 새 업무 도메인은 폴더를 추가한다.
-//   한 화면만 쓰는 호출이면 여기가 아니라 화면 폴더의 api.ts 에 둔다.
+//   파일명은 화면ID가 아니라 업무명으로 짓는다 — 예: menuMng.ts(메뉴 관리), lblMng.ts(라벨 관리).\n//   화면 폴더(src/features/**)에는 api.ts 를 만들지 않는다.
 import { apiClient } from '@/lib/api/client';
 import type { ApiResponse } from '@/lib/api/types';
 
-// 서버 DTO 와 1:1 대응 — 타입은 이 파일에 코로케이트한다 (src/api/common/code.ts 참고)
+// 서버 DTO 와 1:1 대응 — 타입은 이 파일에 코로케이트한다 (src/api/common/comCdApi.ts 참고)
 export interface ${Pascal} {
   ${camel}Id: string;
   ${camel}Nm: string;

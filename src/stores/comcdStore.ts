@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { getAllCodeList, type CodeDetail } from '@/api/common/code';
+import { getAllCodeList, type CodeDetail } from '@/api/common/comCdApi';
 import { idbGet, idbSet } from '@/lib/cache/idbCache';
 import { useProjectStore } from '@/stores/projectStore';
 import { useLocaleStore } from '@/stores/localeStore';

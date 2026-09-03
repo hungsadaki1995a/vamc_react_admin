@@ -66,7 +66,8 @@ import type { ColDef } from 'ag-grid-community';
 import DateCellEditor, { DateCellRenderer } from '@/components/grid/cellEditors/DateCellEditor';
 import SelectCellEditor from '@/components/grid/cellEditors/SelectCellEditor';
 import TagsCellEditor from '@/components/grid/cellEditors/TagsCellEditor';
-import UserCellEditor from '@/components/grid/cellEditors/UserCellEditor';
+import NumberCellEditor from '@/components/grid/cellEditors/NumberCellEditor';
+import TextAreaCellEditor from '@/components/grid/cellEditors/TextAreaCellEditor';
 import ComcdSelectCell, { ComcdSelectCellEditor } from '@/components/grid/ComcdSelectCell';
 import {
   SearchSelectCellEditor,
@@ -81,8 +82,8 @@ import {
   cellEditor: SearchSelectCellEditor,
   cellEditorParams: {
     fetchOptions: async (kw) => {
-      const list = await getOrgList({ orgNm: kw });
-      return list.map(o => ({ label: o.orgNm, value: o.orgId }));
+      const res = await getOrgList({ orgNm: kw });   // src/api/{도메인}/org.ts
+      return (res.data ?? []).map(o => ({ label: o.orgNm, value: o.orgId }));
     },
   },
   // valueFormatter: searchSelectValueFormatter,  ← GridTable이 자동 주입하므로 생략 가능
@@ -115,7 +116,10 @@ import {
   cellEditorParams: { values: ['todo','done'], valueLabels: { todo:'예정', done:'완료' } } }
 { field: 'tags',    editable: true, cellEditor: TagsCellEditor,
   cellEditorParams: { presetTags: ['긴급','중요'] }, cellEditorPopup: true }
-{ field: 'assignee', editable: true, cellEditor: UserCellEditor }
+{ field: 'manDay',  editable: true, cellEditor: NumberCellEditor,
+  cellEditorParams: { min: 0, precision: 1 } }
+{ field: 'mrCont',  editable: true, cellEditor: TextAreaCellEditor,
+  cellEditorParams: { rows: 4 }, cellEditorPopup: true }
 ```
 
 ### enableCellSpan과 enableCellTextSelection
@@ -673,24 +677,29 @@ import type { SearchSelectValue } from '@/components/inputs/SearchSelectField';
 interface SearchSelectValue { label: string; value: string; }
 ```
 
-**도메인 Wrapper 패턴** (`src/components/inputs/selectors/`):
+**도메인 Wrapper 패턴**
+
+업무 도메인별 검색 선택 필드는 `SearchSelectField` 를 감싸 만듭니다.
+API 호출은 wrapper 안이 아니라 **`src/api/{도메인}/{업무}.ts`** 에 두고 wrapper 는 그걸 부릅니다.
 
 ```tsx
-import DeptSelectField from '@/components/inputs/selectors/DeptSelectField';
+// src/components/inputs/selectors/DeptSelectField.tsx (예시 — 서버 구현 후 작성)
+import SearchSelectField from '@/components/inputs/SearchSelectField';
+import { getOrgTree, getOrgList } from '@/api/sys/org';
 
-// 부서 선택 — fetchOptions(getOrgTree/getOrgList) 내장
-<DeptSelectField value={dept} onChange={setDept} />
-<DeptSelectField value={depts} onChange={setDepts} multiple />
+export default function DeptSelectField(props) {
+  const fetchOptions = async (kw: string) => {
+    const res = kw ? await getOrgList({ orgNm: kw }) : await getOrgTree();
+    return (res.data ?? []).map(o => ({ label: o.orgNm, value: o.orgId }));
+  };
+  return <SearchSelectField fetchOptions={fetchOptions} modalTitle="부서 검색" {...props} />;
+}
 ```
 
-| DeptSelectField Prop | 타입 | 설명 |
-|------|------|------|
-| `value` | `SearchSelectValue \| SearchSelectValue[] \| null` | 선택 값 |
-| `onChange` | `(val) => void` | 변경 핸들러 |
-| `multiple` | `boolean` | 다중 선택 |
-| `disabled` | `boolean` | 비활성화 |
-| `style` | `CSSProperties` | 스타일 |
-| `placeholder` | `string` | 플레이스홀더 |
+> ⚠️ 2026-09-03 기준 `selectors/` 폴더는 비어 있습니다. Dept·Usr·Sce·ProjSelectField 는
+> `/api/org`·`/api/usr`·`/api/sce`·`/api/proj` 컨트롤러가 양 백엔드에 없어(404) 삭제했습니다.
+> 서버 컨트롤러를 구현한 뒤 위 패턴으로 다시 만드세요.
+> 그전까지는 `SearchSelectField` 에 `options`(정적 목록)를 직접 넘겨 씁니다.
 
 ---
 

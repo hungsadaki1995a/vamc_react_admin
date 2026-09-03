@@ -1,7 +1,7 @@
 /**
  * PatternI18nLabel — 다국어 라벨 관리 화면 패턴 샘플
  *
- * CCO102003SC 화면 구조를 mock data 기반으로 재현.
+ * SYS050301SC 화면 구조를 mock data 기반으로 재현.
  * - FilterPanel + splitBody(좌 60% 라벨목록 / 우 40% 번역그리드) + FormPanel
  * - API 없음, 로컬 상태만 사용
  */
@@ -46,19 +46,19 @@ interface FormFields {
 // ── Mock data ────────────────────────────────────────────────────────────────
 
 const MOCK_LABELS: LblItem[] = [
-  { lblId: 'CCO102003SC.GRID.TEXT_lblId',        lblTpCd: 'TEXT', mrCont: '라벨 키' },
-  { lblId: 'CCO102003SC.GRID.TEXT_screenId',     lblTpCd: 'TEXT', mrCont: '화면ID' },
-  { lblId: 'CCO102003SC.GRID.TEXT_mrCont',       lblTpCd: 'TEXT', mrCont: '기본 텍스트' },
-  { lblId: 'CCO102003SC.GRID.TEXT_lclCd',        lblTpCd: 'TEXT', mrCont: '언어' },
-  { lblId: 'CCO102003SC.BUTTON.TEXT_save',       lblTpCd: 'TEXT', mrCont: '저장' },
-  { lblId: 'CCO102003SC.BUTTON.TEXT_delete',     lblTpCd: 'TEXT', mrCont: '삭제' },
-  { lblId: 'CCO102003SC.BUTTON.TEXT_add',        lblTpCd: 'TEXT', mrCont: '추가' },
-  { lblId: 'CCO102003SC.BUTTON.TEXT_reset',      lblTpCd: 'TEXT', mrCont: '초기화' },
-  { lblId: 'CCO102003SC.FILTER.TEXT_lblId',      lblTpCd: 'TEXT', mrCont: '라벨 키 검색' },
-  { lblId: 'CCO102003SC.FILTER.TEXT_mrCont',     lblTpCd: 'TEXT', mrCont: '기본 텍스트 검색' },
-  { lblId: 'CCO101001SC.GRID.TEXT_usrNm',        lblTpCd: 'TEXT', mrCont: '사용자명' },
-  { lblId: 'CCO101001SC.GRID.TEXT_deptNm',       lblTpCd: 'TEXT', mrCont: '부서명' },
-  { lblId: 'CCO101001SC.FILTER.TEXT_usrId',      lblTpCd: 'TEXT', mrCont: '사용자ID' },
+  { lblId: 'SYS050301SC.GRID.TEXT_lblId',        lblTpCd: 'TEXT', mrCont: '라벨 키' },
+  { lblId: 'SYS050301SC.GRID.TEXT_screenId',     lblTpCd: 'TEXT', mrCont: '화면ID' },
+  { lblId: 'SYS050301SC.GRID.TEXT_mrCont',       lblTpCd: 'TEXT', mrCont: '기본 텍스트' },
+  { lblId: 'SYS050301SC.GRID.TEXT_lclCd',        lblTpCd: 'TEXT', mrCont: '언어' },
+  { lblId: 'SYS050301SC.BUTTON.TEXT_save',       lblTpCd: 'TEXT', mrCont: '저장' },
+  { lblId: 'SYS050301SC.BUTTON.TEXT_delete',     lblTpCd: 'TEXT', mrCont: '삭제' },
+  { lblId: 'SYS050301SC.BUTTON.TEXT_add',        lblTpCd: 'TEXT', mrCont: '추가' },
+  { lblId: 'SYS050301SC.BUTTON.TEXT_reset',      lblTpCd: 'TEXT', mrCont: '초기화' },
+  { lblId: 'SYS050301SC.FILTER.TEXT_lblId',      lblTpCd: 'TEXT', mrCont: '라벨 키 검색' },
+  { lblId: 'SYS050301SC.FILTER.TEXT_mrCont',     lblTpCd: 'TEXT', mrCont: '기본 텍스트 검색' },
+  { lblId: 'SYS010101SC.GRID.TEXT_usrNm',        lblTpCd: 'TEXT', mrCont: '사용자명' },
+  { lblId: 'SYS010101SC.GRID.TEXT_deptNm',       lblTpCd: 'TEXT', mrCont: '부서명' },
+  { lblId: 'SYS010101SC.FILTER.TEXT_usrId',      lblTpCd: 'TEXT', mrCont: '사용자ID' },
   { lblId: 'MESSAGE.INFO.TEXT_I100002',          lblTpCd: 'TEXT', mrCont: '등록되었습니다.' },
   { lblId: 'MESSAGE.INFO.TEXT_I100003',          lblTpCd: 'TEXT', mrCont: '수정되었습니다.' },
   { lblId: 'MESSAGE.INFO.TEXT_I100004',          lblTpCd: 'TEXT', mrCont: '삭제되었습니다.' },
@@ -68,25 +68,25 @@ const MOCK_LABELS: LblItem[] = [
 ];
 
 const MOCK_TRANSLATIONS: Record<string, LblTrnItem[]> = {
-  'CCO102003SC.GRID.TEXT_lblId': [
-    { lblId: 'CCO102003SC.GRID.TEXT_lblId', lclCd: 'ko', lblTxt: '라벨 키',   _rowId: 'ko' },
-    { lblId: 'CCO102003SC.GRID.TEXT_lblId', lclCd: 'en', lblTxt: 'Label Key', _rowId: 'en' },
-    { lblId: 'CCO102003SC.GRID.TEXT_lblId', lclCd: 'vn', lblTxt: 'Mã nhãn',   _rowId: 'vn' },
+  'SYS050301SC.GRID.TEXT_lblId': [
+    { lblId: 'SYS050301SC.GRID.TEXT_lblId', lclCd: 'ko', lblTxt: '라벨 키',   _rowId: 'ko' },
+    { lblId: 'SYS050301SC.GRID.TEXT_lblId', lclCd: 'en', lblTxt: 'Label Key', _rowId: 'en' },
+    { lblId: 'SYS050301SC.GRID.TEXT_lblId', lclCd: 'vn', lblTxt: 'Mã nhãn',   _rowId: 'vn' },
   ],
-  'CCO102003SC.GRID.TEXT_mrCont': [
-    { lblId: 'CCO102003SC.GRID.TEXT_mrCont', lclCd: 'ko', lblTxt: '기본 텍스트',    _rowId: 'ko' },
-    { lblId: 'CCO102003SC.GRID.TEXT_mrCont', lclCd: 'en', lblTxt: 'Default Text',  _rowId: 'en' },
-    { lblId: 'CCO102003SC.GRID.TEXT_mrCont', lclCd: 'vn', lblTxt: 'Văn bản mặc định', _rowId: 'vn' },
+  'SYS050301SC.GRID.TEXT_mrCont': [
+    { lblId: 'SYS050301SC.GRID.TEXT_mrCont', lclCd: 'ko', lblTxt: '기본 텍스트',    _rowId: 'ko' },
+    { lblId: 'SYS050301SC.GRID.TEXT_mrCont', lclCd: 'en', lblTxt: 'Default Text',  _rowId: 'en' },
+    { lblId: 'SYS050301SC.GRID.TEXT_mrCont', lclCd: 'vn', lblTxt: 'Văn bản mặc định', _rowId: 'vn' },
   ],
-  'CCO102003SC.BUTTON.TEXT_save': [
-    { lblId: 'CCO102003SC.BUTTON.TEXT_save', lclCd: 'ko', lblTxt: '저장', _rowId: 'ko' },
-    { lblId: 'CCO102003SC.BUTTON.TEXT_save', lclCd: 'en', lblTxt: 'Save', _rowId: 'en' },
-    { lblId: 'CCO102003SC.BUTTON.TEXT_save', lclCd: 'vn', lblTxt: 'Lưu',  _rowId: 'vn' },
+  'SYS050301SC.BUTTON.TEXT_save': [
+    { lblId: 'SYS050301SC.BUTTON.TEXT_save', lclCd: 'ko', lblTxt: '저장', _rowId: 'ko' },
+    { lblId: 'SYS050301SC.BUTTON.TEXT_save', lclCd: 'en', lblTxt: 'Save', _rowId: 'en' },
+    { lblId: 'SYS050301SC.BUTTON.TEXT_save', lclCd: 'vn', lblTxt: 'Lưu',  _rowId: 'vn' },
   ],
-  'CCO102003SC.BUTTON.TEXT_delete': [
-    { lblId: 'CCO102003SC.BUTTON.TEXT_delete', lclCd: 'ko', lblTxt: '삭제',   _rowId: 'ko' },
-    { lblId: 'CCO102003SC.BUTTON.TEXT_delete', lclCd: 'en', lblTxt: 'Delete', _rowId: 'en' },
-    { lblId: 'CCO102003SC.BUTTON.TEXT_delete', lclCd: 'vn', lblTxt: 'Xóa',    _rowId: 'vn' },
+  'SYS050301SC.BUTTON.TEXT_delete': [
+    { lblId: 'SYS050301SC.BUTTON.TEXT_delete', lclCd: 'ko', lblTxt: '삭제',   _rowId: 'ko' },
+    { lblId: 'SYS050301SC.BUTTON.TEXT_delete', lclCd: 'en', lblTxt: 'Delete', _rowId: 'en' },
+    { lblId: 'SYS050301SC.BUTTON.TEXT_delete', lclCd: 'vn', lblTxt: 'Xóa',    _rowId: 'vn' },
   ],
   'MESSAGE.INFO.TEXT_I100002': [
     { lblId: 'MESSAGE.INFO.TEXT_I100002', lclCd: 'ko', lblTxt: '등록되었습니다.',     _rowId: 'ko' },
@@ -103,8 +103,8 @@ const MOCK_TRANSLATIONS: Record<string, LblTrnItem[]> = {
 // PJ001/PJ002에서 projTxt 오버라이드 샘플
 const MOCK_PROJ_TRN: Record<string, Record<string, Partial<Record<string, string>>>> = {
   PJ001: {
-    'CCO102003SC.BUTTON.TEXT_save':   { ko: '저장하기', en: 'Save it' },
-    'CCO102003SC.BUTTON.TEXT_delete': { ko: '삭제하기' },
+    'SYS050301SC.BUTTON.TEXT_save':   { ko: '저장하기', en: 'Save it' },
+    'SYS050301SC.BUTTON.TEXT_delete': { ko: '삭제하기' },
   },
   PJ002: {
     'MESSAGE.INFO.TEXT_I100002': { ko: '신규 등록 완료!', en: 'New entry created!' },
@@ -585,7 +585,7 @@ export default function PatternI18nLabel() {
                     <Input
                       readOnly={isEditMode}
                       maxLength={30}
-                      placeholder="CCO102003SC"
+                      placeholder="SYS050301SC"
                       style={isEditMode ? { background: 'var(--tab-bar-bg)', cursor: 'not-allowed' } : undefined}
                     />
                   </Form.Item>

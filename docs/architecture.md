@@ -142,7 +142,7 @@ src/
 │   ├── auth/
 │   ├── cco/
 │   └── dashboard/
-├── dev/pages/           # 개발도구·가이드·데모·이관 샘플 (운영 번들 제외)
+├── dev/pages/           # 개발도구·가이드·데모 (운영 번들 제외)
 ├── hooks/               # useApiQuery, useApiMutation, useMenuPermission, ...
 ├── lib/api/             # Axios 클라이언트, 인터셉터, 타입
 ├── mock/                # 로컬 목데이터

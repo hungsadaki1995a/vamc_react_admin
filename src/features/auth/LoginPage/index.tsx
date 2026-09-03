@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Form, Input, Button, Alert, Checkbox, Typography } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
-import { login } from './api';
+import { login } from '@/api/common/authApi';
 import { useAuthStore } from '@/stores/authStore';
 import { jwtToMeResponse } from '@/utils/jwtUtils';
 
@@ -11,7 +11,7 @@ import { useMenuStore } from '@/stores/menuStore';
 import { useSettingsStore } from '@/stores/settingsStore';
 import { menuConfig } from '@/config/menuConfig';
 import { findMenuByKey } from '@/utils/menuUtils';
-import { fetchAuthMenuList } from '@/api/common/menu';
+import { fetchAuthMenuList } from '@/api/common/myMenuApi';
 import { ApiError } from '@/lib/api/error';
 import type { LoginRequest } from '@/lib/api/types';
 import styles from './index.module.css';

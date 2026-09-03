@@ -13,7 +13,6 @@ import SelectCellEditor from '@/components/grid/cellEditors/SelectCellEditor';
 import { useTreeGrid } from '@/components/grid/useTreeGrid';
 import { TreeCellRenderer } from '@/components/grid/TreeCellRenderer';
 import TagsCellEditor from '@/components/grid/cellEditors/TagsCellEditor';
-import UserCellEditor from '@/components/grid/cellEditors/UserCellEditor';
 import { ComcdSelectCellRenderer, ComcdSelectCellEditor } from '@/components/grid/ComcdSelectCell';
 import { SearchSelectCellRenderer, SearchSelectCellEditor, searchSelectValueFormatter } from '@/components/grid/SearchSelectCell';
 import type { SearchSelectOption } from '@/components/inputs/SearchSelectField';
@@ -21,7 +20,7 @@ import CodeSnippet from '@/components/common/CodeSnippet';
 import { useThemeStore } from '@/stores/themeStore';
 import { useComcdStore } from '@/stores/comcdStore';
 
-const EMPTY_CODES: import('@/api/common/code').CodeDetail[] = [];
+const EMPTY_CODES: import('@/api/common/comCdApi').CodeDetail[] = [];
 import styles from './index.module.css';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
@@ -49,7 +48,6 @@ const editableGridCode = `import GridTable from '@/components/grid/GridTable';
 import DateCellEditor from '@/components/grid/cellEditors/DateCellEditor';
 import SelectCellEditor from '@/components/grid/cellEditors/SelectCellEditor';
 import TagsCellEditor from '@/components/grid/cellEditors/TagsCellEditor';
-import UserCellEditor from '@/components/grid/cellEditors/UserCellEditor';
 
 const columnDefs: ColDef[] = [
   { field: 'name', headerName: '업무명', editable: true },
@@ -70,7 +68,8 @@ const columnDefs: ColDef[] = [
   {
     field: 'assignee', headerName: '담당자',
     editable: true,
-    cellEditor: UserCellEditor,
+    cellEditor: SelectCellEditor,
+    cellEditorParams: { values: ['김영수', '이미영', '송태현'] },
   },
   {
     field: 'tags', headerName: '태그',
@@ -894,7 +893,7 @@ const columnDefs: ColDef[] = [
 // ── Code snippets (ComcdSelect 체이닝) ────────────────────────────────────────
 
 const comcdChainCellCode = `import { ComcdSelectCellRenderer, ComcdSelectCellEditor } from '@/components/grid/ComcdSelectCell';
-import type { CodeDetail } from '@/api/common/code';
+import type { CodeDetail } from '@/api/common/comCdApi';
 
 // cellEditorParams를 함수로 지정하면 params.data (행 데이터)에 접근 가능
 // → 같은 행의 다른 컬럼값으로 자식 셀렉트 옵션 필터링
@@ -951,7 +950,7 @@ const columnDefs: ColDef[] = [
 ];`;
 
 const searchCellCode = `import { SearchSelectCellRenderer, SearchSelectCellEditor, searchSelectValueFormatter } from '@/components/grid/SearchSelectCell';
-import { getOrgList } from '@/api/sys/org';
+import { getOrgList } from '@/api/{도메인}/org';   // API 호출은 src/api/{도메인}/ 아래에 둔다
 
 // cellRenderer:    { label, value } 또는 plain string에서 명칭(label)만 표시
 // valueFormatter:  AG Grid warning #48 억제 + 클립보드/CSV 텍스트 변환
@@ -966,8 +965,8 @@ const columnDefs: ColDef[] = [
     cellEditor: SearchSelectCellEditor,
     cellEditorParams: {
       fetchOptions: async (kw: string) => {
-        const list = await getOrgList({ orgNm: kw });
-        return list.map(o => ({ label: o.orgNm, value: o.orgId }));
+        const res = await getOrgList({ orgNm: kw });
+        return (res.data ?? []).map(o => ({ label: o.orgNm, value: o.orgId }));
       },
     },
   },
@@ -1621,7 +1620,11 @@ export default function GridEditingDemo() {
       cellEditorParams: { values: ['긴급', '높음', '중간', '낮음'] },
     },
     { field: 'dueDate', headerName: '마감일', width: 130, flex: 0, editable: true, cellEditor: DateCellEditor },
-    { field: 'assignee', headerName: '담당자', width: 120, flex: 0, editable: true, cellEditor: UserCellEditor },
+    {
+      field: 'assignee', headerName: '담당자', width: 120, flex: 0, editable: true,
+      cellEditor: SelectCellEditor,
+      cellEditorParams: { values: ['김영수', '이미영', '송태현', '박정호', '윤서연', '배현우', '한지은', '임재혁', '최수진', '오하늘', '권도현', '장수연'] },
+    },
     {
       field: 'tags', headerName: '태그', minWidth: 160,
       editable: true,
@@ -2045,14 +2048,15 @@ function MyPage() {
               <div className={styles.demoSection}>
                 <div className={styles.demoDesc}>
                   <h3>편집 가능 그리드 + Cell Editors</h3>
-                  <p>셀을 더블클릭하면 편집 모드가 활성화됩니다. 4종의 커스텀 Cell Editor를 지원합니다.</p>
+                  <p>셀을 더블클릭하면 편집 모드가 활성화됩니다. 5종의 커스텀 Cell Editor를 지원합니다.</p>
                   <table className={styles.demoPropsTable}>
                     <thead><tr><th>Cell Editor</th><th>용도</th><th>주요 Props</th></tr></thead>
                     <tbody>
                       <tr><td><code>DateCellEditor</code></td><td>날짜 선택 (DatePicker)</td><td>format="YYYY-MM-DD"</td></tr>
                       <tr><td><code>SelectCellEditor</code></td><td>드롭다운 선택</td><td>values, valueLabels</td></tr>
                       <tr><td><code>TagsCellEditor</code></td><td>다중 태그 입력</td><td>presetTags</td></tr>
-                      <tr><td><code>UserCellEditor</code></td><td>사용자 선택 (검색)</td><td>getUsrSimpleList (GET /api/usr) 연동</td></tr>
+                      <tr><td><code>NumberCellEditor</code></td><td>숫자 입력</td><td>min, max, precision</td></tr>
+                      <tr><td><code>TextAreaCellEditor</code></td><td>여러 줄 텍스트</td><td>rows</td></tr>
                     </tbody>
                   </table>
                 </div>
