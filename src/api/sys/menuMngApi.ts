@@ -9,8 +9,8 @@ import type { MnuResponse } from '@/api/common/myMenuApi';
 //    `@/api/common/myMenuApi` 에 있다. 여기에는 메뉴 관리 화면 전용 호출만 둔다.
 //    응답 DTO(MnuResponse)는 두 호출이 같아 공용 파일의 타입을 그대로 쓴다.
 //
-// ⚠️ 등록/수정/삭제(`POST|PUT|DELETE /api/common/menus`)는 서버 컨트롤러가 아직 없다.
-//    화면의 저장·삭제는 TODO 상태이며, 서버 구현 후 이 파일에 함수를 추가한다.
+// 등록/수정/삭제는 서버가 메뉴 행 + 메뉴 이름 라벨 + ADMIN 역할 매핑을 한 트랜잭션에서 처리한다.
+//    셋 중 하나라도 빠지면 "저장은 됐는데 메뉴가 안 보인다" 가 되므로 화면에서 나눠 부르지 않는다.
 // ─────────────────────────────────────────────────────────────────────────────
 
 export type { MnuResponse };
@@ -40,4 +40,46 @@ export async function getAllMenus(params: MenuListParams): Promise<ApiResponse<M
     message: data.message,
     data: data.data ?? [],
   };
+}
+
+// ── 쓰기 ────────────────────────────────────────────────────────────────────
+
+/**
+ * 메뉴 등록·수정 요청.
+ *
+ * 서버가 채우는 값은 보내지 않는다 —
+ *   · `menuDpth` 는 상위 메뉴에서 계산한다 (화면에서도 읽기전용이다)
+ *   · `lblCd` 를 비우면 `lbl.menu.{menuCd}` 규약으로 채운다
+ */
+export interface MenuSaveRequest {
+  menuCd:       string;
+  upMenuCd:     string;
+  menuExpln:    string;   // 메뉴명(원본) — 번역이 없는 언어의 폴백
+  menuSeq:      number;
+  menuSeCd?:    string;   // 비우면 'A'
+  useYn?:       string;   // 비우면 'Y'
+  lblCd?:       string;
+  menuUrlAddr?: string;   // 화면ID. 비우면 클릭 시 미구현 안내
+  langCd?:      string;   // menuLblVal 과 함께 와야 번역이 저장된다
+  menuLblVal?:  string;   // 선택 언어의 메뉴명
+}
+
+/** POST /api/common/menus — 메뉴 + 이름 라벨 + ADMIN 역할 매핑 등록 */
+export async function createMenu(request: MenuSaveRequest): Promise<ApiResponse<void>> {
+  const { data } = await apiClient.post<ApiResponse<void>>('/api/common/menus', request);
+  return { success: data.status === 200, message: data.message, data: null };
+}
+
+/** PUT /api/common/menus/{menuCd} — 메뉴코드는 바꿀 수 없다 */
+export async function updateMenu(request: MenuSaveRequest): Promise<ApiResponse<void>> {
+  const { data } = await apiClient.put<ApiResponse<void>>(
+    `/api/common/menus/${request.menuCd}`, request,
+  );
+  return { success: data.status === 200, message: data.message, data: null };
+}
+
+/** DELETE /api/common/menus/{menuCd} — 하위 메뉴가 있으면 서버가 400 을 낸다 */
+export async function deleteMenu(menuCd: string): Promise<ApiResponse<void>> {
+  const { data } = await apiClient.delete<ApiResponse<void>>(`/api/common/menus/${menuCd}`);
+  return { success: data.status === 200, message: data.message, data: null };
 }
