@@ -5,6 +5,7 @@ import { apiNotify } from './apiNotify';
 import { useAuthStore } from '@/stores/authStore';
 import { useProjectStore } from '@/stores/projectStore';
 import { useLocaleStore } from '@/stores/localeStore';
+import { useLabelStore } from '@/stores/labelStore';
 import { useLoadingStore } from '@/stores/loadingStore';
 import { useTabStore } from '@/stores/tabStore';
 import { registerTabRequest, unregisterTabRequest } from './tabRequestRegistry';
@@ -140,7 +141,11 @@ apiClient.interceptors.response.use(
     if (!error.response) {
       // Defer toast render to next microtask — keeps current error-handling chain lean
       if (!config?.skipErrorToast) {
-        queueMicrotask(() => apiNotify.error('네트워크 연결을 확인해 주세요.'));
+        // 라벨 우선 + 한국어 폴백 — React 밖이라 훅을 못 쓰므로 getState() 로 읽는다
+        // (`lib/api/error.ts` 의 httpMessage 와 같은 패턴).
+        queueMicrotask(() => apiNotify.error(
+          useLabelStore.getState().t('MESSAGE.ERROR.TEXT_NETWORK', '네트워크 연결을 확인해 주세요.'),
+        ));
       }
       return Promise.reject(ApiError.fromAxiosError(error));
     }

@@ -22,6 +22,14 @@ interface LabelStore {
    * @param force true면 캐시를 무시하고 서버에서 다시 받는다 (라벨 관리 화면에서 저장한 직후).
    */
   loadLabels: (force?: boolean) => Promise<void>;
+  /**
+   * 라벨 캐시 무효화 — 라벨을 고친 직후 앱 전체 라벨 맵을 다시 받는다.
+   *
+   * 하는 일은 `loadLabels(true)` 와 같지만 이름을 `menuStore.invalidateMenuCache()` 와 맞췄다.
+   * 화면 코드가 두 전역 캐시를 같은 어휘로 다뤄야 "이건 캐시 무효화구나"가 읽힌다 —
+   * `loadLabels(true)` 는 인자를 봐야 의도를 알 수 있다.
+   */
+  invalidateLabelCache: () => Promise<void>;
   /** Translate a label key. Falls back to defaultText, then the key itself. */
   t: (key: string, defaultText?: string) => string;
   /** Global confirm message: MESSAGE.CONFIRM.TEXT_{code} */
@@ -70,6 +78,8 @@ export const useLabelStore = create<LabelStore>()((set, get) => ({
       // 라벨 로드 실패 시 기존 라벨/키 폴백 유지 (치명적 아님)
     }
   },
+
+  invalidateLabelCache: () => get().loadLabels(true),
 
   t: (key, defaultText) => get().labels[key] ?? defaultText ?? key,
   tmc: (code) => get().labels[`MESSAGE.CONFIRM.TEXT_${code}`] ?? `MESSAGE.CONFIRM.TEXT_${code}`,

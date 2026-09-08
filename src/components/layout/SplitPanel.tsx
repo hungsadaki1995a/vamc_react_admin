@@ -3,7 +3,13 @@ import './SplitPanel.css';
 
 interface SplitPanelProps {
   direction: 'horizontal' | 'vertical';
+  /** 초기 크기(px). 비율로 잡으려면 `defaultRatio` 를 쓴다. */
   defaultSize?: number;
+  /**
+   * 초기 크기를 컨테이너 대비 비율(0~1)로 지정한다. `defaultSize` 가 있으면 무시된다.
+   * 화면 폭이 제각각인 업무 화면에서는 px 보다 비율이 맞다 — 기본값은 0.5(반반).
+   */
+  defaultRatio?: number;
   primaryMinSize?: number;
   secondaryMinSize?: number;
   secondaryVisible?: boolean;
@@ -15,6 +21,7 @@ interface SplitPanelProps {
 export default function SplitPanel({
   direction,
   defaultSize,
+  defaultRatio,
   primaryMinSize = 200,
   secondaryMinSize = 200,
   secondaryVisible = true,
@@ -35,10 +42,10 @@ export default function SplitPanel({
       if (!containerRef.current) return;
       const rect = containerRef.current.getBoundingClientRect();
       const total = direction === 'horizontal' ? rect.width : rect.height;
-      setPrimarySize(defaultSize ?? Math.floor(total * 0.5));
+      setPrimarySize(defaultSize ?? Math.floor(total * (defaultRatio ?? 0.5)));
     });
     return () => cancelAnimationFrame(frame);
-  }, [defaultSize, direction, primarySize]);
+  }, [defaultSize, defaultRatio, direction, primarySize]);
 
   const handleMouseDown = useCallback(
     (e: React.MouseEvent) => {

@@ -833,6 +833,18 @@ html, body, #root {
   box-shadow: var(--shadow-sm);
 }
 
+/* page-container 안에서 필터/폼 사이의 본문(그리드·좌우분할)이 남은 높이를 차지한다.
+   화면마다 인라인 style 이나 CSS Module 로 다시 쓰던 flex 3줄을 한 곳으로 모은 것이다. */
+.page-body {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  /* 아래에 오는 FormPanel/DetailPanel 과 붙지 않게 */
+  margin-bottom: 8px;
+}
+
 /* Grid/Gantt pages: fixed height so content fills remaining space via flex */
 /* 단, .page-scrollable 클래스가 있으면 스크롤 모드 (가이드/데모 페이지) */
 .tab-content-panel:has(.ds-data-grid):not(:has(.page-scrollable)),

@@ -1,21 +1,23 @@
 import { useState, useMemo, useCallback, useRef } from 'react';
 import type { AgGridReact } from 'ag-grid-react';
-import { Input, Button, Form, Row, Col, Space, Select } from 'antd';
+import { Input, Form, Row, Col, Select } from 'antd';
 import GridPanel from '@/components/grid/GridPanel';
-import VerticalDivider from '@/components/layout/VerticalDivider';
+import ActionButtonGroup from '@/components/common/ActionButtonGroup';
 import FilterPanel from '@/components/layout/FilterPanel';
 import FormPanel from '@/components/layout/FormPanel';
 import TipInput from '@/components/inputs/TipInput';
 import { useNotify } from '@/hooks/useNotify';
 import { useScreenLabel } from '@/hooks/useScreenLabel';
+import { useQueryClient } from '@tanstack/react-query';
 import { useApiQuery } from '@/hooks/useApiQuery';
+import { useMenuPermission } from '@/hooks/useMenuPermission';
 import { useLocaleStore } from '@/stores/localeStore';
 import { useMenuStore } from '@/stores/menuStore';
 import { getLanguages } from '@/api/common/lblBulkApi';
 import type { LangItem } from '@/api/common/lblBulkApi';
 import { formatLabel } from '@/lib/i18n/formatLabel';
 import { getAllMenus } from '@/api/sys/menuMngApi';
-import type { MnuResponse } from '@/api/sys/menuMngApi';
+import type { MnuResponse, MenuListParams } from '@/api/sys/menuMngApi';
 import type { ColDef } from 'ag-grid-community';
 
 // ── Constants ────────────────────────────────────────────────────────────────
@@ -46,6 +48,8 @@ type FormValues = {
 export default function SYS030101SC() {
   const { notify, dialog } = useNotify();
   const { tvt, tvb, tvh, tsg, tsm, tmc, tmi, tme } = useScreenLabel();
+  const { canWrite } = useMenuPermission();
+  const queryClient = useQueryClient();
 
   // 조회 대상 언어의 기본값은 화면 로케일을 따른다 — 한국어로 보면서 영어 라벨만 나오던 문제.
   const defaultLangCd = toDbLangCd(useLocaleStore((s) => s.locale));
@@ -61,13 +65,23 @@ export default function SYS030101SC() {
   const [filterMenuCd, setFilterMenuCd]   = useState('');
   const [filterMenuNm, setFilterMenuNm]   = useState('');
   const [filterLangCd, setFilterLangCd]   = useState<LangCd>(defaultLangCd);
-  const [appliedFilter, setAppliedFilter] = useState({ menuCd: '', menuNm: '', langCd: defaultLangCd });
-  const [hasSearched, setHasSearched]     = useState(true);
+  const [appliedFilter, setAppliedFilter] = useState<MenuListParams>({ langCd: defaultLangCd });
 
   // ── Server data ──────────────────────────────────────────────────────────
-  const { data: allMenus = [], isLoading } = useApiQuery<MnuResponse[]>(
-    ['admin', 'menus', 'all', appliedFilter.langCd],
-    () => getAllMenus(appliedFilter.langCd),
+  //
+  // 검색은 서버가 한다 — queryKey 에 조건을 실어 조건이 바뀌면 다시 조회한다.
+  // 받아온 목록을 화면에서 다시 걸러내지 않는다.
+  //
+  // ⚠️ 이 화면은 진입하자마자 조회한다. **표준이 아니라 예외다.**
+  //    메뉴는 IA 가 정한 57건 + 루트로 건수가 고정돼 있고 관리자가 목록부터 보는 화면이라
+  //    조회 버튼을 한 번 더 누르게 할 이유가 없다.
+  //
+  //    🔴 신규 화면은 이 패턴을 복제하지 않는다. 건수가 늘어날 수 있는 업무 데이터는
+  //       `SYS050301SC` 처럼 `{ enabled: applied !== null }` 로 막고 조회 버튼에서 시작한다 —
+  //       그러지 않으면 탭을 여는 것만으로 전건 조회가 돈다.
+  const { data: menuList = [], isLoading } = useApiQuery<MnuResponse[]>(
+    ['admin', 'menus', 'all', appliedFilter],
+    () => getAllMenus(appliedFilter),
   );
 
   // ── Form state ───────────────────────────────────────────────────────────
@@ -77,21 +91,6 @@ export default function SYS030101SC() {
   const gridRef                           = useRef<AgGridReact<MnuResponse>>(null);
 
   const isEditMode = selectedRow !== null;
-
-  // ── Filtered data ────────────────────────────────────────────────────────
-
-  const filteredList = useMemo(() => {
-    if (!hasSearched) return [];
-    return allMenus.filter((item) => {
-      if (appliedFilter.menuCd && !item.menuCd.includes(appliedFilter.menuCd)) return false;
-      if (appliedFilter.menuNm) {
-        const nm = item.menuNmDisplay.trim();
-        const lbl = item.menuLblVal?.trim() ?? '';
-        if (!nm.includes(appliedFilter.menuNm) && !lbl.includes(appliedFilter.menuNm)) return false;
-      }
-      return true;
-    });
-  }, [hasSearched, allMenus, appliedFilter]);
 
   // ── Column definitions ───────────────────────────────────────────────────
 
@@ -119,16 +118,19 @@ export default function SYS030101SC() {
   // ── Handlers ─────────────────────────────────────────────────────────────
 
   const handleSearch = useCallback(() => {
-    setHasSearched(true);
-    setAppliedFilter({ menuCd: filterMenuCd, menuNm: filterMenuNm, langCd: filterLangCd });
+    // 빈 문자열은 조건 없음(undefined)으로 보낸다 — 서버 매퍼 <if> 와 같은 기준이다.
+    setAppliedFilter({
+      langCd: filterLangCd,
+      menuCd: filterMenuCd.trim() || undefined,
+      menuNm: filterMenuNm.trim() || undefined,
+    });
   }, [filterMenuCd, filterMenuNm, filterLangCd]);
 
+  /** 검색 조건만 비운다 — 그리드/폼 상태는 유지 (조건을 다시 입력하는 중에 결과가 사라지지 않게) */
   const handleFilterReset = useCallback(() => {
     setFilterMenuCd('');
     setFilterMenuNm('');
     setFilterLangCd(defaultLangCd);
-    setAppliedFilter({ menuCd: '', menuNm: '', langCd: defaultLangCd });
-    setHasSearched(false);
   }, [defaultLangCd]);
 
   const handleRowClick = useCallback((row: MnuResponse) => {
@@ -159,6 +161,8 @@ export default function SYS030101SC() {
         onOk: () => {
           // TODO: POST/PUT /api/common/menus
           notify.success(isEditMode ? tmi('I100003') : tmi('I100002'));
+          // 접두 무효화 — queryKey 에 langCd 가 붙어 있어 refetch 로는 다른 언어 캐시가 낡은 채 남는다.
+          queryClient.invalidateQueries({ queryKey: ['admin', 'menus'] });
           useMenuStore.getState().invalidateMenuCache();
           if (!isEditMode) handleFormReset();
         },
@@ -166,7 +170,7 @@ export default function SYS030101SC() {
     }).catch(() => {
       notify.error(tme('E100001'));
     });
-  }, [form, isEditMode, dialog, notify, handleFormReset, tmc, tmi, tme]);
+  }, [form, isEditMode, dialog, notify, handleFormReset, queryClient, tmc, tmi, tme]);
 
   const handleDelete = useCallback(() => {
     if (!selectedRow) return;
@@ -180,11 +184,12 @@ export default function SYS030101SC() {
       onOk: () => {
         // TODO: DELETE /api/common/menus/{menuCd}
         notify.success(tmi('I100004'));
+        queryClient.invalidateQueries({ queryKey: ['admin', 'menus'] });
         useMenuStore.getState().invalidateMenuCache();
         handleFormReset();
       },
     });
-  }, [selectedRow, dialog, notify, handleFormReset, tsm, tmi]);
+  }, [selectedRow, dialog, notify, handleFormReset, queryClient, tsm, tmi]);
 
   // ── Render ────────────────────────────────────────────────────────────────
 
@@ -230,18 +235,17 @@ export default function SYS030101SC() {
       </FilterPanel>
 
       {/* ── 그리드 패널 */}
-      <div style={{ flex: 1, minHeight: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+      <div className="page-body">
         <GridPanel<MnuResponse>
-          totalCount={filteredList.length}
+          totalCount={menuList.length}
           columnDefs={columnDefs}
-          rowData={filteredList}
+          rowData={menuList}
           rowKey="menuCd"
           gridRef={gridRef}
           onRowClick={handleRowClick}
           pagination={false}
           height="100%"
           loading={isLoading}
-          defaultColDef={{ suppressHeaderMenuButton: false, suppressHeaderFilterButton: false }}
         />
       </div>
 
@@ -252,13 +256,15 @@ export default function SYS030101SC() {
         collapsed={formCollapsed}
         onCollapsedChange={setFormCollapsed}
         actions={
-          <Space size={4} align="center">
-            <Button size="middle" onClick={handleFormReset}>{tvb('reset', '초기화')}</Button>
-            <VerticalDivider />
-            <Button size="middle" type="primary" onClick={handleSave}>{tvb('save', '저장')}</Button>
-            <Button size="middle" danger disabled={!isEditMode} onClick={handleDelete}>{tvb('delete', '삭제')}</Button>
-            <VerticalDivider />
-          </Space>
+          <ActionButtonGroup
+            preset="formEdit"
+            canWrite={canWrite}
+            items={[
+              { key: 'reset',  action: 'reset',       label: tvb('reset', '초기화'),  onClick: handleFormReset },
+              { key: 'delete', action: 'deleteRow',   label: tvb('delete', '삭제'),   onClick: handleDelete, disabled: !isEditMode },
+              { key: 'save',   action: 'saveChanges', label: tvb('save', '저장'),     onClick: handleSave },
+            ]}
+          />
         }
       >
         <Form
@@ -276,11 +282,7 @@ export default function SYS030101SC() {
                 rules={[{ required: true, message: '' }]}
                 style={{ margin: '0 0 8px' }}
               >
-                <TipInput
-                  readOnly={isEditMode}
-                  maxLength={20}
-                  style={isEditMode ? { background: 'var(--tab-bar-bg)', cursor: 'not-allowed' } : undefined}
-                />
+                <TipInput readOnly={isEditMode} maxLength={20} />
               </Form.Item>
             </Col>
             <Col span={6}>
@@ -299,11 +301,7 @@ export default function SYS030101SC() {
                 name="menuLblVal"
                 style={{ margin: '0 0 8px' }}
               >
-                <TipInput
-                  readOnly
-                  style={{ background: 'var(--tab-bar-bg)', cursor: 'not-allowed' }}
-                  placeholder={tvt('phMenuLblVal', '라벨 테이블에서 자동 조회')}
-                />
+                <TipInput readOnly placeholder={tvt('phMenuLblVal', '라벨 테이블에서 자동 조회')} />
               </Form.Item>
             </Col>
             <Col span={6}>
@@ -337,7 +335,7 @@ export default function SYS030101SC() {
                 name="menuDpth"
                 style={{ margin: '0 0 8px' }}
               >
-                <TipInput readOnly style={{ background: 'var(--tab-bar-bg)', cursor: 'not-allowed' }} />
+                <TipInput readOnly />
               </Form.Item>
             </Col>
             <Col span={6}>

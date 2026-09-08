@@ -1,0 +1,13 @@
+/* 읽기전용 입력의 표준 표기 — 화면마다 인라인 style 로 복붙하던 것을 한 곳으로 모았다.
+   값이 있지만 고칠 수 없다는 뜻이므로 disabled 와 달리 글자색은 그대로 둔다. */
+.ds-input-readonly,
+.ds-input-readonly:hover,
+.ds-input-readonly:focus,
+.ds-input-readonly:focus-within {
+  background: var(--tab-bar-bg);
+  cursor: not-allowed;
+}
+
+.ds-input-readonly input {
+  cursor: not-allowed;
+}
