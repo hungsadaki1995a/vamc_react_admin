@@ -1,28 +1,264 @@
-.groupDesc {
-  color: var(--text-secondary);
-  font-size: 12px;
-  margin: 4px 12px 8px;
-}
-
-.link {
+/* 좌: 목차(고정) / 우: 본문(스크롤) */
+.root {
+  flex: 1;
+  min-height: 0;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 6px 12px;
+  gap: 20px;
+}
+
+/* ── 목차 ───────────────────────────────────────────────────────── */
+.toc {
+  width: 220px;
+  flex-shrink: 0;
+  overflow-y: auto;
+  padding: 4px 0 16px;
+  border-right: 1px solid var(--border-color);
+}
+
+.tocTitle {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  letter-spacing: 0.04em;
+  padding: 0 12px 8px;
+}
+
+.tocItem {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+  width: 100%;
+  padding: 7px 12px;
+  border: 0;
+  border-left: 2px solid transparent;
+  background: none;
   font-size: 13px;
+  line-height: 1.4;
+  text-align: left;
+  color: var(--text-primary);
   cursor: pointer;
-  transition: background-color 0.15s;
+  transition: background-color 0.15s, border-color 0.15s;
 }
 
-.link:hover {
-  background-color: var(--hover-bg, rgba(0, 0, 0, 0.04));
+.tocItem:hover {
+  background-color: rgba(0, 0, 0, 0.04);
 }
 
-:global([data-theme='dark']) .link:hover {
+:global([data-theme='dark']) .tocItem:hover {
   background-color: rgba(255, 255, 255, 0.06);
 }
 
-.linkArrow {
-  font-size: 10px;
+.tocItemActive {
+  border-left-color: var(--color-primary, #1677ff);
+  background-color: rgba(22, 119, 255, 0.08);
+  font-weight: 600;
+  color: var(--color-primary, #1677ff);
+}
+
+.tocNum {
+  flex-shrink: 0;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-secondary);
+}
+
+.tocItemActive .tocNum {
+  color: inherit;
+}
+
+/* ── 본문 ───────────────────────────────────────────────────────── */
+.body {
+  position: relative;   /* 섹션 위치 계산의 기준 */
+  flex: 1;
+  min-width: 0;
+  overflow-y: auto;
+  /* 위 여백 0 — 목차로 이동했을 때 제목이 맨 위에 붙는다.
+     아래 여백은 마지막 섹션도 맨 위까지 올라올 수 있도록 넉넉히 둔다. */
+  padding: 0 8px 70% 0;
+}
+
+.section {
+  margin-bottom: 36px;
+}
+
+.sectionHead {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 6px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.sectionNum {
+  flex-shrink: 0;
+  min-width: 24px;
+  height: 24px;
+  padding: 0 6px;
+  border-radius: 4px;
+  background: var(--color-primary, #1677ff);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 24px;
+  text-align: center;
+}
+
+.sectionHead h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.lead {
+  margin: 10px 0 12px;
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--text-secondary);
+}
+
+.body p {
+  margin: 8px 0;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.body ul {
+  margin: 8px 0;
+  padding-left: 18px;
+  font-size: 13px;
+  line-height: 1.8;
+}
+
+.body li {
+  margin: 2px 0;
+}
+
+.body h4 {
+  margin: 20px 0 6px;
+  font-size: 13.5px;
+  font-weight: 600;
+}
+
+.path {
+  display: inline-block;
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: var(--tab-bar-bg);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 12px;
+}
+
+/* ── 코드 블록 ──────────────────────────────────────────────────── */
+.code {
+  margin: 10px 0;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  overflow: hidden;
+  background: var(--tab-bar-bg);
+}
+
+.codeHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 5px 10px;
+  border-bottom: 1px solid var(--border-color);
+  background: var(--content-header-bg);
+}
+
+.codeFile {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 11.5px;
+  color: var(--text-secondary);
+}
+
+.codeCopy {
+  border: 0;
+  background: none;
+  padding: 2px 6px;
+  font-size: 11.5px;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.codeCopy:hover {
+  color: var(--color-primary, #1677ff);
+}
+
+.code pre {
+  margin: 0;
+  padding: 10px 12px;
+  overflow-x: auto;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 12px;
+  line-height: 1.65;
+  white-space: pre;
+}
+
+/* ── 알림 박스 ──────────────────────────────────────────────────── */
+.note {
+  margin: 12px 0;
+  padding: 9px 12px;
+  border-left: 3px solid var(--border-color);
+  border-radius: 0 4px 4px 0;
+  background: var(--tab-bar-bg);
+  font-size: 12.5px;
+  line-height: 1.7;
+}
+
+.noteWarn {
+  border-left-color: #fa8c16;
+}
+
+.noteDanger {
+  border-left-color: #ff4d4f;
+}
+
+.noteTitle {
+  font-weight: 600;
+  margin-right: 6px;
+}
+
+/* ── 표 ─────────────────────────────────────────────────────────── */
+.table {
+  width: 100%;
+  margin: 10px 0;
+  border-collapse: collapse;
+  font-size: 12.5px;
+}
+
+.table th,
+.table td {
+  padding: 6px 10px;
+  border: 1px solid var(--border-color);
+  text-align: left;
+  vertical-align: top;
+}
+
+.table th {
+  background: var(--content-header-bg);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.table code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 12px;
+}
+
+/* ── 체크리스트 ─────────────────────────────────────────────────── */
+.checklist {
+  margin: 10px 0;
+  padding: 0;
+  list-style: none;
+  font-size: 13px;
+  line-height: 2;
+}
+
+.checklist li::before {
+  content: '☐';
+  margin-right: 8px;
   color: var(--text-secondary);
 }

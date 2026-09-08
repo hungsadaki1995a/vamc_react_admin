@@ -10,14 +10,15 @@ import { useNotify } from '@/hooks/useNotify';
 import { useScreenLabel } from '@/hooks/useScreenLabel';
 import { useQueryClient } from '@tanstack/react-query';
 import { useApiQuery } from '@/hooks/useApiQuery';
+import { useApiMutation } from '@/hooks/useApiMutation';
 import { useMenuPermission } from '@/hooks/useMenuPermission';
 import { useLocaleStore } from '@/stores/localeStore';
 import { useMenuStore } from '@/stores/menuStore';
 import { getLanguages } from '@/api/common/lblBulkApi';
 import type { LangItem } from '@/api/common/lblBulkApi';
 import { formatLabel } from '@/lib/i18n/formatLabel';
-import { getAllMenus } from '@/api/sys/menuMngApi';
-import type { MnuResponse, MenuListParams } from '@/api/sys/menuMngApi';
+import { getAllMenus, createMenu, updateMenu, deleteMenu } from '@/api/sys/menuMngApi';
+import type { MnuResponse, MenuListParams, MenuSaveRequest } from '@/api/sys/menuMngApi';
 import type { ColDef } from 'ag-grid-community';
 
 // ── Constants ────────────────────────────────────────────────────────────────
@@ -34,10 +35,13 @@ function toDbLangCd(locale: string): LangCd {
 
 type FormValues = {
   menuCd: string;
+  /** 메뉴명(원본) = MENU_EXPLN. 번역이 없는 언어에서 폴백으로 쓰인다 */
   menuNmDisplay: string;
+  /** 조회 언어의 번역. 저장 시 그 언어의 LANG_LBL_TRSL 로 들어간다 */
   menuLblVal: string;
   upMenuCd: string;
   menuSeq: number | string;
+  /** 상위 메뉴에서 서버가 계산한다 — 읽기전용 */
   menuDpth: number | string;
   menuUrlAddr: string;
   lblCd: string;
@@ -91,6 +95,20 @@ export default function SYS030101SC() {
   const gridRef                           = useRef<AgGridReact<MnuResponse>>(null);
 
   const isEditMode = selectedRow !== null;
+
+  const createMutation = useApiMutation<void, MenuSaveRequest>(createMenu);
+  const updateMutation = useApiMutation<void, MenuSaveRequest>(updateMenu);
+  const deleteMutation = useApiMutation<void, string>(deleteMenu);
+
+  /**
+   * 저장·삭제 후 캐시 갱신 — 두 층을 모두 비운다.
+   * ① react-query : queryKey 에 검색조건이 붙어 있으므로 접두 무효화를 쓴다.
+   * ② menuStore   : 좌측 레일·플라이아웃이 쓰는 메뉴 트리(IndexedDB 캐시).
+   */
+  const invalidateAfterWrite = useCallback(() => {
+    queryClient.invalidateQueries({ queryKey: ['admin', 'menus'] });
+    void useMenuStore.getState().invalidateMenuCache();
+  }, [queryClient]);
 
   // ── Column definitions ───────────────────────────────────────────────────
 
@@ -155,22 +173,39 @@ export default function SYS030101SC() {
   }, [form]);
 
   const handleSave = useCallback(() => {
-    form.validateFields().then(() => {
+    form.validateFields().then((values) => {
+      // menuDpth 는 보내지 않는다 — 서버가 상위 메뉴에서 계산한다.
+      // lblCd 를 비우면 서버가 lbl.menu.{menuCd} 규약으로 채운다.
+      const request: MenuSaveRequest = {
+        menuCd:      values.menuCd.trim(),
+        upMenuCd:    values.upMenuCd.trim(),
+        menuExpln:   values.menuNmDisplay.trim(),
+        menuSeq:     Number(values.menuSeq) || 0,
+        lblCd:       values.lblCd?.trim() || undefined,
+        menuUrlAddr: values.menuUrlAddr?.trim() || undefined,
+        langCd:      appliedFilter.langCd,
+        menuLblVal:  values.menuLblVal?.trim() || undefined,
+      };
+
       dialog.confirm({
         content: isEditMode ? tmc('C100002') : tmc('C100001'),
+        // onError 를 달지 않는다 — 에러 토스트는 apiClient 인터셉터가 이미 띄운다.
         onOk: () => {
-          // TODO: POST/PUT /api/common/menus
-          notify.success(isEditMode ? tmi('I100003') : tmi('I100002'));
-          // 접두 무효화 — queryKey 에 langCd 가 붙어 있어 refetch 로는 다른 언어 캐시가 낡은 채 남는다.
-          queryClient.invalidateQueries({ queryKey: ['admin', 'menus'] });
-          useMenuStore.getState().invalidateMenuCache();
-          if (!isEditMode) handleFormReset();
+          const mutation = isEditMode ? updateMutation : createMutation;
+          mutation.mutate(request, {
+            onSuccess: () => {
+              notify.success(isEditMode ? tmi('I100003') : tmi('I100002'));
+              if (!isEditMode) handleFormReset();
+              invalidateAfterWrite();
+            },
+          });
         },
       });
     }).catch(() => {
       notify.error(tme('E100001'));
     });
-  }, [form, isEditMode, dialog, notify, handleFormReset, queryClient, tmc, tmi, tme]);
+  }, [form, isEditMode, appliedFilter.langCd, dialog, notify, handleFormReset,
+      createMutation, updateMutation, invalidateAfterWrite, tmc, tmi, tme]);
 
   const handleDelete = useCallback(() => {
     if (!selectedRow) return;
@@ -182,14 +217,16 @@ export default function SYS030101SC() {
       ),
       okButtonProps: { danger: true },
       onOk: () => {
-        // TODO: DELETE /api/common/menus/{menuCd}
-        notify.success(tmi('I100004'));
-        queryClient.invalidateQueries({ queryKey: ['admin', 'menus'] });
-        useMenuStore.getState().invalidateMenuCache();
-        handleFormReset();
+        deleteMutation.mutate(selectedRow.menuCd, {
+          onSuccess: () => {
+            notify.success(tmi('I100004'));
+            handleFormReset();
+            invalidateAfterWrite();
+          },
+        });
       },
     });
-  }, [selectedRow, dialog, notify, handleFormReset, queryClient, tsm, tmi]);
+  }, [selectedRow, dialog, notify, handleFormReset, deleteMutation, invalidateAfterWrite, tsm, tmi]);
 
   // ── Render ────────────────────────────────────────────────────────────────
 
@@ -282,7 +319,7 @@ export default function SYS030101SC() {
                 rules={[{ required: true, message: '' }]}
                 style={{ margin: '0 0 8px' }}
               >
-                <TipInput readOnly={isEditMode} maxLength={20} />
+                <TipInput readOnly={isEditMode} maxLength={9} />
               </Form.Item>
             </Col>
             <Col span={6}>
@@ -308,9 +345,10 @@ export default function SYS030101SC() {
               <Form.Item
                 label={tvt('upMenuCd', '상위메뉴코드')}
                 name="upMenuCd"
+                rules={[{ required: true, message: '' }]}
                 style={{ margin: '0 0 8px' }}
               >
-                <TipInput maxLength={20} />
+                <TipInput maxLength={9} />
               </Form.Item>
             </Col>
           </Row>
@@ -335,7 +373,8 @@ export default function SYS030101SC() {
                 name="menuDpth"
                 style={{ margin: '0 0 8px' }}
               >
-                <TipInput readOnly />
+                {/* 서버가 상위 메뉴에서 계산한다 — 여기 값은 보내지 않는다 */}
+                <TipInput readOnly placeholder={tvt('phMenuDpth', '상위 메뉴에서 자동 계산')} />
               </Form.Item>
             </Col>
             <Col span={6}>
