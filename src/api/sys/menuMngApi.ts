@@ -15,15 +15,25 @@ import type { MnuResponse } from '@/api/common/myMenuApi';
 
 export type { MnuResponse };
 
+/** 메뉴 목록 조회조건 — 비우면(undefined) 조건 없음 */
+export interface MenuListParams {
+  /** DB LANG_CD(KR/EN/VN). 필수 — 서버가 이 값으로 다국어 메뉴명을 해석한다 */
+  langCd: string;
+  /** 메뉴코드 부분일치 */
+  menuCd?: string;
+  /** 메뉴명 부분일치 — 원본 메뉴명과 선택 언어 번역 중 어느 쪽에 걸려도 매치된다 */
+  menuNm?: string;
+}
+
 /**
  * GET /api/common/menus/all — 권한과 무관한 전체 메뉴 목록 (평면 배열).
  *
- * langCd 는 DB LANG_CD(KR/EN/VN) 다. 서버가 이 값으로 MENU_LBL_VAL 을 해석하며,
- * X-Lang 헤더가 아니라 쿼리 파라미터를 본다.
+ * 검색은 **서버가 한다.** 화면이 전건을 받아 걸러내면 데이터가 늘어날 때 그대로 사고가 된다.
+ * langCd 는 DB LANG_CD(KR/EN/VN) 이며, 라벨 API 와 달리 X-Lang 헤더가 아니라 쿼리 파라미터를 본다.
  */
-export async function getAllMenus(langCd: string): Promise<ApiResponse<MnuResponse[]>> {
+export async function getAllMenus(params: MenuListParams): Promise<ApiResponse<MnuResponse[]>> {
   const { data } = await apiClient.get<ApiResponse<MnuResponse[]>>('/api/common/menus/all', {
-    params: { langCd },
+    params,
   });
   return {
     success: data.status === 200,

@@ -17,14 +17,22 @@
   cursor: row-resize;
 }
 
+/* 두 패널 모두 flex column 이다 — GridPanel(툴바 + height:100% 그리드)을 그대로 담기 위한 것.
+   스크롤은 패널이 아니라 안에 들어가는 컴포넌트가 책임진다(그리드는 자체 가상 스크롤). */
 .ds-split-primary {
-  overflow: auto;
   flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-width: 0;
+  min-height: 0;
 }
 
 .ds-split-secondary {
   flex: 1;
-  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
   min-width: 0;
   min-height: 0;
 }

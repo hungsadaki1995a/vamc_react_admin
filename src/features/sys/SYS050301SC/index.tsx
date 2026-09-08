@@ -1,24 +1,28 @@
 import { useState, useMemo, useCallback, useRef } from 'react';
 import type { AgGridReact } from 'ag-grid-react';
 import type { ColDef, CellValueChangedEvent } from 'ag-grid-community';
-import { Button, Form, Row, Col, Space, Input, Select } from 'antd';
+import { Form, Row, Col, Input, Select } from 'antd';
 import GridPanel from '@/components/grid/GridPanel';
+import TipInput from '@/components/inputs/TipInput';
+import ActionButton from '@/components/common/ActionButton';
+import ActionButtonGroup from '@/components/common/ActionButtonGroup';
 import FilterPanel from '@/components/layout/FilterPanel';
 import FormPanel from '@/components/layout/FormPanel';
-import VerticalDivider from '@/components/layout/VerticalDivider';
+import SplitPanel from '@/components/layout/SplitPanel';
 import { useScreenLabel } from '@/hooks/useScreenLabel';
+import { useQueryClient } from '@tanstack/react-query';
 import { useApiQuery } from '@/hooks/useApiQuery';
 import { useApiMutation } from '@/hooks/useApiMutation';
 import { useNotify } from '@/hooks/useNotify';
 import { useMenuPermission } from '@/hooks/useMenuPermission';
 import { useLabelStore } from '@/stores/labelStore';
+import { formatLabel } from '@/lib/i18n/formatLabel';
 import { getLanguages } from '@/api/common/lblBulkApi';
 import type { LangItem } from '@/api/common/lblBulkApi';
 import {
   getLabelRows, saveLabelBatch, deleteLabel, groupLabelRows,
 } from '@/api/sys/lblMngApi';
 import type { LblRow, LblMaster, LblKey } from '@/api/sys/lblMngApi';
-import styles from './index.module.css';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 다국어 라벨 관리 (A06050300)
@@ -79,8 +83,9 @@ function buildLblCd(scrnId: string, section: string, lblSeCd: string, detail: st
 
 export default function SYS050301SC() {
   const { toast, notify, dialog } = useNotify();
-  const { tvt, tvb, tsg, tmi } = useScreenLabel();
+  const { tvt, tvb, tvh, tsg, tsm, tmc, tmi, tme } = useScreenLabel();
   const { canWrite } = useMenuPermission();
+  const queryClient = useQueryClient();
 
   // ── 검색 조건
   const [filterScrnId, setFilterScrnId]   = useState('');
@@ -108,7 +113,7 @@ export default function SYS050301SC() {
     () => getLanguages(),
   );
 
-  const { data: rows = [], isLoading, refetch } = useApiQuery<LblRow[]>(
+  const { data: rows = [], isLoading } = useApiQuery<LblRow[]>(
     ['lbl', 'rows', applied],
     () => getLabelRows(applied ?? {}),
     { enabled: applied !== null },
@@ -116,9 +121,18 @@ export default function SYS050301SC() {
 
   const masters = useMemo(() => (applied === null ? [] : groupLabelRows(rows)), [rows, applied]);
 
-  // 라벨을 고치면 앱 전체가 쓰는 라벨 맵도 다시 받아야 한다.
-  // 서버 캐시는 저장 시 evict 되지만 클라이언트 캐시(IndexedDB, TTL 5분)는 강제로 비운다.
-  const refreshAppLabels = () => { void useLabelStore.getState().loadLabels(true); };
+  /**
+   * 저장/삭제 후 캐시 갱신 — 두 층을 모두 비운다.
+   *
+   * ① react-query : `queryKey` 에 검색조건(`applied`)이 붙어 있으므로 **접두 무효화**를 쓴다.
+   *    `refetch()` 는 지금 조건의 캐시만 갱신해서, 조건을 바꿔 다시 조회하면 낡은 결과가 나온다.
+   * ② labelStore : 앱 전체가 쓰는 라벨 맵. 서버 캐시는 저장 시 evict 되지만
+   *    클라이언트 캐시(IndexedDB, TTL 5분)는 여기서 강제로 비운다.
+   */
+  const invalidateAfterWrite = useCallback(() => {
+    queryClient.invalidateQueries({ queryKey: ['lbl', 'rows'] });
+    void useLabelStore.getState().invalidateLabelCache();
+  }, [queryClient]);
 
   const saveMutation   = useApiMutation<void, LblRow[]>(saveLabelBatch);
   const deleteMutation = useApiMutation<void, LblKey>(deleteLabel);
@@ -193,7 +207,7 @@ export default function SYS050301SC() {
   const handleSave = useCallback(() => {
     form.validateFields().then((values) => {
       dialog.confirm({
-        content: isEditMode ? '수정하시겠습니까?' : '등록하시겠습니까?',
+        content: isEditMode ? tmc('C100002') : tmc('C100001'),
         onOk: () => {
           const item: LblRow = {
             lblCd:    values.lblCd,
@@ -201,27 +215,27 @@ export default function SYS050301SC() {
             lblSeCd:  values.lblSeCd,
             lblExpln: values.lblExpln ?? '',
           };
+          // onError 를 달지 않는다 — 에러 토스트는 apiClient 인터셉터가 이미 띄운다(중복 방지).
+          // 화면 고유 문구가 필요하면 요청에 `skipErrorToast: true` 를 주고 여기서 처리한다.
           saveMutation.mutate([item], {
             onSuccess: () => {
               notify.success(isEditMode ? tmi('I100003') : tmi('I100002'));
               if (!isEditMode) clearSelection();
-              refetch();
-              refreshAppLabels();
+              invalidateAfterWrite();
             },
-            onError: (err) => notify.error(err.message),
           });
         },
       });
     }).catch(() => {
-      notify.error('필수 항목을 입력해 주세요.');
+      notify.error(tme('E100001'));
     });
-  }, [form, isEditMode, dialog, saveMutation, notify, tmi, clearSelection, refetch]);
+  }, [form, isEditMode, dialog, saveMutation, notify, tmc, tmi, tme, clearSelection, invalidateAfterWrite]);
 
   /** 라벨 삭제 — 번역까지 함께 지워진다 */
   const handleDelete = useCallback(() => {
     if (!selected) return;
     dialog.confirm({
-      content: '라벨과 번역이 함께 삭제됩니다. 삭제하시겠습니까?',
+      content: tsm('deleteConfirm', '라벨과 번역이 함께 삭제됩니다. 삭제하시겠습니까?'),
       okButtonProps: { danger: true },
       onOk: () => {
         deleteMutation.mutate(
@@ -230,24 +244,22 @@ export default function SYS050301SC() {
             onSuccess: () => {
               notify.success(tmi('I100004'));
               clearSelection();
-              refetch();
-              refreshAppLabels();
+              invalidateAfterWrite();
             },
-            onError: (err) => notify.error(err.message),
           },
         );
       },
     });
-  }, [selected, dialog, deleteMutation, notify, tmi, clearSelection, refetch]);
+  }, [selected, dialog, deleteMutation, notify, tsm, tmi, clearSelection, invalidateAfterWrite]);
 
   /** 번역 저장 — 변경된 언어 행만 전송 */
   const handleTrnSave = useCallback(() => {
     if (!selected) return;
     const dirty = trnRows.filter((r) => r._dirty);
-    if (dirty.length === 0) { toast.warning('변경된 내용이 없습니다.'); return; }
+    if (dirty.length === 0) { toast.warning(tsm('noChanges', '변경된 내용이 없습니다.')); return; }
 
     dialog.confirm({
-      content: `번역 ${dirty.length}건을 저장하시겠습니까?`,
+      content: formatLabel(tsm('trnSaveConfirm', '번역 {0}건을 저장하시겠습니까?'), dirty.length),
       onOk: () => {
         // lblExpln 을 함께 보내지 않으면 서버의 라벨 upsert 가 라벨설명을 빈값으로 덮어쓴다.
         const items: LblRow[] = dirty.map((r) => ({
@@ -262,14 +274,12 @@ export default function SYS050301SC() {
           onSuccess: () => {
             notify.success(tmi('I100003'));
             setTrnRows((prev) => prev.map((r) => ({ ...r, _dirty: false })));
-            refetch();
-            refreshAppLabels();
+            invalidateAfterWrite();
           },
-          onError: (err) => notify.error(err.message),
         });
       },
     });
-  }, [selected, trnRows, dialog, toast, saveMutation, notify, tmi, refetch]);
+  }, [selected, trnRows, dialog, toast, saveMutation, notify, tsm, tmi, invalidateAfterWrite]);
 
   const handleCellValueChanged = useCallback((e: CellValueChangedEvent<TrnRow>) => {
     setTrnRows((prev) =>
@@ -346,75 +356,66 @@ export default function SYS050301SC() {
         </div>
       </FilterPanel>
 
-      {/* ── 좌우 분할 그리드 */}
-      <div className={styles.splitBody}>
+      {/* ── 좌우 분할 그리드
+          레이아웃은 SplitPanel 이 전담한다 — 화면에서 flex 를 다시 짜지 않는다.
+          영역 제목도 별도 줄을 얹지 않고 GridPanel 의 `title` 슬롯(= 툴바 좌측)에 넣는다.
+          그래야 좌우 툴바 높이가 저절로 맞는다. */}
+      <div className="page-body">
+        <SplitPanel direction="horizontal" defaultRatio={0.6} primaryMinSize={320} secondaryMinSize={280}>
 
-        {/* 좌: 라벨 목록 */}
-        <div className={styles.leftPane}>
-          <div className={styles.paneTitleRow}>{tvt('lblList', '라벨 목록')}</div>
-          <div className={styles.gridWrapper}>
-            <GridPanel<LblMaster>
-              totalCount={masters.length}
-              columnDefs={grid1Cols}
-              rowData={masters}
-              rowKey="rowId"
-              gridRef={grid1Ref}
-              onRowClick={handleRowClick}
-              loading={isLoading}
-              height="100%"
-              pagination={false}
-              defaultColDef={{ suppressHeaderMenuButton: true, suppressHeaderFilterButton: true }}
-            />
-          </div>
-        </div>
+          {/* 좌: 라벨 목록 */}
+          <GridPanel<LblMaster>
+            title={tvh('lblList', '라벨 목록')}
+            totalCount={masters.length}
+            columnDefs={grid1Cols}
+            rowData={masters}
+            rowKey="rowId"
+            gridRef={grid1Ref}
+            onRowClick={handleRowClick}
+            loading={isLoading}
+            height="100%"
+            pagination={false}
+          />
 
-        {/* 우: 언어별 번역 */}
-        <div className={styles.rightPane}>
-          <div className={styles.paneTitleRow}>
-            <span className={styles.paneTitleLabel}>{tvt('trnList', '언어별 번역')}</span>
-          </div>
-          <div className={styles.gridWrapper}>
-            <GridPanel<TrnRow>
-              totalCount={trnRows.length}
-              columnDefs={grid2Cols}
-              rowData={trnRows}
-              rowKey="langCd"
-              gridRef={grid2Ref}
-              height="100%"
-              pagination={false}
-              editable={canWrite}
-              onCellValueChanged={handleCellValueChanged}
-              defaultColDef={{ suppressHeaderMenuButton: true, suppressHeaderFilterButton: true }}
-              actions={canWrite ? (
-                <Button size="middle" type="primary" onClick={handleTrnSave} disabled={!selected}>
-                  {tvb('btnSave', '저장')}
-                </Button>
-              ) : undefined}
-            />
-          </div>
-        </div>
+          {/* 우: 언어별 번역 */}
+          <GridPanel<TrnRow>
+            title={tvh('trnList', '언어별 번역')}
+            totalCount={trnRows.length}
+            columnDefs={grid2Cols}
+            rowData={trnRows}
+            rowKey="langCd"
+            gridRef={grid2Ref}
+            height="100%"
+            pagination={false}
+            editable={canWrite}
+            onCellValueChanged={handleCellValueChanged}
+            actions={
+              <ActionButtonGroup canWrite={canWrite}>
+                <ActionButton action="saveChanges" onClick={handleTrnSave} disabled={!selected}>
+                  {tvb('save', '저장')}
+                </ActionButton>
+              </ActionButtonGroup>
+            }
+          />
+        </SplitPanel>
       </div>
 
       {/* ── 하단 입력 폼 (라벨 등록/수정) */}
       <FormPanel
-        title={tvt('input', '라벨 등록')}
+        title={tvh('input', '라벨 등록')}
         editMode={isEditMode}
         collapsed={formCollapsed}
         onCollapsedChange={setFormCollapsed}
         actions={
-          <Space size={4} align="center">
-            <Button size="middle" onClick={clearSelection}>{tvb('btnInit2', '초기화')}</Button>
-            <VerticalDivider />
-            {canWrite && (
-              <>
-                <Button size="middle" type="primary" onClick={handleSave}>{tvb('btnSave', '저장')}</Button>
-                <Button size="middle" danger disabled={!isEditMode} onClick={handleDelete}>
-                  {tvb('btnDel', '삭제')}
-                </Button>
-                <VerticalDivider />
-              </>
-            )}
-          </Space>
+          <ActionButtonGroup
+            preset="formEdit"
+            canWrite={canWrite}
+            items={[
+              { key: 'reset',  action: 'reset',       label: tvb('reset', '초기화'),  onClick: clearSelection },
+              { key: 'delete', action: 'deleteRow',   label: tvb('delete', '삭제'),   onClick: handleDelete, disabled: !isEditMode },
+              { key: 'save',   action: 'saveChanges', label: tvb('save', '저장'),     onClick: handleSave },
+            ]}
+          />
         }
       >
         <Form
@@ -436,12 +437,7 @@ export default function SYS050301SC() {
                     rules={[{ required: true, message: '' }, { max: 20, message: '' }]}
                     style={{ margin: '0 0 6px' }}
                   >
-                    <Input
-                      readOnly={isEditMode}
-                      maxLength={20}
-                      placeholder="SYS050301SC"
-                      style={isEditMode ? { background: 'var(--tab-bar-bg)', cursor: 'not-allowed' } : undefined}
-                    />
+                    <TipInput readOnly={isEditMode} maxLength={20} placeholder="SYS050301SC" />
                   </Form.Item>
                 </Col>
                 <Col span={8}>
@@ -473,12 +469,7 @@ export default function SYS050301SC() {
                     rules={[{ required: !isEditMode, message: '' }]}
                     style={{ margin: 0 }}
                   >
-                    <Input
-                      readOnly={isEditMode}
-                      maxLength={60}
-                      placeholder="usrId"
-                      style={isEditMode ? { background: 'var(--tab-bar-bg)', cursor: 'not-allowed' } : undefined}
-                    />
+                    <TipInput readOnly={isEditMode} maxLength={60} placeholder="usrId" />
                   </Form.Item>
                 </Col>
                 <Col span={16}>
@@ -488,11 +479,7 @@ export default function SYS050301SC() {
                     rules={[{ required: true, message: '' }, { max: 100, message: '' }]}
                     style={{ margin: 0 }}
                   >
-                    <Input
-                      readOnly
-                      maxLength={100}
-                      style={{ background: 'var(--tab-bar-bg)', cursor: 'not-allowed' }}
-                    />
+                    <TipInput readOnly maxLength={100} />
                   </Form.Item>
                 </Col>
               </Row>

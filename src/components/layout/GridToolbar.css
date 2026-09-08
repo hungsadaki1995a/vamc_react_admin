@@ -5,6 +5,16 @@
   padding: 8px 12px;
   background: var(--content-header-bg);
   flex-shrink: 0;
+  /* 버튼이 있는 툴바(8+32+8)와 같은 높이로 고정한다 —
+     좌우 분할에서 한쪽에만 버튼이 있어도 두 그리드의 시작 높이가 어긋나지 않는다. */
+  min-height: 48px;
+}
+
+.ds-grid-toolbar-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
 }
 
 .ds-grid-toolbar-left {
