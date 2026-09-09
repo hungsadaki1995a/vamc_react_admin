@@ -387,12 +387,6 @@ Số thứ tự (2) = 01, Loại (2) = SC
         <b> Khi phân vân, hãy hỏi: chữ đó có được viết thẳng trong JSX không.</b>
       </p>
 
-      <Note type="warn" title="Chỉ BTN có ở cả hai phía.">
-        Nút trên màn hình là <code>tvb</code> → <code>VIEW.BTN_</code>; nút trong hộp thoại là
-        <code> tsb</code> → <code>SCRIPT.BTN_</code>. Đây là trường hợp duy nhất mà chỉ nhìn phân loại
-        (BTN) thì không biết được phần, nên phải chọn đúng hàm.
-      </Note>
-
       <h4>MESSAGE không phải là phần</h4>
       <p>
         Trong khoá như <code>MESSAGE.CONFIRM.TEXT_C100001</code>, <code>MESSAGE</code> trông giống phần

@@ -23,7 +23,6 @@ const helperRows = [
   { fn: 'tvo(field)', context: 'VIEW', pattern: '{sceId}.VIEW.OPT_{field}', desc: '셀렉트 옵션 레이블' },
   { fn: 'tsg(field)', context: 'SCRIPT', pattern: '{sceId}.SCRIPT.GRID_{field}', desc: '그리드 컬럼 헤더' },
   { fn: 'tsm(field)', context: 'SCRIPT', pattern: '{sceId}.SCRIPT.MSG_{field}', desc: '성공/오류/확인 메시지' },
-  { fn: 'tsb(field)', context: 'SCRIPT', pattern: '{sceId}.SCRIPT.BTN_{field}', desc: '다이얼로그 버튼' },
   { fn: 'tss(field)', context: 'SCRIPT', pattern: '{sceId}.SCRIPT.STATUS_{field}', desc: '상태 레이블 (그리드 태그, 뱃지)' },
   { fn: 'tsr(field)', context: 'SCRIPT', pattern: '{sceId}.SCRIPT.RULE_{field}', desc: '유효성 검사 오류 메시지' },
   { fn: 'tmc(code)', context: 'MESSAGE', pattern: 'MESSAGE.CONFIRM.TEXT_{code}', desc: '전역 확인 메시지 (화면 무관)' },
@@ -45,7 +44,7 @@ const exampleRows = [
   { key: 'SYS030101SC.VIEW.TITLE_inputPanel', ko: '입력 패널', en: 'Input Panel' },
   { key: 'SYS030101SC.SCRIPT.GRID_usrId', ko: '사용자ID', en: 'User ID' },
   { key: 'SYS030101SC.SCRIPT.MSG_updateSuccess', ko: '수정되었습니다.', en: 'Updated successfully.' },
-  { key: 'SYS030101SC.SCRIPT.BTN_delete', ko: '삭제', en: 'Delete' },
+  { key: 'SYS030101SC.VIEW.BTN_delete', ko: '삭제', en: 'Delete' },
 ];
 
 export default function GuideI18nPermission() {
@@ -87,7 +86,7 @@ export default function GuideI18nPermission() {
 
 export default function SYS030101SC() {
   // 모든 라벨 헬퍼를 단일 훅 호출로 사용
-  const { t, tvt, tvb, tvh, tsg, tsm, tsb, tmc, tmi, tme, labels } = useScreenLabel();
+  const { t, tvt, tvb, tvh, tsg, tsm, tmc, tmi, tme, labels } = useScreenLabel();
   // sceId는 TabContext에서 자동 파생 → 'SYS030101SC'
 
   // JSX 레이블
@@ -115,7 +114,7 @@ const columnDefs = useMemo<ColDef<Employee>[]>(() => [
 
                 <CodeSnippet
                   title="메시지 / 다이얼로그 (이벤트 핸들러)"
-                  code={`const { tsm, tsb, tmc, tme } = useScreenLabel();
+                  code={`const { tsm, tvb, tmc, tme } = useScreenLabel();
 const { message, modal } = App.useApp();
 
 const handleSave = useCallback(() => {
@@ -130,11 +129,11 @@ const handleDelete = useCallback(() => {
   modal.confirm({
     title: tsm('deleteConfirmTitle'),
     content: tmc('C100007'),               // MESSAGE.CONFIRM.TEXT_C100007 (전역)
-    okText: tsb('delete'),                 // SCRIPT.BTN_delete
-    cancelText: tsb('cancel'),
+    okText: tvb('delete'),                 // VIEW.BTN_delete
+    cancelText: tvb('cancel'),
     onOk: () => { /* ... */ },
   });
-}, [modal, tsm, tsb, tmc]);
+}, [modal, tsm, tvb, tmc]);
 
 // 전역 메시지 예시
 message.info(tmi('I100008'));    // MESSAGE.INFO.TEXT_I100008
@@ -256,7 +255,7 @@ field   : camelCase 필드명  e.g. usrId, save`}
 // SCRIPT — JS 영역 (헤더, 핸들러)
 headerName: tsg('usrId'),            // ← SCRIPT.GRID_usrId
 message.success(tsm('saved')),       // ← SCRIPT.MSG_saved
-okText: tsb('confirm'),              // ← SCRIPT.BTN_confirm`}
+okText: tvb('confirm'),              // ← VIEW.BTN_confirm`}
                 />
 
                 <CodeSnippet
@@ -433,7 +432,7 @@ function TabPanel({ tab, visible }) {
 □ <PageHeader /> 직접 추가 금지
 □ useScreenLabel() 사용 — 하드코딩 문자열 금지
 □ 그리드 headerName: tsg() 사용
-□ 메시지/confirm: tsm(), tsb() 사용
+□ 메시지/confirm: tsm() 사용, 버튼은 tvb()
 □ 저장/삭제 버튼: canWrite 조건부 렌더링
 □ columnDefs useMemo deps에 [labels] 포함`}
                 />

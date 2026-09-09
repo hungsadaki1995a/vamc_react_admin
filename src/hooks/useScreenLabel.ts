@@ -15,7 +15,9 @@ import { useTabContext } from '@/contexts/TabContext';
  * SCRIPT context (event handlers):
  *   tsg(field) → {sceId}.SCRIPT.GRID_{field}      (grid column headers)
  *   tsm(field) → {sceId}.SCRIPT.MSG_{field}       (success/error/confirm messages)
- *   tsb(field) → {sceId}.SCRIPT.BTN_{field}       (dialog button text)
+ *
+ * 버튼은 섹션과 무관하게 tvb 하나로 쓴다 — 다이얼로그 버튼용 tsb(SCRIPT.BTN_)가 있었으나
+ * 구분(BTN)만 보고는 섹션을 알 수 없게 만드는 유일한 원인이었고 실사용이 없어 폐기했다.
  *
  * Global MESSAGE context (cross-screen messages):
  *   tm(type, code) → MESSAGE.{type}.TEXT_{code}
@@ -28,7 +30,7 @@ import { useTabContext } from '@/contexts/TabContext';
  *
  * @example
  * // Auto sceId from TabContext:
- * const { tvt, tvb, tsg, tsm, tsb, tm, labels } = useScreenLabel();
+ * const { tvt, tvb, tsg, tsm, tm, labels } = useScreenLabel();
  *
  * // Explicit sceId (outside TabPanel):
  * const { tvt } = useScreenLabel('SYS030101SC');
@@ -42,7 +44,6 @@ import { useTabContext } from '@/contexts/TabContext';
  *
  * // Handler:
  * tsm('updateSuccess')   // → SYS030101SC.SCRIPT.MSG_updateSuccess
- * tsb('cancel')          // → SYS030101SC.SCRIPT.BTN_cancel
  *
  * // Global message (cross-screen):
  * tmc('C100007')   // → MESSAGE.CONFIRM.TEXT_C100007
@@ -108,16 +109,9 @@ export function useScreenLabel(sceIdOverride?: string) {
     [labelsVersion, sceId],
   );
 
-  // SCRIPT — button labels used inside dialogs/handlers
-  const tsb = useCallback(
-    (field: string, defaultText?: string) => resolve(`${sceId}.SCRIPT.BTN_${field}`, defaultText),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [labelsVersion, sceId],
-  );
-
   // Expose labels for callers using it as useMemo dep (non-subscribing read — component
   // already re-renders via labelsVersion, so getState() always returns current value here).
   const labels = useLabelStore.getState().labels;
 
-  return { t, tvt, tvb, tvh, tsg, tsm, tsb, tmc, tmi, tme, labels, sceId };
+  return { t, tvt, tvb, tvh, tsg, tsm, tmc, tmi, tme, labels, sceId };
 }

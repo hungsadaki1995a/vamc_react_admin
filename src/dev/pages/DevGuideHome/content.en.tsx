@@ -388,12 +388,6 @@ Seq (2) = 01, Type (2) = SC
         <b> When in doubt, ask whether the text is literally written inside JSX.</b>
       </p>
 
-      <Note type="warn" title="Only BTN exists on both sides.">
-        A screen button is <code>tvb</code> → <code>VIEW.BTN_</code>; a dialog button is
-        <code> tsb</code> → <code>SCRIPT.BTN_</code>. This is the one case where the category (BTN)
-        alone does not tell you the section, so pick the helper carefully.
-      </Note>
-
       <h4>MESSAGE is not a section</h4>
       <p>
         In a key like <code>MESSAGE.CONFIRM.TEXT_C100001</code>, <code>MESSAGE</code> looks like a section

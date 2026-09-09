@@ -42,7 +42,7 @@ const hookRows: HookRow[] = [
   { key: '1', hook: 'useApiQuery(key, fn, opts?)',   returns: 'UseQueryResult<T>',                    desc: 'ApiResponse<T> 자동 언래핑 useQuery 래퍼. enabled/staleTime 등 옵션 전달 가능',                              src: 'hooks/useApiQuery.ts' },
   { key: '2', hook: 'useApiMutation(fn, opts?)',      returns: 'UseMutationResult<T>',                 desc: 'ApiResponse<T> 언래핑 + 성공 토스트 useMutation 래퍼. successMessage / onSuccess / onError 옵션 지원',       src: 'hooks/useApiMutation.ts' },
   { key: '3', hook: 'useMenuPermission()',             returns: '{ canRead, canWrite }',                desc: '현재 활성 탭의 permType → canRead(S|M) / canWrite(M만). 버튼 노출 제어에 사용',                              src: 'hooks/useMenuPermission.ts' },
-  { key: '4', hook: 'useScreenLabel(sceIdOverride?)', returns: '{ t, tvt, tvb, tvh, tsg, tsm, tsb, tmc, tmi, tme, labels, sceId }', desc: 'sceId 기반 라벨 단축 함수. TabContext에서 sceId 자동 추출. 명시적 override 가능', src: 'hooks/useScreenLabel.ts' },
+  { key: '4', hook: 'useScreenLabel(sceIdOverride?)', returns: '{ t, tvt, tvb, tvh, tsg, tsm, tmc, tmi, tme, labels, sceId }', desc: 'sceId 기반 라벨 단축 함수. TabContext에서 sceId 자동 추출. 명시적 override 가능', src: 'hooks/useScreenLabel.ts' },
   { key: '5', hook: 'useLogout()',                     returns: '() => void',                           desc: '로그아웃 확인 모달 → 전체 스토어 초기화 → /login 리다이렉트',                                               src: 'hooks/useLogout.ts' },
   { key: '6', hook: 'useNotify()',                     returns: '{ toast, notify, dialog }',            desc: 'antd message / notification / modal 통합 훅. dialog는 타입별 i18n 기본값 자동 적용',                         src: 'hooks/useNotify.ts' },
   { key: '7', hook: 'useTabRouteSync()',               returns: 'void',                                 desc: '탭 ↔ URL 양방향 동기화. AppLayout 전용 — 페이지 컴포넌트에서 직접 호출 금지',                               src: 'hooks/useTabRouteSync.ts' },
@@ -150,7 +150,7 @@ function MyPage() {
 
 function MyPage() {
   // t, tmc/tmi/tme(전역 메시지), tvt/tvb/tsg/tsm 등 모두 여기서
-  const { t, tvt, tvb, tvh, tsg, tsm, tsb, tmc, tmi, tme, labels } = useScreenLabel();
+  const { t, tvt, tvb, tvh, tsg, tsm, tmc, tmi, tme, labels } = useScreenLabel();
   // sceId는 TabContext에서 자동 추출
 
   const columnDefs = useMemo(() => [
@@ -272,8 +272,8 @@ function MyPage() {
 // info     → title: MESSAGE.SCRIPT.TEXT_info     | danger: false
 // warning  → title: MESSAGE.SCRIPT.TEXT_warning  | danger: true
 // error    → title: MESSAGE.SCRIPT.TEXT_error    | danger: true
-// okText   → MESSAGE.SCRIPT.BTN_confirm
-// cancelText → MESSAGE.SCRIPT.BTN_cancel
+// okText   → COMPONENT.VIEW.BTN_ok
+// cancelText → COMPONENT.VIEW.BTN_cancel
 
 // 모든 기본값은 per-call 오버라이드 가능
 dialog.confirm({
