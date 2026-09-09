@@ -1,7 +1,10 @@
 import { useMemo } from 'react';
 import { useMenuStore } from '@/stores/menuStore';
 import { useLabelStore } from '@/stores/labelStore';
-import { menuConfig } from '@/config/menuConfig';
+import { useLocaleStore } from '@/stores/localeStore';
+import type { LocaleKey } from '@/stores/localeStore';
+import { menuConfig, DEV_TOOLS_ENABLED } from '@/config/menuConfig';
+import { DEV_MENU_LABELS } from '@/config/devMenuLabels';
 import type { MenuItem } from '@/types/menu';
 
 /**
@@ -12,12 +15,42 @@ import type { MenuItem } from '@/types/menu';
  * `labelKey` 가 있는 항목만 치환하고, 없으면 코드에 적힌 label 을 그대로 쓴다 —
  * 개발 도구 트리처럼 번역 대상이 아닌 메뉴는 labelKey 를 두지 않는다.</p>
  */
-function localizeMenus(items: MenuItem[], t: (key: string, defaultText?: string) => string): MenuItem[] {
+function localizeMenus(
+  items: MenuItem[],
+  t: (key: string, defaultText?: string) => string,
+  locale: LocaleKey,
+): MenuItem[] {
   return items.map((item) => ({
     ...item,
-    label: item.labelKey ? t(item.labelKey, item.label) : item.label,
-    children: item.children ? localizeMenus(item.children, t) : undefined,
+    label: resolveLabel(item, t, locale),
+    children: item.children ? localizeMenus(item.children, t, locale) : undefined,
   }));
+}
+
+/**
+ * 정적 메뉴 1건의 표시 이름.
+ *
+ * <p>두 경로가 있다. `labelKey` 가 있으면 DB 라벨(사용자가 보는 메뉴),
+ * 없으면 개발 도구 사전(개발자만 보는 메뉴)을 본다. 둘 다 없으면 코드의 `label` 이다.</p>
+ *
+ * <p>개발 도구를 DB 로 관리하지 않는 이유는 `@/config/devMenuLabels` 주석에 있다.
+ * 한국어는 사전에 없다 — `menuConfig` 의 `label` 이 정본이므로 그대로 폴백한다.</p>
+ *
+ * <p>🔴 사전 조회를 <b>`DEV_TOOLS_ENABLED` 안에</b> 둔다. 이 훅은 개발 도구와 무관하게
+ * 항상 번들에 들어가므로, 가드가 없으면 플래그를 꺼도 사전이 그대로 실려 나간다
+ * (운영 빌드에서 실제로 확인했다). 플래그가 빌드 시점 리터럴 `false` 라
+ * 이 분기가 통째로 죽고 import 까지 함께 제거된다.</p>
+ */
+function resolveLabel(
+  item: MenuItem,
+  t: (key: string, defaultText?: string) => string,
+  locale: LocaleKey,
+): string {
+  if (item.labelKey) return t(item.labelKey, item.label);
+  if (DEV_TOOLS_ENABLED && locale !== 'ko') {
+    return DEV_MENU_LABELS[item.key]?.[locale] ?? item.label;
+  }
+  return item.label;
 }
 
 /**
@@ -31,10 +64,12 @@ export function useAllMenus(): MenuItem[] {
   // 라벨 맵 자체가 아니라 갱신 카운터를 구독한다 (O(1) 비교).
   const labelsVersion = useLabelStore((s) => s.labelsVersion);
   const t = useLabelStore((s) => s.t);
+  // 개발 도구 사전은 DB 가 아니라 코드에 있어 로케일을 직접 봐야 한다.
+  const locale = useLocaleStore((s) => s.locale);
 
   return useMemo(
-    () => [...serverMenus, ...localizeMenus(menuConfig, t)],
+    () => [...serverMenus, ...localizeMenus(menuConfig, t, locale)],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [serverMenus, labelsVersion],
+    [serverMenus, labelsVersion, locale],
   );
 }
