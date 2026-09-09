@@ -347,9 +347,66 @@ export const CONTENT_KO: Record<string, React.ReactNode> = {
           [<code>tvh</code>, <code>VIEW.TITLE_</code>, '영역·패널 제목'],
           [<code>tsg</code>, <code>SCRIPT.GRID_</code>, '그리드 헤더'],
           [<code>tsm</code>, <code>SCRIPT.MSG_</code>, '이 화면 고유 메시지'],
-          [<code>tmc / tmi / tme</code>, <code>MESSAGE.*</code>, '전역 확인·안내·오류'],
+          [<code>tmc / tmi / tme</code>, <code>MESSAGE.CONFIRM|INFO|ERROR.TEXT_</code>, '전 화면 공용 메시지'],
         ]}
       />
+
+      <h4>섹션(VIEW / SCRIPT)은 어떻게 고르나</h4>
+      <p>
+        라벨코드 가운데 마디가 섹션입니다. <b>코드에서 어떤 헬퍼를 썼는지가 섹션을 결정합니다</b> —
+        <code>tvt</code> 로 꺼낸 문구는 <code>VIEW</code>, <code>tsg</code> 로 꺼낸 문구는
+        <code>SCRIPT</code> 입니다. 등록할 때는 코드가 부르는 키와 <b>글자 단위로 같게</b> 맞춰야 하며,
+        어긋나면 아무 경고 없이 폴백 문구가 표시됩니다.
+      </p>
+
+      <DataTable
+        head={['섹션', '무엇', '예']}
+        rows={[
+          [<code>VIEW</code>, <>JSX 에 그대로 박히는 문구. <b>화면을 열면 바로 보인다</b></>,
+           <>항목명(<code>tvt</code>), 버튼(<code>tvb</code>), 패널 제목(<code>tvh</code>)</>],
+          [<code>SCRIPT</code>, <>코드가 만들어 내는 문구. <b>무언가 한 뒤에 나타나거나</b> 배열·설정에서 온다</>,
+           <>그리드 헤더(<code>tsg</code>), 확인·안내 메시지(<code>tsm</code>)</>],
+        ]}
+      />
+
+      <p>
+        그리드 헤더가 <code>SCRIPT</code> 인 것이 헷갈리기 쉽습니다. 화면에 보이지만
+        JSX 가 아니라 <code>columnDefs</code> 배열에서 만들어지기 때문입니다.
+        <b> 판단이 서지 않으면 &quot;JSX 안에 그대로 적혀 있는가&quot;</b>를 보면 됩니다.
+      </p>
+
+      <Note type="warn" title="BTN 만 양쪽에 있습니다.">
+        화면 버튼은 <code>tvb</code> → <code>VIEW.BTN_</code>, 다이얼로그 버튼은
+        <code> tsb</code> → <code>SCRIPT.BTN_</code> 입니다. 구분(BTN)만 보고는 섹션을 알 수 없는
+        유일한 경우라, 이 둘은 헬퍼를 정확히 골라야 합니다.
+      </Note>
+
+      <h4>MESSAGE 는 섹션이 아닙니다</h4>
+      <p>
+        <code>MESSAGE.CONFIRM.TEXT_C100001</code> 같은 키를 보면 <code>MESSAGE</code> 가 섹션처럼
+        보이지만 아닙니다. <b>첫 마디는 화면ID 자리</b>이고, <code>MESSAGE</code> 는 화면이 아니라
+        <b> 전 화면이 함께 쓰는 메시지 모음</b>에 붙인 이름입니다.
+      </p>
+
+      <Code locale={L}>{`화면 라벨   SYS050301SC . VIEW    . TEXT_lblCd
+전역 메시지  MESSAGE     . CONFIRM . TEXT_C100001
+            └ 화면ID      └ 섹션 자리  └ 구분_세부
+
+전역 메시지는 섹션 자리에 CONFIRM / INFO / ERROR 가 들어간다.
+같은 값이 라벨구분(LBL_SE_CD)에도 들어가므로 화면의 섹션·구분 목록과 맞지 않는다.`}</Code>
+
+      <Note type="danger" title="전역 메시지는 이 화면에서 등록할 수 없습니다.">
+        섹션 목록에 <code>CONFIRM/INFO/ERROR</code> 가 없고 라벨구분 목록에도 없습니다.
+        <b> SQL 로 넣습니다</b> (<code>db/patch_08_screen_labels.sql</code> 참고).
+        그리고 <code>tmc/tmi/tme</code> 는 폴백 인자가 없어, 등록하지 않으면 화면에
+        <code> MESSAGE.CONFIRM.TEXT_C100001</code> 같은 키가 그대로 보입니다.
+      </Note>
+
+      <Note title="공용 컴포넌트는 화면ID 자리에 COMPONENT 를 씁니다.">
+        어느 화면에서 그려지든 같아야 하는 문구(<code>useComponentLabel</code>)는
+        <code> COMPONENT.VIEW.TEXT_…</code> 형태입니다. 섹션·구분 규약이 화면 라벨과 같아
+        <b>이 화면에서 그대로 등록할 수 있습니다</b> — 화면ID 칸에 <code>COMPONENT</code> 를 넣으면 됩니다.
+      </Note>
 
       <h4>라벨 등록</h4>
       <p>

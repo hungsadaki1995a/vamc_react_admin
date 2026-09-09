@@ -359,9 +359,67 @@ Số thứ tự (2) = 01, Loại (2) = SC
           [<code>tvh</code>, <code>VIEW.TITLE_</code>, 'Tiêu đề vùng và bảng'],
           [<code>tsg</code>, <code>SCRIPT.GRID_</code>, 'Tiêu đề cột lưới'],
           [<code>tsm</code>, <code>SCRIPT.MSG_</code>, 'Thông báo riêng của màn hình này'],
-          [<code>tmc / tmi / tme</code>, <code>MESSAGE.*</code>, 'Xác nhận / thông tin / lỗi toàn cục'],
+          [<code>tmc / tmi / tme</code>, <code>MESSAGE.CONFIRM|INFO|ERROR.TEXT_</code>, 'Thông báo dùng chung cho mọi màn hình'],
         ]}
       />
+
+      <h4>Chọn phần (VIEW / SCRIPT) thế nào</h4>
+      <p>
+        Đoạn giữa của mã nhãn chính là phần (section). <b>Hàm bạn dùng trong mã quyết định phần này</b> —
+        chữ lấy qua <code>tvt</code> là <code>VIEW</code>, chữ lấy qua <code>tsg</code> là
+        <code>SCRIPT</code>. Khi đăng ký, khoá phải <b>trùng từng ký tự</b> với khoá mà mã gọi;
+        nếu lệch thì màn hình hiển thị văn bản dự phòng mà không có cảnh báo nào.
+      </p>
+
+      <DataTable
+        head={['Phần', 'Là gì', 'Ví dụ']}
+        rows={[
+          [<code>VIEW</code>, <>Chữ viết thẳng trong JSX. <b>Mở màn hình là thấy ngay</b></>,
+           <>Nhãn trường (<code>tvt</code>), nút (<code>tvb</code>), tiêu đề bảng (<code>tvh</code>)</>],
+          [<code>SCRIPT</code>, <>Chữ do mã sinh ra. <b>Xuất hiện sau khi người dùng thao tác</b>, hoặc đến từ mảng/cấu hình</>,
+           <>Tiêu đề cột lưới (<code>tsg</code>), thông báo xác nhận (<code>tsm</code>)</>],
+        ]}
+      />
+
+      <p>
+        Tiêu đề cột lưới thuộc <code>SCRIPT</code> là chỗ dễ nhầm nhất. Chúng hiển thị trên màn hình
+        nhưng đến từ mảng <code>columnDefs</code> chứ không phải từ JSX.
+        <b> Khi phân vân, hãy hỏi: chữ đó có được viết thẳng trong JSX không.</b>
+      </p>
+
+      <Note type="warn" title="Chỉ BTN có ở cả hai phía.">
+        Nút trên màn hình là <code>tvb</code> → <code>VIEW.BTN_</code>; nút trong hộp thoại là
+        <code> tsb</code> → <code>SCRIPT.BTN_</code>. Đây là trường hợp duy nhất mà chỉ nhìn phân loại
+        (BTN) thì không biết được phần, nên phải chọn đúng hàm.
+      </Note>
+
+      <h4>MESSAGE không phải là phần</h4>
+      <p>
+        Trong khoá như <code>MESSAGE.CONFIRM.TEXT_C100001</code>, <code>MESSAGE</code> trông giống phần
+        nhưng không phải. <b>Đoạn đầu là chỗ dành cho mã màn hình</b>, và <code>MESSAGE</code> không phải
+        màn hình — đó là tên đặt cho <b>kho thông báo mà mọi màn hình dùng chung</b>.
+      </p>
+
+      <Code locale={L}>{`Nhãn màn hình    SYS050301SC . VIEW    . TEXT_lblCd
+Thông báo chung  MESSAGE     . CONFIRM . TEXT_C100001
+                 └ mã màn hình  └ chỗ của phần  └ phân loại_chi tiết
+
+Với thông báo chung, chỗ của phần chứa CONFIRM / INFO / ERROR.
+Giá trị đó cũng nằm trong phân loại nhãn (LBL_SE_CD), nên không khớp với
+danh sách phần và phân loại trên màn hình này.`}</Code>
+
+      <Note type="danger" title="Không thể đăng ký thông báo chung từ màn hình này.">
+        <code>CONFIRM/INFO/ERROR</code> không có trong danh sách phần lẫn danh sách phân loại.
+        <b> Hãy thêm bằng SQL</b> (xem <code>db/patch_08_screen_labels.sql</code>).
+        Ngoài ra <code>tmc/tmi/tme</code> không nhận tham số dự phòng — chưa đăng ký thì màn hình
+        hiển thị nguyên khoá như <code>MESSAGE.CONFIRM.TEXT_C100001</code>.
+      </Note>
+
+      <Note title="Thành phần dùng chung đặt COMPONENT vào chỗ mã màn hình.">
+        Chữ phải giống nhau ở mọi nơi được vẽ (<code>useComponentLabel</code>) có dạng
+        <code> COMPONENT.VIEW.TEXT_…</code>. Quy ước phần và phân loại giống nhãn màn hình, nên
+        <b> bạn đăng ký được ngay tại đây</b> — chỉ cần nhập <code>COMPONENT</code> vào ô mã màn hình.
+      </Note>
 
       <h4>Đăng ký nhãn</h4>
       <p>

@@ -360,9 +360,67 @@ Seq (2) = 01, Type (2) = SC
           [<code>tvh</code>, <code>VIEW.TITLE_</code>, 'Section and panel titles'],
           [<code>tsg</code>, <code>SCRIPT.GRID_</code>, 'Grid headers'],
           [<code>tsm</code>, <code>SCRIPT.MSG_</code>, 'Messages specific to this screen'],
-          [<code>tmc / tmi / tme</code>, <code>MESSAGE.*</code>, 'Global confirm / info / error'],
+          [<code>tmc / tmi / tme</code>, <code>MESSAGE.CONFIRM|INFO|ERROR.TEXT_</code>, 'Messages shared by every screen'],
         ]}
       />
+
+      <h4>How to pick the section (VIEW / SCRIPT)</h4>
+      <p>
+        The middle segment of a label code is the section. <b>Which helper you used in code decides it</b> —
+        text read through <code>tvt</code> is <code>VIEW</code>, text read through <code>tsg</code> is
+        <code>SCRIPT</code>. When registering, the key must match the one the code asks for
+        <b> character for character</b>; if it does not, the fallback text is shown with no warning.
+      </p>
+
+      <DataTable
+        head={['Section', 'What', 'Examples']}
+        rows={[
+          [<code>VIEW</code>, <>Text written directly in JSX. <b>Visible as soon as the screen opens</b></>,
+           <>Field labels (<code>tvt</code>), buttons (<code>tvb</code>), panel titles (<code>tvh</code>)</>],
+          [<code>SCRIPT</code>, <>Text produced by code. <b>Appears after the user does something</b>, or comes from an array/config</>,
+           <>Grid headers (<code>tsg</code>), confirm and info messages (<code>tsm</code>)</>],
+        ]}
+      />
+
+      <p>
+        Grid headers being <code>SCRIPT</code> is the easy one to get wrong. They are visible on screen,
+        but they come from the <code>columnDefs</code> array rather than from JSX.
+        <b> When in doubt, ask whether the text is literally written inside JSX.</b>
+      </p>
+
+      <Note type="warn" title="Only BTN exists on both sides.">
+        A screen button is <code>tvb</code> → <code>VIEW.BTN_</code>; a dialog button is
+        <code> tsb</code> → <code>SCRIPT.BTN_</code>. This is the one case where the category (BTN)
+        alone does not tell you the section, so pick the helper carefully.
+      </Note>
+
+      <h4>MESSAGE is not a section</h4>
+      <p>
+        In a key like <code>MESSAGE.CONFIRM.TEXT_C100001</code>, <code>MESSAGE</code> looks like a section
+        but is not. <b>The first segment is the screen-ID slot</b>, and <code>MESSAGE</code> is not a screen —
+        it is the name given to <b>the pool of messages every screen shares</b>.
+      </p>
+
+      <Code locale={L}>{`Screen label   SYS050301SC . VIEW    . TEXT_lblCd
+Global message MESSAGE     . CONFIRM . TEXT_C100001
+               └ screen ID   └ section slot  └ category_detail
+
+For global messages the section slot holds CONFIRM / INFO / ERROR.
+The same value also goes into the label category (LBL_SE_CD), so it does not
+match the section and category lists on this screen.`}</Code>
+
+      <Note type="danger" title="Global messages cannot be registered from this screen.">
+        <code>CONFIRM/INFO/ERROR</code> appear in neither the section list nor the category list.
+        <b> Insert them with SQL</b> (see <code>db/patch_08_screen_labels.sql</code>).
+        Also, <code>tmc/tmi/tme</code> take no fallback argument — if a message is not registered,
+        the raw key such as <code>MESSAGE.CONFIRM.TEXT_C100001</code> is displayed.
+      </Note>
+
+      <Note title="Shared components use COMPONENT in the screen-ID slot.">
+        Text that must be identical wherever it is rendered (<code>useComponentLabel</code>) takes the form
+        <code> COMPONENT.VIEW.TEXT_…</code>. Its section and category conventions match screen labels, so
+        <b> you can register it right here</b> — just enter <code>COMPONENT</code> in the screen ID field.
+      </Note>
 
       <h4>Registering labels</h4>
       <p>
