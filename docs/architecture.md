@@ -160,7 +160,7 @@ npm install
 npm run dev          # Vite 개발 서버 (포트 3000, strictPort)
 npm run build        # tsc -b && vite build → dist/
 npm run lint         # ESLint
-npx tsc --noEmit     # 타입 체크만
+npx tsc -b           # 타입 체크만 (⚠️ --noEmit 은 no-op — tsconfig.json 이 솔루션 파일이다)
 ```
 
 **환경 변수** — `cp .env.example .env.local` 후 값을 확인한다.
