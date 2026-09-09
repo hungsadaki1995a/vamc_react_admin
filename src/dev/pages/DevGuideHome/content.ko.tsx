@@ -1,4 +1,5 @@
 import { Code, Note, DataTable } from './parts';
+import { BACKEND_TUTORIAL_URL } from './sections';
 import styles from './index.module.css';
 import {
   TERMINAL, SQL_ROLE, CODE_EMPTY, CODE_API, CODE_LIST, CODE_CRUD,
@@ -32,6 +33,14 @@ export const CONTENT_KO: Record<string, React.ReactNode> = {
         <span className={styles.path}>.env.local</span> 의 <code>VITE_API_BASE_URL</code> 을 비워 두면
         Vite 프록시가 <code>/api</code> 요청을 <code>http://127.0.0.1:8080</code> 으로 넘깁니다.
         기본값이므로 보통 건드릴 일이 없습니다.
+      </Note>
+
+      <Note title="이 화면이 부를 API가 아직 없다면">
+        백엔드에 <b>공지사항 API 만들기</b> 가이드가 있습니다. 이 문서와 <b>같은 공지사항 예시</b>로
+        DTO · 매퍼 · 서비스 · 컨트롤러를 순서대로 만드는 문서입니다.
+        API를 먼저 만들고 <b>05 API 파일 만들기</b>로 돌아오면 화면이 바로 붙습니다.
+        <br />
+        <a href={BACKEND_TUTORIAL_URL} target="_blank" rel="noreferrer">{BACKEND_TUTORIAL_URL}</a>
       </Note>
     </>
   ),
@@ -410,7 +419,7 @@ export const CONTENT_KO: Record<string, React.ReactNode> = {
       </p>
 
       <Note title="두 번째 인자는 폴백입니다.">
-        <code>tvt(&apos;ntcTtl&apos;, &apos;제목&apos;)</code> 처럼 기본 문구를 넘기면
+        <code>tvt(&apos;ntcMttrTtl&apos;, &apos;제목&apos;)</code> 처럼 기본 문구를 넘기면
         라벨이 아직 없어도 화면은 한국어로 정상 동작합니다.
         <b> 개발 중에는 폴백으로 진행하고, 화면이 확정되면 라벨을 한 번에 등록</b>하는 편이 편합니다.
         전역 메시지(<code>tmc/tmi/tme</code>)는 폴백이 없어 미등록이면 키 문자열이 그대로 보입니다.

@@ -11,6 +11,16 @@ import styles from './index.module.css';
 // Fast Refresh 가 동작하지 않는다(react-refresh/only-export-components).
 // ─────────────────────────────────────────────────────────────────────────────
 
+/**
+ * 백엔드 개발 가이드 — "공지사항 API 만들기" 주소.
+ *
+ * 이 화면과 짝을 이루는 문서이고, 백엔드와 같은 호스트에 있다. 주소를 박아 두지 않는 이유는
+ * 로컬(:8080)과 개발서버(:30281)가 다르기 때문이다. `VITE_API_BASE_URL` 이 비어 있으면
+ * (Vite 프록시 모드) 로컬 백엔드를 가리킨다.
+ */
+export const BACKEND_TUTORIAL_URL =
+  `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'}/demo/tutorial.html`;
+
 export interface Section {
   /** 앵커 id. 언어와 무관하게 고정한다 */
   id: string;
