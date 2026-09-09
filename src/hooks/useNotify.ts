@@ -7,11 +7,17 @@ import { useLabelStore } from '@/stores/labelStore';
 
 type NotifyType = 'success' | 'error' | 'warning' | 'info';
 
+// 알림·다이얼로그 제목 — 공용 컴포넌트 라벨을 쓴다.
+//
+// 종전 MESSAGE.SCRIPT.TEXT_* 는 DB 에 등록된 적이 없어 어떤 언어에서도 폴백
+// ('success' 같은 영어 소문자)이 그대로 제목에 보였다. MESSAGE 네임스페이스는
+// 섹션 자리에 CONFIRM/INFO/ERROR 가 들어가는 별도 규약이라 라벨 관리 화면으로는
+// 등록할 수 없다 — 화면에서 등록 가능한 COMPONENT.VIEW.TITLE_* 로 옮겼다.
 const NOTIFY_CONFIG: Record<NotifyType, { titleKey: string; titleFallback: string }> = {
-  success: { titleKey: 'MESSAGE.SCRIPT.TEXT_success', titleFallback: 'success' },
-  error:   { titleKey: 'MESSAGE.SCRIPT.TEXT_error',   titleFallback: 'error' },
-  warning: { titleKey: 'MESSAGE.SCRIPT.TEXT_warning', titleFallback: 'warning' },
-  info:    { titleKey: 'MESSAGE.SCRIPT.TEXT_info',    titleFallback: 'info' },
+  success: { titleKey: 'COMPONENT.VIEW.TITLE_success', titleFallback: '성공' },
+  error:   { titleKey: 'COMPONENT.VIEW.TITLE_error',   titleFallback: '오류' },
+  warning: { titleKey: 'COMPONENT.VIEW.TITLE_warning', titleFallback: '경고' },
+  info:    { titleKey: 'COMPONENT.VIEW.TITLE_info',    titleFallback: '안내' },
 };
 
 type NotifyOptions = Parameters<ReturnType<typeof App.useApp>['notification']['success']>[0];
@@ -27,10 +33,10 @@ const DIALOG_CONFIG: Record<DialogType, {
   titleFallback: string;
   danger: boolean;
 }> = {
-  confirm: { titleKey: 'MESSAGE.SCRIPT.TEXT_confirm', titleFallback: 'confirm', danger: false },
-  info:    { titleKey: 'MESSAGE.SCRIPT.TEXT_info',    titleFallback: 'info', danger: false },
-  warning: { titleKey: 'MESSAGE.SCRIPT.TEXT_warning', titleFallback: 'warning', danger: true  },
-  error:   { titleKey: 'MESSAGE.SCRIPT.TEXT_error',   titleFallback: 'error', danger: true  },
+  confirm: { titleKey: 'COMPONENT.VIEW.TITLE_confirm', titleFallback: '확인', danger: false },
+  info:    { titleKey: 'COMPONENT.VIEW.TITLE_info',    titleFallback: '안내', danger: false },
+  warning: { titleKey: 'COMPONENT.VIEW.TITLE_warning', titleFallback: '경고', danger: true  },
+  error:   { titleKey: 'COMPONENT.VIEW.TITLE_error',   titleFallback: '오류', danger: true  },
 };
 
 // 다이얼로그 확인/취소 버튼 — 공용 컴포넌트 라벨을 그대로 쓴다.
@@ -65,12 +71,9 @@ function withFallback(value: string, key: string, fallback: string): string {
  * dialog.error({ content: '서버 오류가 발생했습니다.' });
  * ```
  *
- * Notify label keys (DB 등록 시 자동 다국어):
- *   COMMON.NOTIFY.SUCCESS.TITLE / ERROR.TITLE / WARNING.TITLE / INFO.TITLE
- *
- * Dialog label keys (DB 등록 시 자동 다국어):
- *   COMMON.DIALOG.CONFIRM.TITLE / INFO.TITLE / WARNING.TITLE / ERROR.TITLE
- *   COMMON.DIALOG.OK_TEXT / CANCEL_TEXT
+ * 라벨 키 (전부 COMPONENT 네임스페이스 — 다국어 라벨 관리 화면에서 등록한다):
+ *   제목   COMPONENT.VIEW.TITLE_success / _error / _warning / _info / _confirm
+ *   버튼   COMPONENT.VIEW.BTN_ok / BTN_cancel
  *
  * Dialog type defaults:
  *   confirm  — danger: false
