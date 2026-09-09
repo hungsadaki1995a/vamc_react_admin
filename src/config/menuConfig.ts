@@ -65,7 +65,6 @@ const devMenu: MenuItem = {
         { key: 'dev.patterns.timeline',      label: '타임라인',        componentPath: 'Milestone' },
         { key: 'dev.patterns.dashboard',     label: '대시보드',        componentPath: 'PatternDashboard' },
         { key: 'dev.patterns.admin',         label: '관리/폼',         componentPath: 'PatternAdmin' },
-        { key: 'dev.patterns.i18n-label',    label: '다국어 라벨 관리', componentPath: 'PatternI18nLabel' },
       ],
     },
     {
