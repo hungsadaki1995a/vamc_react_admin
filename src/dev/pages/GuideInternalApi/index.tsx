@@ -46,6 +46,12 @@ const hookRows: HookRow[] = [
   { key: '5', hook: 'useLogout()',                     returns: '() => void',                           desc: '로그아웃 확인 모달 → 전체 스토어 초기화 → /login 리다이렉트',                                               src: 'hooks/useLogout.ts' },
   { key: '6', hook: 'useNotify()',                     returns: '{ toast, notify, dialog }',            desc: 'antd message / notification / modal 통합 훅. dialog는 타입별 i18n 기본값 자동 적용',                         src: 'hooks/useNotify.ts' },
   { key: '7', hook: 'useTabRouteSync()',               returns: 'void',                                 desc: '탭 ↔ URL 양방향 동기화. AppLayout 전용 — 페이지 컴포넌트에서 직접 호출 금지',                               src: 'hooks/useTabRouteSync.ts' },
+  { key: '8', hook: 'useComponentLabel()',             returns: 'useScreenLabel 과 동일',                desc: "공용 컴포넌트용 라벨 훅 — sceId 를 'COMPONENT' 로 고정한다. 어느 화면에서 그려지든 같아야 하는 문구에 쓴다", src: 'hooks/useComponentLabel.ts' },
+  { key: '9', hook: 'useTotalCountLabel()',            returns: '{ template, format }',                 desc: '그리드 건수 문구("전체 {0}건")를 로케일에 맞춰 돌려준다. 툴바·페이지네이션·엑셀 모달이 같은 문구를 쓰게 한다', src: 'hooks/useTotalCountLabel.ts' },
+  { key: '10', hook: 'useAllMenus()',                  returns: 'MenuItem[]',                           desc: '서버 메뉴 + 정적 메뉴를 합친 전체 트리. 정적 메뉴 이름은 현재 로케일로 치환된다. 탭 제목·브레드크럼·레일이 같은 목록을 본다', src: 'hooks/useAllMenus.ts' },
+  { key: '11', hook: 'useExcel(options)',              returns: '{ download, upload, ... }',            desc: '엑셀 다운로드·업로드·템플릿을 한 훅으로. 자세한 사용법은 개발 도구 > 엑셀 업로드/다운로드 화면 참조',        src: 'hooks/useExcel.ts' },
+  { key: '12', hook: 'useScrollOverflow<T>(step?)',    returns: '{ ref, overflow, scrollLeft, scrollRight }', desc: '가로 스크롤 가능 여부를 감지해 좌우 화살표 노출을 제어한다. ScrollOverflowWrapper 가 사용',            src: 'hooks/useScrollOverflow.ts' },
+  { key: '13', hook: 'useNavigateTab()',               returns: '(key, params?) => void',               desc: '다른 화면을 탭으로 연다. menuCd 또는 화면ID 를 받으며, 대상 화면은 useTabContext()?.tab.params 로 수신', src: 'hooks/useNavigateTab.ts' },
 ];
 
 // ─── Utils 목록 ──────────────────────────────────────────────────────────────
