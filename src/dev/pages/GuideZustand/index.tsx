@@ -1,6 +1,7 @@
 import { Tabs, Card, Button, Space } from 'antd';
 import { create } from 'zustand';
 import CodeSnippet from '@/components/common/CodeSnippet';
+import DevPageHeader from '@/dev/DevPageHeader';
 
 // Live demo store
 interface CounterStore {
@@ -609,12 +610,7 @@ export default function GuideZustand() {
 
   return (
     <div className="page-container page-scrollable">
-      <div className="ds-section-header">
-        <h2>Zustand 가이드</h2>
-        <p style={{ color: 'var(--text-secondary)', fontSize: 13, margin: '4px 0 0' }}>
-          오프라인 참조용 Zustand 상태 관리 튜토리얼
-        </p>
-      </div>
+      <DevPageHeader page="GuideZustand" />
       <Tabs items={tabItems} />
     </div>
   );

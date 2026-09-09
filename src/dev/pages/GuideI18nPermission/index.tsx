@@ -4,6 +4,7 @@ import CodeSnippet from '@/components/common/CodeSnippet';
 import { useScreenLabel } from '@/hooks/useScreenLabel';
 import { useMenuPermission } from '@/hooks/useMenuPermission';
 import { useLocaleStore } from '@/stores/localeStore';
+import DevPageHeader from '@/dev/DevPageHeader';
 
 const { Text } = Typography;
 
@@ -54,7 +55,7 @@ export default function GuideI18nPermission() {
 
   return (
     <div className="page-container page-scrollable">
-      <div className="ds-section-header"><h2>다국어(i18n) & 권한(Permission) 가이드</h2></div>
+      <DevPageHeader page="GuideI18nPermission" />
 
       <Tabs
         items={[

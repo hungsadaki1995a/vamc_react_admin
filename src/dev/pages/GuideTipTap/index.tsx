@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Tabs, Card } from 'antd';
 import CodeSnippet from '@/components/common/CodeSnippet';
 import RichTextEditor from '@/components/editors/RichTextEditor';
+import DevPageHeader from '@/dev/DevPageHeader';
 
 // ============================================================================
 // Code Examples
@@ -788,12 +789,7 @@ export default function GuideTipTap() {
 
   return (
     <div className="page-container page-scrollable">
-      <div className="ds-section-header">
-        <h2>TipTap 에디터 가이드</h2>
-        <p style={{ color: 'var(--text-secondary)', fontSize: 13, margin: '4px 0 0' }}>
-          오프라인 참조용 TipTap 리치텍스트 에디터 튜토리얼
-        </p>
-      </div>
+      <DevPageHeader page="GuideTipTap" />
       <Tabs items={tabItems} />
     </div>
   );

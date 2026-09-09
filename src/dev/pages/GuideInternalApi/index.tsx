@@ -7,6 +7,7 @@ import { useTabStore } from '@/stores/tabStore';
 import { useProjectStore } from '@/stores/projectStore';
 import { useThemeStore } from '@/stores/themeStore';
 import { useLocaleStore } from '@/stores/localeStore';
+import DevPageHeader from '@/dev/DevPageHeader';
 
 const { Text } = Typography;
 
@@ -84,12 +85,7 @@ export default function GuideInternalApi() {
 
   return (
     <div className="page-container page-scrollable">
-      <div className="ds-section-header">
-        <h2>내부 API 레퍼런스</h2>
-        <p style={{ color: 'var(--text-secondary)', fontSize: 13, margin: '4px 0 0' }}>
-          VAMC NPL ADMIN에서 제공하는 Hooks, Stores, Utils, Contexts, Config, lib/api 사용법 정리
-        </p>
-      </div>
+      <DevPageHeader page="GuideInternalApi" />
 
       <Tabs
         items={[

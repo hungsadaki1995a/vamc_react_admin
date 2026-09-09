@@ -5,6 +5,7 @@ import type { AntdIconProps } from '@ant-design/icons/lib/components/AntdIcon';
 import type { ComponentType } from 'react';
 import { menuConfig } from '@/config/menuConfig';
 import type { MenuItem } from '@/types/menu';
+import DevPageHeader from '@/dev/DevPageHeader';
 
 const { Title, Text } = Typography;
 
@@ -33,7 +34,7 @@ export default function IconsDemo() {
 
   return (
     <div style={{ padding: 24 }}>
-      <Title level={2}>아이콘 갤러리</Title>
+      <DevPageHeader page="IconsDemo" />
       <Text type="secondary">총 {allIconNames.length}개 아이콘</Text>
 
       <div style={{ margin: '12px 0 8px' }}>

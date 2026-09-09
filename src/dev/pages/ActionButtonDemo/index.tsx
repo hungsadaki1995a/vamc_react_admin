@@ -4,6 +4,7 @@ import ActionButton from '@/components/common/ActionButton';
 import ActionButtonGroup from '@/components/common/ActionButtonGroup';
 import CodeSnippet from '@/components/common/CodeSnippet';
 import { useNotify } from '@/hooks/useNotify';
+import DevPageHeader from '@/dev/DevPageHeader';
 
 const { Text } = Typography;
 
@@ -58,14 +59,7 @@ export default function ActionButtonDemo() {
 
   return (
     <div className="page-container page-scrollable">
-      <div className="ds-section-header">
-        <h2>ActionButton</h2>
-        <p style={{ color: 'var(--text-secondary)', fontSize: 13, margin: '4px 0 0' }}>
-          화면 전반의 액션 버튼 표준. <Text code>action</Text> 프리셋으로 아이콘·스타일을 통일하고,
-          <Text code>ActionButtonGroup</Text>의 <Text code>preset</Text>으로 버튼 정렬 순서를,
-          <Text code>canWrite</Text>로 쓰기 권한 연동을 처리합니다.
-        </p>
-      </div>
+      <DevPageHeader page="ActionButtonDemo" />
 
       <Card size="small" title="ActionButton Props" style={{ marginBottom: 16 }}>
         <Table<PropRow>

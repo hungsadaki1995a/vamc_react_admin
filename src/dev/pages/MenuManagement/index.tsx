@@ -4,6 +4,7 @@ import type { TreeDataNode } from 'antd';
 import { EditOutlined } from '@ant-design/icons';
 import { menuConfig } from '@/config/menuConfig';
 import type { MenuItem } from '@/types/menu';
+import DevPageHeader from '@/dev/DevPageHeader';
 
 const { Text } = Typography;
 
@@ -43,9 +44,7 @@ export default function MenuManagement() {
 
   return (
     <>
-      <div className="ds-section-header">
-        <h2>메뉴 관리</h2>
-      </div>
+      <DevPageHeader page="MenuManagement" />
       <div style={{ display: 'flex', gap: 12, minHeight: 400 }}>
         {/* Tree panel */}
         <Card

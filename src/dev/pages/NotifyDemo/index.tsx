@@ -1,23 +1,13 @@
 import { Button, Card, Divider, Space } from 'antd';
-import { Typography } from 'antd';
 import { useNotify } from '@/hooks/useNotify';
-
-const { Text } = Typography;
+import DevPageHeader from '@/dev/DevPageHeader';
 
 export default function NotifyDemo() {
   const { toast, notify, dialog } = useNotify();
 
   return (
     <div className="page-container page-scrollable">
-      <div className="ds-section-header">
-        <h2>useNotify</h2>
-        <p style={{ color: 'var(--text-secondary)', fontSize: 13, margin: '4px 0 0' }}>
-          antd <Text code>message</Text> / <Text code>notification</Text> / <Text code>modal</Text>을
-          하나의 훅으로 제공합니다.
-          <br />
-          <strong>dialog</strong>는 타입별 i18n 기본값(title · okText · cancelText · danger)이 자동 적용되며, 호출 시 개별 오버라이드 가능합니다.
-        </p>
-      </div>
+      <DevPageHeader page="NotifyDemo" />
 
       <Card size="small" style={{ marginBottom: 16 }}>
         <Divider titlePlacement="left" styles={{ content: { margin: 0 } }} style={{ fontSize: 13 }}>toast — 자동 사라지는 메시지</Divider>

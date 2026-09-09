@@ -7,6 +7,7 @@ import { ExcelButton } from '@/components/excel';
 import { ExcelErrorModal } from '@/components/excel';
 import { useExcel } from '@/hooks/useExcel';
 import type { ExcelColumnDef, ExcelUploadResult } from '@/types/excel';
+import DevPageHeader from '@/dev/DevPageHeader';
 
 const { Text } = Typography;
 
@@ -113,14 +114,7 @@ function ErrorModalDemo() {
 export default function GuideExcel() {
   return (
     <div className="page-container page-scrollable">
-      <div className="ds-section-header">
-        <h2>엑셀 업로드 / 다운로드</h2>
-        <p style={{ color: 'var(--text-secondary)', fontSize: 13, margin: '4px 0 0' }}>
-          화면마다 <Text code>ExcelColumnDef[]</Text>를 선언하면
-          <Text code>ExcelButton</Text> 하나로 다운로드·업로드·템플릿을 모두 처리합니다.
-          최대 <strong>5만건</strong> 대응 (SAX 파싱 + MyBatis Cursor 스트리밍).
-        </p>
-      </div>
+      <DevPageHeader page="GuideExcel" />
 
       {/* ── 아키텍처 개요 ── */}
       <Alert

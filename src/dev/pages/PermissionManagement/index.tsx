@@ -5,6 +5,7 @@ import { menuConfig } from '@/config/menuConfig';
 import type { MenuItem } from '@/types/menu';
 import GridToolbar from '@/components/layout/GridToolbar';
 import styles from './index.module.css';
+import DevPageHeader from '@/dev/DevPageHeader';
 
 // Roles definition
 const roles = [
@@ -83,9 +84,7 @@ export default function PermissionManagement() {
 
   return (
     <>
-      <div className="ds-section-header">
-        <h2>메뉴 권한 관리</h2>
-      </div>
+      <DevPageHeader page="PermissionManagement" />
 
       {/* Filter */}
       <div className={styles.permFilterBar}>

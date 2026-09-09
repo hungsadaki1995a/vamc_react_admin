@@ -7,6 +7,7 @@ import CodeSnippet from '@/components/common/CodeSnippet';
 import { lightTheme, darkTheme } from '@/components/grid/GridTable';
 import { useThemeStore } from '@/stores/themeStore';
 import '@/components/grid/GridTable.css';
+import DevPageHeader from '@/dev/DevPageHeader';
 
 // Register AG Grid modules
 ModuleRegistry.registerModules([AllCommunityModule]);
@@ -1624,12 +1625,7 @@ export default function GuideAgGrid() {
 
   return (
     <div className="page-container page-scrollable">
-      <div className="ds-section-header">
-        <h2>AG Grid 가이드</h2>
-        <p style={{ color: 'var(--text-secondary)', fontSize: 13, margin: '4px 0 0' }}>
-          오프라인 참조용 AG Grid 튜토리얼
-        </p>
-      </div>
+      <DevPageHeader page="GuideAgGrid" />
       <Tabs items={tabItems} />
     </div>
   );

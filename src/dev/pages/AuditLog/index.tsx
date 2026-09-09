@@ -3,6 +3,7 @@ import { DatePicker, Select, Space, Tag } from 'antd';
 import GridTable from '@/components/grid/GridTable';
 import type { ColDef, ICellRendererParams } from 'ag-grid-community';
 import dayjs from 'dayjs';
+import DevPageHeader from '@/dev/DevPageHeader';
 
 const { RangePicker } = DatePicker;
 
@@ -69,9 +70,7 @@ export default function AuditLog() {
 
   return (
     <div className="page-container page-scrollable">
-      <div className="ds-section-header">
-        <h2>감사 로그</h2>
-      </div>
+      <DevPageHeader page="AuditLog" />
       <Space style={{ marginBottom: 16 }} size="middle">
         <RangePicker
           value={dateRange}

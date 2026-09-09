@@ -1,5 +1,6 @@
 import { Timeline, Card, Tag, Typography, Space } from 'antd';
 import { CheckCircleOutlined, ClockCircleOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
+import DevPageHeader from '@/dev/DevPageHeader';
 
 const { Text } = Typography;
 
@@ -29,7 +30,7 @@ const statusColor: Record<string, string> = {
 export default function MilestonePage() {
   return (
     <div className="page-container page-scrollable">
-      <div className="ds-section-header"><h2>마일스톤</h2></div>
+      <DevPageHeader page="Milestone" />
       <Card size="small">
         <Timeline
           items={milestones.map((m) => ({
