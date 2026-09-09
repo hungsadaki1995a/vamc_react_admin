@@ -5,6 +5,7 @@ import { GanttSheet } from '@/components/gantt-sheet';
 import type { GanttTask, GanttViewMode } from '@/components/gantt-sheet';
 import CodeSnippet from '@/components/common/CodeSnippet';
 import styles from './index.module.css';
+import DevPageHeader from '@/dev/DevPageHeader';
 
 /* ─── Sample data (기본 데모용) ─── */
 const sampleTasks: GanttTask[] = [
@@ -276,12 +277,7 @@ export default function GanttSheetDemo() {
 
   return (
     <div className="page-container page-scrollable">
-      <div className="ds-section-header">
-        <h2>간트 시트 (GanttSheet)</h2>
-        <p style={{ color: 'var(--text-secondary)', fontSize: 13, margin: '4px 0 0' }}>
-          Virtual Scroll 기반 대용량 간트 컴포넌트 — 5,000행+ 60fps 스크롤. GanttView와 동일한 Props.
-        </p>
-      </div>
+      <DevPageHeader page="GanttSheetDemo" />
 
       <Tabs
         defaultActiveKey="demo"

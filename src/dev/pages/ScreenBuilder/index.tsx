@@ -2,6 +2,7 @@ import { Alert, Card, Col, Form, Input, Radio, Row, Select, Typography } from 'a
 import ActionButton from '@/components/common/ActionButton';
 import ActionButtonGroup from '@/components/common/ActionButtonGroup';
 import { useNotify } from '@/hooks/useNotify';
+import DevPageHeader from '@/dev/DevPageHeader';
 
 const { Text } = Typography;
 
@@ -60,12 +61,7 @@ export default function ScreenBuilder() {
 
   return (
     <div className="page-container page-scrollable">
-      <div className="ds-section-header">
-        <h2>화면 생성기</h2>
-        <p style={{ color: 'var(--text-secondary)', fontSize: 13, margin: '4px 0 0' }}>
-          레이아웃 패턴을 선택해 <Text code>src/features/{'{도메인}'}/{'{화면ID}'}/index.tsx</Text> 스캐폴드를 생성합니다.
-        </p>
-      </div>
+      <DevPageHeader page="ScreenBuilder" />
 
       <Alert
         type="info"

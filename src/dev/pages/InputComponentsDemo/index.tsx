@@ -9,6 +9,7 @@ import SearchSelectField from '@/components/inputs/SearchSelectField';
 import type { SearchSelectValue } from '@/components/inputs/SearchSelectField';
 import CodeSnippet from '@/components/common/CodeSnippet';
 import styles from './index.module.css';
+import DevPageHeader from '@/dev/DevPageHeader';
 
 const { TextArea, Search, Password } = Input;
 
@@ -178,12 +179,7 @@ export default function InputComponentsDemo() {
 
   return (
     <div className="page-container page-scrollable">
-      <div className="ds-section-header">
-        <h2>입력 컴포넌트</h2>
-        <p style={{ color: 'var(--text-secondary)', fontSize: 13, margin: '4px 0 0' }}>
-          커스텀 입력 컴포넌트 및 Ant Design 기본 입력 컴포넌트 사용 예시입니다.
-        </p>
-      </div>
+      <DevPageHeader page="InputComponentsDemo" />
 
       <Tabs
         defaultActiveKey="comcd"

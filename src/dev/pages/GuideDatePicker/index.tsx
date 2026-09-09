@@ -2,8 +2,9 @@ import { useState } from 'react';
 import { Typography, Card, Divider, Space } from 'antd';
 import { DatePicker, Calendar } from 'antd';
 import type { Dayjs } from 'dayjs';
+import DevPageHeader from '@/dev/DevPageHeader';
 
-const { Title, Paragraph, Text } = Typography;
+const { Paragraph, Text } = Typography;
 const { RangePicker } = DatePicker;
 
 export default function GuideDatePicker() {
@@ -12,7 +13,7 @@ export default function GuideDatePicker() {
 
   return (
     <div style={{ padding: 24 }}>
-      <Title level={2}>DatePicker / Calendar 가이드</Title>
+      <DevPageHeader page="GuideDatePicker" />
       <Paragraph>Ant Design의 날짜 관련 컴포넌트입니다. 내부적으로 <Text code>dayjs</Text>를 사용합니다.</Paragraph>
 
       <Divider titlePlacement="left">DatePicker 기본</Divider>

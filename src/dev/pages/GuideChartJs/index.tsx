@@ -15,8 +15,9 @@ import {
   Tooltip,
   Legend,
 } from 'chart.js';
+import DevPageHeader from '@/dev/DevPageHeader';
 
-const { Title, Paragraph, Text } = Typography;
+const { Paragraph, Text } = Typography;
 
 Chart.register(
   CategoryScale,
@@ -109,7 +110,7 @@ function DoughnutChartExample() {
 export default function GuideChartJs() {
   return (
     <div style={{ padding: 24 }}>
-      <Title level={2}>Chart.js 가이드</Title>
+      <DevPageHeader page="GuideChartJs" />
       <Paragraph>Chart.js는 HTML5 Canvas 기반의 차트 라이브러리입니다. 반드시 필요한 컴포넌트를 <Text code>Chart.register()</Text>로 등록해야 합니다.</Paragraph>
 
       <Divider titlePlacement="left">차트 예제</Divider>

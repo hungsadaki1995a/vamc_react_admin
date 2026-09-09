@@ -1,12 +1,13 @@
 import { Typography, Card, Divider, Alert } from 'antd';
 import 'frappe-gantt/dist/frappe-gantt.css';
+import DevPageHeader from '@/dev/DevPageHeader';
 
-const { Title, Paragraph, Text } = Typography;
+const { Paragraph, Text } = Typography;
 
 export default function GuideFrappeGantt() {
   return (
     <div style={{ padding: 24 }}>
-      <Title level={2}>Frappe Gantt 가이드</Title>
+      <DevPageHeader page="GuideFrappeGantt" />
       <Paragraph>Frappe Gantt는 오픈소스 간트 차트 라이브러리입니다. 이 프로젝트에서는 <Text code>GanttView</Text> 컴포넌트로 래핑하여 사용합니다.</Paragraph>
 
       <Alert

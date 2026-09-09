@@ -3,8 +3,9 @@ import type { TableColumnsType } from 'antd';
 import _ from 'lodash';
 import { menuConfig } from '@/config/menuConfig';
 import type { MenuItem } from '@/types/menu';
+import DevPageHeader from '@/dev/DevPageHeader';
 
-const { Title, Paragraph, Text } = Typography;
+const { Paragraph, Text } = Typography;
 
 // Flatten menu items using _.map (example usage)
 const topLevelMenus = _.map(menuConfig, (item: MenuItem) => ({
@@ -26,7 +27,7 @@ export default function GuideLodash() {
 
   return (
     <div style={{ padding: 24 }}>
-      <Title level={2}>Lodash 가이드</Title>
+      <DevPageHeader page="GuideLodash" />
       <Paragraph>Lodash는 배열, 객체, 문자열, 함수를 다루는 유틸리티 라이브러리입니다.</Paragraph>
 
       <Divider titlePlacement="left">menuConfig를 _.map으로 처리</Divider>

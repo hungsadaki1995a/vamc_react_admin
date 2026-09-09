@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { Alert, Card, Input, Segmented, Typography } from 'antd';
 import CodeSnippet from '@/components/common/CodeSnippet';
+import DevPageHeader from '@/dev/DevPageHeader';
 
 const { Text } = Typography;
 
@@ -101,12 +102,7 @@ export default function CodeTemplateBuilder() {
 
   return (
     <div className="page-container page-scrollable">
-      <div className="ds-section-header">
-        <h2>코드 템플릿</h2>
-        <p style={{ color: 'var(--text-secondary)', fontSize: 13, margin: '4px 0 0' }}>
-          프로젝트 컨벤션에 맞춘 보일러플레이트를 생성합니다. 이름을 입력하면 즉시 반영됩니다.
-        </p>
-      </div>
+      <DevPageHeader page="CodeTemplateBuilder" />
 
       <Alert
         type="info"

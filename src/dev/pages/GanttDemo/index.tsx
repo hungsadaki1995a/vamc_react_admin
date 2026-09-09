@@ -4,6 +4,7 @@ import GanttView from '@/components/gantt/GanttView';
 import type { GanttTask, GanttViewMode } from '@/components/gantt/ganttTypes';
 import CodeSnippet from '@/components/common/CodeSnippet';
 import styles from './index.module.css';
+import DevPageHeader from '@/dev/DevPageHeader';
 
 /* ─── Sample data ─── */
 const sampleTasks: GanttTask[] = [
@@ -157,12 +158,7 @@ export default function GanttDemo() {
 
   return (
     <div className="page-container page-scrollable">
-      <div className="ds-section-header">
-        <h2>간트 차트</h2>
-        <p style={{ color: 'var(--text-secondary)', fontSize: 13, margin: '4px 0 0' }}>
-          GanttView 컴포넌트의 Props, Events 및 라이브 데모입니다.
-        </p>
-      </div>
+      <DevPageHeader page="GanttDemo" />
 
       <Tabs
         defaultActiveKey="demo"

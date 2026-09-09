@@ -1,5 +1,6 @@
 import { Tabs, Card, Alert } from 'antd';
 import CodeSnippet from '@/components/common/CodeSnippet';
+import DevPageHeader from '@/dev/DevPageHeader';
 
 // 기본 설정 코드
 const setupCode = `// src/main.tsx
@@ -1064,12 +1065,7 @@ export default function GuideReactQuery() {
 
   return (
     <div className="page-container page-scrollable">
-      <div className="ds-section-header">
-        <h2>React Query 가이드</h2>
-        <p style={{ color: 'var(--text-secondary)', fontSize: 13, margin: '4px 0 0' }}>
-          오프라인 참조용 TanStack React Query 튜토리얼
-        </p>
-      </div>
+      <DevPageHeader page="GuideReactQuery" />
       <Card>
         <Tabs items={tabItems} />
       </Card>

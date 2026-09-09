@@ -1,8 +1,9 @@
 import { Typography, Card, Divider, Table } from 'antd';
 import type { TableColumnsType } from 'antd';
 import dayjs from 'dayjs';
+import DevPageHeader from '@/dev/DevPageHeader';
 
-const { Title, Paragraph, Text } = Typography;
+const { Paragraph, Text } = Typography;
 
 const now = dayjs();
 
@@ -29,7 +30,7 @@ const columns: TableColumnsType<(typeof examples)[0]> = [
 export default function GuideDayjs() {
   return (
     <div style={{ padding: 24 }}>
-      <Title level={2}>dayjs 가이드</Title>
+      <DevPageHeader page="GuideDayjs" />
       <Paragraph>dayjs는 경량 날짜 라이브러리입니다. Moment.js와 호환되는 API를 가지며 2KB 미만입니다.</Paragraph>
 
       <Divider titlePlacement="left">실시간 예제 (현재 시각 기준)</Divider>

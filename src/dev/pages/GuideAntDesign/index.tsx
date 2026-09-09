@@ -51,6 +51,7 @@ import {
   FolderOutlined,
 } from '@ant-design/icons';
 import CodeSnippet from '@/components/common/CodeSnippet';
+import DevPageHeader from '@/dev/DevPageHeader';
 
 const { TextArea, Password } = Input;
 const { RangePicker } = DatePicker;
@@ -2078,12 +2079,7 @@ rules={[{
 
   return (
     <div className="page-container page-scrollable">
-      <div className="ds-section-header">
-        <h2>Ant Design 가이드</h2>
-        <p style={{ color: 'var(--text-secondary)', fontSize: 13, margin: '4px 0 0' }}>
-          오프라인 참조용 Ant Design 컴포넌트 튜토리얼
-        </p>
-      </div>
+      <DevPageHeader page="GuideAntDesign" />
       <Tabs items={tabItems} />
     </div>
   );

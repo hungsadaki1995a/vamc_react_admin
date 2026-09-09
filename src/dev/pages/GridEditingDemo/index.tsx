@@ -19,6 +19,7 @@ import type { SearchSelectOption } from '@/components/inputs/SearchSelectField';
 import CodeSnippet from '@/components/common/CodeSnippet';
 import { useThemeStore } from '@/stores/themeStore';
 import { useComcdStore } from '@/stores/comcdStore';
+import DevPageHeader from '@/dev/DevPageHeader';
 
 const EMPTY_CODES: import('@/api/common/comCdApi').CodeDetail[] = [];
 import styles from './index.module.css';
@@ -1815,12 +1816,7 @@ export default function GridEditingDemo() {
 
   return (
     <div className="page-container page-scrollable">
-      <div className="ds-section-header">
-        <h2>그리드 테이블</h2>
-        <p style={{ color: 'var(--text-secondary)', fontSize: 13, margin: '4px 0 0' }}>
-          GridTable / GridToolbar / GridPanel 컴포넌트와 셀 편집기(Cell Editor) 사용 예시입니다.
-        </p>
-      </div>
+      <DevPageHeader page="GridEditingDemo" />
 
       <Tabs
         defaultActiveKey="toolbar"

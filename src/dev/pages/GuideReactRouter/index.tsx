@@ -1,5 +1,6 @@
 import { Tabs, Card } from 'antd';
 import CodeSnippet from '@/components/common/CodeSnippet';
+import DevPageHeader from '@/dev/DevPageHeader';
 
 // ============================================================
 // 기본 라우팅 예제 코드
@@ -609,12 +610,7 @@ export default function GuideReactRouter() {
 
   return (
     <div className="page-container page-scrollable">
-      <div className="ds-section-header">
-        <h2>React Router 가이드</h2>
-        <p style={{ color: 'var(--text-secondary)', fontSize: 13, margin: '4px 0 0' }}>
-          오프라인 참조용 React Router v7 튜토리얼
-        </p>
-      </div>
+      <DevPageHeader page="GuideReactRouter" />
       <Tabs items={items} />
     </div>
   );

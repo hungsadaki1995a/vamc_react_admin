@@ -2,6 +2,7 @@ import { lazy, Suspense, useRef, useState } from 'react';
 import { Tabs, Card, Space, Select, Spin } from 'antd';
 import type { SpreadSheetRef } from '@/components/editors/SpreadSheet';
 import CodeSnippet from '@/components/common/CodeSnippet';
+import DevPageHeader from '@/dev/DevPageHeader';
 
 // Lazy-load heavy editors — each loads its vendor chunk only when the tab is first opened
 const RichTextEditor = lazy(() => import('@/components/editors/RichTextEditor'));
@@ -102,9 +103,7 @@ export default function EditorDemo() {
 
   return (
     <div className="page-container page-scrollable">
-      <div className="ds-section-header">
-        <h2>에디터 데모</h2>
-      </div>
+      <DevPageHeader page="EditorDemo" />
 
       <Tabs
         defaultActiveKey="rich"

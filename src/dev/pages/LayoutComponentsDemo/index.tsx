@@ -14,6 +14,7 @@ import ActionButtonGroup from '@/components/common/ActionButtonGroup';
 import AppModal from '@/components/common/AppModal';
 import ModalInfoFields from '@/components/common/ModalInfoFields';
 import styles from './index.module.css';
+import DevPageHeader from '@/dev/DevPageHeader';
 
 const actionButtonCode = `import ActionButton from '@/components/common/ActionButton';
 import ActionButtonGroup from '@/components/common/ActionButtonGroup';
@@ -173,12 +174,7 @@ export default function LayoutComponentsDemo() {
 
   return (
     <div className="page-container page-scrollable">
-      <div className="ds-section-header">
-        <h2>레이아웃 컴포넌트</h2>
-        <p style={{ color: 'var(--text-secondary)', fontSize: 13, margin: '4px 0 0' }}>
-          VAMC NPL ADMIN에서 제공하는 레이아웃 공통 컴포넌트의 사용 예시입니다.
-        </p>
-      </div>
+      <DevPageHeader page="LayoutComponentsDemo" />
 
       <Tabs
         defaultActiveKey="filter"

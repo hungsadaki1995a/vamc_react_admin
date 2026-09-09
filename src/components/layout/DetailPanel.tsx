@@ -1,6 +1,7 @@
 import { useRef, useState, useCallback, useEffect, useMemo } from 'react';
 import { Badge } from 'antd';
 import { CloseOutlined, MinusOutlined } from '@ant-design/icons';
+import { useComponentLabel } from '@/hooks/useComponentLabel';
 import './DetailPanel.css';
 
 interface DetailPanelTab {
@@ -33,6 +34,8 @@ export default function DetailPanel({
   tabs,
   children,
 }: DetailPanelProps) {
+  // 어느 화면에서 그려지든 같은 문구여야 하므로 화면 라벨이 아니라 공용 컴포넌트 라벨을 쓴다
+  const { tvt } = useComponentLabel();
   const [height, setHeight] = useState(defaultHeight);
   const [activeTab, setActiveTab] = useState(tabs?.[0]?.key ?? '');
   const [isDragging, setIsDragging] = useState(false);
@@ -92,10 +95,10 @@ export default function DetailPanel({
         <div className="ds-detail-header-actions">
           {onClose && (
             <>
-              <button className="ds-detail-btn" onClick={() => setHeight(minHeight)} title="최소화">
+              <button className="ds-detail-btn" onClick={() => setHeight(minHeight)} title={tvt('minimize', '최소화')}>
                 <MinusOutlined />
               </button>
-              <button className="ds-detail-btn" onClick={onClose} title="닫기">
+              <button className="ds-detail-btn" onClick={onClose} title={tvt('close', '닫기')}>
                 <CloseOutlined />
               </button>
             </>
