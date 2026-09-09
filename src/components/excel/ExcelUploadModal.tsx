@@ -314,7 +314,7 @@ export function ExcelUploadModal({
       ),
       errorCapped: t('COMPONENT.VIEW.TEXT_excelErrorCapped', '오류가 많아 최대 100건까지만 표시됩니다.'),
       okButton: t('COMPONENT.VIEW.BTN_ok', '확인'),
-      cancelButton: t('COMPONENT.SCRIPT.BTN_cancel', '취소'),
+      cancelButton: t('COMPONENT.VIEW.BTN_cancel', '취소'),
       processButton: t('COMPONENT.VIEW.BTN_process', '처리'),
       fileSelectButton: t('COMPONENT.VIEW.BTN_fileSelect', '파일 선택'),
       stopButton: t('COMPONENT.VIEW.BTN_stop', '중단'),

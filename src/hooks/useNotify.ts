@@ -33,8 +33,11 @@ const DIALOG_CONFIG: Record<DialogType, {
   error:   { titleKey: 'MESSAGE.SCRIPT.TEXT_error',   titleFallback: 'error', danger: true  },
 };
 
-const OK_KEY     = 'MESSAGE.SCRIPT.BTN_confirm';
-const CANCEL_KEY = 'MESSAGE.SCRIPT.BTN_cancel';
+// 다이얼로그 확인/취소 버튼 — 공용 컴포넌트 라벨을 그대로 쓴다.
+// 종전 MESSAGE.SCRIPT.BTN_* 는 DB 에 등록된 적이 없어, 어떤 언어에서도
+// 아래 'OK'/'CANCEL' 폴백이 그대로 보였다.
+const OK_KEY     = 'COMPONENT.VIEW.BTN_ok';
+const CANCEL_KEY = 'COMPONENT.VIEW.BTN_cancel';
 
 function withFallback(value: string, key: string, fallback: string): string {
   return value === key ? fallback : value;

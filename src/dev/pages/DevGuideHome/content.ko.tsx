@@ -375,12 +375,6 @@ export const CONTENT_KO: Record<string, React.ReactNode> = {
         <b> 판단이 서지 않으면 &quot;JSX 안에 그대로 적혀 있는가&quot;</b>를 보면 됩니다.
       </p>
 
-      <Note type="warn" title="BTN 만 양쪽에 있습니다.">
-        화면 버튼은 <code>tvb</code> → <code>VIEW.BTN_</code>, 다이얼로그 버튼은
-        <code> tsb</code> → <code>SCRIPT.BTN_</code> 입니다. 구분(BTN)만 보고는 섹션을 알 수 없는
-        유일한 경우라, 이 둘은 헬퍼를 정확히 골라야 합니다.
-      </Note>
-
       <h4>MESSAGE 는 섹션이 아닙니다</h4>
       <p>
         <code>MESSAGE.CONFIRM.TEXT_C100001</code> 같은 키를 보면 <code>MESSAGE</code> 가 섹션처럼
