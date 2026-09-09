@@ -53,7 +53,6 @@ export const DEV_MENU_LABELS: Record<string, DevMenuLabel> = {
   'dev.patterns.timeline':        { en: 'Timeline',             vn: 'Dòng thời gian' },
   'dev.patterns.dashboard':       { en: 'Dashboard',            vn: 'Bảng điều khiển' },
   'dev.patterns.admin':           { en: 'Admin / Form',         vn: 'Quản trị / Biểu mẫu' },
-  'dev.patterns.i18n-label':      { en: 'Label Management',     vn: 'Quản lý nhãn đa ngôn ngữ' },
 
   // 라이브러리/내부 가이드
   'dev.lib':                      { en: 'Libraries & Internals', vn: 'Thư viện & Nội bộ' },
