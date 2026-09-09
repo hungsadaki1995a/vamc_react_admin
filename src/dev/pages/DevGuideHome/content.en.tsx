@@ -1,4 +1,5 @@
 import { Code, Note, DataTable } from './parts';
+import { BACKEND_TUTORIAL_URL } from './sections';
 import styles from './index.module.css';
 import {
   TERMINAL, SQL_ROLE, CODE_EMPTY, CODE_API, CODE_LIST, CODE_CRUD,
@@ -35,6 +36,14 @@ export const CONTENT_EN: Record<string, React.ReactNode> = {
         Leave <code>VITE_API_BASE_URL</code> empty in <span className={styles.path}>.env.local</span> and the
         Vite proxy forwards <code>/api</code> requests to <code>http://127.0.0.1:8080</code>.
         That is the default, so you rarely need to touch it.
+      </Note>
+
+      <Note title="If the API this screen calls does not exist yet">
+        The backend ships a <b>Building the Notice API</b> guide. It walks through DTO → mapper →
+        service → controller using <b>the same Notice example</b> as this page.
+        Build the API first, then come back to <b>05 Create the API File</b> and the screen lights up.
+        <br />
+        <a href={BACKEND_TUTORIAL_URL} target="_blank" rel="noreferrer">{BACKEND_TUTORIAL_URL}</a>
       </Note>
     </>
   ),
@@ -424,7 +433,7 @@ match the section and category lists on this screen.`}</Code>
       </p>
 
       <Note title="The second argument is a fallback.">
-        Passing a default like <code>tvt(&apos;ntcTtl&apos;, &apos;제목&apos;)</code> keeps the screen working
+        Passing a default like <code>tvt(&apos;ntcMttrTtl&apos;, &apos;제목&apos;)</code> keeps the screen working
         even before the label exists.
         <b> Develop against fallbacks and register all labels at once when the screen is settled</b> —
         that is usually easier. Global messages (<code>tmc/tmi/tme</code>) have no fallback: if they are

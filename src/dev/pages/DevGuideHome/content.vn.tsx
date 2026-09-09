@@ -1,4 +1,5 @@
 import { Code, Note, DataTable } from './parts';
+import { BACKEND_TUTORIAL_URL } from './sections';
 import styles from './index.module.css';
 import {
   TERMINAL, SQL_ROLE, CODE_EMPTY, CODE_API, CODE_LIST, CODE_CRUD,
@@ -35,6 +36,14 @@ export const CONTENT_VN: Record<string, React.ReactNode> = {
         Để trống <code>VITE_API_BASE_URL</code> trong <span className={styles.path}>.env.local</span>,
         proxy của Vite sẽ chuyển các yêu cầu <code>/api</code> tới <code>http://127.0.0.1:8080</code>.
         Đây là giá trị mặc định nên thường không cần sửa.
+      </Note>
+
+      <Note title="Nếu API mà màn hình này gọi vẫn chưa có">
+        Backend có hướng dẫn <b>Xây dựng API Thông báo</b>. Tài liệu đó đi lần lượt qua
+        DTO → mapper → service → controller với <b>cùng ví dụ Thông báo</b> như trang này.
+        Hãy tạo API trước rồi quay lại <b>05 Tạo tệp API</b>, màn hình sẽ chạy ngay.
+        <br />
+        <a href={BACKEND_TUTORIAL_URL} target="_blank" rel="noreferrer">{BACKEND_TUTORIAL_URL}</a>
       </Note>
     </>
   ),
@@ -424,7 +433,7 @@ danh sách phần và phân loại trên màn hình này.`}</Code>
       </p>
 
       <Note title="Tham số thứ hai là giá trị dự phòng.">
-        Truyền văn bản mặc định như <code>tvt(&apos;ntcTtl&apos;, &apos;제목&apos;)</code> thì màn hình vẫn hoạt động
+        Truyền văn bản mặc định như <code>tvt(&apos;ntcMttrTtl&apos;, &apos;제목&apos;)</code> thì màn hình vẫn hoạt động
         bình thường ngay cả khi nhãn chưa có.
         <b> Trong lúc phát triển hãy dùng giá trị dự phòng, đến khi màn hình chốt thì đăng ký nhãn một lượt</b> —
         cách này thường tiện hơn. Thông báo toàn cục (<code>tmc/tmi/tme</code>) không có dự phòng: chưa đăng ký

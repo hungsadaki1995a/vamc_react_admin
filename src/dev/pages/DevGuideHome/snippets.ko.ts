@@ -33,16 +33,19 @@ import type { ApiResponse } from '@/lib/api/types';
 
 // 서버 DTO 와 1:1 인 타입은 이 파일에 같이 둔다.
 export interface Notice {
-  ntcId:   number;
-  ntcTtl:  string;   // 제목
-  ntcCntn: string;   // 내용
-  useYn:   string;
-  crtDt?:  string;
+  ntcMttrId:   string;   // NTC_MTTR_ID — UUID(char 36). 서버가 만든다
+  ntcMttrSeCd: string;   // 구분 SVC(서비스 공지) / BID(입찰 공고)
+  ntcMttrTtl:  string;   // 제목
+  ntcCn:       string;   // 내용
+  expsrYn?:    string;   // 노출 여부 Y/N. 안 보내면 서버가 'Y'
+  inqCnt?:     number;   // 조회수 (읽기 전용)
+  crtDt?:      string;
 }
 
 export interface NoticeListParams {
-  ntcTtl?: string;   // 제목 부분일치
-  useYn?:  string;
+  ntcMttrTtl?:  string;  // 제목 부분일치
+  ntcMttrSeCd?: string;  // 구분
+  expsrYn?:     string;  // 노출 여부
 }
 
 // 목록
@@ -53,15 +56,15 @@ export async function getNoticeList(
   return { success: data.status === 200, message: data.message, data: data.data ?? [] };
 }
 
-// 등록·수정 (ntcId 유무로 서버가 갈라도 되고, 화면에서 나눠도 된다)
+// 등록·수정 통합 저장 — 서버가 ntcMttrId 유무로 등록/수정을 가른다
 export async function saveNotice(item: Notice): Promise<ApiResponse<void>> {
   const { data } = await apiClient.post<ApiResponse<void>>('/api/notice', item);
   return { success: data.status === 200, message: data.message, data: null };
 }
 
 // 삭제
-export async function deleteNotice(ntcId: number): Promise<ApiResponse<void>> {
-  const { data } = await apiClient.delete<ApiResponse<void>>(\`/api/notice/\${ntcId}\`);
+export async function deleteNotice(ntcMttrId: string): Promise<ApiResponse<void>> {
+  const { data } = await apiClient.delete<ApiResponse<void>>(\`/api/notice/\${ntcMttrId}\`);
   return { success: data.status === 200, message: data.message, data: null };
 }`;
 
@@ -90,17 +93,17 @@ export default function CNT010001SC() {
   );
 
   const handleSearch = useCallback(() => {
-    setApplied({ ntcTtl: filterTtl.trim() || undefined });
+    setApplied({ ntcMttrTtl: filterTtl.trim() || undefined });
   }, [filterTtl]);
 
   // 초기화는 입력만 비운다 — 보고 있던 결과를 지우지 않는다.
   const handleReset = useCallback(() => setFilterTtl(''), []);
 
   const columnDefs = useMemo<ColDef<Notice>[]>(() => [
-    { field: 'ntcId',  headerName: '번호',   width: 90, flex: 0 },
-    { field: 'ntcTtl', headerName: '제목',   minWidth: 240 },
-    { field: 'useYn',  headerName: '사용',   width: 80, flex: 0 },
-    { field: 'crtDt',  headerName: '등록일', width: 150, flex: 0 },
+    { field: 'ntcMttrSeCd', headerName: '구분',   width: 90,  flex: 0 },
+    { field: 'ntcMttrTtl',  headerName: '제목',   minWidth: 240 },
+    { field: 'expsrYn',     headerName: '노출',   width: 80,  flex: 0 },
+    { field: 'crtDt',       headerName: '등록일', width: 150, flex: 0 },
   ], []);
 
   return (
@@ -127,7 +130,7 @@ export default function CNT010001SC() {
           totalCount={rows.length}
           columnDefs={columnDefs}
           rowData={rows}
-          rowKey="ntcId"
+          rowKey="ntcMttrId"
           gridRef={gridRef}
           loading={isLoading}
           height="100%"
@@ -138,7 +141,7 @@ export default function CNT010001SC() {
   );
 }`;
 
-export const CODE_CRUD = `import { Form, Row, Col, Input } from 'antd';
+export const CODE_CRUD = `import { Form, Row, Col, Input, Select } from 'antd';
 import { useQueryClient } from '@tanstack/react-query';
 import FormPanel from '@/components/layout/FormPanel';
 import ActionButtonGroup from '@/components/common/ActionButtonGroup';
@@ -155,7 +158,7 @@ const [selected, setSelected] = useState<Notice | null>(null);
 const isEditMode = selected !== null;
 
 const saveMutation   = useApiMutation<void, Notice>(saveNotice);
-const deleteMutation = useApiMutation<void, number>(deleteNotice);
+const deleteMutation = useApiMutation<void, string>(deleteNotice);
 
 // 저장 후에는 접두 무효화. refetch() 는 지금 조건의 캐시만 갱신해서,
 // 조건을 바꿔 다시 조회하면 낡은 결과가 나온다.
@@ -196,7 +199,7 @@ const handleDelete = useCallback(() => {
   dialog.confirm({
     content: '삭제하시겠습니까?',
     okButtonProps: { danger: true },
-    onOk: () => deleteMutation.mutate(selected.ntcId, {
+    onOk: () => deleteMutation.mutate(selected.ntcMttrId, {
       onSuccess: () => {
         notify.success('삭제되었습니다.');
         handleFormReset();
@@ -224,18 +227,22 @@ const handleDelete = useCallback(() => {
 >
   <Form form={form} layout="horizontal" labelCol={{ style: { width: 80 } }}>
     <Row gutter={[12, 4]}>
-      <Col span={8}>
-        <Form.Item label="번호" name="ntcId">
-          <TipInput readOnly />
+      {/* ntcMttrId 는 화면에 두지 않는다 — UUID 라 보여 줄 값이 아니고, selected 에 남아 있다 */}
+      <Col span={6}>
+        <Form.Item label="구분" name="ntcMttrSeCd" rules={[{ required: true, message: '' }]}>
+          <Select options={[
+            { value: 'SVC', label: '서비스 공지' },
+            { value: 'BID', label: '입찰 공고' },
+          ]} />
         </Form.Item>
       </Col>
-      <Col span={16}>
-        <Form.Item label="제목" name="ntcTtl" rules={[{ required: true, message: '' }]}>
-          <TipInput maxLength={200} />
+      <Col span={18}>
+        <Form.Item label="제목" name="ntcMttrTtl" rules={[{ required: true, message: '' }]}>
+          <TipInput maxLength={256} />
         </Form.Item>
       </Col>
       <Col span={24}>
-        <Form.Item label="내용" name="ntcCntn">
+        <Form.Item label="내용" name="ntcCn" rules={[{ required: true, message: '' }]}>
           <Input.TextArea rows={3} maxLength={2000} />
         </Form.Item>
       </Col>
@@ -259,9 +266,9 @@ export const CODE_LABEL = `import { useScreenLabel } from '@/hooks/useScreenLabe
 // sceId 는 탭에서 자동으로 들어온다 — 인자로 넘길 필요가 없다.
 const { tvt, tvb, tvh, tsg, tsm, tmc, tmi, tme } = useScreenLabel();
 
-<span>{tvt('ntcTtl', '제목')}</span>              // CNT010001SC.VIEW.TEXT_ntcTtl
+<span>{tvt('ntcMttrTtl', '제목')}</span>              // CNT010001SC.VIEW.TEXT_ntcMttrTtl
 <FormPanel title={tvh('info', '공지사항 정보')} /> // CNT010001SC.VIEW.TITLE_info
-{ headerName: tsg('ntcTtl', '제목') }             // CNT010001SC.SCRIPT.GRID_ntcTtl
+{ headerName: tsg('ntcMttrTtl', '제목') }             // CNT010001SC.SCRIPT.GRID_ntcMttrTtl
 
 dialog.confirm({ content: tmc('C100001') });      // 전역: 등록하시겠습니까?
 notify.success(tmi('I100002'));                   // 전역: 등록되었습니다.
@@ -269,7 +276,7 @@ notify.error(tme('E100001'));                     // 전역: 필수 항목을 �
 
 // 값이 들어가는 문장은 쪼개지 말고 자리표시자를 쓴다
 import { formatLabel } from '@/lib/i18n/formatLabel';
-formatLabel(tsm('deleteConfirm', '{0}을(를) 삭제하시겠습니까?'), row.ntcTtl);`;
+formatLabel(tsm('deleteConfirm', '{0}을(를) 삭제하시겠습니까?'), row.ntcMttrTtl);`;
 
 export const CODE_STATE = `// ① 서버 데이터 → React Query. 직접 useState 에 담지 않는다.
 const { data: rows = [] } = useApiQuery<Notice[]>(['notice', 'list', applied], ...);

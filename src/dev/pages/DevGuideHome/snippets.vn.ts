@@ -33,16 +33,19 @@ import type { ApiResponse } from '@/lib/api/types';
 
 // Kiểu tương ứng 1:1 với DTO của máy chủ thì đặt ngay trong tệp này.
 export interface Notice {
-  ntcId:   number;
-  ntcTtl:  string;   // tiêu đề
-  ntcCntn: string;   // nội dung
-  useYn:   string;
-  crtDt?:  string;
+  ntcMttrId:   string;   // NTC_MTTR_ID — UUID (char 36), do máy chủ sinh
+  ntcMttrSeCd: string;   // phân loại SVC (thông báo dịch vụ) / BID (thông báo đấu thầu)
+  ntcMttrTtl:  string;   // tiêu đề
+  ntcCn:       string;   // nội dung
+  expsrYn?:    string;   // hiển thị Y/N. Không gửi thì máy chủ dùng 'Y'
+  inqCnt?:     number;   // lượt xem (chỉ đọc)
+  crtDt?:      string;
 }
 
 export interface NoticeListParams {
-  ntcTtl?: string;   // khớp một phần theo tiêu đề
-  useYn?:  string;
+  ntcMttrTtl?:  string;  // khớp một phần theo tiêu đề
+  ntcMttrSeCd?: string;  // phân loại
+  expsrYn?:     string;  // hiển thị
 }
 
 // Danh sách
@@ -53,15 +56,15 @@ export async function getNoticeList(
   return { success: data.status === 200, message: data.message, data: data.data ?? [] };
 }
 
-// Thêm/sửa (máy chủ có thể phân nhánh theo ntcId, hoặc màn hình tự tách lời gọi)
+// Lưu gộp thêm/sửa — máy chủ phân nhánh theo việc có ntcMttrId hay không
 export async function saveNotice(item: Notice): Promise<ApiResponse<void>> {
   const { data } = await apiClient.post<ApiResponse<void>>('/api/notice', item);
   return { success: data.status === 200, message: data.message, data: null };
 }
 
 // Xoá
-export async function deleteNotice(ntcId: number): Promise<ApiResponse<void>> {
-  const { data } = await apiClient.delete<ApiResponse<void>>(\`/api/notice/\${ntcId}\`);
+export async function deleteNotice(ntcMttrId: string): Promise<ApiResponse<void>> {
+  const { data } = await apiClient.delete<ApiResponse<void>>(\`/api/notice/\${ntcMttrId}\`);
   return { success: data.status === 200, message: data.message, data: null };
 }`;
 
@@ -90,17 +93,17 @@ export default function CNT010001SC() {
   );
 
   const handleSearch = useCallback(() => {
-    setApplied({ ntcTtl: filterTtl.trim() || undefined });
+    setApplied({ ntcMttrTtl: filterTtl.trim() || undefined });
   }, [filterTtl]);
 
   // Khởi tạo chỉ xoá ô nhập — không xoá kết quả đang xem.
   const handleReset = useCallback(() => setFilterTtl(''), []);
 
   const columnDefs = useMemo<ColDef<Notice>[]>(() => [
-    { field: 'ntcId',  headerName: 'Số',        width: 90, flex: 0 },
-    { field: 'ntcTtl', headerName: 'Tiêu đề',   minWidth: 240 },
-    { field: 'useYn',  headerName: 'Sử dụng',   width: 80, flex: 0 },
-    { field: 'crtDt',  headerName: 'Ngày tạo',  width: 150, flex: 0 },
+    { field: 'ntcMttrSeCd', headerName: 'Loại',      width: 90,  flex: 0 },
+    { field: 'ntcMttrTtl',  headerName: 'Tiêu đề',   minWidth: 240 },
+    { field: 'expsrYn',     headerName: 'Hiển thị',  width: 80,  flex: 0 },
+    { field: 'crtDt',       headerName: 'Ngày tạo',  width: 150, flex: 0 },
   ], []);
 
   return (
@@ -127,7 +130,7 @@ export default function CNT010001SC() {
           totalCount={rows.length}
           columnDefs={columnDefs}
           rowData={rows}
-          rowKey="ntcId"
+          rowKey="ntcMttrId"
           gridRef={gridRef}
           loading={isLoading}
           height="100%"
@@ -138,7 +141,7 @@ export default function CNT010001SC() {
   );
 }`;
 
-export const CODE_CRUD = `import { Form, Row, Col, Input } from 'antd';
+export const CODE_CRUD = `import { Form, Row, Col, Input, Select } from 'antd';
 import { useQueryClient } from '@tanstack/react-query';
 import FormPanel from '@/components/layout/FormPanel';
 import ActionButtonGroup from '@/components/common/ActionButtonGroup';
@@ -155,7 +158,7 @@ const [selected, setSelected] = useState<Notice | null>(null);
 const isEditMode = selected !== null;
 
 const saveMutation   = useApiMutation<void, Notice>(saveNotice);
-const deleteMutation = useApiMutation<void, number>(deleteNotice);
+const deleteMutation = useApiMutation<void, string>(deleteNotice);
 
 // Sau khi lưu thì vô hiệu hoá theo tiền tố. refetch() chỉ làm mới bộ đệm của
 // điều kiện hiện tại, nên đổi điều kiện rồi tìm lại sẽ ra dữ liệu cũ.
@@ -196,7 +199,7 @@ const handleDelete = useCallback(() => {
   dialog.confirm({
     content: 'Bạn có muốn xoá?',
     okButtonProps: { danger: true },
-    onOk: () => deleteMutation.mutate(selected.ntcId, {
+    onOk: () => deleteMutation.mutate(selected.ntcMttrId, {
       onSuccess: () => {
         notify.success('Đã xoá.');
         handleFormReset();
@@ -224,18 +227,22 @@ const handleDelete = useCallback(() => {
 >
   <Form form={form} layout="horizontal" labelCol={{ style: { width: 80 } }}>
     <Row gutter={[12, 4]}>
-      <Col span={8}>
-        <Form.Item label="Số" name="ntcId">
-          <TipInput readOnly />
+      {/* Không hiển thị ntcMttrId — UUID không có gì để xem, và nó vẫn nằm trong 'selected' */}
+      <Col span={6}>
+        <Form.Item label="Loại" name="ntcMttrSeCd" rules={[{ required: true, message: '' }]}>
+          <Select options={[
+            { value: 'SVC', label: 'Thông báo dịch vụ' },
+            { value: 'BID', label: 'Thông báo đấu thầu' },
+          ]} />
         </Form.Item>
       </Col>
-      <Col span={16}>
-        <Form.Item label="Tiêu đề" name="ntcTtl" rules={[{ required: true, message: '' }]}>
-          <TipInput maxLength={200} />
+      <Col span={18}>
+        <Form.Item label="Tiêu đề" name="ntcMttrTtl" rules={[{ required: true, message: '' }]}>
+          <TipInput maxLength={256} />
         </Form.Item>
       </Col>
       <Col span={24}>
-        <Form.Item label="Nội dung" name="ntcCntn">
+        <Form.Item label="Nội dung" name="ntcCn" rules={[{ required: true, message: '' }]}>
           <Input.TextArea rows={3} maxLength={2000} />
         </Form.Item>
       </Col>
@@ -260,9 +267,9 @@ export const CODE_LABEL = `import { useScreenLabel } from '@/hooks/useScreenLabe
 const { tvt, tvb, tvh, tsg, tsm, tmc, tmi, tme } = useScreenLabel();
 
 // Văn bản dự phòng được viết bằng ngôn ngữ gốc của kho này (tiếng Hàn).
-<span>{tvt('ntcTtl', '제목')}</span>              // CNT010001SC.VIEW.TEXT_ntcTtl
+<span>{tvt('ntcMttrTtl', '제목')}</span>              // CNT010001SC.VIEW.TEXT_ntcMttrTtl
 <FormPanel title={tvh('info', '공지사항 정보')} /> // CNT010001SC.VIEW.TITLE_info
-{ headerName: tsg('ntcTtl', '제목') }             // CNT010001SC.SCRIPT.GRID_ntcTtl
+{ headerName: tsg('ntcMttrTtl', '제목') }             // CNT010001SC.SCRIPT.GRID_ntcMttrTtl
 
 dialog.confirm({ content: tmc('C100001') });      // toàn cục: Bạn có muốn đăng ký?
 notify.success(tmi('I100002'));                   // toàn cục: Đã đăng ký.
@@ -270,7 +277,7 @@ notify.error(tme('E100001'));                     // toàn cục: Vui lòng nh�
 
 // Câu có chèn giá trị thì đừng cắt nhỏ — hãy dùng ký tự thay thế
 import { formatLabel } from '@/lib/i18n/formatLabel';
-formatLabel(tsm('deleteConfirm', '{0}을(를) 삭제하시겠습니까?'), row.ntcTtl);`;
+formatLabel(tsm('deleteConfirm', '{0}을(를) 삭제하시겠습니까?'), row.ntcMttrTtl);`;
 
 export const CODE_STATE = `// (1) Dữ liệu máy chủ → React Query. Đừng tự cất vào useState.
 const { data: rows = [] } = useApiQuery<Notice[]>(['notice', 'list', applied], ...);
