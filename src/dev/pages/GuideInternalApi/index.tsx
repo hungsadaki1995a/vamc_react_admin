@@ -268,10 +268,10 @@ function MyPage() {
 }`} />
 
                 <CodeSnippet title="useNotify — dialog 타입별 기본값" code={`// dialog 타입별 i18n 기본값 (DB에 라벨 키 등록 시 자동 다국어)
-// confirm  → title: MESSAGE.SCRIPT.TEXT_confirm  | danger: false
-// info     → title: MESSAGE.SCRIPT.TEXT_info     | danger: false
-// warning  → title: MESSAGE.SCRIPT.TEXT_warning  | danger: true
-// error    → title: MESSAGE.SCRIPT.TEXT_error    | danger: true
+// confirm  → title: COMPONENT.VIEW.TITLE_confirm  | danger: false
+// info     → title: COMPONENT.VIEW.TITLE_info     | danger: false
+// warning  → title: COMPONENT.VIEW.TITLE_warning  | danger: true
+// error    → title: COMPONENT.VIEW.TITLE_error    | danger: true
 // okText   → COMPONENT.VIEW.BTN_ok
 // cancelText → COMPONENT.VIEW.BTN_cancel
 
