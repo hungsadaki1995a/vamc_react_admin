@@ -50,7 +50,7 @@ export async function login(req: LoginRequest): Promise<ApiResponse<LoginRespons
     }
   }
   const { data } = await apiClient.post<LoginResponse>('/api/auth/login', {
-    username: req.username,
+    loginId: req.loginId,
     password,
   });
   return { success: true, message: 'success', data };

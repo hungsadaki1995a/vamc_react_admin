@@ -56,8 +56,10 @@ export interface UserInfo {
 }
 
 // POST /api/auth/login request body
+// loginId — 로그인 ID. 관리자앱은 직원번호(EMP_INFO.EMP_NO) 다.
+// Spring Security 는 이 값을 username 이라 부르지만 사람 이름이 아니라 계정 식별자다.
 export interface LoginRequest {
-  username: string;
+  loginId: string;
   password: string;
 }
 
