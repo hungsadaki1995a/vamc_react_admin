@@ -37,7 +37,7 @@ export default function LoginPage() {
 
     // Save or clear remembered username
     if (rememberUsername) {
-      localStorage.setItem(SAVED_USERNAME_KEY, loginReq.username);
+      localStorage.setItem(SAVED_USERNAME_KEY, loginReq.loginId);
     } else {
       localStorage.removeItem(SAVED_USERNAME_KEY);
     }
@@ -87,12 +87,12 @@ export default function LoginPage() {
           size="large"
           layout="vertical"
           initialValues={{
-            username: savedUsername ?? '',
+            loginId: savedUsername ?? '',
             rememberUsername: !!savedUsername,
           }}
         >
           <Form.Item
-            name="username"
+            name="loginId"
             rules={[{ required: true, message: '아이디를 입력해 주세요.' }]}
           >
             <Input prefix={<UserOutlined />} placeholder="아이디" />
