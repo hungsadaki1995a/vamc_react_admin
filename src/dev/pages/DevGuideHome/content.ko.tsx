@@ -479,7 +479,7 @@ export const CONTENT_KO: Record<string, React.ReactNode> = {
         <li>쓰기 버튼이 <code>canWrite</code> 로 묶여 있고 서버에도 권한 검사가 있다</li>
         <li>화면 문구가 <code>useScreenLabel</code> 을 거친다 (한국어 하드코딩 없음)</li>
         <li>레이아웃을 <code>page-body</code> · <code>SplitPanel</code> 로 잡았다 (flex 직접 작성 없음)</li>
-        <li><code>npx tsc -b</code> 와 <code>npm run lint</code> 가 통과한다
+        <li><code>npx tsc -b</code> 와 <code>pnpm lint</code> 가 통과한다
           <b>(<code>--noEmit</code> 은 아무것도 검사하지 않는다)</b></li>
       </ul>
 

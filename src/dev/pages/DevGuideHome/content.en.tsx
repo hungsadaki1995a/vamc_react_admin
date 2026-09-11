@@ -494,7 +494,7 @@ match the section and category lists on this screen.`}</Code>
         <li>Write buttons are bound to <code>canWrite</code> and the server checks permission too</li>
         <li>Screen text goes through <code>useScreenLabel</code> (no hardcoded Korean)</li>
         <li>Layout uses <code>page-body</code> and <code>SplitPanel</code> (no hand-written flex)</li>
-        <li><code>npx tsc -b</code> and <code>npm run lint</code> both pass
+        <li><code>npx tsc -b</code> and <code>pnpm lint</code> both pass
           <b>(<code>--noEmit</code> checks nothing here)</b></li>
       </ul>
 
