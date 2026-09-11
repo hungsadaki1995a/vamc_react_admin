@@ -16,7 +16,7 @@
 | 간트 차트 | 자체 구현 (`components/gantt-sheet`) | — |
 | 리치 텍스트 | TipTap | 3.20 |
 | 스프레드시트 | Univer | 0.15 |
-| xlsx 읽기/쓰기 | SheetJS (`xlsx`) | 0.18.5 (npm 마지막 판) |
+| xlsx 읽기/쓰기 | SheetJS (`xlsx`) | 0.20.3 (CDN tarball URL 설치) |
 | 코드 에디터 | Monaco Editor | 4.7 |
 | 차트 | Chart.js | 4.5 |
 
