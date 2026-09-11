@@ -42,7 +42,7 @@ export default defineConfig({
           if (id.includes('@monaco-editor') || id.includes('monaco-editor')) return 'editor-monaco';
 
           // Data-heavy libraries
-          if (id.includes('exceljs') || id.includes('xlsx')) return 'exceljs';
+          if (id.includes('xlsx')) return 'xlsx';
           if (id.includes('ag-grid')) return 'ag-grid';
           if (id.includes('chart.js') || id.includes('chartjs')) return 'chartjs';
 
