@@ -494,7 +494,7 @@ danh sách phần và phân loại trên màn hình này.`}</Code>
         <li>Nút ghi được ràng buộc bằng <code>canWrite</code> và máy chủ cũng kiểm tra quyền</li>
         <li>Chữ trên màn hình đi qua <code>useScreenLabel</code> (không viết cứng tiếng Hàn)</li>
         <li>Bố cục dùng <code>page-body</code> và <code>SplitPanel</code> (không tự viết flex)</li>
-        <li><code>npx tsc -b</code> và <code>npm run lint</code> đều qua
+        <li><code>npx tsc -b</code> và <code>pnpm lint</code> đều qua
           <b>(<code>--noEmit</code> ở đây không kiểm tra gì cả)</b></li>
       </ul>
 

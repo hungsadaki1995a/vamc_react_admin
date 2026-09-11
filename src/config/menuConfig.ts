@@ -6,7 +6,7 @@ import type { MenuItem } from '@/types/menu';
 //                  데모·가이드는 src/dev/pages/{폴더}/index.tsx
 
 // 개발 도구 노출 여부.
-// - `npm run dev` (import.meta.env.DEV) → 항상 노출
+// - `pnpm dev` (import.meta.env.DEV) → 항상 노출
 // - 빌드 산출물 → VITE_ENABLE_DEV_TOOLS=true 로 빌드한 경우에만 노출
 //
 // Vite 가 두 상수를 모두 빌드 시점에 리터럴로 치환하므로 false 로 접히면

@@ -311,5 +311,6 @@ docker compose -f docker-compose.local.yml up -d
 
 # 3) 관리자 화면 (:3000)
 cd ../vamc-npl-admin-frontend
-npm install
-npm run dev`;
+corepack enable
+pnpm install
+pnpm dev`;
