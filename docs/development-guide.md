@@ -339,8 +339,16 @@ const buf = XLSX.write(out, { type: 'array', bookType: 'xlsx' });
 > 사용자 데이터에서 시트명을 만들 때는 반드시 잘라내고 중복을 피한다.
 > `SpreadSheet.tsx` 의 `safeSheetName()` 이 그 예다.
 
-> ⚠️ **SheetJS 는 npm 레지스트리 마지막 판 0.18.5(2022-03-24)에 고정돼 있다.**
-> 유지되는 판은 SheetJS 자체 CDN 배포라 Nexus npm 프록시로는 받을 수 없다.
-> `npm audit` 이 Prototype Pollution(0.19.3 수정)과 ReDoS(0.20.2 수정)를 보고한다.
-> **사용자가 직접 고른 파일만** 이 경로로 파싱한다 — 서버에서 받은 파일이나 외부
-> 입력은 넣지 않는다. 서버측 파싱이 필요하면 백엔드(Apache POI)에서 처리한다.
+> ⚠️ **SheetJS 는 CDN tarball URL 로 고정돼 있다** — `package.json` 의
+> `"xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz"`.
+> npm 레지스트리의 `xlsx` 는 0.18.5(2022-03-24)에서 발행이 멈췄고 그 판에는
+> Prototype Pollution(0.19.3 수정)과 ReDoS(0.20.2 수정)가 남아 있다. 두 건을 모두
+> 해결한 판이 CDN 에만 있어 URL 로 받는다. pnpm 이 lock 에 integrity 해시를 남기므로
+> 재현성은 유지된다.
+>
+> 버전을 올릴 때는 **레지스트리가 아니라 URL 을 바꾼다** — `pnpm update` 는 URL
+> 의존성을 올리지 않는다. 폐쇄망으로 이관하면 이 URL 이 막히므로, 그때는 tarball 을
+> 사내 저장소(Nexus raw 등)에 올리고 주소를 바꾼다.
+>
+> 방침 — **사용자가 직접 고른 파일만** 이 경로로 파싱한다. 서버에서 받은 파일이나
+> 외부 입력은 넣지 않는다. 서버측 파싱이 필요하면 백엔드(Apache POI)에서 처리한다.

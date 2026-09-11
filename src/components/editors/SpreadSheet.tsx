@@ -4,12 +4,20 @@ import { FUniver } from '@univerjs/core/lib/facade';
 import { UniverSheetsCorePreset } from '@univerjs/preset-sheets-core';
 // @ts-expect-error — package ships js but lacks .d.ts at this path
 import sheetsCoreKoKR from '@univerjs/preset-sheets-core/lib/locales/ko-KR';
-// SheetJS — npm 레지스트리 마지막 판 0.18.5 에 고정돼 있다(2022-03-24).
-// 유지되는 판은 SheetJS 자체 CDN 으로만 배포되어 Nexus npm 프록시로는 받을 수 없다.
-// npm audit 이 두 건을 보고한다 — Prototype Pollution(0.19.3 에서 수정),
-// ReDoS(0.20.2 에서 수정). 둘 다 npm 에서는 올릴 수 없는 버전이다.
+// SheetJS — package.json 에 **CDN tarball URL** 로 고정돼 있다.
+//   https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz
 //
-// 완화 조건 — 이 컴포넌트는 **사용자가 직접 고른 파일만** 브라우저에서 파싱한다.
+// npm 레지스트리(registry.npmjs.org)의 xlsx 는 0.18.5(2022-03-24)에서 발행이 멈췄고,
+// 그 판에는 Prototype Pollution(0.19.3 에서 수정)과 ReDoS(0.20.2 에서 수정)가 남아 있다.
+// 두 건을 모두 해결한 판은 SheetJS 자체 CDN 으로만 배포되므로 URL 로 받는다.
+// pnpm 이 lock 에 integrity 해시를 남기므로 재현성은 유지된다.
+//
+// ⚠️ 버전을 올릴 때는 레지스트리가 아니라 CDN 의 URL 을 바꿔야 한다.
+//    `pnpm update` 는 URL 의존성을 올리지 않는다.
+// ⚠️ 폐쇄망으로 이관하면 이 URL 이 막힌다. 그때는 tarball 을 사내 저장소(Nexus raw 등)에
+//    올리고 그 주소로 바꾼다.
+//
+// 방침 — 이 컴포넌트는 **사용자가 직접 고른 파일만** 브라우저에서 파싱한다.
 // 서버에서 받은 파일이나 외부 입력을 이 경로로 넣지 말 것. 서버측 파싱이 필요해지면
 // 백엔드(Apache POI)에서 처리하고 이 라이브러리를 쓰지 않는다.
 import * as XLSX from 'xlsx';
