@@ -65,7 +65,6 @@ export const DEV_MENU_LABELS: Record<string, DevMenuLabel> = {
   'dev.lib.gantt':                { en: 'Frappe Gantt',         vn: 'Frappe Gantt' },
   'dev.lib.datepicker':           { en: 'DatePicker/Calendar',  vn: 'DatePicker/Lịch' },
   'dev.lib.dayjs':                { en: 'dayjs',                vn: 'dayjs' },
-  'dev.lib.lodash':               { en: 'Lodash',               vn: 'Lodash' },
   'dev.lib.chartjs':              { en: 'Chart.js',             vn: 'Chart.js' },
   'dev.lib.i18n-perm':            { en: 'i18n & Permissions',   vn: 'Đa ngôn ngữ & Phân quyền' },
   'dev.lib.internal-api':         { en: 'Internal API Reference', vn: 'Tham chiếu API nội bộ' },

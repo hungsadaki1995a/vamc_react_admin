@@ -125,11 +125,6 @@ export const DEV_PAGE_TEXT: Record<string, Record<LocaleKey, DevPageText>> = {
     en: { title: 'dayjs Guide', desc: 'Offline reference tutorial for date handling with dayjs' },
     vn: { title: 'Hướng dẫn dayjs', desc: 'Tài liệu tham khảo ngoại tuyến về xử lý ngày giờ với dayjs' },
   },
-  GuideLodash: {
-    ko: { title: 'Lodash 가이드', desc: '오프라인 참조용 Lodash 유틸리티 튜토리얼' },
-    en: { title: 'Lodash Guide', desc: 'Offline reference tutorial for the Lodash utilities' },
-    vn: { title: 'Hướng dẫn Lodash', desc: 'Tài liệu tham khảo ngoại tuyến cho các tiện ích Lodash' },
-  },
   GuideChartJs: {
     ko: { title: 'Chart.js 가이드', desc: '오프라인 참조용 Chart.js 차트 튜토리얼' },
     en: { title: 'Chart.js Guide', desc: 'Offline reference tutorial for Chart.js charts' },

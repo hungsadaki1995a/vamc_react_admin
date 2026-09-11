@@ -81,7 +81,6 @@ const devMenu: MenuItem = {
         { key: 'dev.lib.gantt',        label: 'Frappe Gantt',        componentPath: 'GuideFrappeGantt' },
         { key: 'dev.lib.datepicker',   label: 'DatePicker/Calendar', componentPath: 'GuideDatePicker' },
         { key: 'dev.lib.dayjs',        label: 'dayjs',               componentPath: 'GuideDayjs' },
-        { key: 'dev.lib.lodash',       label: 'Lodash',              componentPath: 'GuideLodash' },
         { key: 'dev.lib.chartjs',      label: 'Chart.js',            componentPath: 'GuideChartJs' },
         { key: 'dev.lib.i18n-perm',    label: '다국어 & 권한',        componentPath: 'GuideI18nPermission' },
         { key: 'dev.lib.internal-api', label: '내부 API 레퍼런스',    componentPath: 'GuideInternalApi' },
