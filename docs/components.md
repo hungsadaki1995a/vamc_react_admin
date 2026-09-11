@@ -242,29 +242,43 @@ const { treeData, toggleExpand, expandAll, collapseAll } = useTreeGrid({
 
 ---
 
-## GanttView
+## GanttSheet
 
-**경로**: `src/components/gantt/GanttView.tsx`
-**타입**: `src/components/gantt/ganttTypes.ts`
+**경로**: `src/components/gantt-sheet/GanttSheet.tsx`
+**타입**: `src/components/gantt-sheet/ganttTypes.ts`
+**import**: `import { GanttSheet } from '@/components/gantt-sheet';`
 
-frappe-gantt 1.2.2 기반 간트 차트. 좌측 그리드 패널, 크리티컬 패스, 드래그 편집 지원.
+이 프로젝트의 **유일한 간트 컴포넌트**입니다. 좌측 그리드 패널, 크리티컬 패스, 드래그 편집을 지원하며
+`@tanstack/react-virtual` 기반 가상화로 5,000행+ 를 60fps 로 스크롤합니다.
+
+> **간트에는 외부 라이브러리를 쓰지 않습니다.** 2026-09-11 에 `frappe-gantt` 래퍼였던
+> `GanttView`(`src/components/gantt/`)를 걷어내고 이 컴포넌트로 일원화했습니다.
+> 간트 기능이 부족하면 **라이브러리를 추가하기 전에 이 컴포넌트를 확장하세요** —
+> 날짜 헤더·임계경로·의존성 화살표가 모두 자체 구현이라 고칠 수 있습니다.
 
 ```tsx
-import { useRef } from 'react';
-import GanttView from '@/components/gantt/GanttView';
-import type { GanttTask, GanttViewMode } from '@/components/gantt/ganttTypes';
+import { useRef, useState } from 'react';
+import { GanttSheet } from '@/components/gantt-sheet';
+import type { GanttTask, GanttViewMode } from '@/components/gantt-sheet';
 
-// uncontrolled (기본) — 접기/펼치기 상태를 GanttView가 내부 관리
-<GanttView tasks={tasks} viewMode="Week" height={500} />
+// uncontrolled (기본) — 접기/펼치기 상태를 컴포넌트가 내부 관리
+<GanttSheet tasks={tasks} viewMode="Week" height={500} />
+
+// 드래그 편집
+<GanttSheet
+  tasks={tasks}
+  onDateChange={(task, start, end) => updateTask(task.id, { start, end })}
+  onProgressChange={(task, progress) => updateTask(task.id, { progress })}
+/>
 
 // "오늘" 버튼 외부 연동
 const scrollToTodayRef = useRef<(() => void) | null>(null);
 <Button onClick={() => scrollToTodayRef.current?.()}>오늘</Button>
-<GanttView tasks={tasks} scrollToTodayRef={scrollToTodayRef} todayButton={false} />
+<GanttSheet tasks={tasks} scrollToTodayRef={scrollToTodayRef} todayButton={false} />
 
 // controlled — 접기/펼치기 상태를 부모가 관리
 const [collapsed, setCollapsed] = useState(new Set<string>());
-<GanttView
+<GanttSheet
   tasks={tasks}
   collapsedGroups={collapsed}
   onToggleGroup={(id) => setCollapsed(prev => {
@@ -287,7 +301,7 @@ const [collapsed, setCollapsed] = useState(new Set<string>());
 | `gridWidth` | `number` | `400` | 좌측 그리드 너비(px) |
 | `gridMinWidth` | `number` | `200` | 그리드 최소 너비 |
 | `gridMaxWidth` | `number` | `600` | 그리드 최대 너비 |
-| `collapsedGroups` | `Set<string>` | — | 접힌 그룹 ID (controlled). **생략 시 GanttView 내부 상태로 자동 관리 (uncontrolled default)** |
+| `collapsedGroups` | `Set<string>` | — | 접힌 그룹 ID (controlled). **생략 시 컴포넌트 내부 상태로 자동 관리 (uncontrolled default)** |
 | `onToggleGroup` | `(groupId) => void` | — | 그룹 접기/펼치기 콜백 (controlled 모드 시 사용) |
 | `scrollToTodayRef` | `MutableRefObject<(() => void) \| null>` | — | 오늘 날짜로 스크롤하는 함수를 외부 ref에 주입. 툴바 "오늘" 버튼 연동에 사용 |
 | `height` | `string \| number` | `"100%"` | 높이 |
@@ -299,6 +313,9 @@ const [collapsed, setCollapsed] = useState(new Set<string>());
 | `barCornerRadius` | `number` | `4` | 바 모서리 반경 |
 | `rowPadding` | `number` | `16` | 행 위아래 패딩 |
 | `language` | `string` | `'ko'` | 날짜 표시 언어 |
+
+| `rowBuffer` | `number` | `5` | 가상화 오버스캔 행 수 |
+| `columnWidth` | `number` | 뷰모드 기본값 | 열 너비 px 오버라이드 |
 
 ### 이벤트
 
@@ -343,44 +360,6 @@ interface GanttTask {
   priority?: 'low' | 'normal' | 'high' | 'critical'
 }
 ```
-
----
-
-## GanttSheet
-
-**경로**: `src/components/gantt-sheet/GanttSheet.tsx`
-**import**: `import { GanttSheet } from '@/components/gantt-sheet';`
-
-`GanttView`와 **동일한 Props 인터페이스** — drop-in 교체 가능. `@tanstack/react-virtual` 기반 가상화로 5,000행+ 60fps 스크롤 지원.
-
-> `lines` (`'vertical'|'horizontal'|'both'|'none'`, 기본 `'both'`)와 `language` (`'ko'|'en'|'vi'`, 기본 `'ko'`) 포함 GanttView 모든 Props 동일하게 동작.
-
-```tsx
-import { GanttSheet } from '@/components/gantt-sheet';
-import type { GanttTask, GanttViewMode } from '@/components/gantt-sheet';
-
-// 기본 사용 (GanttView와 동일)
-<GanttSheet tasks={tasks} viewMode="Week" height={500} />
-
-// 드래그 편집
-<GanttSheet
-  tasks={tasks}
-  onDateChange={(task, start, end) => updateTask(task.id, { start, end })}
-  onProgressChange={(task, progress) => updateTask(task.id, { progress })}
-/>
-
-// 오늘로 이동
-const scrollToTodayRef = useRef<(() => void) | null>(null);
-<GanttSheet tasks={tasks} scrollToTodayRef={scrollToTodayRef} />
-<Button onClick={() => scrollToTodayRef.current?.()}>오늘</Button>
-```
-
-### GanttSheet 전용 Props (GanttView에 없음)
-
-| Prop | 타입 | 기본값 | 설명 |
-|------|------|--------|------|
-| `rowBuffer` | `number` | `5` | 가상화 오버스캔 행 수 |
-| `columnWidth` | `number` | 뷰모드 기본값 | 열 너비 px 오버라이드 |
 
 ### 아키텍처
 

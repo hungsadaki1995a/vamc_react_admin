@@ -28,6 +28,16 @@ export function calculateCriticalPath(tasks: GanttTask[]): CriticalPathResult {
     schedule.set(task.id, { ES: 0, EF: 0, LS: 0, LF: 0, totalFloat: 0 });
   }
 
+  // 후속 작업 맵을 미리 만든다 — Backward Pass 에서 매번 tasks 를 훑으면 O(n²) 가 된다
+  const successorsMap = new Map<string, GanttTask[]>();
+  for (const task of tasks) {
+    if (!task.dependencies) continue;
+    for (const depId of task.dependencies) {
+      if (!successorsMap.has(depId)) successorsMap.set(depId, []);
+      successorsMap.get(depId)!.push(task);
+    }
+  }
+
   // 위상 정렬
   const sorted = topologicalSort(tasks);
 
@@ -63,7 +73,7 @@ export function calculateCriticalPath(tasks: GanttTask[]): CriticalPathResult {
     const sched = schedule.get(taskId)!;
     const dur = duration.get(taskId)!;
 
-    const successors = getSuccessors(taskId, tasks);
+    const successors = successorsMap.get(taskId) ?? [];
     if (successors.length === 0) {
       sched.LF = projectEnd;
     } else {
@@ -164,9 +174,4 @@ function getConstraint(
     case 'SF': return depSched.ES - depDur; // 선행 시작과 동시 완료
     default: return depSched.EF;
   }
-}
-
-/** 특정 작업의 후속 작업 찾기 */
-function getSuccessors(taskId: string, tasks: GanttTask[]): GanttTask[] {
-  return tasks.filter((t) => t.dependencies?.includes(taskId));
 }

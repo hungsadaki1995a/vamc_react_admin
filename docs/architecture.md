@@ -13,9 +13,10 @@
 | HTTP | Axios | 1.13 |
 | 라우팅 | React Router | 7 |
 | 그리드 테이블 | AG Grid Community | 35 |
-| 간트 차트 | frappe-gantt | 1.2.2 |
+| 간트 차트 | 자체 구현 (`components/gantt-sheet`) | — |
 | 리치 텍스트 | TipTap | 3.20 |
 | 스프레드시트 | Univer | 0.15 |
+| xlsx 읽기/쓰기 | SheetJS (`xlsx`) | 0.18.5 (npm 마지막 판) |
 | 코드 에디터 | Monaco Editor | 4.7 |
 | 차트 | Chart.js | 4.5 |
 
@@ -125,7 +126,7 @@ src/
 │   ├── auth/            # AuthGuard
 │   ├── common/          # CodeSnippet, PlaceholderPage
 │   ├── editors/         # RichTextEditor, CodeEditor, SpreadSheet
-│   ├── gantt/           # GanttView, ganttTypes
+│   ├── gantt-sheet/     # GanttSheet — 간트(자체 구현, 외부 라이브러리 없음)
 │   ├── grid/            # GridTable, GridPanel, cellEditors/*
 │   ├── icons/           # CustomIcons
 │   ├── inputs/          # ComcdSelect, SearchSelectField
@@ -156,10 +157,11 @@ src/
 ## 빌드 / 실행
 
 ```bash
-npm install
-npm run dev          # Vite 개발 서버 (포트 3000, strictPort)
-npm run build        # tsc -b && vite build → dist/
-npm run lint         # ESLint
+corepack enable        # pnpm 을 쓴다. package.json 의 packageManager 가 버전을 고정한다
+pnpm install
+pnpm dev          # Vite 개발 서버 (포트 3000, strictPort)
+pnpm build        # tsc -b && vite build → dist/
+pnpm lint         # ESLint
 npx tsc -b           # 타입 체크만 (⚠️ --noEmit 은 no-op — tsconfig.json 이 솔루션 파일이다)
 ```
 

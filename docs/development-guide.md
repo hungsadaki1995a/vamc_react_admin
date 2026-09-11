@@ -227,10 +227,10 @@ import styles from './index.module.css';
 | 클래스 | 용도 | 특징 |
 |--------|------|------|
 | `page-container` | 기본 페이지 컨테이너 | 흰색 카드, padding, 내부 overflow hidden |
-| `page-master` | 그리드/목록 전용 | 고정 높이, 내부 스크롤 없음 (GridPanel/GanttView와 조합) |
+| `page-master` | 그리드/목록 전용 | 고정 높이, 내부 스크롤 없음 (GridPanel/GanttSheet와 조합) |
 | `page-container page-scrollable` | 스크롤 페이지 | 가이드/데모/폼 화면, 세로 스크롤 활성화 |
 
-`page-container` + GridPanel/GridTable/GanttView 사용 시 CSS가 자동으로 `overflow: hidden` 처리하여 내부 스크롤 없이 그리드가 컨테이너를 채움. 이 동작이 필요 없으면 `page-scrollable` 추가.
+`page-container` + GridPanel/GridTable/GanttSheet 사용 시 CSS가 자동으로 `overflow: hidden` 처리하여 내부 스크롤 없이 그리드가 컨테이너를 채움. 이 동작이 필요 없으면 `page-scrollable` 추가.
 
 ---
 
@@ -295,19 +295,52 @@ export const useMyStore = create<MyState>()(
 
 ## Excel 내보내기
 
-```typescript
-import ExcelJS from 'exceljs';
-import { saveAs } from 'file-saver';
+**기본은 서버에서 받는다.** 그리드 목록을 엑셀로 내리는 경로는 프런트에서 파일을
+만들지 않고 백엔드가 만든 것을 blob 으로 받는다 — 5만 건 같은 대량에서 브라우저가
+버티지 못하고, 권한·마스킹 규칙을 서버가 알고 있기 때문이다.
 
-const exportExcel = async (data: Row[]) => {
-  const wb = new ExcelJS.Workbook();
-  const ws = wb.addWorksheet('목록');
-  ws.columns = [
-    { header: 'ID', key: 'id', width: 10 },
-    { header: '이름', key: 'name', width: 20 },
-  ];
-  data.forEach(row => ws.addRow(row));
-  const buf = await wb.xlsx.writeBuffer();
-  saveAs(new Blob([buf]), '목록.xlsx');
-};
+```tsx
+import { ExcelButton } from '@/components/excel';
+
+<ExcelButton
+  downloadUrl="/api/npl/debt/excel"
+  columns={excelColumns}
+  queryParams={searchParams}
+  fileName="부실채권목록"
+/>
 ```
+
+세부 제어가 필요하면 `useExcel()` 훅을 직접 쓴다 (`src/hooks/useExcel.ts`).
+업로드는 `ExcelUploadModal` + `gridExcelUtils` 조합이다.
+
+### 브라우저에서 xlsx 를 직접 만드는 경우
+
+스프레드시트 편집기(`components/editors/SpreadSheet.tsx`)만 해당한다. 사용자가 고른
+파일을 화면에서 편집하고 다시 내려받는 흐름이라 서버를 거칠 수 없다.
+여기서만 **SheetJS(`xlsx`)** 를 쓴다.
+
+```typescript
+import * as XLSX from 'xlsx';
+
+// 읽기 — cellDates 로 날짜를 일련번호가 아닌 Date 로 받는다
+const wb = XLSX.read(await file.arrayBuffer(), { type: 'array', cellDates: true });
+const ws = wb.Sheets[wb.SheetNames[0]];
+const range = XLSX.utils.decode_range(ws['!ref']!);
+const cell = ws[XLSX.utils.encode_cell({ r: 0, c: 0 })];
+
+// 쓰기
+const out = XLSX.utils.book_new();
+XLSX.utils.book_append_sheet(out, XLSX.utils.aoa_to_sheet(rows), '목록');
+const buf = XLSX.write(out, { type: 'array', bookType: 'xlsx' });
+```
+
+> ⚠️ **`book_append_sheet` 는 시트명 규칙을 어기면 예외를 던진다** — 31자 초과
+> (`Sheet names cannot exceed 31 chars`), 중복 (`Worksheet with name |…| already exists!`).
+> 사용자 데이터에서 시트명을 만들 때는 반드시 잘라내고 중복을 피한다.
+> `SpreadSheet.tsx` 의 `safeSheetName()` 이 그 예다.
+
+> ⚠️ **SheetJS 는 npm 레지스트리 마지막 판 0.18.5(2022-03-24)에 고정돼 있다.**
+> 유지되는 판은 SheetJS 자체 CDN 배포라 Nexus npm 프록시로는 받을 수 없다.
+> `npm audit` 이 Prototype Pollution(0.19.3 수정)과 ReDoS(0.20.2 수정)를 보고한다.
+> **사용자가 직접 고른 파일만** 이 경로로 파싱한다 — 서버에서 받은 파일이나 외부
+> 입력은 넣지 않는다. 서버측 파싱이 필요하면 백엔드(Apache POI)에서 처리한다.

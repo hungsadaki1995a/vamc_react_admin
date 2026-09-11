@@ -51,15 +51,10 @@ export const DEV_PAGE_TEXT: Record<string, Record<LocaleKey, DevPageText>> = {
     en: { title: 'Editor Demo', desc: 'Demos of the rich text, code and spreadsheet editor components.' },
     vn: { title: 'Demo trình soạn thảo', desc: 'Demo các thành phần soạn thảo văn bản, mã nguồn và bảng tính.' },
   },
-  GanttDemo: {
-    ko: { title: '간트 차트', desc: 'GanttView 컴포넌트의 Props, Events 및 라이브 데모입니다.' },
-    en: { title: 'Gantt Chart', desc: 'Props, events and a live demo of the GanttView component.' },
-    vn: { title: 'Biểu đồ Gantt', desc: 'Props, sự kiện và demo trực tiếp của thành phần GanttView.' },
-  },
   GanttSheetDemo: {
-    ko: { title: '간트 시트 (GanttSheet)', desc: 'Virtual Scroll 기반 대용량 간트 컴포넌트 — 5,000행+ 60fps 스크롤. GanttView와 동일한 Props.' },
-    en: { title: 'Gantt Sheet (GanttSheet)', desc: 'Large-scale Gantt component built on virtual scrolling — 5,000+ rows at 60fps. Same props as GanttView.' },
-    vn: { title: 'Bảng Gantt (GanttSheet)', desc: 'Thành phần Gantt cho dữ liệu lớn dựa trên cuộn ảo — hơn 5.000 dòng ở 60fps. Props giống GanttView.' },
+    ko: { title: '간트 차트 (GanttSheet)', desc: 'Virtual Scroll 기반 간트 컴포넌트 — 5,000행+ 60fps 스크롤. 외부 라이브러리 없이 자체 구현.' },
+    en: { title: 'Gantt Chart (GanttSheet)', desc: 'Gantt component built on virtual scrolling — 5,000+ rows at 60fps. Implemented in-house, no external library.' },
+    vn: { title: 'Biểu đồ Gantt (GanttSheet)', desc: 'Thành phần Gantt dựa trên cuộn ảo — hơn 5.000 dòng ở 60fps. Tự triển khai, không dùng thư viện ngoài.' },
   },
   NotifyDemo: {
     ko: { title: 'useNotify', desc: 'antd message / notification / modal을 하나의 훅으로 제공합니다. dialog는 타입별 i18n 기본값(title · okText · cancelText · danger)이 자동 적용되며, 호출 시 개별 오버라이드 가능합니다.' },
@@ -110,11 +105,6 @@ export const DEV_PAGE_TEXT: Record<string, Record<LocaleKey, DevPageText>> = {
     en: { title: 'TipTap Editor Guide', desc: 'Offline reference tutorial for the TipTap rich text editor' },
     vn: { title: 'Hướng dẫn trình soạn thảo TipTap', desc: 'Tài liệu tham khảo ngoại tuyến cho trình soạn thảo TipTap' },
   },
-  GuideFrappeGantt: {
-    ko: { title: 'Frappe Gantt 가이드', desc: '오프라인 참조용 Frappe Gantt 튜토리얼' },
-    en: { title: 'Frappe Gantt Guide', desc: 'Offline reference tutorial for Frappe Gantt' },
-    vn: { title: 'Hướng dẫn Frappe Gantt', desc: 'Tài liệu tham khảo ngoại tuyến cho Frappe Gantt' },
-  },
   GuideDatePicker: {
     ko: { title: 'DatePicker / Calendar 가이드', desc: '오프라인 참조용 날짜 입력·달력 컴포넌트 튜토리얼' },
     en: { title: 'DatePicker / Calendar Guide', desc: 'Offline reference tutorial for the date input and calendar components' },
@@ -124,11 +114,6 @@ export const DEV_PAGE_TEXT: Record<string, Record<LocaleKey, DevPageText>> = {
     ko: { title: 'dayjs 가이드', desc: '오프라인 참조용 dayjs 날짜 처리 튜토리얼' },
     en: { title: 'dayjs Guide', desc: 'Offline reference tutorial for date handling with dayjs' },
     vn: { title: 'Hướng dẫn dayjs', desc: 'Tài liệu tham khảo ngoại tuyến về xử lý ngày giờ với dayjs' },
-  },
-  GuideLodash: {
-    ko: { title: 'Lodash 가이드', desc: '오프라인 참조용 Lodash 유틸리티 튜토리얼' },
-    en: { title: 'Lodash Guide', desc: 'Offline reference tutorial for the Lodash utilities' },
-    vn: { title: 'Hướng dẫn Lodash', desc: 'Tài liệu tham khảo ngoại tuyến cho các tiện ích Lodash' },
   },
   GuideChartJs: {
     ko: { title: 'Chart.js 가이드', desc: '오프라인 참조용 Chart.js 차트 튜토리얼' },
