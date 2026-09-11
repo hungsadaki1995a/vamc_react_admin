@@ -35,6 +35,9 @@ export default defineConfig({
         // their internal dependencies still end up in the main bundle.
         manualChunks(id) {
           if (!id.includes('node_modules')) return;
+          // 스타일시트는 청크를 강제하지 않는다 — 이름을 돌려주면 그 CSS 가 독립 청크가 되어,
+          // 그것을 import 하던 JS 가 트리셰이킹으로 사라져도 스타일시트만 산출물에 남는다.
+          if (id.endsWith('.css')) return;
 
           // Heavy editors — loaded lazily via componentRegistry
           if (id.includes('@univerjs') || id.includes('univer')) return 'editor-univer';
