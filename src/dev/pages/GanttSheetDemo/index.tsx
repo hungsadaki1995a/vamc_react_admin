@@ -157,7 +157,6 @@ function generateTreeTasks(count: number): GanttTask[] {
 const basicCode = `import { GanttSheet } from '@/components/gantt-sheet';
 import type { GanttTask, GanttViewMode } from '@/components/gantt-sheet';
 
-// GanttView와 동일한 Props — drop-in 교체 가능
 <GanttSheet
   tasks={tasks}
   viewMode="Week"
@@ -511,7 +510,7 @@ export default function GanttSheetDemo() {
                   showIcon
                   title={
                     <span>
-                      <strong>GanttView와 완전 호환</strong> — Props 인터페이스가 동일하여 drop-in 교체 가능합니다.
+                      <strong>이 프로젝트의 유일한 간트 컴포넌트입니다.</strong> 외부 라이브러리를 쓰지 않습니다.
                       <code style={{ marginLeft: 8, background: 'rgba(82,196,26,0.1)', padding: '1px 6px', borderRadius: 3 }}>
                         import {'{ GanttSheet }'} from '@/components/gantt-sheet'
                       </code>
@@ -570,53 +569,60 @@ export default function GanttSheetDemo() {
                   </table>
                 </div>
 
-                {/* GanttView vs GanttSheet 비교 */}
+                {/* 자체 구현인 이유 */}
                 <div className={styles.propsSection}>
-                  <h3>GanttView vs GanttSheet 비교</h3>
+                  <h3>왜 외부 라이브러리를 쓰지 않는가</h3>
+                  <Alert
+                    type="info"
+                    showIcon
+                    style={{ marginBottom: 16 }}
+                    title={
+                      <span>
+                        2026-09-11 에 <code>frappe-gantt</code> 래퍼(<code>GanttView</code>)를 걷어내고
+                        이 컴포넌트로 일원화했습니다. 간트는 외부 의존성이 <strong>0개</strong>입니다 —
+                        새 간트 라이브러리를 추가하기 전에 아래 표를 먼저 보세요.
+                      </span>
+                    }
+                  />
                   <table className={styles.propsTable}>
                     <thead>
                       <tr>
                         <th>항목</th>
-                        <th>GanttView</th>
                         <th>GanttSheet</th>
                       </tr>
                     </thead>
                     <tbody>
                       <tr>
                         <td>렌더링 방식</td>
-                        <td>frappe-gantt SVG 전체 렌더</td>
                         <td>react-virtual + DOM 바 (가시 행만)</td>
                       </tr>
                       <tr>
                         <td>권장 행 수</td>
-                        <td><Tag color="orange">~200행</Tag></td>
                         <td><Tag color="green">5,000행+</Tag></td>
                       </tr>
                       <tr>
-                        <td>Props 호환</td>
-                        <td colSpan={2} style={{ textAlign: 'center' }}>
-                          <Tag color="blue">동일 인터페이스 — drop-in 교체 가능</Tag>
-                        </td>
-                      </tr>
-                      <tr>
                         <td>바 드래그 편집</td>
-                        <td><Tag color="green">지원</Tag></td>
                         <td><Tag color="green">지원 (pointer capture 방식)</Tag></td>
                       </tr>
                       <tr>
                         <td>의존성 화살표</td>
-                        <td><Tag color="green">전체</Tag></td>
                         <td><Tag color="blue">가시 범위만 렌더 (성능 최적화)</Tag></td>
                       </tr>
                       <tr>
+                        <td>임계경로(Critical Path)</td>
+                        <td><Tag color="green">지원</Tag> — <code>criticalPath.ts</code> 자체 구현</td>
+                      </tr>
+                      <tr>
                         <td>날짜 헤더</td>
-                        <td>frappe-gantt 내장</td>
                         <td>자체 구현 (Month/Week/Day/Half Day/Quarter Day)</td>
                       </tr>
                       <tr>
                         <td>다크모드</td>
                         <td><Tag color="green">지원</Tag></td>
-                        <td><Tag color="green">지원</Tag></td>
+                      </tr>
+                      <tr>
+                        <td>외부 의존성</td>
+                        <td><Tag color="green">없음</Tag> — <code>@tanstack/react-virtual</code> 만 사용</td>
                       </tr>
                     </tbody>
                   </table>

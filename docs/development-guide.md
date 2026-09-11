@@ -227,10 +227,10 @@ import styles from './index.module.css';
 | 클래스 | 용도 | 특징 |
 |--------|------|------|
 | `page-container` | 기본 페이지 컨테이너 | 흰색 카드, padding, 내부 overflow hidden |
-| `page-master` | 그리드/목록 전용 | 고정 높이, 내부 스크롤 없음 (GridPanel/GanttView와 조합) |
+| `page-master` | 그리드/목록 전용 | 고정 높이, 내부 스크롤 없음 (GridPanel/GanttSheet와 조합) |
 | `page-container page-scrollable` | 스크롤 페이지 | 가이드/데모/폼 화면, 세로 스크롤 활성화 |
 
-`page-container` + GridPanel/GridTable/GanttView 사용 시 CSS가 자동으로 `overflow: hidden` 처리하여 내부 스크롤 없이 그리드가 컨테이너를 채움. 이 동작이 필요 없으면 `page-scrollable` 추가.
+`page-container` + GridPanel/GridTable/GanttSheet 사용 시 CSS가 자동으로 `overflow: hidden` 처리하여 내부 스크롤 없이 그리드가 컨테이너를 채움. 이 동작이 필요 없으면 `page-scrollable` 추가.
 
 ---
 

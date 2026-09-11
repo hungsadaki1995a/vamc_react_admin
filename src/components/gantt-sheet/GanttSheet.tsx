@@ -17,7 +17,7 @@ import GanttSheetArrows from './GanttSheetArrows';
 import type { GanttTask, GanttViewMode, CriticalPathResult, DependencyType } from './ganttTypes';
 import type { DragState } from './useGanttDrag';
 import './GanttSheet.css';
-import '../gantt/GanttGrid.css';
+import './GanttGrid.css';
 
 const HEADER_HEIGHT = 60; // upper(30) + lower(30)
 

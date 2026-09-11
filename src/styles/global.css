@@ -848,14 +848,14 @@ html, body, #root {
 /* Grid/Gantt pages: fixed height so content fills remaining space via flex */
 /* 단, .page-scrollable 클래스가 있으면 스크롤 모드 (가이드/데모 페이지) */
 .tab-content-panel:has(.ds-data-grid):not(:has(.page-scrollable)),
-.tab-content-panel:has(.ds-gantt-view):not(:has(.page-scrollable)) {
+.tab-content-panel:has(.ds-gantt-sheet):not(:has(.page-scrollable)) {
   height: 100%;
   min-height: auto;
   overflow: hidden;
 }
 
 .page-container:has(.ds-data-grid):not(.page-scrollable),
-.page-container:has(.ds-gantt-view):not(.page-scrollable) {
+.page-container:has(.ds-gantt-sheet):not(.page-scrollable) {
   height: 100%;
   min-height: auto;
   overflow: hidden;

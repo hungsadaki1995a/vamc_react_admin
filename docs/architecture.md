@@ -13,7 +13,7 @@
 | HTTP | Axios | 1.13 |
 | 라우팅 | React Router | 7 |
 | 그리드 테이블 | AG Grid Community | 35 |
-| 간트 차트 | frappe-gantt | 1.2.2 |
+| 간트 차트 | 자체 구현 (`components/gantt-sheet`) | — |
 | 리치 텍스트 | TipTap | 3.20 |
 | 스프레드시트 | Univer | 0.15 |
 | 코드 에디터 | Monaco Editor | 4.7 |
@@ -125,7 +125,7 @@ src/
 │   ├── auth/            # AuthGuard
 │   ├── common/          # CodeSnippet, PlaceholderPage
 │   ├── editors/         # RichTextEditor, CodeEditor, SpreadSheet
-│   ├── gantt/           # GanttView, ganttTypes
+│   ├── gantt-sheet/     # GanttSheet — 간트(자체 구현, 외부 라이브러리 없음)
 │   ├── grid/            # GridTable, GridPanel, cellEditors/*
 │   ├── icons/           # CustomIcons
 │   ├── inputs/          # ComcdSelect, SearchSelectField

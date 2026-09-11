@@ -33,7 +33,6 @@ export const DEV_MENU_LABELS: Record<string, DevMenuLabel> = {
   'dev.components.grid':          { en: 'Data Grid',            vn: 'Lưới dữ liệu' },
   'dev.components.editor':        { en: 'Editors',              vn: 'Trình soạn thảo' },
   'dev.components.gantt':         { en: 'Gantt Chart',          vn: 'Biểu đồ Gantt' },
-  'dev.components.gantt-sheet':   { en: 'Gantt Sheet (large)',  vn: 'Bảng Gantt (dữ liệu lớn)' },
   'dev.components.notify':        { en: 'useNotify',            vn: 'useNotify' },
 
   // 화면 빌더
@@ -62,7 +61,6 @@ export const DEV_MENU_LABELS: Record<string, DevMenuLabel> = {
   'dev.lib.react-query':          { en: 'React Query',          vn: 'React Query' },
   'dev.lib.ag-grid':              { en: 'AG Grid',              vn: 'AG Grid' },
   'dev.lib.tiptap':               { en: 'TipTap Editor',        vn: 'Trình soạn thảo TipTap' },
-  'dev.lib.gantt':                { en: 'Frappe Gantt',         vn: 'Frappe Gantt' },
   'dev.lib.datepicker':           { en: 'DatePicker/Calendar',  vn: 'DatePicker/Lịch' },
   'dev.lib.dayjs':                { en: 'dayjs',                vn: 'dayjs' },
   'dev.lib.chartjs':              { en: 'Chart.js',             vn: 'Chart.js' },

@@ -1,8 +1,8 @@
 import { useState, useRef, useCallback } from 'react';
 import { Select, Button, Space, Drawer, Tag, Progress, Typography } from 'antd';
 import { CalendarOutlined } from '@ant-design/icons';
-import GanttView from '@/components/gantt/GanttView';
-import type { GanttTask, GanttViewMode } from '@/components/gantt/ganttTypes';
+import { GanttSheet } from '@/components/gantt-sheet';
+import type { GanttTask, GanttViewMode } from '@/components/gantt-sheet';
 import GridToolbar from '@/components/layout/GridToolbar';
 
 const { Text } = Typography;
@@ -109,7 +109,7 @@ export default function GanttChart() {
         }
       />
       <div style={{ flex: 1, overflow: 'hidden' }}>
-        <GanttView
+        <GanttSheet
           tasks={tasks}
           viewMode={viewMode}
           onTaskClick={handleTaskClick}

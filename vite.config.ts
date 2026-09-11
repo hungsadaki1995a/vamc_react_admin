@@ -24,7 +24,6 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
-      'frappe-gantt/dist/frappe-gantt.css': path.resolve(__dirname, './node_modules/frappe-gantt/dist/frappe-gantt.css'),
     },
   },
   build: {
@@ -35,8 +34,6 @@ export default defineConfig({
         // their internal dependencies still end up in the main bundle.
         manualChunks(id) {
           if (!id.includes('node_modules')) return;
-          // 스타일시트는 청크를 강제하지 않는다 — 이름을 돌려주면 그 CSS 가 독립 청크가 되어,
-          // 그것을 import 하던 JS 가 트리셰이킹으로 사라져도 스타일시트만 산출물에 남는다.
           if (id.endsWith('.css')) return;
 
           // Heavy editors — loaded lazily via componentRegistry
@@ -47,7 +44,6 @@ export default defineConfig({
           // Data-heavy libraries
           if (id.includes('exceljs') || id.includes('xlsx')) return 'exceljs';
           if (id.includes('ag-grid')) return 'ag-grid';
-          if (id.includes('frappe-gantt')) return 'gantt';
           if (id.includes('chart.js') || id.includes('chartjs')) return 'chartjs';
 
           // Ant Design + rc-* + @rc-component/* components (large, split from main bundle)
