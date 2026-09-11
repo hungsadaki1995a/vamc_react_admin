@@ -157,10 +157,11 @@ src/
 ## 빌드 / 실행
 
 ```bash
-npm install
-npm run dev          # Vite 개발 서버 (포트 3000, strictPort)
-npm run build        # tsc -b && vite build → dist/
-npm run lint         # ESLint
+corepack enable        # pnpm 을 쓴다. package.json 의 packageManager 가 버전을 고정한다
+pnpm install
+pnpm dev          # Vite 개발 서버 (포트 3000, strictPort)
+pnpm build        # tsc -b && vite build → dist/
+pnpm lint         # ESLint
 npx tsc -b           # 타입 체크만 (⚠️ --noEmit 은 no-op — tsconfig.json 이 솔루션 파일이다)
 ```
 

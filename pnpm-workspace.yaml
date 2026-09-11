@@ -1,0 +1,13 @@
+# pnpm 은 의존성의 postinstall 스크립트를 기본 차단한다(공급망 공격 방어).
+# 차단된 채로 두면 설치가 ERR_PNPM_IGNORED_BUILDS(exit 1)로 실패해 빌드가 멈춘다.
+# 실제로 빌드 스크립트가 필요한 패키지만 여기서 허용한다.
+#
+#   esbuild — 플랫폼별 네이티브 바이너리를 연결한다. Vite 가 이걸 쓴다.
+#
+# ⚠️ 이 설정은 pnpm 11 기준 pnpm-workspace.yaml 이 정본이다.
+#    package.json 의 "pnpm" 필드와 onlyBuiltDependencies 는 더 이상 읽지 않는다.
+#
+# 새 의존성을 넣었을 때 같은 오류가 나면, 그 패키지가 정말 스크립트를 실행해야
+# 하는지 확인한 뒤에만 true 로 추가할 것. 모르면 false 로 두고 빌드가 되는지 본다.
+allowBuilds:
+  esbuild: true

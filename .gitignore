@@ -42,3 +42,7 @@ views.json
 
 # 로컬 전용 AI 어시스턴트 지침 — 저장소에 올리지 않는다
 CLAUDE.md
+
+# 패키지 매니저는 pnpm 하나다 — npm 으로 설치하면 락파일이 둘이 되어 버전이 갈린다
+package-lock.json
+yarn.lock
