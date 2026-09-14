@@ -130,6 +130,11 @@ export const DEV_PAGE_TEXT: Record<string, Record<LocaleKey, DevPageText>> = {
     en: { title: 'Excel Upload / Download', desc: 'Declare ExcelColumnDef[] per screen and a single ExcelButton handles download, upload and templates. Supports up to 50,000 rows (SAX parsing + MyBatis cursor streaming).' },
     vn: { title: 'Tải lên / tải xuống Excel', desc: 'Khai báo ExcelColumnDef[] cho từng màn hình, chỉ một ExcelButton lo cả tải xuống, tải lên và mẫu. Hỗ trợ tối đa 50.000 dòng (phân tích SAX + luồng con trỏ MyBatis).' },
   },
+  GuideReportingServer: {
+    ko: { title: '리포팅 서버 호출', desc: 'front에서 Crownix 리포팅 서버를 호출하는 두 가지 방법 — ① 화면에 바로 띄우기(뷰어), ② 파일로 뽑아 내려받기(Invoker export). 리포트 서식(.mrd) 제작은 범위 밖입니다.' },
+    en: { title: 'Reporting Server Call', desc: 'Two ways the front end calls the Crownix reporting server — (1) show it in the page (viewer), (2) export and download a file (Invoker). Authoring the .mrd report layout is out of scope.' },
+    vn: { title: 'Gọi máy chủ báo cáo', desc: 'Hai cách front end gọi máy chủ báo cáo Crownix — (1) hiển thị ngay trên màn hình (viewer), (2) xuất và tải file (Invoker). Việc tạo mẫu báo cáo (.mrd) nằm ngoài phạm vi.' },
+  },
   GuideInternalApi: {
     ko: { title: '내부 API 레퍼런스', desc: 'VAMC NPL ADMIN에서 제공하는 Hooks, Stores, Utils, Contexts, Config, lib/api 사용법 정리' },
     en: { title: 'Internal API Reference', desc: 'Hooks, stores, utils, contexts, config and lib/api provided by VAMC NPL ADMIN' },

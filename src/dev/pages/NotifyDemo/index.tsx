@@ -10,50 +10,50 @@ export default function NotifyDemo() {
       <DevPageHeader page="NotifyDemo" />
 
       <Card size="small" style={{ marginBottom: 16 }}>
-        <Divider titlePlacement="left" styles={{ content: { margin: 0 } }} style={{ fontSize: 13 }}>toast — 자동 사라지는 메시지</Divider>
+        <Divider titlePlacement="left" styles={{ content: { margin: 0 } }} style={{ fontSize: 13 }}>toast — auto-dismissing message</Divider>
         <Space wrap style={{ marginBottom: 12 }}>
-          <Button size="small" type="primary" onClick={() => toast.success('저장됐습니다.')}>success</Button>
-          <Button size="small" danger         onClick={() => toast.error('오류가 발생했습니다.')}>error</Button>
-          <Button size="small"                onClick={() => toast.warning('주의가 필요합니다.')}>warning</Button>
-          <Button size="small"                onClick={() => toast.info('참고 안내입니다.')}>info</Button>
-          <Button size="small"                onClick={() => toast.loading('처리 중...')}>loading</Button>
+          <Button size="small" type="primary" onClick={() => toast.success('Saved.')}>success</Button>
+          <Button size="small" danger         onClick={() => toast.error('An error occurred.')}>error</Button>
+          <Button size="small"                onClick={() => toast.warning('This needs your attention.')}>warning</Button>
+          <Button size="small"                onClick={() => toast.info('For your information.')}>info</Button>
+          <Button size="small"                onClick={() => toast.loading('Processing...')}>loading</Button>
         </Space>
 
-        <Divider titlePlacement="left" styles={{ content: { margin: 0 } }} style={{ fontSize: 13 }}>notify — 우측 알림 패널</Divider>
+        <Divider titlePlacement="left" styles={{ content: { margin: 0 } }} style={{ fontSize: 13 }}>notify — notification panel on the right</Divider>
         <Space wrap style={{ marginBottom: 12 }}>
           <Button size="small" type="primary"
-            onClick={() => notify.success('변경 사항이 저장됐습니다.')}>
-            string (title 자동)
+            onClick={() => notify.success('Your changes have been saved.')}>
+            string (auto title)
           </Button>
           <Button size="small" danger
-            onClick={() => notify.error({ title: '커스텀 제목', description: '서버 오류가 발생했습니다.', placement: 'topRight' })}>
-            object (직접 지정)
+            onClick={() => notify.error({ title: 'Custom title', description: 'A server error occurred.', placement: 'topRight' })}>
+            object (explicit)
           </Button>
-          <Button size="small" onClick={() => notify.warning('권한이 곧 만료됩니다.')}>warning</Button>
-          <Button size="small" onClick={() => notify.info('새 공지사항이 등록됐습니다.')}>info</Button>
+          <Button size="small" onClick={() => notify.warning('Your permission expires soon.')}>warning</Button>
+          <Button size="small" onClick={() => notify.info('A new notice has been posted.')}>info</Button>
         </Space>
 
-        <Divider titlePlacement="left" styles={{ content: { margin: 0 } }} style={{ fontSize: 13 }}>dialog — 모달 (i18n 기본값 자동 적용)</Divider>
+        <Divider titlePlacement="left" styles={{ content: { margin: 0 } }} style={{ fontSize: 13 }}>dialog — modal (i18n defaults applied automatically)</Divider>
         <Space wrap>
           <Button size="small"
-            onClick={() => dialog.confirm({ content: '저장하시겠습니까?', onOk: () => toast.success('저장됐습니다.') })}>
+            onClick={() => dialog.confirm({ content: 'Save the changes?', onOk: () => toast.success('Saved.') })}>
             confirm
           </Button>
           <Button size="small"
-            onClick={() => dialog.info({ content: '이것은 정보 다이얼로그입니다.' })}>
+            onClick={() => dialog.info({ content: 'This is an informational dialog.' })}>
             info
           </Button>
           <Button size="small"
-            onClick={() => dialog.warning({ content: '이 작업은 되돌릴 수 없습니다.', onOk: () => toast.warning('계속 진행합니다.') })}>
+            onClick={() => dialog.warning({ content: 'This action cannot be undone.', onOk: () => toast.warning('Proceeding.') })}>
             warning
           </Button>
           <Button size="small" danger
-            onClick={() => dialog.error({ content: '서버 오류가 발생했습니다.' })}>
+            onClick={() => dialog.error({ content: 'A server error occurred.' })}>
             error
           </Button>
           <Button size="small"
-            onClick={() => dialog.warning({ title: '데이터 삭제', content: '삭제 후 복구할 수 없습니다.', okText: '삭제', onOk: () => toast.success('삭제됐습니다.') })}>
-            title · okText 오버라이드
+            onClick={() => dialog.warning({ title: 'Delete data', content: 'Deleted data cannot be recovered.', okText: 'Delete', onOk: () => toast.success('Deleted.') })}>
+            title / okText override
           </Button>
         </Space>
       </Card>

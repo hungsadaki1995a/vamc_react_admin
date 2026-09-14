@@ -28,34 +28,34 @@ function MyEditor() {
 }`;
 
 const editorOptionsCode = `const editor = useEditor({
-  // 확장 프로그램 배열
+  // Array of extensions
   extensions: [StarterKit, Link, Image],
 
-  // 초기 콘텐츠 (HTML 문자열 또는 JSON)
-  content: '<p>초기 텍스트</p>',
+  // Initial content (an HTML string or JSON)
+  content: '<p>Initial text</p>',
 
-  // 편집 가능 여부
+  // Whether editing is allowed
   editable: true,
 
-  // 자동 포커스 (true, false, 'start', 'end', number)
+  // Autofocus (true, false, 'start', 'end', number)
   autofocus: false,
 
-  // 콘텐츠 변경 시 콜백
+  // Called when the content changes
   onUpdate: ({ editor }) => {
     console.log('Content changed:', editor.getHTML());
   },
 
-  // 생성 시 콜백
+  // Called when the editor is created
   onCreate: ({ editor }) => {
     console.log('Editor created');
   },
 
-  // 포커스 시 콜백
+  // Called on focus
   onFocus: ({ editor, event }) => {
     console.log('Editor focused');
   },
 
-  // 블러 시 콜백
+  // Called on blur
   onBlur: ({ editor, event }) => {
     console.log('Editor blurred');
   },
@@ -63,22 +63,22 @@ const editorOptionsCode = `const editor = useEditor({
 
 const starterKitCode = `import StarterKit from '@tiptap/starter-kit';
 
-// StarterKit에 포함된 확장들:
-// - Bold (굵게)
-// - Italic (기울임)
-// - Strike (취소선)
-// - Code (인라인 코드)
-// - Heading (제목 h1~h6)
-// - Paragraph (문단)
-// - Text (텍스트)
-// - BulletList (순서 없는 목록)
-// - OrderedList (순서 있는 목록)
-// - ListItem (목록 항목)
-// - Blockquote (인용구)
-// - CodeBlock (코드 블록)
-// - HorizontalRule (수평선)
-// - HardBreak (줄바꿈)
-// - History (실행취소/재실행)
+// Extensions bundled in StarterKit:
+// - Bold
+// - Italic
+// - Strike
+// - Code (inline code)
+// - Heading (h1–h6)
+// - Paragraph
+// - Text
+// - BulletList (unordered list)
+// - OrderedList (ordered list)
+// - ListItem
+// - Blockquote
+// - CodeBlock
+// - HorizontalRule
+// - HardBreak (line break)
+// - History (undo / redo)
 // - Document, Dropcursor, Gapcursor
 
 const editor = useEditor({
@@ -87,12 +87,12 @@ const editor = useEditor({
   ],
 });
 
-// StarterKit 일부 비활성화
+// Disabling parts of StarterKit
 const editor2 = useEditor({
   extensions: [
     StarterKit.configure({
-      heading: false,  // 제목 비활성화
-      codeBlock: false, // 코드 블록 비활성화
+      heading: false,  // disable headings
+      codeBlock: false, // disable code blocks
     }),
   ],
 });`;
@@ -103,22 +103,22 @@ const editor = useEditor({
   extensions: [
     StarterKit,
     Link.configure({
-      openOnClick: false,  // 클릭 시 링크 열기 비활성화
+      openOnClick: false,  // don't open the link on click
       HTMLAttributes: {
-        target: '_blank',  // 새 탭에서 열기
+        target: '_blank',  // open in a new tab
         rel: 'noopener noreferrer',
       },
     }),
   ],
 });
 
-// 링크 삽입
+// Inserting a link
 editor.chain().focus().setLink({ href: 'https://example.com' }).run();
 
-// 링크 제거
+// Removing a link
 editor.chain().focus().unsetLink().run();
 
-// 링크 활성 상태 확인
+// Checking whether a link is active
 const isActive = editor.isActive('link');`;
 
 const imageExtensionCode = `import Image from '@tiptap/extension-image';
@@ -133,14 +133,14 @@ const editor = useEditor({
   ],
 });
 
-// 이미지 삽입
+// Inserting an image
 editor.chain().focus().setImage({ src: 'https://example.com/image.jpg' }).run();
 
-// alt 텍스트와 함께
+// With alt text
 editor.chain().focus().setImage({
   src: 'https://example.com/image.jpg',
-  alt: '이미지 설명',
-  title: '이미지 제목',
+  alt: 'Image description',
+  title: 'Image title',
 }).run();`;
 
 const tableExtensionCode = `import Table from '@tiptap/extension-table';
@@ -160,10 +160,10 @@ const editor = useEditor({
   ],
 });
 
-// 테이블 삽입 (3x3)
+// Inserting a table (3x3)
 editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run();
 
-// 행/열 추가/삭제
+// Adding and removing rows and columns
 editor.chain().focus().addRowBefore().run();
 editor.chain().focus().addRowAfter().run();
 editor.chain().focus().addColumnBefore().run();
@@ -172,7 +172,7 @@ editor.chain().focus().deleteRow().run();
 editor.chain().focus().deleteColumn().run();
 editor.chain().focus().deleteTable().run();
 
-// 셀 병합
+// Merging cells
 editor.chain().focus().mergeCells().run();
 editor.chain().focus().splitCell().run();`;
 
@@ -189,7 +189,7 @@ const editor = useEditor({
   ],
 });
 
-// 체크리스트 토글
+// Toggling a checklist
 editor.chain().focus().toggleTaskList().run();`;
 
 const otherExtensionsCode = `import Underline from '@tiptap/extension-underline';
@@ -213,20 +213,20 @@ const editor = useEditor({
   ],
 });
 
-// 밑줄
+// Underline
 editor.chain().focus().toggleUnderline().run();
 
-// 정렬
+// Alignment
 editor.chain().focus().setTextAlign('left').run();
 editor.chain().focus().setTextAlign('center').run();
 editor.chain().focus().setTextAlign('right').run();
 editor.chain().focus().setTextAlign('justify').run();
 
-// 형광펜
+// Highlight
 editor.chain().focus().toggleHighlight().run();
 editor.chain().focus().toggleHighlight({ color: '#ffc078' }).run();
 
-// 텍스트 색상
+// Text color
 editor.chain().focus().setColor('#ff0000').run();
 editor.chain().focus().unsetColor().run();`;
 
@@ -265,59 +265,59 @@ const editor = useEditor({
   ],
 });
 
-// 사용
+// Usage
 editor.chain().focus().setCustomNode().run();`;
 
-const commandChainCode = `// 기본 체인 패턴
+const commandChainCode = `// Basic chain pattern
 editor.chain().focus().toggleBold().run();
 
-// 여러 명령 체인
+// Chaining several commands
 editor.chain()
   .focus()
   .toggleBold()
   .toggleItalic()
   .run();
 
-// 조건부 실행 (can으로 확인)
+// Conditional execution (checked with can)
 if (editor.can().toggleBold()) {
   editor.chain().focus().toggleBold().run();
 }
 
-// 주요 커맨드들
-editor.chain().focus().toggleBold().run();               // 굵게
-editor.chain().focus().toggleItalic().run();             // 기울임
-editor.chain().focus().toggleUnderline().run();          // 밑줄
-editor.chain().focus().toggleStrike().run();             // 취소선
-editor.chain().focus().toggleCode().run();               // 인라인 코드
-editor.chain().focus().toggleHeading({ level: 1 }).run(); // 제목
-editor.chain().focus().toggleBulletList().run();         // 순서 없는 목록
-editor.chain().focus().toggleOrderedList().run();        // 순서 있는 목록
-editor.chain().focus().toggleBlockquote().run();         // 인용구
-editor.chain().focus().toggleCodeBlock().run();          // 코드 블록
-editor.chain().focus().setHorizontalRule().run();        // 수평선
-editor.chain().focus().setHardBreak().run();             // 줄바꿈
-editor.chain().focus().undo().run();                     // 실행취소
-editor.chain().focus().redo().run();                     // 재실행`;
+// Common commands
+editor.chain().focus().toggleBold().run();               // bold
+editor.chain().focus().toggleItalic().run();             // italic
+editor.chain().focus().toggleUnderline().run();          // underline
+editor.chain().focus().toggleStrike().run();             // strikethrough
+editor.chain().focus().toggleCode().run();               // inline code
+editor.chain().focus().toggleHeading({ level: 1 }).run(); // heading
+editor.chain().focus().toggleBulletList().run();         // bullet list
+editor.chain().focus().toggleOrderedList().run();        // ordered list
+editor.chain().focus().toggleBlockquote().run();         // block quote
+editor.chain().focus().toggleCodeBlock().run();          // code block
+editor.chain().focus().setHorizontalRule().run();        // horizontal rule
+editor.chain().focus().setHardBreak().run();             // line break
+editor.chain().focus().undo().run();                     // undo
+editor.chain().focus().redo().run();                     // redo`;
 
-const activeStateCode = `// 활성 상태 확인
-editor.isActive('bold');                        // 굵게
-editor.isActive('italic');                      // 기울임
-editor.isActive('underline');                   // 밑줄
-editor.isActive('strike');                      // 취소선
-editor.isActive('code');                        // 인라인 코드
-editor.isActive('heading', { level: 1 });       // 제목 1
-editor.isActive('bulletList');                  // 순서 없는 목록
-editor.isActive('orderedList');                 // 순서 있는 목록
-editor.isActive('blockquote');                  // 인용구
-editor.isActive('codeBlock');                   // 코드 블록
-editor.isActive({ textAlign: 'left' });         // 왼쪽 정렬
-editor.isActive({ textAlign: 'center' });       // 가운데 정렬
-editor.isActive('link');                        // 링크
-editor.isActive('highlight');                   // 형광펜
+const activeStateCode = `// Checking active state
+editor.isActive('bold');                        // bold
+editor.isActive('italic');                      // italic
+editor.isActive('underline');                   // underline
+editor.isActive('strike');                      // strikethrough
+editor.isActive('code');                        // inline code
+editor.isActive('heading', { level: 1 });       // heading 1
+editor.isActive('bulletList');                  // bullet list
+editor.isActive('orderedList');                 // ordered list
+editor.isActive('blockquote');                  // block quote
+editor.isActive('codeBlock');                   // code block
+editor.isActive({ textAlign: 'left' });         // left aligned
+editor.isActive({ textAlign: 'center' });       // center aligned
+editor.isActive('link');                        // link
+editor.isActive('highlight');                   // highlight
 
-// 색상 값 가져오기
-editor.getAttributes('textStyle').color;        // 텍스트 색상
-editor.getAttributes('highlight').color;        // 형광펜 색상`;
+// Reading color values
+editor.getAttributes('textStyle').color;        // text color
+editor.getAttributes('highlight').color;        // highlight color`;
 
 const toolbarComponentCode = `import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
@@ -388,26 +388,26 @@ function MyEditor() {
   );
 }`;
 
-const contentManagementCode = `// HTML 가져오기
+const contentManagementCode = `// Getting HTML
 const html = editor.getHTML();
 console.log(html); // '<p>Hello <strong>World</strong>!</p>'
 
-// JSON 가져오기 (ProseMirror document)
+// Getting JSON (the ProseMirror document)
 const json = editor.getJSON();
 
-// 순수 텍스트 가져오기
+// Getting plain text
 const text = editor.getText();
 
-// 특정 범위 텍스트
+// Text within a range
 const rangeText = editor.getText({ from: 0, to: 5 });
 
-// 구분자와 함께 (블록 사이)
+// With a separator between blocks
 const textWithSeparator = editor.getText({ blockSeparator: '\\n\\n' });`;
 
-const setContentCode = `// HTML 콘텐츠 설정
+const setContentCode = `// Setting HTML content
 editor.commands.setContent('<p>New content</p>');
 
-// JSON 콘텐츠 설정
+// Setting JSON content
 editor.commands.setContent({
   type: 'doc',
   content: [
@@ -418,12 +418,12 @@ editor.commands.setContent({
   ],
 });
 
-// 콘텐츠 초기화
+// Clearing the content
 editor.commands.clearContent();
 
-// emitUpdate 옵션 (onUpdate 콜백 트리거 여부)
+// The emitUpdate option (whether onUpdate fires)
 editor.commands.setContent('<p>New content</p>', {
-  emitUpdate: false, // onUpdate 트리거 안 함
+  emitUpdate: false, // does not trigger onUpdate
 });`;
 
 const onUpdateCode = `const editor = useEditor({
@@ -435,7 +435,7 @@ const onUpdateCode = `const editor = useEditor({
   },
 });
 
-// React 상태와 연동
+// Wiring it to React state
 function MyEditor() {
   const [content, setContent] = useState('<p>Initial</p>');
 
@@ -465,28 +465,28 @@ function MyComponent() {
       value={content}
       onChange={setContent}
       toolbar="full"
-      placeholder="내용을 입력하세요..."
+      placeholder="Type something..."
       minHeight={200}
       maxHeight={600}
     />
   );
 }`;
 
-const toolbarModesCode = `// full: 모든 서식 기능 (텍스트, 문단, 삽입, 정렬)
+const toolbarModesCode = `// full: every formatting feature (text, paragraph, insert, alignment)
 <RichTextEditor
   value={content}
   onChange={setContent}
   toolbar="full"
 />
 
-// compact: 자주 쓰는 서식만 (텍스트 스타일, 목록, 링크)
+// compact: only the common formats (text styles, lists, links)
 <RichTextEditor
   value={content}
   onChange={setContent}
   toolbar="compact"
 />
 
-// minimal: 기본 텍스트 스타일만 (굵게, 기울임, 밑줄)
+// minimal: basic text styles only (bold, italic, underline)
 <RichTextEditor
   value={content}
   onChange={setContent}
@@ -498,35 +498,35 @@ const toolbarModesCode = `// full: 모든 서식 기능 (텍스트, 문단, 삽�
 // ============================================================================
 
 export default function GuideTipTap() {
-  const [demoContent, setDemoContent] = useState('<p>여기서 직접 편집해보세요!</p>');
+  const [demoContent, setDemoContent] = useState('<p>Try editing this right here!</p>');
   const [demoMode, setDemoMode] = useState<'full' | 'compact' | 'minimal'>('full');
   const [demoReadOnly, setDemoReadOnly] = useState(false);
 
   const tabItems = [
     {
       key: '1',
-      label: '기본 설정',
+      label: 'Basic setup',
       children: (
         <div>
           <p style={{ marginBottom: 24, color: 'var(--text-secondary)' }}>
-            TipTap 에디터의 기본 설정과 사용법을 알아봅니다.
+            The basic setup and usage of the TipTap editor.
           </p>
 
           <div className="demo-section">
-            <h3>useEditor 훅</h3>
-            <p>TipTap은 React Hook API를 제공합니다. useEditor 훅으로 에디터 인스턴스를 생성합니다.</p>
-            <CodeSnippet code={basicSetupCode} title="기본 사용 예시" />
+            <h3>The useEditor hook</h3>
+            <p>TipTap ships a React hook API. Create an editor instance with the useEditor hook.</p>
+            <CodeSnippet code={basicSetupCode} title="Basic usage" />
           </div>
 
           <div className="demo-section">
-            <h3>에디터 옵션</h3>
-            <p>useEditor는 다양한 옵션을 지원합니다.</p>
-            <CodeSnippet code={editorOptionsCode} title="에디터 옵션" />
+            <h3>Editor options</h3>
+            <p>useEditor supports a range of options.</p>
+            <CodeSnippet code={editorOptionsCode} title="Editor options" />
           </div>
 
           <div className="demo-section">
-            <h3>EditorContent 컴포넌트</h3>
-            <p>에디터 UI를 렌더링하는 컴포넌트입니다. editor 인스턴스를 props로 전달합니다.</p>
+            <h3>The EditorContent component</h3>
+            <p>The component that renders the editor UI. Pass it the editor instance as a prop.</p>
             <Card size="small" style={{ background: 'var(--bg-secondary)' }}>
               <code style={{ fontSize: 13 }}>
                 {'<EditorContent editor={editor} />'}
@@ -537,20 +537,20 @@ export default function GuideTipTap() {
           <div className="demo-section">
             <h3>Extensions</h3>
             <p>
-              TipTap은 확장(extension) 기반 아키텍처입니다.
-              필요한 기능만 선택적으로 추가할 수 있습니다.
+              TipTap has an extension-based architecture.
+              You add only the features you actually need.
             </p>
             <Card size="small" style={{ background: 'var(--bg-secondary)' }}>
               <div style={{ fontSize: 13, color: 'var(--text-secondary)' }}>
-                <div>• StarterKit: 기본 확장 모음 (Bold, Italic, Heading, List 등)</div>
-                <div>• Link: 링크 삽입</div>
-                <div>• Image: 이미지 삽입</div>
-                <div>• Table: 테이블</div>
-                <div>• TaskList: 체크리스트</div>
-                <div>• Underline: 밑줄</div>
-                <div>• TextAlign: 정렬</div>
-                <div>• Highlight: 형광펜</div>
-                <div>• Color: 텍스트 색상</div>
+                <div>• StarterKit: the base bundle of extensions (Bold, Italic, Heading, List, …)</div>
+                <div>• Link: inserting links</div>
+                <div>• Image: inserting images</div>
+                <div>• Table: tables</div>
+                <div>• TaskList: checklists</div>
+                <div>• Underline: underlining</div>
+                <div>• TextAlign: alignment</div>
+                <div>• Highlight: highlighting</div>
+                <div>• Color: text color</div>
               </div>
             </Card>
           </div>
@@ -559,96 +559,96 @@ export default function GuideTipTap() {
     },
     {
       key: '2',
-      label: '확장 (Extensions)',
+      label: 'Extensions',
       children: (
         <div>
           <p style={{ marginBottom: 24, color: 'var(--text-secondary)' }}>
-            TipTap의 다양한 확장 프로그램과 사용법을 알아봅니다.
+            TipTap's extensions and how to use them.
           </p>
 
           <div className="demo-section">
             <h3>StarterKit</h3>
-            <p>StarterKit은 가장 많이 사용하는 확장들을 묶은 패키지입니다.</p>
-            <CodeSnippet code={starterKitCode} title="StarterKit 사용" />
+            <p>StarterKit bundles the most commonly used extensions.</p>
+            <CodeSnippet code={starterKitCode} title="Using StarterKit" />
           </div>
 
           <div className="demo-section">
-            <h3>Link 확장</h3>
-            <p>링크를 삽입하고 관리하는 기능을 제공합니다.</p>
-            <CodeSnippet code={linkExtensionCode} title="Link 확장" />
+            <h3>The Link extension</h3>
+            <p>Adds the ability to insert and manage links.</p>
+            <CodeSnippet code={linkExtensionCode} title="The Link extension" />
           </div>
 
           <div className="demo-section">
-            <h3>Image 확장</h3>
-            <p>이미지를 삽입하는 기능을 제공합니다. URL 또는 Base64 이미지를 지원합니다.</p>
-            <CodeSnippet code={imageExtensionCode} title="Image 확장" />
+            <h3>The Image extension</h3>
+            <p>Adds image insertion. URLs and Base64 images are both supported.</p>
+            <CodeSnippet code={imageExtensionCode} title="The Image extension" />
           </div>
 
           <div className="demo-section">
-            <h3>Table 확장</h3>
-            <p>테이블을 생성하고 편집하는 기능을 제공합니다.</p>
-            <CodeSnippet code={tableExtensionCode} title="Table 확장" />
+            <h3>The Table extension</h3>
+            <p>Adds table creation and editing.</p>
+            <CodeSnippet code={tableExtensionCode} title="The Table extension" />
           </div>
 
           <div className="demo-section">
-            <h3>TaskList 확장</h3>
-            <p>체크박스가 있는 체크리스트를 만들 수 있습니다.</p>
-            <CodeSnippet code={taskListExtensionCode} title="TaskList 확장" />
+            <h3>The TaskList extension</h3>
+            <p>Lets you build checklists with checkboxes.</p>
+            <CodeSnippet code={taskListExtensionCode} title="The TaskList extension" />
           </div>
 
           <div className="demo-section">
-            <h3>기타 확장</h3>
-            <p>밑줄, 정렬, 형광펜, 색상 등의 확장을 사용할 수 있습니다.</p>
+            <h3>Other extensions</h3>
+            <p>Underline, alignment, highlighting and color are available as extensions too.</p>
             <CodeSnippet code={otherExtensionsCode} title="Underline, TextAlign, Highlight, Color" />
           </div>
 
           <div className="demo-section">
-            <h3>커스텀 확장 만들기</h3>
-            <p>필요한 경우 직접 확장을 만들 수 있습니다.</p>
-            <CodeSnippet code={customExtensionCode} title="커스텀 확장 예시" />
+            <h3>Writing a custom extension</h3>
+            <p>When you need something else, you can write your own extension.</p>
+            <CodeSnippet code={customExtensionCode} title="Custom extension example" />
           </div>
         </div>
       ),
     },
     {
       key: '3',
-      label: '커스텀 툴바',
+      label: 'Custom toolbar',
       children: (
         <div>
           <p style={{ marginBottom: 24, color: 'var(--text-secondary)' }}>
-            에디터의 커맨드를 사용해 커스텀 툴바를 만드는 방법을 알아봅니다.
+            How to build your own toolbar out of the editor's commands.
           </p>
 
           <div className="demo-section">
-            <h3>체인 패턴</h3>
-            <p>TipTap은 체인(chain) 패턴으로 커맨드를 실행합니다.</p>
-            <CodeSnippet code={commandChainCode} title="커맨드 체인" />
+            <h3>The chain pattern</h3>
+            <p>TipTap runs commands through a chain pattern.</p>
+            <CodeSnippet code={commandChainCode} title="Command chains" />
           </div>
 
           <div className="demo-section">
-            <h3>활성 상태 확인</h3>
-            <p>isActive 메서드로 현재 선택된 텍스트의 서식 상태를 확인할 수 있습니다.</p>
-            <CodeSnippet code={activeStateCode} title="활성 상태 확인" />
+            <h3>Checking active state</h3>
+            <p>The isActive method tells you the formatting state of the current selection.</p>
+            <CodeSnippet code={activeStateCode} title="Checking active state" />
           </div>
 
           <div className="demo-section">
-            <h3>툴바 컴포넌트 예시</h3>
-            <p>커맨드와 활성 상태를 사용해 간단한 툴바를 만들 수 있습니다.</p>
-            <CodeSnippet code={toolbarComponentCode} title="툴바 컴포넌트" />
+            <h3>Toolbar component example</h3>
+            <p>Commands plus active state are all you need for a simple toolbar.</p>
+            <CodeSnippet code={toolbarComponentCode} title="Toolbar component" />
           </div>
 
           <div className="demo-section">
-            <h3>주요 커맨드 정리</h3>
+            <h3>Command cheat sheet</h3>
             <Card size="small" style={{ background: 'var(--bg-secondary)' }}>
               <div style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.8 }}>
-                <div><strong>텍스트 스타일:</strong> toggleBold, toggleItalic, toggleUnderline, toggleStrike, toggleCode</div>
-                <div><strong>문단:</strong> toggleHeading, setParagraph, toggleBlockquote</div>
-                <div><strong>목록:</strong> toggleBulletList, toggleOrderedList, toggleTaskList</div>
-                <div><strong>정렬:</strong> setTextAlign('left' | 'center' | 'right' | 'justify')</div>
-                <div><strong>색상:</strong> setColor, setHighlight</div>
-                <div><strong>삽입:</strong> setLink, setImage, insertTable, setHorizontalRule</div>
-                <div><strong>히스토리:</strong> undo, redo</div>
-                <div><strong>콘텐츠:</strong> setContent, clearContent</div>
+                <div><strong>Text styles:</strong> toggleBold, toggleItalic, toggleUnderline, toggleStrike, toggleCode</div>
+                <div><strong>Paragraph:</strong> toggleHeading, setParagraph, toggleBlockquote</div>
+                <div><strong>Lists:</strong> toggleBulletList, toggleOrderedList, toggleTaskList</div>
+                <div><strong>Alignment:</strong> setTextAlign('left' | 'center' | 'right' | 'justify')</div>
+                <div><strong>Color:</strong> setColor, setHighlight</div>
+                <div><strong>Insert:</strong> setLink, setImage, insertTable, setHorizontalRule</div>
+                <div><strong>History:</strong> undo, redo</div>
+                <div><strong>Content:</strong> setContent, clearContent</div>
               </div>
             </Card>
           </div>
@@ -657,38 +657,38 @@ export default function GuideTipTap() {
     },
     {
       key: '4',
-      label: '콘텐츠 관리',
+      label: 'Content management',
       children: (
         <div>
           <p style={{ marginBottom: 24, color: 'var(--text-secondary)' }}>
-            에디터 콘텐츠를 가져오고 설정하는 방법을 알아봅니다.
+            How to read and write the editor's content.
           </p>
 
           <div className="demo-section">
-            <h3>콘텐츠 가져오기</h3>
-            <p>에디터의 콘텐츠를 HTML, JSON, 텍스트 형식으로 가져올 수 있습니다.</p>
+            <h3>Reading content</h3>
+            <p>Editor content can be read as HTML, JSON or plain text.</p>
             <CodeSnippet code={contentManagementCode} title="getHTML, getJSON, getText" />
           </div>
 
           <div className="demo-section">
-            <h3>콘텐츠 설정하기</h3>
-            <p>에디터의 콘텐츠를 프로그래밍 방식으로 설정할 수 있습니다.</p>
+            <h3>Writing content</h3>
+            <p>The content can be set programmatically.</p>
             <CodeSnippet code={setContentCode} title="setContent, clearContent" />
           </div>
 
           <div className="demo-section">
-            <h3>변경 감지</h3>
-            <p>onUpdate 콜백으로 콘텐츠 변경을 감지하고 상위 컴포넌트에 전달할 수 있습니다.</p>
-            <CodeSnippet code={onUpdateCode} title="onUpdate 콜백" />
+            <h3>Detecting changes</h3>
+            <p>The onUpdate callback lets you observe changes and lift them to a parent component.</p>
+            <CodeSnippet code={onUpdateCode} title="The onUpdate callback" />
           </div>
 
           <div className="demo-section">
-            <h3>콘텐츠 형식 비교</h3>
+            <h3>Comparing content formats</h3>
             <Card size="small" style={{ background: 'var(--bg-secondary)' }}>
               <div style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.8 }}>
-                <div><strong>HTML:</strong> 서버 저장, 표시용으로 적합. 가장 많이 사용.</div>
-                <div><strong>JSON:</strong> 에디터 상태를 정확히 보존. 버전 관리, 협업에 유리.</div>
-                <div><strong>Text:</strong> 검색, 미리보기, 글자 수 세기 등에 사용.</div>
+                <div><strong>HTML:</strong> best for storing on the server and rendering. The most common choice.</div>
+                <div><strong>JSON:</strong> preserves editor state exactly. Better for versioning and collaboration.</div>
+                <div><strong>Text:</strong> used for search, previews and character counts.</div>
               </div>
             </Card>
           </div>
@@ -697,40 +697,40 @@ export default function GuideTipTap() {
     },
     {
       key: '5',
-      label: '본 프로젝트 RichTextEditor',
+      label: 'RichTextEditor in this project',
       children: (
         <div>
           <p style={{ marginBottom: 24, color: 'var(--text-secondary)' }}>
-            VAMC NPL ADMIN 프로젝트의 RichTextEditor 컴포넌트 사용법과 라이브 데모입니다.
+            How to use the RichTextEditor component in VAMC NPL ADMIN, plus a live demo.
           </p>
 
           <div className="demo-section">
-            <h3>기본 사용법</h3>
-            <p>RichTextEditor는 TipTap을 래핑한 재사용 가능한 컴포넌트입니다.</p>
-            <CodeSnippet code={richTextEditorUsageCode} title="기본 사용" />
+            <h3>Basic usage</h3>
+            <p>RichTextEditor is a reusable component wrapping TipTap.</p>
+            <CodeSnippet code={richTextEditorUsageCode} title="Basic usage" />
           </div>
 
           <div className="demo-section">
-            <h3>툴바 모드</h3>
-            <p>toolbar prop으로 서식 기능의 범위를 조절할 수 있습니다.</p>
-            <CodeSnippet code={toolbarModesCode} title="툴바 모드 비교" />
+            <h3>Toolbar modes</h3>
+            <p>The toolbar prop controls how many formatting features are exposed.</p>
+            <CodeSnippet code={toolbarModesCode} title="Comparing toolbar modes" />
             <Card size="small" style={{ background: 'var(--bg-secondary)', marginTop: 16 }}>
               <div style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.8 }}>
-                <div><strong>full:</strong> 텍스트 스타일, 제목, 목록, 링크, 이미지, 테이블, 정렬, 색상 등 모든 기능</div>
-                <div><strong>compact:</strong> 텍스트 스타일, 목록, 링크 등 자주 쓰는 기능만</div>
-                <div><strong>minimal:</strong> 굵게, 기울임, 밑줄 등 기본 텍스트 스타일만</div>
+                <div><strong>full:</strong> everything — text styles, headings, lists, links, images, tables, alignment, color</div>
+                <div><strong>compact:</strong> only the common ones — text styles, lists, links</div>
+                <div><strong>minimal:</strong> basic text styles only — bold, italic, underline</div>
               </div>
             </Card>
           </div>
 
           <div className="demo-section">
-            <h3>라이브 데모</h3>
-            <p>아래에서 실제 RichTextEditor를 사용해보세요.</p>
+            <h3>Live demo</h3>
+            <p>Try the real RichTextEditor below.</p>
 
             <Card size="small" style={{ marginBottom: 16 }}>
               <div style={{ display: 'flex', gap: 16, alignItems: 'center', flexWrap: 'wrap' }}>
                 <div>
-                  <span style={{ marginRight: 8, fontSize: 13 }}>툴바 모드:</span>
+                  <span style={{ marginRight: 8, fontSize: 13 }}>Toolbar mode:</span>
                   {(['full', 'compact', 'minimal'] as const).map((mode) => (
                     <label key={mode} style={{ marginRight: 16, fontSize: 13 }}>
                       <input
@@ -751,7 +751,7 @@ export default function GuideTipTap() {
                     onChange={(e) => setDemoReadOnly(e.target.checked)}
                     style={{ marginRight: 4 }}
                   />
-                  읽기 전용
+                  Read only
                 </label>
               </div>
             </Card>
@@ -760,7 +760,7 @@ export default function GuideTipTap() {
               value={demoContent}
               onChange={setDemoContent}
               toolbar={demoMode}
-              placeholder="여기에 내용을 입력하세요..."
+              placeholder="Type your content here..."
               readOnly={demoReadOnly}
               minHeight={300}
               maxHeight={500}
@@ -769,7 +769,7 @@ export default function GuideTipTap() {
             <Card
               size="small"
               style={{ marginTop: 16, background: 'var(--bg-secondary)' }}
-              title={<span style={{ fontSize: 13, fontWeight: 500 }}>현재 HTML 출력</span>}
+              title={<span style={{ fontSize: 13, fontWeight: 500 }}>Current HTML output</span>}
             >
               <pre style={{
                 fontSize: 12,

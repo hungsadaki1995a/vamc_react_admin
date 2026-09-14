@@ -36,9 +36,9 @@ export default function Calendar() {
     <div className="page-container page-scrollable">
       <div className="ds-section-header">
         <Space style={{ width: '100%', justifyContent: 'space-between' }}>
-          <h2>{viewMode === 'month' ? '월간' : '연간'} 캘린더</h2>
+          <h2>{viewMode === 'month' ? 'Monthly' : 'Yearly'} calendar</h2>
           <Select value={viewMode} onChange={setViewMode} style={{ width: 100 }}
-            options={[{ label: '월간', value: 'month' }, { label: '연간', value: 'year' }]} />
+            options={[{ label: 'Month', value: 'month' }, { label: 'Year', value: 'year' }]} />
         </Space>
       </div>
       <Card size="small">

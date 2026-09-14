@@ -35,52 +35,52 @@ type FormValues = Omit<MockMnu, 'sceId' | 'sceNm' | 'mnuLevRank'> & {
 // ── Constants ────────────────────────────────────────────────────────────────
 
 const BZ_OPTIONS = [
-  { value: 'SYS', label: '시스템' },
-  { value: 'PRJ', label: '프로젝트' },
-  { value: 'RSC', label: '자원' },
-  { value: 'RPT', label: '보고서' },
+  { value: 'SYS', label: 'System' },
+  { value: 'PRJ', label: 'Project' },
+  { value: 'RSC', label: 'Resources' },
+  { value: 'RPT', label: 'Reports' },
 ];
 
 const YN_OPTIONS = [
-  { value: 'Y', label: '예(Y)' },
-  { value: 'N', label: '아니오(N)' },
+  { value: 'Y', label: 'Yes (Y)' },
+  { value: 'N', label: 'No (N)' },
 ];
 
-// Mock 화면 목록 — SceSelectField 대신 정적 옵션으로 사용
+// Mock screen list — static options used instead of SceSelectField
 const MOCK_SCREENS: SearchSelectOption[] = [
-  { value: 'SYS010101SC', label: '사용자관리',   bzLrgCzCd: 'SYS' },
-  { value: 'SYS010201SC', label: '공통코드관리', bzLrgCzCd: 'SYS' },
-  { value: 'SYS030101SC', label: '메뉴관리',    bzLrgCzCd: 'SYS' },
-  { value: 'PRJ101001SC', label: '프로젝트목록', bzLrgCzCd: 'PRJ' },
-  { value: 'PRJ102001SC', label: '업무관리',    bzLrgCzCd: 'PRJ' },
-  { value: 'PRJ103001SC', label: '일정관리',    bzLrgCzCd: 'PRJ' },
-  { value: 'RSC101001SC', label: '인력현황',    bzLrgCzCd: 'RSC' },
-  { value: 'RSC102001SC', label: '비용현황',    bzLrgCzCd: 'RSC' },
-  { value: 'RPT101001SC', label: '월별보고서',  bzLrgCzCd: 'RPT' },
-  { value: 'RPT102001SC', label: '분기별보고서', bzLrgCzCd: 'RPT' },
+  { value: 'SYS010101SC', label: 'User management',   bzLrgCzCd: 'SYS' },
+  { value: 'SYS010201SC', label: 'Common code management', bzLrgCzCd: 'SYS' },
+  { value: 'SYS030101SC', label: 'Menu management',    bzLrgCzCd: 'SYS' },
+  { value: 'PRJ101001SC', label: 'Project list', bzLrgCzCd: 'PRJ' },
+  { value: 'PRJ102001SC', label: 'Task management',    bzLrgCzCd: 'PRJ' },
+  { value: 'PRJ103001SC', label: 'Schedule management',    bzLrgCzCd: 'PRJ' },
+  { value: 'RSC101001SC', label: 'Headcount status',    bzLrgCzCd: 'RSC' },
+  { value: 'RSC102001SC', label: 'Cost status',    bzLrgCzCd: 'RSC' },
+  { value: 'RPT101001SC', label: 'Monthly report',  bzLrgCzCd: 'RPT' },
+  { value: 'RPT102001SC', label: 'Quarterly report', bzLrgCzCd: 'RPT' },
 ];
 
 const SCE_COLUMNS: ColumnsType<SearchSelectOption> = [
-  { title: '업무',   dataIndex: 'bzLrgCzCd', key: 'bzLrgCzCd', width: 80,  ellipsis: true },
-  { title: '화면명', dataIndex: 'label',     key: 'label',     ellipsis: true },
-  { title: '화면ID', dataIndex: 'value',     key: 'value',     width: 150, ellipsis: true },
+  { title: 'Area',   dataIndex: 'bzLrgCzCd', key: 'bzLrgCzCd', width: 80,  ellipsis: true },
+  { title: 'Screen name', dataIndex: 'label',     key: 'label',     ellipsis: true },
+  { title: 'Screen ID', dataIndex: 'value',     key: 'value',     width: 150, ellipsis: true },
 ];
 
 const INITIAL_DATA: MockMnu[] = [
-  { mnuId: '100000', mnuNm: '시스템 관리',   upMnuId: '',       mnuRank: 1, sceId: '',            sceNm: '',        mnuLevRank: 1, sceXrsYn: 'N', mnuXrsYn: 'Y', labelKey: 'MNU.SYS.TITLE', bzLrgCzCd: 'SYS' },
-  { mnuId: '100100', mnuNm: '사용자 관리',   upMnuId: '100000', mnuRank: 1, sceId: 'SYS010101SC', sceNm: '사용자관리',  mnuLevRank: 2, sceXrsYn: 'Y', mnuXrsYn: 'Y', labelKey: 'MNU.SYS.USR',   bzLrgCzCd: 'SYS' },
-  { mnuId: '100200', mnuNm: '메뉴 관리',     upMnuId: '100000', mnuRank: 2, sceId: 'SYS030101SC', sceNm: '메뉴관리',   mnuLevRank: 2, sceXrsYn: 'Y', mnuXrsYn: 'Y', labelKey: 'MNU.SYS.MNU',   bzLrgCzCd: 'SYS' },
-  { mnuId: '100300', mnuNm: '공통코드 관리', upMnuId: '100000', mnuRank: 3, sceId: 'SYS010201SC', sceNm: '공통코드관리', mnuLevRank: 2, sceXrsYn: 'Y', mnuXrsYn: 'Y', labelKey: 'MNU.SYS.CD',    bzLrgCzCd: 'SYS' },
-  { mnuId: '200000', mnuNm: '프로젝트 관리', upMnuId: '',       mnuRank: 2, sceId: '',            sceNm: '',        mnuLevRank: 1, sceXrsYn: 'N', mnuXrsYn: 'Y', labelKey: 'MNU.PRJ.TITLE', bzLrgCzCd: 'PRJ' },
-  { mnuId: '200100', mnuNm: '프로젝트 목록', upMnuId: '200000', mnuRank: 1, sceId: 'PRJ101001SC', sceNm: '프로젝트목록', mnuLevRank: 2, sceXrsYn: 'Y', mnuXrsYn: 'Y', labelKey: 'MNU.PRJ.LIST',  bzLrgCzCd: 'PRJ' },
-  { mnuId: '200200', mnuNm: '업무 관리',     upMnuId: '200000', mnuRank: 2, sceId: 'PRJ102001SC', sceNm: '업무관리',   mnuLevRank: 2, sceXrsYn: 'Y', mnuXrsYn: 'Y', labelKey: 'MNU.PRJ.TASK',  bzLrgCzCd: 'PRJ' },
-  { mnuId: '200300', mnuNm: '일정 관리',     upMnuId: '200000', mnuRank: 3, sceId: 'PRJ103001SC', sceNm: '일정관리',   mnuLevRank: 2, sceXrsYn: 'Y', mnuXrsYn: 'N', labelKey: 'MNU.PRJ.SCH',   bzLrgCzCd: 'PRJ' },
-  { mnuId: '300000', mnuNm: '자원 관리',     upMnuId: '',       mnuRank: 3, sceId: '',            sceNm: '',        mnuLevRank: 1, sceXrsYn: 'N', mnuXrsYn: 'Y', labelKey: 'MNU.RSC.TITLE', bzLrgCzCd: 'RSC' },
-  { mnuId: '300100', mnuNm: '인력 현황',     upMnuId: '300000', mnuRank: 1, sceId: 'RSC101001SC', sceNm: '인력현황',   mnuLevRank: 2, sceXrsYn: 'Y', mnuXrsYn: 'Y', labelKey: 'MNU.RSC.HR',    bzLrgCzCd: 'RSC' },
-  { mnuId: '300200', mnuNm: '비용 현황',     upMnuId: '300000', mnuRank: 2, sceId: 'RSC102001SC', sceNm: '비용현황',   mnuLevRank: 2, sceXrsYn: 'Y', mnuXrsYn: 'N', labelKey: 'MNU.RSC.COST',  bzLrgCzCd: 'RSC' },
-  { mnuId: '400000', mnuNm: '보고서',        upMnuId: '',       mnuRank: 4, sceId: '',            sceNm: '',        mnuLevRank: 1, sceXrsYn: 'N', mnuXrsYn: 'Y', labelKey: 'MNU.RPT.TITLE', bzLrgCzCd: 'RPT' },
-  { mnuId: '400100', mnuNm: '월별 보고서',   upMnuId: '400000', mnuRank: 1, sceId: 'RPT101001SC', sceNm: '월별보고서',  mnuLevRank: 2, sceXrsYn: 'Y', mnuXrsYn: 'Y', labelKey: 'MNU.RPT.MON',   bzLrgCzCd: 'RPT' },
-  { mnuId: '400200', mnuNm: '분기별 보고서', upMnuId: '400000', mnuRank: 2, sceId: 'RPT102001SC', sceNm: '분기별보고서', mnuLevRank: 2, sceXrsYn: 'Y', mnuXrsYn: 'Y', labelKey: 'MNU.RPT.QRT',   bzLrgCzCd: 'RPT' },
+  { mnuId: '100000', mnuNm: 'System management', upMnuId: '',       mnuRank: 1, sceId: '',            sceNm: '',        mnuLevRank: 1, sceXrsYn: 'N', mnuXrsYn: 'Y', labelKey: 'MNU.SYS.TITLE', bzLrgCzCd: 'SYS' },
+  { mnuId: '100100', mnuNm: 'User management', upMnuId: '100000', mnuRank: 1, sceId: 'SYS010101SC', sceNm: 'User management', mnuLevRank: 2, sceXrsYn: 'Y', mnuXrsYn: 'Y', labelKey: 'MNU.SYS.USR',   bzLrgCzCd: 'SYS' },
+  { mnuId: '100200', mnuNm: 'Menu management', upMnuId: '100000', mnuRank: 2, sceId: 'SYS030101SC', sceNm: 'Menu management', mnuLevRank: 2, sceXrsYn: 'Y', mnuXrsYn: 'Y', labelKey: 'MNU.SYS.MNU',   bzLrgCzCd: 'SYS' },
+  { mnuId: '100300', mnuNm: 'Common code management', upMnuId: '100000', mnuRank: 3, sceId: 'SYS010201SC', sceNm: 'Common code management', mnuLevRank: 2, sceXrsYn: 'Y', mnuXrsYn: 'Y', labelKey: 'MNU.SYS.CD',    bzLrgCzCd: 'SYS' },
+  { mnuId: '200000', mnuNm: 'Project management', upMnuId: '',       mnuRank: 2, sceId: '',            sceNm: '',        mnuLevRank: 1, sceXrsYn: 'N', mnuXrsYn: 'Y', labelKey: 'MNU.PRJ.TITLE', bzLrgCzCd: 'PRJ' },
+  { mnuId: '200100', mnuNm: 'Project list', upMnuId: '200000', mnuRank: 1, sceId: 'PRJ101001SC', sceNm: 'Project list', mnuLevRank: 2, sceXrsYn: 'Y', mnuXrsYn: 'Y', labelKey: 'MNU.PRJ.LIST',  bzLrgCzCd: 'PRJ' },
+  { mnuId: '200200', mnuNm: 'Task management', upMnuId: '200000', mnuRank: 2, sceId: 'PRJ102001SC', sceNm: 'Task management', mnuLevRank: 2, sceXrsYn: 'Y', mnuXrsYn: 'Y', labelKey: 'MNU.PRJ.TASK',  bzLrgCzCd: 'PRJ' },
+  { mnuId: '200300', mnuNm: 'Schedule management', upMnuId: '200000', mnuRank: 3, sceId: 'PRJ103001SC', sceNm: 'Schedule management', mnuLevRank: 2, sceXrsYn: 'Y', mnuXrsYn: 'N', labelKey: 'MNU.PRJ.SCH',   bzLrgCzCd: 'PRJ' },
+  { mnuId: '300000', mnuNm: 'Resource management', upMnuId: '',       mnuRank: 3, sceId: '',            sceNm: '',        mnuLevRank: 1, sceXrsYn: 'N', mnuXrsYn: 'Y', labelKey: 'MNU.RSC.TITLE', bzLrgCzCd: 'RSC' },
+  { mnuId: '300100', mnuNm: 'Headcount status', upMnuId: '300000', mnuRank: 1, sceId: 'RSC101001SC', sceNm: 'Headcount status', mnuLevRank: 2, sceXrsYn: 'Y', mnuXrsYn: 'Y', labelKey: 'MNU.RSC.HR',    bzLrgCzCd: 'RSC' },
+  { mnuId: '300200', mnuNm: 'Cost status', upMnuId: '300000', mnuRank: 2, sceId: 'RSC102001SC', sceNm: 'Cost status', mnuLevRank: 2, sceXrsYn: 'Y', mnuXrsYn: 'N', labelKey: 'MNU.RSC.COST',  bzLrgCzCd: 'RSC' },
+  { mnuId: '400000', mnuNm: 'Reports', upMnuId: '',       mnuRank: 4, sceId: '',            sceNm: '',        mnuLevRank: 1, sceXrsYn: 'N', mnuXrsYn: 'Y', labelKey: 'MNU.RPT.TITLE', bzLrgCzCd: 'RPT' },
+  { mnuId: '400100', mnuNm: 'Monthly report', upMnuId: '400000', mnuRank: 1, sceId: 'RPT101001SC', sceNm: 'Monthly report', mnuLevRank: 2, sceXrsYn: 'Y', mnuXrsYn: 'Y', labelKey: 'MNU.RPT.MON',   bzLrgCzCd: 'RPT' },
+  { mnuId: '400200', mnuNm: 'Quarterly report', upMnuId: '400000', mnuRank: 2, sceId: 'RPT102001SC', sceNm: 'Quarterly report', mnuLevRank: 2, sceXrsYn: 'Y', mnuXrsYn: 'Y', labelKey: 'MNU.RPT.QRT',   bzLrgCzCd: 'RPT' },
 ];
 
 // ── Main Component ────────────────────────────────────────────────────────────
@@ -121,32 +121,32 @@ export default function PatternGridForm() {
   // ── Column definitions ────────────────────────────────────────────────────
 
   const columnDefs = useMemo<ColDef<MockMnu>[]>(() => [
-    { field: 'mnuId',      headerName: '메뉴ID',    width: 90,  flex: 0 },
+    { field: 'mnuId',      headerName: 'Menu ID',   width: 90,  flex: 0 },
     {
-      field: 'mnuNm', headerName: '메뉴명', minWidth: 200,
+      field: 'mnuNm', headerName: 'Menu name', minWidth: 200,
       valueFormatter: ({ data }) =>
         data ? '\u00A0'.repeat(((data.mnuLevRank ?? 1) - 1) * 4) + (data.mnuNm ?? '') : '',
     },
-    { field: 'upMnuId',    headerName: '상위메뉴ID', width: 100, flex: 0 },
-    { field: 'mnuRank',    headerName: '메뉴순서',   width: 90,  flex: 0 },
-    { field: 'sceId',      headerName: '화면ID',    width: 140, flex: 0 },
-    { field: 'sceNm',      headerName: '화면명',    minWidth: 180 },
-    { field: 'mnuLevRank', headerName: '메뉴레벨',   width: 90,  flex: 0 },
+    { field: 'upMnuId',    headerName: 'Parent menu ID', width: 100, flex: 0 },
+    { field: 'mnuRank',    headerName: 'Order',   width: 90,  flex: 0 },
+    { field: 'sceId',      headerName: 'Screen ID', width: 140, flex: 0 },
+    { field: 'sceNm',      headerName: 'Screen name', minWidth: 180 },
+    { field: 'mnuLevRank', headerName: 'Level',   width: 90,  flex: 0 },
     {
-      field: 'sceXrsYn', headerName: '화면보기', width: 90, flex: 0,
+      field: 'sceXrsYn', headerName: 'Show screen', width: 90, flex: 0,
       cellRenderer: ({ value }: ICellRendererParams<MockMnu>) => (
         <Tag color={value === 'Y' ? 'green' : 'default'}>{value}</Tag>
       ),
     },
     {
-      field: 'mnuXrsYn', headerName: '메뉴표시', width: 90, flex: 0,
+      field: 'mnuXrsYn', headerName: 'Show menu', width: 90, flex: 0,
       cellRenderer: ({ value }: ICellRendererParams<MockMnu>) => (
         <Tag color={value === 'Y' ? 'blue' : 'default'}>{value}</Tag>
       ),
     },
-    { field: 'labelKey',   headerName: '라벨키',    minWidth: 220 },
+    { field: 'labelKey',   headerName: 'Label key', minWidth: 220 },
     {
-      field: 'bzLrgCzCd', headerName: '업무', width: 80, flex: 0,
+      field: 'bzLrgCzCd', headerName: 'Area', width: 80, flex: 0,
       valueFormatter: ({ value }) => BZ_OPTIONS.find((o) => o.value === value)?.label ?? value,
     },
   ], []);
@@ -191,7 +191,7 @@ export default function PatternGridForm() {
   const handleSave = useCallback(() => {
     form.validateFields().then((values) => {
       dialog.confirm({
-        content: isEditMode ? '수정하시겠습니까?' : '등록하시겠습니까?',
+        content: isEditMode ? 'Save these changes?' : 'Register this menu?',
         onOk: () => {
           const { sceId: sceVal, ...rest } = values;
           const sceIdStr = sceVal?.value ?? '';
@@ -204,10 +204,10 @@ export default function PatternGridForm() {
                   : item,
               ),
             );
-            notify.success('수정되었습니다.');
+            notify.success('Updated.');
           } else {
             if (dataList.some((item) => item.mnuId === rest.mnuId)) {
-              notify.error('이미 존재하는 메뉴ID입니다.');
+              notify.error('That menu ID already exists.');
               return;
             }
             const upMnu = dataList.find((item) => item.mnuId === rest.upMnuId);
@@ -219,24 +219,24 @@ export default function PatternGridForm() {
               mnuLevRank: upMnu ? upMnu.mnuLevRank + 1 : 1,
             };
             setDataList((prev) => [...prev, newItem]);
-            notify.success('등록되었습니다.');
+            notify.success('Registered.');
             handleFormReset();
           }
         },
       });
     }).catch(() => {
-      notify.error('필수 항목을 입력해 주세요.');
+      notify.error('Please fill in the required fields.');
     });
   }, [form, isEditMode, dialog, dataList, notify, handleFormReset]);
 
   const handleDelete = useCallback(() => {
     if (!selectedRow) return;
     dialog.confirm({
-      content: `${selectedRow.mnuNm}(${selectedRow.mnuId})을(를) 삭제하시겠습니까?`,
+      content: `${selectedRow.mnuNm}(${selectedRow.mnuId})? This cannot be undone.`,
       okButtonProps: { danger: true },
       onOk: () => {
         setDataList((prev) => prev.filter((item) => item.mnuId !== selectedRow.mnuId));
-        notify.success('삭제되었습니다.');
+        notify.success('Deleted.');
         handleFormReset();
       },
     });
@@ -247,23 +247,23 @@ export default function PatternGridForm() {
   return (
     <div className="page-container">
 
-      {/* ── 검색 필터 */}
+      {/* ── Search filter */}
       <FilterPanel
         onSearch={handleSearch}
         onReset={handleFilterReset}
         activeFilterCount={[filterBzLrgCzCd, filterMnuId, filterMnuNm].filter(Boolean).length}
       >
         <div className="ds-filter-field">
-          <span className="ds-filter-field-label">업무</span>
+          <span className="ds-filter-field-label">Area</span>
           <Select
-            options={[{ value: '', label: '전체' }, ...BZ_OPTIONS]}
+            options={[{ value: '', label: 'All' }, ...BZ_OPTIONS]}
             value={filterBzLrgCzCd}
             onChange={(v) => setFilterBzLrgCzCd(v ?? '')}
             style={{ width: '100%' }}
           />
         </div>
         <div className="ds-filter-field">
-          <span className="ds-filter-field-label">메뉴ID</span>
+          <span className="ds-filter-field-label">Menu ID</span>
           <Input
             value={filterMnuId}
             onChange={(e) => setFilterMnuId(e.target.value.replace(/\D/g, ''))}
@@ -273,7 +273,7 @@ export default function PatternGridForm() {
           />
         </div>
         <div className="ds-filter-field">
-          <span className="ds-filter-field-label">메뉴명</span>
+          <span className="ds-filter-field-label">Menu name</span>
           <Input
             value={filterMnuNm}
             onChange={(e) => setFilterMnuNm(e.target.value)}
@@ -283,7 +283,7 @@ export default function PatternGridForm() {
         </div>
       </FilterPanel>
 
-      {/* ── 그리드 패널 */}
+      {/* ── Grid panel */}
       <div style={{ flex: 1, minHeight: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
         <GridPanel<MockMnu>
           totalCount={filteredList.length}
@@ -298,18 +298,18 @@ export default function PatternGridForm() {
         />
       </div>
 
-      {/* ── 하단 입력 폼 패널 */}
+      {/* ── Input form panel at the bottom */}
       <FormPanel
-        title="입력 정보"
+        title="Input details"
         editMode={isEditMode}
         collapsed={formCollapsed}
         onCollapsedChange={setFormCollapsed}
         actions={
           <Space size={4} align="center">
-            <Button size="middle" onClick={handleFormReset}>초기화</Button>
+            <Button size="middle" onClick={handleFormReset}>Reset</Button>
             <VerticalDivider />
-            <Button size="middle" type="primary" onClick={handleSave}>저장</Button>
-            <Button size="middle" danger disabled={!isEditMode} onClick={handleDelete}>삭제</Button>
+            <Button size="middle" type="primary" onClick={handleSave}>Save</Button>
+            <Button size="middle" danger disabled={!isEditMode} onClick={handleDelete}>Delete</Button>
             <VerticalDivider />
           </Space>
         }
@@ -323,18 +323,18 @@ export default function PatternGridForm() {
           <Row gutter={[12, 4]}>
             <Col span={6}>
               <Form.Item
-                label="업무"
+                label="Area"
                 name="bzLrgCzCd"
                 initialValue=""
                 rules={[{ required: true, message: '' }]}
                 style={{ margin: '0 0 8px' }}
               >
-                <Select options={[{ value: '', label: '선택' }, ...BZ_OPTIONS]} style={{ width: '100%' }} />
+                <Select options={[{ value: '', label: 'Select' }, ...BZ_OPTIONS]} style={{ width: '100%' }} />
               </Form.Item>
             </Col>
             <Col span={6}>
               <Form.Item
-                label="메뉴ID"
+                label="Menu ID"
                 name="mnuId"
                 rules={[{ required: true, message: '' }]}
                 style={{ margin: '0 0 8px' }}
@@ -349,7 +349,7 @@ export default function PatternGridForm() {
             </Col>
             <Col span={6}>
               <Form.Item
-                label="메뉴명"
+                label="Menu name"
                 name="mnuNm"
                 rules={[{ required: true, message: '' }]}
                 style={{ margin: '0 0 8px' }}
@@ -359,7 +359,7 @@ export default function PatternGridForm() {
             </Col>
             <Col span={6}>
               <Form.Item
-                label="상위메뉴ID"
+                label="Parent menu ID"
                 name="upMnuId"
                 style={{ margin: '0 0 8px' }}
               >
@@ -373,7 +373,7 @@ export default function PatternGridForm() {
           <Row gutter={[12, 4]}>
             <Col span={6}>
               <Form.Item
-                label="메뉴순서"
+                label="Order"
                 name="mnuRank"
                 rules={[{ required: true, message: '' }]}
                 style={{ margin: '0 0 8px' }}
@@ -386,24 +386,24 @@ export default function PatternGridForm() {
             </Col>
             <Col span={6}>
               <Form.Item
-                label="화면ID"
+                label="Screen ID"
                 name="sceId"
                 style={{ margin: '0 0 8px' }}
               >
                 <SearchSelectField
                   options={MOCK_SCREENS}
                   columns={SCE_COLUMNS}
-                  modalTitle="화면 검색"
+                  modalTitle="Search screens"
                   modalWidth={560}
                   modalSearchFields={['label', 'value', 'bzLrgCzCd']}
-                  placeholder="화면 선택"
+                  placeholder="Select a screen"
                   style={{ width: '100%' }}
                 />
               </Form.Item>
             </Col>
             <Col span={6}>
               <Form.Item
-                label="화면보기여부"
+                label="Show screen"
                 name="sceXrsYn"
                 initialValue="Y"
                 rules={[{ required: true, message: '' }]}
@@ -414,7 +414,7 @@ export default function PatternGridForm() {
             </Col>
             <Col span={6}>
               <Form.Item
-                label="메뉴표시여부"
+                label="Show menu"
                 name="mnuXrsYn"
                 initialValue="Y"
                 rules={[{ required: true, message: '' }]}
@@ -427,7 +427,7 @@ export default function PatternGridForm() {
           <Row gutter={[12, 4]}>
             <Col span={6}>
               <Form.Item
-                label="라벨키"
+                label="Label key"
                 name="labelKey"
                 style={{ margin: 0 }}
               >

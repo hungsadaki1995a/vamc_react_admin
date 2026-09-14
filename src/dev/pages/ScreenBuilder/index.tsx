@@ -16,44 +16,45 @@ interface BuilderForm {
   menuKey: string;
 }
 
-// 업무 도메인 — 메뉴 IA 의 대분류 7개와 1:1 이다.
-// 폴더명(소문자)이 화면ID 접두 3자(대문자)와 같은 값이라 둘이 어긋날 일이 없다.
-//   src/features/sys/SYS030101SC/  ←→  메뉴코드 A06020100
+// Business domains — one per top-level group in the menu IA (7 of them).
+// The folder name (lowercase) matches the 3-letter screen-ID prefix (uppercase), so the two cannot drift apart.
+//   src/features/sys/SYS030101SC/  <->  menu code A06020100
 //
-// `auth`(로그인 등 메뉴 밖 화면)와 `dashboard`(정적 메뉴)는 화면ID 채번 규칙 대상이 아니라 뺐다.
-// 데모·가이드는 features 가 아니라 src/dev/pages/ 에 있으므로 역시 선택지에 없다.
+// `auth` (login and other off-menu screens) and `dashboard` (a static menu) are not covered by the
+// screen-ID numbering rule, so they are excluded. Demos and guides live in src/dev/pages/, not features,
+// so they are not offered here either.
 const DOMAIN_OPTIONS = [
-  { value: 'mbr', label: 'mbr — 회원 관리 (A01)' },
-  { value: 'trd', label: 'trd — 거래 관리 (A02)' },
-  { value: 'npl', label: 'npl — NPL정보 관리 (A03)' },
-  { value: 'cnt', label: 'cnt — 컨텐츠 관리 (A04)' },
-  { value: 'stt', label: 'stt — 통계 (A05)' },
-  { value: 'sys', label: 'sys — 시스템 운영 관리 (A06)' },
-  { value: 'auc', label: 'auc — 경매 관리 (A07)' },
+  { value: 'mbr', label: 'mbr — Member management (A01)' },
+  { value: 'trd', label: 'trd — Trade management (A02)' },
+  { value: 'npl', label: 'npl — NPL information (A03)' },
+  { value: 'cnt', label: 'cnt — Content management (A04)' },
+  { value: 'stt', label: 'stt — Statistics (A05)' },
+  { value: 'sys', label: 'sys — System operations (A06)' },
+  { value: 'auc', label: 'auc — Auction management (A07)' },
 ];
 
-/** 화면ID 형식 — {도메인3}{중분류2}{소분류2}{일련2}{유형2}. 유형은 SC(화면) / 1P·2P(팝업) */
+/** Screen-ID format — {domain3}{group2}{subgroup2}{seq2}{type2}. Type is SC (screen) or 1P/2P (popup). */
 const SCREEN_ID_PATTERN = /^[A-Z]{3}\d{6}(SC|\dP)$/;
 
-/** 메뉴코드 형식 — MENU_MNG.MENU_CD. 대분류 1자 + 숫자 8자 (예: A06020100) */
+/** Menu-code format — MENU_MNG.MENU_CD. 1 letter for the top group + 8 digits (e.g. A06020100). */
 const MENU_CD_PATTERN = /^[A-Z]\d{8}$/;
 
 const LAYOUT_OPTIONS: { value: LayoutKind; label: string; desc: string }[] = [
-  { value: 'grid-list', label: '목록', desc: 'FilterPanel + GridTable' },
-  { value: 'grid-form', label: '그리드-폼', desc: 'GridTable + FormPanel' },
-  { value: 'master-detail', label: '마스터-디테일', desc: 'SplitPanel 좌/우' },
-  { value: 'dashboard', label: '대시보드', desc: 'Card 그리드 + 차트' },
+  { value: 'grid-list', label: 'List', desc: 'FilterPanel + GridTable' },
+  { value: 'grid-form', label: 'Grid-form', desc: 'GridTable + FormPanel' },
+  { value: 'master-detail', label: 'Master-detail', desc: 'SplitPanel left/right' },
+  { value: 'dashboard', label: 'Dashboard', desc: 'Card grid + charts' },
 ];
 
 /**
- * 화면 생성기 — 뼈대(skeleton).
+ * Screen generator — a skeleton.
  *
- * 입력값을 받아 `src/features/{domain}/{화면ID}/index.tsx` 스캐폴드를 만드는 것이 목표.
- * 현재는 UI 폼만 배치돼 있고 실제 생성 로직은 미구현입니다.
+ * The goal is to take the inputs and scaffold `src/features/{domain}/{screenId}/index.tsx`.
+ * Only the input form exists today; the generation logic is not implemented yet.
  *
- * ⚠️ 서버 메뉴로 여는 화면은 `menuConfig` 에 넣지 않는다 — `MENU_MNG.MENU_URL_ADDR` 에
- *    화면ID를 넣으면 `componentRegistry` 가 폴더를 자동 발견한다. `menuConfig` 는
- *    정적 메뉴(대시보드·개발 도구)만 담는다.
+ * Note: screens opened from a server menu do NOT go into `menuConfig` — put the screen ID in
+ *    `MENU_MNG.MENU_URL_ADDR` and `componentRegistry` discovers the folder automatically.
+ *    `menuConfig` only holds static menus (dashboard, dev tools).
  */
 export default function ScreenBuilder() {
   const { toast } = useNotify();
@@ -67,13 +68,13 @@ export default function ScreenBuilder() {
         type="info"
         showIcon
         style={{ marginBottom: 16 }}
-        message="뼈대 화면"
-        description="현재는 입력 폼만 구성돼 있습니다. 스캐폴드 생성 로직(파일 출력 / 클립보드 복사)은 미구현입니다."
+        message="Skeleton screen"
+        description="Only the input form is built so far. The scaffold generation logic (file output / clipboard copy) is not implemented."
       />
 
       <Row gutter={12}>
         <Col xs={24} xl={14}>
-          <Card size="small" title="화면 정보">
+          <Card size="small" title="Screen information">
             <Form<BuilderForm>
               form={form}
               layout="vertical"
@@ -82,30 +83,30 @@ export default function ScreenBuilder() {
             >
               <Form.Item
                 name="screenId"
-                label="화면 ID (폴더명 = componentPath = MENU_URL_ADDR = sceId)"
-                extra="{도메인3}{중분류2}{소분류2}{일련2}{유형2} — 11자. 유형은 SC(화면) / 1P·2P(팝업). 한 번 부여하면 불변."
+                label="Screen ID (folder name = componentPath = MENU_URL_ADDR = sceId)"
+                extra="{domain3}{group2}{subgroup2}{seq2}{type2} — 11 characters. Type is SC (screen) or 1P/2P (popup). Immutable once assigned."
                 rules={[
                   { required: true },
-                  { pattern: SCREEN_ID_PATTERN, message: '형식이 맞지 않습니다 (예: NPL010101SC)' },
+                  { pattern: SCREEN_ID_PATTERN, message: 'Invalid format (e.g. NPL010101SC)' },
                 ]}
               >
-                <Input placeholder="예: NPL010101SC" style={{ textTransform: 'uppercase' }} />
+                <Input placeholder="e.g. NPL010101SC" style={{ textTransform: 'uppercase' }} />
               </Form.Item>
-              <Form.Item name="screenName" label="화면명" rules={[{ required: true }]}>
-                <Input placeholder="예: 채권 목록" />
+              <Form.Item name="screenName" label="Screen name" rules={[{ required: true }]}>
+                <Input placeholder="e.g. Debt list" />
               </Form.Item>
-              <Form.Item name="domain" label="도메인 (src/features 하위 폴더)">
+              <Form.Item name="domain" label="Domain (folder under src/features)">
                 <Select options={DOMAIN_OPTIONS} />
               </Form.Item>
               <Form.Item
                 name="menuKey"
-                label="메뉴 코드 (MENU_MNG.MENU_CD)"
-                extra="이 메뉴의 MENU_URL_ADDR 에 위 화면ID를 넣어야 화면이 열린다. 라벨 키는 lbl.menu.{메뉴코드}."
-                rules={[{ pattern: MENU_CD_PATTERN, message: '형식이 맞지 않습니다 (예: A03010100)' }]}
+                label="Menu code (MENU_MNG.MENU_CD)"
+                extra="Put the screen ID above into this menu's MENU_URL_ADDR for the screen to open. The label key is lbl.menu.{menuCode}."
+                rules={[{ pattern: MENU_CD_PATTERN, message: 'Invalid format (e.g. A03010100)' }]}
               >
-                <Input placeholder="예: A03010100" style={{ textTransform: 'uppercase' }} />
+                <Input placeholder="e.g. A03010100" style={{ textTransform: 'uppercase' }} />
               </Form.Item>
-              <Form.Item name="layout" label="레이아웃 패턴">
+              <Form.Item name="layout" label="Layout pattern">
                 <Radio.Group>
                   {LAYOUT_OPTIONS.map((o) => (
                     <Radio.Button key={o.value} value={o.value}>
@@ -117,13 +118,13 @@ export default function ScreenBuilder() {
 
               <ActionButtonGroup justify="end">
                 <ActionButton action="reset" onClick={() => form.resetFields()}>
-                  초기화
+                  Reset
                 </ActionButton>
                 <ActionButton
                   action="saveChanges"
-                  onClick={() => toast.info('스캐폴드 생성 로직은 아직 구현되지 않았습니다.')}
+                  onClick={() => toast.info('The scaffold generation logic is not implemented yet.')}
                 >
-                  생성
+                  Generate
                 </ActionButton>
               </ActionButtonGroup>
             </Form>
@@ -131,9 +132,9 @@ export default function ScreenBuilder() {
         </Col>
 
         <Col xs={24} xl={10}>
-          <Card size="small" title="미리보기">
+          <Card size="small" title="Preview">
             <Text type="secondary" style={{ fontSize: 12 }}>
-              선택한 레이아웃에 따른 컴포넌트 구성 미리보기가 여기에 표시됩니다. (미구현)
+              A preview of the component layout for the selected pattern will appear here. (Not implemented)
             </Text>
           </Card>
         </Col>

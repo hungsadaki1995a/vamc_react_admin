@@ -61,7 +61,7 @@ const { Title, Paragraph, Text, Link } = Typography;
 const buttonCode = `import { Button } from 'antd';
 import { DownloadOutlined } from '@ant-design/icons';
 
-// 기본 버튼 타입
+// Basic button types
 <Space>
   <Button type="primary">Primary</Button>
   <Button>Default</Button>
@@ -71,7 +71,7 @@ import { DownloadOutlined } from '@ant-design/icons';
   <Button danger>Danger</Button>
 </Space>
 
-// 크기 및 상태
+// Sizes and states
 <Space>
   <Button type="primary" size="large">Large</Button>
   <Button type="primary">Default</Button>
@@ -87,49 +87,49 @@ import { SearchOutlined } from '@ant-design/icons';
 
 const { TextArea, Password } = Input;
 
-// 기본 입력
-<Input placeholder="기본 입력" />
+// Basic input
+<Input placeholder="Basic input" />
 
-// 비밀번호
-<Password placeholder="비밀번호 입력" />
+// Password
+<Password placeholder="Enter a password" />
 
-// 텍스트 영역
-<TextArea rows={4} placeholder="여러 줄 입력" />
+// Text area
+<TextArea rows={4} placeholder="Multi-line input" />
 
-// 검색
+// Search
 <Input
-  placeholder="검색어 입력"
+  placeholder="Type to search"
   prefix={<SearchOutlined />}
 />`;
 
 const selectCode = `import { Select } from 'antd';
 
 const options = [
-  { value: '1', label: '옵션 1' },
-  { value: '2', label: '옵션 2' },
-  { value: '3', label: '옵션 3' },
+  { value: '1', label: 'Option 1' },
+  { value: '2', label: 'Option 2' },
+  { value: '3', label: 'Option 3' },
 ];
 
-// 기본 선택
+// Basic select
 <Select
   style={{ width: 200 }}
-  placeholder="선택하세요"
+  placeholder="Please select"
   options={options}
 />
 
-// 다중 선택
+// Multiple selection
 <Select
   mode="multiple"
   style={{ width: 300 }}
-  placeholder="여러 개 선택"
+  placeholder="Select several"
   options={options}
 />
 
-// 검색 가능
+// Searchable
 <Select
   showSearch
   style={{ width: 200 }}
-  placeholder="검색 후 선택"
+  placeholder="Search, then select"
   options={options}
   filterOption={(input, option) =>
     (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
@@ -140,15 +140,15 @@ const datePickerCode = `import { DatePicker } from 'antd';
 
 const { RangePicker } = DatePicker;
 
-// 날짜 선택
-<DatePicker placeholder="날짜 선택" />
+// Date picker
+<DatePicker placeholder="Select a date" />
 
-// 기간 선택
+// Date range
 <RangePicker />`;
 
 const tagBadgeCode = `import { Tag, Badge } from 'antd';
 
-// Tag - 색상
+// Tag — colors
 <Space>
   <Tag color="blue">Blue</Tag>
   <Tag color="green">Green</Tag>
@@ -156,7 +156,7 @@ const tagBadgeCode = `import { Tag, Badge } from 'antd';
   <Tag color="red">Red</Tag>
 </Space>
 
-// Tag - 닫기 가능
+// Tag — closable
 const [tags, setTags] = useState(['Tag 1', 'Tag 2', 'Tag 3']);
 {tags.map(tag => (
   <Tag
@@ -168,12 +168,12 @@ const [tags, setTags] = useState(['Tag 1', 'Tag 2', 'Tag 3']);
   </Tag>
 ))}
 
-// Badge - 카운트
+// Badge — count
 <Badge count={5}>
   <Card size="small" style={{ width: 50, height: 50 }} />
 </Badge>
 
-// Badge - 상태 점
+// Badge — status dot
 <Badge status="success" text="Success" />
 <Badge status="error" text="Error" />
 <Badge status="processing" text="Processing" />`;
@@ -213,7 +213,7 @@ const [open, setOpen] = useState(false);
 
 const gridCode = `import { Row, Col } from 'antd';
 
-// 24 그리드 시스템
+// 24-column grid system
 <Row gutter={16}>
   <Col span={12}>
     <div style={{ background: '#0092ff', padding: 16 }}>col-12</div>
@@ -229,33 +229,33 @@ const gridCode = `import { Row, Col } from 'antd';
   <Col span={8}>col-8</Col>
 </Row>
 
-// 반응형
+// Responsive
 <Row gutter={16}>
   <Col xs={24} sm={12} md={8} lg={6}>
-    반응형 컬럼
+    Responsive column
   </Col>
   <Col xs={24} sm={12} md={8} lg={6}>
-    반응형 컬럼
+    Responsive column
   </Col>
 </Row>`;
 
 const spaceFlexCode = `import { Space, Flex, Button } from 'antd';
 
-// Space - 간격 자동 조절
+// Space — automatic gaps
 <Space>
   <Button>Button 1</Button>
   <Button>Button 2</Button>
   <Button>Button 3</Button>
 </Space>
 
-// Space - 방향 및 크기
+// Space — direction and size
 <Space orientation="vertical" size="large">
   <div>Item 1</div>
   <div>Item 2</div>
   <div>Item 3</div>
 </Space>
 
-// Flex - 플렉스박스
+// Flex — flexbox
 <Flex gap="middle" justify="space-between" align="center">
   <div>Left</div>
   <div>Center</div>
@@ -264,15 +264,15 @@ const spaceFlexCode = `import { Space, Flex, Button } from 'antd';
 
 const descriptionsCode = `import { Descriptions } from 'antd';
 
-<Descriptions title="사용자 정보" bordered size="small">
-  <Descriptions.Item label="이름">홍길동</Descriptions.Item>
-  <Descriptions.Item label="전화번호">010-1234-5678</Descriptions.Item>
-  <Descriptions.Item label="이메일">hong@example.com</Descriptions.Item>
-  <Descriptions.Item label="주소" span={3}>
-    서울특별시 강남구 테헤란로 123
+<Descriptions title="User information" bordered size="small">
+  <Descriptions.Item label="Name">John Doe</Descriptions.Item>
+  <Descriptions.Item label="Phone">010-1234-5678</Descriptions.Item>
+  <Descriptions.Item label="Email">john@example.com</Descriptions.Item>
+  <Descriptions.Item label="Address" span={3}>
+    123 Teheran-ro, Gangnam-gu, Seoul
   </Descriptions.Item>
-  <Descriptions.Item label="부서">개발팀</Descriptions.Item>
-  <Descriptions.Item label="직급">선임</Descriptions.Item>
+  <Descriptions.Item label="Department">Engineering</Descriptions.Item>
+  <Descriptions.Item label="Grade">Senior</Descriptions.Item>
 </Descriptions>`;
 
 const statisticProgressCode = `import { Statistic, Progress } from 'antd';
@@ -281,11 +281,11 @@ import { ArrowUpOutlined } from '@ant-design/icons';
 // Statistic
 <Row gutter={16}>
   <Col span={12}>
-    <Statistic title="활성 사용자" value={112893} />
+    <Statistic title="Active users" value={112893} />
   </Col>
   <Col span={12}>
     <Statistic
-      title="증가율"
+      title="Growth rate"
       value={11.28}
       precision={2}
       suffix="%"
@@ -317,27 +317,27 @@ import {
   items={[
     {
       color: 'green',
-      content: '프로젝트 생성 2024-01-01',
+      content: 'Project created 2024-01-01',
       icon: <CheckCircleOutlined />,
     },
     {
       color: 'green',
-      content: '요구사항 분석 완료 2024-01-15',
+      content: 'Requirements analysis complete 2024-01-15',
       icon: <CheckCircleOutlined />,
     },
     {
       color: 'blue',
-      content: '개발 진행 중 2024-02-01',
+      content: 'Development in progress 2024-02-01',
       icon: <SyncOutlined spin />,
     },
     {
       color: 'gray',
-      content: '테스트 예정 2024-03-01',
+      content: 'Testing planned 2024-03-01',
       icon: <ClockCircleOutlined />,
     },
     {
       color: 'gray',
-      content: '배포 예정 2024-03-15',
+      content: 'Release planned 2024-03-15',
     },
   ]}
 />`;
@@ -346,34 +346,34 @@ const typographyCode = `import { Typography } from 'antd';
 
 const { Title, Paragraph, Text, Link } = Typography;
 
-// 제목
+// Title
 <Title level={1}>h1. Ant Design</Title>
 <Title level={2}>h2. Ant Design</Title>
 <Title level={3}>h3. Ant Design</Title>
 
-// 단락
+// Paragraph
 <Paragraph>
-  Ant Design은 엔터프라이즈급 제품을 위한 디자인 시스템입니다.
-  React 컴포넌트 라이브러리와 함께 제공됩니다.
+  Ant Design is a design system for enterprise-grade products.
+  It ships with a React component library.
 </Paragraph>
 
-// 텍스트
+// Text
 <Space orientation="vertical">
-  <Text>기본 텍스트</Text>
-  <Text type="secondary">보조 텍스트</Text>
-  <Text type="success">성공 텍스트</Text>
-  <Text type="warning">경고 텍스트</Text>
-  <Text type="danger">위험 텍스트</Text>
-  <Text strong>굵게</Text>
-  <Text italic>기울임</Text>
-  <Text underline>밑줄</Text>
-  <Text delete>취소선</Text>
-  <Text code>코드</Text>
+  <Text>Regular text</Text>
+  <Text type="secondary">Secondary text</Text>
+  <Text type="success">Success text</Text>
+  <Text type="warning">Warning text</Text>
+  <Text type="danger">Danger text</Text>
+  <Text strong>Bold</Text>
+  <Text italic>Italic</Text>
+  <Text underline>Underline</Text>
+  <Text delete>Strikethrough</Text>
+  <Text code>Code</Text>
 </Space>
 
-// 링크
+// Link
 <Link href="https://ant.design" target="_blank">
-  Ant Design (새 창)
+  Ant Design (new window)
 </Link>`;
 
 const messageNotificationCode = `import { App, Button } from 'antd';
@@ -382,16 +382,16 @@ const { message, notification } = App.useApp();
 
 // Message
 <Space>
-  <Button onClick={() => message.success('성공 메시지')}>
+  <Button onClick={() => message.success('Success message')}>
     Success
   </Button>
-  <Button onClick={() => message.error('에러 메시지')}>
+  <Button onClick={() => message.error('Error message')}>
     Error
   </Button>
-  <Button onClick={() => message.warning('경고 메시지')}>
+  <Button onClick={() => message.warning('Warning message')}>
     Warning
   </Button>
-  <Button onClick={() => message.info('정보 메시지')}>
+  <Button onClick={() => message.info('Info message')}>
     Info
   </Button>
 </Space>
@@ -400,8 +400,8 @@ const { message, notification } = App.useApp();
 <Button
   onClick={() =>
     notification.success({
-      message: '알림 제목',
-      description: '알림 내용이 여기에 표시됩니다.',
+      message: 'Notification title',
+      description: 'The notification body goes here.',
       placement: 'topRight',
     })
   }
@@ -419,14 +419,14 @@ const { modal } = App.useApp();
   <Button
     onClick={() => {
       modal.confirm({
-        title: '삭제 확인',
+        title: 'Confirm deletion',
         icon: <ExclamationCircleOutlined />,
-        content: '정말로 삭제하시겠습니까?',
-        okText: '삭제',
+        content: 'Are you sure you want to delete this?',
+        okText: 'Delete',
         okType: 'danger',
-        cancelText: '취소',
+        cancelText: 'Cancel',
         onOk() {
-          console.log('삭제 확인');
+          console.log('deletion confirmed');
         },
       });
     }}
@@ -436,8 +436,8 @@ const { modal } = App.useApp();
   <Button
     onClick={() => {
       modal.info({
-        title: '안내',
-        content: '이것은 정보 모달입니다.',
+        title: 'Notice',
+        content: 'This is an informational modal.',
       });
     }}
   >
@@ -446,8 +446,8 @@ const { modal } = App.useApp();
   <Button
     onClick={() => {
       modal.warning({
-        title: '경고',
-        content: '주의가 필요합니다.',
+        title: 'Warning',
+        content: 'This needs your attention.',
       });
     }}
   >
@@ -458,14 +458,14 @@ const { modal } = App.useApp();
 const popconfirmCode = `import { Popconfirm, Button, message } from 'antd';
 
 <Popconfirm
-  title="삭제 확인"
-  description="정말로 이 항목을 삭제하시겠습니까?"
-  onConfirm={() => message.success('삭제되었습니다')}
-  onCancel={() => message.info('취소되었습니다')}
-  okText="예"
-  cancelText="아니오"
+  title="Confirm deletion"
+  description="Are you sure you want to delete this item?"
+  onConfirm={() => message.success('Deleted')}
+  onCancel={() => message.info('Cancelled')}
+  okText="Yes"
+  cancelText="No"
 >
-  <Button danger>삭제</Button>
+  <Button danger>Delete</Button>
 </Popconfirm>`;
 
 const formCode = `import { Form, Input, Button, Select, DatePicker } from 'antd';
@@ -474,7 +474,7 @@ const [form] = Form.useForm();
 
 const onFinish = (values: any) => {
   console.log('Success:', values);
-  message.success('폼 제출 성공!');
+  message.success('Form submitted.');
 };
 
 <Form
@@ -484,60 +484,60 @@ const onFinish = (values: any) => {
   initialValues={{ department: '1' }}
 >
   <Form.Item
-    label="이름"
+    label="Name"
     name="name"
-    rules={[{ required: true, message: '이름을 입력하세요' }]}
+    rules={[{ required: true, message: 'Enter your name' }]}
   >
-    <Input placeholder="이름 입력" />
+    <Input placeholder="Enter your name" />
   </Form.Item>
 
   <Form.Item
-    label="이메일"
+    label="Email"
     name="email"
     rules={[
-      { required: true, message: '이메일을 입력하세요' },
-      { type: 'email', message: '올바른 이메일 형식이 아닙니다' },
+      { required: true, message: 'Enter your email' },
+      { type: 'email', message: 'That is not a valid email address' },
     ]}
   >
     <Input placeholder="email@example.com" />
   </Form.Item>
 
   <Form.Item
-    label="비밀번호"
+    label="Password"
     name="password"
     rules={[
-      { required: true, message: '비밀번호를 입력하세요' },
-      { min: 6, message: '최소 6자 이상 입력하세요' },
+      { required: true, message: 'Enter a password' },
+      { min: 6, message: 'Use at least 6 characters' },
     ]}
   >
     <Input.Password />
   </Form.Item>
 
   <Form.Item
-    label="부서"
+    label="Department"
     name="department"
-    rules={[{ required: true, message: '부서를 선택하세요' }]}
+    rules={[{ required: true, message: 'Select a department' }]}
   >
     <Select
       options={[
-        { value: '1', label: '개발팀' },
-        { value: '2', label: '디자인팀' },
-        { value: '3', label: '기획팀' },
+        { value: '1', label: 'Engineering' },
+        { value: '2', label: 'Design' },
+        { value: '3', label: 'Planning' },
       ]}
     />
   </Form.Item>
 
-  <Form.Item label="입사일" name="joinDate">
+  <Form.Item label="Start date" name="joinDate">
     <DatePicker style={{ width: '100%' }} />
   </Form.Item>
 
   <Form.Item>
     <Space>
       <Button type="primary" htmlType="submit">
-        제출
+        Submit
       </Button>
       <Button onClick={() => form.resetFields()}>
-        초기화
+        Reset
       </Button>
     </Space>
   </Form.Item>
@@ -559,19 +559,19 @@ export default function GuideAntDesign() {
 
   const handleFormFinish = (values: any) => {
     console.log('Form values:', values);
-    message.success('폼 제출 성공!');
+    message.success('Form submitted.');
   };
 
   const tabItems = [
     {
       key: 'basic',
-      label: '기본 컴포넌트',
+      label: 'Basic components',
       children: (
         <div>
           <p style={{ marginBottom: 24, color: 'var(--text-secondary)' }}>
-            가장 자주 사용되는 Ant Design 기본 컴포넌트들입니다. Button, Input, Select,
+            The Ant Design components you will use most often — Button, Input, Select,
             DatePicker, Tag, Badge, Card, Modal, InputNumber, Checkbox, Switch,
-            AutoComplete, Dropdown 등을 다룹니다.
+            AutoComplete, Dropdown and friends.
           </p>
 
           <div className="demo-section">
@@ -603,20 +603,20 @@ export default function GuideAntDesign() {
                 </Space>
               </Space>
             </Card>
-            <CodeSnippet code={buttonCode} title="Button 예제" />
+            <CodeSnippet code={buttonCode} title="Button examples" />
           </div>
 
           <div className="demo-section">
             <h3>Input</h3>
             <Card size="small" style={{ marginBottom: 16 }}>
               <Space orientation="vertical" style={{ width: '100%' }}>
-                <Input placeholder="기본 입력" autoComplete="off" />
-                <Password placeholder="비밀번호 입력" autoComplete="new-password" />
-                <TextArea rows={4} placeholder="여러 줄 입력" />
-                <Input placeholder="검색어 입력" prefix={<SearchOutlined />} />
+                <Input placeholder="Basic input" autoComplete="off" />
+                <Password placeholder="Enter a password" autoComplete="new-password" />
+                <TextArea rows={4} placeholder="Multi-line input" />
+                <Input placeholder="Type to search" prefix={<SearchOutlined />} />
               </Space>
             </Card>
-            <CodeSnippet code={inputCode} title="Input 예제" />
+            <CodeSnippet code={inputCode} title="Input examples" />
           </div>
 
           <div className="demo-section">
@@ -625,31 +625,31 @@ export default function GuideAntDesign() {
               <Space orientation="vertical" style={{ width: '100%' }}>
                 <Select
                   style={{ width: 200 }}
-                  placeholder="선택하세요"
+                  placeholder="Please select"
                   options={[
-                    { value: '1', label: '옵션 1' },
-                    { value: '2', label: '옵션 2' },
-                    { value: '3', label: '옵션 3' },
+                    { value: '1', label: 'Option 1' },
+                    { value: '2', label: 'Option 2' },
+                    { value: '3', label: 'Option 3' },
                   ]}
                 />
                 <Select
                   mode="multiple"
                   style={{ width: 300 }}
-                  placeholder="여러 개 선택"
+                  placeholder="Select several"
                   options={[
-                    { value: '1', label: '옵션 1' },
-                    { value: '2', label: '옵션 2' },
-                    { value: '3', label: '옵션 3' },
+                    { value: '1', label: 'Option 1' },
+                    { value: '2', label: 'Option 2' },
+                    { value: '3', label: 'Option 3' },
                   ]}
                 />
                 <Select
                   showSearch
                   style={{ width: 200 }}
-                  placeholder="검색 후 선택"
+                  placeholder="Search, then select"
                   options={[
-                    { value: '1', label: '옵션 1' },
-                    { value: '2', label: '옵션 2' },
-                    { value: '3', label: '옵션 3' },
+                    { value: '1', label: 'Option 1' },
+                    { value: '2', label: 'Option 2' },
+                    { value: '3', label: 'Option 3' },
                   ]}
                   filterOption={(input, option) =>
                     (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
@@ -657,18 +657,18 @@ export default function GuideAntDesign() {
                 />
               </Space>
             </Card>
-            <CodeSnippet code={selectCode} title="Select 예제" />
+            <CodeSnippet code={selectCode} title="Select examples" />
           </div>
 
           <div className="demo-section">
             <h3>DatePicker</h3>
             <Card size="small" style={{ marginBottom: 16 }}>
               <Space orientation="vertical" style={{ width: '100%' }}>
-                <DatePicker placeholder="날짜 선택" />
+                <DatePicker placeholder="Select a date" />
                 <RangePicker />
               </Space>
             </Card>
-            <CodeSnippet code={datePickerCode} title="DatePicker 예제" />
+            <CodeSnippet code={datePickerCode} title="DatePicker examples" />
           </div>
 
           <div className="demo-section">
@@ -677,7 +677,7 @@ export default function GuideAntDesign() {
               <Space orientation="vertical" style={{ width: '100%' }} size="large">
                 <div>
                   <div style={{ marginBottom: 8, fontSize: 13, fontWeight: 500 }}>
-                    Tag 색상
+                    Tag colors
                   </div>
                   <Space wrap>
                     <Tag color="blue">Blue</Tag>
@@ -690,7 +690,7 @@ export default function GuideAntDesign() {
                 </div>
                 <div>
                   <div style={{ marginBottom: 8, fontSize: 13, fontWeight: 500 }}>
-                    Tag 닫기 가능
+                    Closable tags
                   </div>
                   <Space wrap>
                     {tags.map((tag) => (
@@ -725,7 +725,7 @@ export default function GuideAntDesign() {
                 </div>
                 <div>
                   <div style={{ marginBottom: 8, fontSize: 13, fontWeight: 500 }}>
-                    Badge 상태
+                    Badge status
                   </div>
                   <Space orientation="vertical">
                     <Badge status="success" text="Success" />
@@ -737,7 +737,7 @@ export default function GuideAntDesign() {
                 </div>
               </Space>
             </Card>
-            <CodeSnippet code={tagBadgeCode} title="Tag & Badge 예제" />
+            <CodeSnippet code={tagBadgeCode} title="Tag & Badge examples" />
           </div>
 
           <div className="demo-section">
@@ -778,17 +778,17 @@ export default function GuideAntDesign() {
                 </div>
               </Space>
             </Card>
-            <CodeSnippet code={cardModalCode} title="Card & Modal 예제" />
+            <CodeSnippet code={cardModalCode} title="Card & Modal examples" />
           </div>
 
           <div className="demo-section">
             <h3>InputNumber</h3>
             <Card size="small" style={{ marginBottom: 16 }}>
               <p style={{ marginBottom: 12, fontSize: 13, color: 'var(--text-secondary)' }}>
-                숫자 전용 입력 필드. min/max, 포맷터, step 조절을 지원합니다.
+                A numeric-only input. Supports min/max, formatters and step controls.
               </p>
               <Space wrap>
-                <InputNumber placeholder="기본" style={{ width: 120 }} />
+                <InputNumber placeholder="Basic" style={{ width: 120 }} />
                 <InputNumber min={0} max={100} defaultValue={50} style={{ width: 120 }} />
                 <InputNumber
                   defaultValue={1000}
@@ -804,15 +804,15 @@ export default function GuideAntDesign() {
 
 <InputNumber min={0} max={100} defaultValue={50} />
 
-// 천단위 콤마 포맷
+// Thousands separators
 <InputNumber
   formatter={(v) => \`\${v}\`.replace(/\\B(?=(\\d{3})+(?!\\d))/g, ',')}
   parser={(v) => v?.replace(/,/g, '')}
 />
 
-// 접두사/접미사
-<InputNumber prefix="₩" suffix="원" />`}
-              title="InputNumber 예제"
+// Prefix and suffix
+<InputNumber prefix="₩" suffix="KRW" />`}
+              title="InputNumber examples"
             />
           </div>
 
@@ -823,12 +823,12 @@ export default function GuideAntDesign() {
                 <div>
                   <div style={{ marginBottom: 8, fontSize: 13, fontWeight: 500 }}>Checkbox</div>
                   <Space orientation="vertical">
-                    <Checkbox>기본 체크박스</Checkbox>
-                    <Checkbox defaultChecked>기본 체크됨</Checkbox>
-                    <Checkbox disabled>비활성화</Checkbox>
+                    <Checkbox>Basic checkbox</Checkbox>
+                    <Checkbox defaultChecked>Checked by default</Checkbox>
+                    <Checkbox disabled>Disabled</Checkbox>
                     <Checkbox.Group
-                      options={['항목 A', '항목 B', '항목 C']}
-                      defaultValue={['항목 A']}
+                      options={['Item A', 'Item B', 'Item C']}
+                      defaultValue={['Item A']}
                     />
                   </Space>
                 </div>
@@ -848,9 +848,9 @@ export default function GuideAntDesign() {
               code={`import { Checkbox, Switch } from 'antd';
 
 // Checkbox
-<Checkbox>기본 체크박스</Checkbox>
+<Checkbox>Basic checkbox</Checkbox>
 <Checkbox.Group
-  options={['항목 A', '항목 B', '항목 C']}
+  options={['Item A', 'Item B', 'Item C']}
   value={checked}
   onChange={setChecked}
 />
@@ -858,7 +858,7 @@ export default function GuideAntDesign() {
 // Switch
 <Switch defaultChecked />
 <Switch checkedChildren="ON" unCheckedChildren="OFF" onChange={(v) => console.log(v)} />`}
-              title="Checkbox & Switch 예제"
+              title="Checkbox & Switch examples"
             />
           </div>
 
@@ -866,16 +866,16 @@ export default function GuideAntDesign() {
             <h3>AutoComplete</h3>
             <Card size="small" style={{ marginBottom: 16 }}>
               <p style={{ marginBottom: 12, fontSize: 13, color: 'var(--text-secondary)' }}>
-                입력값에 따라 자동완성 옵션을 표시합니다.
+                Shows autocomplete options as the user types.
               </p>
               <AutoComplete
                 style={{ width: 300 }}
                 options={[
-                  { value: '홍길동' },
-                  { value: '김철수' },
-                  { value: '이영희' },
+                  { value: 'John Doe' },
+                  { value: 'Michael Chen' },
+                  { value: 'Emily Park' },
                 ]}
-                placeholder="이름 검색"
+                placeholder="Search by name"
                 filterOption={(input, option) =>
                   (option?.value ?? '').includes(input)
                 }
@@ -885,18 +885,18 @@ export default function GuideAntDesign() {
               code={`import { AutoComplete } from 'antd';
 
 const options = [
-  { value: '홍길동' },
-  { value: '김철수' },
+  { value: 'John Doe' },
+  { value: 'Michael Chen' },
 ];
 
 <AutoComplete
   style={{ width: 300 }}
   options={options}
-  placeholder="검색어 입력"
+  placeholder="Type to search"
   filterOption={(input, option) => (option?.value ?? '').includes(input)}
   onSelect={(value) => console.log('selected:', value)}
 />`}
-              title="AutoComplete 예제"
+              title="AutoComplete examples"
             />
           </div>
 
@@ -904,33 +904,33 @@ const options = [
             <h3>Dropdown</h3>
             <Card size="small" style={{ marginBottom: 16 }}>
               <p style={{ marginBottom: 12, fontSize: 13, color: 'var(--text-secondary)' }}>
-                클릭 또는 호버 시 메뉴를 표시합니다. 액션 버튼 그룹에 자주 사용됩니다.
+                Shows a menu on click or hover. Common in action button groups.
               </p>
               <Space>
                 <Dropdown
                   menu={{
                     items: [
-                      { key: '1', label: '내 정보', icon: <UserOutlined /> },
-                      { key: '2', label: '설정', icon: <SettingOutlined /> },
+                      { key: '1', label: 'My profile', icon: <UserOutlined /> },
+                      { key: '2', label: 'Settings', icon: <SettingOutlined /> },
                       { type: 'divider' },
-                      { key: '3', label: '로그아웃', icon: <LogoutOutlined />, danger: true },
+                      { key: '3', label: 'Sign out', icon: <LogoutOutlined />, danger: true },
                     ],
                   }}
                 >
-                  <Button>메뉴 열기</Button>
+                  <Button>Open menu</Button>
                 </Dropdown>
                 <Dropdown
                   menu={{
                     items: [
-                      { key: 'excel', label: '엑셀 다운로드' },
-                      { key: 'csv', label: 'CSV 다운로드' },
-                      { key: 'pdf', label: 'PDF 다운로드' },
+                      { key: 'excel', label: 'Excel download' },
+                      { key: 'csv', label: 'CSV download' },
+                      { key: 'pdf', label: 'PDF download' },
                     ],
                     onClick: ({ key }) => console.log('clicked:', key),
                   }}
                   trigger={['click']}
                 >
-                  <Button type="primary">다운로드 ▾</Button>
+                  <Button type="primary">Download ▾</Button>
                 </Dropdown>
               </Space>
             </Card>
@@ -941,17 +941,17 @@ import { UserOutlined, SettingOutlined } from '@ant-design/icons';
 <Dropdown
   menu={{
     items: [
-      { key: '1', label: '내 정보', icon: <UserOutlined /> },
+      { key: '1', label: 'My profile', icon: <UserOutlined /> },
       { type: 'divider' },
-      { key: '2', label: '로그아웃', danger: true },
+      { key: '2', label: 'Sign out', danger: true },
     ],
     onClick: ({ key }) => console.log(key),
   }}
   trigger={['click']}  // 'hover' | 'click'
 >
-  <Button>메뉴</Button>
+  <Button>Menu</Button>
 </Dropdown>`}
-              title="Dropdown 예제"
+              title="Dropdown examples"
             />
           </div>
         </div>
@@ -959,12 +959,12 @@ import { UserOutlined, SettingOutlined } from '@ant-design/icons';
     },
     {
       key: 'layout',
-      label: '레이아웃',
+      label: 'Layout',
       children: (
         <div>
           <p style={{ marginBottom: 24, color: 'var(--text-secondary)' }}>
-            페이지 레이아웃을 구성하는 컴포넌트들입니다. Grid 시스템, Space, Flex,
-            Divider를 활용하여 반응형 레이아웃을 구성할 수 있습니다.
+            The components that build a page layout. Grid, Space, Flex and Divider
+            together cover responsive layouts.
           </p>
 
           <div className="demo-section">
@@ -973,7 +973,7 @@ import { UserOutlined, SettingOutlined } from '@ant-design/icons';
               <Space orientation="vertical" style={{ width: '100%' }} size="large">
                 <div>
                   <div style={{ marginBottom: 8, fontSize: 13, fontWeight: 500 }}>
-                    기본 그리드 (24 컬럼 시스템)
+                    Basic grid (24-column system)
                   </div>
                   <Row gutter={16}>
                     <Col span={12}>
@@ -1044,7 +1044,7 @@ import { UserOutlined, SettingOutlined } from '@ant-design/icons';
                 </div>
               </Space>
             </Card>
-            <CodeSnippet code={gridCode} title="Grid 예제" />
+            <CodeSnippet code={gridCode} title="Grid examples" />
           </div>
 
           <div className="demo-section">
@@ -1053,7 +1053,7 @@ import { UserOutlined, SettingOutlined } from '@ant-design/icons';
               <Space orientation="vertical" style={{ width: '100%' }} size="large">
                 <div>
                   <div style={{ marginBottom: 8, fontSize: 13, fontWeight: 500 }}>
-                    Space - 자동 간격 조절
+                    Space — automatic gaps
                   </div>
                   <Space>
                     <Button>Button 1</Button>
@@ -1097,7 +1097,7 @@ import { UserOutlined, SettingOutlined } from '@ant-design/icons';
                 </div>
                 <div>
                   <div style={{ marginBottom: 8, fontSize: 13, fontWeight: 500 }}>
-                    Flex - 플렉스박스
+                    Flex — flexbox
                   </div>
                   <Flex gap="middle" justify="space-between" align="center">
                     <div
@@ -1131,27 +1131,27 @@ import { UserOutlined, SettingOutlined } from '@ant-design/icons';
                 </div>
               </Space>
             </Card>
-            <CodeSnippet code={spaceFlexCode} title="Space & Flex 예제" />
+            <CodeSnippet code={spaceFlexCode} title="Space & Flex examples" />
           </div>
 
           <div className="demo-section">
             <h3>Divider</h3>
             <Card size="small" style={{ marginBottom: 16 }}>
-              <p>위 내용</p>
+              <p>Content above</p>
               <Divider />
-              <p>아래 내용</p>
-              <Divider>텍스트 포함</Divider>
-              <p>구분선 아래</p>
+              <p>Content below</p>
+              <Divider>With text</Divider>
+              <p>Below the divider</p>
               <Divider titlePlacement="left">Left Text</Divider>
-              <p>왼쪽 정렬 텍스트</p>
+              <p>Left-aligned text</p>
               <Divider titlePlacement="right">Right Text</Divider>
-              <p>오른쪽 정렬 텍스트</p>
+              <p>Right-aligned text</p>
             </Card>
             <CodeSnippet
               code={`import { Divider } from 'antd';
 
 <Divider />
-<Divider>텍스트 포함</Divider>
+<Divider>With text</Divider>
 <Divider titlePlacement="left">Left Text</Divider>
 <Divider titlePlacement="right">Right Text</Divider>
 
@@ -1161,7 +1161,7 @@ import { UserOutlined, SettingOutlined } from '@ant-design/icons';
   <span>Link 2</span>
   <span>Link 3</span>
 </Space>`}
-              title="Divider 예제"
+              title="Divider examples"
             />
           </div>
         </div>
@@ -1169,30 +1169,29 @@ import { UserOutlined, SettingOutlined } from '@ant-design/icons';
     },
     {
       key: 'data-display',
-      label: '데이터 표시',
+      label: 'Data display',
       children: (
         <div>
           <p style={{ marginBottom: 24, color: 'var(--text-secondary)' }}>
-            데이터를 표시하는 컴포넌트들입니다. Descriptions, Statistic, Progress,
-            Timeline, Typography, Avatar, Empty, Table, Tree, Calendar를 활용하여
-            정보를 효과적으로 전달할 수 있습니다.
+            The components that present data — Descriptions, Statistic, Progress,
+            Timeline, Typography, Avatar, Empty, Table, Tree and Calendar.
           </p>
 
           <div className="demo-section">
             <h3>Descriptions</h3>
             <Card size="small" style={{ marginBottom: 16 }}>
-              <Descriptions title="사용자 정보" bordered size="small">
-                <Descriptions.Item label="이름">홍길동</Descriptions.Item>
-                <Descriptions.Item label="전화번호">010-1234-5678</Descriptions.Item>
-                <Descriptions.Item label="이메일">hong@example.com</Descriptions.Item>
-                <Descriptions.Item label="주소" span={3}>
-                  서울특별시 강남구 테헤란로 123
+              <Descriptions title="User information" bordered size="small">
+                <Descriptions.Item label="Name">John Doe</Descriptions.Item>
+                <Descriptions.Item label="Phone">010-1234-5678</Descriptions.Item>
+                <Descriptions.Item label="Email">john@example.com</Descriptions.Item>
+                <Descriptions.Item label="Address" span={3}>
+                  123 Teheran-ro, Gangnam-gu, Seoul
                 </Descriptions.Item>
-                <Descriptions.Item label="부서">개발팀</Descriptions.Item>
-                <Descriptions.Item label="직급">선임</Descriptions.Item>
+                <Descriptions.Item label="Department">Engineering</Descriptions.Item>
+                <Descriptions.Item label="Grade">Senior</Descriptions.Item>
               </Descriptions>
             </Card>
-            <CodeSnippet code={descriptionsCode} title="Descriptions 예제" />
+            <CodeSnippet code={descriptionsCode} title="Descriptions examples" />
           </div>
 
           <div className="demo-section">
@@ -1201,11 +1200,11 @@ import { UserOutlined, SettingOutlined } from '@ant-design/icons';
               <Space orientation="vertical" style={{ width: '100%' }} size="large">
                 <Row gutter={16}>
                   <Col span={12}>
-                    <Statistic title="활성 사용자" value={112893} />
+                    <Statistic title="Active users" value={112893} />
                   </Col>
                   <Col span={12}>
                     <Statistic
-                      title="계정 잔액"
+                      title="Account balance"
                       value={1128.93}
                       precision={2}
                       prefix="$"
@@ -1235,7 +1234,7 @@ import { UserOutlined, SettingOutlined } from '@ant-design/icons';
                 </div>
               </Space>
             </Card>
-            <CodeSnippet code={statisticProgressCode} title="Statistic & Progress 예제" />
+            <CodeSnippet code={statisticProgressCode} title="Statistic & Progress examples" />
           </div>
 
           <div className="demo-section">
@@ -1245,32 +1244,32 @@ import { UserOutlined, SettingOutlined } from '@ant-design/icons';
                 items={[
                   {
                     color: 'green',
-                    content: '프로젝트 생성 2024-01-01',
+                    content: 'Project created 2024-01-01',
                     icon: <CheckCircleOutlined />,
                   },
                   {
                     color: 'green',
-                    content: '요구사항 분석 완료 2024-01-15',
+                    content: 'Requirements analysis complete 2024-01-15',
                     icon: <CheckCircleOutlined />,
                   },
                   {
                     color: 'blue',
-                    content: '개발 진행 중 2024-02-01',
+                    content: 'Development in progress 2024-02-01',
                     icon: <SyncOutlined spin />,
                   },
                   {
                     color: 'gray',
-                    content: '테스트 예정 2024-03-01',
+                    content: 'Testing planned 2024-03-01',
                     icon: <ClockCircleOutlined />,
                   },
                   {
                     color: 'gray',
-                    content: '배포 예정 2024-03-15',
+                    content: 'Release planned 2024-03-15',
                   },
                 ]}
               />
             </Card>
-            <CodeSnippet code={timelineCode} title="Timeline 예제" />
+            <CodeSnippet code={timelineCode} title="Timeline examples" />
           </div>
 
           <div className="demo-section">
@@ -1283,34 +1282,34 @@ import { UserOutlined, SettingOutlined } from '@ant-design/icons';
                   <Title level={4}>h4. Ant Design</Title>
                 </div>
                 <Paragraph>
-                  Ant Design은 엔터프라이즈급 제품을 위한 디자인 시스템입니다. React
-                  컴포넌트 라이브러리와 함께 제공되며, 일관된 사용자 경험을 제공합니다.
+                  Ant Design is a design system for enterprise-grade products. It ships with a React
+                  component library and keeps the user experience consistent.
                 </Paragraph>
                 <Space orientation="vertical">
-                  <Text>기본 텍스트</Text>
-                  <Text type="secondary">보조 텍스트</Text>
-                  <Text type="success">성공 텍스트</Text>
-                  <Text type="warning">경고 텍스트</Text>
-                  <Text type="danger">위험 텍스트</Text>
-                  <Text strong>굵게</Text>
-                  <Text italic>기울임</Text>
-                  <Text underline>밑줄</Text>
-                  <Text delete>취소선</Text>
-                  <Text code>코드</Text>
+                  <Text>Regular text</Text>
+                  <Text type="secondary">Secondary text</Text>
+                  <Text type="success">Success text</Text>
+                  <Text type="warning">Warning text</Text>
+                  <Text type="danger">Danger text</Text>
+                  <Text strong>Bold</Text>
+                  <Text italic>Italic</Text>
+                  <Text underline>Underline</Text>
+                  <Text delete>Strikethrough</Text>
+                  <Text code>Code</Text>
                 </Space>
                 <Link href="https://ant.design" target="_blank">
-                  Ant Design 공식 사이트 (새 창)
+                  Ant Design official site (new window)
                 </Link>
               </Space>
             </Card>
-            <CodeSnippet code={typographyCode} title="Typography 예제" />
+            <CodeSnippet code={typographyCode} title="Typography examples" />
           </div>
 
           <div className="demo-section">
             <h3>Avatar</h3>
             <Card size="small" style={{ marginBottom: 16 }}>
               <p style={{ marginBottom: 12, fontSize: 13, color: 'var(--text-secondary)' }}>
-                사용자/항목의 아이콘 표현. 이미지, 아이콘, 텍스트 형태를 지원합니다.
+                An icon standing in for a user or item. Images, icons and text are all supported.
               </p>
               <Space wrap size="large">
                 <Space>
@@ -1319,9 +1318,9 @@ import { UserOutlined, SettingOutlined } from '@ant-design/icons';
                   <Avatar size="small" icon={<UserOutlined />} />
                 </Space>
                 <Space>
-                  <Avatar style={{ backgroundColor: '#f56a00' }}>홍</Avatar>
-                  <Avatar style={{ backgroundColor: '#7265e6' }}>김</Avatar>
-                  <Avatar style={{ backgroundColor: '#00a2ae' }}>이</Avatar>
+                  <Avatar style={{ backgroundColor: '#f56a00' }}>J</Avatar>
+                  <Avatar style={{ backgroundColor: '#7265e6' }}>M</Avatar>
+                  <Avatar style={{ backgroundColor: '#00a2ae' }}>E</Avatar>
                 </Space>
                 <Avatar.Group>
                   <Avatar icon={<UserOutlined />} />
@@ -1335,16 +1334,16 @@ import { UserOutlined, SettingOutlined } from '@ant-design/icons';
               code={`import { Avatar } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 
-// 아이콘/텍스트 아바타
+// Icon and text avatars
 <Avatar icon={<UserOutlined />} />
-<Avatar style={{ backgroundColor: '#f56a00' }}>홍</Avatar>
+<Avatar style={{ backgroundColor: '#f56a00' }}>J</Avatar>
 
-// 그룹
+// Group
 <Avatar.Group maxCount={3}>
   <Avatar icon={<UserOutlined />} />
   <Avatar style={{ backgroundColor: '#f56a00' }}>A</Avatar>
 </Avatar.Group>`}
-              title="Avatar 예제"
+              title="Avatar examples"
             />
           </div>
 
@@ -1352,21 +1351,21 @@ import { UserOutlined } from '@ant-design/icons';
             <h3>Empty</h3>
             <Card size="small" style={{ marginBottom: 16 }}>
               <p style={{ marginBottom: 12, fontSize: 13, color: 'var(--text-secondary)' }}>
-                데이터가 없을 때 표시합니다.
+                Shown when there is no data.
               </p>
               <Space size="large" wrap>
                 <Empty />
-                <Empty description="조회된 데이터가 없습니다." />
-                <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="검색 결과 없음" />
+                <Empty description="No data found." />
+                <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="No search results" />
               </Space>
             </Card>
             <CodeSnippet
               code={`import { Empty } from 'antd';
 
 <Empty />
-<Empty description="조회된 데이터가 없습니다." />
-<Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="검색 결과 없음" />`}
-              title="Empty 예제"
+<Empty description="No data found." />
+<Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="No search results" />`}
+              title="Empty examples"
             />
           </div>
 
@@ -1374,20 +1373,20 @@ import { UserOutlined } from '@ant-design/icons';
             <h3>Table</h3>
             <Card size="small" style={{ marginBottom: 16 }}>
               <p style={{ marginBottom: 12, fontSize: 13, color: 'var(--text-secondary)' }}>
-                Ant Design 기본 Table. 단순 표 표현에 사용 (대용량은 AG Grid 권장).
+                The stock Ant Design table, for simple tabular data. For large data sets, prefer AG Grid.
               </p>
               <Table
                 size="small"
                 dataSource={[
-                  { key: '1', name: '홍길동', dept: '개발팀', grade: '선임' },
-                  { key: '2', name: '김철수', dept: '기획팀', grade: '책임' },
-                  { key: '3', name: '이영희', dept: '디자인팀', grade: '주임' },
+                  { key: '1', name: 'John Doe', dept: 'Engineering', grade: 'Senior' },
+                  { key: '2', name: 'Michael Chen', dept: 'Planning', grade: 'Principal' },
+                  { key: '3', name: 'Emily Park', dept: 'Design', grade: 'Associate' },
                 ]}
                 columns={[
-                  { title: '이름', dataIndex: 'name', key: 'name' },
-                  { title: '부서', dataIndex: 'dept', key: 'dept' },
+                  { title: 'Name', dataIndex: 'name', key: 'name' },
+                  { title: 'Department', dataIndex: 'dept', key: 'dept' },
                   {
-                    title: '직급',
+                    title: 'Grade',
                     dataIndex: 'grade',
                     key: 'grade',
                     render: (v: string) => <Tag color="blue">{v}</Tag>,
@@ -1400,10 +1399,10 @@ import { UserOutlined } from '@ant-design/icons';
               code={`import { Table, Tag } from 'antd';
 
 const columns = [
-  { title: '이름', dataIndex: 'name' },
-  { title: '부서', dataIndex: 'dept' },
+  { title: 'Name', dataIndex: 'name' },
+  { title: 'Department', dataIndex: 'dept' },
   {
-    title: '직급',
+    title: 'Grade',
     dataIndex: 'grade',
     render: (v) => <Tag color="blue">{v}</Tag>,
   },
@@ -1417,8 +1416,8 @@ const columns = [
   pagination={{ pageSize: 20 }}
 />
 
-// 주의: 대용량 그리드는 AG Grid(GridTable) 컴포넌트 사용 권장`}
-              title="Table 예제"
+// Note: for large grids, prefer the AG Grid (GridTable) component`}
+              title="Table examples"
             />
           </div>
 
@@ -1426,23 +1425,23 @@ const columns = [
             <h3>Tree</h3>
             <Card size="small" style={{ marginBottom: 16 }}>
               <p style={{ marginBottom: 12, fontSize: 13, color: 'var(--text-secondary)' }}>
-                계층형 트리 구조 표시. 체크박스, 선택, 드래그 이동을 지원합니다.
+                Displays a hierarchical tree. Checkboxes, selection and drag-to-move are supported.
               </p>
               <Tree
                 defaultExpandAll
                 treeData={[
                   {
-                    title: '개발본부', key: '0',
+                    title: 'Engineering division', key: '0',
                     children: [
-                      { title: '프론트엔드팀', key: '0-0', icon: <FolderOutlined /> },
-                      { title: '백엔드팀', key: '0-1', icon: <FolderOutlined /> },
+                      { title: 'Front-end team', key: '0-0', icon: <FolderOutlined /> },
+                      { title: 'Backend team', key: '0-1', icon: <FolderOutlined /> },
                     ],
                   },
                   {
-                    title: '기획본부', key: '1',
+                    title: 'Planning division', key: '1',
                     children: [
-                      { title: 'UX팀', key: '1-0', icon: <FolderOutlined /> },
-                      { title: '전략팀', key: '1-1', icon: <FolderOutlined /> },
+                      { title: 'UX team', key: '1-0', icon: <FolderOutlined /> },
+                      { title: 'Strategy team', key: '1-1', icon: <FolderOutlined /> },
                     ],
                   },
                 ]}
@@ -1454,11 +1453,11 @@ const columns = [
 
 const treeData = [
   {
-    title: '개발본부',
+    title: 'Engineering division',
     key: '0',
     children: [
-      { title: '프론트엔드팀', key: '0-0' },
-      { title: '백엔드팀', key: '0-1' },
+      { title: 'Front-end team', key: '0-0' },
+      { title: 'Backend team', key: '0-1' },
     ],
   },
 ];
@@ -1466,10 +1465,10 @@ const treeData = [
 <Tree
   treeData={treeData}
   defaultExpandAll
-  checkable          // 체크박스 표시
+  checkable          // show checkboxes
   onSelect={(keys) => console.log(keys)}
 />`}
-              title="Tree 예제"
+              title="Tree examples"
             />
           </div>
 
@@ -1477,7 +1476,7 @@ const treeData = [
             <h3>Calendar</h3>
             <Card size="small" style={{ marginBottom: 16 }}>
               <p style={{ marginBottom: 12, fontSize: 13, color: 'var(--text-secondary)' }}>
-                날짜 달력 뷰. 월/년 모드 전환, 날짜 셀 커스텀을 지원합니다.
+                A calendar view. Supports month/year modes and custom date cells.
               </p>
               <div style={{ maxWidth: 400 }}>
                 <Calendar
@@ -1486,7 +1485,7 @@ const treeData = [
                     <div style={{ padding: '8px 12px', display: 'flex', gap: 8 }}>
                       <Button size="small" onClick={() => onChange(value.clone().subtract(1, 'month'))}>‹</Button>
                       <span style={{ flex: 1, textAlign: 'center', fontWeight: 600 }}>
-                        {value.format('YYYY년 MM월')}
+                        {value.format('MMMM YYYY')}
                       </span>
                       <Button size="small" onClick={() => onChange(value.clone().add(1, 'month'))}>›</Button>
                     </div>
@@ -1498,22 +1497,22 @@ const treeData = [
               code={`import { Calendar } from 'antd';
 import type { Dayjs } from 'dayjs';
 
-// 전체 캘린더
+// Full calendar
 <Calendar
   onSelect={(date) => console.log(date.format('YYYY-MM-DD'))}
 />
 
-// 패널 전용 (카드 내 소형)
+// Panel mode (compact, inside a card)
 <Calendar fullscreen={false} />
 
-// 날짜 셀 커스텀
+// Custom date cells
 <Calendar
   dateCellRender={(date) => {
     const events = getEvents(date);
     return events.map(e => <Badge key={e.id} status="success" text={e.title} />);
   }}
 />`}
-              title="Calendar 예제"
+              title="Calendar examples"
             />
           </div>
         </div>
@@ -1521,51 +1520,49 @@ import type { Dayjs } from 'dayjs';
     },
     {
       key: 'feedback',
-      label: '피드백',
+      label: 'Feedback',
       children: (
         <div>
           <p style={{ marginBottom: 24, color: 'var(--text-secondary)' }}>
-            사용자에게 피드백을 제공하는 컴포넌트들입니다. Alert, Message, Notification,
-            Modal.confirm, Popconfirm, Spin, Tooltip, Popover를 통해 다양한 상황의
-            피드백과 보조 정보를 표현할 수 있습니다.
+            The components that give the user feedback — Alert, Message, Notification,
+            Modal.confirm, Popconfirm, Spin, Tooltip and Popover cover most situations.
           </p>
 
           <div className="demo-section">
             <h3>Message</h3>
             <Card size="small" style={{ marginBottom: 16 }}>
               <p style={{ marginBottom: 12, fontSize: 13, color: 'var(--text-secondary)' }}>
-                화면 상단에 간단한 피드백 메시지를 표시합니다.
+                Shows a brief feedback message at the top of the screen.
               </p>
               <Space wrap>
-                <Button onClick={() => message.success('성공 메시지')}>Success</Button>
-                <Button onClick={() => message.error('에러 메시지')}>Error</Button>
-                <Button onClick={() => message.warning('경고 메시지')}>Warning</Button>
-                <Button onClick={() => message.info('정보 메시지')}>Info</Button>
+                <Button onClick={() => message.success('Success message')}>Success</Button>
+                <Button onClick={() => message.error('Error message')}>Error</Button>
+                <Button onClick={() => message.warning('Warning message')}>Warning</Button>
+                <Button onClick={() => message.info('Info message')}>Info</Button>
                 <Button
                   onClick={() =>
-                    message.loading({ content: '로딩 중...', duration: 2 })
+                    message.loading({ content: 'Loading...', duration: 2 })
                   }
                 >
                   Loading
                 </Button>
               </Space>
             </Card>
-            <CodeSnippet code={messageNotificationCode} title="Message 예제" />
+            <CodeSnippet code={messageNotificationCode} title="Message examples" />
           </div>
 
           <div className="demo-section">
             <h3>Notification</h3>
             <Card size="small" style={{ marginBottom: 16 }}>
               <p style={{ marginBottom: 12, fontSize: 13, color: 'var(--text-secondary)' }}>
-                화면 모서리에 알림을 표시합니다. 메시지보다 더 많은 정보를 담을 수
-                있습니다.
+                Shows a notification in a corner of the screen. It holds more information than a message.
               </p>
               <Space wrap>
                 <Button
                   onClick={() =>
                     notification.success({
-                      message: '성공',
-                      description: '작업이 성공적으로 완료되었습니다.',
+                      message: 'Success',
+                      description: 'The operation completed successfully.',
                       placement: 'topRight',
                     })
                   }
@@ -1575,8 +1572,8 @@ import type { Dayjs } from 'dayjs';
                 <Button
                   onClick={() =>
                     notification.error({
-                      message: '에러',
-                      description: '작업 중 에러가 발생했습니다.',
+                      message: 'Error',
+                      description: 'An error occurred during the operation.',
                       placement: 'topRight',
                     })
                   }
@@ -1586,8 +1583,8 @@ import type { Dayjs } from 'dayjs';
                 <Button
                   onClick={() =>
                     notification.warning({
-                      message: '경고',
-                      description: '주의가 필요한 상황입니다.',
+                      message: 'Warning',
+                      description: 'This situation needs your attention.',
                       placement: 'topRight',
                     })
                   }
@@ -1597,8 +1594,8 @@ import type { Dayjs } from 'dayjs';
                 <Button
                   onClick={() =>
                     notification.info({
-                      message: '정보',
-                      description: '새로운 정보가 있습니다.',
+                      message: 'Information',
+                      description: 'There is something new.',
                       placement: 'bottomRight',
                     })
                   }
@@ -1609,7 +1606,7 @@ import type { Dayjs } from 'dayjs';
             </Card>
             <CodeSnippet
               code={messageNotificationCode}
-              title="Notification 예제"
+              title="Notification examples"
             />
           </div>
 
@@ -1617,20 +1614,20 @@ import type { Dayjs } from 'dayjs';
             <h3>Modal.confirm</h3>
             <Card size="small" style={{ marginBottom: 16 }}>
               <p style={{ marginBottom: 12, fontSize: 13, color: 'var(--text-secondary)' }}>
-                사용자에게 확인을 요청하는 모달 대화상자입니다.
+                A modal dialog asking the user to confirm.
               </p>
               <Space wrap>
                 <Button
                   onClick={() => {
                     modal.confirm({
-                      title: '삭제 확인',
+                      title: 'Confirm deletion',
                       icon: <ExclamationCircleOutlined />,
-                      content: '정말로 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.',
-                      okText: '삭제',
+                      content: 'Are you sure you want to delete this? It cannot be undone.',
+                      okText: 'Delete',
                       okType: 'danger',
-                      cancelText: '취소',
+                      cancelText: 'Cancel',
                       onOk() {
-                        message.success('삭제되었습니다');
+                        message.success('Deleted');
                       },
                     });
                   }}
@@ -1640,8 +1637,8 @@ import type { Dayjs } from 'dayjs';
                 <Button
                   onClick={() => {
                     modal.info({
-                      title: '안내',
-                      content: '이것은 정보 모달입니다. 확인 버튼만 표시됩니다.',
+                      title: 'Notice',
+                      content: 'This is an informational modal. Only the OK button is shown.',
                     });
                   }}
                 >
@@ -1650,8 +1647,8 @@ import type { Dayjs } from 'dayjs';
                 <Button
                   onClick={() => {
                     modal.warning({
-                      title: '경고',
-                      content: '주의가 필요합니다.',
+                      title: 'Warning',
+                      content: 'This needs your attention.',
                     });
                   }}
                 >
@@ -1660,8 +1657,8 @@ import type { Dayjs } from 'dayjs';
                 <Button
                   onClick={() => {
                     modal.error({
-                      title: '에러',
-                      content: '작업을 완료할 수 없습니다.',
+                      title: 'Error',
+                      content: 'The operation could not be completed.',
                     });
                   }}
                 >
@@ -1669,52 +1666,52 @@ import type { Dayjs } from 'dayjs';
                 </Button>
               </Space>
             </Card>
-            <CodeSnippet code={modalConfirmCode} title="Modal.confirm 예제" />
+            <CodeSnippet code={modalConfirmCode} title="Modal.confirm examples" />
           </div>
 
           <div className="demo-section">
             <h3>Popconfirm</h3>
             <Card size="small" style={{ marginBottom: 16 }}>
               <p style={{ marginBottom: 12, fontSize: 13, color: 'var(--text-secondary)' }}>
-                요소 근처에 표시되는 간단한 확인 팝오버입니다.
+                A small confirmation popover anchored to an element.
               </p>
               <Space>
                 <Popconfirm
-                  title="삭제 확인"
-                  description="정말로 이 항목을 삭제하시겠습니까?"
-                  onConfirm={() => message.success('삭제되었습니다')}
-                  onCancel={() => message.info('취소되었습니다')}
-                  okText="예"
-                  cancelText="아니오"
+                  title="Confirm deletion"
+                  description="Are you sure you want to delete this item?"
+                  onConfirm={() => message.success('Deleted')}
+                  onCancel={() => message.info('Cancelled')}
+                  okText="Yes"
+                  cancelText="No"
                 >
-                  <Button danger>삭제</Button>
+                  <Button danger>Delete</Button>
                 </Popconfirm>
                 <Popconfirm
-                  title="변경사항을 저장하시겠습니까?"
-                  onConfirm={() => message.success('저장되었습니다')}
-                  okText="저장"
-                  cancelText="취소"
+                  title="Save your changes?"
+                  onConfirm={() => message.success('Saved')}
+                  okText="Save"
+                  cancelText="Cancel"
                 >
-                  <Button type="primary">저장</Button>
+                  <Button type="primary">Save</Button>
                 </Popconfirm>
               </Space>
             </Card>
-            <CodeSnippet code={popconfirmCode} title="Popconfirm 예제" />
+            <CodeSnippet code={popconfirmCode} title="Popconfirm examples" />
           </div>
 
           <div className="demo-section">
             <h3>Alert</h3>
             <Card size="small" style={{ marginBottom: 16 }}>
               <p style={{ marginBottom: 12, fontSize: 13, color: 'var(--text-secondary)' }}>
-                인라인 상태/경고 메시지를 표시합니다.
+                Shows an inline status or warning message.
               </p>
               <Space orientation="vertical" style={{ width: '100%' }}>
-                <Alert title="정보 알림입니다." type="info" showIcon />
-                <Alert title="성공적으로 처리되었습니다." type="success" showIcon />
-                <Alert title="주의가 필요한 상황입니다." type="warning" showIcon closable />
+                <Alert title="This is an informational alert." type="info" showIcon />
+                <Alert title="Processed successfully." type="success" showIcon />
+                <Alert title="This situation needs your attention." type="warning" showIcon closable />
                 <Alert
-                  title="에러 발생"
-                  description="요청을 처리하는 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요."
+                  title="An error occurred"
+                  description="Something went wrong while processing the request. Please try again shortly."
                   type="error"
                   showIcon
                 />
@@ -1723,16 +1720,16 @@ import type { Dayjs } from 'dayjs';
             <CodeSnippet
               code={`import { Alert } from 'antd';
 
-<Alert title="정보 알림입니다." type="info" showIcon />
-<Alert title="성공적으로 처리되었습니다." type="success" showIcon />
-<Alert title="주의가 필요한 상황입니다." type="warning" showIcon closable />
+<Alert title="This is an informational alert." type="info" showIcon />
+<Alert title="Processed successfully." type="success" showIcon />
+<Alert title="This situation needs your attention." type="warning" showIcon closable />
 <Alert
-  title="에러 발생"
-  description="상세 설명 텍스트"
+  title="An error occurred"
+  description="Detailed description text"
   type="error"
   showIcon
 />`}
-              title="Alert 예제"
+              title="Alert examples"
             />
           </div>
 
@@ -1740,15 +1737,15 @@ import type { Dayjs } from 'dayjs';
             <h3>Spin</h3>
             <Card size="small" style={{ marginBottom: 16 }}>
               <p style={{ marginBottom: 12, fontSize: 13, color: 'var(--text-secondary)' }}>
-                로딩 상태를 표시합니다. 단독 또는 컨텐츠를 감싸는 방식으로 사용합니다.
+                Shows a loading state, either on its own or wrapping content.
               </p>
               <Space size="large" wrap>
                 <Spin size="small" />
                 <Spin />
                 <Spin size="large" />
-                <Spin description="불러오는 중...">
+                <Spin description="Loading...">
                   <div style={{ padding: 32, background: 'rgba(0,0,0,0.04)', borderRadius: 4 }}>
-                    콘텐츠 영역
+                    Content area
                   </div>
                 </Spin>
               </Space>
@@ -1756,21 +1753,21 @@ import type { Dayjs } from 'dayjs';
             <CodeSnippet
               code={`import { Spin } from 'antd';
 
-// 단독 스피너
+// Standalone spinner
 <Spin size="small" />
 <Spin />
 <Spin size="large" />
 
-// 컨텐츠 감싸기
-<Spin description="불러오는 중...">
-  <div>콘텐츠 영역</div>
+// Wrapping content
+<Spin description="Loading...">
+  <div>Content area</div>
 </Spin>
 
-// 조건부 로딩
+// Conditional loading
 <Spin spinning={isLoading}>
   <DataTable ... />
 </Spin>`}
-              title="Spin 예제"
+              title="Spin examples"
             />
           </div>
 
@@ -1778,22 +1775,22 @@ import type { Dayjs } from 'dayjs';
             <h3>Tooltip</h3>
             <Card size="small" style={{ marginBottom: 16 }}>
               <p style={{ marginBottom: 12, fontSize: 13, color: 'var(--text-secondary)' }}>
-                호버 시 간단한 설명을 말풍선으로 표시합니다.
+                Shows a short description in a bubble on hover.
               </p>
               <Space wrap>
-                <Tooltip title="기본 툴팁">
+                <Tooltip title="Basic tooltip">
                   <Button>Hover me</Button>
                 </Tooltip>
-                <Tooltip title="상단 표시" placement="top">
+                <Tooltip title="Shown above" placement="top">
                   <Button>Top</Button>
                 </Tooltip>
-                <Tooltip title="좌측 표시" placement="left">
+                <Tooltip title="Shown to the left" placement="left">
                   <Button>Left</Button>
                 </Tooltip>
-                <Tooltip title="우측 표시" placement="right">
+                <Tooltip title="Shown to the right" placement="right">
                   <Button>Right</Button>
                 </Tooltip>
-                <Tooltip title="아이콘에도 사용 가능">
+                <Tooltip title="Works on icons too">
                   <SettingOutlined style={{ fontSize: 18, cursor: 'pointer' }} />
                 </Tooltip>
               </Space>
@@ -1801,15 +1798,15 @@ import type { Dayjs } from 'dayjs';
             <CodeSnippet
               code={`import { Tooltip } from 'antd';
 
-<Tooltip title="설명 텍스트">
+<Tooltip title="Description text">
   <Button>Hover me</Button>
 </Tooltip>
 
 // placement: 'top' | 'bottom' | 'left' | 'right' | 'topLeft' | ...
-<Tooltip title="상단 표시" placement="top">
-  <span>텍스트</span>
+<Tooltip title="Shown above" placement="top">
+  <span>Text</span>
 </Tooltip>`}
-              title="Tooltip 예제"
+              title="Tooltip examples"
             />
           </div>
 
@@ -1817,26 +1814,26 @@ import type { Dayjs } from 'dayjs';
             <h3>Popover</h3>
             <Card size="small" style={{ marginBottom: 16 }}>
               <p style={{ marginBottom: 12, fontSize: 13, color: 'var(--text-secondary)' }}>
-                Tooltip보다 풍부한 내용을 말풍선으로 표시합니다. 제목과 본문을 포함할 수 있습니다.
+                A richer bubble than a tooltip. It can carry a title and a body.
               </p>
               <Space wrap>
                 <Popover
-                  title="상세 정보"
+                  title="Details"
                   content={
                     <div style={{ maxWidth: 200 }}>
-                      <p style={{ margin: 0 }}>홍길동 / 개발팀</p>
+                      <p style={{ margin: 0 }}>John Doe / Engineering</p>
                       <p style={{ margin: '4px 0 0' }}>hong@example.com</p>
                     </div>
                   }
                 >
-                  <Button>사용자 정보</Button>
+                  <Button>User info</Button>
                 </Popover>
                 <Popover
-                  title="도움말"
-                  content="이 필드에는 숫자만 입력 가능합니다."
+                  title="Help"
+                  content="This field accepts numbers only."
                   trigger="click"
                 >
-                  <Button type="link">클릭으로 열기</Button>
+                  <Button type="link">Open on click</Button>
                 </Popover>
               </Space>
             </Card>
@@ -1844,13 +1841,13 @@ import type { Dayjs } from 'dayjs';
               code={`import { Popover } from 'antd';
 
 <Popover
-  title="제목"
-  content={<div>본문 내용</div>}
+  title="Title"
+  content={<div>Body content</div>}
   trigger="hover"   // 'hover' | 'click' | 'focus'
 >
   <Button>Hover me</Button>
 </Popover>`}
-              title="Popover 예제"
+              title="Popover examples"
             />
           </div>
         </div>
@@ -1858,16 +1855,16 @@ import type { Dayjs } from 'dayjs';
     },
     {
       key: 'form',
-      label: '폼',
+      label: 'Forms',
       children: (
         <div>
           <p style={{ marginBottom: 24, color: 'var(--text-secondary)' }}>
-            사용자 입력을 받는 폼 컴포넌트입니다. Form.Item과 validation rules를
-            활용하여 강력한 폼 검증 기능을 구현할 수 있습니다.
+            The form components that collect user input. Form.Item plus validation rules
+            cover everything from simple fields to complex validation.
           </p>
 
           <div className="demo-section">
-            <h3>Form 기본</h3>
+            <h3>Form basics</h3>
             <Card size="small" style={{ marginBottom: 16 }}>
               <Form
                 form={form}
@@ -1877,83 +1874,83 @@ import type { Dayjs } from 'dayjs';
                 style={{ maxWidth: 600 }}
               >
                 <Form.Item
-                  label="이름"
+                  label="Name"
                   name="name"
-                  rules={[{ required: true, message: '이름을 입력하세요' }]}
+                  rules={[{ required: true, message: 'Enter your name' }]}
                 >
-                  <Input placeholder="이름 입력" />
+                  <Input placeholder="Enter your name" />
                 </Form.Item>
 
                 <Form.Item
-                  label="이메일"
+                  label="Email"
                   name="email"
                   rules={[
-                    { required: true, message: '이메일을 입력하세요' },
-                    { type: 'email', message: '올바른 이메일 형식이 아닙니다' },
+                    { required: true, message: 'Enter your email' },
+                    { type: 'email', message: 'That is not a valid email address' },
                   ]}
                 >
                   <Input placeholder="email@example.com" autoComplete="email" />
                 </Form.Item>
 
                 <Form.Item
-                  label="비밀번호"
+                  label="Password"
                   name="password"
                   rules={[
-                    { required: true, message: '비밀번호를 입력하세요' },
-                    { min: 6, message: '최소 6자 이상 입력하세요' },
+                    { required: true, message: 'Enter a password' },
+                    { min: 6, message: 'Use at least 6 characters' },
                   ]}
                 >
                   <Password autoComplete="current-password" />
                 </Form.Item>
 
                 <Form.Item
-                  label="부서"
+                  label="Department"
                   name="department"
-                  rules={[{ required: true, message: '부서를 선택하세요' }]}
+                  rules={[{ required: true, message: 'Select a department' }]}
                 >
                   <Select
                     options={[
-                      { value: '1', label: '개발팀' },
-                      { value: '2', label: '디자인팀' },
-                      { value: '3', label: '기획팀' },
+                      { value: '1', label: 'Engineering' },
+                      { value: '2', label: 'Design' },
+                      { value: '3', label: 'Planning' },
                     ]}
                   />
                 </Form.Item>
 
-                <Form.Item label="입사일" name="joinDate">
+                <Form.Item label="Start date" name="joinDate">
                   <DatePicker style={{ width: '100%' }} />
                 </Form.Item>
 
-                <Form.Item label="자기소개" name="bio">
-                  <TextArea rows={4} placeholder="간단한 자기소개를 작성하세요" />
+                <Form.Item label="About you" name="bio">
+                  <TextArea rows={4} placeholder="Tell us a little about yourself" />
                 </Form.Item>
 
                 <Form.Item>
                   <Space>
                     <Button type="primary" htmlType="submit">
-                      제출
+                      Submit
                     </Button>
-                    <Button onClick={() => form.resetFields()}>초기화</Button>
+                    <Button onClick={() => form.resetFields()}>Reset</Button>
                     <Button
                       onClick={() =>
                         form.setFieldsValue({
-                          name: '홍길동',
+                          name: 'John Doe',
                           email: 'hong@example.com',
                           department: '1',
                         })
                       }
                     >
-                      샘플 데이터 입력
+                      Fill with sample data
                     </Button>
                   </Space>
                 </Form.Item>
               </Form>
             </Card>
-            <CodeSnippet code={formCode} title="Form 예제" />
+            <CodeSnippet code={formCode} title="Form examples" />
           </div>
 
           <div className="demo-section">
-            <h3>Form 레이아웃</h3>
+            <h3>Form layouts</h3>
             <Card size="small" style={{ marginBottom: 16 }}>
               <Space orientation="vertical" style={{ width: '100%' }} size="large">
                 <div>
@@ -1961,10 +1958,10 @@ import type { Dayjs } from 'dayjs';
                     Horizontal Layout
                   </div>
                   <Form layout="horizontal" labelCol={{ span: 4 }}>
-                    <Form.Item label="이름" name="name1">
+                    <Form.Item label="Name" name="name1">
                       <Input />
                     </Form.Item>
-                    <Form.Item label="이메일" name="email1">
+                    <Form.Item label="Email" name="email1">
                       <Input />
                     </Form.Item>
                   </Form>
@@ -1974,14 +1971,14 @@ import type { Dayjs } from 'dayjs';
                     Inline Layout
                   </div>
                   <Form layout="inline">
-                    <Form.Item label="이름" name="name2">
+                    <Form.Item label="Name" name="name2">
                       <Input />
                     </Form.Item>
-                    <Form.Item label="이메일" name="email2">
+                    <Form.Item label="Email" name="email2">
                       <Input />
                     </Form.Item>
                     <Form.Item>
-                      <Button type="primary">검색</Button>
+                      <Button type="primary">Search</Button>
                     </Form.Item>
                   </Form>
                 </div>
@@ -1992,28 +1989,28 @@ import type { Dayjs } from 'dayjs';
 
 // Horizontal
 <Form layout="horizontal" labelCol={{ span: 4 }}>
-  <Form.Item label="이름" name="name">
+  <Form.Item label="Name" name="name">
     <Input />
   </Form.Item>
 </Form>
 
 // Vertical (default)
 <Form layout="vertical">
-  <Form.Item label="이름" name="name">
+  <Form.Item label="Name" name="name">
     <Input />
   </Form.Item>
 </Form>
 
 // Inline
 <Form layout="inline">
-  <Form.Item label="이름" name="name">
+  <Form.Item label="Name" name="name">
     <Input />
   </Form.Item>
   <Form.Item>
-    <Button type="primary">검색</Button>
+    <Button type="primary">Search</Button>
   </Form.Item>
 </Form>`}
-              title="Form 레이아웃 예제"
+              title="Form layout examples"
             />
           </div>
 
@@ -2021,55 +2018,55 @@ import type { Dayjs } from 'dayjs';
             <h3>Validation Rules</h3>
             <Card size="small" style={{ marginBottom: 16 }}>
               <div style={{ marginBottom: 12, fontSize: 13, color: 'var(--text-secondary)' }}>
-                주요 검증 규칙:
+                The main validation rules:
               </div>
               <ul style={{ fontSize: 13, color: 'var(--text-secondary)', marginBottom: 0 }}>
                 <li>
-                  <code>required: true</code> - 필수 입력
+                  <code>required: true</code> — required field
                 </li>
                 <li>
-                  <code>type: 'email'</code> - 이메일 형식
+                  <code>type: 'email'</code> — email format
                 </li>
                 <li>
-                  <code>min/max</code> - 최소/최대 길이
+                  <code>min/max</code> — minimum / maximum length
                 </li>
                 <li>
-                  <code>pattern</code> - 정규식 패턴
+                  <code>pattern</code> — regular expression
                 </li>
                 <li>
-                  <code>validator</code> - 커스텀 검증 함수
+                  <code>validator</code> — custom validation function
                 </li>
               </ul>
             </Card>
             <CodeSnippet
-              code={`// 필수 입력
-rules={[{ required: true, message: '필수 입력입니다' }]}
+              code={`// Required
+rules={[{ required: true, message: 'This field is required' }]}
 
-// 이메일 형식
-rules={[{ type: 'email', message: '올바른 이메일 형식이 아닙니다' }]}
+// Email format
+rules={[{ type: 'email', message: 'That is not a valid email address' }]}
 
-// 최소/최대 길이
+// Minimum and maximum length
 rules={[
-  { min: 6, message: '최소 6자 이상' },
-  { max: 20, message: '최대 20자 이하' }
+  { min: 6, message: 'At least 6 characters' },
+  { max: 20, message: 'At most 20 characters' }
 ]}
 
-// 정규식 패턴
+// Regular expression
 rules={[{
   pattern: /^[0-9]+$/,
-  message: '숫자만 입력 가능합니다'
+  message: 'Numbers only'
 }]}
 
-// 커스텀 검증
+// Custom validation
 rules={[{
   validator: (_, value) => {
     if (value && value < 18) {
-      return Promise.reject('18세 이상이어야 합니다');
+      return Promise.reject('You must be at least 18');
     }
     return Promise.resolve();
   }
 }]}`}
-              title="Validation Rules 예제"
+              title="Validation rule examples"
             />
           </div>
         </div>

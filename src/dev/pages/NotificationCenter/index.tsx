@@ -22,16 +22,16 @@ interface Notification {
 }
 
 const mockData: Notification[] = [
-  { id: '1', type: 'warning', message: 'ERP 시스템 구축 프로젝트 마일스톤이 지연되고 있습니다.', time: '5분 전', isRead: false },
-  { id: '2', type: 'user', message: '김철수님이 "모바일 앱 개발" 프로젝트에 배정되었습니다.', time: '1시간 전', isRead: false },
-  { id: '3', type: 'success', message: '"웹사이트 리뉴얼" 프로젝트의 태스크가 완료되었습니다.', time: '2시간 전', isRead: true },
-  { id: '4', type: 'document', message: '새로운 문서 "API 설계서 v3.0"이 업로드되었습니다.', time: '3시간 전', isRead: false },
-  { id: '5', type: 'info', message: '내일 오후 2시 주간 진행상황 회의가 예정되어 있습니다.', time: '5시간 전', isRead: true },
-  { id: '6', type: 'warning', message: '이슈 ISS-001 "로그인 세션 만료 오류"가 아직 해결되지 않았습니다.', time: '1일 전', isRead: false },
-  { id: '7', type: 'user', message: '이영희님이 댓글을 남겼습니다: "검토 완료했습니다."', time: '1일 전', isRead: true },
-  { id: '8', type: 'success', message: 'QA 테스트가 성공적으로 완료되었습니다.', time: '2일 전', isRead: true },
-  { id: '9', type: 'document', message: '회의록 "프로젝트 킥오프 미팅"이 공유되었습니다.', time: '2일 전', isRead: true },
-  { id: '10', type: 'info', message: '시스템 정기 점검이 예정되어 있습니다. (2024-02-15 02:00)', time: '3일 전', isRead: true },
+  { id: '1', type: 'warning', message: 'A milestone on the ERP rollout project is running late.', time: '5 min ago', isRead: false },
+  { id: '2', type: 'user', message: 'Chulsoo Kim has been assigned to the "Mobile app development" project.', time: '1 hour ago', isRead: false },
+  { id: '3', type: 'success', message: 'A task on the "Website renewal" project has been completed.', time: '2 hours ago', isRead: true },
+  { id: '4', type: 'document', message: 'A new document "API design spec v3.0" has been uploaded.', time: '3 hours ago', isRead: false },
+  { id: '5', type: 'info', message: 'The weekly progress meeting is scheduled for tomorrow at 2 PM.', time: '5 hours ago', isRead: true },
+  { id: '6', type: 'warning', message: 'Issue ISS-001 "Login session expiry error" is still unresolved.', time: '1 day ago', isRead: false },
+  { id: '7', type: 'user', message: 'Younghee Lee left a comment: "Review complete."', time: '1 day ago', isRead: true },
+  { id: '8', type: 'success', message: 'QA testing finished successfully.', time: '2 days ago', isRead: true },
+  { id: '9', type: 'document', message: 'Meeting notes "Project kickoff" have been shared.', time: '2 days ago', isRead: true },
+  { id: '10', type: 'info', message: 'Scheduled system maintenance is planned. (2024-02-15 02:00)', time: '3 days ago', isRead: true },
 ];
 
 export default function NotificationCenter() {
@@ -69,7 +69,7 @@ export default function NotificationCenter() {
       <div className="ds-section-header">
         <Space style={{ width: '100%', justifyContent: 'space-between' }}>
           <Space>
-            <h2>알림 센터</h2>
+            <h2>Notification center</h2>
             {unreadCount > 0 && (
               <Badge count={unreadCount} style={{ backgroundColor: '#ff4d4f' }} />
             )}
@@ -79,7 +79,7 @@ export default function NotificationCenter() {
             onClick={handleMarkAllRead}
             disabled={unreadCount === 0}
           >
-            모두 읽음
+            Mark all read
           </Button>
         </Space>
       </div>

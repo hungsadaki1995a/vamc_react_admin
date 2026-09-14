@@ -9,11 +9,11 @@ import DevPageHeader from '@/dev/DevPageHeader';
 
 // Roles definition
 const roles = [
-  { key: 'admin', label: '관리자' },
+  { key: 'admin', label: 'Administrator' },
   { key: 'pm', label: 'PM' },
-  { key: 'developer', label: '개발자' },
-  { key: 'designer', label: '디자이너' },
-  { key: 'viewer', label: '뷰어' },
+  { key: 'developer', label: 'Developer' },
+  { key: 'designer', label: 'Designer' },
+  { key: 'viewer', label: 'Viewer' },
 ];
 
 interface MenuPermRow {
@@ -79,7 +79,7 @@ export default function PermissionManagement() {
   };
 
   const handleSave = () => {
-    message.success('권한 설정이 저장되었습니다.');
+    message.success('Permission settings have been saved.');
   };
 
   return (
@@ -89,16 +89,16 @@ export default function PermissionManagement() {
       {/* Filter */}
       <div className={styles.permFilterBar}>
         <div className={styles.permFilterItem}>
-          <span className={styles.permFilterLabel}>프로젝트</span>
+          <span className={styles.permFilterLabel}>Project</span>
           <Select
             value={projectFilter}
             onChange={setProjectFilter}
             style={{ width: 200 }}
             options={[
-              { label: '전체 프로젝트', value: 'all' },
-              { label: 'ERP 구축', value: 'P001' },
-              { label: '모바일 앱 개발', value: 'P002' },
-              { label: 'AI 챗봇', value: 'P003' },
+              { label: 'All projects', value: 'all' },
+              { label: 'ERP rollout', value: 'P001' },
+              { label: 'Mobile app development', value: 'P002' },
+              { label: 'AI chatbot', value: 'P003' },
             ]}
           />
         </div>
@@ -108,7 +108,7 @@ export default function PermissionManagement() {
         totalCount={rows.length}
         actions={
           <Button type="primary" icon={<SaveOutlined />} onClick={handleSave}>
-            저장
+            Save
           </Button>
         }
       />
@@ -119,20 +119,20 @@ export default function PermissionManagement() {
           <thead>
             {/* 1st header row: role names */}
             <tr>
-              <th className={styles.permColId} rowSpan={2}>메뉴 ID</th>
-              <th className={styles.permColName} rowSpan={2}>메뉴명</th>
+              <th className={styles.permColId} rowSpan={2}>Menu ID</th>
+              <th className={styles.permColName} rowSpan={2}>Menu name</th>
               {roles.map((role) => (
                 <th key={role.key} className={styles.permColRole} colSpan={2}>
                   {role.label}
                 </th>
               ))}
             </tr>
-            {/* 2nd header row: 조회/수정 */}
+            {/* 2nd header row: read / write */}
             <tr>
               {roles.map((role) => (
                 <Fragment key={role.key}>
-                  <th className={styles.permColCheck}>조회</th>
-                  <th className={styles.permColCheck}>수정</th>
+                  <th className={styles.permColCheck}>Read</th>
+                  <th className={styles.permColCheck}>Write</th>
                 </Fragment>
               ))}
             </tr>

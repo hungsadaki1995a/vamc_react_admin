@@ -83,6 +83,7 @@ const devMenu: MenuItem = {
         { key: 'dev.lib.i18n-perm',    label: '다국어 & 권한',        componentPath: 'GuideI18nPermission' },
         { key: 'dev.lib.internal-api', label: '내부 API 레퍼런스',    componentPath: 'GuideInternalApi' },
         { key: 'dev.lib.excel',        label: '엑셀 업로드/다운로드', componentPath: 'GuideExcel' },
+        { key: 'dev.lib.reporting',    label: '리포팅 서버 호출',     componentPath: 'GuideReportingServer' },
       ],
     },
   ],

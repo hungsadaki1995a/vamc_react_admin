@@ -33,7 +33,7 @@ const useBearStore = create<BearStore>((set) => ({
   removeAllBears: () => set({ bears: 0 }),
 }));
 
-// 컴포넌트에서 사용
+// Using it in a component
 function BearCounter() {
   const bears = useBearStore((state) => state.bears);
   return <h1>{bears} around here...</h1>;
@@ -44,14 +44,14 @@ function Controls() {
   return <button onClick={increasePopulation}>Add bear</button>;
 }`;
 
-const selectorCode = `// ❌ 비효율적: 전체 상태를 구독 (불필요한 리렌더 발생)
+const selectorCode = `// Inefficient: subscribing to the whole state (causes unnecessary re-renders)
 const state = useBearStore();
 
-// ✅ 효율적: 필요한 상태만 선택
+// Efficient: select only the state you need
 const bears = useBearStore((state) => state.bears);
 const increasePopulation = useBearStore((state) => state.increasePopulation);
 
-// ✅ 여러 값 선택 (useShallow로 shallow comparison)
+// Selecting several values (shallow comparison via useShallow)
 import { useShallow } from 'zustand/react/shallow';
 
 const { bears, increasePopulation } = useBearStore(
@@ -64,13 +64,13 @@ const { bears, increasePopulation } = useBearStore(
 const actionsCode = `const useStore = create<Store>((set, get) => ({
   count: 0,
 
-  // 기본 액션
+  // Basic actions
   increment: () => set((state) => ({ count: state.count + 1 })),
 
-  // 여러 상태 업데이트
+  // Updating several pieces of state
   reset: () => set({ count: 0, lastReset: Date.now() }),
 
-  // get()으로 현재 상태 접근
+  // Reading the current state with get()
   incrementIfOdd: () => {
     const { count } = get();
     if (count % 2 === 1) {
@@ -78,7 +78,7 @@ const actionsCode = `const useStore = create<Store>((set, get) => ({
     }
   },
 
-  // 비동기 액션
+  // Async actions
   fetchData: async () => {
     set({ loading: true });
     const data = await api.fetch();
@@ -177,7 +177,7 @@ const useTodoStore = create<TodoStore>()(
 
     addTodo: (text) =>
       set((state) => {
-        // Immer를 사용하면 불변성을 신경쓰지 않고 직접 수정 가능
+        // With Immer you can mutate directly without worrying about immutability
         state.todos.push({
           id: Math.random().toString(),
           text,
@@ -205,7 +205,7 @@ const useStore = create<Store>()(
       increment: () => set((state) => ({ count: state.count + 1 }), false, 'increment'),
       decrement: () => set((state) => ({ count: state.count - 1 }), false, 'decrement'),
     }),
-    { name: 'CounterStore' } // Redux DevTools에 표시될 이름
+    { name: 'CounterStore' } // name shown in Redux DevTools
   )
 );`;
 
@@ -213,7 +213,7 @@ const combinedMiddlewareCode = `import { create } from 'zustand';
 import { persist, devtools } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 
-// 미들웨어 조합 순서: devtools > persist > immer
+// Middleware composition order: devtools > persist > immer
 const useStore = create<Store>()(
   devtools(
     persist(
@@ -226,7 +226,7 @@ const useStore = create<Store>()(
   )
 );`;
 
-const domainSeparationCode = `// ❌ 나쁜 예: 모든 것을 하나의 스토어에
+const domainSeparationCode = `// Bad: everything in a single store
 const useAppStore = create((set) => ({
   user: null,
   tabs: [],
@@ -234,7 +234,7 @@ const useAppStore = create((set) => ({
   projects: [],
 }));
 
-// ✅ 좋은 예: 도메인별 스토어 분리
+// Good: one store per domain
 const useUserStore = create((set) => ({
   user: null,
   login: (user) => set({ user }),
@@ -249,14 +249,14 @@ const useTabStore = create((set) => ({
   })),
 }));`;
 
-const crossStoreCode = `// 스토어 간 참조 패턴
+const crossStoreCode = `// Referencing one store from another
 const useProjectStore = create<ProjectStore>((set, get) => ({
   selectedProject: null,
 
   selectProject: (project) => {
     set({ selectedProject: project });
 
-    // 다른 스토어의 액션 호출
+    // Calling an action on another store
     useTabStore.getState().openTab({
       key: 'project-detail',
       title: project.name,
@@ -264,7 +264,7 @@ const useProjectStore = create<ProjectStore>((set, get) => ({
   },
 }));
 
-// subscribe를 사용한 반응형 패턴
+// Reactive pattern using subscribe
 useProjectStore.subscribe(
   (state) => state.selectedProject,
   (selectedProject) => {
@@ -274,26 +274,26 @@ useProjectStore.subscribe(
   }
 );`;
 
-const projectStoresCode = `// VAMC NPL ADMIN 프로젝트의 스토어 구조
+const projectStoresCode = `// Store layout of the VAMC NPL ADMIN project
 
 1. tabStore (src/stores/tabStore.ts)
-   - 탭 열기/닫기/핀/언핀/재정렬
-   - persist 미들웨어로 localStorage 영속화
-   - 최대 20개 탭 제한
+   - open / close / pin / unpin / reorder tabs
+   - persisted to localStorage via the persist middleware
+   - limited to 20 tabs
 
 2. menuStore (src/stores/menuStore.ts)
-   - Icon Rail 활성 상태 (activeRailKey)
-   - Flyout Panel 표시/숨김 (flyoutVisible)
-   - 메뉴 펼침 상태 (openKeys)
+   - active icon rail entry (activeRailKey)
+   - flyout panel visibility (flyoutVisible)
+   - expanded menu state (openKeys)
 
 3. themeStore (src/stores/themeStore.ts)
-   - 다크/라이트 테마 토글
-   - persist로 사용자 선호도 저장
-   - Ant Design algorithm 연동
+   - dark / light theme toggle
+   - user preference stored via persist
+   - wired to the Ant Design algorithm
 
 4. projectStore (src/stores/projectStore.ts)
-   - 선택된 프로젝트 상태
-   - persist로 마지막 선택 유지`;
+   - the selected project
+   - last selection kept via persist`;
 
 const asyncActionCode = `interface DataStore {
   data: any[];
@@ -320,7 +320,7 @@ const useDataStore = create<DataStore>((set) => ({
   },
 }));
 
-// 컴포넌트에서 사용
+// Using it in a component
 function DataList() {
   const { data, loading, error, fetchData } = useDataStore();
 
@@ -447,108 +447,108 @@ export default function GuideZustand() {
   const tabItems = [
     {
       key: 'basic',
-      label: '기본 사용법',
+      label: 'Basics',
       children: (
         <div>
           <div className="demo-section">
-            <h3>Store 생성</h3>
+            <h3>Creating a store</h3>
             <p style={{ color: 'var(--text-secondary)', marginBottom: 16 }}>
-              <code>create()</code> 함수로 스토어를 생성합니다. TypeScript를 사용하면 타입 안정성을 확보할 수 있습니다.
+              Create a store with the <code>create()</code> function. With TypeScript you get full type safety.
             </p>
-            <CodeSnippet code={basicStoreCode} title="기본 스토어 생성" />
+            <CodeSnippet code={basicStoreCode} title="Creating a basic store" />
           </div>
 
           <div className="demo-section">
-            <h3>Selector 패턴</h3>
+            <h3>Selector pattern</h3>
             <p style={{ color: 'var(--text-secondary)', marginBottom: 16 }}>
-              필요한 상태만 선택하여 불필요한 리렌더를 방지합니다.
+              Select only the state you need to avoid unnecessary re-renders.
             </p>
-            <CodeSnippet code={selectorCode} title="효율적인 Selector 사용" />
+            <CodeSnippet code={selectorCode} title="Using selectors efficiently" />
           </div>
 
           <div className="demo-section">
-            <h3>Actions 정의</h3>
+            <h3>Defining actions</h3>
             <p style={{ color: 'var(--text-secondary)', marginBottom: 16 }}>
-              <code>set</code>과 <code>get</code> 함수를 사용하여 상태를 업데이트하는 액션을 정의합니다.
+              Use the <code>set</code> and <code>get</code> functions to define actions that update state.
             </p>
-            <CodeSnippet code={actionsCode} title="다양한 액션 패턴" />
+            <CodeSnippet code={actionsCode} title="Assorted action patterns" />
           </div>
 
           <div className="demo-section">
-            <h3>라이브 데모: 카운터</h3>
+            <h3>Live demo: counter</h3>
             <p style={{ color: 'var(--text-secondary)', marginBottom: 16 }}>
-              실제로 동작하는 Zustand 스토어 예제입니다. 버튼을 클릭해보세요.
+              A working Zustand store. Try clicking the buttons.
             </p>
             <LiveCounterDemo />
-            <CodeSnippet code={liveCounterCode} title="카운터 구현 코드" />
+            <CodeSnippet code={liveCounterCode} title="Counter implementation" />
           </div>
         </div>
       ),
     },
     {
       key: 'middleware',
-      label: '미들웨어',
+      label: 'Middleware',
       children: (
         <div>
           <div className="demo-section">
-            <h3>Persist 미들웨어</h3>
+            <h3>Persist middleware</h3>
             <p style={{ color: 'var(--text-secondary)', marginBottom: 16 }}>
-              localStorage 또는 sessionStorage에 상태를 자동으로 저장하고 복원합니다.
+              Automatically saves state to localStorage or sessionStorage and restores it.
             </p>
-            <CodeSnippet code={persistMiddlewareCode} title="Persist 미들웨어 사용" />
+            <CodeSnippet code={persistMiddlewareCode} title="Using the persist middleware" />
           </div>
 
           <div className="demo-section">
-            <h3>Immer 미들웨어</h3>
+            <h3>Immer middleware</h3>
             <p style={{ color: 'var(--text-secondary)', marginBottom: 16 }}>
-              복잡한 중첩 상태를 불변성을 신경쓰지 않고 직접 수정하는 것처럼 업데이트할 수 있습니다.
+              Update deeply nested state as if you were mutating it, without handling immutability yourself.
             </p>
-            <CodeSnippet code={immerMiddlewareCode} title="Immer 미들웨어 사용" />
+            <CodeSnippet code={immerMiddlewareCode} title="Using the immer middleware" />
           </div>
 
           <div className="demo-section">
-            <h3>Devtools 미들웨어</h3>
+            <h3>Devtools middleware</h3>
             <p style={{ color: 'var(--text-secondary)', marginBottom: 16 }}>
-              Redux DevTools와 연동하여 상태 변화를 시각화하고 디버깅할 수 있습니다.
+              Hooks into Redux DevTools so you can visualize and debug state changes.
             </p>
-            <CodeSnippet code={devtoolsCode} title="Devtools 미들웨어" />
+            <CodeSnippet code={devtoolsCode} title="Devtools middleware" />
           </div>
 
           <div className="demo-section">
-            <h3>미들웨어 조합</h3>
+            <h3>Composing middleware</h3>
             <p style={{ color: 'var(--text-secondary)', marginBottom: 16 }}>
-              여러 미들웨어를 함께 사용할 수 있습니다. 조합 순서: devtools → persist → immer.
+              Several middlewares can be combined. Composition order: devtools → persist → immer.
             </p>
-            <CodeSnippet code={combinedMiddlewareCode} title="미들웨어 조합" />
+            <CodeSnippet code={combinedMiddlewareCode} title="Composing middleware" />
           </div>
         </div>
       ),
     },
     {
       key: 'patterns',
-      label: '스토어 설계 패턴',
+      label: 'Store design patterns',
       children: (
         <div>
           <div className="demo-section">
-            <h3>도메인별 스토어 분리</h3>
+            <h3>One store per domain</h3>
             <p style={{ color: 'var(--text-secondary)', marginBottom: 16 }}>
-              하나의 거대한 스토어보다 도메인별로 분리된 작은 스토어들이 유지보수에 유리합니다.
+              Several small domain stores are easier to maintain than one large store.
             </p>
-            <CodeSnippet code={domainSeparationCode} title="도메인 분리 원칙" />
+            <CodeSnippet code={domainSeparationCode} title="Domain separation" />
           </div>
 
           <div className="demo-section">
-            <h3>스토어 간 참조</h3>
+            <h3>Referencing other stores</h3>
             <p style={{ color: 'var(--text-secondary)', marginBottom: 16 }}>
-              스토어는 다른 스토어의 상태를 읽거나 액션을 호출할 수 있습니다.
+              A store can read another store's state or call its actions.
             </p>
-            <CodeSnippet code={crossStoreCode} title="스토어 간 통신" />
+            <CodeSnippet code={crossStoreCode} title="Store-to-store communication" />
           </div>
 
           <div className="demo-section">
-            <h3>VAMC NPL ADMIN 프로젝트 스토어 구조</h3>
+            <h3>Store layout in VAMC NPL ADMIN</h3>
             <p style={{ color: 'var(--text-secondary)', marginBottom: 16 }}>
-              본 프로젝트는 4개의 도메인별 스토어로 구성되어 있습니다.
+              This project is organized into four domain stores.
             </p>
             <Card size="small">
               <pre style={{ margin: 0, whiteSpace: 'pre-wrap', fontSize: 13 }}>
@@ -561,28 +561,28 @@ export default function GuideZustand() {
     },
     {
       key: 'react',
-      label: 'React 연동',
+      label: 'React integration',
       children: (
         <div>
           <div className="demo-section">
-            <h3>비동기 액션 처리</h3>
+            <h3>Handling async actions</h3>
             <p style={{ color: 'var(--text-secondary)', marginBottom: 16 }}>
-              비동기 작업(API 호출 등)은 액션 함수 내에서 처리하고, loading/error 상태를 함께 관리합니다.
+              Handle async work (API calls and the like) inside the action and track loading / error state alongside it.
             </p>
-            <CodeSnippet code={asyncActionCode} title="비동기 액션" />
+            <CodeSnippet code={asyncActionCode} title="Async actions" />
           </div>
         </div>
       ),
     },
     {
       key: 'examples',
-      label: '프로젝트 실전 예시',
+      label: 'Real project examples',
       children: (
         <div>
           <div className="demo-section">
-            <h3>tabStore - 탭 관리</h3>
+            <h3>tabStore — tab management</h3>
             <p style={{ color: 'var(--text-secondary)', marginBottom: 16 }}>
-              탭 열기/닫기/핀/재정렬 등의 복잡한 로직을 Zustand로 관리합니다.
+              Opening, closing, pinning and reordering tabs is all managed in Zustand.
             </p>
             <CodeSnippet code={tabStoreCode} title="src/stores/tabStore.ts" />
           </div>
@@ -595,12 +595,12 @@ export default function GuideZustand() {
               borderColor: 'var(--primary-color-border)',
             }}
           >
-            <h4 style={{ margin: '0 0 8px', fontSize: 14 }}>핵심 패턴 요약</h4>
+            <h4 style={{ margin: '0 0 8px', fontSize: 14 }}>Key patterns at a glance</h4>
             <ul style={{ margin: 0, paddingLeft: 20, fontSize: 13 }}>
-              <li><strong>Persist</strong>: 사용자 설정(theme, tabs)은 persist로 저장</li>
-              <li><strong>도메인 분리</strong>: 탭/메뉴/테마/프로젝트 각각 독립된 스토어</li>
-              <li><strong>Selector 최적화</strong>: 필요한 상태만 선택하여 리렌더 최소화</li>
-              <li><strong>타입 안정성</strong>: TypeScript 인터페이스로 안전한 상태 관리</li>
+              <li><strong>Persist</strong>: user settings (theme, tabs) are stored with persist</li>
+              <li><strong>Domain separation</strong>: tabs, menu, theme and project each get their own store</li>
+              <li><strong>Selector optimization</strong>: select only what you need to minimize re-renders</li>
+              <li><strong>Type safety</strong>: TypeScript interfaces keep state management safe</li>
             </ul>
           </Card>
         </div>

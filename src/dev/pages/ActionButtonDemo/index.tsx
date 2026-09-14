@@ -15,22 +15,22 @@ interface PropRow {
 }
 
 const BUTTON_PROPS: PropRow[] = [
-  { prop: 'action', type: "'search' | 'reset' | 'addRow' | 'deleteRow' | 'saveChanges' | ...", desc: '액션 프리셋 — 기본 아이콘/intent 자동 적용' },
-  { prop: 'intent', type: "'default' | 'primary' | 'danger' | 'excel' | 'text' | 'icon'", desc: '스타일 의도 (action 기본값 덮어쓰기)' },
-  { prop: '...ButtonProps', type: 'antd ButtonProps', desc: 'onClick, disabled, size 등 antd Button props 그대로 전달' },
+  { prop: 'action', type: "'search' | 'reset' | 'addRow' | 'deleteRow' | 'saveChanges' | ...", desc: 'Action preset — applies the default icon and intent' },
+  { prop: 'intent', type: "'default' | 'primary' | 'danger' | 'excel' | 'text' | 'icon'", desc: 'Style intent (overrides the action default)' },
+  { prop: '...ButtonProps', type: 'antd ButtonProps', desc: 'onClick, disabled, size and every other antd Button prop, passed through' },
 ];
 
 const GROUP_PROPS: PropRow[] = [
-  { prop: 'preset', type: "'search' | 'gridEdit' | 'formEdit' | 'modal' | 'excelRegister'", desc: '프리셋별 표준 버튼 정렬 순서 적용' },
-  { prop: 'items', type: 'ActionButtonGroupItem[]', desc: '선언형 버튼 목록 (key, action, label, hidden, order)' },
-  { prop: 'justify', type: "'start' | 'center' | 'end' | 'between'", desc: '정렬' },
-  { prop: 'canWrite', type: 'boolean', desc: 'false면 쓰기 계열(addRow/deleteRow/saveChanges/register/excelUpload/upload) 자동 비활성' },
+  { prop: 'preset', type: "'search' | 'gridEdit' | 'formEdit' | 'modal' | 'excelRegister'", desc: 'Applies the standard button order for the preset' },
+  { prop: 'items', type: 'ActionButtonGroupItem[]', desc: 'Declarative button list (key, action, label, hidden, order)' },
+  { prop: 'justify', type: "'start' | 'center' | 'end' | 'between'", desc: 'Alignment' },
+  { prop: 'canWrite', type: 'boolean', desc: 'When false, write actions (addRow/deleteRow/saveChanges/register/excelUpload/upload) are disabled automatically' },
 ];
 
 const PROP_COLUMNS = [
   { title: 'Prop', dataIndex: 'prop', width: 160, render: (v: string) => <Text code>{v}</Text> },
-  { title: '타입', dataIndex: 'type', width: 320 },
-  { title: '설명', dataIndex: 'desc' },
+  { title: 'Type', dataIndex: 'type', width: 320 },
+  { title: 'Description', dataIndex: 'desc' },
 ];
 
 const USAGE = `import ActionButton from '@/components/common/ActionButton';
@@ -39,17 +39,17 @@ import { useMenuPermission } from '@/hooks/useMenuPermission';
 
 const { canWrite } = useMenuPermission();
 
-// 1) 단일 버튼 — action 프리셋이 아이콘/스타일을 결정
-<ActionButton action="search" onClick={handleSearch}>조회</ActionButton>
+// 1) Single button — the action preset decides the icon and style
+<ActionButton action="search" onClick={handleSearch}>Search</ActionButton>
 
-// 2) 선언형 그룹 — preset이 버튼 정렬 순서를 결정
+// 2) Declarative group — the preset decides the button order
 <ActionButtonGroup
   preset="gridEdit"
   canWrite={canWrite}
   items={[
-    { key: 'add',  action: 'addRow',       label: '행 추가', onClick: handleAdd },
-    { key: 'del',  action: 'deleteRow',    label: '행 삭제', onClick: handleDelete },
-    { key: 'save', action: 'saveChanges',  label: '저장',   onClick: handleSave },
+    { key: 'add',  action: 'addRow',       label: 'Add row', onClick: handleAdd },
+    { key: 'del',  action: 'deleteRow',    label: 'Delete row', onClick: handleDelete },
+    { key: 'save', action: 'saveChanges',  label: 'Save',   onClick: handleSave },
   ]}
 />`;
 
@@ -81,27 +81,27 @@ export default function ActionButtonDemo() {
         />
       </Card>
 
-      <Card size="small" title="라이브 데모" style={{ marginBottom: 16 }}>
+      <Card size="small" title="Live demo" style={{ marginBottom: 16 }}>
         <Divider titlePlacement="left" styles={{ content: { margin: 0 } }} style={{ fontSize: 13 }}>
-          단일 버튼 (action 프리셋)
+          Single buttons (action presets)
         </Divider>
         <div style={{ marginBottom: 12 }}>
           <ActionButtonGroup>
-            <ActionButton action="search" onClick={() => toast.info('조회')}>조회</ActionButton>
-            <ActionButton action="reset" onClick={() => toast.info('초기화')}>초기화</ActionButton>
-            <ActionButton action="saveChanges" onClick={() => toast.success('저장됐습니다.')}>저장</ActionButton>
-            <ActionButton action="deleteRow" onClick={() => toast.warning('삭제')}>삭제</ActionButton>
-            <ActionButton action="excelDownload" onClick={() => toast.info('엑셀 다운로드')}>엑셀 다운로드</ActionButton>
+            <ActionButton action="search" onClick={() => toast.info('Search')}>Search</ActionButton>
+            <ActionButton action="reset" onClick={() => toast.info('Reset')}>Reset</ActionButton>
+            <ActionButton action="saveChanges" onClick={() => toast.success('Saved.')}>Save</ActionButton>
+            <ActionButton action="deleteRow" onClick={() => toast.warning('Delete')}>Delete</ActionButton>
+            <ActionButton action="excelDownload" onClick={() => toast.info('Excel download')}>Excel download</ActionButton>
           </ActionButtonGroup>
         </div>
 
         <Divider titlePlacement="left" styles={{ content: { margin: 0 } }} style={{ fontSize: 13 }}>
-          preset="gridEdit" + canWrite 연동
+          preset="gridEdit" wired to canWrite
         </Divider>
         <div style={{ marginBottom: 8 }}>
           <Switch size="small" checked={canWrite} onChange={setCanWrite} />{' '}
           <Text type="secondary" style={{ fontSize: 12 }}>
-            canWrite = {String(canWrite)} — false면 쓰기 계열 버튼이 자동 비활성화됩니다.
+            canWrite = {String(canWrite)} — when false, write buttons are disabled automatically.
           </Text>
         </div>
         <ActionButtonGroup
@@ -109,11 +109,11 @@ export default function ActionButtonDemo() {
           canWrite={canWrite}
           justify="end"
           items={[
-            { key: 'excelDown', action: 'excelDownload', label: '엑셀 다운로드', onClick: () => toast.info('다운로드') },
-            { key: 'excelUp', action: 'excelUpload', label: '엑셀 업로드', onClick: () => toast.info('업로드') },
-            { key: 'add', action: 'addRow', label: '행 추가', onClick: () => toast.info('행 추가') },
-            { key: 'del', action: 'deleteRow', label: '행 삭제', onClick: () => toast.warning('행 삭제') },
-            { key: 'save', action: 'saveChanges', label: '저장', onClick: () => toast.success('저장됐습니다.') },
+            { key: 'excelDown', action: 'excelDownload', label: 'Excel download', onClick: () => toast.info('Download') },
+            { key: 'excelUp', action: 'excelUpload', label: 'Excel upload', onClick: () => toast.info('Upload') },
+            { key: 'add', action: 'addRow', label: 'Add row', onClick: () => toast.info('Add row') },
+            { key: 'del', action: 'deleteRow', label: 'Delete row', onClick: () => toast.warning('Delete row') },
+            { key: 'save', action: 'saveChanges', label: 'Save', onClick: () => toast.success('Saved.') },
           ]}
         />
       </Card>

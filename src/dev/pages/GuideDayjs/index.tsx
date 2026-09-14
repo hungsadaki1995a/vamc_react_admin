@@ -10,7 +10,7 @@ const now = dayjs();
 const examples = [
   { method: "dayjs()", result: now.format() },
   { method: "dayjs().format('YYYY-MM-DD')", result: now.format('YYYY-MM-DD') },
-  { method: "dayjs().format('YYYY년 MM월 DD일')", result: now.format('YYYY년 MM월 DD일') },
+  { method: "dayjs().format('MMMM D, YYYY')", result: now.format('MMMM D, YYYY') },
   { method: "dayjs().format('HH:mm:ss')", result: now.format('HH:mm:ss') },
   { method: "dayjs().add(7, 'day').format('YYYY-MM-DD')", result: now.add(7, 'day').format('YYYY-MM-DD') },
   { method: "dayjs().subtract(1, 'month').format('YYYY-MM-DD')", result: now.subtract(1, 'month').format('YYYY-MM-DD') },
@@ -23,17 +23,17 @@ const examples = [
 ];
 
 const columns: TableColumnsType<(typeof examples)[0]> = [
-  { title: '코드', dataIndex: 'method', key: 'method', render: (v) => <Text code>{v}</Text> },
-  { title: '결과', dataIndex: 'result', key: 'result' },
+  { title: 'Code', dataIndex: 'method', key: 'method', render: (v) => <Text code>{v}</Text> },
+  { title: 'Result', dataIndex: 'result', key: 'result' },
 ];
 
 export default function GuideDayjs() {
   return (
     <div style={{ padding: 24 }}>
       <DevPageHeader page="GuideDayjs" />
-      <Paragraph>dayjs는 경량 날짜 라이브러리입니다. Moment.js와 호환되는 API를 가지며 2KB 미만입니다.</Paragraph>
+      <Paragraph>dayjs is a lightweight date library. It offers a Moment.js-compatible API in under 2 KB.</Paragraph>
 
-      <Divider titlePlacement="left">실시간 예제 (현재 시각 기준)</Divider>
+      <Divider titlePlacement="left">Live examples (based on the current time)</Divider>
       <Table
         dataSource={examples.map((e, i) => ({ ...e, key: i }))}
         columns={columns}
@@ -41,18 +41,18 @@ export default function GuideDayjs() {
         pagination={false}
       />
 
-      <Divider titlePlacement="left">날짜 파싱</Divider>
+      <Divider titlePlacement="left">Parsing dates</Divider>
       <Card>
         <pre style={{ margin: 0, fontSize: 13 }}>{`import dayjs from 'dayjs';
 
-dayjs()                          // 현재 시각
-dayjs('2024-01-15')             // 문자열 파싱
-dayjs('2024-01-15 09:30:00')    // 날짜+시간
-dayjs(1705276800000)            // 타임스탬프(ms)
-dayjs(new Date())               // Date 객체`}</pre>
+dayjs()                          // current time
+dayjs('2024-01-15')             // parse a string
+dayjs('2024-01-15 09:30:00')    // date + time
+dayjs(1705276800000)            // timestamp (ms)
+dayjs(new Date())               // Date object`}</pre>
       </Card>
 
-      <Divider titlePlacement="left">플러그인 사용</Divider>
+      <Divider titlePlacement="left">Using plugins</Divider>
       <Card>
         <pre style={{ margin: 0, fontSize: 13 }}>{`import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
@@ -63,8 +63,8 @@ dayjs.extend(relativeTime);
 dayjs.extend(isBetween);
 dayjs.locale('ko');
 
-dayjs().fromNow()               // '방금 전', '3일 전'
-dayjs().isBetween(start, end)   // 범위 내 여부`}</pre>
+dayjs().fromNow()               // 'a few seconds ago', '3 days ago'
+dayjs().isBetween(start, end)   // is it inside the range`}</pre>
       </Card>
     </div>
   );

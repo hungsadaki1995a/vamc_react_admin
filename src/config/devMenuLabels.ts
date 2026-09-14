@@ -67,4 +67,5 @@ export const DEV_MENU_LABELS: Record<string, DevMenuLabel> = {
   'dev.lib.i18n-perm':            { en: 'i18n & Permissions',   vn: 'Đa ngôn ngữ & Phân quyền' },
   'dev.lib.internal-api':         { en: 'Internal API Reference', vn: 'Tham chiếu API nội bộ' },
   'dev.lib.excel':                { en: 'Excel Up/Download',    vn: 'Tải lên/xuống Excel' },
+  'dev.lib.reporting':            { en: 'Reporting Server Call', vn: 'Gọi máy chủ báo cáo' },
 };
