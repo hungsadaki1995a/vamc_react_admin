@@ -9,6 +9,8 @@ interface ImportMetaEnv {
    * 운영 이미지에서는 절대 'true' 로 빌드하지 말 것.
    */
   readonly VITE_ENABLE_DEV_TOOLS?: string;
+  /** Swagger / OpenAPI docs URL */
+  readonly VITE_SWAGGER_URL?: string;
 }
 
 interface ImportMeta {
