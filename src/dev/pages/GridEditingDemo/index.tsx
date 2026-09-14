@@ -31,9 +31,9 @@ const basicGridCode = `import GridTable from '@/components/grid/GridTable';
 import type { ColDef } from 'ag-grid-community';
 
 const columnDefs: ColDef[] = [
-  { field: 'name', headerName: '이름', minWidth: 120 },
-  { field: 'department', headerName: '부서', width: 100 },
-  { field: 'role', headerName: '역할', width: 100 },
+  { field: 'name', headerName: 'Name', minWidth: 120 },
+  { field: 'department', headerName: 'Department', width: 100 },
+  { field: 'role', headerName: 'Role', width: 100 },
 ];
 
 <GridTable
@@ -51,32 +51,32 @@ import SelectCellEditor from '@/components/grid/cellEditors/SelectCellEditor';
 import TagsCellEditor from '@/components/grid/cellEditors/TagsCellEditor';
 
 const columnDefs: ColDef[] = [
-  { field: 'name', headerName: '업무명', editable: true },
+  { field: 'name', headerName: 'Task name', editable: true },
   {
-    field: 'status', headerName: '상태',
+    field: 'status', headerName: 'Status',
     editable: true,
     cellEditor: SelectCellEditor,
     cellEditorParams: {
       values: ['planned', 'in_progress', 'completed'],
-      valueLabels: { planned: '계획', in_progress: '진행중', completed: '완료' },
+      valueLabels: { planned: 'Planned', in_progress: 'In progress', completed: 'Completed' },
     },
   },
   {
-    field: 'dueDate', headerName: '마감일',
+    field: 'dueDate', headerName: 'Due date',
     editable: true,
     cellEditor: DateCellEditor,
   },
   {
-    field: 'assignee', headerName: '담당자',
+    field: 'assignee', headerName: 'Assignee',
     editable: true,
     cellEditor: SelectCellEditor,
-    cellEditorParams: { values: ['김영수', '이미영', '송태현'] },
+    cellEditorParams: { values: ['Steve Kim', 'Michelle Lee', 'Thomas Song'] },
   },
   {
-    field: 'tags', headerName: '태그',
+    field: 'tags', headerName: 'Tags',
     editable: true,
     cellEditor: TagsCellEditor,
-    cellEditorParams: { presetTags: ['긴급', '중요', '버그', '기능'] },
+    cellEditorParams: { presetTags: ['Urgent', 'Important', 'Bug', 'Feature'] },
     cellEditorPopup: true,
   },
 ];
@@ -97,13 +97,13 @@ const selectionGridCode = `<GridTable
   onSelectionChanged={(rows) => console.log('Selected:', rows)}
 />`;
 
-/* ─── Code snippets (셀 렌더러/포맷터) ─── */
-const formatterCode = `// valueFormatter: 값 포맷팅 (표시만 변경, 원본 데이터는 유지)
+/* ─── Code snippets (cell renderers and formatters) ─── */
+const formatterCode = `// valueFormatter: formats the display only — the underlying data is untouched
 
 const columnDefs: ColDef[] = [
   {
     field: 'hireDate',
-    headerName: '입사일',
+    headerName: 'Start date',
     valueFormatter: (params) => {
       if (!params.value) return '';
       return new Date(params.value).toLocaleDateString('ko-KR');
@@ -111,32 +111,32 @@ const columnDefs: ColDef[] = [
   },
   {
     field: 'salary',
-    headerName: '급여',
+    headerName: 'Salary',
     valueFormatter: (params) => {
       if (params.value == null) return '';
-      return params.value.toLocaleString('ko-KR') + '원';
+      return 'KRW ' + params.value.toLocaleString('en-US');
     },
   },
   {
     field: 'status',
-    headerName: '상태',
+    headerName: 'Status',
     valueFormatter: (params) => {
       const statusMap: Record<string, string> = {
-        active: '활성',
-        inactive: '비활성',
-        pending: '대기중',
+        active: 'Active',
+        inactive: 'Inactive',
+        pending: 'Pending',
       };
       return statusMap[params.value] || params.value;
     },
   },
 ];`;
 
-const cellRendererCode = `// cellRenderer: 커스텀 React 컴포넌트
+const cellRendererCode = `// cellRenderer: render a cell with your own React component
 
 import { Tag } from 'antd';
 import type { CustomCellRendererProps } from 'ag-grid-react';
 
-// 상태 태그 렌더러
+// Status tag renderer
 const StatusRenderer = (props: CustomCellRendererProps) => {
   const { value } = props;
   const colorMap: Record<string, string> = {
@@ -147,17 +147,17 @@ const StatusRenderer = (props: CustomCellRendererProps) => {
   return <Tag color={colorMap[value]}>{value}</Tag>;
 };
 
-// 컬럼 정의에서 사용
+// Using it in a column definition
 const columnDefs: ColDef[] = [
   {
     field: 'status',
-    headerName: '상태',
+    headerName: 'Status',
     cellRenderer: StatusRenderer,
     width: 100,
   },
 ];
 
-// 아바타 + 이름 렌더러
+// Avatar + name renderer
 import { Avatar } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 
@@ -171,12 +171,12 @@ const UserRenderer = (props: CustomCellRendererProps) => {
   );
 };`;
 
-const cellStyleCode = `// cellStyle, cellClass: 조건부 스타일링
+const cellStyleCode = `// cellStyle and cellClass: conditional styling
 
 const columnDefs: ColDef[] = [
   {
     field: 'salary',
-    headerName: '급여',
+    headerName: 'Salary',
     cellStyle: (params) => {
       if (params.value > 6000000) {
         return { backgroundColor: '#fff7e6', color: '#d46b08' };
@@ -186,7 +186,7 @@ const columnDefs: ColDef[] = [
   },
   {
     field: 'status',
-    headerName: '상태',
+    headerName: 'Status',
     cellClass: (params) => {
       if (params.value === 'active') return 'cell-active';
       if (params.value === 'inactive') return 'cell-inactive';
@@ -195,7 +195,7 @@ const columnDefs: ColDef[] = [
   },
 ];
 
-// CSS 정의
+// The CSS
 .cell-active {
   background-color: #f6ffed;
   color: #52c41a;
@@ -205,43 +205,43 @@ const columnDefs: ColDef[] = [
   color: #8c8c8c;
 }`;
 
-const tooltipCode = `// 툴팁 설정
+const tooltipCode = `// Tooltips
 
 const columnDefs: ColDef[] = [
   {
     field: 'name',
-    headerName: '이름',
-    tooltipField: 'name',  // 필드값을 툴팁으로 표시
+    headerName: 'Name',
+    tooltipField: 'name',  // show the field value as the tooltip
   },
   {
     field: 'department',
-    headerName: '부서',
+    headerName: 'Department',
     tooltipValueGetter: (params) => {
-      return \`부서: \${params.data.department}, 팀원: \${params.data.teamSize}명\`;
+      return \`Department: \${params.data.department}, team size: \${params.data.teamSize}\`;
     },
   },
 ];
 
-// 전역 툴팁 설정
+// Global tooltip settings
 <AgGridReact
   tooltipShowDelay={500}
   tooltipHideDelay={2000}
   {...props}
 />`;
 
-/* ─── Code snippets (셀 에디터) ─── */
-const cellEditorBasicCode = `// 내장 셀 에디터
+/* ─── Code snippets (cell editors) ─── */
+const cellEditorBasicCode = `// The built-in cell editors
 
 const columnDefs: ColDef[] = [
   {
     field: 'name',
-    headerName: '이름',
+    headerName: 'Name',
     editable: true,
     cellEditor: 'agTextCellEditor',
   },
   {
     field: 'age',
-    headerName: '나이',
+    headerName: 'Age',
     editable: true,
     cellEditor: 'agNumberCellEditor',
     cellEditorParams: {
@@ -251,7 +251,7 @@ const columnDefs: ColDef[] = [
   },
   {
     field: 'description',
-    headerName: '설명',
+    headerName: 'Description',
     editable: true,
     cellEditor: 'agLargeTextCellEditor',
     cellEditorPopup: true,
@@ -263,7 +263,7 @@ const columnDefs: ColDef[] = [
   },
   {
     field: 'status',
-    headerName: '상태',
+    headerName: 'Status',
     editable: true,
     cellEditor: 'agSelectCellEditor',
     cellEditorParams: {
@@ -272,7 +272,7 @@ const columnDefs: ColDef[] = [
   },
 ];`;
 
-const customCellEditorCode = `// 커스텀 셀 에디터 패턴
+const customCellEditorCode = `// The custom cell editor pattern
 
 import { forwardRef, useImperativeHandle, useRef } from 'react';
 import { DatePicker } from 'antd';
@@ -310,131 +310,131 @@ const DateCellEditor = forwardRef((props: DateCellEditorProps, ref) => {
   );
 });
 
-// 사용
+// Usage
 const columnDefs: ColDef[] = [
   {
     field: 'hireDate',
-    headerName: '입사일',
+    headerName: 'Start date',
     editable: true,
     cellEditor: DateCellEditor,
     cellEditorParams: { format: 'YYYY-MM-DD' },
   },
 ];`;
 
-/* ─── Code snippets (헤더 그룹핑) ─── */
-const headerGroupCode = `// 헤더 그룹핑: children 배열로 컬럼 그룹 구성
+/* ─── Code snippets (header grouping) ─── */
+const headerGroupCode = `// Header grouping: a children array makes a column group
 const [columnDefs] = useState<(ColDef | ColGroupDef)[]>([
-  { field: 'name', headerName: '이름', width: 120, pinned: 'left' },
+  { field: 'name', headerName: 'Name', width: 120, pinned: 'left' },
   {
-    headerName: '인사 정보',        // 그룹 헤더명
-    children: [                     // 하위 컬럼들
-      { field: 'department', headerName: '부서' },
-      { field: 'position', headerName: '직급' },
-      { field: 'hireDate', headerName: '입사일' },
+    headerName: 'HR information',  // group header text
+    children: [                     // the child columns
+      { field: 'department', headerName: 'Department' },
+      { field: 'position', headerName: 'Grade' },
+      { field: 'hireDate', headerName: 'Start date' },
     ],
   },
   {
-    headerName: '급여 정보',
+    headerName: 'Compensation',
     children: [
-      { field: 'salary', headerName: '기본급' },
-      { field: 'bonus', headerName: '상여금' },
-      { field: 'totalPay', headerName: '총 급여' },
+      { field: 'salary', headerName: 'Base salary' },
+      { field: 'bonus', headerName: 'Bonus' },
+      { field: 'totalPay', headerName: 'Total pay' },
     ],
   },
 ]);`;
 
-const headerGroupAdvancedCode = `// 다단 헤더 그룹 (중첩)
+const headerGroupAdvancedCode = `// Multi-level header groups (nested)
 const columnDefs: (ColDef | ColGroupDef)[] = [
-  { field: 'name', headerName: '이름' },
+  { field: 'name', headerName: 'Name' },
   {
-    headerName: '근무 현황',
+    headerName: 'Attendance',
     children: [
       {
-        headerName: '출결',
+        headerName: 'Presence',
         children: [
-          { field: 'attendance', headerName: '출근일' },
-          { field: 'absence', headerName: '결근일' },
+          { field: 'attendance', headerName: 'Days present' },
+          { field: 'absence', headerName: 'Days absent' },
         ],
       },
       {
-        headerName: '성과',
+        headerName: 'Performance',
         children: [
           { field: 'kpi', headerName: 'KPI' },
-          { field: 'evaluation', headerName: '평가' },
+          { field: 'evaluation', headerName: 'Rating' },
         ],
       },
     ],
   },
 ];
 
-// 그룹 열기/닫기 (columnGroupShow)
+// Expanding and collapsing groups (columnGroupShow)
 const columnDefs2 = [
   {
-    headerName: '금액 상세',
+    headerName: 'Amount detail',
     children: [
-      // 그룹 닫혔을 때 보이는 컬럼
-      { field: 'totalPay', headerName: '총액', columnGroupShow: 'closed' },
-      // 그룹 열렸을 때 보이는 컬럼들
-      { field: 'salary', headerName: '기본급', columnGroupShow: 'open' },
-      { field: 'bonus', headerName: '상여금', columnGroupShow: 'open' },
-      { field: 'tax', headerName: '세금', columnGroupShow: 'open' },
+      // shown while the group is collapsed
+      { field: 'totalPay', headerName: 'Total', columnGroupShow: 'closed' },
+      // shown while the group is expanded
+      { field: 'salary', headerName: 'Base salary', columnGroupShow: 'open' },
+      { field: 'bonus', headerName: 'Bonus', columnGroupShow: 'open' },
+      { field: 'tax', headerName: 'Tax', columnGroupShow: 'open' },
     ],
   },
 ];`;
 
-/* ─── Code snippets (셀/행 스패닝) ─── */
-const colSpanCode = `// colSpan: 조건에 따라 셀이 여러 컬럼을 차지
+/* ─── Code snippets (cell and row spanning) ─── */
+const colSpanCode = `// colSpan: let a cell span several columns under a condition
 const columnDefs: ColDef[] = [
   {
     field: 'category',
-    headerName: '구분',
+    headerName: 'Category',
     width: 120,
-    // '소계' 행이면 구분+항목 2컬럼 병합
-    colSpan: (params) => params.data.category?.includes('소계') ? 2 : 1,
+    // On a subtotal row, merge Category and Item into one cell
+    colSpan: (params) => params.data.category?.includes('Subtotal') ? 2 : 1,
     cellStyle: (params) => {
-      if (params.data.category?.includes('소계')) {
+      if (params.data.category?.includes('Subtotal')) {
         return { fontWeight: 'bold', backgroundColor: '#f5f5f5' };
       }
       return undefined;
     },
   },
-  { field: 'item', headerName: '항목', width: 120 },
-  { field: 'q1', headerName: '1분기', type: 'numericColumn' },
-  { field: 'q2', headerName: '2분기', type: 'numericColumn' },
-  { field: 'q3', headerName: '3분기', type: 'numericColumn' },
-  { field: 'q4', headerName: '4분기', type: 'numericColumn' },
+  { field: 'item', headerName: 'Item', width: 120 },
+  { field: 'q1', headerName: 'Q1', type: 'numericColumn' },
+  { field: 'q2', headerName: 'Q2', type: 'numericColumn' },
+  { field: 'q3', headerName: 'Q3', type: 'numericColumn' },
+  { field: 'q4', headerName: 'Q4', type: 'numericColumn' },
 ];`;
 
-const rowSpanCode = `// rowSpan: 같은 값이 연속된 행에서 셀 병합
-// AG Grid v35+ Community 기능 (AllCommunityModule에 포함)
+const rowSpanCode = `// rowSpan: merge cells across consecutive rows with the same value
+// An AG Grid v35+ Community feature (included in AllCommunityModule)
 
 const columnDefs: ColDef[] = [
   {
     field: 'department',
-    headerName: '부서',
-    spanRows: true,       // 같은 값 자동 병합
-    sort: 'asc',          // 정렬해야 병합이 의미 있음
+    headerName: 'Department',
+    spanRows: true,       // merge identical consecutive values
+    sort: 'asc',          // merging only makes sense on sorted data
   },
-  { field: 'name', headerName: '이름' },
-  { field: 'position', headerName: '직급' },
+  { field: 'name', headerName: 'Name' },
+  { field: 'position', headerName: 'Grade' },
 ];
 
-// GridTable에 enableCellSpan 설정 필요
+// enableCellSpan must be set on GridTable
 <GridTable
   columnDefs={columnDefs}
   rowData={rowData}
   enableCellSpan={true}
 />`;
 
-/* ─── Code snippets (풋터/고정 행) ─── */
-const pinnedRowCode = `// pinnedTopRowData: 상단 고정 행 (헤더 아래)
-// pinnedBottomRowData: 하단 고정 행 (풋터)
+/* ─── Code snippets (footer and pinned rows) ─── */
+const pinnedRowCode = `// pinnedTopRowData: rows pinned to the top, below the header
+// pinnedBottomRowData: rows pinned to the bottom (a footer)
 const pinnedTopRowData = useMemo(() => [
-  { name: '[ 평균 ]', department: '-', position: '-', salary: 5460000 },
+  { name: '[ Average ]', department: '-', position: '-', salary: 5460000 },
 ], []);
 
 const pinnedBottomRowData = useMemo(() => [
-  { name: '[ 합계 ]', department: '-', position: '-', salary: 27300000 },
+  { name: '[ Total ]', department: '-', position: '-', salary: 27300000 },
 ], []);
 
 <GridTable
@@ -444,10 +444,10 @@ const pinnedBottomRowData = useMemo(() => [
   pinnedBottomRowData={pinnedBottomRowData}
 />`;
 
-const pinnedRowStyleCode = `// 고정 행 스타일 커스터마이징
+const pinnedRowStyleCode = `// Styling pinned rows
 const defaultColDef: ColDef = {
   cellStyle: (params) => {
-    // 고정 행이면 배경색 + 굵게
+    // Pinned rows get a background color and bold text
     if (params.node.rowPinned) {
       return {
         fontWeight: 'bold',
@@ -458,7 +458,7 @@ const defaultColDef: ColDef = {
   },
 };
 
-// getRowStyle로 전체 행 스타일
+// getRowStyle styles the whole row
 const getRowStyle = (params) => {
   if (params.node.rowPinned === 'bottom') {
     return { fontWeight: 'bold', background: '#f0f0f0' };
@@ -466,10 +466,10 @@ const getRowStyle = (params) => {
   return undefined;
 };`;
 
-const manualGroupingCode = `// Community 에디션에서 그룹핑 효과 자체 구현
-// 전략: 데이터를 그룹별로 정렬 + 소계 행 삽입 + valueFormatter(반복 숨김) + colSpan + 구분선
+const manualGroupingCode = `// Recreating row grouping in the Community edition
+// Approach: sort by group, insert subtotal rows, hide repeats with valueFormatter, add colSpan and a separator line
 
-// 1단계: 원본 데이터를 그룹별로 정렬 + 소계 행 삽입
+// Step 1: sort the source data by group and insert subtotal rows
 function buildGroupedData(rawData: SalesRow[]): SalesRow[] {
   const groups = new Map<string, SalesRow[]>();
   rawData.forEach(row => {
@@ -482,7 +482,7 @@ function buildGroupedData(rawData: SalesRow[]): SalesRow[] {
   groups.forEach((rows, category) => {
     result.push(...rows);
     result.push({
-      category: category + ' 소계',
+      category: category + ' Subtotal',
       item: '',
       q1: rows.reduce((s, r) => s + r.q1, 0),
       q2: rows.reduce((s, r) => s + r.q2, 0),
@@ -492,11 +492,11 @@ function buildGroupedData(rawData: SalesRow[]): SalesRow[] {
   return result;
 }
 
-// 2단계: valueFormatter(반복 숨김) + colSpan + cellStyle
+// Step 2: valueFormatter (hide repeats) + colSpan + cellStyle
 const columnDefs: ColDef[] = [
   {
     field: 'category',
-    headerName: '구분',
+    headerName: 'Category',
     valueFormatter: (params) => {
       if (params.data?.isSubtotal) return params.value;
       const idx = params.node?.rowIndex ?? 0;
@@ -514,94 +514,94 @@ const columnDefs: ColDef[] = [
       return Object.keys(style).length ? style : undefined;
     },
   },
-  { field: 'item', headerName: '항목' },
-  { field: 'q1', headerName: '1분기', type: 'numericColumn' },
-  { field: 'q2', headerName: '2분기', type: 'numericColumn' },
+  { field: 'item', headerName: 'Item' },
+  { field: 'q1', headerName: 'Q1', type: 'numericColumn' },
+  { field: 'q2', headerName: 'Q2', type: 'numericColumn' },
 ];
 
-// 3단계: pinnedBottomRowData로 총계 행 추가
+// Step 3: add the grand total row with pinnedBottomRowData
 <GridTable
   rowData={groupedData}
   columnDefs={columnDefs}
   pinnedBottomRowData={totalRow}
 />`;
 
-/* ─── Code snippets (열 고정) ─── */
-const columnPinningCode = `// 열 고정 (Column Pinning)
+/* ─── Code snippets (column pinning) ─── */
+const columnPinningCode = `// Column pinning
 const columnDefs: ColDef[] = [
-  // 좌측 고정: ID, 이름
+  // Pinned left: ID and name
   {
     field: 'id',
     headerName: 'ID',
     width: 80,
-    pinned: 'left',        // 좌측 고정
-    lockPinned: true,       // 드래그로 고정 해제 불가
+    pinned: 'left',        // pinned to the left
+    lockPinned: true,       // cannot be unpinned by dragging
   },
   {
     field: 'name',
-    headerName: '이름',
+    headerName: 'Name',
     width: 120,
     pinned: 'left',
-    lockPosition: 'left',  // 컬럼 이동 자체를 제한
+    lockPosition: 'left',  // the column cannot be moved at all
   },
 
-  // 일반 컬럼 (스크롤 가능)
-  { field: 'department', headerName: '부서', flex: 1 },
-  { field: 'position', headerName: '직급', flex: 1 },
-  { field: 'hireDate', headerName: '입사일', flex: 1 },
-  { field: 'email', headerName: '이메일', width: 200 },
+  // Regular columns (they scroll)
+  { field: 'department', headerName: 'Department', flex: 1 },
+  { field: 'position', headerName: 'Grade', flex: 1 },
+  { field: 'hireDate', headerName: 'Start date', flex: 1 },
+  { field: 'email', headerName: 'Email', width: 200 },
 
-  // 우측 고정: 급여
+  // Pinned right: salary
   {
     field: 'salary',
-    headerName: '급여',
+    headerName: 'Salary',
     width: 130,
     pinned: 'right',
     type: 'numericColumn',
   },
 ];`;
 
-const dynamicPinningCode = `// API를 통한 동적 열 고정/해제
+const dynamicPinningCode = `// Pinning and unpinning columns through the API
 
-// 특정 컬럼을 좌측 고정
+// Pin a column to the left
 api.setColumnsPinned(['name', 'id'], 'left');
 
-// 특정 컬럼을 우측 고정
+// Pin a column to the right
 api.setColumnsPinned(['salary'], 'right');
 
-// 고정 해제
+// Unpin
 api.setColumnsPinned(['name'], null);
 
-// 컬럼 정의에서 개별 설정
+// Or configure it per column definition
 const colDef: ColDef = {
   field: 'name',
   pinned: 'left',
-  lockPinned: true,      // 사용자가 고정 해제 불가
-  lockPosition: 'left',  // 다른 위치로 이동 불가
-  suppressMovable: true,  // 드래그 이동 완전 비활성화
+  lockPinned: true,      // the user cannot unpin it
+  lockPosition: 'left',  // it cannot be moved elsewhere
+  suppressMovable: true,  // dragging is disabled entirely
 };
 
-// 컨텍스트 메뉴로도 고정 가능
-// 컬럼 헤더 우클릭 → "Pin Column" → Left / Right / No Pin`;
+// The context menu can pin columns too
+// Right-click a column header -> "Pin Column" -> Left / Right / No Pin`;
 
-/* ─── Code snippets (복사/붙여넣기) ─── */
-const clipboardBasicCode = `// GridTable 컴포넌트에 enableClipboard 활성화
+/* ─── Code snippets (copy and paste) ─── */
+const clipboardBasicCode = `// Turn on enableClipboard on the GridTable component
 <GridTable
   columnDefs={columnDefs}
   rowData={rowData}
-  rowSelection="multiRow"    // 행 선택 필요
-  enableClipboard            // 클립보드 기능 활성화
-  editable                   // 붙여넣기는 편집모드에서만
+  rowSelection="multiRow"    // row selection is required
+  enableClipboard            // enables the clipboard feature
+  editable                   // pasting only works in edit mode
   onCellValueChanged={handleCellValueChanged}
 />
 
-// 사용법:
-// 1. 체크박스로 행 선택 (여러 행 가능)
-// 2. Ctrl+C → 선택 행이 헤더 포함 탭 구분 텍스트로 복사
-// 3. 엑셀/구글시트에 Ctrl+V로 붙여넣기 가능
-// 4. 편집모드에서 Ctrl+V → 클립보드 데이터가 셀에 입력`;
+// How to use it:
+// 1. Select rows with the checkboxes (several at a time)
+// 2. Ctrl+C copies the selected rows as tab-separated text, header included
+// 3. Ctrl+V pastes straight into Excel or Google Sheets
+// 4. In edit mode, Ctrl+V writes the clipboard data into the cells`;
 
-const clipboardImplCode = `// GridTable.tsx 내부 클립보드 구현 핵심
+const clipboardImplCode = `// The core of the clipboard implementation in GridTable.tsx
 useEffect(() => {
   if (!enableClipboard) return;
 
@@ -610,7 +610,7 @@ useEffect(() => {
     const api = gridRef.current?.api;
     if (!api) return;
 
-    // Ctrl+C: 선택된 행을 탭 구분 텍스트로 복사
+    // Ctrl+C: copy the selected rows as tab-separated text
     if ((e.ctrlKey || e.metaKey) && e.key === 'c') {
       const selectedRows = api.getSelectedRows();
       if (selectedRows.length === 0) return;
@@ -623,10 +623,10 @@ useEffect(() => {
 
       e.preventDefault();
       navigator.clipboard.writeText(text);
-      message.success(selectedRows.length + '행 복사');
+      message.success(selectedRows.length + ' rows copied');
     }
 
-    // Ctrl+V: 클립보드 → 포커스 셀부터 붙여넣기
+    // Ctrl+V: paste from the clipboard starting at the focused cell
     if ((e.ctrlKey || e.metaKey) && e.key === 'v' && editable) {
       const focused = api.getFocusedCell();
       if (!focused) return;
@@ -647,12 +647,12 @@ useEffect(() => {
     }
   };
 
-  // capture: true → AG Grid 내부 이벤트 차단 무관하게 동작
+  // capture: true -> works regardless of AG Grid stopping the event internally
   document.addEventListener('keydown', handleKeyDown, true);
   return () => document.removeEventListener('keydown', handleKeyDown, true);
 }, [enableClipboard, columnDefs, editable]);`;
 
-const contextMenuBasicCode = `// getContextMenuItems prop으로 우클릭 메뉴를 커스터마이징합니다.
+const contextMenuBasicCode = `// getContextMenuItems customizes the right-click menu.
 import GridTable from '@/components/grid/GridTable';
 import type { GetContextMenuItemsParams } from 'ag-grid-community';
 
@@ -662,36 +662,36 @@ import type { GetContextMenuItemsParams } from 'ag-grid-community';
   rowKey="id"
   getContextMenuItems={(params: GetContextMenuItemsParams) => [
     {
-      name: \`"\${params.node?.data?.name}" 상세보기\`,
+      name: \`View "\${params.node?.data?.name}"\`,
       action: () => openDetail(params.node?.data),
       icon: '<span>🔍</span>',
     },
     {
-      name: '수정',
+      name: 'Edit',
       disabled: !canWrite,
       action: () => openEdit(params.node?.data),
       icon: '<span>✏️</span>',
     },
     'separator',
     {
-      name: '삭제',
+      name: 'Delete',
       disabled: !canWrite,
       action: () => handleDelete(params.node?.data?.id),
       icon: '<span>🗑️</span>',
     },
     'separator',
-    'copy',           // AG Grid 기본 제공 항목
+    'copy',           // a built-in AG Grid item
     'copyWithHeaders',
   ]}
 />`;
 
-const contextMenuBuiltinCode = `// AG Grid 기본 제공 항목 (문자열로 지정)
+const contextMenuBuiltinCode = `// Built-in AG Grid items (given as strings)
 // 'copy' | 'copyWithHeaders' | 'cut' | 'paste' | 'export' | 'separator'
 
-// 기본 항목만 유지하는 예시
+// Keeping only the built-in items
 getContextMenuItems={() => ['copy', 'copyWithHeaders', 'separator', 'export']}
 
-// 완전히 비활성화
+// Disabling it entirely
 <GridTable suppressContextMenu={true} ... />`;
 
 /* ─── Mock data (existing) ─── */
@@ -705,21 +705,21 @@ interface Employee {
 }
 
 const basicData: Employee[] = [
-  { id: 'E001', name: '김영수', department: '개발1팀', role: '팀장', email: 'kim@ds.com', joinDate: '2020-03-15' },
-  { id: 'E002', name: '이미영', department: '개발1팀', role: '선임', email: 'lee@ds.com', joinDate: '2019-07-01' },
-  { id: 'E003', name: '박정호', department: '개발2팀', role: '팀장', email: 'park@ds.com', joinDate: '2021-05-20' },
-  { id: 'E004', name: '최수진', department: '개발2팀', role: '사원', email: 'choi@ds.com', joinDate: '2023-01-10' },
-  { id: 'E005', name: '정민우', department: '기획팀', role: '팀장', email: 'jung@ds.com', joinDate: '2018-11-01' },
-  { id: 'E006', name: '한지은', department: '디자인팀', role: '선임', email: 'han@ds.com', joinDate: '2020-09-15' },
-  { id: 'E007', name: '송태현', department: '개발1팀', role: '사원', email: 'song@ds.com', joinDate: '2022-06-01' },
-  { id: 'E008', name: '윤서연', department: 'QA팀', role: '팀장', email: 'yoon@ds.com', joinDate: '2019-03-20' },
-  { id: 'E009', name: '임재혁', department: '개발2팀', role: '선임', email: 'im@ds.com', joinDate: '2021-09-01' },
-  { id: 'E010', name: '오하늘', department: '기획팀', role: '사원', email: 'oh@ds.com', joinDate: '2023-07-15' },
-  { id: 'E011', name: '강민준', department: '개발1팀', role: '사원', email: 'kang@ds.com', joinDate: '2024-02-01' },
-  { id: 'E012', name: '서지훈', department: '개발2팀', role: '사원', email: 'seo@ds.com', joinDate: '2024-04-10' },
-  { id: 'E013', name: '장수연', department: '디자인팀', role: '사원', email: 'jang@ds.com', joinDate: '2023-11-01' },
-  { id: 'E014', name: '배현우', department: 'QA팀', role: '선임', email: 'bae@ds.com', joinDate: '2020-12-15' },
-  { id: 'E015', name: '권도현', department: '인프라팀', role: '팀장', email: 'kwon@ds.com', joinDate: '2017-08-01' },
+  { id: 'E001', name: 'Steve Kim', department: 'Engineering A', role: 'Team lead', email: 'kim@ds.com', joinDate: '2020-03-15' },
+  { id: 'E002', name: 'Michelle Lee', department: 'Engineering A', role: 'Senior', email: 'lee@ds.com', joinDate: '2019-07-01' },
+  { id: 'E003', name: 'Paul Park', department: 'Engineering B', role: 'Team lead', email: 'park@ds.com', joinDate: '2021-05-20' },
+  { id: 'E004', name: 'Susan Choi', department: 'Engineering B', role: 'Staff', email: 'choi@ds.com', joinDate: '2023-01-10' },
+  { id: 'E005', name: 'Andrew Jung', department: 'Planning', role: 'Team lead', email: 'jung@ds.com', joinDate: '2018-11-01' },
+  { id: 'E006', name: 'Jane Han', department: 'Design', role: 'Senior', email: 'han@ds.com', joinDate: '2020-09-15' },
+  { id: 'E007', name: 'Thomas Song', department: 'Engineering A', role: 'Staff', email: 'song@ds.com', joinDate: '2022-06-01' },
+  { id: 'E008', name: 'Laura Yoon', department: 'QA', role: 'Team lead', email: 'yoon@ds.com', joinDate: '2019-03-20' },
+  { id: 'E009', name: 'Jacob Lim', department: 'Engineering B', role: 'Senior', email: 'im@ds.com', joinDate: '2021-09-01' },
+  { id: 'E010', name: 'Hannah Oh', department: 'Planning', role: 'Staff', email: 'oh@ds.com', joinDate: '2023-07-15' },
+  { id: 'E011', name: 'Justin Kang', department: 'Engineering A', role: 'Staff', email: 'kang@ds.com', joinDate: '2024-02-01' },
+  { id: 'E012', name: 'Jihoon Seo', department: 'Engineering B', role: 'Staff', email: 'seo@ds.com', joinDate: '2024-04-10' },
+  { id: 'E013', name: 'Sue Jang', department: 'Design', role: 'Staff', email: 'jang@ds.com', joinDate: '2023-11-01' },
+  { id: 'E014', name: 'Brian Bae', department: 'QA', role: 'Senior', email: 'bae@ds.com', joinDate: '2020-12-15' },
+  { id: 'E015', name: 'Kevin Kwon', department: 'Infrastructure', role: 'Team lead', email: 'kwon@ds.com', joinDate: '2017-08-01' },
 ];
 
 interface EditableTask {
@@ -733,23 +733,23 @@ interface EditableTask {
 }
 
 const editableData: EditableTask[] = [
-  { id: 'T001', name: '로그인 UI 개발', status: 'in_progress', priority: '높음', dueDate: '2025-04-15', assignee: '김영수', tags: ['기능', '긴급'] },
-  { id: 'T002', name: 'API 인증 모듈', status: 'planned', priority: '높음', dueDate: '2025-04-20', assignee: '이미영', tags: ['기능'] },
-  { id: 'T003', name: '대시보드 차트', status: 'completed', priority: '중간', dueDate: '2025-03-30', assignee: '송태현', tags: ['기능', '개선'] },
-  { id: 'T004', name: '메모리 누수 수정', status: 'in_progress', priority: '긴급', dueDate: '2025-04-10', assignee: '박정호', tags: ['버그', '긴급'] },
-  { id: 'T005', name: '문서 업데이트', status: 'planned', priority: '낮음', dueDate: '2025-05-01', assignee: '윤서연', tags: [] },
-  { id: 'T006', name: '성능 테스트', status: 'planned', priority: '중간', dueDate: '2025-04-25', assignee: '배현우', tags: ['QA'] },
-  { id: 'T007', name: '다크모드 지원', status: 'planned', priority: '낮음', dueDate: '2025-05-15', assignee: '한지은', tags: ['UI', '개선'] },
-  { id: 'T008', name: 'DB 인덱스 최적화', status: 'in_progress', priority: '높음', dueDate: '2025-04-30', assignee: '임재혁', tags: ['성능', 'DB'] },
-  { id: 'T009', name: '알림 센터 구현', status: 'completed', priority: '중간', dueDate: '2025-03-25', assignee: '최수진', tags: ['기능'] },
-  { id: 'T010', name: '접근성(a11y) 개선', status: 'planned', priority: '낮음', dueDate: '2025-06-30', assignee: '오하늘', tags: ['UI', '접근성'] },
-  { id: 'T011', name: 'CI/CD 파이프라인 설정', status: 'completed', priority: '높음', dueDate: '2025-03-10', assignee: '권도현', tags: ['DevOps'] },
-  { id: 'T012', name: '모바일 반응형 작업', status: 'in_progress', priority: '중간', dueDate: '2025-05-20', assignee: '장수연', tags: ['UI', '모바일'] },
+  { id: 'T001', name: 'Login UI development', status: 'in_progress', priority: 'High', dueDate: '2025-04-15', assignee: 'Steve Kim', tags: ['Feature', 'Urgent'] },
+  { id: 'T002', name: 'API authentication module', status: 'planned', priority: 'High', dueDate: '2025-04-20', assignee: 'Michelle Lee', tags: ['Feature'] },
+  { id: 'T003', name: 'Dashboard charts', status: 'completed', priority: 'Medium', dueDate: '2025-03-30', assignee: 'Thomas Song', tags: ['Feature', 'Improvement'] },
+  { id: 'T004', name: 'Fix the memory leak', status: 'in_progress', priority: 'Critical', dueDate: '2025-04-10', assignee: 'Paul Park', tags: ['Bug', 'Urgent'] },
+  { id: 'T005', name: 'Update the docs', status: 'planned', priority: 'Low', dueDate: '2025-05-01', assignee: 'Laura Yoon', tags: [] },
+  { id: 'T006', name: 'Performance testing', status: 'planned', priority: 'Medium', dueDate: '2025-04-25', assignee: 'Brian Bae', tags: ['QA'] },
+  { id: 'T007', name: 'Dark mode support', status: 'planned', priority: 'Low', dueDate: '2025-05-15', assignee: 'Jane Han', tags: ['UI', 'Improvement'] },
+  { id: 'T008', name: 'Database index tuning', status: 'in_progress', priority: 'High', dueDate: '2025-04-30', assignee: 'Jacob Lim', tags: ['Performance', 'DB'] },
+  { id: 'T009', name: 'Notification center', status: 'completed', priority: 'Medium', dueDate: '2025-03-25', assignee: 'Susan Choi', tags: ['Feature'] },
+  { id: 'T010', name: 'Accessibility (a11y) work', status: 'planned', priority: 'Low', dueDate: '2025-06-30', assignee: 'Hannah Oh', tags: ['UI', 'A11y'] },
+  { id: 'T011', name: 'CI/CD pipeline setup', status: 'completed', priority: 'High', dueDate: '2025-03-10', assignee: 'Kevin Kwon', tags: ['DevOps'] },
+  { id: 'T012', name: 'Responsive mobile work', status: 'in_progress', priority: 'Medium', dueDate: '2025-05-20', assignee: 'Sue Jang', tags: ['UI', 'Mobile'] },
 ];
 
 const statusColors: Record<string, string> = { planned: 'default', in_progress: 'processing', completed: 'success' };
-const statusLabels: Record<string, string> = { planned: '계획', in_progress: '진행중', completed: '완료' };
-const priorityColors: Record<string, string> = { '긴급': 'red', '높음': 'orange', '중간': 'blue', '낮음': 'default' };
+const statusLabels: Record<string, string> = { planned: 'Planned', in_progress: 'In progress', completed: 'Completed' };
+const priorityColors: Record<string, string> = { 'Critical': 'red', 'High': 'orange', 'Medium': 'blue', 'Low': 'default' };
 
 /* ─── Mock data (new) ─── */
 interface GroupDemoRow {
@@ -763,12 +763,12 @@ interface GroupDemoRow {
 }
 
 const groupDemoData: GroupDemoRow[] = [
-  { id: 1, name: '김철수', department: '개발팀', position: '팀장', hireDate: '2020-01-15', salary: 6500000, bonus: 1000000 },
-  { id: 2, name: '박민수', department: '개발팀', position: '대리', hireDate: '2022-05-10', salary: 4500000, bonus: 600000 },
-  { id: 3, name: '한지혜', department: '개발팀', position: '사원', hireDate: '2024-02-01', salary: 3500000, bonus: 400000 },
-  { id: 4, name: '이영희', department: '기획팀', position: '과장', hireDate: '2021-03-20', salary: 5500000, bonus: 800000 },
-  { id: 5, name: '정수연', department: '디자인팀', position: '사원', hireDate: '2023-07-01', salary: 3800000, bonus: 500000 },
-  { id: 6, name: '최동욱', department: '영업팀', position: '부장', hireDate: '2019-11-05', salary: 7000000, bonus: 1200000 },
+  { id: 1, name: 'Michael Chen', department: 'Engineering', position: 'Team lead', hireDate: '2020-01-15', salary: 6500000, bonus: 1000000 },
+  { id: 2, name: 'David Kim', department: 'Engineering', position: 'Associate', hireDate: '2022-05-10', salary: 4500000, bonus: 600000 },
+  { id: 3, name: 'Grace Han', department: 'Engineering', position: 'Staff', hireDate: '2024-02-01', salary: 3500000, bonus: 400000 },
+  { id: 4, name: 'Emily Park', department: 'Planning', position: 'Manager', hireDate: '2021-03-20', salary: 5500000, bonus: 800000 },
+  { id: 5, name: 'Sophia Jung', department: 'Design', position: 'Staff', hireDate: '2023-07-01', salary: 3800000, bonus: 500000 },
+  { id: 6, name: 'Peter Han', department: 'Sales', position: 'Director', hireDate: '2019-11-05', salary: 7000000, bonus: 1200000 },
 ];
 
 interface SpanDemoRow {
@@ -782,14 +782,14 @@ interface SpanDemoRow {
 }
 
 const spanDemoData: SpanDemoRow[] = [
-  { id: 1, category: '매출', item: '제품A', q1: 1200, q2: 1500, q3: 1100, q4: 1800 },
-  { id: 2, category: '매출', item: '제품B', q1: 800, q2: 900, q3: 950, q4: 1100 },
-  { id: 3, category: '매출', item: '제품C', q1: 600, q2: 700, q3: 750, q4: 800 },
-  { id: 4, category: '매출 소계', item: '', q1: 2600, q2: 3100, q3: 2800, q4: 3700 },
-  { id: 5, category: '비용', item: '인건비', q1: 2000, q2: 2000, q3: 2100, q4: 2100 },
-  { id: 6, category: '비용', item: '운영비', q1: 500, q2: 550, q3: 520, q4: 600 },
-  { id: 7, category: '비용', item: '마케팅', q1: 300, q2: 400, q3: 350, q4: 500 },
-  { id: 8, category: '비용 소계', item: '', q1: 2800, q2: 2950, q3: 2970, q4: 3200 },
+  { id: 1, category: 'Revenue', item: 'Product A', q1: 1200, q2: 1500, q3: 1100, q4: 1800 },
+  { id: 2, category: 'Revenue', item: 'Product B', q1: 800, q2: 900, q3: 950, q4: 1100 },
+  { id: 3, category: 'Revenue', item: 'Product C', q1: 600, q2: 700, q3: 750, q4: 800 },
+  { id: 4, category: 'Revenue Subtotal', item: '', q1: 2600, q2: 3100, q3: 2800, q4: 3700 },
+  { id: 5, category: 'Cost', item: 'Payroll', q1: 2000, q2: 2000, q3: 2100, q4: 2100 },
+  { id: 6, category: 'Cost', item: 'Operations', q1: 500, q2: 550, q3: 520, q4: 600 },
+  { id: 7, category: 'Cost', item: 'Marketing', q1: 300, q2: 400, q3: 350, q4: 500 },
+  { id: 8, category: 'Cost Subtotal', item: '', q1: 2800, q2: 2950, q3: 2970, q4: 3200 },
 ];
 
 interface RowSpanDemoRow {
@@ -801,89 +801,89 @@ interface RowSpanDemoRow {
 }
 
 const rowSpanDemoData: RowSpanDemoRow[] = [
-  { id: 1, department: '개발본부', team: '프론트엔드', name: '김철수', role: '팀장' },
-  { id: 2, department: '개발본부', team: '프론트엔드', name: '이영희', role: '시니어' },
-  { id: 3, department: '개발본부', team: '백엔드', name: '박민수', role: '팀장' },
-  { id: 4, department: '개발본부', team: '백엔드', name: '한지혜', role: '주니어' },
-  { id: 5, department: '개발본부', team: '백엔드', name: '조현우', role: '주니어' },
-  { id: 6, department: '경영지원', team: '인사팀', name: '정수연', role: '과장' },
-  { id: 7, department: '경영지원', team: '인사팀', name: '최동욱', role: '대리' },
-  { id: 8, department: '경영지원', team: '재무팀', name: '윤미라', role: '팀장' },
+  { id: 1, department: 'Engineering', team: 'Front-end', name: 'Michael Chen', role: 'Team lead' },
+  { id: 2, department: 'Engineering', team: 'Front-end', name: 'Emily Park', role: 'Senior' },
+  { id: 3, department: 'Engineering', team: 'Backend', name: 'David Kim', role: 'Team lead' },
+  { id: 4, department: 'Engineering', team: 'Backend', name: 'Grace Han', role: 'Junior' },
+  { id: 5, department: 'Engineering', team: 'Backend', name: 'Hugo Cho', role: 'Junior' },
+  { id: 6, department: 'Corporate', team: 'HR', name: 'Sophia Jung', role: 'Manager' },
+  { id: 7, department: 'Corporate', team: 'HR', name: 'Peter Han', role: 'Associate' },
+  { id: 8, department: 'Corporate', team: 'Finance', name: 'Mira Yoon', role: 'Team lead' },
 ];
 
-// ── Code snippets (DatePicker 셀) ─────────────────────────────────────────────
+// ── Code snippets (DatePicker cells) ────────────────────────────────────────
 
 const dateCellCode = `import DateCellEditor, { DateCellRenderer } from '@/components/grid/cellEditors/DateCellEditor';
 
-// DateCellRenderer: 날짜를 지정 포맷으로 표시
-// DateCellEditor:   Ant Design DatePicker 팝업 에디터 (선택 즉시 편집 종료)
+// DateCellRenderer: displays a date in the given format
+// DateCellEditor:   an Ant Design DatePicker popup editor (editing ends as soon as a date is picked)
 const columnDefs: ColDef[] = [
   {
     field: 'startDt',
-    headerName: '시작일',
+    headerName: 'Start date',
     editable: true,
     cellRenderer: DateCellRenderer,
-    cellRendererParams: { format: 'YYYY-MM-DD' },  // 기본값, 생략 가능
+    cellRendererParams: { format: 'YYYY-MM-DD' },  // the default; can be omitted
     cellEditor: DateCellEditor,
   },
   {
     field: 'endDt',
-    headerName: '종료일',
+    headerName: 'End date',
     editable: true,
     cellRenderer: DateCellRenderer,
-    cellRendererParams: { format: 'YYYY.MM.DD' },  // 커스텀 포맷
+    cellRendererParams: { format: 'YYYY.MM.DD' },  // a custom format
     cellEditor: DateCellEditor,
     cellEditorParams: { format: 'YYYY.MM.DD' },
   },
 ];
 
-// GridTable 사용
+// Using GridTable
 <GridTable
   columnDefs={columnDefs}
   rowData={data}
   rowKey="id"
-  editable={false}   // 컬럼별 editable: true로 개별 제어
+  editable={false}   // control it per column with editable: true
   pagination={false}
 />`;
 
-// ── Code snippets (Tree 구조) ─────────────────────────────────────────────────
+// ── Code snippets (tree structure) ──────────────────────────────────────────
 
 const treeCellCode = `import { useTreeGrid } from '@/components/grid/useTreeGrid';
 import { TreeCellRenderer } from '@/components/grid/TreeCellRenderer';
 
-// 1) 원본 flat 데이터 (parentId로 계층 표현)
+// 1) The flat source data (the hierarchy lives in parentId)
 const orgData = [
-  { id: '001', name: '본사', parentId: null },
-  { id: '010', name: '개발본부', parentId: '001' },
-  { id: '011', name: '프론트엔드팀', parentId: '010' },
-  { id: '012', name: '백엔드팀', parentId: '010' },
-  { id: '020', name: '경영지원본부', parentId: '001' },
-  { id: '021', name: '인사팀', parentId: '020' },
+  { id: '001', name: 'Head office', parentId: null },
+  { id: '010', name: 'Engineering division', parentId: '001' },
+  { id: '011', name: 'Front-end team', parentId: '010' },
+  { id: '012', name: 'Backend team', parentId: '010' },
+  { id: '020', name: 'Corporate division', parentId: '001' },
+  { id: '021', name: 'HR team', parentId: '020' },
 ];
 
-// 2) useTreeGrid로 트리 데이터 처리
+// 2) Turn it into tree rows with useTreeGrid
 const { treeData, toggleExpand, expandAll, collapseAll } = useTreeGrid({
   data: orgData,
-  idField: 'id',          // PK 필드명 (기본값: 'id')
-  parentField: 'parentId', // 부모 ID 필드명 (기본값: 'parentId')
-  defaultExpanded: true,   // 초기 전체 펼침 (기본값: true)
+  idField: 'id',          // primary key field (default: 'id')
+  parentField: 'parentId', // parent id field (default: 'parentId')
+  defaultExpanded: true,   // expand everything initially (default: true)
 });
 
-// 3) TreeCellRenderer를 계층 컬럼에 적용
+// 3) Apply TreeCellRenderer to the hierarchy column
 const columnDefs: ColDef[] = [
   {
     field: 'name',
-    headerName: '조직명',
+    headerName: 'Organization',
     cellRenderer: TreeCellRenderer,
     cellRendererParams: {
-      onToggle: toggleExpand,   // 접기/펼치기 토글
-      indentSize: 18,           // 레벨당 들여쓰기(px), 기본값 18
+      onToggle: toggleExpand,   // the collapse/expand toggle
+      indentSize: 18,           // indent per level in px (default 18)
     },
   },
-  { field: 'id', headerName: '코드', width: 100 },
+  { field: 'id', headerName: 'Code', width: 100 },
 ];
 
-// 4) GridTable에 treeData 사용 (rowKey 필수)
+// 4) Pass treeData to GridTable (rowKey is required)
 <GridTable
   columnDefs={columnDefs}
   rowData={treeData}
@@ -891,33 +891,33 @@ const columnDefs: ColDef[] = [
   pagination={false}
 />`;
 
-// ── Code snippets (ComcdSelect 체이닝) ────────────────────────────────────────
+// ── Code snippets (ComcdSelect chaining) ────────────────────────────────────
 
 const comcdChainCellCode = `import { ComcdSelectCellRenderer, ComcdSelectCellEditor } from '@/components/grid/ComcdSelectCell';
 import type { CodeDetail } from '@/api/common/comCdApi';
 
-// cellEditorParams를 함수로 지정하면 params.data (행 데이터)에 접근 가능
-// → 같은 행의 다른 컬럼값으로 자식 셀렉트 옵션 필터링
+// Make cellEditorParams a function and you get access to params.data (the row)
+// -> filter the child select's options by another column in the same row
 const columnDefs: ColDef[] = [
-  // 부모 컬럼
+  // Parent column
   {
     field: 'parentCd',
-    headerName: '대분류',
+    headerName: 'Category',
     editable: true,
     cellRenderer: ComcdSelectCellRenderer,
     cellRendererParams: { cdDmnId: 'PARENT_CD' },
     cellEditor: ComcdSelectCellEditor,
     cellEditorParams: { cdDmnId: 'PARENT_CD' },
   },
-  // 자식 컬럼 — cellEditorParams를 함수로 사용하여 부모값 참조
+  // Child column — cellEditorParams as a function so it can read the parent value
   {
     field: 'childCd',
-    headerName: '소분류',
+    headerName: 'Subcategory',
     editable: true,
     cellRenderer: ComcdSelectCellRenderer,
     cellRendererParams: { cdDmnId: 'CHILD_CD' },
     cellEditor: ComcdSelectCellEditor,
-    // 함수 형태 — params.data에서 같은 행의 parentCd 읽기
+    // Function form — reads parentCd from the same row via params.data
     cellEditorParams: (params: any) => ({
       cdDmnId: 'CHILD_CD',
       filterFn: (code: CodeDetail) => code.bzLrgCzCd === params.data.parentCd,
@@ -929,40 +929,40 @@ const columnDefs: ColDef[] = [
 
 const comcdCellCode = `import { ComcdSelectCellRenderer, ComcdSelectCellEditor } from '@/components/grid/ComcdSelectCell';
 
-// cellRenderer: 코드값 → 명칭으로 자동 표시 (comcdStore 참조)
-// cellEditor:   ComcdSelect 드롭다운 팝업 에디터
+// cellRenderer: turns the code into its display name (looked up in comcdStore)
+// cellEditor:   the ComcdSelect dropdown popup editor
 const columnDefs: ColDef[] = [
   {
     field: 'jbcCd',
-    headerName: '직급',
+    headerName: 'Grade',
     cellRenderer: ComcdSelectCellRenderer,
     cellRendererParams: { cdDmnId: 'JBC_CD' },
-    // editable 편집 추가 시:
+    // When you add editing:
     editable: true,
     cellEditor: ComcdSelectCellEditor,
     cellEditorParams: { cdDmnId: 'JBC_CD' },
   },
   {
     field: 'gdCd',
-    headerName: '등급',
+    headerName: 'Level',
     cellRenderer: ComcdSelectCellRenderer,
     cellRendererParams: { cdDmnId: 'GD_CD' },
   },
 ];`;
 
 const searchCellCode = `import { SearchSelectCellRenderer, SearchSelectCellEditor, searchSelectValueFormatter } from '@/components/grid/SearchSelectCell';
-import { getOrgList } from '@/api/{도메인}/org';   // API 호출은 src/api/{도메인}/ 아래에 둔다
+import { getOrgList } from '@/api/{domain}/org';   // API calls live under src/api/{domain}/
 
-// cellRenderer:    { label, value } 또는 plain string에서 명칭(label)만 표시
-// valueFormatter:  AG Grid warning #48 억제 + 클립보드/CSV 텍스트 변환
-// cellEditor:      AutoComplete 에디터 (fetchOptions 또는 staticOptions 전달)
+// cellRenderer:    shows only the label from { label, value } or a plain string
+// valueFormatter:  silences AG Grid warning #48 and converts to text for clipboard/CSV
+// cellEditor:      an autocomplete editor (pass fetchOptions or staticOptions)
 const columnDefs: ColDef[] = [
   {
     field: 'dept',
-    headerName: '부서',
+    headerName: 'Department',
     editable: true,
     cellRenderer: SearchSelectCellRenderer,
-    valueFormatter: searchSelectValueFormatter,  // ← warning #48 해결
+    valueFormatter: searchSelectValueFormatter,  // <- fixes warning #48
     cellEditor: SearchSelectCellEditor,
     cellEditorParams: {
       fetchOptions: async (kw: string) => {
@@ -973,16 +973,16 @@ const columnDefs: ColDef[] = [
   },
   {
     field: 'dept',
-    headerName: '부서 (staticOptions)',
+    headerName: 'Department (staticOptions)',
     editable: true,
     cellRenderer: SearchSelectCellRenderer,
     cellEditor: SearchSelectCellEditor,
     cellEditorParams: {
       staticOptions: [
-        { label: '개발1팀', value: 'D001' },
-        { label: '개발2팀', value: 'D002' },
-        { label: '기획팀',  value: 'D003' },
-        { label: '디자인팀', value: 'D004' },
+        { label: 'Engineering A', value: 'D001' },
+        { label: 'Engineering B', value: 'D002' },
+        { label: 'Planning', value: 'D003' },
+        { label: 'Design', value: 'D004' },
       ],
     },
   },
@@ -999,27 +999,27 @@ interface ComcdDemoRow {
 }
 
 const SAMPLE_DEPTS: SearchSelectOption[] = [
-  { label: '개발1팀',   value: 'D001', upDept: '개발본부' },
-  { label: '개발2팀',   value: 'D002', upDept: '개발본부' },
-  { label: '기획팀',    value: 'D003', upDept: '경영지원' },
-  { label: '디자인팀',  value: 'D004', upDept: '경영지원' },
-  { label: 'QA팀',     value: 'D005', upDept: '개발본부' },
-  { label: '인사팀',    value: 'D006', upDept: '경영지원' },
-  { label: '재무팀',    value: 'D007', upDept: '경영지원' },
+  { label: 'Engineering A', value: 'D001', upDept: 'Engineering' },
+  { label: 'Engineering B', value: 'D002', upDept: 'Engineering' },
+  { label: 'Planning', value: 'D003', upDept: 'Corporate' },
+  { label: 'Design', value: 'D004', upDept: 'Corporate' },
+  { label: 'QA', value: 'D005', upDept: 'Engineering' },
+  { label: 'HR', value: 'D006', upDept: 'Corporate' },
+  { label: 'Finance', value: 'D007', upDept: 'Corporate' },
 ];
 
-// ── 체이닝 그리드 데모 데이터 ─────────────────────────────────────────────────
+// ── Data for the chained-select grid demo ───────────────────────────────────
 
 const CHAIN_PARENT_OPTS = [
-  { label: 'SW 개발', value: 'SW' },
-  { label: '인프라', value: 'INFRA' },
-  { label: '운영지원', value: 'OPS' },
+  { label: 'Software', value: 'SW' },
+  { label: 'Infrastructure', value: 'INFRA' },
+  { label: 'Operations', value: 'OPS' },
 ];
 
 const CHAIN_CHILD_MAP: Record<string, Array<{ label: string; value: string }>> = {
-  SW:    [{ label: '프론트엔드', value: 'SW01' }, { label: '백엔드', value: 'SW02' }, { label: '모바일앱', value: 'SW03' }],
-  INFRA: [{ label: '네트워크', value: 'INF01' }, { label: '서버/스토리지', value: 'INF02' }, { label: 'DB 관리', value: 'INF03' }],
-  OPS:   [{ label: '모니터링', value: 'OPS01' }, { label: '고객지원', value: 'OPS02' }, { label: '보안운영', value: 'OPS03' }],
+  SW:    [{ label: 'Front-end', value: 'SW01' }, { label: 'Backend', value: 'SW02' }, { label: 'Mobile app', value: 'SW03' }],
+  INFRA: [{ label: 'Network', value: 'INF01' }, { label: 'Server / storage', value: 'INF02' }, { label: 'Database administration', value: 'INF03' }],
+  OPS:   [{ label: 'Monitoring', value: 'OPS01' }, { label: 'Customer support', value: 'OPS02' }, { label: 'Security operations', value: 'OPS03' }],
 };
 
 const CHAIN_PARENT_LABEL: Record<string, string> = Object.fromEntries(CHAIN_PARENT_OPTS.map(o => [o.value, o.label]));
@@ -1030,25 +1030,25 @@ const CHAIN_CHILD_LABEL: Record<string, string> = Object.fromEntries(
 interface ChainRow { id: number; task: string; parentCd: string; childCd: string; }
 
 const CHAIN_INIT_ROWS: ChainRow[] = [
-  { id: 1, task: '로그인 UI 개발', parentCd: 'SW', childCd: 'SW01' },
-  { id: 2, task: '서버 증설', parentCd: 'INFRA', childCd: 'INF02' },
-  { id: 3, task: '장애 대응', parentCd: 'OPS', childCd: 'OPS01' },
-  { id: 4, task: '미분류 업무', parentCd: '', childCd: '' },
+  { id: 1, task: 'Login UI development', parentCd: 'SW', childCd: 'SW01' },
+  { id: 2, task: 'Add server capacity', parentCd: 'INFRA', childCd: 'INF02' },
+  { id: 3, task: 'Incident response', parentCd: 'OPS', childCd: 'OPS01' },
+  { id: 4, task: 'Uncategorized task', parentCd: '', childCd: '' },
 ];
 
 function ComcdChainGridDemo() {
   const [rows, setRows] = useState<ChainRow[]>(CHAIN_INIT_ROWS);
 
   const chainCols = useMemo<ColDef<ChainRow>[]>(() => [
-    { field: 'task', headerName: '업무명', minWidth: 160, editable: true },
+    { field: 'task', headerName: 'Task name', minWidth: 160, editable: true },
     {
-      field: 'parentCd', headerName: '대분류', width: 140, flex: 0,
+      field: 'parentCd', headerName: 'Category', width: 140, flex: 0,
       editable: true,
       cellRenderer: (p: any) => {
         const label = CHAIN_PARENT_LABEL[p.value];
         return label
           ? <span style={{ background: '#e6f4ff', color: '#1677ff', padding: '1px 7px', borderRadius: 10, fontSize: 12 }}>{label}</span>
-          : <span style={{ color: '#bfbfbf', fontSize: 12 }}>미선택</span>;
+          : <span style={{ color: '#bfbfbf', fontSize: 12 }}>Not selected</span>;
       },
       cellEditor: SelectCellEditor,
       cellEditorParams: {
@@ -1068,16 +1068,16 @@ function ComcdChainGridDemo() {
       ),
     },
     {
-      field: 'childCd', headerName: '소분류', width: 180,
+      field: 'childCd', headerName: 'Subcategory', width: 180,
       editable: (p: any) => !!p.data?.parentCd,
       cellRenderer: (p: any) => {
-        if (!p.data?.parentCd) return <span style={{ color: '#bfbfbf', fontSize: 12 }}>← 대분류 먼저</span>;
+        if (!p.data?.parentCd) return <span style={{ color: '#bfbfbf', fontSize: 12 }}>Pick a category first</span>;
         const label = CHAIN_CHILD_LABEL[p.value];
         return label
           ? <span style={{ background: '#f6ffed', color: '#52c41a', padding: '1px 7px', borderRadius: 10, fontSize: 12 }}>{label}</span>
-          : <span style={{ color: '#bfbfbf', fontSize: 12 }}>선택 없음</span>;
+          : <span style={{ color: '#bfbfbf', fontSize: 12 }}>None</span>;
       },
-      // cellEditorParams를 함수로 — params.data.parentCd 기반으로 옵션 동적 필터링
+      // cellEditorParams as a function — filters options by params.data.parentCd
       cellEditorParams: (p: any) => {
         const opts = CHAIN_CHILD_MAP[p.data?.parentCd] ?? [];
         return { values: opts.map(o => o.value), valueLabels: Object.fromEntries(opts.map(o => [o.value, o.label])) };
@@ -1089,7 +1089,7 @@ function ComcdChainGridDemo() {
   const handleCellValueChanged = useCallback((e: CellValueChangedEvent<ChainRow>) => {
     setRows((prev) => prev.map((r) => {
       if (r.id !== (e.data as ChainRow).id) return r;
-      // 대분류 변경 시 소분류 초기화
+      // Clear the subcategory when the category changes
       if (e.colDef.field === 'parentCd') return { ...e.data as ChainRow, childCd: '' };
       return e.data as ChainRow;
     }));
@@ -1100,7 +1100,7 @@ function ComcdChainGridDemo() {
       <Alert
         type="info"
         showIcon
-        title='대분류 셀을 클릭 → 값 변경 → 소분류 셀 클릭 시 해당 대분류의 항목만 표시됩니다. 대분류가 없으면 소분류는 편집 불가.'
+        title="Click a Category cell, change the value, then click the Subcategory cell — only that category's items appear. Without a category, Subcategory cannot be edited."
         style={{ marginBottom: 10 }}
       />
       <div style={{ height: 180 }}>
@@ -1125,19 +1125,19 @@ function ComcdSearchCellDemo() {
   const makeInitialRows = useCallback(
     (jbc: typeof jbcCodes, gd: typeof gdCodes): ComcdDemoRow[] => [
       {
-        id: 1, name: '홍길동',
+        id: 1, name: 'John Doe',
         jbcCd: jbc[2]?.cd ?? jbc[0]?.cd ?? '',
         gdCd:  gd[0]?.cd ?? '',
-        dept: { label: '개발1팀', value: 'D001' },
+        dept: { label: 'Engineering A', value: 'D001' },
       },
       {
-        id: 2, name: '김철수',
+        id: 2, name: 'Michael Chen',
         jbcCd: jbc[1]?.cd ?? jbc[0]?.cd ?? '',
         gdCd:  gd[1]?.cd ?? gd[0]?.cd ?? '',
-        dept: { label: '기획팀', value: 'D003' },
+        dept: { label: 'Planning', value: 'D003' },
       },
       {
-        id: 3, name: '이영희',
+        id: 3, name: 'Emily Park',
         jbcCd: jbc[0]?.cd ?? '',
         gdCd:  gd[0]?.cd ?? '',
         dept: null,
@@ -1156,10 +1156,10 @@ function ComcdSearchCellDemo() {
   }, [jbcCodes.length, gdCodes.length]);
 
   const comcdColDefs = useMemo<ColDef<ComcdDemoRow>[]>(() => [
-    { field: 'name', headerName: '이름', width: 110, editable: true },
+    { field: 'name', headerName: 'Name', width: 110, editable: true },
     {
       field: 'jbcCd',
-      headerName: '직급',
+      headerName: 'Grade',
       width: 120,
       editable: true,
       cellRenderer: ComcdSelectCellRenderer,
@@ -1169,7 +1169,7 @@ function ComcdSearchCellDemo() {
     },
     {
       field: 'gdCd',
-      headerName: '등급',
+      headerName: 'Level',
       width: 120,
       editable: true,
       cellRenderer: ComcdSelectCellRenderer,
@@ -1179,7 +1179,7 @@ function ComcdSearchCellDemo() {
     },
     {
       field: 'dept',
-      headerName: '부서(SearchSelect)',
+      headerName: 'Department (SearchSelect)',
       flex: 1,
       editable: true,
       cellRenderer: SearchSelectCellRenderer,
@@ -1198,32 +1198,32 @@ function ComcdSearchCellDemo() {
   return (
     <div className={styles.demoSection}>
       <table className={styles.demoPropsTable} style={{ marginBottom: 24 }}>
-        <thead><tr><th style={{ width: 240 }}>컴포넌트 / Prop</th><th>타입</th><th>설명</th></tr></thead>
+        <thead><tr><th style={{ width: 240 }}>Component / prop</th><th>Type</th><th>Description</th></tr></thead>
         <tbody>
-          <tr><td><code>ComcdSelectCellRenderer</code></td><td>cellRenderer</td><td>comcdStore에서 코드명 조회 후 표시 (cdDmnId 필수)</td></tr>
-          <tr><td><code>ComcdSelectCellEditor</code></td><td>cellEditor</td><td>공통코드 드롭다운 팝업 에디터 (cdDmnId 필수)</td></tr>
-          <tr><td><code>cellRendererParams.cdDmnId</code></td><td><code>string</code></td><td>조회할 공통코드 도메인 ID (예: 'JBC_CD')</td></tr>
-          <tr><td><code>cellEditorParams.cdDmnId</code></td><td><code>string</code></td><td>에디터에서 조회할 공통코드 도메인 ID</td></tr>
-          <tr><td><code>cellEditorParams.filterFn</code></td><td><code>(codes, row) =&gt; codes</code></td><td>다른 컬럼값 기반 코드 필터링 (체이닝)</td></tr>
-          <tr><td><code>SearchSelectCellRenderer</code></td><td>cellRenderer</td><td>{'{label, value}'} 또는 string에서 label 표시</td></tr>
-          <tr><td><code>SearchSelectCellEditor</code></td><td>cellEditor</td><td>AutoComplete 방식 검색 에디터</td></tr>
-          <tr><td><code>cellEditorParams.staticOptions</code></td><td><code>Option[]</code></td><td>정적 옵션 배열</td></tr>
-          <tr><td><code>cellEditorParams.fetchOptions</code></td><td><code>(kw) =&gt; Promise&lt;Option[]&gt;</code></td><td>키워드 기반 서버 조회 함수</td></tr>
+          <tr><td><code>ComcdSelectCellRenderer</code></td><td>cellRenderer</td><td>Looks the code name up in comcdStore and displays it (cdDmnId required)</td></tr>
+          <tr><td><code>ComcdSelectCellEditor</code></td><td>cellEditor</td><td>A common-code dropdown popup editor (cdDmnId required)</td></tr>
+          <tr><td><code>cellRendererParams.cdDmnId</code></td><td><code>string</code></td><td>The common-code domain ID to look up (e.g. 'JBC_CD')</td></tr>
+          <tr><td><code>cellEditorParams.cdDmnId</code></td><td><code>string</code></td><td>The common-code domain ID the editor looks up</td></tr>
+          <tr><td><code>cellEditorParams.filterFn</code></td><td><code>(codes, row) =&gt; codes</code></td><td>Filters codes by another column's value (chaining)</td></tr>
+          <tr><td><code>SearchSelectCellRenderer</code></td><td>cellRenderer</td><td>Displays the label from {'{label, value}'} or a plain string</td></tr>
+          <tr><td><code>SearchSelectCellEditor</code></td><td>cellEditor</td><td>An autocomplete-style search editor</td></tr>
+          <tr><td><code>cellEditorParams.staticOptions</code></td><td><code>Option[]</code></td><td>A static array of options</td></tr>
+          <tr><td><code>cellEditorParams.fetchOptions</code></td><td><code>(kw) =&gt; Promise&lt;Option[]&gt;</code></td><td>A keyword-based server lookup function</td></tr>
         </tbody>
       </table>
 
-      <h3>ComcdSelectCell — 공통코드 셀 렌더러/에디터</h3>
+      <h3>ComcdSelectCell — the common-code cell renderer and editor</h3>
       <p className={styles.demoDesc}>
-        <code>ComcdSelectCellRenderer</code>는 comcdStore에서 코드명을 조회해 표시합니다.
-        <code>ComcdSelectCellEditor</code>는 ComcdSelect 드롭다운 팝업 에디터입니다.
+        <code>ComcdSelectCellRenderer</code> looks the code name up in comcdStore and displays it.
+        <code>ComcdSelectCellEditor</code> is a ComcdSelect dropdown popup editor.
         <br />
-        <strong>※ comcdStore가 로드된 환경에서만 명칭이 표시됩니다.</strong> 개발 환경에서 코드값 그대로 보이면 정상입니다 (store 미로드).
+        <strong>Names only appear once comcdStore has loaded.</strong> Seeing raw code values in a dev environment is expected — the store has not loaded.
       </p>
 
       <Alert
         type="info"
         showIcon
-        title="셀을 클릭하면 에디터가 열립니다. 직급/등급은 ComcdSelect 드롭다운, 부서는 AutoComplete 방식입니다."
+        title="Click a cell to open its editor. Grade and Level use the ComcdSelect dropdown; Department uses autocomplete."
         style={{ marginBottom: 12 }}
       />
 
@@ -1239,25 +1239,25 @@ function ComcdSearchCellDemo() {
         />
       </div>
 
-      <Divider titlePlacement="left" style={{ marginTop: 20 }}>ComcdSelectCell 사용법</Divider>
+      <Divider titlePlacement="left" style={{ marginTop: 20 }}>Using ComcdSelectCell</Divider>
       <CodeSnippet code={comcdCellCode} title="ComcdSelectCell (renderer + editor)" />
 
-      <Divider titlePlacement="left" style={{ marginTop: 16 }}>ComcdSelectCell 체이닝 — 라이브 데모</Divider>
+      <Divider titlePlacement="left" style={{ marginTop: 16 }}>ComcdSelectCell chaining — live demo</Divider>
       <p className={styles.demoDesc}>
-        <code>cellEditorParams</code>를 <strong>함수</strong>로 지정하면 <code>params.data</code>에서
-        같은 행의 다른 컬럼값을 읽어 소분류 옵션을 동적으로 필터링합니다.
-        아래 그리드에서 <strong>대분류 → 소분류 순서로 클릭</strong>하여 체이닝을 확인하세요.
+        Make <code>cellEditorParams</code> a <strong>function</strong> and it can read another column of the same row
+        from <code>params.data</code> to filter the subcategory options on the fly.
+        In the grid below, <strong>click Category first, then Subcategory</strong> to see the chaining.
       </p>
       <ComcdChainGridDemo />
       <div style={{ marginTop: 12 }}>
-        <CodeSnippet code={comcdChainCellCode} title="ComcdSelectCell 체이닝 (cellEditorParams 함수)" />
+        <CodeSnippet code={comcdChainCellCode} title="ComcdSelectCell chaining (cellEditorParams as a function)" />
       </div>
 
-      <Divider titlePlacement="left" style={{ marginTop: 16 }}>SearchSelectCell 사용법</Divider>
+      <Divider titlePlacement="left" style={{ marginTop: 16 }}>Using SearchSelectCell</Divider>
       <p className={styles.demoDesc}>
-        <code>SearchSelectCellRenderer</code>는 <code>{'{ label, value }'}</code> 또는 plain string에서
-        label(명칭)만 표시합니다. <code>SearchSelectCellEditor</code>는 <code>fetchOptions</code> 또는
-        <code>staticOptions</code>를 받아 AutoComplete 방식으로 동작합니다.
+        <code>SearchSelectCellRenderer</code> displays only the label from <code>{'{ label, value }'}</code> or
+        a plain string. <code>SearchSelectCellEditor</code> takes <code>fetchOptions</code> or
+        <code>staticOptions</code> and behaves like an autocomplete.
       </p>
       <CodeSnippet code={searchCellCode} title="SearchSelectCell (renderer + editor)" />
     </div>
@@ -1275,11 +1275,11 @@ interface DateDemoRow {
 }
 
 const dateDemoData: DateDemoRow[] = [
-  { id: 1, name: '프로젝트 킥오프', startDt: '2025-04-01', endDt: '2025-04-15', planDt: '2025-03-25' },
-  { id: 2, name: '요구사항 분석', startDt: '2025-04-10', endDt: '2025-04-30', planDt: '2025-04-05' },
-  { id: 3, name: '설계 및 아키텍처', startDt: '2025-05-01', endDt: '2025-05-20', planDt: '2025-04-28' },
-  { id: 4, name: '개발 스프린트 1', startDt: '2025-05-21', endDt: '2025-06-10', planDt: '' },
-  { id: 5, name: '개발 스프린트 2', startDt: '2025-06-11', endDt: '2025-06-30', planDt: '' },
+  { id: 1, name: 'Project kickoff', startDt: '2025-04-01', endDt: '2025-04-15', planDt: '2025-03-25' },
+  { id: 2, name: 'Requirements analysis', startDt: '2025-04-10', endDt: '2025-04-30', planDt: '2025-04-05' },
+  { id: 3, name: 'Design and architecture', startDt: '2025-05-01', endDt: '2025-05-20', planDt: '2025-04-28' },
+  { id: 4, name: 'Development sprint 1', startDt: '2025-05-21', endDt: '2025-06-10', planDt: '' },
+  { id: 5, name: 'Development sprint 2', startDt: '2025-06-11', endDt: '2025-06-30', planDt: '' },
 ];
 
 function DateCellDemo() {
@@ -1287,23 +1287,23 @@ function DateCellDemo() {
 
   const dateCols = useMemo<ColDef<DateDemoRow>[]>(() => [
     { field: 'id', headerName: 'ID', width: 60, flex: 0, editable: false },
-    { field: 'name', headerName: '업무명', minWidth: 180, editable: true },
+    { field: 'name', headerName: 'Task name', minWidth: 180, editable: true },
     {
-      field: 'startDt', headerName: '시작일', width: 130, flex: 0,
+      field: 'startDt', headerName: 'Start date', width: 130, flex: 0,
       editable: true,
       cellRenderer: DateCellRenderer,
       cellRendererParams: { format: 'YYYY-MM-DD' },
       cellEditor: DateCellEditor,
     },
     {
-      field: 'endDt', headerName: '종료일', width: 130, flex: 0,
+      field: 'endDt', headerName: 'End date', width: 130, flex: 0,
       editable: true,
       cellRenderer: DateCellRenderer,
       cellRendererParams: { format: 'YYYY-MM-DD' },
       cellEditor: DateCellEditor,
     },
     {
-      field: 'planDt', headerName: '계획일 (YYYY.MM.DD)', width: 180, flex: 0,
+      field: 'planDt', headerName: 'Planned date (YYYY.MM.DD)', width: 180, flex: 0,
       editable: true,
       cellRenderer: DateCellRenderer,
       cellRendererParams: { format: 'YYYY.MM.DD' },
@@ -1322,25 +1322,25 @@ function DateCellDemo() {
   return (
     <div className={styles.demoSection}>
       <table className={styles.demoPropsTable} style={{ marginBottom: 24 }}>
-        <thead><tr><th style={{ width: 260 }}>컴포넌트 / Prop</th><th>타입</th><th>설명</th></tr></thead>
+        <thead><tr><th style={{ width: 260 }}>Component / prop</th><th>Type</th><th>Description</th></tr></thead>
         <tbody>
-          <tr><td><code>DateCellRenderer</code></td><td>cellRenderer</td><td>날짜 값을 지정 포맷으로 표시하는 렌더러</td></tr>
-          <tr><td><code>cellRendererParams.format</code></td><td><code>string</code></td><td>표시 포맷 (기본: <code>'YYYY-MM-DD'</code>)</td></tr>
-          <tr><td><code>DateCellEditor</code></td><td>cellEditor</td><td>Ant Design DatePicker 팝업 에디터. 날짜 선택 즉시 편집 종료</td></tr>
-          <tr><td><code>cellEditorParams.format</code></td><td><code>string</code></td><td>에디터 내 DatePicker 포맷 (기본: <code>'YYYY-MM-DD'</code>)</td></tr>
+          <tr><td><code>DateCellRenderer</code></td><td>cellRenderer</td><td>Renders a date value in the given format</td></tr>
+          <tr><td><code>cellRendererParams.format</code></td><td><code>string</code></td><td>Display format (default: <code>'YYYY-MM-DD'</code>)</td></tr>
+          <tr><td><code>DateCellEditor</code></td><td>cellEditor</td><td>An Ant Design DatePicker popup editor. Editing ends as soon as a date is picked</td></tr>
+          <tr><td><code>cellEditorParams.format</code></td><td><code>string</code></td><td>DatePicker format inside the editor (default: <code>'YYYY-MM-DD'</code>)</td></tr>
         </tbody>
       </table>
 
       <h3>DateCellEditor + DateCellRenderer</h3>
       <p className={styles.demoDesc}>
-        셀을 클릭하면 Ant Design <code>DatePicker</code>가 팝업으로 열립니다.
-        날짜 선택 즉시 편집이 종료되고 포맷팅된 날짜가 표시됩니다.
-        <code>cellRendererParams.format</code>으로 표시 형식을 지정할 수 있습니다.
+        Clicking a cell opens an Ant Design <code>DatePicker</code> as a popup.
+        Picking a date ends the edit immediately and the formatted date is shown.
+        <code>cellRendererParams.format</code> controls the display format.
       </p>
       <Alert
         type="info"
         showIcon
-        title="날짜 컬럼을 클릭하여 DatePicker를 열어보세요. 날짜 선택 즉시 저장됩니다."
+        title="Click a date column to open the DatePicker. Picking a date saves it immediately."
         style={{ marginBottom: 12 }}
       />
       <div style={{ height: 220 }}>
@@ -1354,7 +1354,7 @@ function DateCellDemo() {
           onCellValueChanged={handleCellValueChanged}
         />
       </div>
-      <Divider titlePlacement="left" style={{ marginTop: 20 }}>사용법</Divider>
+      <Divider titlePlacement="left" style={{ marginTop: 20 }}>Usage</Divider>
       <CodeSnippet code={dateCellCode} title="DateCellRenderer + DateCellEditor" />
     </div>
   );
@@ -1371,19 +1371,19 @@ interface OrgNode {
 }
 
 const orgRawData: OrgNode[] = [
-  { id: '001', name: 'VAMC', type: '회사', headcount: 1200, parentId: null },
-  { id: '010', name: '개발본부', type: '본부', headcount: 480, parentId: '001' },
-  { id: '011', name: '프론트엔드팀', type: '팀', headcount: 120, parentId: '010' },
-  { id: '012', name: '백엔드팀', type: '팀', headcount: 150, parentId: '010' },
-  { id: '013', name: '인프라팀', type: '팀', headcount: 80, parentId: '010' },
-  { id: '014', name: 'QA팀', type: '팀', headcount: 60, parentId: '010' },
-  { id: '020', name: '경영지원본부', type: '본부', headcount: 320, parentId: '001' },
-  { id: '021', name: '인사팀', type: '팀', headcount: 90, parentId: '020' },
-  { id: '022', name: '재무팀', type: '팀', headcount: 70, parentId: '020' },
-  { id: '023', name: '법무팀', type: '팀', headcount: 40, parentId: '020' },
-  { id: '030', name: '영업본부', type: '본부', headcount: 400, parentId: '001' },
-  { id: '031', name: '국내영업팀', type: '팀', headcount: 200, parentId: '030' },
-  { id: '032', name: '해외영업팀', type: '팀', headcount: 150, parentId: '030' },
+  { id: '001', name: 'VAMC', type: 'Company', headcount: 1200, parentId: null },
+  { id: '010', name: 'Engineering division', type: 'Division', headcount: 480, parentId: '001' },
+  { id: '011', name: 'Front-end team', type: 'Team', headcount: 120, parentId: '010' },
+  { id: '012', name: 'Backend team', type: 'Team', headcount: 150, parentId: '010' },
+  { id: '013', name: 'Infrastructure team', type: 'Team', headcount: 80, parentId: '010' },
+  { id: '014', name: 'QA team', type: 'Team', headcount: 60, parentId: '010' },
+  { id: '020', name: 'Corporate division', type: 'Division', headcount: 320, parentId: '001' },
+  { id: '021', name: 'HR team', type: 'Team', headcount: 90, parentId: '020' },
+  { id: '022', name: 'Finance team', type: 'Team', headcount: 70, parentId: '020' },
+  { id: '023', name: 'Legal team', type: 'Team', headcount: 40, parentId: '020' },
+  { id: '030', name: 'Sales division', type: 'Division', headcount: 400, parentId: '001' },
+  { id: '031', name: 'Domestic sales team', type: 'Team', headcount: 200, parentId: '030' },
+  { id: '032', name: 'International sales team', type: 'Team', headcount: 150, parentId: '030' },
 ];
 
 function TreeDemo() {
@@ -1397,15 +1397,15 @@ function TreeDemo() {
   const treeCols = useMemo<ColDef<OrgNode>[]>(() => [
     {
       field: 'name',
-      headerName: '조직명',
+      headerName: 'Organization',
       minWidth: 220,
       cellRenderer: TreeCellRenderer,
       cellRendererParams: { onToggle: toggleExpand, indentSize: 20 },
     },
-    { field: 'type', headerName: '구분', width: 80, flex: 0 },
-    { field: 'id', headerName: '코드', width: 80, flex: 0 },
+    { field: 'type', headerName: 'Type', width: 80, flex: 0 },
+    { field: 'id', headerName: 'Code', width: 80, flex: 0 },
     {
-      field: 'headcount', headerName: '인원', width: 80, flex: 0,
+      field: 'headcount', headerName: 'Headcount', width: 80, flex: 0,
       type: 'numericColumn',
       valueFormatter: (p) => p.value != null ? p.value.toLocaleString() : '',
     },
@@ -1414,41 +1414,41 @@ function TreeDemo() {
   return (
     <div className={styles.demoSection}>
       <table className={styles.demoPropsTable} style={{ marginBottom: 24 }}>
-        <thead><tr><th style={{ width: 260 }}>훅 / 컴포넌트 / Prop</th><th>타입</th><th>설명</th></tr></thead>
+        <thead><tr><th style={{ width: 260 }}>Hook / component / prop</th><th>Type</th><th>Description</th></tr></thead>
         <tbody>
-          <tr><td><code>useTreeGrid(options)</code></td><td>Hook</td><td>flat 데이터를 DFS 순 트리 행으로 변환. Enterprise 불필요</td></tr>
-          <tr><td><code>options.data</code></td><td><code>T[]</code></td><td>원본 flat 데이터 배열</td></tr>
-          <tr><td><code>options.idField</code></td><td><code>string</code></td><td>고유 ID 필드명 (기본: <code>'id'</code>)</td></tr>
-          <tr><td><code>options.parentField</code></td><td><code>string</code></td><td>부모 ID 필드명 (기본: <code>'parentId'</code>)</td></tr>
-          <tr><td><code>options.defaultExpanded</code></td><td><code>boolean</code></td><td>초기 전체 펼침 여부 (기본: <code>true</code>)</td></tr>
-          <tr><td><code>returns.treeData</code></td><td><code>TreeRow&lt;T&gt;[]</code></td><td>GridTable rowData에 전달할 처리된 트리 행 배열</td></tr>
-          <tr><td><code>returns.toggleExpand(id)</code></td><td><code>fn</code></td><td>노드 접기/펼치기 토글</td></tr>
-          <tr><td><code>returns.expandAll / collapseAll</code></td><td><code>fn</code></td><td>전체 펼치기 / 전체 접기</td></tr>
-          <tr><td><code>TreeCellRenderer</code></td><td>cellRenderer</td><td>들여쓰기 + 토글 아이콘이 있는 계층 셀 렌더러</td></tr>
-          <tr><td><code>cellRendererParams.onToggle</code></td><td><code>(id) =&gt; void</code></td><td>toggleExpand 함수 전달 (필수)</td></tr>
-          <tr><td><code>cellRendererParams.indentSize</code></td><td><code>number</code></td><td>레벨당 들여쓰기 px (기본: 18)</td></tr>
+          <tr><td><code>useTreeGrid(options)</code></td><td>Hook</td><td>Converts flat data into DFS-ordered tree rows. No Enterprise license needed</td></tr>
+          <tr><td><code>options.data</code></td><td><code>T[]</code></td><td>The flat source data array</td></tr>
+          <tr><td><code>options.idField</code></td><td><code>string</code></td><td>The unique ID field (default: <code>'id'</code>)</td></tr>
+          <tr><td><code>options.parentField</code></td><td><code>string</code></td><td>The parent ID field (default: <code>'parentId'</code>)</td></tr>
+          <tr><td><code>options.defaultExpanded</code></td><td><code>boolean</code></td><td>Whether everything starts expanded (default: <code>true</code>)</td></tr>
+          <tr><td><code>returns.treeData</code></td><td><code>TreeRow&lt;T&gt;[]</code></td><td>The processed tree rows to pass to GridTable's rowData</td></tr>
+          <tr><td><code>returns.toggleExpand(id)</code></td><td><code>fn</code></td><td>Collapses or expands a node</td></tr>
+          <tr><td><code>returns.expandAll / collapseAll</code></td><td><code>fn</code></td><td>Expand all / collapse all</td></tr>
+          <tr><td><code>TreeCellRenderer</code></td><td>cellRenderer</td><td>A hierarchy cell renderer with indentation and a toggle icon</td></tr>
+          <tr><td><code>cellRendererParams.onToggle</code></td><td><code>(id) =&gt; void</code></td><td>Pass the toggleExpand function (required)</td></tr>
+          <tr><td><code>cellRendererParams.indentSize</code></td><td><code>number</code></td><td>Indent per level in px (default: 18)</td></tr>
         </tbody>
       </table>
 
-      <h3>Tree 구조 — useTreeGrid + TreeCellRenderer</h3>
+      <h3>Tree structure — useTreeGrid + TreeCellRenderer</h3>
       <p className={styles.demoDesc}>
-        AG Grid Community Edition 제약을 우회하여, flat 데이터를 DFS 순서로 재배치하고
-        커스텀 셀 렌더러로 계층 UI를 구현합니다. Enterprise 라이선스 불필요.
+        This works around the Community edition's limits: flat data is reordered depth-first and a custom
+        cell renderer draws the hierarchy. No Enterprise license required.
       </p>
       <Alert
         type="info"
         showIcon
-        title="조직명 옆 ▶ 아이콘을 클릭하면 하위 조직을 접고 펼칩니다."
+        title="Click the ▶ icon next to an organization to collapse or expand its children."
         style={{ marginBottom: 12 }}
       />
       <div style={{ marginBottom: 8, display: 'flex', gap: 8 }}>
         <button onClick={expandAll}
           style={{ padding: '2px 10px', fontSize: 12, cursor: 'pointer', border: '1px solid #d9d9d9', borderRadius: 4, background: '#fff' }}>
-          전체 펼치기
+          Expand all
         </button>
         <button onClick={collapseAll}
           style={{ padding: '2px 10px', fontSize: 12, cursor: 'pointer', border: '1px solid #d9d9d9', borderRadius: 4, background: '#fff' }}>
-          전체 접기
+          Collapse all
         </button>
       </div>
       <div style={{ height: 400 }}>
@@ -1461,7 +1461,7 @@ function TreeDemo() {
           suppressCellFocus
         />
       </div>
-      <Divider titlePlacement="left" style={{ marginTop: 20 }}>사용법</Divider>
+      <Divider titlePlacement="left" style={{ marginTop: 20 }}>Usage</Divider>
       <CodeSnippet code={treeCellCode} title="useTreeGrid + TreeCellRenderer" />
     </div>
   );
@@ -1472,17 +1472,17 @@ function TreeDemo() {
 interface MemberRow { id: number; name: string; role: string; team: string; }
 
 const memberData: MemberRow[] = [
-  { id: 1, name: '김영수', role: '개발자', team: '백엔드' },
-  { id: 2, name: '이미영', role: '디자이너', team: 'UX' },
-  { id: 3, name: '박지성', role: 'PM', team: '기획' },
-  { id: 4, name: '송태현', role: '개발자', team: '프론트' },
-  { id: 5, name: '최유진', role: 'QA', team: '품질' },
+  { id: 1, name: 'Steve Kim', role: 'Developer', team: 'Backend' },
+  { id: 2, name: 'Michelle Lee', role: 'Designer', team: 'UX' },
+  { id: 3, name: 'Jason Park', role: 'PM', team: 'Planning' },
+  { id: 4, name: 'Thomas Song', role: 'Developer', team: 'Front-end' },
+  { id: 5, name: 'Eugene Choi', role: 'QA', team: 'Quality' },
 ];
 
 const memberColDefs: ColDef<MemberRow>[] = [
-  { field: 'name', headerName: '이름', width: 100 },
-  { field: 'role', headerName: '역할', width: 100 },
-  { field: 'team', headerName: '팀', width: 100 },
+  { field: 'name', headerName: 'Name', width: 100 },
+  { field: 'role', headerName: 'Role', width: 100 },
+  { field: 'team', headerName: 'Team', width: 100 },
 ];
 
 function ToolbarActionDemo() {
@@ -1492,22 +1492,22 @@ function ToolbarActionDemo() {
 
   const handleAdd = () => {
     const newId = Math.max(...data.map((r) => r.id)) + 1;
-    const newRow: MemberRow = { id: newId, name: `신규${newId}`, role: '개발자', team: '백엔드' };
+    const newRow: MemberRow = { id: newId, name: `New ${newId}`, role: 'Developer', team: 'Backend' };
     setData((prev) => [...prev, newRow]);
-    message.success(`'${newRow.name}' 행이 추가됐습니다.`);
+    message.success(`Row '${newRow.name}' was added.`);
   };
 
   const handleDelete = () => {
     modal.confirm({
-      title: '삭제 확인',
-      content: `선택한 ${selected.length}건을 삭제하시겠습니까?`,
-      okText: '삭제',
+      title: 'Confirm deletion',
+      content: `Delete the ${selected.length} selected rows?`,
+      okText: 'Delete',
       okButtonProps: { danger: true },
       onOk: () => {
         const ids = new Set(selected.map((r) => r.id));
         setData((prev) => prev.filter((r) => !ids.has(r.id)));
         setSelected([]);
-        message.success(`${selected.length}건 삭제됐습니다.`);
+        message.success(`${selected.length} rows deleted.`);
       },
     });
   };
@@ -1522,7 +1522,7 @@ function ToolbarActionDemo() {
             type="primary"
             onClick={handleAdd}
           >
-            등록
+            New
           </Button>
           <Button
             icon={<DeleteOutlined />}
@@ -1530,7 +1530,7 @@ function ToolbarActionDemo() {
             onClick={handleDelete}
             disabled={selected.length === 0}
           >
-            삭제 {selected.length > 0 && `(${selected.length})`}
+            Delete {selected.length > 0 && `(${selected.length})`}
           </Button>
         </>
       }
@@ -1549,16 +1549,16 @@ function ToolbarActionDemo() {
 interface ClipboardRow { id: number; name: string; dept: string; score: number; }
 
 const clipboardDemoData: ClipboardRow[] = [
-  { id: 1, name: '김영수', dept: '개발팀', score: 92 },
-  { id: 2, name: '이미영', dept: '기획팀', score: 85 },
-  { id: 3, name: '박정호', dept: '개발팀', score: 78 },
-  { id: 4, name: '최수진', dept: 'QA팀',   score: 95 },
+  { id: 1, name: 'Steve Kim', dept: 'Engineering', score: 92 },
+  { id: 2, name: 'Michelle Lee', dept: 'Planning', score: 85 },
+  { id: 3, name: 'Paul Park', dept: 'Engineering', score: 78 },
+  { id: 4, name: 'Susan Choi', dept: 'QA',   score: 95 },
 ];
 
 const clipboardColDefs: ColDef<ClipboardRow>[] = [
-  { field: 'name',  headerName: '이름', width: 100, editable: false },
-  { field: 'dept',  headerName: '부서', width: 100, editable: false },
-  { field: 'score', headerName: '점수 (편집 가능)', width: 160, editable: true },
+  { field: 'name',  headerName: 'Name', width: 100, editable: false },
+  { field: 'dept',  headerName: 'Department', width: 100, editable: false },
+  { field: 'score', headerName: 'Score (editable)', width: 160, editable: true },
 ];
 
 function ClipboardDemo() {
@@ -1593,18 +1593,18 @@ export default function GridEditingDemo() {
   /* ── Existing columns ── */
   const basicCols = useMemo<ColDef<Employee>[]>(() => [
     { field: 'id', headerName: 'ID', width: 80, flex: 0 },
-    { field: 'name', headerName: '이름', width: 100, flex: 0 },
-    { field: 'department', headerName: '부서', width: 100, flex: 0 },
-    { field: 'role', headerName: '역할', width: 90, flex: 0 },
-    { field: 'email', headerName: '이메일', minWidth: 180 },
-    { field: 'joinDate', headerName: '입사일', width: 120, flex: 0 },
+    { field: 'name', headerName: 'Name', width: 100, flex: 0 },
+    { field: 'department', headerName: 'Department', width: 100, flex: 0 },
+    { field: 'role', headerName: 'Role', width: 90, flex: 0 },
+    { field: 'email', headerName: 'Email', minWidth: 180 },
+    { field: 'joinDate', headerName: 'Start date', width: 120, flex: 0 },
   ], []);
 
   const editableCols = useMemo<ColDef<EditableTask>[]>(() => [
     { field: 'id', headerName: 'ID', width: 80, flex: 0, editable: false },
-    { field: 'name', headerName: '업무명', minWidth: 160, editable: true },
+    { field: 'name', headerName: 'Task name', minWidth: 160, editable: true },
     {
-      field: 'status', headerName: '상태', width: 100, flex: 0,
+      field: 'status', headerName: 'Status', width: 100, flex: 0,
       editable: true,
       cellRenderer: (params: any) => {
         if (!params.value) return null;
@@ -1614,37 +1614,37 @@ export default function GridEditingDemo() {
       cellEditorParams: { values: ['planned', 'in_progress', 'completed'], valueLabels: statusLabels },
     },
     {
-      field: 'priority', headerName: '우선순위', width: 100, flex: 0,
+      field: 'priority', headerName: 'Priority', width: 100, flex: 0,
       editable: true,
       cellRenderer: (params: any) => params.value ? <Tag color={priorityColors[params.value]}>{params.value}</Tag> : null,
       cellEditor: SelectCellEditor,
-      cellEditorParams: { values: ['긴급', '높음', '중간', '낮음'] },
+      cellEditorParams: { values: ['Critical', 'High', 'Medium', 'Low'] },
     },
-    { field: 'dueDate', headerName: '마감일', width: 130, flex: 0, editable: true, cellEditor: DateCellEditor },
+    { field: 'dueDate', headerName: 'Due date', width: 130, flex: 0, editable: true, cellEditor: DateCellEditor },
     {
-      field: 'assignee', headerName: '담당자', width: 120, flex: 0, editable: true,
+      field: 'assignee', headerName: 'Assignee', width: 120, flex: 0, editable: true,
       cellEditor: SelectCellEditor,
-      cellEditorParams: { values: ['김영수', '이미영', '송태현', '박정호', '윤서연', '배현우', '한지은', '임재혁', '최수진', '오하늘', '권도현', '장수연'] },
+      cellEditorParams: { values: ['Steve Kim', 'Michelle Lee', 'Thomas Song', 'Paul Park', 'Laura Yoon', 'Brian Bae', 'Jane Han', 'Jacob Lim', 'Susan Choi', 'Hannah Oh', 'Kevin Kwon', 'Sue Jang'] },
     },
     {
-      field: 'tags', headerName: '태그', minWidth: 160,
+      field: 'tags', headerName: 'Tags', minWidth: 160,
       editable: true,
       cellRenderer: (params: any) => {
         const tags: string[] = params.value ?? [];
         return tags.map((t: string) => <Tag key={t} style={{ marginRight: 2 }}>{t}</Tag>);
       },
       cellEditor: TagsCellEditor,
-      cellEditorParams: { presetTags: ['긴급', '중요', '버그', '기능', '개선', 'QA'] },
+      cellEditorParams: { presetTags: ['Urgent', 'Important', 'Bug', 'Feature', 'Improvement', 'QA'] },
       cellEditorPopup: true,
     },
   ], []);
 
   const selectionCols = useMemo<ColDef<Employee>[]>(() => [
     { width: 50, flex: 0, sortable: false, filter: false },
-    { field: 'name', headerName: '이름', width: 100, flex: 0 },
-    { field: 'department', headerName: '부서', width: 100, flex: 0 },
-    { field: 'role', headerName: '역할', width: 90, flex: 0 },
-    { field: 'email', headerName: '이메일', minWidth: 180 },
+    { field: 'name', headerName: 'Name', width: 100, flex: 0 },
+    { field: 'department', headerName: 'Department', width: 100, flex: 0 },
+    { field: 'role', headerName: 'Role', width: 90, flex: 0 },
+    { field: 'email', headerName: 'Email', minWidth: 180 },
   ], []);
 
   const handleCellValueChanged = useCallback((e: CellValueChangedEvent<EditableTask>) => {
@@ -1656,33 +1656,33 @@ export default function GridEditingDemo() {
 
   /* ── Header grouping columns ── */
   const [headerGroupColDefs] = useState<(ColDef<GroupDemoRow> | ColGroupDef)[]>([
-    { field: 'name', headerName: '이름', width: 120, pinned: 'left' },
+    { field: 'name', headerName: 'Name', width: 120, pinned: 'left' },
     {
-      headerName: '인사 정보',
+      headerName: 'HR information',
       children: [
-        { field: 'department', headerName: '부서', width: 110 },
-        { field: 'position', headerName: '직급', width: 100 },
+        { field: 'department', headerName: 'Department', width: 110 },
+        { field: 'position', headerName: 'Grade', width: 100 },
         {
-          field: 'hireDate', headerName: '입사일', width: 120,
+          field: 'hireDate', headerName: 'Start date', width: 120,
           valueFormatter: (p: any) => p.value ? new Date(p.value).toLocaleDateString('ko-KR') : '',
         },
       ],
     },
     {
-      headerName: '급여 정보',
+      headerName: 'Compensation',
       children: [
         {
-          field: 'salary', headerName: '기본급', width: 130,
-          valueFormatter: (p: any) => p.value?.toLocaleString('ko-KR') + '원',
+          field: 'salary', headerName: 'Base salary', width: 130,
+          valueFormatter: (p: any) => 'KRW ' + p.value?.toLocaleString('en-US'),
         },
         {
-          field: 'bonus', headerName: '상여금', width: 120,
-          valueFormatter: (p: any) => p.value?.toLocaleString('ko-KR') + '원',
+          field: 'bonus', headerName: 'Bonus', width: 120,
+          valueFormatter: (p: any) => 'KRW ' + p.value?.toLocaleString('en-US'),
         },
         {
-          headerName: '총 급여', width: 140,
+          headerName: 'Total pay', width: 140,
           valueGetter: (p: any) => (p.data?.salary ?? 0) + (p.data?.bonus ?? 0),
-          valueFormatter: (p: any) => p.value?.toLocaleString('ko-KR') + '원',
+          valueFormatter: (p: any) => 'KRW ' + p.value?.toLocaleString('en-US'),
         },
       ],
     },
@@ -1691,38 +1691,38 @@ export default function GridEditingDemo() {
   /* ── ColSpan demo columns ── */
   const [spanColDefs] = useState<ColDef<SpanDemoRow>[]>([
     {
-      field: 'category', headerName: '구분', width: 120,
-      colSpan: (params) => params.data?.category?.includes('소계') ? 2 : 1,
+      field: 'category', headerName: 'Category', width: 120,
+      colSpan: (params) => params.data?.category?.includes('Subtotal') ? 2 : 1,
       cellStyle: (params) =>
-        params.data?.category?.includes('소계')
+        params.data?.category?.includes('Subtotal')
           ? { fontWeight: 'bold', backgroundColor: 'var(--content-header-bg, #f5f5f5)' }
           : undefined,
     },
     {
-      field: 'item', headerName: '항목', width: 120,
+      field: 'item', headerName: 'Item', width: 120,
       cellStyle: (params) =>
-        params.data?.category?.includes('소계')
+        params.data?.category?.includes('Subtotal')
           ? { fontWeight: 'bold', backgroundColor: 'var(--content-header-bg, #f5f5f5)' }
           : undefined,
     },
-    { field: 'q1', headerName: '1분기', width: 100, type: 'numericColumn', valueFormatter: (p) => p.value?.toLocaleString(), cellStyle: (p) => p.data?.category?.includes('소계') ? { fontWeight: 'bold', backgroundColor: 'var(--content-header-bg, #f5f5f5)' } : undefined },
-    { field: 'q2', headerName: '2분기', width: 100, type: 'numericColumn', valueFormatter: (p) => p.value?.toLocaleString(), cellStyle: (p) => p.data?.category?.includes('소계') ? { fontWeight: 'bold', backgroundColor: 'var(--content-header-bg, #f5f5f5)' } : undefined },
-    { field: 'q3', headerName: '3분기', width: 100, type: 'numericColumn', valueFormatter: (p) => p.value?.toLocaleString(), cellStyle: (p) => p.data?.category?.includes('소계') ? { fontWeight: 'bold', backgroundColor: 'var(--content-header-bg, #f5f5f5)' } : undefined },
-    { field: 'q4', headerName: '4분기', width: 100, type: 'numericColumn', valueFormatter: (p) => p.value?.toLocaleString(), cellStyle: (p) => p.data?.category?.includes('소계') ? { fontWeight: 'bold', backgroundColor: 'var(--content-header-bg, #f5f5f5)' } : undefined },
+    { field: 'q1', headerName: 'Q1', width: 100, type: 'numericColumn', valueFormatter: (p) => p.value?.toLocaleString(), cellStyle: (p) => p.data?.category?.includes('Subtotal') ? { fontWeight: 'bold', backgroundColor: 'var(--content-header-bg, #f5f5f5)' } : undefined },
+    { field: 'q2', headerName: 'Q2', width: 100, type: 'numericColumn', valueFormatter: (p) => p.value?.toLocaleString(), cellStyle: (p) => p.data?.category?.includes('Subtotal') ? { fontWeight: 'bold', backgroundColor: 'var(--content-header-bg, #f5f5f5)' } : undefined },
+    { field: 'q3', headerName: 'Q3', width: 100, type: 'numericColumn', valueFormatter: (p) => p.value?.toLocaleString(), cellStyle: (p) => p.data?.category?.includes('Subtotal') ? { fontWeight: 'bold', backgroundColor: 'var(--content-header-bg, #f5f5f5)' } : undefined },
+    { field: 'q4', headerName: 'Q4', width: 100, type: 'numericColumn', valueFormatter: (p) => p.value?.toLocaleString(), cellStyle: (p) => p.data?.category?.includes('Subtotal') ? { fontWeight: 'bold', backgroundColor: 'var(--content-header-bg, #f5f5f5)' } : undefined },
   ]);
 
   /* ── RowSpan demo columns ── */
   const [rowSpanColDefs] = useState<ColDef<RowSpanDemoRow>[]>([
-    { field: 'department', headerName: '본부', width: 130, spanRows: true, sort: 'asc' as const, cellStyle: { fontWeight: 'bold' } },
-    { field: 'team', headerName: '팀', width: 130, spanRows: true, sort: 'asc' as const },
-    { field: 'name', headerName: '이름', width: 120 },
-    { field: 'role', headerName: '직급', width: 100 },
+    { field: 'department', headerName: 'Division', width: 130, spanRows: true, sort: 'asc' as const, cellStyle: { fontWeight: 'bold' } },
+    { field: 'team', headerName: 'Team', width: 130, spanRows: true, sort: 'asc' as const },
+    { field: 'name', headerName: 'Name', width: 120 },
+    { field: 'role', headerName: 'Grade', width: 100 },
   ]);
 
   /* ── Footer demo ── */
   const pinnedBottomData = useMemo<Partial<GroupDemoRow>[]>(() => [{
     id: 0,
-    name: '합 계',
+    name: 'Total',
     department: '-',
     position: '-',
     hireDate: '',
@@ -1731,12 +1731,12 @@ export default function GridEditingDemo() {
   }], []);
 
   const footerColDefs = useMemo<ColDef<GroupDemoRow>[]>(() => [
-    { field: 'name', headerName: '이름', width: 120 },
-    { field: 'department', headerName: '부서', width: 110 },
-    { field: 'position', headerName: '직급', width: 100 },
-    { field: 'hireDate', headerName: '입사일', width: 120, valueFormatter: (p) => p.value ? new Date(p.value).toLocaleDateString('ko-KR') : '' },
-    { field: 'salary', headerName: '기본급', width: 130, valueFormatter: (p) => p.value ? p.value.toLocaleString('ko-KR') + '원' : '' },
-    { field: 'bonus', headerName: '상여금', width: 120, valueFormatter: (p) => p.value ? p.value.toLocaleString('ko-KR') + '원' : '' },
+    { field: 'name', headerName: 'Name', width: 120 },
+    { field: 'department', headerName: 'Department', width: 110 },
+    { field: 'position', headerName: 'Grade', width: 100 },
+    { field: 'hireDate', headerName: 'Start date', width: 120, valueFormatter: (p) => p.value ? new Date(p.value).toLocaleDateString('en-US') : '' },
+    { field: 'salary', headerName: 'Base salary', width: 130, valueFormatter: (p) => p.value ? 'KRW ' + p.value.toLocaleString('en-US') : '' },
+    { field: 'bonus', headerName: 'Bonus', width: 120, valueFormatter: (p) => p.value ? 'KRW ' + p.value.toLocaleString('en-US') : '' },
   ], []);
 
   /* ── Manual grouping demo ── */
@@ -1744,12 +1744,12 @@ export default function GridEditingDemo() {
 
   const groupTotalRow = useMemo<Partial<SpanDemoRow>[]>(() => [{
     id: 99,
-    category: '총 합계',
+    category: 'Grand total',
     item: '',
-    q1: spanDemoData.filter(r => !r.category.includes('소계')).reduce((s, r) => s + r.q1, 0),
-    q2: spanDemoData.filter(r => !r.category.includes('소계')).reduce((s, r) => s + r.q2, 0),
-    q3: spanDemoData.filter(r => !r.category.includes('소계')).reduce((s, r) => s + r.q3, 0),
-    q4: spanDemoData.filter(r => !r.category.includes('소계')).reduce((s, r) => s + r.q4, 0),
+    q1: spanDemoData.filter(r => !r.category.includes('Subtotal')).reduce((s, r) => s + r.q1, 0),
+    q2: spanDemoData.filter(r => !r.category.includes('Subtotal')).reduce((s, r) => s + r.q2, 0),
+    q3: spanDemoData.filter(r => !r.category.includes('Subtotal')).reduce((s, r) => s + r.q3, 0),
+    q4: spanDemoData.filter(r => !r.category.includes('Subtotal')).reduce((s, r) => s + r.q4, 0),
   }], []);
 
   const isGroupFirstRow = useCallback((params: { data?: SpanDemoRow; node?: { rowIndex: number | null } }) => {
@@ -1761,7 +1761,7 @@ export default function GridEditingDemo() {
   }, [groupedRowData]);
 
   const categoryValueFormatter = useCallback((params: { value?: string; data?: SpanDemoRow; node?: { rowIndex: number | null } }) => {
-    if (!params.data || params.data.category.includes('소계')) return params.value ?? '';
+    if (!params.data || params.data.category.includes('Subtotal')) return params.value ?? '';
     if (!params.node || params.node.rowIndex === null) return params.value ?? '';
     const idx = params.node.rowIndex;
     if (idx === 0) return params.value ?? '';
@@ -1772,11 +1772,11 @@ export default function GridEditingDemo() {
 
   const groupCellStyle = useCallback((params: CellClassParams<SpanDemoRow>) => {
     const base: CellStyle = {};
-    if (params.data?.category?.includes('소계') || params.node?.rowPinned) {
+    if (params.data?.category?.includes('Subtotal') || params.node?.rowPinned) {
       base.fontWeight = 'bold';
       base.backgroundColor = 'var(--content-header-bg, #f0f0f0)';
     }
-    if (isGroupFirstRow(params) && !params.data?.category?.includes('소계')) {
+    if (isGroupFirstRow(params) && !params.data?.category?.includes('Subtotal')) {
       base.borderTop = '2px solid var(--border-color, #d9d9d9)';
     }
     return Object.keys(base).length > 0 ? base : undefined;
@@ -1784,33 +1784,33 @@ export default function GridEditingDemo() {
 
   const groupColDefs = useMemo<ColDef<SpanDemoRow>[]>(() => [
     {
-      field: 'category', headerName: '구분', width: 120,
-      colSpan: (params) => params.data?.category?.includes('소계') || params.data?.category === '총 합계' ? 2 : 1,
+      field: 'category', headerName: 'Category', width: 120,
+      colSpan: (params) => params.data?.category?.includes('Subtotal') || params.data?.category === 'Grand total' ? 2 : 1,
       valueFormatter: categoryValueFormatter as any,
       cellStyle: groupCellStyle,
     },
     {
-      field: 'item', headerName: '항목', width: 120,
-      cellStyle: (params) => params.data?.category?.includes('소계') ? { fontWeight: 'bold', backgroundColor: 'var(--content-header-bg, #f0f0f0)' } : undefined,
+      field: 'item', headerName: 'Item', width: 120,
+      cellStyle: (params) => params.data?.category?.includes('Subtotal') ? { fontWeight: 'bold', backgroundColor: 'var(--content-header-bg, #f0f0f0)' } : undefined,
     },
-    { field: 'q1', headerName: '1분기', width: 110, type: 'numericColumn', valueFormatter: (p) => p.value?.toLocaleString(), cellStyle: (p) => (p.data?.category?.includes('소계') || p.node?.rowPinned) ? { fontWeight: 'bold', backgroundColor: 'var(--content-header-bg, #f0f0f0)' } : undefined },
-    { field: 'q2', headerName: '2분기', width: 110, type: 'numericColumn', valueFormatter: (p) => p.value?.toLocaleString(), cellStyle: (p) => (p.data?.category?.includes('소계') || p.node?.rowPinned) ? { fontWeight: 'bold', backgroundColor: 'var(--content-header-bg, #f0f0f0)' } : undefined },
-    { field: 'q3', headerName: '3분기', width: 110, type: 'numericColumn', valueFormatter: (p) => p.value?.toLocaleString(), cellStyle: (p) => (p.data?.category?.includes('소계') || p.node?.rowPinned) ? { fontWeight: 'bold', backgroundColor: 'var(--content-header-bg, #f0f0f0)' } : undefined },
-    { field: 'q4', headerName: '4분기', width: 110, type: 'numericColumn', valueFormatter: (p) => p.value?.toLocaleString(), cellStyle: (p) => (p.data?.category?.includes('소계') || p.node?.rowPinned) ? { fontWeight: 'bold', backgroundColor: 'var(--content-header-bg, #f0f0f0)' } : undefined },
+    { field: 'q1', headerName: 'Q1', width: 110, type: 'numericColumn', valueFormatter: (p) => p.value?.toLocaleString(), cellStyle: (p) => (p.data?.category?.includes('Subtotal') || p.node?.rowPinned) ? { fontWeight: 'bold', backgroundColor: 'var(--content-header-bg, #f0f0f0)' } : undefined },
+    { field: 'q2', headerName: 'Q2', width: 110, type: 'numericColumn', valueFormatter: (p) => p.value?.toLocaleString(), cellStyle: (p) => (p.data?.category?.includes('Subtotal') || p.node?.rowPinned) ? { fontWeight: 'bold', backgroundColor: 'var(--content-header-bg, #f0f0f0)' } : undefined },
+    { field: 'q3', headerName: 'Q3', width: 110, type: 'numericColumn', valueFormatter: (p) => p.value?.toLocaleString(), cellStyle: (p) => (p.data?.category?.includes('Subtotal') || p.node?.rowPinned) ? { fontWeight: 'bold', backgroundColor: 'var(--content-header-bg, #f0f0f0)' } : undefined },
+    { field: 'q4', headerName: 'Q4', width: 110, type: 'numericColumn', valueFormatter: (p) => p.value?.toLocaleString(), cellStyle: (p) => (p.data?.category?.includes('Subtotal') || p.node?.rowPinned) ? { fontWeight: 'bold', backgroundColor: 'var(--content-header-bg, #f0f0f0)' } : undefined },
   ], [categoryValueFormatter, groupCellStyle]);
 
   /* ── Column pinning columns ── */
   const pinnedColDefs = useMemo<ColDef<GroupDemoRow>[]>(() => [
     { field: 'id', headerName: 'ID', width: 70, pinned: 'left', lockPinned: true },
-    { field: 'name', headerName: '이름', width: 100, pinned: 'left', lockPinned: true },
-    { field: 'department', headerName: '부서', width: 120 },
-    { field: 'position', headerName: '직급', width: 100 },
-    { field: 'hireDate', headerName: '입사일', width: 120 },
-    { field: 'department', headerName: '소속팀', width: 120, colId: 'team' },
-    { field: 'position', headerName: '역할', width: 100, colId: 'role' },
+    { field: 'name', headerName: 'Name', width: 100, pinned: 'left', lockPinned: true },
+    { field: 'department', headerName: 'Department', width: 120 },
+    { field: 'position', headerName: 'Grade', width: 100 },
+    { field: 'hireDate', headerName: 'Start date', width: 120 },
+    { field: 'department', headerName: 'Team', width: 120, colId: 'team' },
+    { field: 'position', headerName: 'Role', width: 100, colId: 'role' },
     {
-      field: 'salary', headerName: '급여', width: 130, pinned: 'right', type: 'numericColumn',
-      valueFormatter: (p) => p.value ? `${p.value.toLocaleString()}원` : '',
+      field: 'salary', headerName: 'Salary', width: 130, pinned: 'right', type: 'numericColumn',
+      valueFormatter: (p) => p.value ? `KRW ${p.value.toLocaleString()}` : '',
     },
   ], []);
 
@@ -1829,51 +1829,51 @@ export default function GridEditingDemo() {
               <div className={styles.demoSection}>
                 <h3>GridToolbar</h3>
                 <p className={styles.demoDesc}>
-                  데이터 건수 표시 + 액션 버튼을 제공하는 도구 모음입니다. FilterPanel 아래, GridTable 위에 단독으로 사용하거나
-                  GridPanel을 통해 GridTable과 함께 사용합니다.
+                  A toolbar that shows the row count and hosts action buttons. Use it on its own between FilterPanel and
+                  GridTable, or together with GridTable through GridPanel.
                 </p>
                 <table className={styles.demoPropsTable} style={{ marginBottom: 24 }}>
-                  <thead><tr><th style={{ width: 140 }}>Prop</th><th>타입</th><th>설명</th></tr></thead>
+                  <thead><tr><th style={{ width: 140 }}>Prop</th><th>Type</th><th>Description</th></tr></thead>
                   <tbody>
-                    <tr><td><code>totalCount</code></td><td><code>number</code></td><td>건수 표시 (예: "전체 102건")</td></tr>
-                    <tr><td><code>countLabel</code></td><td><code>string</code></td><td>건수 앞 라벨 (기본: "전체")</td></tr>
-                    <tr><td><code>left</code></td><td><code>ReactNode</code></td><td>좌측 추가 요소 (검색어, 필터 태그 등)</td></tr>
-                    <tr><td><code>actions</code></td><td><code>ReactNode</code></td><td>우측 액션 버튼들 (등록/삭제/엑셀 등)</td></tr>
+                    <tr><td><code>totalCount</code></td><td><code>number</code></td><td>Row count display (e.g. "102 total")</td></tr>
+                    <tr><td><code>countLabel</code></td><td><code>string</code></td><td>Label in front of the count (default: "Total")</td></tr>
+                    <tr><td><code>left</code></td><td><code>ReactNode</code></td><td>Extra content on the left (search terms, filter tags, …)</td></tr>
+                    <tr><td><code>actions</code></td><td><code>ReactNode</code></td><td>Action buttons on the right (new, delete, Excel, …)</td></tr>
                   </tbody>
                 </table>
 
-                <Card title="라이브 데모" style={{ marginBottom: 24 }}>
+                <Card title="Live demo" style={{ marginBottom: 24 }}>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
                     <div>
-                      <p style={{ fontSize: 12, color: 'var(--text-secondary)', margin: '0 0 6px' }}>기본 (건수 + 버튼)</p>
+                      <p style={{ fontSize: 12, color: 'var(--text-secondary)', margin: '0 0 6px' }}>Basic (count + buttons)</p>
                       <GridToolbar
                         totalCount={102}
                         actions={
                           <>
-                            <Button icon={<PlusOutlined />} type="primary">등록</Button>
-                            <Button icon={<DeleteOutlined />} danger disabled>삭제</Button>
+                            <Button icon={<PlusOutlined />} type="primary">New</Button>
+                            <Button icon={<DeleteOutlined />} danger disabled>Delete</Button>
                           </>
                         }
                       />
                     </div>
                     <Divider style={{ margin: '0' }} />
                     <div>
-                      <p style={{ fontSize: 12, color: 'var(--text-secondary)', margin: '0 0 6px' }}>countLabel 변경 + left 슬롯</p>
+                      <p style={{ fontSize: 12, color: 'var(--text-secondary)', margin: '0 0 6px' }}>Custom countLabel + the left slot</p>
                       <GridToolbar
                         totalCount={25}
-                        countLabel="조회 결과"
-                        left={<span style={{ fontSize: 13, color: 'var(--text-secondary)' }}>검색어: <strong>김영수</strong></span>}
-                        actions={<Button>엑셀 다운로드</Button>}
+                        countLabel="Results"
+                        left={<span style={{ fontSize: 13, color: 'var(--text-secondary)' }}>Keyword: <strong>Steve Kim</strong></span>}
+                        actions={<Button>Excel download</Button>}
                       />
                     </div>
                     <Divider style={{ margin: '0' }} />
                     <div>
-                      <p style={{ fontSize: 12, color: 'var(--text-secondary)', margin: '0 0 6px' }}>건수 없이 버튼만</p>
+                      <p style={{ fontSize: 12, color: 'var(--text-secondary)', margin: '0 0 6px' }}>Buttons only, no count</p>
                       <GridToolbar
                         actions={
                           <>
-                            <Button icon={<PlusOutlined />} type="primary">행 추가</Button>
-                            <Button>저장</Button>
+                            <Button icon={<PlusOutlined />} type="primary">Add row</Button>
+                            <Button>Save</Button>
                           </>
                         }
                       />
@@ -1885,26 +1885,26 @@ export default function GridEditingDemo() {
 import { Button } from 'antd';
 import { PlusOutlined, DeleteOutlined } from '@ant-design/icons';
 
-// 기본 사용
+// Basic usage
 <GridToolbar
   totalCount={data.length}
   actions={
     <>
-      <Button type="primary" icon={<PlusOutlined />}>등록</Button>
+      <Button type="primary" icon={<PlusOutlined />}>New</Button>
       <Button danger icon={<DeleteOutlined />} disabled={selected.length === 0}>
-        삭제 {selected.length > 0 && \`(\${selected.length})\`}
+        Delete {selected.length > 0 && \`(\${selected.length})\`}
       </Button>
     </>
   }
 />
 
-// left 슬롯 활용
+// Using the left slot
 <GridToolbar
   totalCount={25}
-  countLabel="조회 결과"
-  left={<span>검색어: <strong>{keyword}</strong></span>}
-  actions={<Button>엑셀 다운로드</Button>}
-/>`} title="GridToolbar 기본 사용" />
+  countLabel="Results"
+  left={<span>Keyword: <strong>{keyword}</strong></span>}
+  actions={<Button>Excel download</Button>}
+/>`} title="Basic GridToolbar usage" />
               </div>
             ),
           },
@@ -1917,23 +1917,23 @@ import { PlusOutlined, DeleteOutlined } from '@ant-design/icons';
               <div className={styles.demoSection}>
                 <h3>GridPanel</h3>
                 <p className={styles.demoDesc}>
-                  <code>GridToolbar + GridTable</code>을 하나로 묶은 편의 컴포넌트입니다.
-                  GridTable의 모든 props를 그대로 지원하며, 추가로 툴바 관련 props를 제공합니다.
+                  A convenience component that bundles <code>GridToolbar + GridTable</code>.
+                  Every GridTable prop still works, plus a few toolbar-specific ones.
                 </p>
                 <table className={styles.demoPropsTable} style={{ marginBottom: 24 }}>
-                  <thead><tr><th style={{ width: 160 }}>Prop</th><th>타입</th><th>설명</th></tr></thead>
+                  <thead><tr><th style={{ width: 160 }}>Prop</th><th>Type</th><th>Description</th></tr></thead>
                   <tbody>
-                    <tr><td><code>totalCount</code></td><td><code>number</code></td><td>툴바 건수 표시 (예: "전체 102건")</td></tr>
-                    <tr><td><code>countLabel</code></td><td><code>string</code></td><td>건수 앞 라벨 (기본: "전체")</td></tr>
-                    <tr><td><code>toolbarLeft</code></td><td><code>ReactNode</code></td><td>툴바 좌측 추가 요소</td></tr>
-                    <tr><td><code>actions</code></td><td><code>ReactNode</code></td><td>툴바 우측 액션 버튼들</td></tr>
-                    <tr><td colSpan={3} style={{ color: 'var(--text-secondary)', fontSize: 12 }}>+ GridTable의 모든 props (columnDefs, rowData, rowSelection, onSelectionChanged, ...)</td></tr>
+                    <tr><td><code>totalCount</code></td><td><code>number</code></td><td>Row count in the toolbar (e.g. "102 total")</td></tr>
+                    <tr><td><code>countLabel</code></td><td><code>string</code></td><td>Label in front of the count (default: "Total")</td></tr>
+                    <tr><td><code>toolbarLeft</code></td><td><code>ReactNode</code></td><td>Extra content on the left of the toolbar</td></tr>
+                    <tr><td><code>actions</code></td><td><code>ReactNode</code></td><td>Action buttons on the right of the toolbar</td></tr>
+                    <tr><td colSpan={3} style={{ color: 'var(--text-secondary)', fontSize: 12 }}>+ every GridTable prop (columnDefs, rowData, rowSelection, onSelectionChanged, …)</td></tr>
                   </tbody>
                 </table>
 
-                <Card title="라이브 데모 — 등록/삭제 버튼 + 건수 표시" style={{ marginBottom: 24 }}>
+                <Card title="Live demo — new/delete buttons with a row count" style={{ marginBottom: 24 }}>
                   <p style={{ fontSize: 13, color: 'var(--text-secondary)', marginBottom: 8 }}>
-                    행을 선택하면 삭제 버튼이 활성화됩니다.
+                    Select a row and the delete button becomes enabled.
                   </p>
                   <App>
                     <ToolbarActionDemo />
@@ -1952,15 +1952,15 @@ function MyPage() {
 
   const handleDelete = () => {
     modal.confirm({
-      title: '삭제 확인',
-      content: \`선택한 \${selected.length}건을 삭제하시겠습니까?\`,
-      okText: '삭제',
+      title: 'Confirm deletion',
+      content: \`Delete the \${selected.length} selected rows?\`,
+      okText: 'Delete',
       okButtonProps: { danger: true },
       onOk: () => {
         const ids = new Set(selected.map((r) => r.id));
         setData((prev) => prev.filter((r) => !ids.has(r.id)));
         setSelected([]);
-        message.success(\`\${selected.length}건 삭제됐습니다.\`);
+        message.success(\`\${selected.length} rows deleted.\`);
       },
     });
   };
@@ -1970,12 +1970,12 @@ function MyPage() {
       totalCount={data.length}
       actions={
         <>
-          <Button type="primary" icon={<PlusOutlined />}>등록</Button>
+          <Button type="primary" icon={<PlusOutlined />}>New</Button>
           <Button danger icon={<DeleteOutlined />}
             disabled={selected.length === 0}
             onClick={handleDelete}
           >
-            삭제 {selected.length > 0 && \`(\${selected.length})\`}
+            Delete {selected.length > 0 && \`(\${selected.length})\`}
           </Button>
         </>
       }
@@ -1986,40 +1986,40 @@ function MyPage() {
       onSelectionChanged={setSelected}
     />
   );
-}`} title="GridPanel 기본 사용 패턴" />
+}`} title="The basic GridPanel pattern" />
 
                 <div style={{ marginTop: 16, padding: 12, background: 'var(--content-header-bg)', borderRadius: 4 }}>
-                  <strong>핵심 정리</strong>
+                  <strong>Key points</strong>
                   <ul style={{ margin: '8px 0 0', paddingLeft: 20, color: 'var(--text-secondary)' }}>
-                    <li><code>totalCount={'{data.length}'}</code>: 데이터 변경 시 자동 업데이트</li>
-                    <li><code>actions</code>: 등록/삭제/엑셀 등 버튼을 ReactNode로 자유롭게 구성</li>
-                    <li><code>onSelectionChanged</code>: 선택된 행 배열 → 삭제 버튼 활성화 제어에 활용</li>
-                    <li>GridTable props 전체 지원: <code>rowSelection</code>, <code>editable</code>, <code>pagination</code>, <code>getContextMenuItems</code> 등</li>
+                    <li><code>totalCount={'{data.length}'}</code>: updates itself whenever the data changes</li>
+                    <li><code>actions</code>: any ReactNode — new, delete, Excel, whatever you need</li>
+                    <li><code>onSelectionChanged</code>: the array of selected rows — use it to enable the delete button</li>
+                    <li>Every GridTable prop works: <code>rowSelection</code>, <code>editable</code>, <code>pagination</code>, <code>getContextMenuItems</code> and the rest</li>
                   </ul>
                 </div>
               </div>
             ),
           },
 
-          /* ── 기본 그리드 ── */
+          /* ── Basic grid ── */
           {
             key: 'basic',
             label: 'GridTable',
             children: (
               <div className={styles.demoSection}>
                 <div className={styles.demoDesc}>
-                  <h3>기본 GridTable</h3>
-                  <p>정렬, 필터, 리사이즈, 페이지네이션이 기본 제공됩니다.</p>
+                  <h3>The basic GridTable</h3>
+                  <p>Sorting, filtering, resizing and pagination come for free.</p>
                   <table className={styles.demoPropsTable}>
-                    <thead><tr><th>Prop</th><th>타입</th><th>설명</th></tr></thead>
+                    <thead><tr><th>Prop</th><th>Type</th><th>Description</th></tr></thead>
                     <tbody>
-                      <tr><td><code>columnDefs</code></td><td>ColDef[]</td><td>컬럼 정의 배열</td></tr>
-                      <tr><td><code>rowData</code></td><td>T[]</td><td>행 데이터</td></tr>
-                      <tr><td><code>rowKey</code></td><td>string</td><td>행 고유 키 필드 (기본: "id")</td></tr>
-                      <tr><td><code>pagination</code></td><td>boolean</td><td>페이지네이션 활성화 (기본: true)</td></tr>
-                      <tr><td><code>pageSize</code></td><td>number</td><td>페이지당 행 수 (기본: 20)</td></tr>
-                      <tr><td><code>onRowClick</code></td><td>(row: T) =&gt; void</td><td>행 클릭 콜백</td></tr>
-                      <tr><td><code>height</code></td><td>string | number</td><td>그리드 높이 (기본: "100%")</td></tr>
+                      <tr><td><code>columnDefs</code></td><td>ColDef[]</td><td>The column definitions</td></tr>
+                      <tr><td><code>rowData</code></td><td>T[]</td><td>The row data</td></tr>
+                      <tr><td><code>rowKey</code></td><td>string</td><td>The unique row key field (default: "id")</td></tr>
+                      <tr><td><code>pagination</code></td><td>boolean</td><td>Enables pagination (default: true)</td></tr>
+                      <tr><td><code>pageSize</code></td><td>number</td><td>Rows per page (default: 20)</td></tr>
+                      <tr><td><code>onRowClick</code></td><td>(row: T) =&gt; void</td><td>Row click callback</td></tr>
+                      <tr><td><code>height</code></td><td>string | number</td><td>Grid height (default: "100%")</td></tr>
                     </tbody>
                   </table>
                 </div>
@@ -2036,27 +2036,27 @@ function MyPage() {
             ),
           },
 
-          /* ── 셀 편집 ── */
+          /* ── Cell editing ── */
           {
             key: 'editable',
-            label: '셀 편집',
+            label: 'Cell editing',
             children: (
               <div className={styles.demoSection}>
                 <div className={styles.demoDesc}>
-                  <h3>편집 가능 그리드 + Cell Editors</h3>
-                  <p>셀을 더블클릭하면 편집 모드가 활성화됩니다. 5종의 커스텀 Cell Editor를 지원합니다.</p>
+                  <h3>An editable grid and its cell editors</h3>
+                  <p>Double-click a cell to start editing. Five custom cell editors are available.</p>
                   <table className={styles.demoPropsTable}>
-                    <thead><tr><th>Cell Editor</th><th>용도</th><th>주요 Props</th></tr></thead>
+                    <thead><tr><th>Cell editor</th><th>Purpose</th><th>Key props</th></tr></thead>
                     <tbody>
-                      <tr><td><code>DateCellEditor</code></td><td>날짜 선택 (DatePicker)</td><td>format="YYYY-MM-DD"</td></tr>
-                      <tr><td><code>SelectCellEditor</code></td><td>드롭다운 선택</td><td>values, valueLabels</td></tr>
-                      <tr><td><code>TagsCellEditor</code></td><td>다중 태그 입력</td><td>presetTags</td></tr>
-                      <tr><td><code>NumberCellEditor</code></td><td>숫자 입력</td><td>min, max, precision</td></tr>
-                      <tr><td><code>TextAreaCellEditor</code></td><td>여러 줄 텍스트</td><td>rows</td></tr>
+                      <tr><td><code>DateCellEditor</code></td><td>Date selection (DatePicker)</td><td>format="YYYY-MM-DD"</td></tr>
+                      <tr><td><code>SelectCellEditor</code></td><td>Dropdown selection</td><td>values, valueLabels</td></tr>
+                      <tr><td><code>TagsCellEditor</code></td><td>Multi-tag input</td><td>presetTags</td></tr>
+                      <tr><td><code>NumberCellEditor</code></td><td>Numeric input</td><td>min, max, precision</td></tr>
+                      <tr><td><code>TextAreaCellEditor</code></td><td>Multi-line text</td><td>rows</td></tr>
                     </tbody>
                   </table>
                 </div>
-                <Alert type="info" showIcon title="셀을 더블클릭하여 편집해보세요." style={{ marginBottom: 8 }} />
+                <Alert type="info" showIcon title="Double-click a cell to edit it." style={{ marginBottom: 8 }} />
                 <div style={{ height: 320 }}>
                   <GridTable<EditableTask>
                     columnDefs={editableCols}
@@ -2070,7 +2070,7 @@ function MyPage() {
                   />
                 </div>
                 {changeLog.length > 0 && (
-                  <Card size="small" title="변경 로그" style={{ marginTop: 8, fontSize: 12 }}>
+                  <Card size="small" title="Change log" style={{ marginTop: 8, fontSize: 12 }}>
                     {changeLog.map((log, i) => (
                       <div key={i} style={{ color: 'var(--text-secondary)', fontSize: 12, padding: '2px 0' }}>{log}</div>
                     ))}
@@ -2081,27 +2081,27 @@ function MyPage() {
             ),
           },
 
-          /* ── 행 선택 ── */
+          /* ── Row selection ── */
           {
             key: 'selection',
-            label: '행 선택',
+            label: 'Row selection',
             children: (
               <div className={styles.demoSection}>
                 <div className={styles.demoDesc}>
-                  <h3>행 선택 (Row Selection)</h3>
-                  <p>체크박스를 통한 단일/다중 행 선택을 지원합니다.</p>
+                  <h3>Row selection</h3>
+                  <p>Single and multiple row selection through checkboxes.</p>
                   <table className={styles.demoPropsTable}>
-                    <thead><tr><th>Prop</th><th>타입</th><th>설명</th></tr></thead>
+                    <thead><tr><th>Prop</th><th>Type</th><th>Description</th></tr></thead>
                     <tbody>
-                      <tr><td><code>rowSelection</code></td><td>'singleRow' | 'multiRow'</td><td>선택 모드</td></tr>
-                      <tr><td><code>onSelectionChanged</code></td><td>(rows: T[]) =&gt; void</td><td>선택 변경 콜백</td></tr>
+                      <tr><td><code>rowSelection</code></td><td>'singleRow' | 'multiRow'</td><td>Selection mode</td></tr>
+                      <tr><td><code>onSelectionChanged</code></td><td>(rows: T[]) =&gt; void</td><td>Selection change callback</td></tr>
                     </tbody>
                   </table>
                 </div>
                 <Alert
                   type="info"
                   showIcon
-                  title={`선택된 행: ${selectedRows.length}건 ${selectedRows.length > 0 ? `(${selectedRows.map(r => r.name).join(', ')})` : ''}`}
+                  title={`Selected rows: ${selectedRows.length} ${selectedRows.length > 0 ? `(${selectedRows.map(r => r.name).join(', ')})` : ''}`}
                   style={{ marginBottom: 8 }}
                 />
                 <div style={{ height: 350 }}>
@@ -2120,53 +2120,53 @@ function MyPage() {
             ),
           },
 
-          /* ── 셀 렌더러/포맷터 ── */
+          /* ── Cell renderers and formatters ── */
           {
             key: 'renderer',
-            label: '셀 렌더러/포맷터',
+            label: 'Renderers & formatters',
             children: (
               <div className={styles.demoSection}>
-                <h3>셀 렌더러 / 포맷터</h3>
-                <p className={styles.demoDesc}>ColDef에 valueFormatter, cellRenderer, cellStyle, cellClass 등을 지정하여 셀 표시를 커스터마이징합니다.</p>
+                <h3>Cell renderers and formatters</h3>
+                <p className={styles.demoDesc}>Customize how a cell looks with valueFormatter, cellRenderer, cellStyle and cellClass on the ColDef.</p>
 
                 <table className={styles.demoPropsTable} style={{ marginBottom: 24 }}>
-                  <thead><tr><th style={{ width: 200 }}>ColDef 옵션</th><th>타입</th><th>설명</th></tr></thead>
+                  <thead><tr><th style={{ width: 200 }}>ColDef option</th><th>Type</th><th>Description</th></tr></thead>
                   <tbody>
-                    <tr><td><code>valueFormatter</code></td><td><code>(params) =&gt; string</code></td><td>표시 값 변환. 원본 데이터는 유지되며 화면/클립보드 표시만 변경</td></tr>
-                    <tr><td><code>cellRenderer</code></td><td><code>Component | string</code></td><td>커스텀 React 컴포넌트로 셀 렌더링 (Tag, Avatar 등)</td></tr>
-                    <tr><td><code>cellRendererParams</code></td><td><code>object</code></td><td>cellRenderer에 전달할 추가 파라미터</td></tr>
-                    <tr><td><code>cellStyle</code></td><td><code>CSSProperties | (params) =&gt; CSSProperties</code></td><td>셀 인라인 스타일 (조건부 가능)</td></tr>
-                    <tr><td><code>cellClass</code></td><td><code>string | (params) =&gt; string</code></td><td>셀 CSS 클래스 동적 지정</td></tr>
-                    <tr><td><code>tooltipField</code></td><td><code>string</code></td><td>마우스 호버 시 해당 필드값을 툴팁으로 표시</td></tr>
-                    <tr><td><code>tooltipValueGetter</code></td><td><code>(params) =&gt; string</code></td><td>커스텀 툴팁 텍스트 계산 함수</td></tr>
+                    <tr><td><code>valueFormatter</code></td><td><code>(params) =&gt; string</code></td><td>Transforms the displayed value. The data is untouched — only the screen and clipboard change</td></tr>
+                    <tr><td><code>cellRenderer</code></td><td><code>Component | string</code></td><td>Renders the cell with your own React component (Tag, Avatar, …)</td></tr>
+                    <tr><td><code>cellRendererParams</code></td><td><code>object</code></td><td>Extra parameters passed to the cellRenderer</td></tr>
+                    <tr><td><code>cellStyle</code></td><td><code>CSSProperties | (params) =&gt; CSSProperties</code></td><td>Inline cell style, optionally conditional</td></tr>
+                    <tr><td><code>cellClass</code></td><td><code>string | (params) =&gt; string</code></td><td>Assigns a CSS class to the cell dynamically</td></tr>
+                    <tr><td><code>tooltipField</code></td><td><code>string</code></td><td>Shows that field's value as a tooltip on hover</td></tr>
+                    <tr><td><code>tooltipValueGetter</code></td><td><code>(params) =&gt; string</code></td><td>A function that computes custom tooltip text</td></tr>
                   </tbody>
                 </table>
 
-                <Card title="라이브 데모 — valueFormatter / cellStyle / cellRenderer" style={{ marginBottom: 24 }}>
+                <Card title="Live demo — valueFormatter / cellStyle / cellRenderer" style={{ marginBottom: 24 }}>
                   <div style={{ height: 260 }}>
                     <GridTable<Employee>
                       columnDefs={[
-                        { field: 'name', headerName: '이름', width: 100, tooltipField: 'email' },
-                        { field: 'department', headerName: '부서', width: 110 },
+                        { field: 'name', headerName: 'Name', width: 100, tooltipField: 'email' },
+                        { field: 'department', headerName: 'Department', width: 110 },
                         {
-                          field: 'role', headerName: '직급', width: 90,
+                          field: 'role', headerName: 'Grade', width: 90,
                           cellStyle: (p) => {
                             const map: Record<string, CellStyle> = {
-                              '팀장': { background: '#e6f4ff', color: '#0958d9' },
-                              '선임': { background: '#f6ffed', color: '#389e0d' },
-                              '사원': { background: '#f5f5f5', color: '#595959' },
+                              'Team lead': { background: '#e6f4ff', color: '#0958d9' },
+                              'Senior': { background: '#f6ffed', color: '#389e0d' },
+                              'Staff': { background: '#f5f5f5', color: '#595959' },
                             };
                             return map[p.value] ?? {};
                           },
                         },
                         {
-                          field: 'joinDate', headerName: '입사일', width: 120,
+                          field: 'joinDate', headerName: 'Start date', width: 120,
                           valueFormatter: (p) => p.value ? p.value.replace(/-/g, '.') : '',
                         },
                         {
-                          field: 'email', headerName: '상태', width: 100,
+                          field: 'email', headerName: 'Status', width: 100,
                           valueFormatter: () => '',
-                          cellRenderer: () => <Tag color="green">활성</Tag>,
+                          cellRenderer: () => <Tag color="green">Active</Tag>,
                         },
                       ]}
                       rowData={basicData.slice(0, 6)}
@@ -2178,55 +2178,55 @@ function MyPage() {
                 </Card>
 
                 <h3>valueFormatter</h3>
-                <p className={styles.demoDesc}>셀 값의 표시 형식을 변경합니다. 원본 데이터는 유지되며 화면 표시만 변경됩니다.</p>
-                <CodeSnippet code={formatterCode} title="값 포맷팅" />
+                <p className={styles.demoDesc}>Changes how a cell value is displayed. The underlying data is untouched.</p>
+                <CodeSnippet code={formatterCode} title="Value formatting" />
 
                 <h3 style={{ marginTop: 24 }}>cellRenderer</h3>
-                <p className={styles.demoDesc}>커스텀 React 컴포넌트로 셀을 렌더링합니다. Tag, Avatar 등 복잡한 UI를 표현할 수 있습니다.</p>
-                <CodeSnippet code={cellRendererCode} title="커스텀 셀 렌더러" />
+                <p className={styles.demoDesc}>Renders a cell with your own React component, so tags, avatars and richer UI are all possible.</p>
+                <CodeSnippet code={cellRendererCode} title="Custom cell renderers" />
 
                 <h3 style={{ marginTop: 24 }}>cellStyle / cellClass</h3>
-                <p className={styles.demoDesc}>조건에 따라 셀의 스타일을 동적으로 변경합니다.</p>
-                <CodeSnippet code={cellStyleCode} title="조건부 스타일링" />
+                <p className={styles.demoDesc}>Changes a cell's style dynamically based on a condition.</p>
+                <CodeSnippet code={cellStyleCode} title="Conditional styling" />
 
-                <h3 style={{ marginTop: 24 }}>툴팁</h3>
-                <CodeSnippet code={tooltipCode} title="셀 툴팁 설정" />
+                <h3 style={{ marginTop: 24 }}>Tooltips</h3>
+                <CodeSnippet code={tooltipCode} title="Cell tooltips" />
               </div>
             ),
           },
 
-          /* ── 셀 에디터 가이드 ── */
+          /* ── Cell editor guide ── */
           {
             key: 'celleditor',
-            label: '셀 에디터 가이드',
+            label: 'Cell editor guide',
             children: (
               <div className={styles.demoSection}>
-                <h3>셀 에디터</h3>
-                <p className={styles.demoDesc}>ColDef의 <code>editable</code>과 <code>cellEditor</code>로 셀 편집 방식을 제어합니다. AG Grid 내장 에디터와 커스텀 React 에디터를 모두 지원합니다.</p>
+                <h3>Cell editors</h3>
+                <p className={styles.demoDesc}>The ColDef's <code>editable</code> and <code>cellEditor</code> control how a cell is edited. Both AG Grid's built-in editors and custom React editors work.</p>
 
                 <table className={styles.demoPropsTable} style={{ marginBottom: 24 }}>
-                  <thead><tr><th style={{ width: 200 }}>ColDef 옵션</th><th>타입</th><th>설명</th></tr></thead>
+                  <thead><tr><th style={{ width: 200 }}>ColDef option</th><th>Type</th><th>Description</th></tr></thead>
                   <tbody>
-                    <tr><td><code>editable</code></td><td><code>boolean | (params) =&gt; boolean</code></td><td>셀 편집 활성화. 함수형으로 조건부 제어 가능</td></tr>
-                    <tr><td><code>cellEditor</code></td><td><code>Component | string</code></td><td>에디터 컴포넌트. 기본값: agTextCellEditor</td></tr>
-                    <tr><td><code>cellEditorParams</code></td><td><code>object | (params) =&gt; object</code></td><td>에디터에 전달할 파라미터. 함수형으로 행 데이터 기반 동적 설정 가능</td></tr>
-                    <tr><td><code>cellEditorPopup</code></td><td><code>boolean</code></td><td>팝업 모드 에디터 (텍스트 에어리어, DatePicker 등)</td></tr>
-                    <tr><td><code>singleClickEdit</code></td><td><code>boolean</code></td><td>더블클릭 대신 싱글클릭으로 편집 시작</td></tr>
-                    <tr><td><code>onCellValueChanged</code></td><td><code>(event) =&gt; void</code></td><td>셀 값 변경 완료 시 콜백. event.oldValue / event.newValue 제공</td></tr>
+                    <tr><td><code>editable</code></td><td><code>boolean | (params) =&gt; boolean</code></td><td>Enables cell editing. Pass a function for conditional control</td></tr>
+                    <tr><td><code>cellEditor</code></td><td><code>Component | string</code></td><td>The editor component. Defaults to agTextCellEditor</td></tr>
+                    <tr><td><code>cellEditorParams</code></td><td><code>object | (params) =&gt; object</code></td><td>Parameters passed to the editor. Pass a function to derive them from the row data</td></tr>
+                    <tr><td><code>cellEditorPopup</code></td><td><code>boolean</code></td><td>Popup-mode editor (text area, DatePicker, …)</td></tr>
+                    <tr><td><code>singleClickEdit</code></td><td><code>boolean</code></td><td>Start editing on a single click instead of a double click</td></tr>
+                    <tr><td><code>onCellValueChanged</code></td><td><code>(event) =&gt; void</code></td><td>Fires once a cell value has changed. Provides event.oldValue and event.newValue</td></tr>
                   </tbody>
                 </table>
 
-                <Card title="라이브 데모 — 내장 에디터 (더블클릭으로 편집)" style={{ marginBottom: 24 }}>
+                <Card title="Live demo — the built-in editors (double-click to edit)" style={{ marginBottom: 24 }}>
                   <div style={{ height: 220 }}>
                     <GridTable<MemberRow>
                       columnDefs={[
-                        { field: 'name', headerName: '이름', editable: true, width: 110 },
+                        { field: 'name', headerName: 'Name', editable: true, width: 110 },
                         {
-                          field: 'role', headerName: '역할', editable: true, width: 120,
+                          field: 'role', headerName: 'Role', editable: true, width: 120,
                           cellEditor: 'agSelectCellEditor',
-                          cellEditorParams: { values: ['개발자', 'PM', '디자이너', 'QA'] },
+                          cellEditorParams: { values: ['Developer', 'PM', 'Designer', 'QA'] },
                         },
-                        { field: 'team', headerName: '팀', editable: true, flex: 1 },
+                        { field: 'team', headerName: 'Team', editable: true, flex: 1 },
                       ]}
                       rowData={memberData}
                       rowKey="id"
@@ -2237,61 +2237,61 @@ function MyPage() {
                   </div>
                 </Card>
 
-                <h3>내장 셀 에디터</h3>
-                <p className={styles.demoDesc}>AG Grid는 텍스트, 숫자, 대형 텍스트, 선택 등 기본 에디터를 제공합니다.</p>
-                <CodeSnippet code={cellEditorBasicCode} title="내장 에디터 사용" />
+                <h3>Built-in cell editors</h3>
+                <p className={styles.demoDesc}>AG Grid ships editors for text, numbers, large text and select inputs.</p>
+                <CodeSnippet code={cellEditorBasicCode} title="Using the built-in editors" />
 
-                <h3 style={{ marginTop: 24 }}>커스텀 셀 에디터</h3>
+                <h3 style={{ marginTop: 24 }}>Custom cell editors</h3>
                 <p className={styles.demoDesc}>
-                  React forwardRef + useImperativeHandle 패턴으로 커스텀 에디터를 만들 수 있습니다.
-                  <code>getValue()</code>와 <code>afterGuiAttached()</code> 메서드를 구현해야 합니다.
+                  Custom editors are built with the React forwardRef + useImperativeHandle pattern.
+                  You must implement <code>getValue()</code> and <code>afterGuiAttached()</code>.
                 </p>
-                <CodeSnippet code={customCellEditorCode} title="커스텀 에디터 패턴" />
+                <CodeSnippet code={customCellEditorCode} title="The custom editor pattern" />
 
                 <div style={{ marginTop: 16, padding: 12, background: 'var(--content-header-bg)', borderRadius: 4 }}>
-                  <strong>에디터 팁</strong>
+                  <strong>Editor tips</strong>
                   <ul style={{ margin: '8px 0 0', paddingLeft: 20, color: 'var(--text-secondary)' }}>
-                    <li>editable은 boolean 또는 함수로 설정 가능 (조건부 편집)</li>
-                    <li>cellEditorParams로 에디터에 추가 설정 전달</li>
-                    <li>onCellValueChanged로 값 변경 시 로직 처리</li>
-                    <li>cellEditorPopup: true로 팝업 에디터 모드 사용 가능</li>
+                    <li>editable takes a boolean or a function, so editing can be conditional</li>
+                    <li>cellEditorParams passes extra configuration to the editor</li>
+                    <li>onCellValueChanged is where you react to a value change</li>
+                    <li>cellEditorPopup: true switches the editor into popup mode</li>
                   </ul>
                 </div>
               </div>
             ),
           },
 
-          /* ── 공통코드/검색 셀 ── */
+          /* ── Common-code and search cells ── */
           {
             key: 'comcd-search-cell',
-            label: '공통코드/검색 셀',
+            label: 'Common-code & search cells',
             children: <ComcdSearchCellDemo />,
           },
 
-          /* ── 헤더 그룹핑 ── */
+          /* ── Header grouping ── */
           {
             key: 'headergroup',
-            label: '헤더 그룹핑',
+            label: 'Header grouping',
             children: (
               <div className={styles.demoSection}>
-                <h3>컬럼 헤더 그룹</h3>
+                <h3>Column header groups</h3>
                 <p className={styles.demoDesc}>
-                  <code>ColGroupDef.children</code> 배열로 관련 컬럼을 묶어 다단 헤더를 구성합니다. Community 에디션에서 지원됩니다.
+                  A <code>ColGroupDef.children</code> array groups related columns into a multi-level header. Supported in the Community edition.
                 </p>
 
                 <table className={styles.demoPropsTable} style={{ marginBottom: 24 }}>
-                  <thead><tr><th style={{ width: 200 }}>ColGroupDef 옵션</th><th>타입</th><th>설명</th></tr></thead>
+                  <thead><tr><th style={{ width: 200 }}>ColGroupDef option</th><th>Type</th><th>Description</th></tr></thead>
                   <tbody>
-                    <tr><td><code>headerName</code></td><td><code>string</code></td><td>그룹 헤더 표시명</td></tr>
-                    <tr><td><code>children</code> <span style={{ color: '#ff4d4f' }}>*</span></td><td><code>(ColDef | ColGroupDef)[]</code></td><td>그룹에 속한 컬럼/하위 그룹 (있으면 자동으로 그룹으로 처리)</td></tr>
-                    <tr><td><code>openByDefault</code></td><td><code>boolean</code></td><td>초기 그룹 펼침 여부 (기본: false)</td></tr>
-                    <tr><td><code>marryChildren</code></td><td><code>boolean</code></td><td>true이면 그룹 내 컬럼을 그룹 밖으로 이동 불가</td></tr>
-                    <tr><td><code>columnGroupShow</code></td><td><code>'open' | 'closed'</code></td><td>그룹이 열렸을 때 / 닫혔을 때만 표시할 컬럼 지정</td></tr>
-                    <tr><td><code>headerGroupComponent</code></td><td><code>Component</code></td><td>커스텀 그룹 헤더 컴포넌트</td></tr>
+                    <tr><td><code>headerName</code></td><td><code>string</code></td><td>Group header text</td></tr>
+                    <tr><td><code>children</code> <span style={{ color: '#ff4d4f' }}>*</span></td><td><code>(ColDef | ColGroupDef)[]</code></td><td>The columns or subgroups in this group — its presence makes it a group</td></tr>
+                    <tr><td><code>openByDefault</code></td><td><code>boolean</code></td><td>Whether the group starts expanded (default: false)</td></tr>
+                    <tr><td><code>marryChildren</code></td><td><code>boolean</code></td><td>When true, columns cannot be dragged out of the group</td></tr>
+                    <tr><td><code>columnGroupShow</code></td><td><code>'open' | 'closed'</code></td><td>Shows the column only while the group is expanded or only while collapsed</td></tr>
+                    <tr><td><code>headerGroupComponent</code></td><td><code>Component</code></td><td>A custom group header component</td></tr>
                   </tbody>
                 </table>
 
-                <Card title="라이브 데모 - 헤더 그룹핑" style={{ marginBottom: 24 }}>
+                <Card title="Live demo — header grouping" style={{ marginBottom: 24 }}>
                   <div className="ds-data-grid" style={{ height: 280 }}>
                     <AgGridReact
                       rowData={groupDemoData}
@@ -2302,42 +2302,42 @@ function MyPage() {
                   </div>
                 </Card>
 
-                <h3>기본 헤더 그룹</h3>
-                <CodeSnippet code={headerGroupCode} title="헤더 그룹 설정" />
+                <h3>A basic header group</h3>
+                <CodeSnippet code={headerGroupCode} title="Header group setup" />
 
-                <h3 style={{ marginTop: 24 }}>다단 그룹 / 열기·닫기</h3>
+                <h3 style={{ marginTop: 24 }}>Nested groups and expand/collapse</h3>
                 <p className={styles.demoDesc}>
-                  <code>columnGroupShow</code>로 그룹 열기/닫기 시 표시할 컬럼을 제어할 수 있습니다.
+                  <code>columnGroupShow</code> controls which columns appear when a group is expanded or collapsed.
                 </p>
-                <CodeSnippet code={headerGroupAdvancedCode} title="다단 그룹 & columnGroupShow" />
+                <CodeSnippet code={headerGroupAdvancedCode} title="Nested groups & columnGroupShow" />
 
                 <div style={{ marginTop: 16, padding: 12, background: 'var(--content-header-bg)', borderRadius: 4 }}>
-                  <strong>핵심 정리</strong>
+                  <strong>Key points</strong>
                   <ul style={{ margin: '8px 0 0', paddingLeft: 20, color: 'var(--text-secondary)' }}>
-                    <li><code>children</code> 배열이 있으면 자동으로 그룹 헤더로 처리</li>
-                    <li>중첩 가능: children 안에 다시 children (다단 헤더)</li>
-                    <li><code>columnGroupShow: 'open' | 'closed'</code>로 그룹 접기/펼치기 시 표시 제어</li>
-                    <li><code>headerGroupComponent</code>로 커스텀 그룹 헤더 렌더링 가능</li>
-                    <li><code>marryChildren: true</code>로 그룹 내 컬럼 이동 제한</li>
+                    <li>A column with a <code>children</code> array automatically becomes a group header</li>
+                    <li>Nesting works: children inside children gives multi-level headers</li>
+                    <li><code>columnGroupShow: 'open' | 'closed'</code> decides visibility per expand state</li>
+                    <li><code>headerGroupComponent</code> renders a custom group header</li>
+                    <li><code>marryChildren: true</code> keeps group columns from being moved out</li>
                   </ul>
                 </div>
               </div>
             ),
           },
 
-          /* ── 셀/행 스패닝 ── */
+          /* ── Cell and row spanning ── */
           {
             key: 'spanning',
-            label: '셀/행 스패닝',
+            label: 'Cell & row spanning',
             children: (
               <div className={styles.demoSection}>
                 <h3>Column Spanning (colSpan)</h3>
                 <p className={styles.demoDesc}>
-                  <code>colSpan</code> 콜백으로 특정 조건에서 셀이 여러 컬럼을 차지하도록 설정합니다.
-                  소계 행이나 제목 행 등에 활용합니다.
+                  The <code>colSpan</code> callback lets a cell span several columns under a condition.
+                  Useful for subtotal rows and section headings.
                 </p>
 
-                <Card title="라이브 데모 - colSpan (소계 행 셀 병합)" style={{ marginBottom: 24 }}>
+                <Card title="Live demo — colSpan (merged cells on subtotal rows)" style={{ marginBottom: 24 }}>
                   <div style={{ height: 280 }}>
                     <GridTable<SpanDemoRow>
                       columnDefs={spanColDefs}
@@ -2349,15 +2349,15 @@ function MyPage() {
                   </div>
                 </Card>
 
-                <CodeSnippet code={colSpanCode} title="colSpan 예제" />
+                <CodeSnippet code={colSpanCode} title="colSpan example" />
 
                 <h3 style={{ marginTop: 24 }}>Row Spanning (spanRows)</h3>
                 <p className={styles.demoDesc}>
-                  같은 값이 연속된 행에서 셀을 자동 병합합니다.
-                  AG Grid v35+ Community의 <code>CellSpanModule</code> (<code>AllCommunityModule</code>에 포함)을 사용합니다.
+                  Automatically merges cells across consecutive rows with the same value.
+                  It uses <code>CellSpanModule</code> from AG Grid v35+ Community (included in <code>AllCommunityModule</code>).
                 </p>
 
-                <Card title="라이브 데모 - spanRows (본부/팀 자동 병합)" style={{ marginBottom: 24 }}>
+                <Card title="Live demo — spanRows (division and team merged automatically)" style={{ marginBottom: 24 }}>
                   <div style={{ height: 320 }}>
                     <GridTable<RowSpanDemoRow>
                       columnDefs={rowSpanColDefs}
@@ -2370,35 +2370,35 @@ function MyPage() {
                   </div>
                 </Card>
 
-                <CodeSnippet code={rowSpanCode} title="행 스패닝 (enableCellSpan)" />
+                <CodeSnippet code={rowSpanCode} title="Row spanning (enableCellSpan)" />
 
                 <div style={{ marginTop: 16, padding: 12, background: 'var(--content-header-bg)', borderRadius: 4 }}>
-                  <strong>핵심 정리</strong>
+                  <strong>Key points</strong>
                   <ul style={{ margin: '8px 0 0', paddingLeft: 20, color: 'var(--text-secondary)' }}>
-                    <li><code>colSpan</code>: 함수형 — <code>(params) =&gt; number</code> (1이면 스패닝 없음)</li>
-                    <li><code>spanRows: true</code>: 같은 값의 연속 행 자동 병합 (정렬 필수)</li>
-                    <li><code>enableCellSpan</code> prop을 GridTable에 설정해야 행 스패닝 동작</li>
-                    <li>스패닝된 셀의 스타일은 <code>cellStyle</code> 콜백으로 별도 지정</li>
+                    <li><code>colSpan</code>: a function — <code>(params) =&gt; number</code> (1 means no spanning)</li>
+                    <li><code>spanRows: true</code>: merges consecutive identical values (the data must be sorted)</li>
+                    <li>Row spanning only works when the <code>enableCellSpan</code> prop is set on GridTable</li>
+                    <li>Style spanned cells separately through the <code>cellStyle</code> callback</li>
                   </ul>
                 </div>
               </div>
             ),
           },
 
-          /* ── 풋터/고정 행 ── */
+          /* ── Footer and pinned rows ── */
           {
             key: 'footer',
-            label: '풋터/고정 행',
+            label: 'Footer & pinned rows',
             children: (
               <div className={styles.demoSection}>
-                <h3>Pinned Rows (고정 행)</h3>
+                <h3>Pinned rows</h3>
                 <p className={styles.demoDesc}>
-                  <code>pinnedTopRowData</code>와 <code>pinnedBottomRowData</code>로 상단/하단에 고정 행을 추가합니다.
-                  합계, 평균, 요약 정보를 표시하는 풋터로 활용합니다.{' '}
+                  <code>pinnedTopRowData</code> and <code>pinnedBottomRowData</code> add rows pinned to the top or bottom.
+                  They make natural footers for totals, averages and summaries.{' '}
                   <Tag color="green">Community</Tag>
                 </p>
 
-                <Card title="라이브 데모 - 풋터 (하단 합계 행)" style={{ marginBottom: 24 }}>
+                <Card title="Live demo — footer (a total row at the bottom)" style={{ marginBottom: 24 }}>
                   <div style={{ height: 300 }}>
                     <GridTable<GroupDemoRow>
                       columnDefs={footerColDefs}
@@ -2419,21 +2419,21 @@ function MyPage() {
                   </div>
                 </Card>
 
-                <CodeSnippet code={pinnedRowCode} title="Pinned Rows 기본 사용" />
+                <CodeSnippet code={pinnedRowCode} title="Basic pinned rows" />
 
-                <h3 style={{ marginTop: 24 }}>고정 행 스타일링</h3>
+                <h3 style={{ marginTop: 24 }}>Styling pinned rows</h3>
                 <p className={styles.demoDesc}>
-                  <code>params.node.rowPinned</code>으로 고정 행 여부를 판별하여 스타일을 적용합니다.
+                  Check <code>params.node.rowPinned</code> to tell a pinned row apart and style it.
                 </p>
-                <CodeSnippet code={pinnedRowStyleCode} title="고정 행 스타일 커스터마이징" />
+                <CodeSnippet code={pinnedRowStyleCode} title="Customizing pinned row styles" />
 
-                <h3 style={{ marginTop: 24 }}>그룹핑 효과 자체 구현</h3>
+                <h3 style={{ marginTop: 24 }}>Recreating grouping by hand</h3>
                 <p className={styles.demoDesc}>
-                  데이터를 그룹별로 정렬하고 소계 행을 삽입한 뒤, valueFormatter(반복 값 숨김) + colSpan + cellStyle(구분선) + pinnedBottomRowData(총계 풋터)를 조합하면
-                  Community 에디션에서도 그룹핑 효과를 구현할 수 있습니다.
+                  Sort the data by group, insert subtotal rows, then combine valueFormatter (hide repeated values), colSpan, cellStyle (a separator line) and pinnedBottomRowData (the grand total footer) —
+                  and the Community edition gets a grouping effect of its own.
                 </p>
 
-                <Card title="라이브 데모 - 그룹핑 자체 구현 (반복 값 숨김 + colSpan + 총계 풋터)" style={{ marginBottom: 24 }}>
+                <Card title="Live demo — hand-rolled grouping (hidden repeats + colSpan + grand total footer)" style={{ marginBottom: 24 }}>
                   <div style={{ height: 380 }}>
                     <GridTable<SpanDemoRow>
                       columnDefs={groupColDefs}
@@ -2446,36 +2446,36 @@ function MyPage() {
                   </div>
                 </Card>
 
-                <CodeSnippet code={manualGroupingCode} title="Community 그룹핑 자체 구현 패턴" />
+                <CodeSnippet code={manualGroupingCode} title="Hand-rolled grouping in the Community edition" />
 
                 <div style={{ marginTop: 16, padding: 12, background: 'var(--content-header-bg)', borderRadius: 4 }}>
-                  <strong>핵심 정리</strong>
+                  <strong>Key points</strong>
                   <ul style={{ margin: '8px 0 0', paddingLeft: 20, color: 'var(--text-secondary)' }}>
-                    <li><code>pinnedTopRowData</code>: 헤더 바로 아래 고정 행 (요약/검색 등)</li>
-                    <li><code>pinnedBottomRowData</code>: 스크롤 아래 고정 행 (합계/풋터)</li>
+                    <li><code>pinnedTopRowData</code>: rows pinned under the header (summaries, search rows)</li>
+                    <li><code>pinnedBottomRowData</code>: rows pinned below the scroll area (totals, footers)</li>
                     <li><code>params.node.rowPinned</code>: <code>'top' | 'bottom' | undefined</code></li>
-                    <li>고정 행 데이터는 useMemo로 최적화 권장</li>
-                    <li>그룹핑: 데이터 전처리(소계 행 삽입) + valueFormatter(반복 숨김) + colSpan + cellStyle(구분선) 조합</li>
+                    <li>Wrap pinned row data in useMemo</li>
+                    <li>Grouping: preprocess the data (insert subtotal rows) and combine valueFormatter (hide repeats), colSpan and cellStyle (separator line)</li>
                   </ul>
                 </div>
               </div>
             ),
           },
 
-          /* ── 열 고정 ── */
+          /* ── Column pinning ── */
           {
             key: 'pinning',
-            label: '열 고정',
+            label: 'Column pinning',
             children: (
               <div className={styles.demoSection}>
-                <h3>Column Pinning (열 고정)</h3>
+                <h3>Column pinning</h3>
                 <p className={styles.demoDesc}>
-                  <code>pinned</code> 속성으로 특정 컬럼을 좌측 또는 우측에 고정합니다.
-                  스크롤 시에도 고정 컬럼은 항상 보이므로, ID/이름 등 핵심 식별 컬럼이나 액션 버튼에 사용합니다.
+                  The <code>pinned</code> property pins a column to the left or the right.
+                  Pinned columns stay visible while scrolling, which suits identifying columns such as ID and name, or a column of action buttons.
                   <Tag color="green" style={{ marginLeft: 8 }}>Community</Tag>
                 </p>
 
-                <Card title="라이브 데모 - 좌/우 열 고정 (좌: ID·이름, 우: 급여)" style={{ marginBottom: 24 }}>
+                <Card title="Live demo — pinned left (ID, name) and right (salary)" style={{ marginBottom: 24 }}>
                   <div style={{ height: 280 }}>
                     <GridTable<GroupDemoRow>
                       columnDefs={pinnedColDefs}
@@ -2487,137 +2487,137 @@ function MyPage() {
                   </div>
                 </Card>
 
-                <CodeSnippet code={columnPinningCode} title="열 고정 기본 사용법" />
+                <CodeSnippet code={columnPinningCode} title="Basic column pinning" />
 
-                <h3 style={{ marginTop: 24 }}>동적 열 고정</h3>
+                <h3 style={{ marginTop: 24 }}>Pinning at runtime</h3>
                 <p className={styles.demoDesc}>
-                  API를 통해 런타임에 열 고정을 변경할 수 있습니다.
-                  컬럼 헤더 우클릭 컨텍스트 메뉴에서도 고정/해제가 가능합니다.
+                  Pinning can be changed at runtime through the API.
+                  Right-clicking a column header offers pin and unpin as well.
                 </p>
-                <CodeSnippet code={dynamicPinningCode} title="동적 열 고정 / 해제" />
+                <CodeSnippet code={dynamicPinningCode} title="Pinning and unpinning at runtime" />
 
                 <div style={{ marginTop: 16, padding: 12, background: 'var(--content-header-bg)', borderRadius: 4 }}>
-                  <strong>핵심 정리</strong>
+                  <strong>Key points</strong>
                   <ul style={{ margin: '8px 0 0', paddingLeft: 20, color: 'var(--text-secondary)' }}>
-                    <li><code>pinned: 'left'</code>: 좌측 고정 (스크롤 시 왼쪽에 고정)</li>
-                    <li><code>pinned: 'right'</code>: 우측 고정 (액션 버튼 등에 활용)</li>
-                    <li><code>lockPinned: true</code>: 사용자가 드래그로 고정 해제 불가</li>
-                    <li><code>lockPosition: 'left'</code>: 컬럼 이동 자체를 제한</li>
-                    <li>API로 동적 변경: <code>api.setColumnsPinned(['col'], 'left')</code></li>
-                    <li>고정 컬럼은 <code>width</code> 고정값 사용 권장 (<code>flex</code> 미사용)</li>
+                    <li><code>pinned: 'left'</code>: pinned to the left while scrolling</li>
+                    <li><code>pinned: 'right'</code>: pinned to the right — handy for action buttons</li>
+                    <li><code>lockPinned: true</code>: the user cannot unpin it by dragging</li>
+                    <li><code>lockPosition: 'left'</code>: the column cannot be moved at all</li>
+                    <li>Change it at runtime: <code>api.setColumnsPinned(['col'], 'left')</code></li>
+                    <li>Give pinned columns a fixed <code>width</code> rather than <code>flex</code></li>
                   </ul>
                 </div>
               </div>
             ),
           },
 
-          /* ── 복사/붙여넣기 ── */
+          /* ── Copy and paste ── */
           {
             key: 'clipboard',
-            label: '복사/붙여넣기',
+            label: 'Copy & paste',
             children: (
               <div className={styles.demoSection}>
-                <h3>Clipboard (복사 / 붙여넣기)</h3>
+                <h3>Clipboard (copy and paste)</h3>
                 <p className={styles.demoDesc}>
-                  AG Grid Community 에디션에서는 기본 클립보드 기능이 제한적이므로,
-                  <code>GridTable</code> 래퍼에 커스텀 <code>enableClipboard</code> prop을 추가하여
-                  <strong> Ctrl+C (복사)</strong>와 <strong>Ctrl+V (붙여넣기)</strong>를 구현했습니다.
-                  <Tag color="blue" style={{ marginLeft: 8 }}>커스텀</Tag>
+                  The Community edition's built-in clipboard support is limited, so the
+                  <code>GridTable</code> wrapper adds a custom <code>enableClipboard</code> prop that implements
+                  <strong> Ctrl+C (copy)</strong> and <strong>Ctrl+V (paste)</strong> itself.
+                  <Tag color="blue" style={{ marginLeft: 8 }}>custom</Tag>
                 </p>
 
-                <Card title="사용법" style={{ marginBottom: 16 }}>
+                <Card title="How to use it" style={{ marginBottom: 16 }}>
                   <table className={styles.demoPropsTable}>
                     <thead>
-                      <tr><th style={{ width: 140 }}>단축키</th><th>동작</th><th style={{ width: 100 }}>조건</th></tr>
+                      <tr><th style={{ width: 140 }}>Shortcut</th><th>Action</th><th style={{ width: 100 }}>Requires</th></tr>
                     </thead>
                     <tbody>
                       <tr>
                         <td><code>Ctrl+C</code></td>
-                        <td>선택된 행을 헤더 포함 탭 구분 텍스트로 클립보드에 복사</td>
-                        <td>행 선택 필요</td>
+                        <td>Copies the selected rows to the clipboard as tab-separated text, header included</td>
+                        <td>Selected rows</td>
                       </tr>
                       <tr>
                         <td><code>Ctrl+V</code></td>
-                        <td>클립보드 데이터를 포커스 셀부터 행/열 매핑하여 붙여넣기</td>
+                        <td>Pastes the clipboard data starting at the focused cell, mapped row by row and column by column</td>
                         <td><code>editable</code></td>
                       </tr>
                     </tbody>
                   </table>
                 </Card>
 
-                <Card title="라이브 데모 — 행 선택 후 Ctrl+C, 점수 셀 더블클릭 후 수정 → Ctrl+V" style={{ marginBottom: 16 }}>
+                <Card title="Live demo — select rows and Ctrl+C, then double-click a Score cell and Ctrl+V" style={{ marginBottom: 16 }}>
                   <App>
                     <ClipboardDemo />
                   </App>
                 </Card>
 
-                <CodeSnippet code={clipboardBasicCode} title="GridTable 클립보드 사용법" />
+                <CodeSnippet code={clipboardBasicCode} title="Using the GridTable clipboard" />
 
-                <h3 style={{ marginTop: 24 }}>구현 상세</h3>
+                <h3 style={{ marginTop: 24 }}>Implementation detail</h3>
                 <p className={styles.demoDesc}>
-                  <code>document.addEventListener('keydown', handler, true)</code>로 캡처 페이즈에서 이벤트를 잡아
-                  AG Grid 내부의 <code>stopPropagation</code>과 무관하게 동작합니다.
+                  <code>document.addEventListener('keydown', handler, true)</code> catches the event in the capture phase,
+                  so it works regardless of AG Grid's internal <code>stopPropagation</code>.
                 </p>
-                <CodeSnippet code={clipboardImplCode} title="클립보드 구현 코드 (GridTable.tsx)" />
+                <CodeSnippet code={clipboardImplCode} title="The clipboard implementation (GridTable.tsx)" />
 
                 <div style={{ marginTop: 16, padding: 12, background: 'var(--content-header-bg)', borderRadius: 4 }}>
-                  <strong>핵심 정리</strong>
+                  <strong>Key points</strong>
                   <ul style={{ margin: '8px 0 0', paddingLeft: 20, color: 'var(--text-secondary)' }}>
-                    <li><code>enableClipboard</code>: GridTable prop으로 그리드별 선택적 활성화</li>
-                    <li><strong>Ctrl+C</strong>: 선택 행 → 헤더 + 데이터를 탭 구분 텍스트로 복사 (엑셀 호환)</li>
-                    <li><strong>Ctrl+V</strong>: 포커스 셀부터 클립보드 데이터 파싱 → 셀 값 입력 (편집 모드 전용)</li>
-                    <li>캡처 페이즈(<code>true</code>)로 등록하여 AG Grid 이벤트 차단 우회</li>
+                    <li><code>enableClipboard</code>: a GridTable prop, enabled per grid</li>
+                    <li><strong>Ctrl+C</strong>: copies the selected rows — header and data — as tab-separated text (Excel compatible)</li>
+                    <li><strong>Ctrl+V</strong>: parses the clipboard and writes it into cells from the focused cell onward (edit mode only)</li>
+                    <li>Registering in the capture phase (<code>true</code>) bypasses AG Grid's event blocking</li>
                   </ul>
                 </div>
               </div>
             ),
           },
 
-          /* ── 우클릭 메뉴 ── */
+          /* ── Context menu ── */
           {
             key: 'context-menu',
-            label: '우클릭 메뉴',
+            label: 'Context menu',
             children: (
               <div className={styles.demoSection}>
-                <h3>Context Menu (우클릭 메뉴)</h3>
+                <h3>Context menu</h3>
                 <p className={styles.demoDesc}>
-                  <code>getContextMenuItems</code> prop으로 셀 우클릭 시 표시할 메뉴 항목을 커스터마이징합니다.
-                  AG Grid Context Menu는 Enterprise 전용이므로 GridTable에서 자체 구현합니다.{' '}
-                  <Tag color="blue">커스텀 구현</Tag>
+                  The <code>getContextMenuItems</code> prop customizes the menu shown when a cell is right-clicked.
+                  AG Grid's own context menu is Enterprise-only, so GridTable implements its own.{' '}
+                  <Tag color="blue">custom implementation</Tag>
                 </p>
 
                 <table className={styles.demoPropsTable} style={{ marginBottom: 16 }}>
-                  <thead><tr><th style={{ width: 220 }}>Prop / 옵션</th><th>타입</th><th>설명</th></tr></thead>
+                  <thead><tr><th style={{ width: 220 }}>Prop / option</th><th>Type</th><th>Description</th></tr></thead>
                   <tbody>
-                    <tr><td><code>getContextMenuItems</code></td><td><code>(params) =&gt; MenuItem[]</code></td><td>우클릭 시 표시할 메뉴 항목 반환. 미지정 시 메뉴 없음</td></tr>
-                    <tr><td><code>suppressContextMenu</code></td><td><code>boolean</code></td><td>컨텍스트 메뉴 완전 비활성화</td></tr>
-                    <tr><td><code>MenuItemDef.name</code></td><td><code>string</code></td><td>메뉴 항목 표시명</td></tr>
-                    <tr><td><code>MenuItemDef.action</code></td><td><code>() =&gt; void</code></td><td>항목 클릭 시 실행 함수</td></tr>
-                    <tr><td><code>MenuItemDef.icon</code></td><td><code>string</code></td><td>아이콘 HTML 문자열 (예: <code>{'<span>🔍</span>'}</code>)</td></tr>
-                    <tr><td><code>MenuItemDef.disabled</code></td><td><code>boolean</code></td><td>항목 비활성화</td></tr>
-                    <tr><td><code>'separator'</code></td><td><code>string</code></td><td>구분선. 항목 배열에 문자열 <code>'separator'</code>로 삽입</td></tr>
-                    <tr><td><code>'copy' | 'copyWithHeaders'</code></td><td><code>string</code></td><td>기본 제공 항목 (클립보드 복사)</td></tr>
+                    <tr><td><code>getContextMenuItems</code></td><td><code>(params) =&gt; MenuItem[]</code></td><td>Returns the items to show on right-click. Without it, no menu appears</td></tr>
+                    <tr><td><code>suppressContextMenu</code></td><td><code>boolean</code></td><td>Disables the context menu entirely</td></tr>
+                    <tr><td><code>MenuItemDef.name</code></td><td><code>string</code></td><td>The item's display text</td></tr>
+                    <tr><td><code>MenuItemDef.action</code></td><td><code>() =&gt; void</code></td><td>The function run when the item is clicked</td></tr>
+                    <tr><td><code>MenuItemDef.icon</code></td><td><code>string</code></td><td>Icon as an HTML string (e.g. <code>{'<span>🔍</span>'}</code>)</td></tr>
+                    <tr><td><code>MenuItemDef.disabled</code></td><td><code>boolean</code></td><td>Disables the item</td></tr>
+                    <tr><td><code>'separator'</code></td><td><code>string</code></td><td>A separator. Insert the string <code>'separator'</code> into the item array</td></tr>
+                    <tr><td><code>'copy' | 'copyWithHeaders'</code></td><td><code>string</code></td><td>Built-in items (copy to clipboard)</td></tr>
                   </tbody>
                 </table>
 
                 <Alert
                   type="info"
                   showIcon
-                  title="팝업 렌더링 위치"
-                  description="GridTable은 popupParent={document.body}를 기본 적용합니다. overflow:hidden 컨테이너에서도 메뉴가 정상 표시됩니다."
+                  title="Where the popup renders"
+                  description="GridTable applies popupParent={document.body} by default, so the menu renders correctly even inside an overflow:hidden container."
                   style={{ marginBottom: 16 }}
                 />
 
-                <Card title="라이브 데모 — 셀을 우클릭해 보세요" style={{ marginBottom: 24 }}>
+                <Card title="Live demo — try right-clicking a cell" style={{ marginBottom: 24 }}>
                   <div style={{ display: 'flex', gap: 16, alignItems: 'flex-start' }}>
                     <div style={{ flex: 1, height: 240 }}>
                       <GridTable
                         columnDefs={[
                           { field: 'id',         headerName: 'ID',   width: 80,  flex: 0 },
-                          { field: 'name',       headerName: '이름', width: 120, flex: 0 },
-                          { field: 'department', headerName: '부서', flex: 1 },
-                          { field: 'role',       headerName: '직급', width: 100, flex: 0 },
-                          { field: 'email',      headerName: '이메일', flex: 1 },
+                          { field: 'name',       headerName: 'Name', width: 120, flex: 0 },
+                          { field: 'department', headerName: 'Department', flex: 1 },
+                          { field: 'role',       headerName: 'Grade', width: 100, flex: 0 },
+                          { field: 'email',      headerName: 'Email', flex: 1 },
                         ]}
                         rowData={basicData.slice(0, 6)}
                         rowKey="id"
@@ -2625,12 +2625,12 @@ function MyPage() {
                         height={240}
                         getContextMenuItems={(params) => [
                           {
-                            name: `"${params.node?.data?.name}" 상세보기`,
-                            action: () => alert(`상세보기:\n${JSON.stringify(params.node?.data, null, 2)}`),
+                            name: `View "${params.node?.data?.name}"`,
+                            action: () => alert(`Details:\n${JSON.stringify(params.node?.data, null, 2)}`),
                             icon: '<span>🔍</span>',
                           },
                           {
-                            name: '이메일 복사',
+                            name: 'Copy email',
                             action: () => navigator.clipboard.writeText(params.node?.data?.email ?? ''),
                             icon: '<span>📧</span>',
                           },
@@ -2642,7 +2642,7 @@ function MyPage() {
                     </div>
                     {/* Always-visible context menu preview */}
                     <div style={{ width: 200, flexShrink: 0 }}>
-                      <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginBottom: 6 }}>메뉴 미리보기</div>
+                      <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginBottom: 6 }}>Menu preview</div>
                       <div style={{
                         border: '1px solid var(--border-color)',
                         borderRadius: 4,
@@ -2652,8 +2652,8 @@ function MyPage() {
                         fontSize: 13,
                       }}>
                         {[
-                          { icon: '🔍', label: '"김영수" 상세보기' },
-                          { icon: '📧', label: '이메일 복사' },
+                          { icon: '🔍', label: 'View "Steve Kim"' },
+                          { icon: '📧', label: 'Copy email' },
                           null,
                           { icon: null, label: 'Copy' },
                           { icon: null, label: 'Copy with Headers' },
@@ -2678,162 +2678,162 @@ function MyPage() {
                   </div>
                 </Card>
 
-                <h3>기본 사용법</h3>
-                <CodeSnippet code={contextMenuBasicCode} title="getContextMenuItems 기본 사용 (GridTable)" />
+                <h3>Basic usage</h3>
+                <CodeSnippet code={contextMenuBasicCode} title="Basic getContextMenuItems usage (GridTable)" />
 
-                <h3 style={{ marginTop: 24 }}>기본 제공 항목 / 비활성화</h3>
-                <CodeSnippet code={contextMenuBuiltinCode} title="기본 항목 문자열 및 비활성화" />
+                <h3 style={{ marginTop: 24 }}>Built-in items and disabling the menu</h3>
+                <CodeSnippet code={contextMenuBuiltinCode} title="Built-in item strings and disabling" />
 
                 <div style={{ marginTop: 16, padding: 12, background: 'var(--content-header-bg)', borderRadius: 4 }}>
-                  <strong>핵심 정리</strong>
+                  <strong>Key points</strong>
                   <ul style={{ margin: '8px 0 0', paddingLeft: 20, color: 'var(--text-secondary)' }}>
-                    <li><code>getContextMenuItems</code> 미지정 → AG Grid 기본 메뉴 표시</li>
-                    <li><code>suppressContextMenu={'{true}'}</code> → 컨텍스트 메뉴 완전 비활성화</li>
-                    <li>문자열 항목: <code>'copy' | 'copyWithHeaders' | 'cut' | 'paste' | 'export' | 'separator'</code></li>
-                    <li>커스텀 항목: <code>{'{ name, action, icon, disabled, cssClasses }'}</code></li>
-                    <li><code>params.node?.data</code>: 우클릭한 행의 데이터 / <code>params.value</code>: 셀 값</li>
-                    <li>헤더 우클릭은 <code>suppressHeaderContextMenu</code>(defaultColDef)로 별도 제어</li>
+                    <li>Omit <code>getContextMenuItems</code> and AG Grid's default menu shows</li>
+                    <li><code>suppressContextMenu={'{true}'}</code> disables the context menu entirely</li>
+                    <li>String items: <code>'copy' | 'copyWithHeaders' | 'cut' | 'paste' | 'export' | 'separator'</code></li>
+                    <li>Custom items: <code>{'{ name, action, icon, disabled, cssClasses }'}</code></li>
+                    <li><code>params.node?.data</code>: the right-clicked row's data / <code>params.value</code>: the cell value</li>
+                    <li>Right-clicking a header is controlled separately by <code>suppressHeaderContextMenu</code> on defaultColDef</li>
                   </ul>
                 </div>
               </div>
             ),
           },
 
-          /* ── DatePicker 셀 ── */
+          /* ── DatePicker cells ── */
           {
             key: 'datepicker-cell',
-            label: 'DatePicker 셀',
+            label: 'DatePicker cells',
             children: <DateCellDemo />,
           },
 
-          /* ── Tree 구조 ── */
+          /* ── Tree structure ── */
           {
             key: 'tree',
-            label: 'Tree 구조',
+            label: 'Tree structure',
             children: <TreeDemo />,
           },
 
-          /* ── API 레퍼런스 ── */
+          /* ── API reference ── */
           {
             key: 'api',
-            label: 'API 레퍼런스',
+            label: 'API reference',
             children: (
               <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
 
                 <section>
-                  <h3 style={{ fontSize: 14, fontWeight: 700, margin: '0 0 8px', borderBottom: '2px solid var(--primary-color)', display: 'inline-block', paddingBottom: 4 }}>기본 설정</h3>
+                  <h3 style={{ fontSize: 14, fontWeight: 700, margin: '0 0 8px', borderBottom: '2px solid var(--primary-color)', display: 'inline-block', paddingBottom: 4 }}>Basic configuration</h3>
                   <table className={styles.demoPropsTable}>
-                    <thead><tr><th style={{ width: 180 }}>Prop</th><th>타입</th><th style={{ width: 100 }}>기본값</th><th>설명</th></tr></thead>
+                    <thead><tr><th style={{ width: 180 }}>Prop</th><th>Type</th><th style={{ width: 100 }}>Default</th><th>Description</th></tr></thead>
                     <tbody>
-                      <tr><td><code>columnDefs</code> <span style={{ color: '#ff4d4f' }}>*</span></td><td><code>ColDef&lt;T&gt;[]</code></td><td>—</td><td>컬럼 정의 배열 (AG Grid ColDef)</td></tr>
-                      <tr><td><code>rowData</code> <span style={{ color: '#ff4d4f' }}>*</span></td><td><code>T[]</code></td><td>—</td><td>행 데이터 배열</td></tr>
-                      <tr><td><code>rowKey</code></td><td><code>string</code></td><td><code>"id"</code></td><td>행 고유 키 필드명</td></tr>
-                      <tr><td><code>defaultColDef</code></td><td><code>ColDef&lt;T&gt;</code></td><td>—</td><td>모든 컬럼에 적용할 기본 ColDef</td></tr>
-                      <tr><td><code>editable</code></td><td><code>boolean</code></td><td><code>false</code></td><td>전체 셀 편집 활성화</td></tr>
-                      <tr><td><code>enableClipboard</code></td><td><code>boolean</code></td><td><code>false</code></td><td>Ctrl+C/V 클립보드 복사/붙여넣기 활성화</td></tr>
-                      <tr><td><code>rowSelection</code></td><td><code>'singleRow' | 'multiRow'</code></td><td>—</td><td>행 선택 모드 (없으면 선택 비활성)</td></tr>
-                      <tr><td><code>pagination</code></td><td><code>boolean</code></td><td><code>true</code></td><td>페이지네이션 활성화</td></tr>
-                      <tr><td><code>pageSize</code></td><td><code>number</code></td><td><code>20</code></td><td>페이지당 행 수</td></tr>
-                      <tr><td><code>height</code></td><td><code>string | number</code></td><td><code>"100%"</code></td><td>그리드 높이. "100%"이면 flex:1 적용</td></tr>
-                      <tr><td><code>autoHeight</code></td><td><code>boolean</code></td><td><code>false</code></td><td>행 수에 맞게 높이 자동 조정</td></tr>
-                      <tr><td><code>rowHeight</code></td><td><code>number</code></td><td>—</td><td>행 높이(px)</td></tr>
-                      <tr><td><code>headerHeight</code></td><td><code>number</code></td><td>—</td><td>헤더 높이(px)</td></tr>
-                      <tr><td><code>loading</code></td><td><code>boolean</code></td><td><code>false</code></td><td>로딩 오버레이 표시</td></tr>
-                      <tr><td><code>noRowsMessage</code></td><td><code>string</code></td><td><code>"데이터가 없습니다."</code></td><td>빈 데이터 시 표시할 메시지</td></tr>
-                      <tr><td><code>enableCellSpan</code></td><td><code>boolean</code></td><td><code>false</code></td><td>colSpan/rowSpan 기반 셀 병합 활성화</td></tr>
+                      <tr><td><code>columnDefs</code> <span style={{ color: '#ff4d4f' }}>*</span></td><td><code>ColDef&lt;T&gt;[]</code></td><td>—</td><td>The column definitions (AG Grid ColDef)</td></tr>
+                      <tr><td><code>rowData</code> <span style={{ color: '#ff4d4f' }}>*</span></td><td><code>T[]</code></td><td>—</td><td>The row data array</td></tr>
+                      <tr><td><code>rowKey</code></td><td><code>string</code></td><td><code>"id"</code></td><td>The unique row key field</td></tr>
+                      <tr><td><code>defaultColDef</code></td><td><code>ColDef&lt;T&gt;</code></td><td>—</td><td>A default ColDef applied to every column</td></tr>
+                      <tr><td><code>editable</code></td><td><code>boolean</code></td><td><code>false</code></td><td>Enables editing on every cell</td></tr>
+                      <tr><td><code>enableClipboard</code></td><td><code>boolean</code></td><td><code>false</code></td><td>Enables Ctrl+C / Ctrl+V clipboard copy and paste</td></tr>
+                      <tr><td><code>rowSelection</code></td><td><code>'singleRow' | 'multiRow'</code></td><td>—</td><td>Row selection mode (omit it and selection is off)</td></tr>
+                      <tr><td><code>pagination</code></td><td><code>boolean</code></td><td><code>true</code></td><td>Enables pagination</td></tr>
+                      <tr><td><code>pageSize</code></td><td><code>number</code></td><td><code>20</code></td><td>Rows per page</td></tr>
+                      <tr><td><code>height</code></td><td><code>string | number</code></td><td><code>"100%"</code></td><td>Grid height. "100%" applies flex:1</td></tr>
+                      <tr><td><code>autoHeight</code></td><td><code>boolean</code></td><td><code>false</code></td><td>Sizes the grid to fit the number of rows</td></tr>
+                      <tr><td><code>rowHeight</code></td><td><code>number</code></td><td>—</td><td>Row height in px</td></tr>
+                      <tr><td><code>headerHeight</code></td><td><code>number</code></td><td>—</td><td>Header height in px</td></tr>
+                      <tr><td><code>loading</code></td><td><code>boolean</code></td><td><code>false</code></td><td>Shows the loading overlay</td></tr>
+                      <tr><td><code>noRowsMessage</code></td><td><code>string</code></td><td><code>"No data."</code></td><td>Message shown when there are no rows</td></tr>
+                      <tr><td><code>enableCellSpan</code></td><td><code>boolean</code></td><td><code>false</code></td><td>Enables cell merging via colSpan / rowSpan</td></tr>
                     </tbody>
                   </table>
                 </section>
 
                 <section>
-                  <h3 style={{ fontSize: 14, fontWeight: 700, margin: '0 0 8px', borderBottom: '2px solid var(--primary-color)', display: 'inline-block', paddingBottom: 4 }}>행 스타일 / 제어</h3>
+                  <h3 style={{ fontSize: 14, fontWeight: 700, margin: '0 0 8px', borderBottom: '2px solid var(--primary-color)', display: 'inline-block', paddingBottom: 4 }}>Row styling and control</h3>
                   <table className={styles.demoPropsTable}>
-                    <thead><tr><th style={{ width: 220 }}>Prop</th><th>타입</th><th>설명</th></tr></thead>
+                    <thead><tr><th style={{ width: 220 }}>Prop</th><th>Type</th><th>Description</th></tr></thead>
                     <tbody>
-                      <tr><td><code>getRowClass</code></td><td><code>(params: RowClassParams&lt;T&gt;) =&gt; string | string[]</code></td><td>행마다 동적으로 CSS 클래스 지정</td></tr>
-                      <tr><td><code>getRowStyle</code></td><td><code>(params: RowClassParams&lt;T&gt;) =&gt; CSSProperties</code></td><td>행마다 동적으로 인라인 스타일 지정</td></tr>
-                      <tr><td><code>isRowSelectable</code></td><td><code>(node: IRowNode&lt;T&gt;) =&gt; boolean</code></td><td>행 선택 가능 여부 (false = 체크박스 비활성)</td></tr>
-                      <tr><td><code>suppressRowClickSelection</code></td><td><code>boolean</code></td><td>클릭으로 행 선택 억제 (체크박스 전용)</td></tr>
-                      <tr><td><code>rowMultiSelectWithClick</code></td><td><code>boolean</code></td><td>Ctrl 없이 클릭만으로 다중 선택</td></tr>
+                      <tr><td><code>getRowClass</code></td><td><code>(params: RowClassParams&lt;T&gt;) =&gt; string | string[]</code></td><td>Assigns a CSS class per row, dynamically</td></tr>
+                      <tr><td><code>getRowStyle</code></td><td><code>(params: RowClassParams&lt;T&gt;) =&gt; CSSProperties</code></td><td>Assigns an inline style per row, dynamically</td></tr>
+                      <tr><td><code>isRowSelectable</code></td><td><code>(node: IRowNode&lt;T&gt;) =&gt; boolean</code></td><td>Whether the row can be selected (false disables its checkbox)</td></tr>
+                      <tr><td><code>suppressRowClickSelection</code></td><td><code>boolean</code></td><td>Stops a click from selecting the row (checkbox only)</td></tr>
+                      <tr><td><code>rowMultiSelectWithClick</code></td><td><code>boolean</code></td><td>Multi-select by clicking, without holding Ctrl</td></tr>
                     </tbody>
                   </table>
                 </section>
 
                 <section>
-                  <h3 style={{ fontSize: 14, fontWeight: 700, margin: '0 0 8px', borderBottom: '2px solid var(--primary-color)', display: 'inline-block', paddingBottom: 4 }}>셀 / UI 제어</h3>
+                  <h3 style={{ fontSize: 14, fontWeight: 700, margin: '0 0 8px', borderBottom: '2px solid var(--primary-color)', display: 'inline-block', paddingBottom: 4 }}>Cell and UI control</h3>
                   <table className={styles.demoPropsTable}>
-                    <thead><tr><th style={{ width: 220 }}>Prop</th><th>타입</th><th>설명</th></tr></thead>
+                    <thead><tr><th style={{ width: 220 }}>Prop</th><th>Type</th><th>Description</th></tr></thead>
                     <tbody>
-                      <tr><td><code>suppressCellFocus</code></td><td><code>boolean</code></td><td>셀 포커스 시 파란 테두리 억제</td></tr>
-                      <tr><td><code>suppressMovableColumns</code></td><td><code>boolean</code></td><td>컬럼 드래그 이동 억제</td></tr>
-                      <tr><td><code>suppressContextMenu</code></td><td><code>boolean</code></td><td>우클릭 컨텍스트 메뉴 비활성화</td></tr>
-                      <tr><td><code>getContextMenuItems</code></td><td><code>GetContextMenuItems&lt;T&gt;</code></td><td>커스텀 컨텍스트 메뉴 항목 반환 함수</td></tr>
-                      <tr><td><code>floatingFilter</code></td><td><code>boolean</code></td><td>헤더 아래 플로팅 필터 입력 행 표시</td></tr>
-                      <tr><td><code>quickFilterText</code></td><td><code>string</code></td><td>전체 컬럼 빠른 필터 텍스트</td></tr>
+                      <tr><td><code>suppressCellFocus</code></td><td><code>boolean</code></td><td>Suppresses the blue focus outline on a cell</td></tr>
+                      <tr><td><code>suppressMovableColumns</code></td><td><code>boolean</code></td><td>Stops columns from being dragged</td></tr>
+                      <tr><td><code>suppressContextMenu</code></td><td><code>boolean</code></td><td>Disables the right-click context menu</td></tr>
+                      <tr><td><code>getContextMenuItems</code></td><td><code>GetContextMenuItems&lt;T&gt;</code></td><td>A function returning the custom context menu items</td></tr>
+                      <tr><td><code>floatingFilter</code></td><td><code>boolean</code></td><td>Shows a floating filter row below the header</td></tr>
+                      <tr><td><code>quickFilterText</code></td><td><code>string</code></td><td>Quick filter text applied across every column</td></tr>
                     </tbody>
                   </table>
                 </section>
 
                 <section>
-                  <h3 style={{ fontSize: 14, fontWeight: 700, margin: '0 0 8px', borderBottom: '2px solid var(--primary-color)', display: 'inline-block', paddingBottom: 4 }}>고정 행 / 외부 필터 / 기타</h3>
+                  <h3 style={{ fontSize: 14, fontWeight: 700, margin: '0 0 8px', borderBottom: '2px solid var(--primary-color)', display: 'inline-block', paddingBottom: 4 }}>Pinned rows, external filters and more</h3>
                   <table className={styles.demoPropsTable}>
-                    <thead><tr><th style={{ width: 220 }}>Prop</th><th>타입</th><th>설명</th></tr></thead>
+                    <thead><tr><th style={{ width: 220 }}>Prop</th><th>Type</th><th>Description</th></tr></thead>
                     <tbody>
-                      <tr><td><code>pinnedTopRowData</code></td><td><code>T[]</code></td><td>상단에 고정할 행 데이터 (스크롤 시 유지)</td></tr>
-                      <tr><td><code>pinnedBottomRowData</code></td><td><code>T[]</code></td><td>하단에 고정할 행 데이터</td></tr>
-                      <tr><td><code>isExternalFilterPresent</code></td><td><code>() =&gt; boolean</code></td><td>외부 필터 활성 여부</td></tr>
-                      <tr><td><code>doesExternalFilterPass</code></td><td><code>(node: IRowNode&lt;T&gt;) =&gt; boolean</code></td><td>외부 필터 통과 여부. false 반환 시 행 숨김</td></tr>
-                      <tr><td><code>context</code></td><td><code>any</code></td><td>모든 AG Grid 콜백에 전달될 공유 객체</td></tr>
-                      <tr><td><code>gridRef</code></td><td><code>RefObject&lt;AgGridReact&lt;T&gt;&gt;</code></td><td>AgGridReact ref (GridApi 직접 제어)</td></tr>
-                      <tr><td><code>gridProps</code></td><td><code>AgGridReactProps&lt;T&gt;</code></td><td>GridTableProps에 없는 AG Grid 고급 props 직접 전달 (escape hatch)</td></tr>
+                      <tr><td><code>pinnedTopRowData</code></td><td><code>T[]</code></td><td>Row data pinned to the top (stays put while scrolling)</td></tr>
+                      <tr><td><code>pinnedBottomRowData</code></td><td><code>T[]</code></td><td>Row data pinned to the bottom</td></tr>
+                      <tr><td><code>isExternalFilterPresent</code></td><td><code>() =&gt; boolean</code></td><td>Whether an external filter is active</td></tr>
+                      <tr><td><code>doesExternalFilterPass</code></td><td><code>(node: IRowNode&lt;T&gt;) =&gt; boolean</code></td><td>Whether a row passes the external filter. Returning false hides it</td></tr>
+                      <tr><td><code>context</code></td><td><code>any</code></td><td>A shared object passed to every AG Grid callback</td></tr>
+                      <tr><td><code>gridRef</code></td><td><code>RefObject&lt;AgGridReact&lt;T&gt;&gt;</code></td><td>The AgGridReact ref, for direct GridApi control</td></tr>
+                      <tr><td><code>gridProps</code></td><td><code>AgGridReactProps&lt;T&gt;</code></td><td>An escape hatch for advanced AG Grid props not covered by GridTableProps</td></tr>
                     </tbody>
                   </table>
                 </section>
 
                 <section>
-                  <h3 style={{ fontSize: 14, fontWeight: 700, margin: '0 0 8px', borderBottom: '2px solid var(--primary-color)', display: 'inline-block', paddingBottom: 4 }}>이벤트 — 행</h3>
+                  <h3 style={{ fontSize: 14, fontWeight: 700, margin: '0 0 8px', borderBottom: '2px solid var(--primary-color)', display: 'inline-block', paddingBottom: 4 }}>Events — rows</h3>
                   <table className={styles.demoPropsTable}>
-                    <thead><tr><th style={{ width: 220 }}>이벤트</th><th>시그니처</th><th>설명</th></tr></thead>
+                    <thead><tr><th style={{ width: 220 }}>Event</th><th>Signature</th><th>Description</th></tr></thead>
                     <tbody>
-                      <tr><td><code>onRowClick</code></td><td><code>(data: T) =&gt; void</code></td><td>행 클릭. data는 해당 행의 원본 데이터</td></tr>
-                      <tr><td><code>onRowDoubleClick</code></td><td><code>(data: T, event: RowDoubleClickedEvent) =&gt; void</code></td><td>행 더블클릭</td></tr>
-                      <tr><td><code>onRowSelected</code></td><td><code>(event: RowSelectedEvent&lt;T&gt;) =&gt; void</code></td><td>개별 행의 선택 상태 변경 시</td></tr>
-                      <tr><td><code>onSelectionChanged</code></td><td><code>(rows: T[]) =&gt; void</code></td><td>선택된 전체 행 목록 변경 시</td></tr>
-                      <tr><td><code>onFirstDataRendered</code></td><td><code>(event: FirstDataRenderedEvent&lt;T&gt;) =&gt; void</code></td><td>첫 번째 rowData가 그리드에 렌더링 완료된 시점</td></tr>
-                      <tr><td><code>onModelUpdated</code></td><td><code>(event: ModelUpdatedEvent&lt;T&gt;) =&gt; void</code></td><td>필터/정렬 등으로 표시 행이 변경될 때마다</td></tr>
-                      <tr><td><code>onBodyScrollEnd</code></td><td><code>(event: BodyScrollEndEvent) =&gt; void</code></td><td>그리드 본문 스크롤 종료</td></tr>
+                      <tr><td><code>onRowClick</code></td><td><code>(data: T) =&gt; void</code></td><td>Row clicked. data is that row's original data</td></tr>
+                      <tr><td><code>onRowDoubleClick</code></td><td><code>(data: T, event: RowDoubleClickedEvent) =&gt; void</code></td><td>Row double-clicked</td></tr>
+                      <tr><td><code>onRowSelected</code></td><td><code>(event: RowSelectedEvent&lt;T&gt;) =&gt; void</code></td><td>Fires when an individual row's selection changes</td></tr>
+                      <tr><td><code>onSelectionChanged</code></td><td><code>(rows: T[]) =&gt; void</code></td><td>Fires when the full list of selected rows changes</td></tr>
+                      <tr><td><code>onFirstDataRendered</code></td><td><code>(event: FirstDataRenderedEvent&lt;T&gt;) =&gt; void</code></td><td>Fires once the first rowData has finished rendering</td></tr>
+                      <tr><td><code>onModelUpdated</code></td><td><code>(event: ModelUpdatedEvent&lt;T&gt;) =&gt; void</code></td><td>Fires whenever filtering or sorting changes the displayed rows</td></tr>
+                      <tr><td><code>onBodyScrollEnd</code></td><td><code>(event: BodyScrollEndEvent) =&gt; void</code></td><td>The grid body finished scrolling</td></tr>
                     </tbody>
                   </table>
                 </section>
 
                 <section>
-                  <h3 style={{ fontSize: 14, fontWeight: 700, margin: '0 0 8px', borderBottom: '2px solid var(--primary-color)', display: 'inline-block', paddingBottom: 4 }}>이벤트 — 셀</h3>
+                  <h3 style={{ fontSize: 14, fontWeight: 700, margin: '0 0 8px', borderBottom: '2px solid var(--primary-color)', display: 'inline-block', paddingBottom: 4 }}>Events — cells</h3>
                   <table className={styles.demoPropsTable}>
-                    <thead><tr><th style={{ width: 220 }}>이벤트</th><th>시그니처</th><th>설명</th></tr></thead>
+                    <thead><tr><th style={{ width: 220 }}>Event</th><th>Signature</th><th>Description</th></tr></thead>
                     <tbody>
-                      <tr><td><code>onCellClicked</code></td><td><code>(event: CellClickedEvent&lt;T&gt;) =&gt; void</code></td><td>셀 클릭</td></tr>
-                      <tr><td><code>onCellDoubleClicked</code></td><td><code>(event: CellDoubleClickedEvent&lt;T&gt;) =&gt; void</code></td><td>셀 더블클릭</td></tr>
-                      <tr><td><code>onCellValueChanged</code></td><td><code>(event: CellValueChangedEvent&lt;T&gt;) =&gt; void</code></td><td>편집 후 셀 값 변경. event.oldValue / event.newValue 제공</td></tr>
-                      <tr><td><code>onCellEditingStarted</code></td><td><code>(event: CellEditingStartedEvent&lt;T&gt;) =&gt; void</code></td><td>셀 편집 모드 진입 시</td></tr>
-                      <tr><td><code>onCellEditingStopped</code></td><td><code>(event: CellEditingStoppedEvent&lt;T&gt;) =&gt; void</code></td><td>셀 편집 모드 종료 시</td></tr>
-                      <tr><td><code>onCellContextMenu</code></td><td><code>(event: CellContextMenuEvent&lt;T&gt;) =&gt; void</code></td><td>셀 우클릭</td></tr>
-                      <tr><td><code>onCellKeyDown</code></td><td><code>(event: CellKeyDownEvent&lt;T&gt;) =&gt; void</code></td><td>셀 포커스 상태에서 키 입력</td></tr>
+                      <tr><td><code>onCellClicked</code></td><td><code>(event: CellClickedEvent&lt;T&gt;) =&gt; void</code></td><td>Cell clicked</td></tr>
+                      <tr><td><code>onCellDoubleClicked</code></td><td><code>(event: CellDoubleClickedEvent&lt;T&gt;) =&gt; void</code></td><td>Cell double-clicked</td></tr>
+                      <tr><td><code>onCellValueChanged</code></td><td><code>(event: CellValueChangedEvent&lt;T&gt;) =&gt; void</code></td><td>A cell value changed after editing. Provides event.oldValue and event.newValue</td></tr>
+                      <tr><td><code>onCellEditingStarted</code></td><td><code>(event: CellEditingStartedEvent&lt;T&gt;) =&gt; void</code></td><td>A cell entered edit mode</td></tr>
+                      <tr><td><code>onCellEditingStopped</code></td><td><code>(event: CellEditingStoppedEvent&lt;T&gt;) =&gt; void</code></td><td>A cell left edit mode</td></tr>
+                      <tr><td><code>onCellContextMenu</code></td><td><code>(event: CellContextMenuEvent&lt;T&gt;) =&gt; void</code></td><td>Cell right-clicked</td></tr>
+                      <tr><td><code>onCellKeyDown</code></td><td><code>(event: CellKeyDownEvent&lt;T&gt;) =&gt; void</code></td><td>A key was pressed while a cell had focus</td></tr>
                     </tbody>
                   </table>
                 </section>
 
                 <section>
-                  <h3 style={{ fontSize: 14, fontWeight: 700, margin: '0 0 8px', borderBottom: '2px solid var(--primary-color)', display: 'inline-block', paddingBottom: 4 }}>이벤트 — 그리드 상태</h3>
+                  <h3 style={{ fontSize: 14, fontWeight: 700, margin: '0 0 8px', borderBottom: '2px solid var(--primary-color)', display: 'inline-block', paddingBottom: 4 }}>Events — grid state</h3>
                   <table className={styles.demoPropsTable}>
-                    <thead><tr><th style={{ width: 220 }}>이벤트</th><th>시그니처</th><th>설명</th></tr></thead>
+                    <thead><tr><th style={{ width: 220 }}>Event</th><th>Signature</th><th>Description</th></tr></thead>
                     <tbody>
-                      <tr><td><code>onGridReady</code></td><td><code>(api: GridApi&lt;T&gt;) =&gt; void</code></td><td>그리드 초기화 완료</td></tr>
-                      <tr><td><code>onSortChanged</code></td><td><code>(event: SortChangedEvent&lt;T&gt;) =&gt; void</code></td><td>컬럼 정렬 변경 시</td></tr>
-                      <tr><td><code>onFilterChanged</code></td><td><code>(event: FilterChangedEvent&lt;T&gt;) =&gt; void</code></td><td>필터 적용/해제 시</td></tr>
-                      <tr><td><code>onPaginationChanged</code></td><td><code>(event: PaginationChangedEvent&lt;T&gt;) =&gt; void</code></td><td>페이지 이동/페이지 크기 변경 시</td></tr>
-                      <tr><td><code>onColumnResized</code></td><td><code>(event: ColumnResizedEvent&lt;T&gt;) =&gt; void</code></td><td>컬럼 너비 드래그 리사이즈 시</td></tr>
-                      <tr><td><code>onColumnMoved</code></td><td><code>(event: ColumnMovedEvent&lt;T&gt;) =&gt; void</code></td><td>컬럼 드래그 이동 시</td></tr>
-                      <tr><td><code>onColumnVisible</code></td><td><code>(event: ColumnVisibleEvent&lt;T&gt;) =&gt; void</code></td><td>컬럼 숨김/표시 토글 시</td></tr>
+                      <tr><td><code>onGridReady</code></td><td><code>(api: GridApi&lt;T&gt;) =&gt; void</code></td><td>The grid finished initializing</td></tr>
+                      <tr><td><code>onSortChanged</code></td><td><code>(event: SortChangedEvent&lt;T&gt;) =&gt; void</code></td><td>A column sort changed</td></tr>
+                      <tr><td><code>onFilterChanged</code></td><td><code>(event: FilterChangedEvent&lt;T&gt;) =&gt; void</code></td><td>A filter was applied or cleared</td></tr>
+                      <tr><td><code>onPaginationChanged</code></td><td><code>(event: PaginationChangedEvent&lt;T&gt;) =&gt; void</code></td><td>The page or page size changed</td></tr>
+                      <tr><td><code>onColumnResized</code></td><td><code>(event: ColumnResizedEvent&lt;T&gt;) =&gt; void</code></td><td>A column was resized by dragging</td></tr>
+                      <tr><td><code>onColumnMoved</code></td><td><code>(event: ColumnMovedEvent&lt;T&gt;) =&gt; void</code></td><td>A column was moved by dragging</td></tr>
+                      <tr><td><code>onColumnVisible</code></td><td><code>(event: ColumnVisibleEvent&lt;T&gt;) =&gt; void</code></td><td>A column was hidden or shown</td></tr>
                     </tbody>
                   </table>
                 </section>

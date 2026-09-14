@@ -7,26 +7,26 @@ import CodeSnippet from '@/components/common/CodeSnippet';
 import styles from './index.module.css';
 import DevPageHeader from '@/dev/DevPageHeader';
 
-/* ─── Sample data (기본 데모용) ─── */
+/* ─── Sample data (for the basic demo) ─── */
 const sampleTasks: GanttTask[] = [
-  { id: 'G1', name: '1단계: 기획/분석', start: '2025-01-02', end: '2025-01-17', progress: 100, isGroup: true },
-  { id: 'T1', name: '요구사항 분석', start: '2025-01-02', end: '2025-01-10', progress: 100, assignee: '홍길동', dependencies: [], parentId: 'G1', level: 1 },
-  { id: 'T2', name: '시스템 설계', start: '2025-01-13', end: '2025-01-17', progress: 100, assignee: '김철수', dependencies: ['T1'], parentId: 'G1', level: 1 },
-  { id: 'G2', name: '2단계: 개발', start: '2025-01-20', end: '2025-03-07', progress: 55, isGroup: true },
-  { id: 'T3', name: '프론트엔드 개발', start: '2025-01-20', end: '2025-02-21', progress: 60, assignee: '이영희', dependencies: ['T2'], parentId: 'G2', level: 1 },
-  { id: 'T4', name: '백엔드 API 개발', start: '2025-01-20', end: '2025-02-14', progress: 75, assignee: '박민수', dependencies: ['T2'], parentId: 'G2', level: 1 },
-  { id: 'T5', name: '통합 테스트', start: '2025-02-24', end: '2025-03-07', progress: 20, assignee: '최지영', dependencies: ['T3', 'T4'], parentId: 'G2', level: 1 },
-  { id: 'G3', name: '3단계: 배포', start: '2025-03-10', end: '2025-03-21', progress: 0, isGroup: true },
-  { id: 'T6', name: '스테이징 배포', start: '2025-03-10', end: '2025-03-14', progress: 0, assignee: '홍길동', dependencies: ['T5'], parentId: 'G3', level: 1, priority: 'high' },
-  { id: 'T7', name: '프로덕션 배포', start: '2025-03-17', end: '2025-03-21', progress: 0, assignee: '홍길동', dependencies: ['T6'], parentId: 'G3', level: 1, priority: 'critical', milestone: false },
+  { id: 'G1', name: 'Phase 1: planning & analysis', start: '2025-01-02', end: '2025-01-17', progress: 100, isGroup: true },
+  { id: 'T1', name: 'Requirements analysis', start: '2025-01-02', end: '2025-01-10', progress: 100, assignee: 'John Doe', dependencies: [], parentId: 'G1', level: 1 },
+  { id: 'T2', name: 'System design', start: '2025-01-13', end: '2025-01-17', progress: 100, assignee: 'Michael Chen', dependencies: ['T1'], parentId: 'G1', level: 1 },
+  { id: 'G2', name: 'Phase 2: development', start: '2025-01-20', end: '2025-03-07', progress: 55, isGroup: true },
+  { id: 'T3', name: 'Front-end development', start: '2025-01-20', end: '2025-02-21', progress: 60, assignee: 'Emily Park', dependencies: ['T2'], parentId: 'G2', level: 1 },
+  { id: 'T4', name: 'Backend API development', start: '2025-01-20', end: '2025-02-14', progress: 75, assignee: 'David Kim', dependencies: ['T2'], parentId: 'G2', level: 1 },
+  { id: 'T5', name: 'Integration testing', start: '2025-02-24', end: '2025-03-07', progress: 20, assignee: 'Sarah Lee', dependencies: ['T3', 'T4'], parentId: 'G2', level: 1 },
+  { id: 'G3', name: 'Phase 3: deployment', start: '2025-03-10', end: '2025-03-21', progress: 0, isGroup: true },
+  { id: 'T6', name: 'Staging deployment', start: '2025-03-10', end: '2025-03-14', progress: 0, assignee: 'John Doe', dependencies: ['T5'], parentId: 'G3', level: 1, priority: 'high' },
+  { id: 'T7', name: 'Production deployment', start: '2025-03-17', end: '2025-03-21', progress: 0, assignee: 'John Doe', dependencies: ['T6'], parentId: 'G3', level: 1, priority: 'critical', milestone: false },
 ];
 
-/* ─── Large task generator (성능 테스트용) ─── */
-const ASSIGNEES = ['홍길동', '김철수', '이영희', '박민수', '최지영', '정유진', '강민호', '윤서연'];
+/* ─── Large task generator (for the performance test) ─── */
+const ASSIGNEES = ['John Doe', 'Michael Chen', 'Emily Park', 'David Kim', 'Sarah Lee', 'Eugene Jung', 'Minho Kang', 'Laura Yoon'];
 const PRIORITIES: GanttTask['priority'][] = ['low', 'normal', 'normal', 'high', 'critical'];
-const PHASE_NAMES = ['요구분석', '설계', '개발', '테스트', '배포'];
+const PHASE_NAMES = ['Analysis', 'Design', 'Development', 'Testing', 'Deployment'];
 
-/** 2-depth: 그룹 → 태스크 */
+/** 2 levels: group -> task */
 function generateTasks(count: number): GanttTask[] {
   const tasks: GanttTask[] = [];
   const groupSize = 10;
@@ -43,7 +43,7 @@ function generateTasks(count: number): GanttTask[] {
 
     tasks.push({
       id: gId,
-      name: `프로젝트 ${g + 1}`,
+      name: `Project ${g + 1}`,
       start: gStart.toISOString().slice(0, 10),
       end: gEnd.toISOString().slice(0, 10),
       progress: Math.floor(Math.random() * 100),
@@ -60,7 +60,7 @@ function generateTasks(count: number): GanttTask[] {
 
       tasks.push({
         id: tId,
-        name: `태스크 ${g + 1}-${t + 1}`,
+        name: `Task ${g + 1}-${t + 1}`,
         start: tStart.toISOString().slice(0, 10),
         end: tEnd.toISOString().slice(0, 10),
         progress: Math.floor(Math.random() * 100),
@@ -76,15 +76,15 @@ function generateTasks(count: number): GanttTask[] {
   return tasks.slice(0, count + groupCount);
 }
 
-/** 3-depth: 프로젝트(0) → 단계(1) → 태스크(2) */
+/** 3 levels: project (0) -> phase (1) -> task (2) */
 function generateTreeTasks(count: number): GanttTask[] {
   const tasks: GanttTask[] = [];
-  const tasksPerPhase = 4;            // 단계당 태스크 수
-  const phasesPerProject = 3;         // 프로젝트당 단계 수
+  const tasksPerPhase = 4;            // tasks per phase
+  const phasesPerProject = 3;         // phases per project
   // rows per project = 1(top) + 3(phases) + 12(tasks) = 16
   const rowsPerProject = 1 + phasesPerProject + phasesPerProject * tasksPerPhase;
   const projectCount = Math.ceil(count / rowsPerProject);
-  const phaseDays = tasksPerPhase * 3; // 단계 1개 기간(일)
+  const phaseDays = tasksPerPhase * 3; // length of one phase in days
 
   const baseDate = new Date();
   baseDate.setDate(baseDate.getDate() - Math.floor((projectCount * phaseDays * phasesPerProject) / 4));
@@ -98,7 +98,7 @@ function generateTreeTasks(count: number): GanttTask[] {
 
     tasks.push({
       id: gId,
-      name: `프로젝트 ${p + 1}`,
+      name: `Project ${p + 1}`,
       start: gStart.toISOString().slice(0, 10),
       end: gEnd.toISOString().slice(0, 10),
       progress: Math.floor(Math.random() * 100),
@@ -131,12 +131,12 @@ function generateTreeTasks(count: number): GanttTask[] {
         const tEnd = new Date(tStart);
         tEnd.setDate(tEnd.getDate() + Math.floor(Math.random() * 3) + 2);
 
-        // 첫 태스크: 이전 단계 마지막 태스크에 의존
+        // First task: depends on the last task of the previous phase
         const prevDep = t === 0 && s > 0 ? [`PT${p}_${s - 1}_${tasksPerPhase - 1}`] : t > 0 ? [`PT${p}_${s}_${t - 1}`] : [];
 
         tasks.push({
           id: tId,
-          name: `작업 ${p + 1}-${s + 1}-${t + 1}`,
+          name: `Task ${p + 1}-${s + 1}-${t + 1}`,
           start: tStart.toISOString().slice(0, 10),
           end: tEnd.toISOString().slice(0, 10),
           progress: Math.floor(Math.random() * 100),
@@ -167,24 +167,24 @@ import type { GanttTask, GanttViewMode } from '@/components/gantt-sheet';
   height="100%"
 />`;
 
-const perfCode = `// 5000행 이상도 60fps 스크롤
-// @tanstack/react-virtual 기반 — 가시 행만 DOM에 렌더링
+const perfCode = `// 60fps scrolling even past 5,000 rows
+// Built on @tanstack/react-virtual — only visible rows exist in the DOM
 
 <GanttSheet
   tasks={largeTaskList}   // 5000+ GanttTask[]
   viewMode="Month"
-  rowBuffer={5}           // 오버스캔 행 수 (기본: 5)
-  columnWidth={80}        // 뷰모드별 열 너비 px 오버라이드
+  rowBuffer={5}           // overscan rows (default: 5)
+  columnWidth={80}        // override the per-view-mode column width in px
   height={600}
 />`;
 
-const dragCode = `// 바 드래그 편집 — pointer capture 기반
-// readOnly=false (기본) 시 활성화
+const dragCode = `// Drag-to-edit bars — built on pointer capture
+// Enabled when readOnly=false (the default)
 
 <GanttSheet
   tasks={tasks}
   onDateChange={(task, start, end) => {
-    // 드래그 완료 후 날짜 변경 콜백
+    // Callback fired with the new dates once the drag ends
     updateTask(task.id, { start, end });
   }}
   onProgressChange={(task, progress) => {
@@ -192,42 +192,42 @@ const dragCode = `// 바 드래그 편집 — pointer capture 기반
   }}
 />
 
-// 개별 태스크 편집 잠금
+// Lock an individual task against editing
 const tasks = [
-  { ...task, locked: true },  // 이 태스크만 드래그 불가
+  { ...task, locked: true },  // only this task cannot be dragged
 ];`;
 
 /* ─── Props table ─── */
 const sheetProps = [
-  { name: 'tasks', type: 'GanttTask[]', required: true, default: '—', desc: '태스크 목록 (5000+행 가상화 처리)' },
-  { name: 'viewMode', type: "'Quarter Day'|'Half Day'|'Day'|'Week'|'Month'", required: false, default: "'Week'", desc: '타임라인 단위' },
-  { name: 'readOnly', type: 'boolean', required: false, default: 'false', desc: '드래그 편집 비활성화' },
-  { name: 'showCriticalPath', type: 'boolean', required: false, default: 'false', desc: '크리티컬 패스 강조' },
-  { name: 'showGrid', type: 'boolean', required: false, default: 'true', desc: '좌측 그리드 패널' },
-  { name: 'gridWidth', type: 'number', required: false, default: '400', desc: '그리드 초기 너비(px)' },
-  { name: 'collapsedGroups', type: 'Set<string>', required: false, default: 'undefined', desc: '접힌 그룹 ID (controlled). 미전달 시 내부 상태 관리' },
-  { name: 'onToggleGroup', type: '(groupId: string) => void', required: false, default: '—', desc: '그룹 접기/펼치기 콜백' },
-  { name: 'height', type: 'string | number', required: false, default: "'100%'", desc: '컴포넌트 높이' },
-  { name: 'loading', type: 'boolean', required: false, default: 'false', desc: '로딩 오버레이' },
-  { name: 'showProgress', type: 'boolean', required: false, default: 'true', desc: '진행률 바 표시' },
-  { name: 'todayButton', type: 'boolean', required: false, default: 'true', desc: '오늘 날짜 이동 버튼' },
-  { name: 'barHeight', type: 'number', required: false, default: '28', desc: '바 높이(px)' },
-  { name: 'barCornerRadius', type: 'number', required: false, default: '4', desc: '바 모서리 반경' },
-  { name: 'rowPadding', type: 'number', required: false, default: '16', desc: '행 패딩. rowHeight = barHeight + rowPadding' },
-  { name: 'rowBuffer', type: 'number', required: false, default: '5', desc: '가상화 오버스캔 행 수 (GanttSheet 전용)' },
-  { name: 'columnWidth', type: 'number', required: false, default: '뷰모드 기본값', desc: '열 너비 px 오버라이드 (GanttSheet 전용)' },
-  { name: 'scrollToTodayRef', type: 'MutableRefObject<(() => void) | null>', required: false, default: '—', desc: '오늘 날짜 스크롤 함수 외부 노출' },
+  { name: 'tasks', type: 'GanttTask[]', required: true, default: '—', desc: 'The task list (virtualized past 5,000 rows)' },
+  { name: 'viewMode', type: "'Quarter Day'|'Half Day'|'Day'|'Week'|'Month'", required: false, default: "'Week'", desc: 'Timeline unit' },
+  { name: 'readOnly', type: 'boolean', required: false, default: 'false', desc: 'Disables drag editing' },
+  { name: 'showCriticalPath', type: 'boolean', required: false, default: 'false', desc: 'Highlights the critical path' },
+  { name: 'showGrid', type: 'boolean', required: false, default: 'true', desc: 'Grid panel on the left' },
+  { name: 'gridWidth', type: 'number', required: false, default: '400', desc: 'Initial grid width in px' },
+  { name: 'collapsedGroups', type: 'Set<string>', required: false, default: 'undefined', desc: 'IDs of collapsed groups (controlled). If omitted, state is managed internally' },
+  { name: 'onToggleGroup', type: '(groupId: string) => void', required: false, default: '—', desc: 'Group collapse / expand callback' },
+  { name: 'height', type: 'string | number', required: false, default: "'100%'", desc: 'Component height' },
+  { name: 'loading', type: 'boolean', required: false, default: 'false', desc: 'Loading overlay' },
+  { name: 'showProgress', type: 'boolean', required: false, default: 'true', desc: 'Shows the progress bar' },
+  { name: 'todayButton', type: 'boolean', required: false, default: 'true', desc: 'Jump-to-today button' },
+  { name: 'barHeight', type: 'number', required: false, default: '28', desc: 'Bar height in px' },
+  { name: 'barCornerRadius', type: 'number', required: false, default: '4', desc: 'Bar corner radius' },
+  { name: 'rowPadding', type: 'number', required: false, default: '16', desc: 'Row padding. rowHeight = barHeight + rowPadding' },
+  { name: 'rowBuffer', type: 'number', required: false, default: '5', desc: 'Virtualization overscan rows (GanttSheet only)' },
+  { name: 'columnWidth', type: 'number', required: false, default: 'per view mode', desc: 'Overrides the column width in px (GanttSheet only)' },
+  { name: 'scrollToTodayRef', type: 'MutableRefObject<(() => void) | null>', required: false, default: '—', desc: 'Exposes the scroll-to-today function to the caller' },
 ];
 
 const sheetEvents = [
-  { name: 'onTaskClick', type: '(task: GanttTask) => void', desc: '태스크 바 클릭' },
-  { name: 'onTaskDoubleClick', type: '(task: GanttTask) => void', desc: '태스크 바 더블클릭' },
-  { name: 'onTaskContextMenu', type: '(task: GanttTask, e: MouseEvent) => void', desc: '태스크 바 우클릭' },
-  { name: 'onTaskHover', type: '(task: GanttTask | null) => void', desc: '호버 진입(task) / 이탈(null)' },
-  { name: 'onTaskSelect', type: '(task: GanttTask | null) => void', desc: '선택 변경' },
-  { name: 'onGanttReady', type: '() => void', desc: '초기 렌더링 완료' },
-  { name: 'onDateChange', type: '(task: GanttTask, start: Date, end: Date) => void', desc: '바 드래그 날짜 변경 (readOnly=false)' },
-  { name: 'onProgressChange', type: '(task: GanttTask, progress: number) => void', desc: '진행률 드래그 변경 (readOnly=false)' },
+  { name: 'onTaskClick', type: '(task: GanttTask) => void', desc: 'Task bar clicked' },
+  { name: 'onTaskDoubleClick', type: '(task: GanttTask) => void', desc: 'Task bar double-clicked' },
+  { name: 'onTaskContextMenu', type: '(task: GanttTask, e: MouseEvent) => void', desc: 'Task bar right-clicked' },
+  { name: 'onTaskHover', type: '(task: GanttTask | null) => void', desc: 'Hover enter (task) / leave (null)' },
+  { name: 'onTaskSelect', type: '(task: GanttTask | null) => void', desc: 'Selection changed' },
+  { name: 'onGanttReady', type: '() => void', desc: 'Initial render finished' },
+  { name: 'onDateChange', type: '(task: GanttTask, start: Date, end: Date) => void', desc: 'Dates changed by dragging a bar (readOnly=false)' },
+  { name: 'onProgressChange', type: '(task: GanttTask, progress: number) => void', desc: 'Progress changed by dragging (readOnly=false)' },
 ];
 
 /* ─── Component ─── */
@@ -281,15 +281,15 @@ export default function GanttSheetDemo() {
       <Tabs
         defaultActiveKey="demo"
         items={[
-          /* ── 라이브 데모 ── */
+          /* ── Live demo ── */
           {
             key: 'demo',
-            label: '라이브 데모',
+            label: 'Live demo',
             children: (
               <Card size="small">
                 <div className={styles.controlBar}>
                   <div className={styles.controlItem}>
-                    <span>뷰 모드</span>
+                    <span>View mode</span>
                     <Select
                       value={viewMode}
                       onChange={setViewMode}
@@ -304,19 +304,19 @@ export default function GanttSheetDemo() {
                     />
                   </div>
                   <div className={styles.controlItem}>
-                    <span>크리티컬 패스</span>
+                    <span>Critical path</span>
                     <Switch size="small" checked={showCriticalPath} onChange={setShowCriticalPath} />
                   </div>
                   <div className={styles.controlItem}>
-                    <span>좌측 그리드</span>
+                    <span>Left grid</span>
                     <Switch size="small" checked={showGrid} onChange={setShowGrid} />
                   </div>
                   <div className={styles.controlItem}>
-                    <span>진행률 바</span>
+                    <span>Progress bar</span>
                     <Switch size="small" checked={showProgress} onChange={setShowProgress} />
                   </div>
                   <div className={styles.controlItem}>
-                    <span>바 높이</span>
+                    <span>Bar height</span>
                     <InputNumber
                       value={barHeight}
                       onChange={(v) => setBarHeight(v ?? 28)}
@@ -339,12 +339,12 @@ export default function GanttSheetDemo() {
             ),
           },
 
-          /* ── 성능 테스트 ── */
+          /* ── Performance test ── */
           {
             key: 'perf',
             label: (
               <span>
-                <ThunderboltOutlined /> 성능 테스트
+                <ThunderboltOutlined /> Performance test
               </span>
             ),
             children: (
@@ -352,26 +352,26 @@ export default function GanttSheetDemo() {
                 <Alert
                   type="info"
                   showIcon
-                  title="@tanstack/react-virtual 기반 가상화 — 행 수에 관계없이 DOM에는 ~30행만 존재합니다."
+                  title="Virtualized with @tanstack/react-virtual — no matter the row count, only about 30 rows exist in the DOM."
                   style={{ marginBottom: 16 }}
                 />
                 <div className={styles.controlBar} style={{ marginBottom: 16 }}>
                   <div className={styles.controlItem}>
-                    <span>행 수</span>
+                    <span>Rows</span>
                     <Select
                       value={rowCount}
                       onChange={setRowCount}
                       style={{ width: 120 }}
                       options={[
-                        { label: '500행', value: 500 },
-                        { label: '1,000행', value: 1000 },
-                        { label: '2,000행', value: 2000 },
-                        { label: '5,000행', value: 5000 },
+                        { label: '500 rows', value: 500 },
+                        { label: '1,000 rows', value: 1000 },
+                        { label: '2,000 rows', value: 2000 },
+                        { label: '5,000 rows', value: 5000 },
                       ]}
                     />
                   </div>
                   <div className={styles.controlItem}>
-                    <span>트리 구조</span>
+                    <span>Tree structure</span>
                     <Switch
                       size="small"
                       checked={treeMode}
@@ -382,14 +382,14 @@ export default function GanttSheetDemo() {
                   </div>
                   <div className={styles.controlItem}>
                     <span style={{ color: 'var(--text-secondary)', fontSize: 12 }}>
-                      {treeMode ? '프로젝트→단계→작업 (3depth)' : '그룹→태스크 (2depth)'} · DOM ~30행
+                      {treeMode ? 'project → phase → task (3 levels)' : 'group → task (2 levels)'} · ~30 rows in the DOM
                     </span>
                   </div>
                   <Button
                     size="small"
                     onClick={() => scrollToTodayRef.current?.()}
                   >
-                    오늘로 이동
+                    Jump to today
                   </Button>
                 </div>
 
@@ -397,9 +397,9 @@ export default function GanttSheetDemo() {
                   <Col span={6}>
                     <Card size="small">
                       <Statistic
-                        title="총 태스크"
+                        title="Total tasks"
                         value={perfTasks.length}
-                        suffix="행"
+                        suffix="rows"
                         styles={{ content: { color: '#1677ff' } }}
                       />
                     </Card>
@@ -407,9 +407,9 @@ export default function GanttSheetDemo() {
                   <Col span={6}>
                     <Card size="small">
                       <Statistic
-                        title="DOM 노드 (행)"
+                        title="DOM nodes (rows)"
                         value="~30"
-                        suffix="개"
+                        suffix=""
                         styles={{ content: { color: '#52c41a' } }}
                       />
                     </Card>
@@ -417,7 +417,7 @@ export default function GanttSheetDemo() {
                   <Col span={6}>
                     <Card size="small">
                       <Statistic
-                        title="메모리 절약"
+                        title="Memory saved"
                         value={Math.round((1 - 30 / perfTasks.length) * 100)}
                         suffix="%"
                         styles={{ content: { color: '#fa8c16' } }}
@@ -427,7 +427,7 @@ export default function GanttSheetDemo() {
                   <Col span={6}>
                     <Card size="small">
                       <Statistic
-                        title="스크롤 목표"
+                        title="Scroll target"
                         value="60"
                         suffix="fps"
                         styles={{ content: { color: '#722ed1' } }}
@@ -453,16 +453,16 @@ export default function GanttSheetDemo() {
             ),
           },
 
-          /* ── 드래그 편집 ── */
+          /* ── Drag editing ── */
           {
             key: 'drag',
-            label: '드래그 편집',
+            label: 'Drag editing',
             children: (
               <Card size="small">
                 <Alert
                   type="info"
                   showIcon
-                  title="바를 드래그하여 이동, 좌우 핸들로 날짜 조절, 진행률 핸들로 진행률 변경. 아래 로그에 변경사항이 기록됩니다."
+                  title="Drag a bar to move it, use the side handles to change dates, and the progress handle to change progress. Every change is written to the log below."
                   style={{ marginBottom: 12 }}
                 />
                 <div style={{ height: 360 }}>
@@ -473,7 +473,7 @@ export default function GanttSheetDemo() {
                     onTaskClick={(t) => addLog(`click: "${t.name}"`)}
                     onTaskDoubleClick={(t) => addLog(`dblClick: "${t.name}"`)}
                     onTaskHover={(t) => t && addLog(`hover: "${t.name}"`)}
-                    onTaskSelect={(t) => addLog(`select: ${t ? `"${t.name}"` : '(해제)'}`)}
+                    onTaskSelect={(t) => addLog(`select: ${t ? `"${t.name}"` : '(cleared)'}`)}
                     onTaskContextMenu={(t) => addLog(`contextMenu: "${t.name}"`)}
                     onToggleGroup={(gId) => {
                       const g = dragTasks.find((t) => t.id === gId);
@@ -483,10 +483,10 @@ export default function GanttSheetDemo() {
                     onProgressChange={handleDragProgressChange}
                   />
                 </div>
-                <Card size="small" title="이벤트 로그" style={{ marginTop: 8 }}>
+                <Card size="small" title="Event log" style={{ marginTop: 8 }}>
                   <div className={styles.eventLog}>
                     {eventLog.length === 0 ? (
-                      <span className={styles.eventLogEmpty}>바를 드래그해보세요</span>
+                      <span className={styles.eventLogEmpty}>Try dragging a bar</span>
                     ) : (
                       eventLog.map((log, i) => (
                         <div key={i} className={styles.eventLogItem}>{log}</div>
@@ -510,7 +510,7 @@ export default function GanttSheetDemo() {
                   showIcon
                   title={
                     <span>
-                      <strong>이 프로젝트의 유일한 간트 컴포넌트입니다.</strong> 외부 라이브러리를 쓰지 않습니다.
+                      <strong>This is the only Gantt component in the project.</strong> No external library is used.
                       <code style={{ marginLeft: 8, background: 'rgba(82,196,26,0.1)', padding: '1px 6px', borderRadius: 3 }}>
                         import {'{ GanttSheet }'} from '@/components/gantt-sheet'
                       </code>
@@ -525,9 +525,9 @@ export default function GanttSheetDemo() {
                     <thead>
                       <tr>
                         <th style={{ width: 180 }}>Prop</th>
-                        <th>타입</th>
-                        <th style={{ width: 120 }}>기본값</th>
-                        <th>설명</th>
+                        <th>Type</th>
+                        <th style={{ width: 120 }}>Default</th>
+                        <th>Description</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -552,9 +552,9 @@ export default function GanttSheetDemo() {
                   <table className={styles.propsTable}>
                     <thead>
                       <tr>
-                        <th style={{ width: 200 }}>이벤트</th>
-                        <th>시그니처</th>
-                        <th>설명</th>
+                        <th style={{ width: 200 }}>Event</th>
+                        <th>Signature</th>
+                        <th>Description</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -569,60 +569,60 @@ export default function GanttSheetDemo() {
                   </table>
                 </div>
 
-                {/* 자체 구현인 이유 */}
+                {/* Why it is built in-house */}
                 <div className={styles.propsSection}>
-                  <h3>왜 외부 라이브러리를 쓰지 않는가</h3>
+                  <h3>Why no external library</h3>
                   <Alert
                     type="info"
                     showIcon
                     style={{ marginBottom: 16 }}
                     title={
                       <span>
-                        2026-09-11 에 <code>frappe-gantt</code> 래퍼(<code>GanttView</code>)를 걷어내고
-                        이 컴포넌트로 일원화했습니다. 간트는 외부 의존성이 <strong>0개</strong>입니다 —
-                        새 간트 라이브러리를 추가하기 전에 아래 표를 먼저 보세요.
+                        On 2026-09-11 the <code>frappe-gantt</code> wrapper (<code>GanttView</code>) was removed and
+                        everything consolidated into this component. The Gantt has <strong>zero</strong> external dependencies —
+                        read the table below before adding a new Gantt library.
                       </span>
                     }
                   />
                   <table className={styles.propsTable}>
                     <thead>
                       <tr>
-                        <th>항목</th>
+                        <th>Aspect</th>
                         <th>GanttSheet</th>
                       </tr>
                     </thead>
                     <tbody>
                       <tr>
-                        <td>렌더링 방식</td>
-                        <td>react-virtual + DOM 바 (가시 행만)</td>
+                        <td>Rendering</td>
+                        <td>react-virtual + DOM bars (visible rows only)</td>
                       </tr>
                       <tr>
-                        <td>권장 행 수</td>
-                        <td><Tag color="green">5,000행+</Tag></td>
+                        <td>Recommended row count</td>
+                        <td><Tag color="green">5,000+ rows</Tag></td>
                       </tr>
                       <tr>
-                        <td>바 드래그 편집</td>
-                        <td><Tag color="green">지원 (pointer capture 방식)</Tag></td>
+                        <td>Drag-to-edit bars</td>
+                        <td><Tag color="green">Supported (pointer capture)</Tag></td>
                       </tr>
                       <tr>
-                        <td>의존성 화살표</td>
-                        <td><Tag color="blue">가시 범위만 렌더 (성능 최적화)</Tag></td>
+                        <td>Dependency arrows</td>
+                        <td><Tag color="blue">Only the visible range is rendered (a performance optimization)</Tag></td>
                       </tr>
                       <tr>
-                        <td>임계경로(Critical Path)</td>
-                        <td><Tag color="green">지원</Tag> — <code>criticalPath.ts</code> 자체 구현</td>
+                        <td>Critical path</td>
+                        <td><Tag color="green">Supported</Tag> — implemented in-house in <code>criticalPath.ts</code></td>
                       </tr>
                       <tr>
-                        <td>날짜 헤더</td>
-                        <td>자체 구현 (Month/Week/Day/Half Day/Quarter Day)</td>
+                        <td>Date header</td>
+                        <td>Built in-house (Month / Week / Day / Half Day / Quarter Day)</td>
                       </tr>
                       <tr>
-                        <td>다크모드</td>
-                        <td><Tag color="green">지원</Tag></td>
+                        <td>Dark mode</td>
+                        <td><Tag color="green">Supported</Tag></td>
                       </tr>
                       <tr>
-                        <td>외부 의존성</td>
-                        <td><Tag color="green">없음</Tag> — <code>@tanstack/react-virtual</code> 만 사용</td>
+                        <td>External dependencies</td>
+                        <td><Tag color="green">None</Tag> — only <code>@tanstack/react-virtual</code></td>
                       </tr>
                     </tbody>
                   </table>

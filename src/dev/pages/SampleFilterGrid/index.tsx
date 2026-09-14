@@ -18,26 +18,26 @@ interface Issue {
 }
 
 const rawData: Issue[] = [
-  { id: 'ISS-001', title: '로그인 페이지 오류', type: 'bug', priority: 'high', status: 'open', assignee: '홍길동', createdAt: '2025-03-01' },
-  { id: 'ISS-002', title: '다크모드 전환 시 깜빡임', type: 'bug', priority: 'medium', status: 'in-progress', assignee: '김철수', createdAt: '2025-03-02' },
-  { id: 'ISS-003', title: '엑셀 다운로드 기능 추가', type: 'feature', priority: 'medium', status: 'open', assignee: '이영희', createdAt: '2025-03-03' },
-  { id: 'ISS-004', title: '성능 최적화 작업', type: 'task', priority: 'low', status: 'closed', assignee: '박민수', createdAt: '2025-03-04' },
-  { id: 'ISS-005', title: 'API 응답 오류 처리', type: 'bug', priority: 'high', status: 'open', assignee: '최지영', createdAt: '2025-03-05' },
-  { id: 'ISS-006', title: '모바일 반응형 레이아웃', type: 'feature', priority: 'low', status: 'closed', assignee: '홍길동', createdAt: '2025-03-06' },
-  { id: 'ISS-007', title: '세션 타임아웃 알림 미표시', type: 'bug', priority: 'medium', status: 'in-progress', assignee: '이미영', createdAt: '2025-03-07' },
-  { id: 'ISS-008', title: '그리드 페이지네이션 버그', type: 'bug', priority: 'high', status: 'open', assignee: '송태현', createdAt: '2025-03-08' },
-  { id: 'ISS-009', title: '다국어 지원 추가', type: 'feature', priority: 'medium', status: 'in-progress', assignee: '최수진', createdAt: '2025-03-09' },
-  { id: 'ISS-010', title: '코드 리뷰 프로세스 수립', type: 'task', priority: 'low', status: 'closed', assignee: '김철수', createdAt: '2025-03-10' },
-  { id: 'ISS-011', title: '파일 업로드 용량 제한 오류', type: 'bug', priority: 'high', status: 'open', assignee: '임재혁', createdAt: '2025-03-11' },
-  { id: 'ISS-012', title: '대시보드 차트 데이터 갱신 지연', type: 'bug', priority: 'medium', status: 'in-progress', assignee: '정민우', createdAt: '2025-03-12' },
-  { id: 'ISS-013', title: 'PDF 내보내기 기능 추가', type: 'feature', priority: 'medium', status: 'open', assignee: '오하늘', createdAt: '2025-03-13' },
-  { id: 'ISS-014', title: '단위 테스트 커버리지 향상', type: 'task', priority: 'low', status: 'in-progress', assignee: '윤서연', createdAt: '2025-03-14' },
-  { id: 'ISS-015', title: '알림 센터 읽음 처리 오류', type: 'bug', priority: 'high', status: 'open', assignee: '강민준', createdAt: '2025-03-15' },
-  { id: 'ISS-016', title: '메뉴 권한 체계 개선', type: 'feature', priority: 'high', status: 'closed', assignee: '이미영', createdAt: '2025-03-16' },
-  { id: 'ISS-017', title: 'DB 인덱스 최적화', type: 'task', priority: 'medium', status: 'closed', assignee: '권도현', createdAt: '2025-03-17' },
-  { id: 'ISS-018', title: '비밀번호 변경 후 세션 초기화 누락', type: 'bug', priority: 'high', status: 'in-progress', assignee: '박정호', createdAt: '2025-03-18' },
-  { id: 'ISS-019', title: '드래그앤드롭 탭 순서 저장', type: 'feature', priority: 'low', status: 'open', assignee: '한지은', createdAt: '2025-03-19' },
-  { id: 'ISS-020', title: '배포 자동화 스크립트 작성', type: 'task', priority: 'medium', status: 'closed', assignee: '신예진', createdAt: '2025-03-20' },
+  { id: 'ISS-001', title: 'Login page error', type: 'bug', priority: 'high', status: 'open', assignee: 'John Doe', createdAt: '2025-03-01' },
+  { id: 'ISS-002', title: 'Flicker when switching to dark mode', type: 'bug', priority: 'medium', status: 'in-progress', assignee: 'Michael Chen', createdAt: '2025-03-02' },
+  { id: 'ISS-003', title: 'Add Excel download', type: 'feature', priority: 'medium', status: 'open', assignee: 'Emily Park', createdAt: '2025-03-03' },
+  { id: 'ISS-004', title: 'Performance optimization', type: 'task', priority: 'low', status: 'closed', assignee: 'David Kim', createdAt: '2025-03-04' },
+  { id: 'ISS-005', title: 'Handle API response errors', type: 'bug', priority: 'high', status: 'open', assignee: 'Sarah Lee', createdAt: '2025-03-05' },
+  { id: 'ISS-006', title: 'Responsive mobile layout', type: 'feature', priority: 'low', status: 'closed', assignee: 'John Doe', createdAt: '2025-03-06' },
+  { id: 'ISS-007', title: 'Session timeout warning not shown', type: 'bug', priority: 'medium', status: 'in-progress', assignee: 'Michelle Lee', createdAt: '2025-03-07' },
+  { id: 'ISS-008', title: 'Grid pagination bug', type: 'bug', priority: 'high', status: 'open', assignee: 'Thomas Song', createdAt: '2025-03-08' },
+  { id: 'ISS-009', title: 'Add multi-language support', type: 'feature', priority: 'medium', status: 'in-progress', assignee: 'Susan Choi', createdAt: '2025-03-09' },
+  { id: 'ISS-010', title: 'Establish a code review process', type: 'task', priority: 'low', status: 'closed', assignee: 'Michael Chen', createdAt: '2025-03-10' },
+  { id: 'ISS-011', title: 'File upload size limit error', type: 'bug', priority: 'high', status: 'open', assignee: 'Jacob Lim', createdAt: '2025-03-11' },
+  { id: 'ISS-012', title: 'Dashboard chart data refresh lag', type: 'bug', priority: 'medium', status: 'in-progress', assignee: 'Andrew Jung', createdAt: '2025-03-12' },
+  { id: 'ISS-013', title: 'Add PDF export', type: 'feature', priority: 'medium', status: 'open', assignee: 'Hannah Oh', createdAt: '2025-03-13' },
+  { id: 'ISS-014', title: 'Improve unit test coverage', type: 'task', priority: 'low', status: 'in-progress', assignee: 'Laura Yoon', createdAt: '2025-03-14' },
+  { id: 'ISS-015', title: 'Notification center read-state bug', type: 'bug', priority: 'high', status: 'open', assignee: 'Justin Kang', createdAt: '2025-03-15' },
+  { id: 'ISS-016', title: 'Improve the menu permission model', type: 'feature', priority: 'high', status: 'closed', assignee: 'Michelle Lee', createdAt: '2025-03-16' },
+  { id: 'ISS-017', title: 'Database index optimization', type: 'task', priority: 'medium', status: 'closed', assignee: 'Kevin Kwon', createdAt: '2025-03-17' },
+  { id: 'ISS-018', title: 'Session not reset after password change', type: 'bug', priority: 'high', status: 'in-progress', assignee: 'Paul Park', createdAt: '2025-03-18' },
+  { id: 'ISS-019', title: 'Persist tab order after drag and drop', type: 'feature', priority: 'low', status: 'open', assignee: 'Jane Han', createdAt: '2025-03-19' },
+  { id: 'ISS-020', title: 'Write deployment automation scripts', type: 'task', priority: 'medium', status: 'closed', assignee: 'Erin Shin', createdAt: '2025-03-20' },
 ];
 
 const typeColors: Record<string, string> = { bug: 'red', feature: 'blue', task: 'default' };
@@ -63,12 +63,12 @@ export default function SampleFilterGrid() {
 
   const colDefs: ColDef<Issue>[] = [
     { field: 'id', headerName: 'ID', width: 90 },
-    { field: 'title', headerName: '제목', flex: 1 },
-    { field: 'type', headerName: '유형', width: 90, cellRenderer: (p: { value: string }) => <Tag color={typeColors[p.value]}>{p.value}</Tag> },
-    { field: 'priority', headerName: '우선순위', width: 100, cellRenderer: (p: { value: string }) => <Tag color={priorityColors[p.value]}>{p.value}</Tag> },
-    { field: 'status', headerName: '상태', width: 110, cellRenderer: (p: { value: string }) => <Tag color={statusColors[p.value]}>{p.value}</Tag> },
-    { field: 'assignee', headerName: '담당자', width: 100 },
-    { field: 'createdAt', headerName: '등록일', width: 110 },
+    { field: 'title', headerName: 'Title', flex: 1 },
+    { field: 'type', headerName: 'Type', width: 90, cellRenderer: (p: { value: string }) => <Tag color={typeColors[p.value]}>{p.value}</Tag> },
+    { field: 'priority', headerName: 'Priority', width: 100, cellRenderer: (p: { value: string }) => <Tag color={priorityColors[p.value]}>{p.value}</Tag> },
+    { field: 'status', headerName: 'Status', width: 110, cellRenderer: (p: { value: string }) => <Tag color={statusColors[p.value]}>{p.value}</Tag> },
+    { field: 'assignee', headerName: 'Assignee', width: 100 },
+    { field: 'createdAt', headerName: 'Created', width: 110 },
   ];
 
   const handleSearch = () => {
@@ -89,15 +89,15 @@ export default function SampleFilterGrid() {
   return (
     <div className={styles['sample-filter-grid']}>
       <GridToolbar
-        left="이슈 목록 (필터-그리드 샘플)"
-        actions={<Button size="small" icon={<PlusOutlined />} type="primary">신규</Button>}
+        left="Issue list (filter-grid sample)"
+        actions={<Button size="small" icon={<PlusOutlined />} type="primary">New</Button>}
       />
       <FilterPanel activeFilterCount={activeFilterCount} onSearch={handleSearch} onReset={handleReset}>
         <div className="ds-filter-field">
-          <span className="ds-filter-field-label">유형</span>
+          <span className="ds-filter-field-label">Type</span>
           <Select
             style={{ width: '100%' }}
-            placeholder="전체"
+            placeholder="All"
             value={typeFilter || undefined}
             onChange={setTypeFilter}
             allowClear
@@ -109,10 +109,10 @@ export default function SampleFilterGrid() {
           />
         </div>
         <div className="ds-filter-field">
-          <span className="ds-filter-field-label">상태</span>
+          <span className="ds-filter-field-label">Status</span>
           <Select
             style={{ width: '100%' }}
-            placeholder="전체"
+            placeholder="All"
             value={statusFilter || undefined}
             onChange={setStatusFilter}
             allowClear
@@ -124,8 +124,8 @@ export default function SampleFilterGrid() {
           />
         </div>
         <div className="ds-filter-field">
-          <span className="ds-filter-field-label">검색어</span>
-          <Input placeholder="제목, 담당자" value={keyword} onChange={(e) => setKeyword(e.target.value)} />
+          <span className="ds-filter-field-label">Keyword</span>
+          <Input placeholder="Title, assignee" value={keyword} onChange={(e) => setKeyword(e.target.value)} />
         </div>
       </FilterPanel>
       <div className={styles['sample-grid-area']}>

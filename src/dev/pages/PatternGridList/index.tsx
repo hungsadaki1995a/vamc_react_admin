@@ -8,9 +8,9 @@ import type { Project, ProjectStatus } from '@/mock/projects';
 import type { ColDef, ICellRendererParams } from 'ag-grid-community';
 
 const projStatusCfg: Record<ProjectStatus, { label: string; color: string }> = {
-  active:    { label: '진행중', color: 'processing' },
-  completed: { label: '완료',   color: 'success' },
-  hold:      { label: '보류',   color: 'error' },
+  active:    { label: 'In progress', color: 'processing' },
+  completed: { label: 'Completed', color: 'success' },
+  hold:      { label: 'On hold',   color: 'error' },
 };
 
 export default function PatternGridList() {
@@ -35,21 +35,21 @@ export default function PatternGridList() {
 
   const colDefs: ColDef<Project>[] = [
     { field: 'id',       headerName: 'ID',       width: 80,  flex: 0 },
-    { field: 'name',     headerName: '프로젝트명', minWidth: 180 },
-    { field: 'status',   headerName: '상태',      width: 100, flex: 0,
+    { field: 'name',     headerName: 'Project name', minWidth: 180 },
+    { field: 'status',   headerName: 'Status',    width: 100, flex: 0,
       cellRenderer: (p: ICellRendererParams<Project, ProjectStatus>) =>
         p.value ? <Badge status={projStatusCfg[p.value].color as import('antd').BadgeProps['status']} text={projStatusCfg[p.value].label} /> : null,
     },
-    { field: 'progress', headerName: '진행률',    width: 150, flex: 0, filter: false,
+    { field: 'progress', headerName: 'Progress',  width: 150, flex: 0, filter: false,
       cellRenderer: (p: ICellRendererParams<Project, number>) =>
         <Progress percent={p.value ?? 0} size="small" />,
     },
-    { field: 'manager',  headerName: '담당자',    width: 100, flex: 0 },
-    { field: 'category', headerName: '분류',      width: 110, flex: 0 },
-    { field: 'budget',   headerName: '예산(원)',   width: 140, flex: 0,
+    { field: 'manager',  headerName: 'Manager',   width: 100, flex: 0 },
+    { field: 'category', headerName: 'Category',  width: 110, flex: 0 },
+    { field: 'budget',   headerName: 'Budget (KRW)', width: 140, flex: 0,
       valueFormatter: (p) => p.value?.toLocaleString() ?? '',
     },
-    { headerName: '기간', width: 210, flex: 0, sortable: false, filter: false,
+    { headerName: 'Period', width: 210, flex: 0, sortable: false, filter: false,
       cellRenderer: (p: ICellRendererParams<Project>) =>
         p.data ? <>{p.data.startDate} ~ {p.data.endDate}</> : null,
     },
@@ -68,25 +68,25 @@ export default function PatternGridList() {
         }}
       >
         <div className="ds-filter-field">
-          <span className="ds-filter-field-label">검색어</span>
-          <Input placeholder="프로젝트명, 담당자" prefix={<SearchOutlined />} value={keyword}
+          <span className="ds-filter-field-label">Keyword</span>
+          <Input placeholder="Project name, manager" prefix={<SearchOutlined />} value={keyword}
             onChange={(e) => setKeyword(e.target.value)} allowClear />
         </div>
         <div className="ds-filter-field">
-          <span className="ds-filter-field-label">상태</span>
+          <span className="ds-filter-field-label">Status</span>
           <Select style={{ width: '100%' }} value={status} onChange={setStatus}
             options={[
-              { value: 'all', label: '전체' },
-              { value: 'active', label: '진행중' },
-              { value: 'completed', label: '완료' },
-              { value: 'hold', label: '보류' },
+              { value: 'all', label: 'All' },
+              { value: 'active', label: 'In progress' },
+              { value: 'completed', label: 'Completed' },
+              { value: 'hold', label: 'On hold' },
             ]}
           />
         </div>
         <div className="ds-filter-field">
-          <span className="ds-filter-field-label">분류</span>
+          <span className="ds-filter-field-label">Category</span>
           <Select style={{ width: '100%' }} value={category} onChange={setCategory}
-            options={[{ value: 'all', label: '전체' }, ...categories.map((c) => ({ value: c, label: c }))]}
+            options={[{ value: 'all', label: 'All' }, ...categories.map((c) => ({ value: c, label: c }))]}
           />
         </div>
       </FilterPanel>
@@ -95,8 +95,8 @@ export default function PatternGridList() {
           totalCount={filtered.length}
           actions={
             <>
-              <Button size="small" icon={<DownloadOutlined />}>엑셀</Button>
-              <Button size="small" type="primary" icon={<PlusOutlined />}>등록</Button>
+              <Button size="small" icon={<DownloadOutlined />}>Excel</Button>
+              <Button size="small" type="primary" icon={<PlusOutlined />}>New</Button>
             </>
           }
           columnDefs={colDefs}

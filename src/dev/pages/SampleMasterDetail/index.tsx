@@ -16,22 +16,22 @@ interface Project {
 }
 
 const sampleProjects: Project[] = [
-  { id: 'P001', name: '디지털 전환 플랫폼', status: 'active', manager: '홍길동', startDate: '2025-01-01', endDate: '2025-12-31', description: '기업 내부 시스템의 디지털 전환을 위한 플랫폼 구축 프로젝트입니다.', budget: '5억원' },
-  { id: 'P002', name: '모바일 앱 개발', status: 'active', manager: '김철수', startDate: '2025-03-01', endDate: '2025-09-30', description: '고객 대상 모바일 앱 신규 개발 프로젝트입니다.', budget: '2억원' },
-  { id: 'P003', name: 'ERP 고도화', status: 'pending', manager: '이영희', startDate: '2025-04-01', endDate: '2026-03-31', description: 'ERP 시스템 기능 고도화 및 성능 개선 프로젝트입니다.', budget: '8억원' },
-  { id: 'P004', name: '보안 강화 프로젝트', status: 'done', manager: '박민수', startDate: '2024-09-01', endDate: '2025-02-28', description: '전사 보안 체계 강화를 위한 프로젝트입니다.', budget: '1.5억원' },
-  { id: 'P005', name: '빅데이터 분석 플랫폼', status: 'pending', manager: '최지영', startDate: '2025-05-01', endDate: '2026-04-30', description: '데이터 기반 의사결정을 위한 분석 플랫폼 구축입니다.', budget: '6억원' },
-  { id: 'P006', name: '클라우드 마이그레이션', status: 'active', manager: '임재혁', startDate: '2025-02-01', endDate: '2025-10-31', description: '온프레미스 인프라를 AWS 클라우드로 단계적으로 전환합니다.', budget: '4억원' },
-  { id: 'P007', name: 'AI 챗봇 도입', status: 'active', manager: '정민우', startDate: '2025-04-01', endDate: '2025-11-30', description: '고객 서비스 자동화를 위한 AI 기반 챗봇 시스템을 도입합니다.', budget: '1.5억원' },
-  { id: 'P008', name: 'HR 셀프서비스 포털', status: 'pending', manager: '오하늘', startDate: '2025-04-15', endDate: '2025-11-30', description: '임직원이 HR 업무를 스스로 처리할 수 있는 셀프서비스 포털 구축입니다.', budget: '1.2억원' },
-  { id: 'P009', name: '전자결재 시스템 고도화', status: 'active', manager: '이미영', startDate: '2025-03-01', endDate: '2025-08-31', description: '기존 전자결재 시스템의 기능 개선 및 모바일 지원을 추가합니다.', budget: '1.8억원' },
-  { id: 'P010', name: 'CRM 시스템 구축', status: 'done', manager: '박정호', startDate: '2024-06-01', endDate: '2025-01-31', description: '고객 관계 관리를 위한 CRM 시스템을 신규 구축했습니다.', budget: '2.5억원' },
-  { id: 'P011', name: '홈페이지 개편', status: 'done', manager: '한지은', startDate: '2024-09-01', endDate: '2025-02-28', description: '회사 홈페이지 전면 개편 및 반응형 UI 적용을 완료했습니다.', budget: '8000만원' },
-  { id: 'P012', name: 'BI 리포팅 고도화', status: 'active', manager: '김영수', startDate: '2025-01-20', endDate: '2025-07-31', description: '경영진 대시보드 및 월간 BI 리포트 자동화 시스템을 구축합니다.', budget: '1.6억원' },
+  { id: 'P001', name: 'Digital transformation platform', status: 'active', manager: 'John Doe', startDate: '2025-01-01', endDate: '2025-12-31', description: 'Platform build-out for the digital transformation of internal corporate systems.', budget: 'KRW 500M' },
+  { id: 'P002', name: 'Mobile app development', status: 'active', manager: 'Michael Chen', startDate: '2025-03-01', endDate: '2025-09-30', description: 'New customer-facing mobile app development project.', budget: 'KRW 200M' },
+  { id: 'P003', name: 'ERP enhancement', status: 'pending', manager: 'Emily Park', startDate: '2025-04-01', endDate: '2026-03-31', description: 'Feature enhancements and performance work on the ERP system.', budget: 'KRW 800M' },
+  { id: 'P004', name: 'Security hardening', status: 'done', manager: 'David Kim', startDate: '2024-09-01', endDate: '2025-02-28', description: 'Company-wide strengthening of the security framework.', budget: 'KRW 150M' },
+  { id: 'P005', name: 'Big data analytics platform', status: 'pending', manager: 'Sarah Lee', startDate: '2025-05-01', endDate: '2026-04-30', description: 'Analytics platform supporting data-driven decision making.', budget: 'KRW 600M' },
+  { id: 'P006', name: 'Cloud migration', status: 'active', manager: 'Jacob Lim', startDate: '2025-02-01', endDate: '2025-10-31', description: 'Migrating on-premises infrastructure to AWS in stages.', budget: 'KRW 400M' },
+  { id: 'P007', name: 'AI chatbot rollout', status: 'active', manager: 'Andrew Jung', startDate: '2025-04-01', endDate: '2025-11-30', description: 'Introducing an AI chatbot to automate customer service.', budget: 'KRW 150M' },
+  { id: 'P008', name: 'HR self-service portal', status: 'pending', manager: 'Hannah Oh', startDate: '2025-04-15', endDate: '2025-11-30', description: 'Self-service portal where employees handle their own HR tasks.', budget: 'KRW 120M' },
+  { id: 'P009', name: 'E-approval system upgrade', status: 'active', manager: 'Michelle Lee', startDate: '2025-03-01', endDate: '2025-08-31', description: 'Feature improvements and mobile support for the existing e-approval system.', budget: 'KRW 180M' },
+  { id: 'P010', name: 'CRM system build', status: 'done', manager: 'Paul Park', startDate: '2024-06-01', endDate: '2025-01-31', description: 'Built a new CRM system for customer relationship management.', budget: 'KRW 250M' },
+  { id: 'P011', name: 'Website revamp', status: 'done', manager: 'Jane Han', startDate: '2024-09-01', endDate: '2025-02-28', description: 'Completed a full redesign of the corporate website with a responsive UI.', budget: 'KRW 80M' },
+  { id: 'P012', name: 'BI reporting upgrade', status: 'active', manager: 'Steve Kim', startDate: '2025-01-20', endDate: '2025-07-31', description: 'Executive dashboard and automation of the monthly BI report.', budget: 'KRW 160M' },
 ];
 
 const statusColors: Record<string, string> = { active: 'green', pending: 'orange', done: 'default' };
-const statusLabels: Record<string, string> = { active: '진행중', pending: '준비중', done: '완료' };
+const statusLabels: Record<string, string> = { active: 'In progress', pending: 'Preparing', done: 'Completed' };
 
 export default function SampleMasterDetail() {
   const [selected, setSelected] = useState<Project>(sampleProjects[0]);
@@ -44,8 +44,8 @@ export default function SampleMasterDetail() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
       <GridToolbar
-        left="프로젝트 관리 (마스터-디테일 샘플)"
-        actions={<Button size="small" icon={<PlusOutlined />} type="primary">신규</Button>}
+        left="Project management (master-detail sample)"
+        actions={<Button size="small" icon={<PlusOutlined />} type="primary">New</Button>}
       />
       <div className={styles['sample-master-detail']}>
         {/* Left: master list */}
@@ -53,7 +53,7 @@ export default function SampleMasterDetail() {
           <div style={{ padding: '6px 8px', borderBottom: '1px solid #f0f0f0' }}>
             <Input
               size="small"
-              placeholder="검색"
+              placeholder="Search"
               prefix={<SearchOutlined />}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
@@ -85,21 +85,21 @@ export default function SampleMasterDetail() {
                 left={<span style={{ fontWeight: 600 }}>{selected.name}</span>}
                 actions={
                   <Space>
-                    <Button size="small" type="primary">저장</Button>
-                    <Button size="small">삭제</Button>
+                    <Button size="small" type="primary">Save</Button>
+                    <Button size="small">Delete</Button>
                   </Space>
                 }
               />
               <div className={styles['sample-detail-content']}>
                 {[
-                  ['프로젝트 ID', selected.id],
-                  ['프로젝트명', selected.name],
-                  ['상태', <Tag color={statusColors[selected.status]}>{statusLabels[selected.status]}</Tag>],
+                  ['Project ID', selected.id],
+                  ['Project name', selected.name],
+                  ['Status', <Tag color={statusColors[selected.status]}>{statusLabels[selected.status]}</Tag>],
                   ['PM', selected.manager],
-                  ['시작일', selected.startDate],
-                  ['종료일', selected.endDate],
-                  ['예산', selected.budget],
-                  ['설명', selected.description],
+                  ['Start date', selected.startDate],
+                  ['End date', selected.endDate],
+                  ['Budget', selected.budget],
+                  ['Description', selected.description],
                 ].map(([label, value]) => (
                   <div key={String(label)} className={styles['sample-field-row']}>
                     <span className={styles['sample-field-label']}>{label}</span>
@@ -109,7 +109,7 @@ export default function SampleMasterDetail() {
               </div>
             </>
           ) : (
-            <Empty description="항목을 선택하세요" style={{ margin: 'auto', padding: 40 }} />
+            <Empty description="Select an item" style={{ margin: 'auto', padding: 40 }} />
           )}
         </div>
       </div>

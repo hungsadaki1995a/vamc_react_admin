@@ -13,99 +13,99 @@ import DevPageHeader from '@/dev/DevPageHeader';
 
 const { TextArea, Search, Password } = Input;
 
-/* ─── Antd 탭 기존 data ─── */
+/* ─── Data used by the Ant Design tab ─── */
 const treeData = [
-  { value: 'dev', title: '개발팀', children: [{ value: 'frontend', title: '프론트엔드' }, { value: 'backend', title: '백엔드' }] },
-  { value: 'design', title: '디자인팀', children: [{ value: 'ui', title: 'UI/UX' }] },
+  { value: 'dev', title: 'Engineering', children: [{ value: 'frontend', title: 'Front-end' }, { value: 'backend', title: 'Backend' }] },
+  { value: 'design', title: 'Design', children: [{ value: 'ui', title: 'UI/UX' }] },
 ];
 
 const cascaderOptions = [
-  { value: 'seoul', label: '서울', children: [{ value: 'gangnam', label: '강남구' }, { value: 'seocho', label: '서초구' }] },
-  { value: 'gyeonggi', label: '경기도', children: [{ value: 'seongnam', label: '성남시' }] },
+  { value: 'seoul', label: 'Seoul', children: [{ value: 'gangnam', label: 'Gangnam-gu' }, { value: 'seocho', label: 'Seocho-gu' }] },
+  { value: 'gyeonggi', label: 'Gyeonggi-do', children: [{ value: 'seongnam', label: 'Seongnam-si' }] },
 ];
 
 /* ─── ComcdSelect code snippet ─── */
 const comcdCode = `import ComcdSelect from '@/components/inputs/ComcdSelect';
 
-// cdDmnId: T_CCO_COM_C의 코드 도메인 ID
-// comcdStore에서 해당 도메인의 코드 목록을 자동 로드
+// cdDmnId: the code domain ID from T_CCO_COM_C
+// The code list for that domain is loaded automatically from comcdStore
 <ComcdSelect
-  cdDmnId="JBC_CD"          // 직책 코드
-  placeholder="직책 선택"
+  cdDmnId="JBC_CD"          // job title codes
+  placeholder="Select a job title"
   style={{ width: 200 }}
   allowClear
   onChange={(value) => console.log(value)}
 />
 
-// antd Select의 모든 Props를 그대로 사용 가능
-// (options prop만 제외 — cdDmnId로 자동 주입)
+// Every antd Select prop works as usual
+// (except options — that is injected from cdDmnId)
 <ComcdSelect
-  cdDmnId="GD_CD"           // 등급 코드
+  cdDmnId="GD_CD"           // grade codes
   mode="multiple"
   size="small"
   disabled={!canWrite}
 />`;
 
-// 체이닝 데모용 정적 데이터 (comcdStore 불필요 — 개념 시연용)
+// Static data for the chaining demo (no comcdStore needed — it only illustrates the idea)
 const CHAIN_PARENT_OPTIONS = [
-  { label: 'SW 개발', value: 'SW' },
-  { label: '인프라', value: 'INFRA' },
-  { label: '운영지원', value: 'OPS' },
+  { label: 'Software', value: 'SW' },
+  { label: 'Infrastructure', value: 'INFRA' },
+  { label: 'Operations', value: 'OPS' },
 ];
 
 interface ChainChildOption { label: string; value: string; parentCd: string; }
 const CHAIN_CHILD_OPTIONS: ChainChildOption[] = [
-  { label: '프론트엔드', value: 'SW01', parentCd: 'SW' },
-  { label: '백엔드', value: 'SW02', parentCd: 'SW' },
-  { label: '모바일앱', value: 'SW03', parentCd: 'SW' },
-  { label: '네트워크', value: 'INF01', parentCd: 'INFRA' },
-  { label: '서버/스토리지', value: 'INF02', parentCd: 'INFRA' },
-  { label: 'DB 관리', value: 'INF03', parentCd: 'INFRA' },
-  { label: '시스템 모니터링', value: 'OPS01', parentCd: 'OPS' },
-  { label: '고객지원', value: 'OPS02', parentCd: 'OPS' },
-  { label: '보안운영', value: 'OPS03', parentCd: 'OPS' },
+  { label: 'Front-end', value: 'SW01', parentCd: 'SW' },
+  { label: 'Backend', value: 'SW02', parentCd: 'SW' },
+  { label: 'Mobile app', value: 'SW03', parentCd: 'SW' },
+  { label: 'Network', value: 'INF01', parentCd: 'INFRA' },
+  { label: 'Server / storage', value: 'INF02', parentCd: 'INFRA' },
+  { label: 'Database administration', value: 'INF03', parentCd: 'INFRA' },
+  { label: 'System monitoring', value: 'OPS01', parentCd: 'OPS' },
+  { label: 'Customer support', value: 'OPS02', parentCd: 'OPS' },
+  { label: 'Security operations', value: 'OPS03', parentCd: 'OPS' },
 ];
 
 const comcdChainCode = `import ComcdSelect from '@/components/inputs/ComcdSelect';
 import type { CodeDetail } from '@/api/common/comCdApi';
 
-// ─ 폼에서 체이닝 ──────────────────────────────────────────
+// ─ Chaining inside a form ────────────────────────────────
 const [parentVal, setParentVal] = useState('');
 const [childVal, setChildVal] = useState('');
 
-// ① 부모 셀렉트
+// 1) Parent select
 <ComcdSelect
-  cdDmnId="BZ_LRG_CD"          // 대분류 도메인
-  placeholder="대분류 선택"
+  cdDmnId="BZ_LRG_CD"          // top-level category domain
+  placeholder="Select a category"
   value={parentVal || undefined}
   onChange={(v) => {
     setParentVal(v as string);
-    setChildVal('');             // 부모 변경 시 자식 초기화
+    setChildVal('');             // clear the child when the parent changes
   }}
   allowClear
 />
 
-// ② 자식 셀렉트 — filterFn에 부모값 캡처
-//   CodeDetail.bzLrgCzCd 필드가 부모 코드와 일치하는 항목만 표시
+// 2) Child select — filterFn captures the parent value
+//   Only entries whose CodeDetail.bzLrgCzCd matches the parent code are shown
 <ComcdSelect
-  cdDmnId="BZ_DTL_CD"          // 소분류 도메인
-  placeholder="소분류 선택"
+  cdDmnId="BZ_DTL_CD"          // subcategory domain
+  placeholder="Select a subcategory"
   value={childVal || undefined}
   onChange={(v) => setChildVal(v as string)}
   filterFn={(c: CodeDetail) => c.bzLrgCzCd === parentVal}
-  disabled={!parentVal}        // 부모 미선택 시 비활성
+  disabled={!parentVal}        // disabled until a parent is chosen
 />`;
 
-const comcdPrefixCode = `// prefixOption — 옵션 상단에 빈값(value='') 항목 추가
-// 필터/검색 조건에서 "전체" 선택이 필요한 경우 사용
+const comcdPrefixCode = `// prefixOption — prepends an empty (value='') entry to the options
+// Use it when a filter or search condition needs an "All" choice
 
-// "전체" 옵션 추가 (필터 드롭다운)
-<ComcdSelect cdDmnId="JBC_CD" prefixOption="전체" style={{ width: 160 }} />
+// Adding an "All" option (filter dropdown)
+<ComcdSelect cdDmnId="JBC_CD" prefixOption="All" style={{ width: 160 }} />
 
-// "선택" 옵션 추가 (폼 필드)
-<ComcdSelect cdDmnId="GD_CD" prefixOption="선택" style={{ width: 160 }} />
+// Adding a "Select" option (form field)
+<ComcdSelect cdDmnId="GD_CD" prefixOption="Select" style={{ width: 160 }} />
 
-// 빈 레이블 옵션 추가
+// Adding an option with an empty label
 <ComcdSelect cdDmnId="JBC_CD" prefixOption="" style={{ width: 160 }} />`;
 
 /* ─── SearchSelectField code snippet ─── */
@@ -114,19 +114,19 @@ import type { SearchSelectValue } from '@/components/inputs/SearchSelectField';
 
 const [value, setValue] = useState<SearchSelectValue | null>(null);
 
-// 단건 선택 + 정적 옵션
+// Single selection with static options
 <SearchSelectField
   value={value}
   onChange={setValue}
   options={[
-    { label: '홍길동', value: 'U001' },
-    { label: '김철수', value: 'U002' },
+    { label: 'John Doe', value: 'U001' },
+    { label: 'Michael Chen', value: 'U002' },
   ]}
-  placeholder="사용자 검색"
-  modalTitle="사용자 선택"
+  placeholder="Search users"
+  modalTitle="Select a user"
 />`;
 
-const ssfMultiCode = `// 다중 선택 + 비동기 로드
+const ssfMultiCode = `// Multiple selection with async loading
 const [members, setMembers] = useState<SearchSelectValue[]>([]);
 
 <SearchSelectField
@@ -137,22 +137,22 @@ const [members, setMembers] = useState<SearchSelectValue[]>([]);
     const res = await userApi.search(keyword);
     return res.map(u => ({ label: u.name, value: u.id }));
   }}
-  modalTitle="참여자 선택"
+  modalTitle="Select members"
   modalWidth={640}
   columns={[
-    { title: '이름', dataIndex: 'label' },
-    { title: '부서', dataIndex: 'dept' },
-    { title: '직책', dataIndex: 'position' },
+    { title: 'Name', dataIndex: 'label' },
+    { title: 'Department', dataIndex: 'dept' },
+    { title: 'Title', dataIndex: 'position' },
   ]}
 />`;
 
-/* ─── 샘플 옵션 ─── */
+/* ─── Sample options ─── */
 const sampleUsers = [
-  { label: '홍길동', value: 'U001', dept: '개발팀', position: '시니어' },
-  { label: '김철수', value: 'U002', dept: '개발팀', position: '리드' },
-  { label: '이영희', value: 'U003', dept: '기획팀', position: '매니저' },
-  { label: '박민수', value: 'U004', dept: 'QA팀', position: '주니어' },
-  { label: '최지영', value: 'U005', dept: '디자인팀', position: '시니어' },
+  { label: 'John Doe', value: 'U001', dept: 'Engineering', position: 'Senior' },
+  { label: 'Michael Chen', value: 'U002', dept: 'Engineering', position: 'Lead' },
+  { label: 'Emily Park', value: 'U003', dept: 'Planning', position: 'Manager' },
+  { label: 'David Kim', value: 'U004', dept: 'QA', position: 'Junior' },
+  { label: 'Sarah Lee', value: 'U005', dept: 'Design', position: 'Senior' },
 ];
 
 export default function InputComponentsDemo() {
@@ -164,7 +164,7 @@ export default function InputComponentsDemo() {
   // ComcdSelect demo
   const [comcdVal, setComcdVal] = useState<string | undefined>();
   const [comcdPrefixVal, setComcdPrefixVal] = useState<string | undefined>();
-  // ComcdSelect chain demo (static data — comcdStore 불필요)
+  // ComcdSelect chain demo (static data — no comcdStore needed)
   const [chainParentVal, setChainParentVal] = useState<string>('');
   const [chainChildVal, setChainChildVal] = useState<string>('');
   const chainChildOptions = useMemo(
@@ -191,31 +191,31 @@ export default function InputComponentsDemo() {
             children: (
               <Card size="small">
                 <p className={styles.demoDesc}>
-                  공통 코드 도메인 ID(<code>cdDmnId</code>)만 지정하면 <code>comcdStore</code>에서
-                  코드 목록을 자동으로 가져오는 Select입니다. antd Select의 모든 Props를 그대로 사용합니다.
+                  A Select that pulls its code list from <code>comcdStore</code> as soon as you give it a
+                  common-code domain ID (<code>cdDmnId</code>). Every antd Select prop still works.
                 </p>
 
                 <Alert
                   type="info"
                   showIcon
-                  title="comcdStore는 로그인 후 서버 API에서 코드 목록을 로드합니다. 개발 환경에서 store가 비어있으면 옵션이 표시되지 않을 수 있습니다."
+                  title="comcdStore loads the code list from the server API after login. In a dev environment with an empty store, no options may appear."
                   style={{ marginBottom: 12 }}
                 />
 
                 <table className={styles.demoPropsTable}>
                   <thead>
-                    <tr><th style={{ width: 160 }}>Prop</th><th>타입</th><th style={{ width: 80 }}>필수</th><th>설명</th></tr>
+                    <tr><th style={{ width: 160 }}>Prop</th><th>Type</th><th style={{ width: 80 }}>Required</th><th>Description</th></tr>
                   </thead>
                   <tbody>
-                    <tr><td><code>cdDmnId</code></td><td><code>string</code></td><td style={{ textAlign: 'center' }}>✓</td><td>코드 도메인 ID (T_CCO_COM_C.CD_DMN_ID)</td></tr>
-                    <tr><td><code>prefixOption</code></td><td><code>string</code></td><td></td><td>옵션 상단에 추가할 빈값(value='') 항목 레이블. 예: <code>'전체'</code>, <code>'선택'</code>, <code>''</code></td></tr>
-                    <tr><td colSpan={4} style={{ background: 'var(--flyout-header-bg)', fontStyle: 'italic', fontSize: 12 }}>+ antd SelectProps (options 제외) 모두 사용 가능</td></tr>
-                    <tr><td><code>placeholder</code></td><td><code>string</code></td><td></td><td>입력 플레이스홀더</td></tr>
-                    <tr><td><code>allowClear</code></td><td><code>boolean</code></td><td></td><td>선택 초기화 버튼 표시</td></tr>
-                    <tr><td><code>mode</code></td><td><code>'multiple' | 'tags'</code></td><td></td><td>다중 선택 모드</td></tr>
-                    <tr><td><code>disabled</code></td><td><code>boolean</code></td><td></td><td>비활성화</td></tr>
-                    <tr><td><code>size</code></td><td><code>'small' | 'middle' | 'large'</code></td><td></td><td>크기</td></tr>
-                    <tr><td><code>onChange</code></td><td><code>(value: string | string[]) =&gt; void</code></td><td></td><td>선택 변경 콜백</td></tr>
+                    <tr><td><code>cdDmnId</code></td><td><code>string</code></td><td style={{ textAlign: 'center' }}>✓</td><td>Code domain ID (T_CCO_COM_C.CD_DMN_ID)</td></tr>
+                    <tr><td><code>prefixOption</code></td><td><code>string</code></td><td></td><td>Label of the empty (value='') entry prepended to the options. e.g. <code>'All'</code>, <code>'Select'</code>, <code>''</code></td></tr>
+                    <tr><td colSpan={4} style={{ background: 'var(--flyout-header-bg)', fontStyle: 'italic', fontSize: 12 }}>+ every antd SelectProp except options</td></tr>
+                    <tr><td><code>placeholder</code></td><td><code>string</code></td><td></td><td>Input placeholder</td></tr>
+                    <tr><td><code>allowClear</code></td><td><code>boolean</code></td><td></td><td>Shows a clear button</td></tr>
+                    <tr><td><code>mode</code></td><td><code>'multiple' | 'tags'</code></td><td></td><td>Multiple selection mode</td></tr>
+                    <tr><td><code>disabled</code></td><td><code>boolean</code></td><td></td><td>Disabled</td></tr>
+                    <tr><td><code>size</code></td><td><code>'small' | 'middle' | 'large'</code></td><td></td><td>Size</td></tr>
+                    <tr><td><code>onChange</code></td><td><code>(value: string | string[]) =&gt; void</code></td><td></td><td>Selection change callback</td></tr>
                   </tbody>
                 </table>
 
@@ -223,7 +223,7 @@ export default function InputComponentsDemo() {
                   <Space wrap>
                     <ComcdSelect
                       cdDmnId="JBC_CD"
-                      placeholder="직책 코드 선택"
+                      placeholder="Select a job title code"
                       style={{ width: 200 }}
                       allowClear
                       value={comcdVal}
@@ -231,67 +231,67 @@ export default function InputComponentsDemo() {
                     />
                     <ComcdSelect
                       cdDmnId="GD_CD"
-                      placeholder="등급 코드 선택"
+                      placeholder="Select a grade code"
                       style={{ width: 200 }}
                       allowClear
                     />
                     <ComcdSelect
                       cdDmnId="JBC_CD"
-                      placeholder="다중 선택"
+                      placeholder="Multiple selection"
                       mode="multiple"
                       style={{ width: 240 }}
                     />
                   </Space>
-                  <div className={styles.resultBox}>선택된 값: {comcdVal ?? '(없음)'}</div>
+                  <div className={styles.resultBox}>Selected value: {comcdVal ?? '(none)'}</div>
                 </div>
 
                 <CodeSnippet code={comcdCode} />
 
-                <Divider titlePlacement="left" style={{ marginTop: 20 }}>prefixOption — 상단 빈값 옵션</Divider>
+                <Divider titlePlacement="left" style={{ marginTop: 20 }}>prefixOption — an empty leading option</Divider>
                 <p className={styles.demoDesc}>
-                  필터 드롭다운처럼 "전체" 또는 "선택" 등의 빈값 옵션이 상단에 필요할 때 사용합니다.
-                  선택 시 value는 <code>''</code>(빈 문자열)입니다.
+                  Use it when a dropdown needs a leading empty option such as "All" or "Select", as filters usually do.
+                  Choosing it yields a value of <code>''</code> (an empty string).
                 </p>
                 <div className={styles.liveDemo}>
                   <Space wrap>
                     <div>
-                      <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginBottom: 4 }}>prefixOption="전체"</div>
+                      <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginBottom: 4 }}>prefixOption="All"</div>
                       <ComcdSelect
                         cdDmnId="JBC_CD"
-                        prefixOption="전체"
+                        prefixOption="All"
                         style={{ width: 160 }}
                         value={comcdPrefixVal}
                         onChange={(v) => setComcdPrefixVal(v as string)}
                       />
                     </div>
                     <div>
-                      <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginBottom: 4 }}>prefixOption="선택"</div>
-                      <ComcdSelect cdDmnId="GD_CD" prefixOption="선택" style={{ width: 160 }} />
+                      <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginBottom: 4 }}>prefixOption="Select"</div>
+                      <ComcdSelect cdDmnId="GD_CD" prefixOption="Select" style={{ width: 160 }} />
                     </div>
                     <div>
-                      <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginBottom: 4 }}>prefixOption="" (빈값)</div>
+                      <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginBottom: 4 }}>prefixOption="" (empty)</div>
                       <ComcdSelect cdDmnId="JBC_CD" prefixOption="" style={{ width: 160 }} />
                     </div>
                   </Space>
-                  <div className={styles.resultBox}>선택된 값: {comcdPrefixVal === '' ? '(빈 문자열)' : (comcdPrefixVal ?? '(없음)')}</div>
+                  <div className={styles.resultBox}>Selected value: {comcdPrefixVal === '' ? '(empty string)' : (comcdPrefixVal ?? '(none)')}</div>
                 </div>
 
                 <CodeSnippet code={comcdPrefixCode} />
 
-                <Divider titlePlacement="left" style={{ marginTop: 20 }}>filterFn — 체이닝 (연쇄 선택)</Divider>
+                <Divider titlePlacement="left" style={{ marginTop: 20 }}>filterFn — chained selects</Divider>
                 <p className={styles.demoDesc}>
-                  <code>filterFn</code> prop으로 부모 선택값에 따라 자식 셀렉트의 옵션을 필터링합니다.
-                  아래 데모는 <strong>정적 데이터</strong>로 동작하며, 실제 운영에서는
-                  <code>{'ComcdSelect filterFn={(c) => c.bzLrgCzCd === parentVal}'}</code> 형태로 사용합니다.
+                  The <code>filterFn</code> prop filters the child select's options by the parent's value.
+                  The demo below runs on <strong>static data</strong>; in production you would write
+                  <code>{'ComcdSelect filterFn={(c) => c.bzLrgCzCd === parentVal}'}</code>.
                 </p>
 
-                {/* ── 체이닝 흐름 시각화 ── */}
+                {/* ── Visualizing the chained flow ── */}
                 <div style={{
                   display: 'flex', alignItems: 'stretch', gap: 0,
                   border: '1px solid var(--border-color)', borderRadius: 8, overflow: 'hidden',
                   margin: '12px 0',
                 }}>
-                  {/* Step 1 — 부모 */}
+                  {/* Step 1 — parent */}
                   <div style={{
                     flex: 1, padding: '16px 20px',
                     background: 'var(--content-header-bg)',
@@ -303,12 +303,12 @@ export default function InputComponentsDemo() {
                         width: 20, height: 20, display: 'inline-flex', alignItems: 'center',
                         justifyContent: 'center', fontSize: 11, fontWeight: 700, flexShrink: 0,
                       }}>1</span>
-                      <span style={{ fontSize: 13, fontWeight: 600 }}>대분류 선택</span>
-                      <Tag color="blue" style={{ margin: 0, fontSize: 11 }}>부모</Tag>
+                      <span style={{ fontSize: 13, fontWeight: 600 }}>Select a category</span>
+                      <Tag color="blue" style={{ margin: 0, fontSize: 11 }}>Parent</Tag>
                     </div>
                     <Select
                       options={CHAIN_PARENT_OPTIONS}
-                      placeholder="업무유형 선택"
+                      placeholder="Select a work type"
                       value={chainParentVal || undefined}
                       onChange={(v) => { setChainParentVal(v ?? ''); setChainChildVal(''); }}
                       allowClear
@@ -316,7 +316,7 @@ export default function InputComponentsDemo() {
                     />
                     {chainParentVal && (
                       <div style={{ marginTop: 8, fontSize: 12, color: '#1677ff' }}>
-                        선택: <strong>{CHAIN_PARENT_OPTIONS.find(o => o.value === chainParentVal)?.label}</strong>
+                        Selected: <strong>{CHAIN_PARENT_OPTIONS.find(o => o.value === chainParentVal)?.label}</strong>
                       </div>
                     )}
                   </div>
@@ -337,11 +337,11 @@ export default function InputComponentsDemo() {
                       />
                     </svg>
                     <span style={{ fontSize: 10, color: chainParentVal ? '#1677ff' : '#bfbfbf', transition: 'color 0.2s', textAlign: 'center', lineHeight: 1.2 }}>
-                      {chainParentVal ? 'filterFn\n적용 중' : 'filterFn'}
+                      {chainParentVal ? 'filterFn\napplied' : 'filterFn'}
                     </span>
                   </div>
 
-                  {/* Step 2 — 자식 */}
+                  {/* Step 2 — child */}
                   <div style={{
                     flex: 1, padding: '16px 20px',
                     background: chainParentVal ? '#f0f7ff' : 'var(--content-bg)',
@@ -356,19 +356,19 @@ export default function InputComponentsDemo() {
                         justifyContent: 'center', fontSize: 11, fontWeight: 700, flexShrink: 0,
                         transition: 'background 0.2s',
                       }}>2</span>
-                      <span style={{ fontSize: 13, fontWeight: 600 }}>소분류 선택</span>
-                      <Tag color="green" style={{ margin: 0, fontSize: 11 }}>자식</Tag>
-                      {/* 필터 카운트 배지 */}
+                      <span style={{ fontSize: 13, fontWeight: 600 }}>Select a subcategory</span>
+                      <Tag color="green" style={{ margin: 0, fontSize: 11 }}>Child</Tag>
+                      {/* filtered-count badge */}
                       <Tag
                         color={chainParentVal ? 'blue' : 'default'}
                         style={{ margin: 0, fontSize: 11 }}
                       >
-                        {chainChildOptions.length} / {CHAIN_CHILD_OPTIONS.length}개
+                        {chainChildOptions.length} / {CHAIN_CHILD_OPTIONS.length}
                       </Tag>
                     </div>
                     <Select
                       options={chainChildOptions}
-                      placeholder={chainParentVal ? '소분류 선택' : '← 대분류를 먼저 선택하세요'}
+                      placeholder={chainParentVal ? 'Select a subcategory' : 'Pick a category first'}
                       value={chainChildVal || undefined}
                       onChange={(v) => setChainChildVal(v ?? '')}
                       disabled={!chainParentVal}
@@ -377,25 +377,25 @@ export default function InputComponentsDemo() {
                     />
                     {chainParentVal && (
                       <div style={{ marginTop: 8, fontSize: 12, color: '#52c41a' }}>
-                        <strong>"{CHAIN_PARENT_OPTIONS.find(o => o.value === chainParentVal)?.label}"</strong> 기준으로 필터링됨
+                        <strong>"{CHAIN_PARENT_OPTIONS.find(o => o.value === chainParentVal)?.label}"</strong>
                       </div>
                     )}
                     {!chainParentVal && (
                       <div style={{ marginTop: 8, fontSize: 12, color: 'var(--text-disabled, #bfbfbf)' }}>
-                        대분류 선택 후 활성화됩니다
+                        Enabled once a category is selected
                       </div>
                     )}
                   </div>
                 </div>
 
-                {/* 결과 요약 */}
+                {/* result summary */}
                 <div className={styles.resultBox}>
                   {chainParentVal
-                    ? `대분류: "${CHAIN_PARENT_OPTIONS.find(o => o.value === chainParentVal)?.label}" → 소분류 옵션 ${CHAIN_CHILD_OPTIONS.length}개 중 ${chainChildOptions.length}개 표시${chainChildVal ? ` → 선택: "${chainChildOptions.find(o => o.value === chainChildVal)?.label}"` : ''}`
-                    : '← 대분류를 선택하면 소분류가 자동으로 필터링됩니다'}
+                    ? `Category: "${CHAIN_PARENT_OPTIONS.find(o => o.value === chainParentVal)?.label}" → showing ${chainChildOptions.length} of ${CHAIN_CHILD_OPTIONS.length} subcategory options${chainChildVal ? ` → selected: "${chainChildOptions.find(o => o.value === chainChildVal)?.label}"` : ''}`
+                    : 'Pick a category and the subcategories filter themselves'}
                 </div>
 
-                <CodeSnippet code={comcdChainCode} title="ComcdSelect filterFn 체이닝 (실제 코드)" />
+                <CodeSnippet code={comcdChainCode} title="ComcdSelect filterFn chaining (real code)" />
               </Card>
             ),
           },
@@ -407,65 +407,65 @@ export default function InputComponentsDemo() {
             children: (
               <Card size="small">
                 <p className={styles.demoDesc}>
-                  텍스트 입력 자동완성 + 🔍 버튼 클릭 시 팝업 모달 검색을 제공하는 커스텀 입력 컴포넌트입니다.
-                  단건/다중 선택, 정적/비동기 옵션, 커스텀 컬럼, 완전 커스텀 모달 본문을 지원합니다.
+                  A custom input that combines type-ahead autocomplete with a popup search modal behind the 🔍 button.
+                  It supports single and multiple selection, static and async options, custom columns and a fully custom modal body.
                 </p>
 
                 <table className={styles.demoPropsTable}>
                   <thead>
-                    <tr><th style={{ width: 180 }}>Prop</th><th>타입</th><th style={{ width: 80 }}>기본값</th><th>설명</th></tr>
+                    <tr><th style={{ width: 180 }}>Prop</th><th>Type</th><th style={{ width: 80 }}>Default</th><th>Description</th></tr>
                   </thead>
                   <tbody>
-                    <tr><td><code>value</code></td><td><code>SearchSelectValue | SearchSelectValue[] | null</code></td><td>—</td><td>선택된 값 (controlled)</td></tr>
-                    <tr><td><code>onChange</code></td><td><code>(val: SearchSelectValue | SearchSelectValue[] | null) =&gt; void</code></td><td>—</td><td>선택 변경 콜백</td></tr>
-                    <tr><td><code>options</code></td><td><code>SearchSelectOption[]</code></td><td>—</td><td>정적 옵션 목록 <code>&#123; label, value, ...extras &#125;</code></td></tr>
-                    <tr><td><code>fetchOptions</code></td><td><code>(keyword: string) =&gt; Promise&lt;SearchSelectOption[]&gt;</code></td><td>—</td><td>비동기 옵션 로더 (모달 열기 + 자동완성 타이핑 시 호출)</td></tr>
-                    <tr><td><code>multiple</code></td><td><code>boolean</code></td><td><code>false</code></td><td>다중 선택 모드 (체크박스)</td></tr>
-                    <tr><td><code>placeholder</code></td><td><code>string</code></td><td><code>"검색어 입력"</code></td><td>자동완성 플레이스홀더</td></tr>
-                    <tr><td><code>disabled</code></td><td><code>boolean</code></td><td><code>false</code></td><td>전체 비활성화</td></tr>
-                    <tr><td><code>modalTitle</code></td><td><code>string</code></td><td><code>"검색"</code></td><td>팝업 모달 제목</td></tr>
-                    <tr><td><code>modalWidth</code></td><td><code>number</code></td><td><code>560</code></td><td>팝업 모달 너비(px)</td></tr>
-                    <tr><td><code>columns</code></td><td><code>ColumnsType&lt;SearchSelectOption&gt;</code></td><td>—</td><td>[Level 1] 기본 [명칭, 코드] 컬럼 대체</td></tr>
-                    <tr><td><code>showModalSearch</code></td><td><code>boolean</code></td><td><code>true</code></td><td>[Level 2] 모달 내 검색 입력 표시 여부</td></tr>
-                    <tr><td><code>modalSearchFields</code></td><td><code>(keyof SearchSelectOption)[]</code></td><td><code>['label','value']</code></td><td>[Level 2] 검색 대상 필드 목록</td></tr>
-                    <tr><td><code>renderModalContent</code></td><td><code>(ctx: ModalContentContext) =&gt; ReactNode</code></td><td>—</td><td>[Level 3] 모달 본문 완전 커스텀 (기본 Table 대체)</td></tr>
-                    <tr><td><code>codeWidth</code></td><td><code>number</code></td><td><code>110</code></td><td>우측 코드 입력 너비(px)</td></tr>
+                    <tr><td><code>value</code></td><td><code>SearchSelectValue | SearchSelectValue[] | null</code></td><td>—</td><td>The selected value (controlled)</td></tr>
+                    <tr><td><code>onChange</code></td><td><code>(val: SearchSelectValue | SearchSelectValue[] | null) =&gt; void</code></td><td>—</td><td>Selection change callback</td></tr>
+                    <tr><td><code>options</code></td><td><code>SearchSelectOption[]</code></td><td>—</td><td>Static option list <code>&#123; label, value, ...extras &#125;</code></td></tr>
+                    <tr><td><code>fetchOptions</code></td><td><code>(keyword: string) =&gt; Promise&lt;SearchSelectOption[]&gt;</code></td><td>—</td><td>Async option loader (called when the modal opens and while typing in the autocomplete)</td></tr>
+                    <tr><td><code>multiple</code></td><td><code>boolean</code></td><td><code>false</code></td><td>Multiple selection mode (checkboxes)</td></tr>
+                    <tr><td><code>placeholder</code></td><td><code>string</code></td><td><code>"Type to search"</code></td><td>Autocomplete placeholder</td></tr>
+                    <tr><td><code>disabled</code></td><td><code>boolean</code></td><td><code>false</code></td><td>Disables the whole control</td></tr>
+                    <tr><td><code>modalTitle</code></td><td><code>string</code></td><td><code>"Search"</code></td><td>Title of the popup modal</td></tr>
+                    <tr><td><code>modalWidth</code></td><td><code>number</code></td><td><code>560</code></td><td>Width of the popup modal (px)</td></tr>
+                    <tr><td><code>columns</code></td><td><code>ColumnsType&lt;SearchSelectOption&gt;</code></td><td>—</td><td>[Level 1] Replaces the default [name, code] columns</td></tr>
+                    <tr><td><code>showModalSearch</code></td><td><code>boolean</code></td><td><code>true</code></td><td>[Level 2] Whether the search box inside the modal is shown</td></tr>
+                    <tr><td><code>modalSearchFields</code></td><td><code>(keyof SearchSelectOption)[]</code></td><td><code>['label','value']</code></td><td>[Level 2] Fields the search runs against</td></tr>
+                    <tr><td><code>renderModalContent</code></td><td><code>(ctx: ModalContentContext) =&gt; ReactNode</code></td><td>—</td><td>[Level 3] Fully custom modal body (replaces the default table)</td></tr>
+                    <tr><td><code>codeWidth</code></td><td><code>number</code></td><td><code>110</code></td><td>Width of the code input on the right (px)</td></tr>
                   </tbody>
                 </table>
 
-                {/* 단건 선택 데모 */}
-                <Divider titlePlacement="left" style={{ marginTop: 16 }}>단건 선택</Divider>
+                {/* single-selection demo */}
+                <Divider titlePlacement="left" style={{ marginTop: 16 }}>Single selection</Divider>
                 <div className={styles.liveDemo}>
                   <SearchSelectField
                     value={ssfSingle}
                     onChange={(v) => setSsfSingle(v as SearchSelectValue | null)}
                     options={sampleUsers}
-                    placeholder="사용자 검색"
-                    modalTitle="사용자 선택"
+                    placeholder="Search users"
+                    modalTitle="Select a user"
                     style={{ maxWidth: 400 }}
                   />
                   <div className={styles.resultBox}>
-                    선택: {ssfSingle ? `${ssfSingle.label} (${ssfSingle.value})` : '(없음)'}
+                    Selected: {ssfSingle ? `${ssfSingle.label} (${ssfSingle.value})` : '(none)'}
                   </div>
                 </div>
                 <CodeSnippet code={ssfSingleCode} />
 
-                {/* 다중 선택 데모 */}
-                <Divider titlePlacement="left" style={{ marginTop: 16 }}>다중 선택</Divider>
+                {/* multiple-selection demo */}
+                <Divider titlePlacement="left" style={{ marginTop: 16 }}>Multiple selection</Divider>
                 <div className={styles.liveDemo}>
                   <SearchSelectField
                     value={ssfMulti}
                     onChange={(v) => setSsfMulti(v as SearchSelectValue[] | null)}
                     options={sampleUsers}
                     multiple={true}
-                    placeholder="참여자 검색"
-                    modalTitle="참여자 선택"
+                    placeholder="Search members"
+                    modalTitle="Select members"
                     style={{ maxWidth: 500 }}
                   />
                   <div className={styles.resultBox}>
-                    선택: {ssfMulti?.length
+                    Selected: {ssfMulti?.length
                       ? ssfMulti.map((v) => `${v.label}(${v.value})`).join(', ')
-                      : '(없음)'}
+                      : '(none)'}
                   </div>
                 </div>
                 <CodeSnippet code={ssfMultiCode} />
@@ -473,40 +473,40 @@ export default function InputComponentsDemo() {
             ),
           },
 
-          /* ── Ant Design 기본 ── */
+          /* ── Ant Design basics ── */
           {
             key: 'antd',
-            label: 'Ant Design 기본',
+            label: 'Ant Design basics',
             children: (
               <Card size="small">
-                <Divider titlePlacement="left">Input 변형</Divider>
+                <Divider titlePlacement="left">Input variants</Divider>
                 <Row gutter={[16, 12]}>
-                  <Col span={8}><Input placeholder="기본 Input" /></Col>
-                  <Col span={8}><form onSubmit={(e) => e.preventDefault()}><Password placeholder="비밀번호" /></form></Col>
-                  <Col span={8}><Search placeholder="검색어 입력" onSearch={(v) => console.log(v)} /></Col>
-                  <Col span={8}><InputNumber style={{ width: '100%' }} placeholder="숫자 입력" min={0} max={100} /></Col>
-                  <Col span={8}><AutoComplete style={{ width: '100%' }} placeholder="자동완성" options={[{ value: '홍길동' }, { value: '김철수' }]} /></Col>
-                  <Col span={24}><TextArea rows={3} placeholder="여러 줄 텍스트" /></Col>
+                  <Col span={8}><Input placeholder="Basic input" /></Col>
+                  <Col span={8}><form onSubmit={(e) => e.preventDefault()}><Password placeholder="Password" /></form></Col>
+                  <Col span={8}><Search placeholder="Type to search" onSearch={(v) => console.log(v)} /></Col>
+                  <Col span={8}><InputNumber style={{ width: '100%' }} placeholder="Enter a number" min={0} max={100} /></Col>
+                  <Col span={8}><AutoComplete style={{ width: '100%' }} placeholder="Autocomplete" options={[{ value: 'John Doe' }, { value: 'Michael Chen' }]} /></Col>
+                  <Col span={24}><TextArea rows={3} placeholder="Multi-line text" /></Col>
                 </Row>
 
                 <Divider titlePlacement="left">Select</Divider>
                 <Row gutter={[16, 12]}>
                   <Col span={8}>
-                    <Select style={{ width: '100%' }} placeholder="단일 선택" options={[{ value: '1', label: '옵션 1' }, { value: '2', label: '옵션 2' }, { value: '3', label: '옵션 3' }]} />
+                    <Select style={{ width: '100%' }} placeholder="Single selection" options={[{ value: '1', label: 'Option 1' }, { value: '2', label: 'Option 2' }, { value: '3', label: 'Option 3' }]} />
                   </Col>
                   <Col span={8}>
-                    <Select mode="multiple" style={{ width: '100%' }} placeholder="다중 선택" options={[{ value: 'apple', label: '사과' }, { value: 'banana', label: '바나나' }, { value: 'cherry', label: '체리' }]} />
+                    <Select mode="multiple" style={{ width: '100%' }} placeholder="Multiple selection" options={[{ value: 'apple', label: 'Apple' }, { value: 'banana', label: 'Banana' }, { value: 'cherry', label: 'Cherry' }]} />
                   </Col>
                   <Col span={8}>
-                    <Select showSearch style={{ width: '100%' }} placeholder="검색 가능 Select" options={[{ value: 'react', label: 'React' }, { value: 'vue', label: 'Vue' }, { value: 'angular', label: 'Angular' }]} />
+                    <Select showSearch style={{ width: '100%' }} placeholder="Searchable select" options={[{ value: 'react', label: 'React' }, { value: 'vue', label: 'Vue' }, { value: 'angular', label: 'Angular' }]} />
                   </Col>
                 </Row>
 
                 <Divider titlePlacement="left">DatePicker</Divider>
                 <Space wrap>
-                  <DatePicker placeholder="날짜" />
-                  <DatePicker.RangePicker placeholder={['시작', '종료']} />
-                  <DatePicker picker="month" placeholder="월" />
+                  <DatePicker placeholder="Date" />
+                  <DatePicker.RangePicker placeholder={['Start', 'End']} />
+                  <DatePicker picker="month" placeholder="Month" />
                 </Space>
 
                 <Divider titlePlacement="left">Checkbox / Radio</Divider>
@@ -515,12 +515,12 @@ export default function InputComponentsDemo() {
                     <Checkbox.Group
                       value={checkboxVals}
                       onChange={(v) => setCheckboxVals(v as string[])}
-                      options={[{ label: '사과', value: 'apple' }, { label: '바나나', value: 'banana' }, { label: '체리', value: 'cherry' }]}
+                      options={[{ label: 'Apple', value: 'apple' }, { label: 'Banana', value: 'banana' }, { label: 'Cherry', value: 'cherry' }]}
                     />
                     <Radio.Group value={radioVal} onChange={(e) => setRadioVal(e.target.value)}>
-                      <Radio value="a">옵션 A</Radio>
-                      <Radio value="b">옵션 B</Radio>
-                      <Radio value="c">옵션 C</Radio>
+                      <Radio value="a">Option A</Radio>
+                      <Radio value="b">Option B</Radio>
+                      <Radio value="c">Option C</Radio>
                     </Radio.Group>
                     <Radio.Group value={radioVal} onChange={(e) => setRadioVal(e.target.value)} optionType="button">
                       <Radio value="a">A</Radio>
@@ -538,17 +538,17 @@ export default function InputComponentsDemo() {
                   </Space>
                   <div style={{ width: 300 }}>
                     <Slider value={sliderVal} onChange={setSliderVal} marks={{ 0: '0', 50: '50', 100: '100' }} />
-                    <span>값: {sliderVal}</span>
+                    <span>Value: {sliderVal}</span>
                   </div>
                 </Space>
 
                 <Divider titlePlacement="left">TreeSelect / Cascader</Divider>
                 <Row gutter={16}>
                   <Col span={12}>
-                    <TreeSelect style={{ width: '100%' }} treeData={treeData} placeholder="부서 선택 (TreeSelect)" allowClear />
+                    <TreeSelect style={{ width: '100%' }} treeData={treeData} placeholder="Select a department (TreeSelect)" allowClear />
                   </Col>
                   <Col span={12}>
-                    <Cascader style={{ width: '100%' }} options={cascaderOptions} placeholder="지역 선택 (Cascader)" />
+                    <Cascader style={{ width: '100%' }} options={cascaderOptions} placeholder="Select a region (Cascader)" />
                   </Col>
                 </Row>
               </Card>

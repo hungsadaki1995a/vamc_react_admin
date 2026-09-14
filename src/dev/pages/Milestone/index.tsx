@@ -5,15 +5,15 @@ import DevPageHeader from '@/dev/DevPageHeader';
 const { Text } = Typography;
 
 const milestones = [
-  { date: '2025-01-31', title: 'ERP DB 설계 완료', project: '차세대 ERP 시스템', status: 'done' },
-  { date: '2025-02-28', title: '홈페이지 개편 완료', project: '홈페이지 개편', status: 'done' },
-  { date: '2025-03-31', title: 'AWS 인프라 구성 완료', project: '클라우드 마이그레이션', status: 'done' },
-  { date: '2025-04-15', title: '앱 디자인 시안 확정', project: '모바일 앱 리뉴얼', status: 'review' },
-  { date: '2025-04-30', title: 'ERP API 개발 완료', project: '차세대 ERP 시스템', status: 'in_progress' },
-  { date: '2025-05-15', title: 'NLP 모델 선정 완료', project: 'AI 챗봇 도입', status: 'in_progress' },
-  { date: '2025-06-30', title: '데이터 분석 플랫폼 오픈', project: '데이터 분석 플랫폼', status: 'upcoming' },
-  { date: '2025-09-30', title: 'ERP 통합 테스트 완료', project: '차세대 ERP 시스템', status: 'upcoming' },
-  { date: '2025-12-31', title: 'ERP 시스템 오픈', project: '차세대 ERP 시스템', status: 'upcoming' },
+  { date: '2025-01-31', title: 'ERP database design complete', project: 'Next-gen ERP system', status: 'done' },
+  { date: '2025-02-28', title: 'Website revamp complete', project: 'Website revamp', status: 'done' },
+  { date: '2025-03-31', title: 'AWS infrastructure ready', project: 'Cloud migration', status: 'done' },
+  { date: '2025-04-15', title: 'App design mockups approved', project: 'Mobile app renewal', status: 'review' },
+  { date: '2025-04-30', title: 'ERP API development complete', project: 'Next-gen ERP system', status: 'in_progress' },
+  { date: '2025-05-15', title: 'NLP model selected', project: 'AI chatbot rollout', status: 'in_progress' },
+  { date: '2025-06-30', title: 'Analytics platform launch', project: 'Analytics platform', status: 'upcoming' },
+  { date: '2025-09-30', title: 'ERP integration testing complete', project: 'Next-gen ERP system', status: 'upcoming' },
+  { date: '2025-12-31', title: 'ERP system go-live', project: 'Next-gen ERP system', status: 'upcoming' },
 ];
 
 const statusIcon: Record<string, React.ReactNode> = {
@@ -39,7 +39,7 @@ export default function MilestonePage() {
               <Space orientation="vertical" size={2}>
                 <Space>
                   <Text strong>{m.title}</Text>
-                  <Tag color={statusColor[m.status]}>{m.status === 'done' ? '완료' : m.status === 'review' ? '검토중' : m.status === 'in_progress' ? '진행중' : '예정'}</Tag>
+                  <Tag color={statusColor[m.status]}>{m.status === 'done' ? 'Done' : m.status === 'review' ? 'In review' : m.status === 'in_progress' ? 'In progress' : 'Upcoming'}</Tag>
                 </Space>
                 <Text type="secondary" style={{ fontSize: 12 }}>{m.project} · {m.date}</Text>
               </Space>

@@ -1,7 +1,7 @@
 import TaskStats from '../TaskStats';
 
 /**
- * 대시보드 패턴 — 통계 카드 · 진행률 · 상태 분포를 한 화면에 배치하는 구성 예시.
+ * Dashboard pattern — stat cards, progress bars and status distribution on one screen.
  */
 export default function PatternDashboard() {
   return (

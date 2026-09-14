@@ -23,10 +23,10 @@ import { useMenuPermission } from '@/hooks/useMenuPermission';
 const { canWrite } = useMenuPermission();
 
 <ActionButtonGroup preset="gridEdit" canWrite={canWrite}>
-  <ActionButton action="excelDownload">엑셀다운로드</ActionButton>
-  <ActionButton action="addRow">행추가</ActionButton>
-  <ActionButton action="deleteRow">행삭제</ActionButton>
-  <ActionButton action="saveChanges">저장</ActionButton>
+  <ActionButton action="excelDownload">Excel download</ActionButton>
+  <ActionButton action="addRow">Add row</ActionButton>
+  <ActionButton action="deleteRow">Delete row</ActionButton>
+  <ActionButton action="saveChanges">Save</ActionButton>
 </ActionButtonGroup>`;
 
 const appModalCode = `import AppModal from '@/components/common/AppModal';
@@ -34,9 +34,9 @@ import ModalInfoFields from '@/components/common/ModalInfoFields';
 
 <AppModal
   open={open}
-  title="상세 정보"
-  resizable                 // 우하단 핸들로 리사이즈
-  showFullscreenToggle      // 전체화면 토글 버튼
+  title="Details"
+  resizable                 // resize with the bottom-right handle
+  showFullscreenToggle      // fullscreen toggle button
   onCancel={() => setOpen(false)}
   footer={null}
   width={560}
@@ -44,9 +44,9 @@ import ModalInfoFields from '@/components/common/ModalInfoFields';
   <ModalInfoFields
     columns={2}
     items={[
-      { key: 'no', label: '채권번호', value: 'NPL-2026-0001' },
-      { key: 'debtor', label: '채무자', value: '홍*동' },
-      { key: 'status', label: '상태', value: '진행중' },
+      { key: 'no', label: 'Debt number', value: 'NPL-2026-0001' },
+      { key: 'debtor', label: 'Debtor', value: 'J** Doe' },
+      { key: 'status', label: 'Status', value: 'In progress' },
     ]}
   />
 </AppModal>`;
@@ -58,23 +58,23 @@ const [isEditMode, setIsEditMode] = useState(false);
 const [formCollapsed, setFormCollapsed] = useState(false);
 
 <FormPanel
-  title="입력"
-  editMode={isEditMode}          // 수정 모드 → 하단 보더 파란색
-  collapsed={formCollapsed}      // controlled 접힘
+  title="Input"
+  editMode={isEditMode}          // edit mode -> blue bottom border
+  collapsed={formCollapsed}      // controlled collapse
   onCollapsedChange={setFormCollapsed}
   actions={
     <>
-      <Button onClick={handleReset}>초기화</Button>
+      <Button onClick={handleReset}>Reset</Button>
       <Divider orientation="vertical" />
-      <Button type="primary" onClick={handleSave}>저장</Button>
-      <Button danger disabled={!isEditMode} onClick={handleDelete}>삭제</Button>
+      <Button type="primary" onClick={handleSave}>Save</Button>
+      <Button danger disabled={!isEditMode} onClick={handleDelete}>Delete</Button>
       <Divider orientation="vertical" />
     </>
   }
 >
   <Form layout="horizontal" labelCol={{ style: { width: 80 } }}>
-    <Form.Item label="이름"><Input /></Form.Item>
-    <Form.Item label="이메일"><Input /></Form.Item>
+    <Form.Item label="Name"><Input /></Form.Item>
+    <Form.Item label="Email"><Input /></Form.Item>
   </Form>
 </FormPanel>`;
 
@@ -85,16 +85,16 @@ const activeFilterCount = [statusFilter !== 'all'].filter(Boolean).length;
 
 <FilterPanel
   activeFilterCount={activeFilterCount}
-  onSearch={() => { /* 검색 */ }}
+  onSearch={() => { /* search */ }}
   onReset={() => setStatusFilter('all')}
 >
   <div className="ds-filter-field">
-    <span className="ds-filter-field-label">상태</span>
+    <span className="ds-filter-field-label">Status</span>
     <Select value={statusFilter} onChange={setStatusFilter}
       style={{ width: '100%' }} size="small"
       options={[
-        { label: '전체', value: 'all' },
-        { label: '진행중', value: 'active' },
+        { label: 'All', value: 'all' },
+        { label: 'In progress', value: 'active' },
       ]}
     />
   </div>
@@ -109,8 +109,8 @@ const splitPanelCode = `import SplitPanel from '@/components/layout/SplitPanel';
   secondaryMinSize={200}
   secondaryVisible={true}
 >
-  <div>좌측(Primary) 패널</div>
-  <div>우측(Secondary) 패널</div>
+  <div>Left (primary) panel</div>
+  <div>Right (secondary) panel</div>
 </SplitPanel>`;
 
 const detailPanelCode = `import DetailPanel from '@/components/layout/DetailPanel';
@@ -119,29 +119,29 @@ const [visible, setVisible] = useState(false);
 
 <DetailPanel
   visible={visible}
-  title={<span>상세 정보</span>}
+  title={<span>Details</span>}
   defaultHeight={280}
   minHeight={150}
   maxHeight={500}
   onClose={() => setVisible(false)}
   tabs={[
-    { key: 'info', label: '기본정보', children: <div>내용</div> },
-    { key: 'history', label: '이력', badge: 3, children: <div>이력</div> },
+    { key: 'info', label: 'Basic info', children: <div>Content</div> },
+    { key: 'history', label: 'History', badge: 3, children: <div>History</div> },
   ]}
 />`;
 
 /* ─── Demo data ─── */
 const demoItems = [
-  { id: 1, name: '요구사항 분석', status: 'completed', assignee: '김영수' },
-  { id: 2, name: 'DB 설계', status: 'in_progress', assignee: '이미영' },
-  { id: 3, name: 'API 서버 개발', status: 'planned', assignee: '박지성' },
-  { id: 4, name: '프론트엔드 개발', status: 'planned', assignee: '송태현' },
+  { id: 1, name: 'Requirements analysis', status: 'completed', assignee: 'Steve Kim' },
+  { id: 2, name: 'Database design', status: 'in_progress', assignee: 'Michelle Lee' },
+  { id: 3, name: 'API server development', status: 'planned', assignee: 'Jason Park' },
+  { id: 4, name: 'Front-end development', status: 'planned', assignee: 'Thomas Song' },
 ];
 
 const statusMap: Record<string, { label: string; color: string }> = {
-  planned: { label: '계획', color: 'default' },
-  in_progress: { label: '진행중', color: 'processing' },
-  completed: { label: '완료', color: 'success' },
+  planned: { label: 'Planned', color: 'default' },
+  in_progress: { label: 'In progress', color: 'processing' },
+  completed: { label: 'Completed', color: 'success' },
 };
 
 export default function LayoutComponentsDemo() {
@@ -187,16 +187,16 @@ export default function LayoutComponentsDemo() {
               <div className={styles.demoSection}>
                 <div className={styles.demoDesc}>
                   <h3>FilterPanel</h3>
-                  <p>접기/펼치기가 가능한 검색 필터 패널입니다. 접힌 상태에서 활성 필터 수가 배지로 표시됩니다.</p>
+                  <p>A collapsible search filter panel. When collapsed, a badge shows how many filters are active.</p>
                   <table className={styles.demoPropsTable}>
-                    <thead><tr><th>Prop</th><th>타입</th><th>설명</th></tr></thead>
+                    <thead><tr><th>Prop</th><th>Type</th><th>Description</th></tr></thead>
                     <tbody>
-                      <tr><td><code>collapsed</code></td><td>boolean</td><td>접힘 상태 (controlled)</td></tr>
-                      <tr><td><code>onCollapsedChange</code></td><td>(v: boolean) =&gt; void</td><td>접힘 토글 콜백</td></tr>
-                      <tr><td><code>activeFilterCount</code></td><td>number</td><td>활성 필터 수 (배지)</td></tr>
-                      <tr><td><code>onSearch</code></td><td>() =&gt; void</td><td>검색 버튼</td></tr>
-                      <tr><td><code>onReset</code></td><td>() =&gt; void</td><td>초기화 버튼</td></tr>
-                      <tr><td><code>children</code></td><td>ReactNode</td><td>필터 필드들</td></tr>
+                      <tr><td><code>collapsed</code></td><td>boolean</td><td>Collapsed state (controlled)</td></tr>
+                      <tr><td><code>onCollapsedChange</code></td><td>(v: boolean) =&gt; void</td><td>Collapse toggle callback</td></tr>
+                      <tr><td><code>activeFilterCount</code></td><td>number</td><td>Number of active filters (badge)</td></tr>
+                      <tr><td><code>onSearch</code></td><td>() =&gt; void</td><td>Search button</td></tr>
+                      <tr><td><code>onReset</code></td><td>() =&gt; void</td><td>Reset button</td></tr>
+                      <tr><td><code>children</code></td><td>ReactNode</td><td>The filter fields</td></tr>
                     </tbody>
                   </table>
                 </div>
@@ -207,25 +207,25 @@ export default function LayoutComponentsDemo() {
                     onReset={() => { setStatusFilter('all'); setNameSearch(''); }}
                   >
                     <div className="ds-filter-field">
-                      <span className="ds-filter-field-label">상태</span>
+                      <span className="ds-filter-field-label">Status</span>
                       <Select
                         value={statusFilter}
                         onChange={setStatusFilter}
                         style={{ width: '100%' }}
                         options={[
-                          { label: '전체', value: 'all' },
-                          { label: '계획', value: 'planned' },
-                          { label: '진행중', value: 'in_progress' },
-                          { label: '완료', value: 'completed' },
+                          { label: 'All', value: 'all' },
+                          { label: 'Planned', value: 'planned' },
+                          { label: 'In progress', value: 'in_progress' },
+                          { label: 'Completed', value: 'completed' },
                         ]}
                       />
                     </div>
                     <div className="ds-filter-field">
-                      <span className="ds-filter-field-label">업무명</span>
+                      <span className="ds-filter-field-label">Task name</span>
                       <Input
                         value={nameSearch}
                         onChange={(e) => setNameSearch(e.target.value)}
-                        placeholder="업무명 검색"
+                        placeholder="Search task name"
                         allowClear
                       />
                     </div>
@@ -254,53 +254,53 @@ export default function LayoutComponentsDemo() {
               <div className={styles.demoSection}>
                 <div className={styles.demoDesc}>
                   <h3>FormPanel</h3>
-                  <p>CRUD 화면의 하단 입력 영역 패널입니다. 헤더(타이틀 + 액션 버튼 + 접기 토글)와 폼 바디로 구성됩니다.</p>
+                  <p>The input panel at the bottom of a CRUD screen. It has a header (title, action buttons, collapse toggle) and a form body.</p>
                   <table className={styles.demoPropsTable}>
-                    <thead><tr><th>Prop</th><th>타입</th><th>설명</th></tr></thead>
+                    <thead><tr><th>Prop</th><th>Type</th><th>Description</th></tr></thead>
                     <tbody>
-                      <tr><td><code>title</code></td><td>ReactNode</td><td>헤더 좌측 제목</td></tr>
-                      <tr><td><code>actions</code></td><td>ReactNode</td><td>헤더 우측 버튼 그룹 (접기 버튼 왼쪽)</td></tr>
-                      <tr><td><code>editMode</code></td><td>boolean</td><td>수정 모드 — 하단 보더 파란색 표시</td></tr>
-                      <tr><td><code>collapsed</code></td><td>boolean</td><td>접힘 상태 (controlled)</td></tr>
-                      <tr><td><code>onCollapsedChange</code></td><td>(v: boolean) =&gt; void</td><td>접힘 토글 콜백</td></tr>
-                      <tr><td><code>children</code></td><td>ReactNode</td><td>폼 내용</td></tr>
+                      <tr><td><code>title</code></td><td>ReactNode</td><td>Title on the left of the header</td></tr>
+                      <tr><td><code>actions</code></td><td>ReactNode</td><td>Button group on the right of the header (left of the collapse button)</td></tr>
+                      <tr><td><code>editMode</code></td><td>boolean</td><td>Edit mode — the bottom border turns blue</td></tr>
+                      <tr><td><code>collapsed</code></td><td>boolean</td><td>Collapsed state (controlled)</td></tr>
+                      <tr><td><code>onCollapsedChange</code></td><td>(v: boolean) =&gt; void</td><td>Collapse toggle callback</td></tr>
+                      <tr><td><code>children</code></td><td>ReactNode</td><td>Form content</td></tr>
                     </tbody>
                   </table>
                 </div>
                 <div className={styles.demoPreview}>
                   <div style={{ marginBottom: 8, display: 'flex', gap: 8, alignItems: 'center' }}>
-                    <span style={{ fontSize: 13, color: 'var(--text-secondary)' }}>모드 전환:</span>
+                    <span style={{ fontSize: 13, color: 'var(--text-secondary)' }}>Switch mode:</span>
                     <Button
                       size="small"
                       type={!isFormEditMode ? 'primary' : 'default'}
                       icon={<PlusOutlined />}
                       onClick={() => { setIsFormEditMode(false); setFormName(''); setFormEmail(''); setFormCollapsed(false); }}
                     >
-                      신규
+                      New
                     </Button>
                     <Button
                       size="small"
                       type={isFormEditMode ? 'primary' : 'default'}
                       icon={<EditOutlined />}
-                      onClick={() => { setIsFormEditMode(true); setFormName('김영수'); setFormEmail('kim@shinhan.com'); setFormCollapsed(false); }}
+                      onClick={() => { setIsFormEditMode(true); setFormName('Steve Kim'); setFormEmail('kim@example.com'); setFormCollapsed(false); }}
                     >
-                      수정 (행 클릭 시뮬레이션)
+                      Edit (simulates a row click)
                     </Button>
                   </div>
                   <FormPanel
-                    title="입력"
+                    title="Input"
                     editMode={isFormEditMode}
                     collapsed={formCollapsed}
                     onCollapsedChange={setFormCollapsed}
                     actions={
                       <Space size={4}>
                         <Button size="middle" onClick={() => { setIsFormEditMode(false); setFormName(''); setFormEmail(''); }}>
-                          초기화
+                          Reset
                         </Button>
                         <Divider orientation="vertical" />
-                        <Button size="middle" type="primary">저장</Button>
+                        <Button size="middle" type="primary">Save</Button>
                         <Button size="middle" danger disabled={!isFormEditMode} icon={<DeleteOutlined />}>
-                          삭제
+                          Delete
                         </Button>
                         <Divider orientation="vertical" />
                       </Space>
@@ -308,10 +308,10 @@ export default function LayoutComponentsDemo() {
                   >
                     <Form layout="horizontal" labelCol={{ style: { width: 80, textAlign: 'right' } }} wrapperCol={{ style: { flex: 1 } }}>
                       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 12px' }}>
-                        <Form.Item label="이름" style={{ margin: '0 0 8px' }}>
+                        <Form.Item label="Name" style={{ margin: '0 0 8px' }}>
                           <Input value={formName} onChange={(e) => setFormName(e.target.value)} />
                         </Form.Item>
-                        <Form.Item label="이메일" style={{ margin: '0 0 8px' }}>
+                        <Form.Item label="Email" style={{ margin: '0 0 8px' }}>
                           <Input value={formEmail} onChange={(e) => setFormEmail(e.target.value)} placeholder="example@shinhan.com" />
                         </Form.Item>
                       </div>
@@ -319,8 +319,8 @@ export default function LayoutComponentsDemo() {
                   </FormPanel>
                   <div style={{ marginTop: 8, fontSize: 12, color: 'var(--text-secondary)' }}>
                     {isFormEditMode
-                      ? '✅ 수정 모드 — 하단 보더가 파란색으로 표시됩니다'
-                      : '⬜ 신규 모드 — 보더가 기본 색입니다'}
+                      ? 'Edit mode — the bottom border is blue'
+                      : 'New mode — the border keeps its default color'}
                   </div>
                 </div>
                 <CodeSnippet code={formPanelCode} />
@@ -336,30 +336,30 @@ export default function LayoutComponentsDemo() {
               <div className={styles.demoSection}>
                 <div className={styles.demoDesc}>
                   <h3>SplitPanel</h3>
-                  <p>드래그 리사이즈 가능한 2영역 분할 패널입니다. 좌우(horizontal) 또는 상하(vertical)를 지원합니다.</p>
+                  <p>A two-pane split panel you can resize by dragging. Supports horizontal (left/right) and vertical (top/bottom).</p>
                   <table className={styles.demoPropsTable}>
-                    <thead><tr><th>Prop</th><th>타입</th><th>설명</th></tr></thead>
+                    <thead><tr><th>Prop</th><th>Type</th><th>Description</th></tr></thead>
                     <tbody>
-                      <tr><td><code>direction</code></td><td>'horizontal' | 'vertical'</td><td>분할 방향</td></tr>
-                      <tr><td><code>defaultSize</code></td><td>number</td><td>primary 패널 초기 크기(px)</td></tr>
-                      <tr><td><code>primaryMinSize</code></td><td>number</td><td>최소 크기 (기본 200)</td></tr>
-                      <tr><td><code>secondaryMinSize</code></td><td>number</td><td>secondary 최소 크기 (기본 200)</td></tr>
-                      <tr><td><code>secondaryVisible</code></td><td>boolean</td><td>secondary 패널 표시 여부</td></tr>
-                      <tr><td><code>children</code></td><td>[ReactNode, ReactNode]</td><td>2개 자식 요소 (튜플)</td></tr>
+                      <tr><td><code>direction</code></td><td>'horizontal' | 'vertical'</td><td>Split direction</td></tr>
+                      <tr><td><code>defaultSize</code></td><td>number</td><td>Initial size of the primary panel (px)</td></tr>
+                      <tr><td><code>primaryMinSize</code></td><td>number</td><td>Minimum size (default 200)</td></tr>
+                      <tr><td><code>secondaryMinSize</code></td><td>number</td><td>Minimum size of the secondary panel (default 200)</td></tr>
+                      <tr><td><code>secondaryVisible</code></td><td>boolean</td><td>Whether the secondary panel is shown</td></tr>
+                      <tr><td><code>children</code></td><td>[ReactNode, ReactNode]</td><td>Exactly two children (a tuple)</td></tr>
                     </tbody>
                   </table>
                 </div>
                 <div className={styles.demoPreview}>
                   <Space style={{ marginBottom: 8 }}>
-                    <span style={{ fontSize: 13 }}>방향:</span>
+                    <span style={{ fontSize: 13 }}>Direction:</span>
                     <Select
                       value={splitDir}
                       onChange={setSplitDir}
                       size="small"
                       style={{ width: 140 }}
                       options={[
-                        { label: 'Horizontal (좌우)', value: 'horizontal' },
-                        { label: 'Vertical (상하)', value: 'vertical' },
+                        { label: 'Horizontal (left/right)', value: 'horizontal' },
+                        { label: 'Vertical (top/bottom)', value: 'vertical' },
                       ]}
                     />
                   </Space>
@@ -367,12 +367,12 @@ export default function LayoutComponentsDemo() {
                     <SplitPanel direction={splitDir} defaultSize={280} primaryMinSize={150} secondaryMinSize={150}>
                       <div className={styles.demoSplitPane} style={{ background: 'var(--primary-light)' }}>
                         <strong>Primary</strong>
-                        <p>좌측(또는 상단) 패널</p>
-                        <p style={{ fontSize: 12, color: 'var(--text-secondary)' }}>드래그 핸들을 잡고 리사이즈 해보세요</p>
+                        <p>Left (or top) panel</p>
+                        <p style={{ fontSize: 12, color: 'var(--text-secondary)' }}>Grab the drag handle and resize it</p>
                       </div>
                       <div className={styles.demoSplitPane}>
                         <strong>Secondary</strong>
-                        <p>우측(또는 하단) 패널</p>
+                        <p>Right (or bottom) panel</p>
                       </div>
                     </SplitPanel>
                   </div>
@@ -390,22 +390,22 @@ export default function LayoutComponentsDemo() {
               <div className={styles.demoSection}>
                 <div className={styles.demoDesc}>
                   <h3>DetailPanel</h3>
-                  <p>하단에 표시되는 접이식 상세 패널입니다. 탭과 배지를 지원하며, 드래그로 높이를 조절할 수 있습니다.</p>
+                  <p>A collapsible detail panel docked at the bottom. It supports tabs and badges, and its height can be dragged.</p>
                   <table className={styles.demoPropsTable}>
-                    <thead><tr><th>Prop</th><th>타입</th><th>설명</th></tr></thead>
+                    <thead><tr><th>Prop</th><th>Type</th><th>Description</th></tr></thead>
                     <tbody>
-                      <tr><td><code>visible</code></td><td>boolean</td><td>패널 표시 여부</td></tr>
-                      <tr><td><code>title</code></td><td>ReactNode</td><td>제목</td></tr>
-                      <tr><td><code>defaultHeight</code></td><td>number</td><td>초기 높이 (기본 300)</td></tr>
-                      <tr><td><code>minHeight / maxHeight</code></td><td>number</td><td>최소/최대 높이</td></tr>
-                      <tr><td><code>onClose</code></td><td>() =&gt; void</td><td>닫기 콜백</td></tr>
-                      <tr><td><code>tabs</code></td><td>DetailPanelTab[]</td><td>탭 배열 (key, label, badge, children)</td></tr>
+                      <tr><td><code>visible</code></td><td>boolean</td><td>Whether the panel is shown</td></tr>
+                      <tr><td><code>title</code></td><td>ReactNode</td><td>Title</td></tr>
+                      <tr><td><code>defaultHeight</code></td><td>number</td><td>Initial height (default 300)</td></tr>
+                      <tr><td><code>minHeight / maxHeight</code></td><td>number</td><td>Minimum / maximum height</td></tr>
+                      <tr><td><code>onClose</code></td><td>() =&gt; void</td><td>Close callback</td></tr>
+                      <tr><td><code>tabs</code></td><td>DetailPanelTab[]</td><td>Tab array (key, label, badge, children)</td></tr>
                     </tbody>
                   </table>
                 </div>
                 <div className={styles.demoPreview} style={{ position: 'relative', minHeight: 400, display: 'flex', flexDirection: 'column' }}>
                   <div style={{ flex: 1, padding: 12, border: '1px solid var(--border-color)', borderRadius: '6px 6px 0 0', background: 'var(--content-bg)' }}>
-                    <p style={{ color: 'var(--text-secondary)', fontSize: 13, marginBottom: 8 }}>아래 항목을 클릭하면 하단 DetailPanel이 열립니다.</p>
+                    <p style={{ color: 'var(--text-secondary)', fontSize: 13, marginBottom: 8 }}>Click an item below to open the DetailPanel at the bottom.</p>
                     {demoItems.map((item) => (
                       <div
                         key={item.id}
@@ -433,12 +433,12 @@ export default function LayoutComponentsDemo() {
                     tabs={[
                       {
                         key: 'info',
-                        label: '기본정보',
+                        label: 'Basic info',
                         children: (
                           <Descriptions column={2} size="small" bordered>
-                            <Descriptions.Item label="업무명">{selectedItem.name}</Descriptions.Item>
-                            <Descriptions.Item label="담당자">{selectedItem.assignee}</Descriptions.Item>
-                            <Descriptions.Item label="상태">
+                            <Descriptions.Item label="Task name">{selectedItem.name}</Descriptions.Item>
+                            <Descriptions.Item label="Assignee">{selectedItem.assignee}</Descriptions.Item>
+                            <Descriptions.Item label="Status">
                               <Tag color={statusMap[selectedItem.status].color}>{statusMap[selectedItem.status].label}</Tag>
                             </Descriptions.Item>
                             <Descriptions.Item label="ID">{selectedItem.id}</Descriptions.Item>
@@ -447,12 +447,12 @@ export default function LayoutComponentsDemo() {
                       },
                       {
                         key: 'history',
-                        label: '이력',
+                        label: 'History',
                         badge: 2,
                         children: (
                           <div style={{ padding: '8px 0', fontSize: 13, color: 'var(--text-secondary)' }}>
-                            <p>2025-03-01 상태 변경: 계획 → 진행중</p>
-                            <p>2025-02-28 담당자 배정: {selectedItem.assignee}</p>
+                            <p>2025-03-01 status changed: Planned → In progress</p>
+                            <p>2025-02-28 assignee set: {selectedItem.assignee}</p>
                           </div>
                         ),
                       },
@@ -473,29 +473,29 @@ export default function LayoutComponentsDemo() {
                 <div className={styles.demoDesc}>
                   <h3>ActionButton / ActionButtonGroup</h3>
                   <p>
-                    표준 액션(조회/저장/삭제/엑셀 등) 버튼과 프리셋 정렬 그룹입니다.
-                    <code>canWrite</code>가 false면 쓰기 계열 버튼이 자동 비활성화됩니다.
+                    Standard action buttons (search, save, delete, Excel, …) plus preset-ordered groups.
+                    When <code>canWrite</code> is false, write buttons are disabled automatically.
                   </p>
                 </div>
                 <div className={styles.demoPreview}>
                   <Space orientation="vertical" size={16} style={{ width: '100%' }}>
                     <ActionButtonGroup preset="search" justify="start">
-                      <ActionButton action="reset">초기화</ActionButton>
-                      <ActionButton action="search">조회</ActionButton>
+                      <ActionButton action="reset">Reset</ActionButton>
+                      <ActionButton action="search">Search</ActionButton>
                     </ActionButtonGroup>
                     <ActionButtonGroup preset="gridEdit">
-                      <ActionButton action="excelDownload">엑셀다운로드</ActionButton>
-                      <ActionButton action="addRow">행추가</ActionButton>
-                      <ActionButton action="deleteRow">행삭제</ActionButton>
-                      <ActionButton action="saveChanges">저장</ActionButton>
+                      <ActionButton action="excelDownload">Excel download</ActionButton>
+                      <ActionButton action="addRow">Add row</ActionButton>
+                      <ActionButton action="deleteRow">Delete row</ActionButton>
+                      <ActionButton action="saveChanges">Save</ActionButton>
                     </ActionButtonGroup>
                     <div>
-                      <p style={{ fontSize: 12, color: 'var(--text-secondary)', margin: '0 0 8px' }}>canWrite=false (읽기 전용 화면)</p>
+                      <p style={{ fontSize: 12, color: 'var(--text-secondary)', margin: '0 0 8px' }}>canWrite=false (read-only screen)</p>
                       <ActionButtonGroup preset="gridEdit" canWrite={false}>
-                        <ActionButton action="excelDownload">엑셀다운로드</ActionButton>
-                        <ActionButton action="addRow">행추가</ActionButton>
-                        <ActionButton action="deleteRow">행삭제</ActionButton>
-                        <ActionButton action="saveChanges">저장</ActionButton>
+                        <ActionButton action="excelDownload">Excel download</ActionButton>
+                        <ActionButton action="addRow">Add row</ActionButton>
+                        <ActionButton action="deleteRow">Delete row</ActionButton>
+                        <ActionButton action="saveChanges">Save</ActionButton>
                       </ActionButtonGroup>
                     </div>
                   </Space>
@@ -514,14 +514,14 @@ export default function LayoutComponentsDemo() {
                 <div className={styles.demoDesc}>
                   <h3>AppModal / ModalInfoFields</h3>
                   <p>
-                    리사이즈·전체화면 토글을 지원하는 표준 모달과 라벨-값 필드 그리드입니다.
+                    A standard modal with resize and fullscreen toggle, plus a label-value field grid.
                   </p>
                 </div>
                 <div className={styles.demoPreview}>
-                  <Button type="primary" onClick={() => setModalOpen(true)}>모달 열기</Button>
+                  <Button type="primary" onClick={() => setModalOpen(true)}>Open modal</Button>
                   <AppModal
                     open={modalOpen}
-                    title="상세 정보"
+                    title="Details"
                     resizable
                     onCancel={() => setModalOpen(false)}
                     footer={null}
@@ -530,10 +530,10 @@ export default function LayoutComponentsDemo() {
                     <ModalInfoFields
                       columns={2}
                       items={[
-                        { key: 'no', label: '채권번호', value: 'NPL-2026-0001' },
-                        { key: 'debtor', label: '채무자', value: '홍*동' },
-                        { key: 'status', label: '상태', value: '진행중' },
-                        { key: 'amount', label: '채권금액', value: '1,200,000,000 VND' },
+                        { key: 'no', label: 'Debt number', value: 'NPL-2026-0001' },
+                        { key: 'debtor', label: 'Debtor', value: 'J** Doe' },
+                        { key: 'status', label: 'Status', value: 'In progress' },
+                        { key: 'amount', label: 'Debt amount', value: '1,200,000,000 VND' },
                       ]}
                     />
                   </AppModal>

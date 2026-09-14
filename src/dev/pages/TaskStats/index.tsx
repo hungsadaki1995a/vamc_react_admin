@@ -21,12 +21,12 @@ export default function TaskStats() {
     <>
       <Row gutter={[16, 16]}>
         <Col xs={24} lg={8}>
-          <Card title="상태별 업무" size="small">
+          <Card title="Tasks by status" size="small">
             {statusCounts.map(({ status, count }) => (
               <div key={status} style={{ marginBottom: 12 }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
                   <Tag color={taskStatusColors[status]}>{taskStatusLabels[status]}</Tag>
-                  <Text strong>{count}건</Text>
+                  <Text strong>{count}</Text>
                 </div>
                 <Progress percent={Math.round((count / mockTasks.length) * 100)} size="small" showInfo={false} />
               </div>
@@ -34,24 +34,24 @@ export default function TaskStats() {
           </Card>
         </Col>
         <Col xs={24} lg={8}>
-          <Card title="우선순위별 업무" size="small">
+          <Card title="Tasks by priority" size="small">
             {priorityCounts.map(({ priority, count }) => (
               <div key={priority} style={{ marginBottom: 16, textAlign: 'center' }}>
                 <Statistic
                   title={<Tag color={taskPriorityColors[priority]}>{taskPriorityLabels[priority]}</Tag>}
                   value={count}
-                  suffix="건"
+                  suffix="tasks"
                 />
               </div>
             ))}
           </Card>
         </Col>
         <Col xs={24} lg={8}>
-          <Card title="프로젝트별 업무" size="small">
+          <Card title="Tasks by project" size="small">
             {projectCounts.map(({ name, count }) => (
               <div key={name} style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 10 }}>
                 <Text ellipsis style={{ maxWidth: 180 }}>{name}</Text>
-                <Tag color="blue">{count}건</Tag>
+                <Tag color="blue">{count}</Tag>
               </div>
             ))}
           </Card>

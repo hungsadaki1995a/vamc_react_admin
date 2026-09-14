@@ -35,10 +35,10 @@ export default function IconsDemo() {
   return (
     <div style={{ padding: 24 }}>
       <DevPageHeader page="IconsDemo" />
-      <Text type="secondary">총 {allIconNames.length}개 아이콘</Text>
+      <Text type="secondary">{allIconNames.length} icons in total</Text>
 
       <div style={{ margin: '12px 0 8px' }}>
-        <Title level={5}>메뉴에서 사용 중인 아이콘</Title>
+        <Title level={5}>Icons currently used in menus</Title>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 16 }}>
           {menuIconNames.map((name) => {
             const IconComp = (Icons as unknown as Record<string, ComponentType<AntdIconProps>>)[name];
@@ -54,16 +54,16 @@ export default function IconsDemo() {
       </div>
 
       <Input
-        placeholder="아이콘 이름 검색 (예: User, Home, Setting)"
+        placeholder="Search icon name (e.g. User, Home, Setting)"
         value={search}
         onChange={(e) => setSearch(e.target.value)}
         style={{ marginBottom: 16, maxWidth: 400 }}
         allowClear
       />
-      <Text type="secondary">{filtered.length}개 표시 중</Text>
+      <Text type="secondary">Showing {filtered.length}</Text>
 
       {filtered.length === 0 ? (
-        <Empty description="검색 결과 없음" style={{ marginTop: 24 }} />
+        <Empty description="No results" style={{ marginTop: 24 }} />
       ) : (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))', gap: 8, marginTop: 12 }}>
           {filtered.slice(0, 200).map((name) => {
@@ -84,7 +84,7 @@ export default function IconsDemo() {
         </div>
       )}
       {filtered.length > 200 && (
-        <Text type="secondary" style={{ display: 'block', marginTop: 8 }}>... 상위 200개만 표시. 검색어를 입력하세요.</Text>
+        <Text type="secondary" style={{ display: 'block', marginTop: 8 }}>... showing the first 200 only. Type a search term to narrow it down.</Text>
       )}
     </div>
   );

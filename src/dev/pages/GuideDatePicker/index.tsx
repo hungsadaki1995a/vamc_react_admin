@@ -14,57 +14,57 @@ export default function GuideDatePicker() {
   return (
     <div style={{ padding: 24 }}>
       <DevPageHeader page="GuideDatePicker" />
-      <Paragraph>Ant Design의 날짜 관련 컴포넌트입니다. 내부적으로 <Text code>dayjs</Text>를 사용합니다.</Paragraph>
+      <Paragraph>Ant Design's date components. Internally they use <Text code>dayjs</Text>.</Paragraph>
 
-      <Divider titlePlacement="left">DatePicker 기본</Divider>
+      <Divider titlePlacement="left">DatePicker basics</Divider>
       <Space orientation="vertical" style={{ width: '100%' }}>
         <Space wrap>
-          <DatePicker placeholder="날짜 선택" onChange={setDate} />
-          <DatePicker picker="week" placeholder="주 선택" />
-          <DatePicker picker="month" placeholder="월 선택" />
-          <DatePicker picker="quarter" placeholder="분기 선택" />
-          <DatePicker picker="year" placeholder="연도 선택" />
+          <DatePicker placeholder="Select a date" onChange={setDate} />
+          <DatePicker picker="week" placeholder="Select a week" />
+          <DatePicker picker="month" placeholder="Select a month" />
+          <DatePicker picker="quarter" placeholder="Select a quarter" />
+          <DatePicker picker="year" placeholder="Select a year" />
         </Space>
-        {date && <Text>선택한 날짜: {date.format('YYYY-MM-DD')}</Text>}
+        {date && <Text>Selected date: {date.format('YYYY-MM-DD')}</Text>}
       </Space>
 
       <Divider titlePlacement="left">RangePicker</Divider>
       <Space orientation="vertical">
         <RangePicker
-          placeholder={['시작일', '종료일']}
+          placeholder={['Start date', 'End date']}
           onChange={(dates) => setRange(dates as [Dayjs | null, Dayjs | null] | null)}
         />
-        <RangePicker picker="month" placeholder={['시작월', '종료월']} />
+        <RangePicker picker="month" placeholder={['Start month', 'End month']} />
         {range?.[0] && range?.[1] && (
           <Text>{range[0]!.format('YYYY-MM-DD')} ~ {range[1]!.format('YYYY-MM-DD')}</Text>
         )}
       </Space>
 
-      <Divider titlePlacement="left">DatePicker with 시간</Divider>
+      <Divider titlePlacement="left">DatePicker with time</Divider>
       <Space>
-        <DatePicker showTime placeholder="날짜 + 시간" format="YYYY-MM-DD HH:mm" />
-        <RangePicker showTime format="YYYY-MM-DD HH:mm" placeholder={['시작', '종료']} />
+        <DatePicker showTime placeholder="Date + time" format="YYYY-MM-DD HH:mm" />
+        <RangePicker showTime format="YYYY-MM-DD HH:mm" placeholder={['Start', 'End']} />
       </Space>
 
-      <Divider titlePlacement="left">비활성화 날짜</Divider>
+      <Divider titlePlacement="left">Disabled dates</Divider>
       <DatePicker
         disabledDate={(current) => current && current.isBefore(new Date(), 'day')}
-        placeholder="오늘 이후만 선택 가능"
+        placeholder="Only today and later can be picked"
       />
 
-      <Divider titlePlacement="left">사용법 코드</Divider>
+      <Divider titlePlacement="left">Usage code</Divider>
       <Card>
         <pre style={{ margin: 0, fontSize: 13 }}>{`import { DatePicker } from 'antd';
 import type { Dayjs } from 'dayjs';
 
-// 단일 날짜
+// Single date
 <DatePicker
   value={value}
   onChange={(date: Dayjs | null) => setValue(date)}
   format="YYYY-MM-DD"
 />
 
-// 범위
+// Range
 <DatePicker.RangePicker
   value={[start, end]}
   onChange={(dates) => {
@@ -74,7 +74,7 @@ import type { Dayjs } from 'dayjs';
 />`}</pre>
       </Card>
 
-      <Divider titlePlacement="left">Calendar 컴포넌트</Divider>
+      <Divider titlePlacement="left">Calendar component</Divider>
       <div style={{ border: '1px solid #d9d9d9', borderRadius: 8, padding: 8, maxWidth: 600 }}>
         <Calendar fullscreen={false} />
       </div>

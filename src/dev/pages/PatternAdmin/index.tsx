@@ -12,10 +12,10 @@ export default function PatternAdmin() {
         destroyOnHidden
         className="ds-scrollable-tabs"
         items={[
-          { key: 'form',         label: '폼 입력',   children: <ProjectCreate /> },
-          { key: 'notification', label: '알림 센터', children: <NotificationCenter /> },
-          { key: 'permission',   label: '권한 관리', children: <PermissionManagement /> },
-          { key: 'menu',         label: '메뉴 관리', children: <MenuManagement /> },
+          { key: 'form',         label: 'Form input',  children: <ProjectCreate /> },
+          { key: 'notification', label: 'Notifications', children: <NotificationCenter /> },
+          { key: 'permission',   label: 'Permissions', children: <PermissionManagement /> },
+          { key: 'menu',         label: 'Menu management', children: <MenuManagement /> },
         ]}
       />
     </div>

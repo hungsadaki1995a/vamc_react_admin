@@ -49,13 +49,13 @@ export default function MenuManagement() {
         {/* Tree panel */}
         <Card
           size="small"
-          title="메뉴 트리"
+          title="Menu tree"
           style={{ width: 400, flexShrink: 0, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}
           styles={{ body: { flex: 1, overflow: 'auto', padding: 8 } }}
           extra={
             <Input
               size="small"
-              placeholder="검색"
+              placeholder="Search"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               style={{ width: 120 }}
@@ -74,28 +74,28 @@ export default function MenuManagement() {
         {/* Detail panel */}
         <Card
           size="small"
-          title="메뉴 상세"
+          title="Menu details"
           style={{ flex: 1, overflow: 'auto' }}
-          extra={selectedMenu && <Button size="small" icon={<EditOutlined />}>수정</Button>}
+          extra={selectedMenu && <Button size="small" icon={<EditOutlined />}>Edit</Button>}
         >
           {selectedMenu ? (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
               {[
                 ['Key', selectedMenu.key],
-                ['라벨', selectedMenu.label],
-                ['아이콘', selectedMenu.icon ?? '-'],
-                ['컴포넌트', selectedMenu.componentPath ?? '(그룹 메뉴)'],
-                ['권한코드', selectedMenu.permType ?? '-'],
-                ['자식 수', String(selectedMenu.children?.length ?? 0)],
+                ['Label', selectedMenu.label],
+                ['Icon', selectedMenu.icon ?? '-'],
+                ['Component', selectedMenu.componentPath ?? '(group menu)'],
+                ['Permission', selectedMenu.permType ?? '-'],
+                ['Children', String(selectedMenu.children?.length ?? 0)],
               ].map(([label, value]) => (
                 <div key={label} style={{ display: 'flex', gap: 8, fontSize: 13 }}>
                   <Text style={{ width: 80, flexShrink: 0, fontWeight: 500, color: '#555' }}>{label}</Text>
-                  <Text code={label === 'Key' || label === '컴포넌트'}>{value}</Text>
+                  <Text code={label === 'Key' || label === 'Component'}>{value}</Text>
                 </div>
               ))}
             </div>
           ) : (
-            <Text type="secondary">트리에서 메뉴를 선택하세요</Text>
+            <Text type="secondary">Select a menu in the tree</Text>
           )}
         </Card>
       </div>
