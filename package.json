@@ -12,7 +12,9 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "openapi": "openapi-typescript",
+    "api:generate": "node -e \"['.env', '.env.local'].forEach(f => { try { process.loadEnvFile(f); } catch {} }); const url = process.env.VITE_SWAGGER_URL || process.env.SWAGGER_URL || process.env.OPENAPI_URL || (process.env.VITE_API_BASE_URL ? process.env.VITE_API_BASE_URL.replace(/\\/+$/, '') + '/v3/api-docs' : 'http://localhost:8080/v3/api-docs'); console.log('Fetching OpenAPI schema from:', url); require('child_process').execSync(`npx openapi-typescript \\\"${url}\\\" -o src/api/swagger.ts`, { stdio: 'inherit' });\""
   },
   "dependencies": {
     "@ant-design/icons": "^6.1.0",
@@ -70,6 +72,7 @@
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.4.24",
     "globals": "^16.5.0",
+    "openapi-typescript": "^7.13.0",
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.48.0",
     "vite": "^7.3.1"
