@@ -18,7 +18,7 @@ interface BuilderForm {
 
 // 업무 도메인 — 메뉴 IA 의 대분류 7개와 1:1 이다.
 // 폴더명(소문자)이 화면ID 접두 3자(대문자)와 같은 값이라 둘이 어긋날 일이 없다.
-//   src/features/sys/SYS030101SC/  ←→  메뉴코드 A06030100
+//   src/features/sys/SYS030101SC/  ←→  메뉴코드 A06020100
 //
 // `auth`(로그인 등 메뉴 밖 화면)와 `dashboard`(정적 메뉴)는 화면ID 채번 규칙 대상이 아니라 뺐다.
 // 데모·가이드는 features 가 아니라 src/dev/pages/ 에 있으므로 역시 선택지에 없다.
@@ -35,7 +35,7 @@ const DOMAIN_OPTIONS = [
 /** 화면ID 형식 — {도메인3}{중분류2}{소분류2}{일련2}{유형2}. 유형은 SC(화면) / 1P·2P(팝업) */
 const SCREEN_ID_PATTERN = /^[A-Z]{3}\d{6}(SC|\dP)$/;
 
-/** 메뉴코드 형식 — MENU_MNG.MENU_CD. 대분류 1자 + 숫자 8자 (예: A06030100) */
+/** 메뉴코드 형식 — MENU_MNG.MENU_CD. 대분류 1자 + 숫자 8자 (예: A06020100) */
 const MENU_CD_PATTERN = /^[A-Z]\d{8}$/;
 
 const LAYOUT_OPTIONS: { value: LayoutKind; label: string; desc: string }[] = [

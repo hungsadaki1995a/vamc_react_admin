@@ -25,7 +25,7 @@ import {
 import type { LblRow, LblMaster, LblKey } from '@/api/sys/lblMngApi';
 
 // ─────────────────────────────────────────────────────────────────────────────
-// 다국어 라벨 관리 (A06050300)
+// 다국어 라벨 관리 (A06040300)
 //
 // LANG_LBL 의 PK 는 (LBL_CD, SCRN_ID, LBL_SE_CD) 3개다. 화면 전체가 이 3개를 하나의
 // 식별자로 다루며, 단일 키(lblId)로 줄여 부르지 않는다 — LBL_CD 만으로는 행이 특정되지 않는다.

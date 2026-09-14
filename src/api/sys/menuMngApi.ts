@@ -3,7 +3,7 @@ import type { ApiResponse } from '@/lib/api/types';
 import type { MnuResponse } from '@/api/common/myMenuApi';
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Admin 메뉴 관리 API — 시스템 운영 관리 도메인 (메뉴 A06030100 / 화면 SYS030101SC)
+// Admin 메뉴 관리 API — 시스템 운영 관리 도메인 (메뉴 A06020100 / 화면 SYS030101SC)
 //
 // ⚠️ 로그인 사용자의 권한 메뉴 트리(`/api/common/menus/my`)는 레일·플라이아웃 부트스트랩용이라
 //    `@/api/common/myMenuApi` 에 있다. 여기에는 메뉴 관리 화면 전용 호출만 둔다.

@@ -71,7 +71,7 @@ GET /api/lbl/bulk
 
 ---
 
-### 라벨 관리 API (다국어 라벨 관리 화면 `SYS050301SC` / 메뉴 `A06050300`)
+### 라벨 관리 API (다국어 라벨 관리 화면 `SYS050301SC` / 메뉴 `A06040300`)
 
 라벨을 **등록·수정하는** 경로입니다. 위 `/api/lbl/bulk`가 읽기 전용 서빙이라면 이쪽은 관리용입니다.
 
@@ -79,8 +79,8 @@ GET /api/lbl/bulk
 |--------|------|------|------|
 | GET | `/api/lbl/rows?scrnId=&lblCd=&lblSeCd=` | 라벨-번역 행 목록. 세 조건 모두 선택, `lblCd`는 부분일치 | Bearer |
 | GET | `/api/lbl/languages` | 사용 언어 목록 (`LANG_MNG`) | Bearer |
-| POST | `/api/lbl/batch` | 라벨/번역 배치 upsert | 쓰기(A06050300) |
-| DELETE | `/api/lbl?lblCd=&scrnId=&lblSeCd=` | 라벨 + 그 번역 삭제 | 쓰기(A06050300) |
+| POST | `/api/lbl/batch` | 라벨/번역 배치 upsert | 쓰기(A06040300) |
+| DELETE | `/api/lbl?lblCd=&scrnId=&lblSeCd=` | 라벨 + 그 번역 삭제 | 쓰기(A06040300) |
 | GET/POST | `/api/lbl/excel/{download,template,upload}` | 엑셀 일괄 편집 | 업로드만 쓰기 |
 
 **식별자는 단일 키가 아니라 `LANG_LBL`의 PK 3개(`LBL_CD` + `SCRN_ID` + `LBL_SE_CD`)입니다.**

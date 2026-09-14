@@ -90,7 +90,7 @@ export default function IconRail() {
   // 현재 활성 탭이 속한 1단 카테고리(레일 아이콘).
   //
   // 정적 메뉴는 점 구분 키('dev.overview')라 첫 마디가 곧 레일 키지만,
-  // 서버 메뉴는 'A06050300' 처럼 계층이 키에 드러나지 않아 트리를 타야 한다.
+  // 서버 메뉴는 'A06040300' 처럼 계층이 키에 드러나지 않아 트리를 타야 한다.
   // 종전에는 split('.')[0] 만 써서 서버 메뉴 화면에서는 아이콘이 켜지지 않았다.
   const activeTab = tabs.find((t) => t.key === activeTabKey);
   const activeTopKey = useMemo(() => {
