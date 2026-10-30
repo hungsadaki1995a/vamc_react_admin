@@ -3,10 +3,9250 @@
  * Do not make direct changes to the file.
  */
 
-export type paths = Record<string, never>;
+export interface paths {
+    "/api/v1/roles/{roleId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get role detail / Chi tiết vai trò
+         * @description Returns detail of a single role. / Trả về chi tiết một vai trò.
+         */
+        get: operations["getRole"];
+        /**
+         * Update role / Cập nhật vai trò
+         * @description Updates role name, group, and use status. Requires WRITE permission. / Cập nhật tên, nhóm và trạng thái vai trò. Yêu cầu quyền GHI.
+         */
+        put: operations["updateRole"];
+        post?: never;
+        /**
+         * Delete role / Xóa vai trò
+         * @description Deletes a role. Fails if any user or menu mappings still reference it. Requires WRITE permission. / Xóa vai trò. Thất bại nếu còn ánh xạ người dùng hoặc menu. Yêu cầu quyền GHI.
+         */
+        delete: operations["deleteRole"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/roles/{roleId}/menu-permissions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get role menu permissions matrix / Lấy ma trận phân quyền menu của vai trò
+         * @description Returns complete menu tree with assigned permission levels for a given role. / Trả về toàn bộ cây menu kèm mức phân quyền được gán cho vai trò chỉ định.
+         */
+        get: operations["getRoleMenuPermissions"];
+        /**
+         * Batch save role menu permissions / Lưu hàng loạt phân quyền menu cho vai trò
+         * @description Batch updates menu permissions for a role. Items with NONE are revoked. Requires WRITE permission. / Lưu hàng loạt phân quyền menu cho vai trò. Các mục có quyền NONE sẽ bị thu hồi. Yêu cầu quyền GHI.
+         */
+        put: operations["batchSaveRoleMenuPermissions"];
+        /**
+         * Assign single menu permission to role / Gán phân quyền menu đơn lẻ cho vai trò
+         * @description Assigns or updates a single menu permission. Requires WRITE permission. / Gán hoặc cập nhật phân quyền của một menu cho vai trò. Yêu cầu quyền GHI.
+         */
+        post: operations["assignRoleMenuPermission"];
+        /**
+         * Revoke all menu permissions from role / Thu hồi toàn bộ phân quyền menu của vai trò
+         * @description Removes all menu permission mappings for a role. Requires WRITE permission. / Xóa toàn bộ phân quyền menu của vai trò. Yêu cầu quyền GHI.
+         */
+        delete: operations["revokeAllRoleMenuPermissions"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/role-groups/{roleGroupId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get role group detail / Chi tiết nhóm vai trò
+         * @description Returns role group detail with nested role list. / Trả về chi tiết nhóm vai trò kèm danh sách vai trò con.
+         */
+        get: operations["getRoleGroup"];
+        /**
+         * Update role group / Cập nhật nhóm vai trò
+         * @description Updates name and use status of a role group. Requires WRITE permission. / Cập nhật tên và trạng thái sử dụng của nhóm vai trò. Yêu cầu quyền GHI.
+         */
+        put: operations["updateRoleGroup"];
+        post?: never;
+        /**
+         * Delete role group / Xóa nhóm vai trò
+         * @description Deletes a role group. Fails if the group still has roles. Requires WRITE permission. / Xóa nhóm vai trò. Thất bại nếu nhóm còn vai trò con. Yêu cầu quyền GHI.
+         */
+        delete: operations["deleteRoleGroup"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/platform/fees/{feeId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get fee item / Chi tiết mục phí
+         * @description editable=false while the item is in use. / editable=false khi đang sử dụng.
+         */
+        get: operations["getFee"];
+        /**
+         * Update fee item / Sửa mục phí
+         * @description Returns 409 (FEE001) while the item is in use. / Trả 409 khi đang sử dụng.
+         */
+        put: operations["updateFee"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/members/{mbrNo}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get member details
+         * @description Retrieves complete member profile details for popup screens VPA0002P01 and VPA0008P01. Requires READ permission on sign-up (A01010000) or member management (A01020000).
+         */
+        get: operations["getMember"];
+        /**
+         * Update member information
+         * @description Screens VPA0002P01 and VPA0008P01 Edit button: updates member profile information. Requires WRITE permission on sign-up (A01010000) or member management (A01020000).
+         */
+        put: operations["updateMember"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/locations/provinces/{mctpvCd}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get province detail / Chi tiết Tỉnh/Thành phố
+         * @description Returns province detail including its district list. / Trả về chi tiết Tỉnh/Thành phố kèm danh sách Quận/Huyện.
+         */
+        get: operations["getProvinceDetail"];
+        /**
+         * Update province / Cập nhật Tỉnh/Thành phố
+         * @description Updates an existing province. Requires WRITE permission. / Cập nhật Tỉnh/Thành phố. Yêu cầu quyền GHI.
+         */
+        put: operations["updateProvince"];
+        post?: never;
+        /**
+         * Delete province / Xóa Tỉnh/Thành phố
+         * @description Deletes a province. Fails if child districts or references exist. Requires WRITE permission. / Xóa Tỉnh/Thành phố. Yêu cầu quyền GHI.
+         */
+        delete: operations["deleteProvince"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/locations/districts/{distCd}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get district detail / Chi tiết Quận/Huyện
+         * @description Returns detail of a single district. / Trả về chi tiết một Quận/Huyện.
+         */
+        get: operations["getDistrictDetail"];
+        /**
+         * Update district / Cập nhật Quận/Huyện
+         * @description Updates an existing district. Requires WRITE permission. / Cập nhật Quận/Huyện. Yêu cầu quyền GHI.
+         */
+        put: operations["updateDistrict"];
+        post?: never;
+        /**
+         * Delete district / Xóa Quận/Huyện
+         * @description Deletes a district. Fails if member or debtor references exist. Requires WRITE permission. / Xóa Quận/Huyện. Yêu cầu quyền GHI.
+         */
+        delete: operations["deleteDistrict"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/institutions/{fnstCd}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get financial institution detail / Chi tiết Tổ chức tài chính
+         * @description Returns institution detail including its branch list. / Trả về chi tiết tổ chức tài chính kèm danh sách chi nhánh.
+         */
+        get: operations["getInstitutionDetail"];
+        /**
+         * Update financial institution / Cập nhật Tổ chức tài chính
+         * @description Updates an existing financial institution. Requires WRITE permission. / Cập nhật tổ chức tài chính. Yêu cầu quyền GHI.
+         */
+        put: operations["updateInstitution"];
+        post?: never;
+        /**
+         * Delete financial institution / Xóa Tổ chức tài chính
+         * @description Deletes a financial institution. Fails if child branches or references exist. Requires WRITE permission. / Xóa tổ chức tài chính. Yêu cầu quyền GHI.
+         */
+        delete: operations["deleteInstitution"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/institutions/branches/{fnstBrnchCd}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get branch detail / Chi tiết Chi nhánh
+         * @description Returns detail of a single branch. / Trả về chi tiết một chi nhánh.
+         */
+        get: operations["getBranchDetail"];
+        /**
+         * Update branch / Cập nhật Chi nhánh
+         * @description Updates an existing branch. Requires WRITE permission. / Cập nhật chi nhánh. Yêu cầu quyền GHI.
+         */
+        put: operations["updateBranch"];
+        post?: never;
+        /**
+         * Delete branch / Xóa Chi nhánh
+         * @description Deletes a branch. Fails if references exist. Requires WRITE permission. / Xóa chi nhánh. Yêu cầu quyền GHI.
+         */
+        delete: operations["deleteBranch"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/employees/{empNo}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get employee detail / Lấy chi tiết nhân viên
+         * @description Retrieves full profile of an employee by employee number. / Lấy toàn bộ thông tin chi tiết của nhân viên theo mã nhân viên.
+         */
+        get: operations["getEmployee"];
+        /**
+         * Update employee profile / Cập nhật hồ sơ nhân viên
+         * @description Updates employee profile attributes (name, email, phone, position, status). / Cập nhật các thông tin hồ sơ của nhân viên.
+         */
+        put: operations["updateEmployee"];
+        post?: never;
+        /**
+         * Delete employee / Xóa nhân viên
+         * @description Deletes an employee record from the system. / Xóa một bản ghi nhân viên khỏi hệ thống.
+         */
+        delete: operations["deleteEmployee"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/employees/{empNo}/unlock": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Unlock employee account / Mở khóa tài khoản nhân viên
+         * @description Resets login failure attempt count and activates the employee account. / Đặt lại số lần đăng nhập sai và kích hoạt lại tài khoản nhân viên.
+         */
+        put: operations["unlockAccount"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/employees/{empNo}/status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Update employee status / Cập nhật trạng thái nhân viên
+         * @description Updates employee employment/account status (H, L, R, S). / Cập nhật trạng thái làm việc/tài khoản của nhân viên.
+         */
+        put: operations["updateStatus"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/employees/{empNo}/password": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Reset / Change employee password / Đổi hoặc đặt lại mật khẩu nhân viên
+         * @description Resets the login password for the specified employee. / Đặt lại mật khẩu đăng nhập cho nhân viên chỉ định.
+         */
+        put: operations["changePassword"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/contents/service-guides/{pstNo}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get guide section / Chi tiết section
+         * @description Section detail with attachments. / Chi tiết section kèm tệp.
+         */
+        get: operations["getSection"];
+        /**
+         * Update guide section / Sửa section
+         * @description Editable while published; the section key cannot change. / Sửa được khi đang đăng; không đổi khóa section.
+         */
+        put: operations["updateSection"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/contents/npl-announcements/{pstNo}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get NPL announcement detail / Chi tiết thông báo NPL
+         * @description tag = document number. contentEditable=false while published. / tag là số văn bản.
+         */
+        get: operations["getAnnouncement"];
+        /**
+         * Update NPL announcement content / Sửa nội dung thông báo NPL
+         * @description Returns 409 (CNT001) while published. / Trả 409 khi đang đăng.
+         */
+        put: operations["updateAnnouncement"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/contents/notices/{pstNo}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get notice detail / Chi tiết thông báo
+         * @description Notice detail with attachments. contentEditable=false while published. / Chi tiết kèm tệp đính kèm.
+         */
+        get: operations["getNotice"];
+        /**
+         * Update notice content / Sửa nội dung thông báo
+         * @description Edits title, content and attachments. Returns 409 (CNT001) while published. / Sửa tiêu đề, nội dung, tệp. Trả 409 khi đang đăng.
+         */
+        put: operations["updateNotice"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/contents/news/{pstNo}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Detail / Chi tiết
+         * @description Detail with attachments. / Chi tiết kèm tệp đính kèm.
+         */
+        get: operations["detail"];
+        /**
+         * Edit news content / Sửa nội dung tin
+         * @description Returns 409 (CNT001) while published. Category, publication and featured flags are changed with PATCH /{pstNo}/status. / Trả 409 khi đang đăng.
+         */
+        put: operations["update"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/contents/legal-documents/{pstNo}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Detail / Chi tiết
+         * @description Detail with attachments. / Chi tiết kèm tệp đính kèm.
+         */
+        get: operations["detail_1"];
+        /**
+         * Edit legal document / Sửa văn bản
+         * @description Updates content, document type and publication status in one call. / Cập nhật nội dung, loại và trạng thái.
+         */
+        put: operations["update_1"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/contents/inquiries/{pstNo}/answer": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Answer inquiry / Trả lời câu hỏi
+         * @description Stores the answer (shown in My Page) and e-mails the inquirer. Returns 409 (CNT008) if already answered. / Lưu câu trả lời và gửi email; trả 409 nếu đã trả lời.
+         */
+        put: operations["answerInquiry"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/contents/faqs/{pstNo}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get FAQ detail / Chi tiết FAQ
+         * @description title = question, content = answer. / title là câu hỏi, content là câu trả lời.
+         */
+        get: operations["getFaq"];
+        /**
+         * Update FAQ question/answer / Sửa câu hỏi và câu trả lời
+         * @description Returns 409 (CNT001) while published. / Trả 409 khi đang đăng.
+         */
+        put: operations["updateFaq"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/contents/careers/{pstNo}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Detail / Chi tiết
+         * @description Detail with attachments. / Chi tiết kèm tệp đính kèm.
+         */
+        get: operations["detail_2"];
+        /**
+         * Edit career posting / Sửa tin tuyển dụng
+         * @description Updates content, publication status and pin in one call. / Cập nhật nội dung, trạng thái và ghim.
+         */
+        put: operations["update_2"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/contents/banners/{bannerId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get banner / Chi tiết banner
+         * @description editable=false while in use. / editable=false khi đang sử dụng.
+         */
+        get: operations["detail_3"];
+        /**
+         * Edit banner / Sửa banner
+         * @description Returns 409 (BNR001) while in use. / Trả 409 khi đang sử dụng.
+         */
+        put: operations["update_3"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/contents/about/{pstNo}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Detail / Chi tiết
+         * @description Detail with attachments. / Chi tiết kèm tệp đính kèm.
+         */
+        get: operations["detail_4"];
+        /**
+         * Edit item / Sửa mục
+         * @description Updates every value and the publication status; the section cannot change. / Cập nhật toàn bộ giá trị và trạng thái.
+         */
+        put: operations["update_4"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/common-codes/groups/{groupCd}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get code group detail / Chi tiết nhóm mã
+         * @description Returns detail of a single code group. / Trả về thông tin chi tiết một nhóm mã.
+         */
+        get: operations["getGroupDetail"];
+        /**
+         * Update code group / Cập nhật nhóm mã
+         * @description Updates an existing code group. Requires WRITE permission. / Cập nhật thông tin nhóm mã. Yêu cầu quyền GHI.
+         */
+        put: operations["updateGroup"];
+        post?: never;
+        /**
+         * Delete code group / Xóa nhóm mã
+         * @description Deletes a code group and its detailed codes. Requires WRITE permission. / Xóa nhóm mã và toàn bộ mã chi tiết. Yêu cầu quyền GHI.
+         */
+        delete: operations["deleteGroup"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/common/menus/{menuCd}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Update menu / Cập nhật menu
+         * @description Updates an existing menu and its associated multilingual labels. Requires ADMIN role and write permission. / Cập nhật menu hiện có và nhãn đa ngôn ngữ liên quan. Yêu cầu vai trò ADMIN và quyền ghi.
+         */
+        put: operations["updateMenu"];
+        post?: never;
+        /**
+         * Delete menu / Xóa menu
+         * @description Deletes a menu, its role mappings, and associated labels. Rejects if child menus exist. Requires ADMIN role and write permission. / Xóa menu, phân quyền vai trò và nhãn liên quan. Bị từ chối nếu có menu con. Yêu cầu vai trò ADMIN và quyền ghi.
+         */
+        delete: operations["deleteMenu"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/batch/jobs/{jobName}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get batch job config details / Chi tiết cấu hình batch job */
+        get: operations["getJob"];
+        /** Update batch job config / Cập nhật cấu hình batch job */
+        put: operations["updateJob"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/batch/jobs/{jobName}/schedule": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Update batch schedule / Cập nhật lịch chạy batch (cron + enabled) */
+        put: operations["updateSchedule"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/roles": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List roles / Danh sách vai trò
+         * @description Returns paginated roles with optional group, use status, and keyword filters. / Trả về danh sách vai trò phân trang với bộ lọc nhóm, trạng thái và từ khóa tùy chọn.
+         */
+        get: operations["getRoles"];
+        put?: never;
+        /**
+         * Create role / Tạo mới vai trò
+         * @description Creates a new role under a role group. Requires WRITE permission. / Tạo mới vai trò trong nhóm vai trò. Yêu cầu quyền GHI.
+         */
+        post: operations["createRole"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/roles/{roleId}/menu-permissions/batch": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Batch save role menu permissions (POST alias) / Lưu hàng loạt phân quyền menu (Bí danh POST)
+         * @description POST alias for batch updating menu permissions. Requires WRITE permission. / Bí danh POST để lưu hàng loạt phân quyền menu. Yêu cầu quyền GHI.
+         */
+        post: operations["batchSaveRoleMenuPermissionsAlias"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/roles/user-assignments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get user role assignments / Danh sách vai trò của người dùng
+         * @description Returns all roles assigned to a specific user. / Trả về tất cả vai trò được gán cho người dùng chỉ định.
+         */
+        get: operations["getUserRoles"];
+        put?: never;
+        /**
+         * Assign role to user / Gán vai trò cho người dùng
+         * @description Assigns a role to a user. Requires WRITE permission. / Gán vai trò cho người dùng. Yêu cầu quyền GHI.
+         */
+        post: operations["assignRole"];
+        /**
+         * Revoke role from user / Thu hồi vai trò của người dùng
+         * @description Removes a specific role assignment from a user. Requires WRITE permission. / Xóa gán vai trò cụ thể khỏi người dùng. Yêu cầu quyền GHI.
+         */
+        delete: operations["revokeRole"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/role-groups": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List role groups / Danh sách nhóm vai trò
+         * @description Returns paginated role groups with optional use status and keyword filters. / Trả về danh sách nhóm vai trò phân trang theo bộ lọc.
+         */
+        get: operations["getRoleGroups"];
+        put?: never;
+        /**
+         * Create role group / Tạo mới nhóm vai trò
+         * @description Creates a new role group. Requires WRITE permission. / Tạo mới một nhóm vai trò. Yêu cầu quyền GHI.
+         */
+        post: operations["createRoleGroup"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/platform/fees": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List fee items / Danh sách mục phí
+         * @description Ordered by batch, category (Annual fee, Consulting, Brokerage) and display order. / Sắp theo đợt, loại phí và thứ tự.
+         */
+        get: operations["getFees"];
+        put?: never;
+        /**
+         * Register fee item / Đăng ký mục phí
+         * @description Fee code is generated; the item joins the current batch and starts not in use. / Mã phí tự sinh, mặc định không sử dụng.
+         */
+        post: operations["createFee"];
+        /**
+         * Delete fee items / Xóa mục phí
+         * @description Only items not in use and not referenced by an application fee group. / Chỉ mục không sử dụng và chưa được tham chiếu.
+         */
+        delete: operations["deleteFees"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/members/{mbrNo}/membership-fee/confirm": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Confirm membership fee deposit
+         * @description Records the membership fee transfer checked by the officer. A general member becomes a full member for one year from today; a full member who received the renewal notice is renewed for one year from the previous period end (the end date cannot be edited). Exempt members have no fee. Requires WRITE permission.
+         */
+        post: operations["confirmMembershipFee"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/members/{mbrNo}/documents": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Check posted sign-up documents
+         * @description After receipt: 'Y' marks the mandatory documents complete (optional scan file group) so the assignee can request approval; 'N' closes the approval session, sends the application back to the applicant (status U) with the supplement note and e-mails them. 'N' must be done by the assignee of the processing step. Requires WRITE permission.
+         */
+        post: operations["checkDocuments"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/members/{mbrNo}/approvals/receive": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Receive member sign-up
+         * @description Starts the approval workflow of a pending, not yet received sign-up and assigns it to an employee holding the processing role. Requires WRITE permission.
+         */
+        post: operations["receive"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/members/{mbrNo}/approval": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get member approval context
+         * @description Retrieves workflow stage, current actor, summary application data, and steps timeline for popups ADF1234_P08..P12. Requires READ permission.
+         */
+        get: operations["getApprovalContext"];
+        put?: never;
+        /**
+         * Request member sign-up approval
+         * @description Step 2 -> 3: Assignee submits the member sign-up to a designated 1st approver with the SGDN member code and the membership fee terms (ADF1234_P09). The documents must have been checked as complete (409 otherwise). Requires WRITE permission.
+         */
+        post: operations["requestApproval"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/members/register": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Register member from admin channel
+         * @description Screen VPA000801 'New' button: registers a new member application from the admin channel into pending approval state. Matches client member registration schema. Requires WRITE permission.
+         */
+        post: operations["createMember"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/members": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Search members
+         * @description Retrieves paginated and filtered list of members and sign-up applications (VPA000801). Requires READ permission.
+         */
+        get: operations["getMembers"];
+        put?: never;
+        /**
+         * Register member from admin channel
+         * @description Screen VPA000801 'New' button: registers a new member application from the admin channel into pending approval state. Matches client member registration schema. Requires WRITE permission.
+         */
+        post: operations["createMember_1"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/members/batch-generate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Batch generate pending members
+         * @description Creates multiple pending member sign-up applications with verification attachments for workflow testing and simulation. Requires WRITE permission.
+         */
+        post: operations["batchGenerate"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/locations/provinces": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List provinces / Danh sách Tỉnh/Thành phố
+         * @description Returns paginated provinces with optional use status and search keyword. / Trả về danh sách Tỉnh/Thành phố phân trang với bộ lọc trạng thái và tìm kiếm.
+         */
+        get: operations["getProvinces"];
+        put?: never;
+        /**
+         * Create province / Tạo mới Tỉnh/Thành phố
+         * @description Creates a new province. Requires WRITE permission. / Tạo mới Tỉnh/Thành phố. Yêu cầu quyền GHI.
+         */
+        post: operations["createProvince"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/locations/districts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List districts / Danh sách Quận/Huyện
+         * @description Returns paginated districts with optional province, status, and keyword filters. / Trả về danh sách Quận/Huyện phân trang theo các bộ lọc tùy chọn.
+         */
+        get: operations["getDistricts"];
+        put?: never;
+        /**
+         * Create district / Tạo mới Quận/Huyện
+         * @description Creates a new district under a province. Requires WRITE permission. / Tạo mới Quận/Huyện trong Tỉnh/Thành phố. Yêu cầu quyền GHI.
+         */
+        post: operations["createDistrict"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/institutions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List financial institutions / Danh sách Tổ chức tài chính
+         * @description Returns paginated financial institutions with optional filters. / Trả về danh sách tổ chức tài chính phân trang theo bộ lọc.
+         */
+        get: operations["getInstitutions"];
+        put?: never;
+        /**
+         * Create financial institution / Tạo mới Tổ chức tài chính
+         * @description Creates a new financial institution. Requires WRITE permission. / Tạo mới tổ chức tài chính. Yêu cầu quyền GHI.
+         */
+        post: operations["createInstitution"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/institutions/branches": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List branches / Danh sách Chi nhánh
+         * @description Returns paginated branches with optional filters. / Trả về danh sách chi nhánh phân trang theo các bộ lọc tùy chọn.
+         */
+        get: operations["getBranches"];
+        put?: never;
+        /**
+         * Create branch / Tạo mới Chi nhánh
+         * @description Creates a new branch. Requires WRITE permission. / Tạo mới chi nhánh. Yêu cầu quyền GHI.
+         */
+        post: operations["createBranch"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/employees": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Search employees / Tìm kiếm nhân viên
+         * @description Retrieves paginated employee list with optional filters. / Lấy danh sách nhân viên phân trang với các bộ lọc tùy chọn.
+         */
+        get: operations["getEmployees"];
+        put?: never;
+        /**
+         * Create employee / Thêm mới nhân viên
+         * @description Registers a new employee account. / Đăng ký mới một tài khoản nhân viên vào hệ thống.
+         */
+        post: operations["createEmployee"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/contents/service-guides": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List guide sections / Danh sách section
+         * @description Use category=TRD|BUY|SELL|CNSL|FEE for one page. Ordered by display order (PST_SN); tag = section key. / Lọc theo trang; sắp theo thứ tự hiển thị.
+         */
+        get: operations["getSections"];
+        put?: never;
+        /**
+         * Add guide section / Thêm section
+         * @description Section key must be unique per page (409 CNT013). Default published. / Khóa section không trùng trong trang.
+         */
+        post: operations["createSection"];
+        /**
+         * Delete sections / Xóa section
+         * @description Soft-deletes the selected sections. / Xóa mềm các section được chọn.
+         */
+        delete: operations["deleteSections"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/contents/npl-announcements": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List NPL announcements / Danh sách thông báo NPL
+         * @description Filter by type (APPR, SALE, AUCT); pinnedOnly=true for View Major Notices. Keyword matches number, title or document number. / Lọc theo loại; pinnedOnly=true để xem thông báo chính.
+         */
+        get: operations["getAnnouncements"];
+        put?: never;
+        /**
+         * Create NPL announcement / Tạo thông báo NPL
+         * @description Default unpublished. At most 5 announcements can be published with top display. / Mặc định chưa đăng; tối đa 5 bài hiển thị đầu trang.
+         */
+        post: operations["createAnnouncement"];
+        /**
+         * Delete NPL announcements / Xóa thông báo NPL
+         * @description Soft-deletes the selected announcements. / Xóa mềm các thông báo được chọn.
+         */
+        delete: operations["deleteAnnouncements"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/contents/notices": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List notices / Danh sách thông báo
+         * @description Paginated notices; pinned first, then newest. sortBy: crtDt, title, viewCount. / Danh sách phân trang; bài ghim trước, sau đó mới nhất.
+         */
+        get: operations["getNotices"];
+        put?: never;
+        /**
+         * Create notice / Tạo thông báo
+         * @description Creates a notice (default unpublished). At most 5 pinned notices can be published. / Tạo thông báo (mặc định chưa đăng). Tối đa 5 bài ghim đang đăng.
+         */
+        post: operations["createNotice"];
+        /**
+         * Delete notices / Xóa thông báo
+         * @description Soft-deletes the selected notices. / Xóa mềm các thông báo được chọn.
+         */
+        delete: operations["deleteNotices"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/contents/news": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List / Danh sách
+         * @description Paginated list with the board search conditions. / Danh sách phân trang theo điều kiện tìm kiếm.
+         */
+        get: operations["list"];
+        put?: never;
+        /**
+         * Register news / Đăng ký tin
+         * @description category = NWS, MED or RSC. Default unpublished. / Mặc định chưa đăng.
+         */
+        post: operations["create"];
+        /**
+         * Delete / Xóa
+         * @description Soft-deletes the selected posts. / Xóa mềm các bài được chọn.
+         */
+        delete: operations["delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/contents/legal-documents": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List / Danh sách
+         * @description Paginated list with the board search conditions. / Danh sách phân trang theo điều kiện tìm kiếm.
+         */
+        get: operations["list_1"];
+        put?: never;
+        /**
+         * Register legal document / Đăng ký văn bản
+         * @description Default published. Required: type, number/sign, issue date, title. / Mặc định công bố.
+         */
+        post: operations["create_1"];
+        /**
+         * Delete / Xóa
+         * @description Soft-deletes the selected posts. / Xóa mềm các bài được chọn.
+         */
+        delete: operations["delete_1"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/contents/files": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Upload attachments / Tải lên tệp đính kèm
+         * @description Creates a new group, or appends to fileUnqId. board decides the write permission checked (NOTICE, FAQ). / Tạo nhóm mới hoặc thêm vào nhóm có sẵn.
+         */
+        post: operations["upload"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/contents/faqs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List FAQs / Danh sách FAQ
+         * @description Paginated FAQs. Use sortBy=displayOrder to list in display order per category. / Danh sách phân trang; sortBy=displayOrder để xem theo thứ tự hiển thị.
+         */
+        get: operations["getFaqs"];
+        put?: never;
+        /**
+         * Create FAQ / Tạo FAQ
+         * @description Creates an FAQ (default unpublished), appended at the end of its category. / Tạo FAQ (mặc định chưa đăng), xếp cuối danh mục.
+         */
+        post: operations["createFaq"];
+        /**
+         * Delete FAQs / Xóa FAQ
+         * @description Soft-deletes the selected FAQs. / Xóa mềm các FAQ được chọn.
+         */
+        delete: operations["deleteFaqs"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/contents/careers": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List / Danh sách
+         * @description Paginated list with the board search conditions. / Danh sách phân trang theo điều kiện tìm kiếm.
+         */
+        get: operations["list_2"];
+        put?: never;
+        /**
+         * Register career posting / Đăng ký tin tuyển dụng
+         * @description Default published. / Mặc định công bố.
+         */
+        post: operations["create_2"];
+        /**
+         * Delete / Xóa
+         * @description Soft-deletes the selected posts. / Xóa mềm các bài được chọn.
+         */
+        delete: operations["delete_2"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/contents/banners": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List banners / Danh sách banner
+         * @description Ordered by position and display order. / Sắp theo vị trí và thứ tự.
+         */
+        get: operations["list_3"];
+        put?: never;
+        /**
+         * Register banner / Đăng ký banner
+         * @description Starts not in use. / Mặc định không sử dụng.
+         */
+        post: operations["create_3"];
+        /**
+         * Delete banners / Xóa banner
+         * @description BNR_MNG has no deletion flag: banners are switched off (USE_YN = 'N'). / Banner được tắt sử dụng.
+         */
+        delete: operations["delete_3"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/contents/banners/images": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Upload banner image / Tải ảnh banner
+         * @description Returns the file group ID to pass as imageFileId. / Trả mã nhóm ảnh dùng cho imageFileId.
+         */
+        post: operations["uploadImage"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/contents/about": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List / Danh sách
+         * @description Paginated list with the board search conditions. / Danh sách phân trang theo điều kiện tìm kiếm.
+         */
+        get: operations["list_4"];
+        put?: never;
+        /**
+         * Add item / Thêm mục
+         * @description section = CEOM, HIST, HSTI, MSSN, FUNC, ORGS, DIRC, BEXB, BDIR, BSPV or PRTN. extraJson must be valid JSON matching the section format (CNT015): ORGS = department array or {"vi": [...], "en": [...]}, DIRC values = string or {"vi", "en"}, PRTN = {"url": "https://..."}. BEXB/BDIR/BSPV need name and tag = M or F; PRTN needs tag = DOMESTIC or FOREIGN (CNT017). CEOM ignores email/phone (company name and signatory title are platform i18n labels). / extraJson phải là JSON hợp lệ đúng định dạng section; ban lãnh đạo cần tên và giới tính M/F; đối tác cần nhóm DOMESTIC/FOREIGN; CEOM bỏ qua email/phone.
+         */
+        post: operations["create_4"];
+        /**
+         * Delete / Xóa
+         * @description Soft-deletes the selected posts. / Xóa mềm các bài được chọn.
+         */
+        delete: operations["delete_4"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/common-codes/groups": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List code groups (paginated) / Danh sách nhóm mã (phân trang)
+         * @description Returns paginated code groups with optional search filters. / Trả về danh sách nhóm mã phân trang theo bộ lọc.
+         */
+        get: operations["getCodeGroups"];
+        put?: never;
+        /**
+         * Create code group / Tạo mới nhóm mã
+         * @description Creates a new code group and synchronizes multilingual label. Requires WRITE permission. / Tạo mới nhóm mã và đồng bộ nhãn đa ngôn ngữ. Yêu cầu quyền GHI.
+         */
+        post: operations["createGroup"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/common-codes/groups/{groupCd}/codes/batch": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Batch save / delete codes / Lưu / xóa hàng loạt mã chi tiết
+         * @description Batch upserts and deletes detailed codes within a group. Requires WRITE permission. / Thêm, sửa, xóa hàng loạt mã chi tiết trong nhóm. Yêu cầu quyền GHI.
+         */
+        post: operations["saveCodesBatch"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/common-codes/groups/copy": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Copy code group / Sao chép nhóm mã (Domain Copy)
+         * @description Duplicates all codes from a source group to a new target group. Requires WRITE permission. / Sao chép toàn bộ mã từ nhóm nguồn sang nhóm đích. Yêu cầu quyền GHI.
+         */
+        post: operations["copyGroup"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/approvals/{atrzHstryId}/reject": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Reject current step
+         * @description Approver rejects the session with a mandatory reason. Closes the session and updates target domain state (A-04, ADF1234_P11). Requires WRITE permission.
+         */
+        post: operations["reject"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/approvals/{atrzHstryId}/approve": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Approve current step
+         * @description Approver approves the current step. Completes the session if final and executes target domain side-effects (A-03, ADF1234_P10). Requires WRITE permission.
+         */
+        post: operations["approve"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/lbl/excel/upload": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Upload labels Excel / Tải lên file Excel nhãn
+         * @description Parses Excel file and batch saves labels / Phân tích file Excel và lưu hàng loạt nhãn
+         */
+        post: operations["uploadExcel"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/lbl/batch": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Batch save labels / translations / Lưu hàng loạt nhãn / bản dịch
+         * @description Upserts labels and translations (requires write permission) / Thêm/sửa hàng loạt nhãn và bản dịch
+         */
+        post: operations["saveBatch"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/files/upload": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Single file upload / Tải lên một tập tin
+         * @description Uploads a single file to the server. / Tải một tập tin lên máy chủ.
+         */
+        post: operations["uploadFile"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/files/upload-with-data": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Upload with metadata / Tải lên kèm metadata
+         * @description Uploads a file along with title and description. / Tải lên tập tin kèm tiêu đề và mô tả.
+         */
+        post: operations["uploadFileWithData"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/files/upload-multiple": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Multiple file upload / Tải lên nhiều tập tin
+         * @description Uploads multiple files at once. / Tải nhiều tập tin lên cùng một lúc.
+         */
+        post: operations["uploadMultipleFiles"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/common/menus": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Create menu / Đăng ký menu mới
+         * @description Registers a new menu and its associated multilingual labels. Requires ADMIN role and write permission. / Đăng ký một menu mới và nhãn đa ngôn ngữ liên quan. Yêu cầu vai trò ADMIN và quyền ghi.
+         */
+        post: operations["createMenu"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/refresh": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Token Refresh / Làm mới Token
+         * @description Issues new Access/Refresh tokens via HttpOnly cookie (refresh_token). (Token Rotation applied) / Cấp Access/Refresh Token mới qua cookie HttpOnly (áp dụng Token Rotation).
+         */
+        post: operations["refresh"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/logout": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Logout / Đăng xuất
+         * @description Invalidates access token and clears refresh token cookie. / Vô hiệu hóa access token và xóa cookie refresh token.
+         */
+        post: operations["logout"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/login": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * User Login / Đăng nhập
+         * @description Authenticates user and issues JWT token. Refresh Token is issued as HttpOnly cookie (refresh_token). / Xác thực người dùng và cấp phát JWT token. Refresh Token được cấp qua HttpOnly cookie.
+         */
+        post: operations["login"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/batch/schedules/refresh": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Force refresh all schedules / Làm mới toàn bộ lịch chạy batch */
+        post: operations["refreshSchedules"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/batch/jobs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get batch job configs / Danh sách cấu hình batch job */
+        get: operations["getJobs"];
+        put?: never;
+        /** Create batch job config / Đăng ký cấu hình batch job mới */
+        post: operations["createJob"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/batch/jobs/{jobName}/execute": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Execute batch job manually / Chạy thủ công batch job */
+        post: operations["executeJob"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/platform/fees/use": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Switch fee items in use / Bật tắt sử dụng mục phí
+         * @description useYn is required. / Bắt buộc useYn.
+         */
+        patch: operations["updateUse"];
+        trace?: never;
+    };
+    "/api/v1/contents/service-guides/reorder": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Reorder sections of a page / Sắp xếp section trong trang
+         * @description category = page; pstNos must list every section of the page. / pstNos gồm toàn bộ section của trang.
+         */
+        patch: operations["reorderSections"];
+        trace?: never;
+    };
+    "/api/v1/contents/service-guides/publish": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Bulk publish / hide sections / Hiện hoặc ẩn section
+         * @description Hidden sections fall back to the built-in text on the platform. / Section bị ẩn sẽ dùng nội dung mặc định.
+         */
+        patch: operations["publishSections"];
+        trace?: never;
+    };
+    "/api/v1/contents/npl-announcements/{pstNo}/status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Update NPL announcement status / Cập nhật trạng thái thông báo NPL
+         * @description Type, published flag and top display (editable while published). / Loại, trạng thái đăng, hiển thị đầu trang.
+         */
+        patch: operations["updateAnnouncementStatus"];
+        trace?: never;
+    };
+    "/api/v1/contents/npl-announcements/publish": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Bulk post / stop posting NPL announcements / Đăng hoặc dừng đăng hàng loạt
+         * @description Returns the number of updated announcements. / Trả về số bài được cập nhật.
+         */
+        patch: operations["publishAnnouncements"];
+        trace?: never;
+    };
+    "/api/v1/contents/notices/{pstNo}/status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Update notice status / Cập nhật trạng thái thông báo
+         * @description Notice type, published flag and pin settings (editable while published). / Loại, trạng thái đăng, ghim (sửa được khi đang đăng).
+         */
+        patch: operations["updateNoticeStatus"];
+        trace?: never;
+    };
+    "/api/v1/contents/notices/publish": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Bulk post / stop posting notices / Đăng hoặc dừng đăng hàng loạt
+         * @description Returns the number of updated notices. / Trả về số bài được cập nhật.
+         */
+        patch: operations["publishNotices"];
+        trace?: never;
+    };
+    "/api/v1/contents/news/{pstNo}/status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Update news status / Cập nhật trạng thái tin
+         * @description Category, published flag and featured (pinned) settings. / Danh mục, trạng thái đăng, bài nổi bật.
+         */
+        patch: operations["updateStatus_1"];
+        trace?: never;
+    };
+    "/api/v1/contents/news/publish": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Bulk publish / unpublish / Đăng hoặc dừng đăng hàng loạt
+         * @description Returns the number of updated posts. / Trả về số bài được cập nhật.
+         */
+        patch: operations["publish"];
+        trace?: never;
+    };
+    "/api/v1/contents/legal-documents/publish": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Bulk publish / unpublish / Đăng hoặc dừng đăng hàng loạt
+         * @description Returns the number of updated posts. / Trả về số bài được cập nhật.
+         */
+        patch: operations["publish_1"];
+        trace?: never;
+    };
+    "/api/v1/contents/faqs/{pstNo}/status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Update FAQ status / Cập nhật trạng thái FAQ
+         * @description Category and published flag (pinning is not supported for FAQ). / Danh mục và trạng thái đăng (FAQ không hỗ trợ ghim).
+         */
+        patch: operations["updateFaqStatus"];
+        trace?: never;
+    };
+    "/api/v1/contents/faqs/reorder": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Reorder FAQs in a category / Sắp xếp lại FAQ trong danh mục
+         * @description pstNos must list every FAQ of the category in the desired order. / pstNos phải gồm toàn bộ FAQ của danh mục theo thứ tự mong muốn.
+         */
+        patch: operations["reorderFaqs"];
+        trace?: never;
+    };
+    "/api/v1/contents/faqs/publish": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Bulk post / stop posting FAQs / Đăng hoặc dừng đăng hàng loạt
+         * @description Returns the number of updated FAQs. / Trả về số FAQ được cập nhật.
+         */
+        patch: operations["publishFaqs"];
+        trace?: never;
+    };
+    "/api/v1/contents/careers/publish": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Bulk publish / unpublish / Đăng hoặc dừng đăng hàng loạt
+         * @description Returns the number of updated posts. / Trả về số bài được cập nhật.
+         */
+        patch: operations["publish_2"];
+        trace?: never;
+    };
+    "/api/v1/contents/banners/use": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Switch banners in use / Bật tắt sử dụng banner
+         * @description useYn is required. / Bắt buộc useYn.
+         */
+        patch: operations["updateUse_1"];
+        trace?: never;
+    };
+    "/api/v1/contents/about/reorder": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Reorder items of a section / Sắp xếp mục trong section
+         * @description category = section; pstNos must list every item of the section. / pstNos gồm toàn bộ mục của section.
+         */
+        patch: operations["reorder"];
+        trace?: never;
+    };
+    "/api/v1/contents/about/publish": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Bulk publish / unpublish / Đăng hoặc dừng đăng hàng loạt
+         * @description Returns the number of updated posts. / Trả về số bài được cập nhật.
+         */
+        patch: operations["publish_3"];
+        trace?: never;
+    };
+    "/api/v1/roles/{roleId}/menu-permissions/{menuCd}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get single menu permission for role / Chi tiết phân quyền menu của vai trò
+         * @description Returns permission level for a specific menu and role. / Trả về mức phân quyền của một menu cụ thể cho vai trò.
+         */
+        get: operations["getRoleMenuPermission"];
+        put?: never;
+        post?: never;
+        /**
+         * Revoke single menu permission from role / Thu hồi phân quyền menu đơn lẻ của vai trò
+         * @description Removes permission mapping for a specific menu and role. Requires WRITE permission. / Xóa ánh xạ phân quyền của một menu cụ thể khỏi vai trò. Yêu cầu quyền GHI.
+         */
+        delete: operations["revokeRoleMenuPermission"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/roles/assigned-users": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get users assigned to a role / Danh sách người dùng theo vai trò
+         * @description Returns paginated users assigned to a specific role group and/or role ID. / Trả về danh sách người dùng phân trang được gán theo mã nhóm vai trò và/hoặc mã vai trò.
+         */
+        get: operations["getUsersByRole"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/roles/assigned-users/all": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get all users assigned to a role / Danh sách toàn bộ người dùng theo vai trò
+         * @description Returns all users assigned to a specific role group and/or role ID without pagination. / Trả về danh sách tất cả người dùng không phân trang theo mã nhóm vai trò và/hoặc mã vai trò.
+         */
+        get: operations["getAllUsersByRole"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/roles/all": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List all roles / Danh sách tất cả vai trò
+         * @description Returns all roles without pagination for dropdowns. / Trả về toàn bộ vai trò không phân trang cho dropdown.
+         */
+        get: operations["getAllRoles"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/role-groups/all": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List all role groups / Danh sách tất cả nhóm vai trò
+         * @description Returns all role groups without pagination for dropdowns. / Trả về toàn bộ nhóm vai trò không phân trang cho dropdown.
+         */
+        get: operations["getAllRoleGroups"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/locations/provinces/{mctpvCd}/districts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get districts by province / Danh sách Quận/Huyện theo Tỉnh
+         * @description Returns all districts belonging to a province. / Trả về danh sách Quận/Huyện trực thuộc một Tỉnh/Thành phố.
+         */
+        get: operations["getDistrictsByProvince"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/institutions/{fnstCd}/branches": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get branches by institution / Danh sách Chi nhánh theo Tổ chức tài chính
+         * @description Returns all branches belonging to an institution. / Trả về danh sách chi nhánh trực thuộc một tổ chức tài chính.
+         */
+        get: operations["getBranchesByInstitution"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/contents/legal-documents/options": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Dropdown options / Danh sách lựa chọn
+         * @description Document types, groups, fields and issuing authorities. / Loại văn bản, nhóm, lĩnh vực, cơ quan ban hành.
+         */
+        get: operations["options"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/contents/legal-documents/excel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Excel download / Tải Excel
+         * @description Exports the list with the same search conditions (max 10,000 rows). / Xuất danh sách theo điều kiện tìm kiếm.
+         */
+        get: operations["excel"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/contents/inquiries": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List inquiries / Danh sách câu hỏi
+         * @description Default filter: unanswered. Inquirer names are masked. / Mặc định lọc câu hỏi chưa trả lời; tên người hỏi được che.
+         */
+        get: operations["getInquiries"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/contents/inquiries/{pstNo}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get inquiry detail / Chi tiết câu hỏi
+         * @description Inquirer name, e-mail and phone are masked. Audited as a personal data read. / Tên, email, SĐT được che; có ghi audit.
+         */
+        get: operations["getInquiry"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/contents/inquiries/excel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Excel download / Tải Excel
+         * @description Exports the inquiry list with the same search conditions (names masked, max 10,000 rows). / Xuất danh sách câu hỏi (tên đã che).
+         */
+        get: operations["excel_1"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/contents/files/{fileUnqId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get attachment group / Xem nhóm tệp đính kèm
+         * @description Active files of a group. / Các tệp còn hiệu lực của nhóm.
+         */
+        get: operations["getGroup"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/contents/faqs/excel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Excel download / Tải Excel
+         * @description Exports the FAQ list with the same search conditions (max 10,000 rows). / Xuất danh sách FAQ theo điều kiện tìm kiếm.
+         */
+        get: operations["excel_2"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/contents/careers/excel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Excel download / Tải Excel
+         * @description Exports the list with the same search conditions (max 10,000 rows). / Xuất danh sách theo điều kiện tìm kiếm.
+         */
+        get: operations["excel_3"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/contents/banners/excel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Excel download / Tải Excel
+         * @description Exports the list with the same search conditions (max 10,000 rows). / Xuất danh sách theo điều kiện tìm kiếm.
+         */
+        get: operations["excel_4"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/common-codes/groups/{groupCd}/codes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List codes by group / Danh sách mã chi tiết theo nhóm
+         * @description Returns detailed codes within a group for admin grid display. / Trả về danh sách mã chi tiết thuộc một nhóm cho bảng quản trị.
+         */
+        get: operations["getCodesByGroup"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/common-codes/groups/all": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List all code groups / Danh sách tất cả nhóm mã
+         * @description Returns all code groups (unpaginated) with optional filters. / Trả về toàn bộ danh sách nhóm mã không phân trang.
+         */
+        get: operations["getAllCodeGroups"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/attachments/{fileUnqId}/{fileSeq}/preview": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Preview verification document inline
+         * @description Streams attached document for inline browser preview
+         */
+        get: operations["preview"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/attachments/{fileUnqId}/{fileSeq}/download": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Download verification document
+         * @description Downloads attached verification file as attachment
+         */
+        get: operations["download"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/approvals/{atrzHstryId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get approval session detail
+         * @description Retrieves approval session state and complete steps timeline history (A-16, ADF1234_P12). Requires READ permission.
+         */
+        get: operations["getDetail"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/approvals/candidates": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Search step candidate employees
+         * @description Finds eligible active employees holding the required role for an approval step (A-02, ADF1234_P08..P09). Requires READ permission.
+         */
+        get: operations["getCandidates"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/lbl": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Query labels by screen / Truy vấn nhãn theo màn hình
+         * @description Returns labels/translations by screen ID for admin UI / Trả về danh sách nhãn/bản dịch theo ID màn hình
+         */
+        get: operations["getLabelsByScrn"];
+        put?: never;
+        post?: never;
+        /**
+         * Delete label / Xóa nhãn
+         * @description Deletes label and all associated translations / Xóa nhãn và toàn bộ bản dịch liên quan
+         */
+        delete: operations["deleteLabel"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/lbl/rows": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Query label-translation rows / Truy vấn danh sách dòng nhãn-bản dịch
+         * @description Returns label-translation rows with optional filters / Trả về danh sách nhãn-bản dịch kèm các bộ lọc tùy chọn
+         */
+        get: operations["getLabelRows"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/lbl/languages": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Query active languages / Truy vấn danh sách ngôn ngữ
+         * @description Returns active languages in sorted order / Trả về danh sách ngôn ngữ hoạt động theo thứ tự
+         */
+        get: operations["getLanguages"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/lbl/excel/template": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Download labels upload template / Tải template Excel mẫu
+         * @description Downloads template with required columns / Tải file mẫu với các cột bắt buộc
+         */
+        get: operations["downloadTemplate"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/lbl/excel/download": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Download labels Excel / Tải file Excel danh sách nhãn
+         * @description Downloads all label-translation rows as Excel / Tải toàn bộ danh sách nhãn-bản dịch dưới dạng file Excel
+         */
+        get: operations["downloadExcel"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/lbl/bulk": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Bulk query all labels / Truy vấn toàn bộ nhãn hàng loạt
+         * @description Returns {LBL_CD: text} map based on X-Lang header / Trả về map {LBL_CD: text} theo ngôn ngữ trong header X-Lang
+         */
+        get: operations["getBulkLabels"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/files/download/{fileName}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * File download / Tải về tập tin
+         * @description Downloads a stored file. / Tải về tập tin đã được lưu trữ.
+         */
+        get: operations["downloadFile"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/common/menus/{menuCd}/programs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Query programs by menu / Truy vấn chương trình theo menu
+         * @description Retrieves list of programs/screens mapped to a specific menu code. / Trả về danh sách chương trình/màn hình được liên kết với mã menu chỉ định.
+         */
+        get: operations["getProgramsByMenuCd"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/common/menus/permissions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Query my permissions list / Truy vấn danh sách quyền cá nhân
+         * @description Retrieves detailed menu authorization permissions (AL: All, WT: Write, RD: Read-only) based on user's role. / Trả về danh sách quyền hạn chi tiết theo vai trò người dùng (AL: Toàn quyền, WT: Ghi, RD: Chỉ đọc).
+         */
+        get: operations["getMyPermissions"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/common/menus/my": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Query my menu tree / Truy vấn cây menu cá nhân
+         * @description Retrieves hierarchical menu tree according to the authenticated user's role and requested language code. / Trả về cây menu phân cấp theo vai trò của người dùng đã đăng nhập và mã ngôn ngữ yêu cầu.
+         */
+        get: operations["getMyMenus"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/common/menus/all": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Query all menus list / Truy vấn danh sách toàn bộ menu
+         * @description Retrieves full menu list for administrative management with optional search filters. Requires ADMIN role. / Trả về toàn bộ danh sách menu phục vụ quản trị với các bộ lọc tìm kiếm tùy chọn. Yêu cầu vai trò ADMIN.
+         */
+        get: operations["getAllMenus"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/common/locations/provinces": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get active provinces / Lấy danh sách Tỉnh/Thành phố đang hoạt động
+         * @description Returns active provinces for dropdown selections (cached). / Trả về danh sách Tỉnh/Thành phố đang hoạt động cho các dropdown chọn lựa (có lưu cache).
+         */
+        get: operations["getActiveProvinces"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/common/locations/provinces/{mctpvCd}/districts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get active districts by province / Lấy danh sách Quận/Huyện theo Tỉnh
+         * @description Returns active districts of a province for cascaded dropdowns. / Trả về danh sách Quận/Huyện của Tỉnh cho dropdown liên kết.
+         */
+        get: operations["getActiveDistrictsByProvince"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/common/institutions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get active financial institutions / Lấy danh sách Tổ chức tài chính đang hoạt động
+         * @description Returns active financial institutions for dropdown selections (cached). / Trả về danh sách tổ chức tài chính đang hoạt động cho dropdown (có lưu cache).
+         */
+        get: operations["getActiveInstitutions"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/common/institutions/{fnstCd}/branches": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get active branches by institution / Lấy danh sách Chi nhánh theo Tổ chức tài chính
+         * @description Returns active branches of an institution for cascaded dropdowns. / Trả về danh sách chi nhánh hoạt động theo ngân hàng.
+         */
+        get: operations["getActiveBranchesByInstitution"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/common/codes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get multiple groups at once / Lấy danh sách mã cho nhiều nhóm cùng lúc
+         * @description Returns map of group codes to their respective code lists. / Trả về bản đồ mã nhóm và danh sách mã tương ứng.
+         */
+        get: operations["getCodesByGroups"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/common/codes/{groupCode}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get code list by group / Lấy danh sách mã theo nhóm
+         * @description Returns active common codes for a specific group (cached). / Trả về danh sách mã đang hoạt động theo nhóm (có lưu cache).
+         */
+        get: operations["getCodesByGroup_1"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/common/codes/{groupCode}/{code}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get single code / Lấy chi tiết một mã
+         * @description Returns single common code detail. / Trả về chi tiết một mã dùng chung.
+         */
+        get: operations["getCode"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/public-key": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get RSA Public Key for login / Lấy khóa công khai RSA dùng cho đăng nhập
+         * @description Returns RSA-OAEP(SHA-256) public key used for password encryption. / Trả về khóa công khai RSA-OAEP(SHA-256) dùng để mã hóa mật khẩu.
+         */
+        get: operations["getPublicKey"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/me": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get authenticated user profile and roles / Lấy thông tin tài khoản hiện tại
+         * @description Returns current authenticated employee profile, assigned roles, and menu trees. / Trả về thông tin hồ sơ nhân viên đang đăng nhập kèm danh sách vai trò và cây menu.
+         */
+        get: operations["getMe"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/batch/registry": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get @BatchJob registry list / Tra cứu danh sách @BatchJob đã đăng ký trong mã nguồn */
+        get: operations["getRegistry"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/batch/jobs/{jobName}/history": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get execution history by job / Lịch sử thực thi theo từng công việc */
+        get: operations["getJobHistory"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/batch/history": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get all execution history / Tra cứu toàn bộ lịch sử thực thi (lọc theo tên/trạng thái) */
+        get: operations["getAllHistory"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/auth/login-attempts/{loginId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get login failure/lockout status / Tra cứu trạng thái thất bại/khóa đăng nhập
+         * @description Queries fail count, blocked status, and remaining lock minutes. Responds with 0/false if no history exists. / Tra cứu số lần thất bại, trạng thái khóa và số phút khóa còn lại. Phản hồi 0/false nếu chưa có lịch sử.
+         */
+        get: operations["getStatus"];
+        put?: never;
+        post?: never;
+        /**
+         * Reset login failure count and lockout / Đặt lại số lần thất bại và mở khóa đăng nhập
+         * @description Immediately resets the fail counter and blocked state. Idempotently returns 200 even if no history exists. / Đặt lại ngay lập tức bộ đếm thất bại và trạng thái khóa. Trả về 200 một cách lũy đẳng kể cả khi không có lịch sử.
+         */
+        delete: operations["reset"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/auth/lockouts/{loginId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get login failure/lockout status / Tra cứu trạng thái thất bại/khóa đăng nhập
+         * @description Queries fail count, blocked status, and remaining lock minutes. Responds with 0/false if no history exists. / Tra cứu số lần thất bại, trạng thái khóa và số phút khóa còn lại. Phản hồi 0/false nếu chưa có lịch sử.
+         */
+        get: operations["getStatus_1"];
+        put?: never;
+        post?: never;
+        /**
+         * Reset login failure count and lockout / Đặt lại số lần thất bại và mở khóa đăng nhập
+         * @description Immediately resets the fail counter and blocked state. Idempotently returns 200 even if no history exists. / Đặt lại ngay lập tức bộ đếm thất bại và trạng thái khóa. Trả về 200 một cách lũy đẳng kể cả khi không có lịch sử.
+         */
+        delete: operations["reset_1"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/auth/lockouts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List all locked accounts / Danh sách tài khoản bị khóa
+         * @description Retrieves all currently locked employee accounts across database and Redis. / Lấy danh sách tất cả các tài khoản nhân viên đang bị khóa trong cơ sở dữ liệu và Redis.
+         */
+        get: operations["getLockedAccounts"];
+        put?: never;
+        post?: never;
+        /**
+         * Reset all lockouts across the system / Mở khóa toàn bộ tài khoản
+         * @description Resets all login failure counters and unlocks all accounts in DB and Redis. / Mở khóa toàn bộ tài khoản bị khóa trong hệ thống và Redis.
+         */
+        delete: operations["resetAll"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/auth/login-attempts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List all locked accounts / Danh sách tài khoản bị khóa
+         * @description Retrieves all currently locked employee accounts across database and Redis. / Lấy danh sách tất cả các tài khoản nhân viên đang bị khóa trong cơ sở dữ liệu và Redis.
+         */
+        get: operations["getLockedAccounts_1"];
+        put?: never;
+        post?: never;
+        /**
+         * Reset all lockouts across the system / Mở khóa toàn bộ tài khoản
+         * @description Resets all login failure counters and unlocks all accounts in DB and Redis. / Mở khóa toàn bộ tài khoản bị khóa trong hệ thống và Redis.
+         */
+        delete: operations["resetAll_1"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/contents/files/{fileUnqId}/{fileSeq}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * Delete attachment / Xóa tệp đính kèm
+         * @description Soft-deletes one file of a group. / Xóa mềm một tệp trong nhóm.
+         */
+        delete: operations["delete_5"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/files/delete/{fileName}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * File deletion / Xóa tập tin
+         * @description Deletes a stored file. / Xóa tập tin đã lưu trữ.
+         */
+        delete: operations["deleteFile"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+}
 export type webhooks = Record<string, never>;
 export interface components {
-    schemas: never;
+    schemas: {
+        UpdateRoleRequest: {
+            /**
+             * @description Role Name / Tên vai trò
+             * @example Receptionist
+             */
+            roleNm: string;
+            /**
+             * @description Role Group ID / Mã nhóm vai trò
+             * @example RG00001
+             */
+            roleGroupId: string;
+            /**
+             * @description Use status (Y: Active, N: Inactive) / Trạng thái sử dụng (Y: Hoạt động, N: Không hoạt động)
+             * @example Y
+             */
+            useYn: string;
+        };
+        ApiResponseRoleResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["RoleResponse"];
+        };
+        RoleResponse: {
+            /**
+             * @description Role ID / Mã vai trò
+             * @example RCPT
+             */
+            roleId?: string;
+            /**
+             * @description Role Name / Tên vai trò
+             * @example Receptionist
+             */
+            roleNm?: string;
+            /**
+             * @description Role Group ID / Mã nhóm vai trò
+             * @example RG00001
+             */
+            roleGroupId?: string;
+            /**
+             * @description Use status (Y/N) / Trạng thái sử dụng (Y/N)
+             * @example Y
+             */
+            useYn?: string;
+            /**
+             * Format: date-time
+             * @description Creation timestamp / Thời điểm tạo
+             */
+            crtDt?: string;
+            /**
+             * @description Creator user ID / Mã người tạo
+             * @example ADMIN
+             */
+            crtBy?: string;
+            /**
+             * Format: date-time
+             * @description Modification timestamp / Thời điểm cập nhật
+             */
+            mdfcnDt?: string;
+            /**
+             * @description Modifier user ID / Mã người cập nhật
+             * @example ADMIN
+             */
+            mdfcnBy?: string;
+        };
+        /** @description Batch role menu permission request / Yêu cầu lưu hàng loạt phân quyền menu cho vai trò */
+        BatchRoleMenuPermissionRequest: {
+            /** @description List of menu permissions to assign or revoke / Danh sách quyền menu cần gán hoặc thu hồi */
+            permissions: components["schemas"]["RoleMenuPermissionItem"][];
+        };
+        /** @description Role menu permission item / Mục phân quyền menu cho vai trò */
+        RoleMenuPermissionItem: {
+            /**
+             * @description Menu code / Mã menu
+             * @example A01010000
+             */
+            menuCd: string;
+            /**
+             * @description Authority level (RD: Read-only, WT: Write, AL: All/Read-Write, NONE: Revoke/No permission) / Mức quyền (RD: Chỉ đọc, WT: Ghi, AL: Toàn quyền, NONE: Thu hồi/Không cấp quyền)
+             * @example AL
+             */
+            menuAuthrt: string;
+        };
+        ApiResponseVoid: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: unknown;
+        };
+        UpdateRoleGroupRequest: {
+            /**
+             * @description Role Group Name / Tên nhóm vai trò
+             * @example IT Department
+             */
+            roleGroupNm: string;
+            /**
+             * @description Use status (Y: Active, N: Inactive) / Trạng thái sử dụng (Y: Hoạt động, N: Không hoạt động)
+             * @example Y
+             */
+            useYn: string;
+        };
+        ApiResponseRoleGroupResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["RoleGroupResponse"];
+        };
+        RoleGroupResponse: {
+            /**
+             * @description Role Group ID / Mã nhóm vai trò
+             * @example RG00001
+             */
+            roleGroupId?: string;
+            /**
+             * @description Role Group Name / Tên nhóm vai trò
+             * @example NPL Transaction Department
+             */
+            roleGroupNm?: string;
+            /**
+             * @description Use status (Y/N) / Trạng thái sử dụng (Y/N)
+             * @example Y
+             */
+            useYn?: string;
+            /**
+             * Format: date-time
+             * @description Creation timestamp / Thời điểm tạo
+             */
+            crtDt?: string;
+            /**
+             * @description Creator user ID / Mã người tạo
+             * @example ADMIN
+             */
+            crtBy?: string;
+            /**
+             * Format: date-time
+             * @description Modification timestamp / Thời điểm cập nhật
+             */
+            mdfcnDt?: string;
+            /**
+             * @description Modifier user ID / Mã người cập nhật
+             * @example ADMIN
+             */
+            mdfcnBy?: string;
+            /** @description List of roles belonging to this group / Danh sách vai trò thuộc nhóm này */
+            roles?: components["schemas"]["RoleResponse"][];
+        };
+        FeeRequest: {
+            /**
+             * @description Fee category (FEE_ARTCL_SE_CD: ANFE annual fee, CNSLT consulting, MDT brokerage) / Loại phí
+             * @example CNSLT
+             */
+            category: string;
+            /**
+             * Format: int32
+             * @description Display order inside the category / Thứ tự hiển thị trong loại phí
+             * @example 1
+             */
+            order: number;
+            /**
+             * @description Fee item name / Tên mục phí
+             * @example Consulting on documents and conditions
+             */
+            name: string;
+            /**
+             * @description Fee item description / Mô tả mục phí
+             * @example Consulting fee for contracts involving NPL and related documents
+             */
+            description?: string;
+            /**
+             * @description Levy method (FEE_LEVY_MTH_CD: FXAMT fixed amount, TRF rate) / Cách tính phí
+             * @example TRF
+             */
+            method: string;
+            /**
+             * @description Currency (VND, USD) / Tiền tệ
+             * @example VND
+             */
+            currency: string;
+            /**
+             * @description Fixed amount (FXAMT only) / Số tiền phí (chỉ FXAMT)
+             * @example 2000000
+             */
+            fee?: number;
+            /**
+             * @description Rate in % (TRF only) / Tỷ lệ % (chỉ TRF)
+             * @example 1
+             */
+            rate?: number;
+            /**
+             * @description Minimum applicable amount (TRF only) / Mức phí tối thiểu (chỉ TRF)
+             * @example 5000000
+             */
+            minAmount?: number;
+            /**
+             * @description Note / Ghi chú
+             * @example VAT not included
+             */
+            note?: string;
+        };
+        ApiResponseFeeResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["FeeResponse"];
+        };
+        FeeResponse: {
+            /**
+             * @description Fee item ID / Mã mục phí
+             * @example FEE-CNS-0001
+             */
+            feeId?: string;
+            /**
+             * @description Fee batch code / Mã đợt phí
+             * @example FEE_20210823
+             */
+            batchCd?: string;
+            /**
+             * @description In use (Y/N) / Đang sử dụng
+             * @example Y
+             */
+            useYn?: string;
+            /**
+             * @description Fee category code / Mã loại phí
+             * @example CNSLT
+             */
+            category?: string;
+            /**
+             * @description Fee category name / Tên loại phí
+             * @example Consulting
+             */
+            categoryNm?: string;
+            /**
+             * Format: int32
+             * @description Display order inside the category / Thứ tự
+             * @example 1
+             */
+            order?: number;
+            /**
+             * @description Fee item name / Tên mục phí
+             * @example Consulting on documents and conditions
+             */
+            name?: string;
+            /**
+             * @description Fee item description / Mô tả
+             * @example Consulting fee for contracts involving NPL
+             */
+            description?: string;
+            /**
+             * @description Levy method code / Mã cách tính
+             * @example TRF
+             */
+            method?: string;
+            /**
+             * @description Levy method name / Tên cách tính
+             * @example Percentage / Rate
+             */
+            methodNm?: string;
+            /**
+             * @description Currency / Tiền tệ
+             * @example VND
+             */
+            currency?: string;
+            /**
+             * @description Fixed amount (FXAMT) / Số tiền cố định
+             * @example 2000000
+             */
+            fee?: number;
+            /**
+             * @description Rate % (TRF) / Tỷ lệ %
+             * @example 1
+             */
+            rate?: number;
+            /**
+             * @description Minimum applicable amount (TRF) / Mức tối thiểu
+             * @example 5000000
+             */
+            minAmount?: number;
+            /**
+             * @description Currency of the minimum amount / Tiền tệ mức tối thiểu
+             * @example VND
+             */
+            minAmountCurrency?: string;
+            /**
+             * @description Effective from (DDMMYYYY) / Ngày áp dụng
+             * @example 23082021
+             */
+            effectiveFrom?: string;
+            /**
+             * @description Note / Ghi chú
+             * @example VAT not included
+             */
+            note?: string;
+            /**
+             * @description Editable (only when not in use) / Có thể sửa (chỉ khi không sử dụng)
+             * @example false
+             */
+            editable?: boolean;
+            /**
+             * Format: date-time
+             * @description Created at / Ngày tạo
+             */
+            crtDt?: string;
+            /**
+             * @description Creator / Người tạo
+             * @example admin
+             */
+            crtBy?: string;
+            /**
+             * Format: date-time
+             * @description Modified at / Ngày sửa
+             */
+            mdfcnDt?: string;
+            /**
+             * @description Modifier / Người sửa
+             * @example admin
+             */
+            mdfcnBy?: string;
+        };
+        /** @description Address details */
+        AddressRequest: {
+            addressLine?: string;
+            wardCode?: string;
+            provinceCode?: string;
+            localityName?: string;
+            provinceName?: string;
+            countryCode?: string;
+            postalCode?: string;
+        };
+        /** @description Authorization document details */
+        AuthorizationDocumentRequest: {
+            attachments?: components["schemas"]["DocumentAttachmentRequest"][];
+        };
+        /** @description Authorized representative details */
+        AuthorizedRepresentativeRequest: {
+            fullName?: string;
+            /** Format: date */
+            dateOfBirth?: string;
+            identityDocument?: components["schemas"]["IdentityDocumentRequest"];
+            permanentAddress?: components["schemas"]["AddressRequest"];
+            phoneNumber?: string;
+        };
+        /** @description Contact phone and email */
+        ContactRequest: {
+            phoneNumber?: string;
+            email?: string;
+        };
+        /** @description Uploaded document attachment reference */
+        DocumentAttachmentRequest: {
+            fileId?: string;
+            side?: string;
+            /** Format: int32 */
+            pageNumber?: number;
+        };
+        /** @description Identity document details */
+        IdentityDocumentRequest: {
+            documentType?: string;
+            documentNumber?: string;
+            /** Format: date */
+            issueDate?: string;
+            issuePlace?: string;
+            /** Format: date */
+            expiryDate?: string;
+            attachments?: components["schemas"]["DocumentAttachmentRequest"][];
+        };
+        /** @description Individual or foreigner profile details */
+        IndividualRequest: {
+            fullName?: string;
+            /** Format: date */
+            dateOfBirth?: string;
+            gender?: string;
+            nationalityCode?: string;
+            identityDocument?: components["schemas"]["IdentityDocumentRequest"];
+            permanentAddress?: components["schemas"]["AddressRequest"];
+            temporaryAddress?: components["schemas"]["AddressRequest"];
+        };
+        /** @description Legal representative details */
+        LegalRepresentativeRequest: {
+            fullName?: string;
+            position?: string;
+            identityDocument?: components["schemas"]["IdentityDocumentRequest"];
+            address?: components["schemas"]["AddressRequest"];
+        };
+        /** @description Organization profile details */
+        OrganizationRequest: {
+            organizationName?: string;
+            businessAddress?: components["schemas"]["AddressRequest"];
+            registeredCapital?: number;
+            capitalCurrency?: string;
+            registrationDocument?: components["schemas"]["RegistrationDocumentRequest"];
+            legalRepresentative?: components["schemas"]["LegalRepresentativeRequest"];
+            representativeMode?: string;
+            authorizedRepresentative?: components["schemas"]["AuthorizedRepresentativeRequest"];
+            authorizationDocument?: components["schemas"]["AuthorizationDocumentRequest"];
+        };
+        /** @description Organization registration document details */
+        RegistrationDocumentRequest: {
+            documentType?: string;
+            taxNumber?: string;
+            registrationNumber?: string;
+            registrationPlace?: string;
+            /** Format: date */
+            issueDate?: string;
+            attachments?: components["schemas"]["DocumentAttachmentRequest"][];
+        };
+        /** @description Member update request DTO for screen popups VPA0002P01 and VPA0008P01 */
+        UpdateMemberRequest: {
+            /**
+             * @description Member full name
+             * @example Nguyen Van An
+             */
+            mbrNm?: string;
+            /**
+             * @description International phone country prefix
+             * @default +84
+             * @example +84
+             */
+            intlTelnoNtnNo: string;
+            /**
+             * @description Member phone number
+             * @example 0912345678
+             */
+            mbrTelno?: string;
+            /**
+             * @description Phone number alias
+             * @example 0912345678
+             */
+            telno?: string;
+            /**
+             * @description Encrypted or raw phone number alias from legacy forms
+             * @example 0912345678
+             */
+            mbrEncptTelno?: string;
+            /**
+             * Format: email
+             * @description Member email address
+             * @example member.an@example.com
+             */
+            mbrEmlAddr?: string;
+            /**
+             * Format: email
+             * @description Email address alias
+             * @example member.an@example.com
+             */
+            emlAddr?: string;
+            /**
+             * @description Email address alias
+             * @example member.an@example.com
+             */
+            email?: string;
+            /**
+             * @description Birth date in DDMMYYYY or YYYY-MM-DD format
+             * @example 15081990
+             */
+            brdt?: string;
+            /**
+             * @description Gender code (M: Male, F: Female, O: Other)
+             * @example M
+             */
+            gndrCd?: string;
+            /**
+             * @description Nationality code (ISO 3-alpha, e.g. VNM, KOR)
+             * @example VNM
+             */
+            ntnCd?: string;
+            /**
+             * @description Foreigner city code
+             * @example SEL001
+             */
+            ctyCd?: string;
+            /**
+             * @description Identity document type (CCCD, CMND, PSPT, BSNO)
+             * @example CCCD
+             */
+            uiiSeCd?: string;
+            /**
+             * @description Citizen identification number (CCCD)
+             * @example 001090123456
+             */
+            cccdNo?: string;
+            /**
+             * @description National identity card number (CMND 9 digits)
+             * @example 012345678
+             */
+            cmndNo?: string;
+            /**
+             * @description Passport number
+             * @example M12345678
+             */
+            ppNo?: string;
+            /**
+             * @description Tax identification number
+             * @example 0106180376
+             */
+            mstNo?: string;
+            /**
+             * @description Identity issuing authority
+             * @example Cuc Canh sat QLHC ve TTXH
+             */
+            uiiIssuInstNm?: string;
+            /**
+             * @description Identity issue date in DDMMYYYY or YYYY-MM-DD
+             * @example 20012020
+             */
+            uiiIssuDmy?: string;
+            /**
+             * @description Identity expiry date in DDMMYYYY or YYYY-MM-DD
+             * @example 20012030
+             */
+            uiiExpryDmy?: string;
+            /**
+             * @description Province / City code
+             * @example HNI
+             */
+            mctpvCd?: string;
+            /**
+             * @description District / Ward code
+             * @example 00070
+             */
+            distCd?: string;
+            /**
+             * @description Detailed address line 1
+             * @example 123
+             */
+            mbrDaddr1?: string;
+            /**
+             * @description Detailed address line 2 (current residence)
+             * @example Apartment 402, Block B
+             */
+            mbrDaddr2?: string;
+            /**
+             * @description Permanent residence province code
+             * @example HNI
+             */
+            prmntMctpvCd?: string;
+            /**
+             * @description Permanent residence district code
+             * @example 00070
+             */
+            prmntDistCd?: string;
+            /**
+             * @description Permanent residence detailed address
+             * @example Village 3, Tan Binh
+             */
+            prmntDaddr?: string;
+            /** @description Evidence 1 file unique ID (front ID or passport) */
+            file1UnqId?: string;
+            /** @description Evidence 2 file unique ID (back ID) */
+            file2UnqId?: string;
+            /** @description Delegation file unique ID */
+            dlgtAtchFileId?: string;
+            /**
+             * @description Organization or company name
+             * @example Cong ty Co phan Dau tu ABC
+             */
+            orgnzNm?: string;
+            /**
+             * @description Organization name alias from local codebase
+             * @example Cong ty Co phan Dau tu ABC
+             */
+            ognzNm?: string;
+            /**
+             * @description Business registration number (BRNO)
+             * @example 0106180376
+             */
+            orgnzBrno?: string;
+            /**
+             * @description Legal representative full name
+             * @example Tran Van B
+             */
+            rprsvNm?: string;
+            /**
+             * @description Position / job title
+             * @example General Director
+             */
+            jbpsNm?: string;
+            /**
+             * @description Legal representative position
+             * @example General Director
+             */
+            rprsvJbpsNm?: string;
+            /**
+             * @description Legal representative ID type
+             * @example CCCD
+             */
+            rprsvUiiSeCd?: string;
+            /**
+             * @description Legal representative ID number
+             * @example 001088776655
+             */
+            rprsvUiiNo?: string;
+            /**
+             * @description Legal representative ID issuing authority
+             * @example Cuc Canh sat QLHC ve TTXH
+             */
+            rprsvUiiIssuInstNm?: string;
+            /**
+             * @description Legal representative ID issue date
+             * @example 10022021
+             */
+            rprsvUiiIssuDmy?: string;
+            /**
+             * @description Legal representative ID expiry date
+             * @example 10022031
+             */
+            rprsvUiiExprDmy?: string;
+            /**
+             * @description Legal representative province code
+             * @example HNI
+             */
+            rprsvMctpvCd?: string;
+            /**
+             * @description Legal representative district code
+             * @example 00070
+             */
+            rprsvDistCd?: string;
+            /**
+             * @description Legal representative address
+             * @example 456
+             */
+            rprsvDaddr?: string;
+            /**
+             * @description Legal document type (B: BRC, I: Investment, E: Enterprise)
+             * @example B
+             */
+            lglDcmntSeCd?: string;
+            /**
+             * @description Legal document issuing authority
+             * @example So Ke hoach va Dau tu Ha Noi
+             */
+            lglDcmntIssuInstNm?: string;
+            /**
+             * @description Legal document issue date
+             * @example 15032018
+             */
+            lglDcmntIssuDmy?: string;
+            /**
+             * @description Registered charter capital
+             * @example 10000000000
+             */
+            rgstCptl?: number;
+            /**
+             * @description Charter capital currency code
+             * @default VND
+             * @example VND
+             */
+            chrtrCptlCrncCd: string;
+            /** @description Organization evidence file unique ID (BRC / License) */
+            evdncAtchFile?: string;
+            /** @description Legal representative ID file unique ID */
+            rprsvEvdncAtchFile?: string;
+            /**
+             * @description Delegator full name
+             * @example Le Van C
+             */
+            mndtrNm?: string;
+            /**
+             * @description Delegator ID type
+             * @example CCCD
+             */
+            dlgtUiiSeCd?: string;
+            /**
+             * @description Delegator ID number
+             * @example 001099887766
+             */
+            dlgtUiiNo?: string;
+            /**
+             * @description Delegator ID issuing authority
+             * @example Cuc Canh sat QLHC ve TTXH
+             */
+            dlgtUiiIssuInstNm?: string;
+            /**
+             * @description Delegator ID issue date
+             * @example 15052021
+             */
+            dlgtUiiIssuDmy?: string;
+            /**
+             * @description Delegator province code
+             * @example HNI
+             */
+            dlgtMctpvCd?: string;
+            /**
+             * @description Delegator district code
+             * @example 00070
+             */
+            dlgtDistCd?: string;
+            /**
+             * @description Delegator detailed address
+             * @example 789
+             */
+            dlgtDaddr?: string;
+            /** @description Delegator evidence file ID */
+            dlgtEvdncAtchFile?: string;
+            /** @description Contact details structure */
+            contact?: components["schemas"]["ContactRequest"];
+            /** @description Individual profile details structure */
+            individual?: components["schemas"]["IndividualRequest"];
+            /** @description Organization profile details structure */
+            organization?: components["schemas"]["OrganizationRequest"];
+        };
+        ApiResponseMemberDetailResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["MemberDetailResponse"];
+        };
+        /** @description Account information section */
+        MemberAccountDto: {
+            /**
+             * @description Login ID
+             * @example member.user01
+             */
+            lgnId?: string;
+            /**
+             * @description International calling prefix
+             * @example +84
+             */
+            intlTelnoNtnNo?: string;
+            /**
+             * @description Masked phone number
+             * @example 090-****-0019
+             */
+            telno?: string;
+            /**
+             * @description Unmasked phone number (accessible for edit)
+             * @example 0900000019
+             */
+            rawTelno?: string;
+            /**
+             * @description Masked email address
+             * @example us**@example.com
+             */
+            emlAddr?: string;
+            /**
+             * @description Unmasked email address (accessible for edit)
+             * @example user01@example.com
+             */
+            rawEmlAddr?: string;
+        };
+        /** @description Address detail DTO */
+        MemberAddressDto: {
+            /**
+             * @description Province or municipality code
+             * @example HNI
+             */
+            mctpvCd?: string;
+            /**
+             * @description Province or municipality name
+             * @example Ha Noi
+             */
+            mctpvNm?: string;
+            /**
+             * @description District or ward code
+             * @example 00070
+             */
+            distCd?: string;
+            /**
+             * @description District or ward name
+             * @example Hoan Kiem District
+             */
+            distNm?: string;
+            /**
+             * @description Foreign country / city code
+             * @example SEL001
+             */
+            ctyCd?: string;
+            /**
+             * @description Detailed address line
+             * @example 123
+             */
+            daddr?: string;
+        };
+        /** @description Authorized agent or delegator section */
+        MemberAgentDto: {
+            /**
+             * @description Full Name
+             * @example Le Van C
+             */
+            fullNm?: string;
+            /**
+             * @description Identity Document Type Code
+             * @example CCCD
+             */
+            uiiSeCd?: string;
+            /**
+             * @description Masked ID Number
+             * @example 001099******
+             */
+            uiiNo?: string;
+            /**
+             * @description Unmasked ID Number
+             * @example 001099887766
+             */
+            rawUiiNo?: string;
+            /**
+             * @description Issuing Authority
+             * @example Police Department
+             */
+            issuInstNm?: string;
+            /**
+             * @description Date of Issue (DD/MM/YYYY)
+             * @example 15/05/2021
+             */
+            issuDt?: string;
+            /**
+             * @description Expiry Date (DD/MM/YYYY)
+             * @example 15/05/2031
+             */
+            expryDt?: string;
+            /** @description Address */
+            address?: components["schemas"]["MemberAddressDto"];
+            /** @description Agent attached verification files */
+            files?: components["schemas"]["MemberAttachmentDto"][];
+        };
+        /** @description Member verification document attachment */
+        MemberAttachmentDto: {
+            /**
+             * @description File unique ID (UUID)
+             * @example 686f37c3-7b86-43d4-ab7d-702c3e8134cd
+             */
+            fileUnqId?: string;
+            /**
+             * Format: int32
+             * @description File sequence number
+             * @example 1
+             */
+            fileSeq?: number;
+            /**
+             * @description Document type code (ID_CARD_FRONT, ID_CARD_BACK, PASSPORT, BUSINESS_LICENSE, POWER_OF_ATTORNEY)
+             * @example ID_CARD_FRONT
+             */
+            docType?: string;
+            /**
+             * @description Document type display name
+             * @example Identity Card (Front)
+             */
+            docTypeNm?: string;
+            /**
+             * @description Physical or stored file name
+             * @example id_card_front.jpeg
+             */
+            fileNm?: string;
+            /**
+             * @description File extension
+             * @example jpeg
+             */
+            fileExtnNm?: string;
+            /**
+             * Format: int64
+             * @description File size in bytes
+             * @example 172513
+             */
+            fileSz?: number;
+            /**
+             * @description Human-readable file size
+             * @example 168.5
+             */
+            fileSzFormatted?: string;
+            /**
+             * @description Download URL
+             * @example /api/v1/attachments/686f37c3-7b86-43d4-ab7d-702c3e8134cd/1/download
+             */
+            downloadUrl?: string;
+            /**
+             * @description In-browser preview URL
+             * @example /api/v1/attachments/686f37c3-7b86-43d4-ab7d-702c3e8134cd/1/preview
+             */
+            previewUrl?: string;
+            /**
+             * Format: date-time
+             * @description Upload timestamp
+             * @example 2026-10-16T06:44:37
+             */
+            crtDt?: string;
+        };
+        /** @description Basic member information section */
+        MemberBasicDto: {
+            /**
+             * @description Member Code (Read-Only)
+             * @example TV00000001
+             */
+            mbrNo?: string;
+            /**
+             * @description Member Type Code (P: Individual, F: Foreigner, O: Organization)
+             * @example P
+             */
+            mbrTypeCd?: string;
+            /**
+             * @description Member Type Name
+             * @example Individual
+             */
+            mbrTypeNm?: string;
+            /**
+             * @description Member Classification / Status Code (P, T, S, R, L, D)
+             * @example S
+             */
+            mbrSttsCd?: string;
+            /**
+             * @description Member Classification / Status Name
+             * @example Verified
+             */
+            mbrSttsNm?: string;
+            /**
+             * @description Application ID / Login ID
+             * @example member.user01
+             */
+            lgnId?: string;
+            /**
+             * Format: date-time
+             * @description Application Date / Registration Timestamp
+             */
+            aplyDt?: string;
+            /**
+             * Format: date-time
+             * @description Approval Completion Date
+             */
+            aprvDt?: string;
+            /**
+             * @description Account Status (ACTIVE, LOCKED)
+             * @example ACTIVE
+             */
+            acntSttsCd?: string;
+            /**
+             * @description Membership Payment Status (Y: Paid, N: Unpaid, -: N/A)
+             * @example Y
+             */
+            mbrshpPayYn?: string;
+            /**
+             * @description Membership Grade Code (TMP: Temporary, GEN: General, FUL: Full)
+             * @example GEN
+             */
+            mbrGrdCd?: string;
+            /**
+             * @description Membership Grade Name
+             * @example General Member
+             */
+            mbrGrdNm?: string;
+            /**
+             * @description SGDN Member Code
+             * @example SGDN-000123
+             */
+            sgdnMbrCd?: string;
+            /**
+             * @description Membership Fee Exemption (Y: Exempt, N: Charged)
+             * @example N
+             */
+            mbrshpFeeExmpYn?: string;
+            /**
+             * @description Membership Payment Due Date (DD/MM/YYYY)
+             * @example 15/11/2026
+             */
+            mbrshpPayDueDt?: string;
+            /**
+             * @description Posted Documents Complete (Y/N)
+             * @example Y
+             */
+            dcmntCmpltYn?: string;
+            /**
+             * @description Document Supplement Request sent to the applicant (status U)
+             * @example Please upload a clear copy of the power of attorney.
+             */
+            splmntRqstCn?: string;
+            /**
+             * Format: date-time
+             * @description Document Supplement Request Datetime
+             * @example 2026-10-29T10:15:00
+             */
+            splmntRqstDt?: string;
+            /**
+             * @description Membership Period Start Date (DD/MM/YYYY)
+             * @example 01/03/2026
+             */
+            mbrshpBgngDt?: string;
+            /**
+             * @description Membership Expiry Date (DD/MM/YYYY)
+             * @example 01/03/2027
+             */
+            mbrshpEndDt?: string;
+            /**
+             * @description Active Approval Session ID
+             * @example 3fa85f64-5717-4562-b3fc-2c963f66afa6
+             */
+            atrzHstryId?: string;
+            /**
+             * @description Current Workflow Stage
+             * @example APPROVED
+             */
+            atrzStage?: string;
+            /**
+             * @description Available action in popup
+             * @example VIEW
+             */
+            availableAction?: string;
+        };
+        /** @description Corporate information section for organization members */
+        MemberCorporateDto: {
+            /**
+             * @description Legal Document Type Code (B: BRC, I: Investment, E: Enterprise)
+             * @example B
+             */
+            lglDcmntSeCd?: string;
+            /**
+             * @description Legal Document Type Name
+             * @example Business Registration Certificate
+             */
+            lglDcmntSeNm?: string;
+            /**
+             * @description Masked Tax Identification Number
+             * @example 0106******
+             */
+            mstNo?: string;
+            /**
+             * @description Unmasked Tax Identification Number
+             * @example 0106180376
+             */
+            rawMstNo?: string;
+            /**
+             * @description Business Registration Number (BRNO)
+             * @example 0106180376
+             */
+            orgnzBrno?: string;
+            /**
+             * @description Company or Enterprise Name
+             * @example ABC Investment JSC
+             */
+            orgnzNm?: string;
+            /**
+             * @description Issuing Authority
+             * @example Department of Planning and Investment
+             */
+            issuInstNm?: string;
+            /**
+             * @description Date of Issue (DD/MM/YYYY)
+             * @example 15/03/2018
+             */
+            issuDt?: string;
+            /**
+             * @description Charter Capital Amount
+             * @example 10000000000
+             */
+            chrtrCptlAmt?: number;
+            /**
+             * @description Charter Capital Currency
+             * @example VND
+             */
+            crncCd?: string;
+            /** @description Head Office Address */
+            headOfficeAddress?: components["schemas"]["MemberAddressDto"];
+            /** @description Corporate attached verification files */
+            files?: components["schemas"]["MemberAttachmentDto"][];
+        };
+        /** @description Member detail response for popups VPA0002P01 and VPA0008P01 */
+        MemberDetailResponse: {
+            /** @description Basic application and membership information */
+            basic?: components["schemas"]["MemberBasicDto"];
+            /** @description Account credential and communication information */
+            account?: components["schemas"]["MemberAccountDto"];
+            /** @description Identity document information */
+            identity?: components["schemas"]["MemberIdentityDto"];
+            /** @description Permanent residence address */
+            permanentAddress?: components["schemas"]["MemberAddressDto"];
+            /** @description Current residential address */
+            currentAddress?: components["schemas"]["MemberAddressDto"];
+            /** @description Corporate organization information (for type O) */
+            corporate?: components["schemas"]["MemberCorporateDto"];
+            /** @description Legal representative information (for type O) */
+            legalRepresentative?: components["schemas"]["MemberRepresentativeDto"];
+            /**
+             * @description Legal representative applied in person (Y/N)
+             * @example Y
+             */
+            selfApplyYn?: string;
+            /** @description Authorized agent information (when selfApplyYn = N) */
+            authorizedAgent?: components["schemas"]["MemberAgentDto"];
+            /** @description List of attached verification files */
+            files?: components["schemas"]["MemberAttachmentDto"][];
+            /**
+             * @description Member number
+             * @example TV00000001
+             */
+            mbrNo?: string;
+            /**
+             * @description Member name
+             * @example Nguyen Van An
+             */
+            mbrNm?: string;
+            /**
+             * @description Member type code (P, F, O)
+             * @example P
+             */
+            mbrTypeCd?: string;
+            /**
+             * @description Member type display name
+             * @example Individual
+             */
+            mbrTypeNm?: string;
+            /**
+             * @description Member status code
+             * @example S
+             */
+            mbrSttsCd?: string;
+            /**
+             * @description Member status display name
+             * @example Verified
+             */
+            mbrSttsNm?: string;
+            /**
+             * @description Account login ID
+             * @example user01
+             */
+            lgnId?: string;
+            /**
+             * @description Masked phone number
+             * @example 090-****-0019
+             */
+            telno?: string;
+            /**
+             * @description Masked email address
+             * @example us**@example.com
+             */
+            emlAddr?: string;
+            /**
+             * @description Organization name
+             * @example MB Bank
+             */
+            orgnzNm?: string;
+            /**
+             * @description Business registration number
+             * @example 0106180376
+             */
+            orgnzBrno?: string;
+            /**
+             * @description Job title or position
+             * @example Director
+             */
+            jbpsNm?: string;
+            /**
+             * @description Representative name
+             * @example Tran Van B
+             */
+            rprsvNm?: string;
+            /**
+             * @description Account status (ACTIVE, LOCKED)
+             * @example ACTIVE
+             */
+            acntSttsCd?: string;
+            /**
+             * @description Approval stage
+             * @example APPROVED
+             */
+            atrzStage?: string;
+            /**
+             * @description Available user action
+             * @example VIEW
+             */
+            availableAction?: string;
+            /**
+             * Format: date-time
+             * @description Last modification date
+             */
+            mdfcnDt?: string;
+            /**
+             * @description Last modified by
+             * @example admin
+             */
+            mdfcnBy?: string;
+        };
+        /** @description Identity document and personal info section */
+        MemberIdentityDto: {
+            /**
+             * @description Identity Document Type Code (CCCD, CMND, PSPT, BSNO)
+             * @example CCCD
+             */
+            uiiSeCd?: string;
+            /**
+             * @description Identity Document Type Name
+             * @example Citizen Identity Card
+             */
+            uiiSeNm?: string;
+            /**
+             * @description Full Name
+             * @example Nguyen Van An
+             */
+            fullNm?: string;
+            /**
+             * @description Date of Birth (DD/MM/YYYY or YYYY-MM-DD)
+             * @example 15/08/1990
+             */
+            brdt?: string;
+            /**
+             * @description Gender Code (M: Male, F: Female, O: Other)
+             * @example M
+             */
+            gndrCd?: string;
+            /**
+             * @description Nationality Code
+             * @example VNM
+             */
+            ntnCd?: string;
+            /**
+             * @description Foreign City Code (for Foreigner)
+             * @example SEL001
+             */
+            ctyCd?: string;
+            /**
+             * @description Masked identity document number
+             * @example 001090******
+             */
+            uiiNo?: string;
+            /**
+             * @description Unmasked identity document number (accessible for edit)
+             * @example 001090123456
+             */
+            rawUiiNo?: string;
+            /**
+             * @description Issuing Authority
+             * @example Police Department
+             */
+            uiiIssuInstNm?: string;
+            /**
+             * @description Date of Issue (DD/MM/YYYY)
+             * @example 20/01/2020
+             */
+            uiiIssuDt?: string;
+            /**
+             * @description Expiry Date (DD/MM/YYYY)
+             * @example 20/01/2030
+             */
+            uiiExpryDt?: string;
+            /** @description Attached verification files for identity */
+            files?: components["schemas"]["MemberAttachmentDto"][];
+        };
+        /** @description Legal Representative section */
+        MemberRepresentativeDto: {
+            /**
+             * @description Full Name
+             * @example Tran Van B
+             */
+            fullNm?: string;
+            /**
+             * @description Position / Job Title
+             * @example Director
+             */
+            jbpsNm?: string;
+            /**
+             * @description Identity Document Type Code
+             * @example CCCD
+             */
+            uiiSeCd?: string;
+            /**
+             * @description Masked ID Number
+             * @example 001088******
+             */
+            uiiNo?: string;
+            /**
+             * @description Unmasked ID Number
+             * @example 001088776655
+             */
+            rawUiiNo?: string;
+            /**
+             * @description Issuing Authority
+             * @example Police Department
+             */
+            issuInstNm?: string;
+            /**
+             * @description Date of Issue (DD/MM/YYYY)
+             * @example 10/02/2021
+             */
+            issuDt?: string;
+            /**
+             * @description Expiry Date (DD/MM/YYYY)
+             * @example 10/02/2031
+             */
+            expryDt?: string;
+            /** @description Address */
+            address?: components["schemas"]["MemberAddressDto"];
+            /** @description Representative attached verification files */
+            files?: components["schemas"]["MemberAttachmentDto"][];
+        };
+        UpdateProvinceRequest: {
+            /**
+             * @description Province/City Name / Tên Tỉnh/Thành phố
+             * @example Thành phố Hà Nội
+             */
+            mctpvNm: string;
+            /**
+             * Format: int32
+             * @description GSO Administrative Province Code / Mã hành chính Tổng cục Thống kê (GSO)
+             * @example 1
+             */
+            admdstCd: number;
+            /**
+             * Format: int32
+             * @description Sort Order / Thứ tự sắp xếp
+             * @example 1
+             */
+            sortSeq: number;
+            /**
+             * @description Use status (Y: Active, N: Inactive) / Trạng thái sử dụng (Y: Hoạt động, N: Không hoạt động)
+             * @example Y
+             */
+            useYn: string;
+        };
+        ApiResponseProvinceResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["ProvinceResponse"];
+        };
+        ProvinceResponse: {
+            /**
+             * @description Province/City Code (PK) / Mã Tỉnh/Thành phố
+             * @example HNI
+             */
+            mctpvCd?: string;
+            /**
+             * @description Province/City Name / Tên Tỉnh/Thành phố
+             * @example Thành phố Hà Nội
+             */
+            mctpvNm?: string;
+            /**
+             * Format: int32
+             * @description GSO Administrative Province Code / Mã hành chính Tổng cục Thống kê (GSO)
+             * @example 1
+             */
+            admdstCd?: number;
+            /**
+             * Format: int32
+             * @description Sort Order / Thứ tự sắp xếp
+             * @example 1
+             */
+            sortSeq?: number;
+            /**
+             * @description Use status (Y/N) / Trạng thái sử dụng (Y/N)
+             * @example Y
+             */
+            useYn?: string;
+            /**
+             * Format: int32
+             * @description Number of child districts/wards / Số lượng quận huyện trực thuộc
+             * @example 30
+             */
+            districtCount?: number;
+            /**
+             * Format: date-time
+             * @description Creation timestamp / Thời điểm tạo
+             */
+            crtDt?: string;
+            /**
+             * @description Creator user ID / Mã người tạo
+             * @example ADMIN
+             */
+            crtBy?: string;
+            /**
+             * Format: date-time
+             * @description Modification timestamp / Thời điểm cập nhật
+             */
+            mdfcnDt?: string;
+            /**
+             * @description Modifier user ID / Mã người cập nhật
+             * @example ADMIN
+             */
+            mdfcnBy?: string;
+        };
+        UpdateDistrictRequest: {
+            /**
+             * @description Province/City Code (FK → MCTPV_CD) / Mã Tỉnh/Thành phố
+             * @example HNI
+             */
+            mctpvCd: string;
+            /**
+             * @description District/Ward Name / Tên Quận/Huyện/Phường/Xã
+             * @example Phường Hoàn Kiếm
+             */
+            distNm: string;
+            /**
+             * Format: int32
+             * @description Sort Order / Thứ tự sắp xếp
+             * @example 1
+             */
+            sortSeq?: number;
+            /**
+             * @description Use status (Y: Active, N: Inactive) / Trạng thái sử dụng (Y: Hoạt động, N: Không hoạt động)
+             * @example Y
+             */
+            useYn: string;
+        };
+        ApiResponseDistrictResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["DistrictResponse"];
+        };
+        DistrictResponse: {
+            /**
+             * @description District/Ward Code (PK) / Mã Quận/Huyện/Phường/Xã
+             * @example 00070
+             */
+            distCd?: string;
+            /**
+             * @description Province/City Code / Mã Tỉnh/Thành phố
+             * @example HNI
+             */
+            mctpvCd?: string;
+            /**
+             * @description Province/City Name / Tên Tỉnh/Thành phố
+             * @example Thành phố Hà Nội
+             */
+            mctpvNm?: string;
+            /**
+             * @description District/Ward Name / Tên Quận/Huyện/Phường/Xã
+             * @example Phường Hoàn Kiếm
+             */
+            distNm?: string;
+            /**
+             * Format: int32
+             * @description Sort Order / Thứ tự sắp xếp
+             * @example 1
+             */
+            sortSeq?: number;
+            /**
+             * @description Use status (Y/N) / Trạng thái sử dụng (Y/N)
+             * @example Y
+             */
+            useYn?: string;
+            /**
+             * Format: date-time
+             * @description Creation timestamp / Thời điểm tạo
+             */
+            crtDt?: string;
+            /**
+             * @description Creator user ID / Mã người tạo
+             * @example ADMIN
+             */
+            crtBy?: string;
+            /**
+             * Format: date-time
+             * @description Modification timestamp / Thời điểm cập nhật
+             */
+            mdfcnDt?: string;
+            /**
+             * @description Modifier user ID / Mã người cập nhật
+             * @example ADMIN
+             */
+            mdfcnBy?: string;
+        };
+        UpdateInstitutionRequest: {
+            /**
+             * @description Financial Institution Full Name / Tên đầy đủ tổ chức tài chính
+             * @example Ngân hàng TMCP Ngoại thương Việt Nam
+             */
+            fnstNm: string;
+            /**
+             * @description Financial Institution Abbreviation / Tên viết tắt tổ chức tài chính
+             * @example Vietcombank
+             */
+            fnstAbbrNm?: string;
+            /**
+             * @description Use status (Y: Active, N: Inactive) / Trạng thái sử dụng (Y: Hoạt động, N: Không hoạt động)
+             * @example Y
+             */
+            useYn: string;
+        };
+        ApiResponseInstitutionResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["InstitutionResponse"];
+        };
+        InstitutionResponse: {
+            /**
+             * Format: int32
+             * @description Financial Institution ID / Mã định danh tổ chức tài chính
+             * @example 6
+             */
+            fnstId?: number;
+            /**
+             * Format: int32
+             * @description Financial Institution Code / Mã tổ chức tài chính
+             * @example 203
+             */
+            fnstCd?: number;
+            /**
+             * @description Financial Institution Full Name / Tên đầy đủ tổ chức tài chính
+             * @example Ngân hàng TMCP Ngoại thương Việt Nam
+             */
+            fnstNm?: string;
+            /**
+             * @description Financial Institution Abbreviation / Tên viết tắt tổ chức tài chính
+             * @example Vietcombank
+             */
+            fnstAbbrNm?: string;
+            /**
+             * @description Use status (Y: Active, N: Inactive) / Trạng thái sử dụng
+             * @example Y
+             */
+            useYn?: string;
+            /**
+             * Format: int32
+             * @description Number of child branches / Số lượng chi nhánh trực thuộc
+             * @example 120
+             */
+            branchCount?: number;
+            /**
+             * Format: date-time
+             * @description Creation Timestamp / Thời gian tạo
+             */
+            crtDt?: string;
+            /**
+             * @description Created By / Người tạo
+             * @example admin
+             */
+            crtBy?: string;
+            /**
+             * Format: date-time
+             * @description Last Modification Timestamp / Thời gian cập nhật
+             */
+            mdfcnDt?: string;
+            /**
+             * @description Modified By / Người cập nhật
+             * @example admin
+             */
+            mdfcnBy?: string;
+        };
+        UpdateBranchRequest: {
+            /**
+             * Format: int32
+             * @description Financial Institution Code (FK → FNST_CD) / Mã tổ chức tài chính
+             * @example 203
+             */
+            fnstCd: number;
+            /**
+             * @description Branch Name / Tên chi nhánh
+             * @example Hội sở chính - Vietcombank
+             */
+            fnstBrnchNm: string;
+            /**
+             * @description Sales Branch / Office Name / Tên phòng giao dịch
+             * @example Hội sở chính Ngân hàng TMCP Ngoại thương Việt Nam
+             */
+            fnstSlsbrNm?: string;
+            /**
+             * @description Branch Address / Địa chỉ chi nhánh
+             * @example 198
+             */
+            fnstBrnchAddr?: string;
+            /**
+             * @description Classification Code (FBC01: Head Office, FBC02: Tier 1, FBC03: Tier 2, etc.) / Mã phân loại chi nhánh
+             * @example FBC01
+             */
+            fnstBrnchClsfCd: string;
+            /**
+             * Format: int32
+             * @description GSO Administrative Province Code / Mã tỉnh/thành phố theo GSO
+             * @example 1
+             */
+            admdstCd: number;
+            /**
+             * @description Use status (Y: Active, N: Inactive) / Trạng thái sử dụng (Y: Hoạt động, N: Không hoạt động)
+             * @example Y
+             */
+            useYn: string;
+        };
+        ApiResponseBranchResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["BranchResponse"];
+        };
+        BranchResponse: {
+            /**
+             * Format: int32
+             * @description Branch ID / Mã định danh chi nhánh
+             * @example 1
+             */
+            fnstBrnchId?: number;
+            /**
+             * Format: int32
+             * @description Financial Institution Code / Mã tổ chức tài chính
+             * @example 203
+             */
+            fnstCd?: number;
+            /**
+             * @description Financial Institution Name / Tên tổ chức tài chính
+             * @example Ngân hàng TMCP Ngoại thương Việt Nam
+             */
+            fnstNm?: string;
+            /**
+             * @description Financial Institution Abbreviation / Tên viết tắt tổ chức tài chính
+             * @example Vietcombank
+             */
+            fnstAbbrNm?: string;
+            /**
+             * Format: int32
+             * @description Branch Code / Mã chi nhánh
+             * @example 203001
+             */
+            fnstBrnchCd?: number;
+            /**
+             * @description Branch Name / Tên chi nhánh
+             * @example Hội sở chính - Vietcombank
+             */
+            fnstBrnchNm?: string;
+            /**
+             * @description Sales Branch / Office Name / Tên phòng giao dịch
+             * @example Hội sở chính Ngân hàng TMCP Ngoại thương Việt Nam
+             */
+            fnstSlsbrNm?: string;
+            /**
+             * @description Branch Address / Địa chỉ chi nhánh
+             * @example 198
+             */
+            fnstBrnchAddr?: string;
+            /**
+             * @description Branch Classification Code / Mã phân loại chi nhánh
+             * @example FBC01
+             */
+            fnstBrnchClsfCd?: string;
+            /**
+             * Format: int32
+             * @description GSO Administrative Province Code / Mã tỉnh/thành phố theo GSO
+             * @example 1
+             */
+            admdstCd?: number;
+            /**
+             * @description Use status (Y: Active, N: Inactive) / Trạng thái sử dụng
+             * @example Y
+             */
+            useYn?: string;
+            /**
+             * Format: date-time
+             * @description Creation Timestamp / Thời gian tạo
+             */
+            crtDt?: string;
+            /**
+             * @description Created By / Người tạo
+             * @example admin
+             */
+            crtBy?: string;
+            /**
+             * Format: date-time
+             * @description Last Modification Timestamp / Thời gian cập nhật
+             */
+            mdfcnDt?: string;
+            /**
+             * @description Modified By / Người cập nhật
+             * @example admin
+             */
+            mdfcnBy?: string;
+        };
+        /** @description Update Employee Request / Yêu cầu Cập nhật Hồ sơ Nhân viên */
+        UpdateEmpRequest: {
+            /**
+             * @description Employee full name / Họ và tên nhân viên
+             * @example Nguyen Van B
+             */
+            empNm: string;
+            /**
+             * Format: email
+             * @description Email address / Địa chỉ email
+             * @example nguyenvanb@vamc.com.vn
+             */
+            empEmlAddr: string;
+            /**
+             * @description Office landline phone number / Số điện thoại bàn văn phòng
+             * @example 02431234567
+             */
+            empTelno?: string;
+            /**
+             * @description Mobile phone number / Số điện thoại di động
+             * @example 0912345678
+             */
+            empMoblTelno?: string;
+            /**
+             * @description Employee status code (H, L, R, S) / Mã trạng thái nhân viên (H, L, R, S)
+             * @example H
+             */
+            empSttsCd: string;
+            /**
+             * @description Job position name / Chức danh vị trí công việc
+             * @example Team Leader / Trưởng nhóm
+             */
+            jbpsNm?: string;
+        };
+        ApiResponseEmpDetailResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["EmpDetailResponse"];
+        };
+        /** @description Employee Detail Response / Phản hồi chi tiết hồ sơ nhân viên */
+        EmpDetailResponse: {
+            /**
+             * @description Employee number / login ID / Mã nhân viên / ID đăng nhập
+             * @example user01
+             */
+            empNo?: string;
+            /**
+             * @description Employee full name / Họ và tên nhân viên
+             * @example Nguyen Van A
+             */
+            empNm?: string;
+            /**
+             * @description Full email address / Địa chỉ email đầy đủ
+             * @example user01@vamc.com.vn
+             */
+            empEmlAddr?: string;
+            /**
+             * @description Office landline phone number / Số điện thoại bàn văn phòng
+             * @example 02431234567
+             */
+            empTelno?: string;
+            /**
+             * @description Mobile phone number / Số điện thoại di động
+             * @example 0912345678
+             */
+            empMoblTelno?: string;
+            /**
+             * @description Last password change date (DDMMYYYY) / Ngày đổi mật khẩu gần nhất (DDMMYYYY)
+             * @example 14092026
+             */
+            pswdChgDmy?: string;
+            /**
+             * Format: int32
+             * @description Password failure attempt count / Số lần đăng nhập sai mật khẩu
+             * @example 0
+             */
+            pswdFailNmtm?: number;
+            /**
+             * @description Employee status code (H: Active, L: Leave, R: Retired, S: Suspended) / Mã trạng thái nhân viên
+             * @example H
+             */
+            empSttsCd?: string;
+            /**
+             * @description Job position name / Chức danh vị trí công việc
+             * @example Senior Specialist / Chuyên viên chính
+             */
+            jbpsNm?: string;
+            /**
+             * Format: date-time
+             * @description Creation date / Thời điểm tạo
+             * @example 2026-09-14T08:00:00
+             */
+            createdAt?: string;
+            /**
+             * @description Created by user ID / Người tạo
+             * @example admin
+             */
+            createdBy?: string;
+            /**
+             * Format: date-time
+             * @description Last modification date / Thời điểm cập nhật cuối
+             * @example 2026-09-14T08:00:00
+             */
+            updatedAt?: string;
+            /**
+             * @description Last modified by user ID / Người cập nhật cuối
+             * @example admin
+             */
+            updatedBy?: string;
+        };
+        /** @description Update Employee Status Request / Yêu cầu Cập nhật Trạng thái Nhân viên */
+        UpdateEmpStatusRequest: {
+            /**
+             * @description Employee status code (H: Active, L: Leave, R: Retired, S: Suspended) / Mã trạng thái nhân viên (H: Đang làm việc, L: Nghỉ phép, R: Nghỉ việc, S: Đình chỉ)
+             * @example H
+             */
+            empSttsCd: string;
+        };
+        /** @description Change Employee Password Request / Yêu cầu Đổi hoặc Đặt lại Mật khẩu Nhân viên */
+        ChangeEmpPasswordRequest: {
+            /**
+             * @description New password (min 8 chars) / Mật khẩu mới (tối thiểu 8 ký tự)
+             * @example NewSecretPass123!
+             */
+            newPassword: string;
+        };
+        UpdateServiceGuideSectionRequest: {
+            /**
+             * @description Vietnamese title / Tiêu đề tiếng Việt
+             * @example Quy trình mua nợ xấu
+             */
+            title: string;
+            /**
+             * @description Vietnamese content / Nội dung tiếng Việt
+             * @example Bước 1: Tìm kiếm và kiểm tra thông tin
+             */
+            content: string;
+            /**
+             * @description English title / Tiêu đề tiếng Anh
+             * @example NPL Purchase Process
+             */
+            titleEn?: string;
+            /**
+             * @description English content / Nội dung tiếng Anh
+             * @example STEP 1: Search and check information
+             */
+            contentEn?: string;
+            /**
+             * @description Summary (PST_SMRY_CN) / Tóm tắt
+             * @example Quy trình 5 bước mua khoản nợ xấu
+             */
+            summary?: string;
+            /**
+             * @description Attachment file group ID (null removes the link) / Mã nhóm tệp đính kèm
+             * @example 3f2b1c9e-8a7d-4e6f-9b0a-1c2d3e4f5a6b
+             */
+            attachmentFileId?: string;
+        };
+        ApiResponsePostDetailResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["PostDetailResponse"];
+        };
+        ContentFileResponse: {
+            /**
+             * @description File group ID / Mã nhóm tệp
+             * @example 7c1d2e3f-4a5b-6c7d-8e9f-0a1b2c3d4e5f
+             */
+            fileUnqId?: string;
+            /**
+             * Format: int32
+             * @description File sequence in the group / Số thứ tự tệp trong nhóm
+             * @example 1
+             */
+            fileSeq?: number;
+            /**
+             * @description File type code (DOC, IMG) / Loại tệp
+             * @example DOC
+             */
+            fileTypeCd?: string;
+            /**
+             * @description Stored file name / Tên tệp đã lưu
+             * @example a1b2c3_guide.pdf
+             */
+            fileNm?: string;
+            /**
+             * @description File extension / Phần mở rộng
+             * @example pdf
+             */
+            fileExtnNm?: string;
+            /**
+             * Format: int64
+             * @description File size in bytes / Dung lượng (byte)
+             * @example 204800
+             */
+            fileSz?: number;
+            /**
+             * @description Download URL / Đường dẫn tải xuống
+             * @example /api/v1/attachments/7c1d2e3f-4a5b-6c7d-8e9f-0a1b2c3d4e5f/1/download
+             */
+            downloadUrl?: string;
+        };
+        PostDetailResponse: {
+            /**
+             * @description Post number / Mã bài viết
+             * @example 3f2b1c9e-8a7d-4e6f-9b0a-1c2d3e4f5a6b
+             */
+            pstNo?: string;
+            /**
+             * @description Category code / Mã danh mục
+             * @example SVC
+             */
+            category?: string;
+            /**
+             * @description Category name / Tên danh mục
+             * @example Service Use Announcement
+             */
+            categoryNm?: string;
+            /**
+             * @description Title (question for FAQ) / Tiêu đề (câu hỏi với FAQ)
+             * @example Thông báo bảo trì hệ thống
+             */
+            title?: string;
+            /**
+             * @description Content (answer for FAQ) / Nội dung (câu trả lời với FAQ)
+             * @example <p>Hệ thống sẽ bảo trì từ 22:00.</p>
+             */
+            content?: string;
+            /**
+             * @description English title / Tiêu đề tiếng Anh
+             * @example System maintenance notice
+             */
+            titleEn?: string;
+            /**
+             * @description English content / Nội dung tiếng Anh
+             * @example <p>The system will be under maintenance.</p>
+             */
+            contentEn?: string;
+            /**
+             * @description Thumbnail file group ID (news) / Mã nhóm ảnh thumbnail
+             * @example 7c1d2e3f-4a5b-6c7d-8e9f-0a1b2c3d4e5f
+             */
+            thumbnailFileId?: string;
+            /**
+             * @description Legal document number/sign / Số, ký hiệu văn bản
+             * @example 17/2017/QH14
+             */
+            docNumber?: string;
+            /**
+             * @description Legal issue date (DDMMYYYY) / Ngày ban hành
+             * @example 20112017
+             */
+            issueDate?: string;
+            /**
+             * @description Legal document group code / Mã nhóm văn bản
+             * @example LGL
+             */
+            lawGroup?: string;
+            /**
+             * @description Legal document group name / Tên nhóm văn bản
+             * @example Legal Document
+             */
+            lawGroupNm?: string;
+            /**
+             * @description Legal field code / Mã lĩnh vực
+             * @example BNK
+             */
+            lawField?: string;
+            /**
+             * @description Legal field name / Tên lĩnh vực
+             * @example Banking
+             */
+            lawFieldNm?: string;
+            /**
+             * @description Issuing authority code / Mã cơ quan ban hành
+             * @example NA
+             */
+            issuingAuthority?: string;
+            /**
+             * @description Issuing authority name / Tên cơ quan ban hành
+             * @example National Assembly
+             */
+            issuingAuthorityNm?: string;
+            /**
+             * @description INQRY_NM: legal signer or about-section name / Người ký hoặc tên
+             * @example Nguyễn Thị Kim Ngân
+             */
+            name?: string;
+            /**
+             * @description PST_TAG: document number (NPL announcement) or section key (service guide) / Số văn bản hoặc khóa section
+             * @example TB-VAMC-SGDN 359
+             */
+            tag?: string;
+            /**
+             * @description Summary (NPL announcement, service guide) / Tóm tắt
+             * @example Thông báo lựa chọn tổ chức thẩm định giá
+             */
+            summary?: string;
+            /**
+             * @description Published (Y/N) / Trạng thái đăng
+             * @example N
+             */
+            published?: string;
+            /**
+             * @description Pinned to top (Y/N) / Ghim đầu trang
+             * @example N
+             */
+            pinned?: string;
+            /**
+             * Format: int32
+             * @description Pin order / Thứ tự ghim
+             * @example 1
+             */
+            pinOrder?: number;
+            /**
+             * @description Title/content editable (false while published) / Có thể sửa nội dung (false khi đang đăng)
+             * @example true
+             */
+            contentEditable?: boolean;
+            /**
+             * Format: int64
+             * @description View count / Số lượt xem
+             * @example 120
+             */
+            viewCount?: number;
+            /**
+             * @description Attachment file group ID / Mã nhóm tệp đính kèm
+             * @example 7c1d2e3f-4a5b-6c7d-8e9f-0a1b2c3d4e5f
+             */
+            attachmentFileId?: string;
+            /**
+             * @description ATCH_FILE single image group (about: CEO image) / Mã nhóm ảnh
+             * @example 7c1d2e3f-4a5b-6c7d-8e9f-0a1b2c3d4e5f
+             */
+            imageFileId?: string;
+            /**
+             * @description INQRY_EML_ADDR (about: company name / e-mail) / Giá trị phụ
+             * @example sangiaodichno@sbvamc.vn
+             */
+            email?: string;
+            /**
+             * @description INQRY_TELNO (about: signatory title / phone) / Giá trị phụ
+             * @example (+84-024) 3935-2884
+             */
+            phone?: string;
+            /**
+             * @description INQRY_ANS_CN JSON (about: directions details, department list) / JSON phụ
+             * @example {
+             *       "workingHours": "08:30 ~ 17:30"
+             *     }
+             */
+            extraJson?: string;
+            /** @description Attachments / Danh sách tệp đính kèm */
+            attachments?: components["schemas"]["ContentFileResponse"][];
+            /**
+             * Format: date-time
+             * @description Created at / Ngày tạo
+             */
+            crtDt?: string;
+            /**
+             * @description Creator employee number / Mã nhân viên tạo
+             * @example E000000001
+             */
+            crtBy?: string;
+            /**
+             * @description Creator name / Tên người tạo
+             * @example Kim Shin-han
+             */
+            crtByNm?: string;
+            /**
+             * Format: date-time
+             * @description Modified at / Ngày sửa
+             */
+            mdfcnDt?: string;
+            /**
+             * @description Modifier employee number / Mã nhân viên sửa
+             * @example E000000001
+             */
+            mdfcnBy?: string;
+            /**
+             * @description Modifier name / Tên người sửa
+             * @example Kim Shin-han
+             */
+            mdfcnByNm?: string;
+        };
+        UpdateNplAnnouncementRequest: {
+            /**
+             * @description Title / Tiêu đề
+             * @example Thông báo lựa chọn tổ chức thẩm định giá
+             */
+            title: string;
+            /**
+             * @description Content (HTML from editor) / Nội dung (HTML)
+             * @example <p>VAMC thông báo...</p>
+             */
+            content: string;
+            /**
+             * @description English title / Tiêu đề tiếng Anh
+             * @example Notice on selecting an appraisal organization
+             */
+            titleEn?: string;
+            /**
+             * @description English content / Nội dung tiếng Anh
+             * @example <p>VAMC announces...</p>
+             */
+            contentEn?: string;
+            /**
+             * @description Document number (PST_TAG) / Số văn bản
+             * @example TB-VAMC-SGDN 359
+             */
+            docNumber?: string;
+            /**
+             * @description Summary (PST_SMRY_CN) / Tóm tắt
+             * @example Sàn giao dịch nợ VAMC thông báo...
+             */
+            summary?: string;
+            /**
+             * @description Attachment file group ID (null removes the link) / Mã nhóm tệp đính kèm
+             * @example 3f2b1c9e-8a7d-4e6f-9b0a-1c2d3e4f5a6b
+             */
+            attachmentFileId?: string;
+        };
+        UpdateNoticeRequest: {
+            /**
+             * @description Title / Tiêu đề
+             * @example Thông báo bảo trì hệ thống
+             */
+            title: string;
+            /**
+             * @description Content (HTML from editor) / Nội dung (HTML từ trình soạn thảo)
+             * @example <p>Hệ thống sẽ bảo trì từ 22:00.</p>
+             */
+            content: string;
+            /**
+             * @description English title / Tiêu đề tiếng Anh
+             * @example System maintenance notice
+             */
+            titleEn?: string;
+            /**
+             * @description English content / Nội dung tiếng Anh
+             * @example <p>The system will be under maintenance from 22:00.</p>
+             */
+            contentEn?: string;
+            /**
+             * @description Attachment file group ID (null removes the link) / Mã nhóm tệp đính kèm (null để bỏ liên kết)
+             * @example 3f2b1c9e-8a7d-4e6f-9b0a-1c2d3e4f5a6b
+             */
+            attachmentFileId?: string;
+        };
+        NewsRequest: {
+            /**
+             * @description Category: NWS news, MED media, RSC resources (create only) / Danh mục (chỉ khi tạo)
+             * @example MED
+             */
+            category?: string;
+            /**
+             * @description Title / Tiêu đề
+             * @example VAMC NPL Exchange thúc đẩy minh bạch thị trường
+             */
+            title: string;
+            /**
+             * @description Content (HTML: images, links, YouTube) / Nội dung (HTML)
+             * @example <p>...</p>
+             */
+            content: string;
+            /**
+             * @description English title / Tiêu đề tiếng Anh
+             * @example VAMC NPL Exchange Promotes Market Transparency
+             */
+            titleEn?: string;
+            /** @description English content / Nội dung tiếng Anh */
+            contentEn?: string;
+            /**
+             * @description Excerpt shown in the list (PST_SMRY_CN) / Tóm tắt
+             * @example Nâng cấp liên tục nền tảng giao dịch nợ
+             */
+            summary?: string;
+            /**
+             * @description Thumbnail file group ID (default image when empty) / Mã nhóm ảnh thumbnail
+             * @example 7c1d2e3f-4a5b-6c7d-8e9f-0a1b2c3d4e5f
+             */
+            thumbnailFileId?: string;
+            /**
+             * @description Attachment file group ID / Mã nhóm tệp đính kèm
+             * @example 3f2b1c9e-8a7d-4e6f-9b0a-1c2d3e4f5a6b
+             */
+            attachmentFileId?: string;
+            /**
+             * @description Published (Y/N, default N; create only) / Đăng bài (chỉ khi tạo)
+             * @example N
+             */
+            published?: string;
+            /**
+             * @description Featured on the platform (pinned; create only) / Bài nổi bật (chỉ khi tạo)
+             * @example N
+             */
+            pinned?: string;
+            /**
+             * Format: int32
+             * @description Featured order (1~5; the lowest is shown first) / Thứ tự nổi bật
+             * @example 1
+             */
+            pinOrder?: number;
+        };
+        LegalDocumentRequest: {
+            /**
+             * @description Document type (LAW_DOC_TYPE_CD) / Loại văn bản
+             * @example LWO
+             */
+            docType: string;
+            /**
+             * @description Group (LAW_GROUP_CD) / Nhóm
+             * @example LGL
+             */
+            group?: string;
+            /**
+             * @description Field (LAW_FIELD_CD) / Lĩnh vực
+             * @example BNK
+             */
+            field?: string;
+            /**
+             * @description Issuing authority (LAW_AGENCY_CD) / Cơ quan ban hành
+             * @example NA
+             */
+            issuingAuthority?: string;
+            /**
+             * @description Number / sign / Số, ký hiệu
+             * @example 17/2017/QH14
+             */
+            docNumber: string;
+            /**
+             * @description Issue date (dd/MM/yyyy) / Ngày ban hành
+             * @example 20/11/2017
+             */
+            issueDate: string;
+            /**
+             * @description Signer / Người ký
+             * @example Nguyễn Thị Kim Ngân
+             */
+            signer?: string;
+            /**
+             * @description Title / Tiêu đề
+             * @example Luật số 17/2017/QH14 sửa đổi, bổ sung Luật các tổ chức tín dụng
+             */
+            title: string;
+            /**
+             * @description Content (HTML from editor) / Nội dung
+             * @example <p>Nội dung liên quan đến sửa đổi Luật các tổ chức tín dụng</p>
+             */
+            content?: string;
+            /**
+             * @description English title / Tiêu đề tiếng Anh
+             * @example Law No. 17/2017/QH14
+             */
+            titleEn?: string;
+            /** @description English content / Nội dung tiếng Anh */
+            contentEn?: string;
+            /**
+             * @description Description shown in the list (PST_SMRY_CN) / Mô tả
+             * @example Sửa đổi Luật các tổ chức tín dụng
+             */
+            description?: string;
+            /**
+             * @description Published (Y/N, default Y) / Trạng thái công bố (mặc định Y)
+             * @example Y
+             */
+            published?: string;
+            /**
+             * @description Attachment file group ID (pdf, doc, docx, xlsx) / Mã nhóm tệp đính kèm
+             * @example 3f2b1c9e-8a7d-4e6f-9b0a-1c2d3e4f5a6b
+             */
+            attachmentFileId?: string;
+        };
+        AnswerInquiryRequest: {
+            /**
+             * @description Answer text / Nội dung trả lời
+             * @example Cảm ơn quý khách. Bộ phận tư vấn sẽ liên hệ trong 2 ngày làm việc.
+             */
+            answer: string;
+        };
+        ApiResponseInquiryDetailResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["InquiryDetailResponse"];
+        };
+        InquiryDetailResponse: {
+            /**
+             * @description Post number / Mã bài viết
+             * @example 3f2b1c9e-8a7d-4e6f-9b0a-1c2d3e4f5a6b
+             */
+            pstNo?: string;
+            /**
+             * @description Answer status (ANSWERED / UNANSWERED) / Trạng thái trả lời
+             * @example UNANSWERED
+             */
+            answerStatus?: string;
+            /**
+             * @description Inquiry type code / Mã loại câu hỏi
+             * @example CST
+             */
+            category?: string;
+            /**
+             * @description Inquiry type name / Tên loại câu hỏi
+             * @example Consulting
+             */
+            categoryNm?: string;
+            /**
+             * @description Inquiry title / Tiêu đề câu hỏi
+             * @example Tư vấn mua nợ xấu
+             */
+            title?: string;
+            /**
+             * @description Inquiry content / Nội dung câu hỏi
+             * @example Tôi muốn được tư vấn về danh mục nợ.
+             */
+            content?: string;
+            /**
+             * @description Member number (null for guests) / Mã hội viên
+             * @example M000000001
+             */
+            mbrNo?: string;
+            /**
+             * @description Inquirer name (masked) / Tên người hỏi (đã che)
+             * @example Ng*** A
+             */
+            inquirerNm?: string;
+            /**
+             * @description Inquirer email (masked) / Email người hỏi (đã che)
+             * @example ab***@gmail.com
+             */
+            inquirerEmail?: string;
+            /**
+             * @description Inquirer phone (masked) / Số điện thoại người hỏi (đã che)
+             * @example 090****567
+             */
+            inquirerPhone?: string;
+            /**
+             * @description Answer text (null while unanswered) / Nội dung trả lời
+             * @example Cảm ơn quý khách.
+             */
+            answer?: string;
+            /**
+             * @description Answering employee number / Mã nhân viên trả lời
+             * @example E000000001
+             */
+            ansEmpNo?: string;
+            /**
+             * @description Answering employee name / Tên nhân viên trả lời
+             * @example Kim Shin-han
+             */
+            ansEmpNm?: string;
+            /**
+             * Format: date-time
+             * @description Registered at / Ngày đăng ký
+             */
+            crtDt?: string;
+            /**
+             * Format: date-time
+             * @description Answered at / Thời điểm trả lời
+             */
+            answeredAt?: string;
+            /** @description Attachments sent by the inquirer / Tệp người hỏi đính kèm */
+            attachments?: components["schemas"]["ContentFileResponse"][];
+        };
+        UpdateFaqRequest: {
+            /**
+             * @description Question / Câu hỏi
+             * @example Làm thế nào để đăng ký hội viên?
+             */
+            question: string;
+            /**
+             * @description Answer (HTML) / Câu trả lời (HTML)
+             * @example <p>Chọn Đăng ký ở góc trên bên phải.</p>
+             */
+            answer: string;
+            /**
+             * @description English question / Câu hỏi tiếng Anh
+             * @example How do I register as a member?
+             */
+            questionEn?: string;
+            /**
+             * @description English answer / Câu trả lời tiếng Anh
+             * @example <p>Click Sign up at the top right.</p>
+             */
+            answerEn?: string;
+        };
+        CareerRequest: {
+            /**
+             * @description Title / Tiêu đề
+             * @example VAMC tuyển dụng nhân sự quản lý tài sản
+             */
+            title: string;
+            /**
+             * @description Content (HTML from editor) / Nội dung
+             * @example <p>...</p>
+             */
+            content: string;
+            /**
+             * @description English title / Tiêu đề tiếng Anh
+             * @example VAMC is hiring asset management staff
+             */
+            titleEn?: string;
+            /** @description English content / Nội dung tiếng Anh */
+            contentEn?: string;
+            /**
+             * @description Published (Y/N, default Y) / Trạng thái công bố (mặc định Y)
+             * @example Y
+             */
+            published?: string;
+            /**
+             * @description Pin to top with a Notice badge (Y/N) / Ghim đầu trang
+             * @example N
+             */
+            pinned?: string;
+            /**
+             * Format: int32
+             * @description Pin order (optional) / Thứ tự ghim (tùy chọn)
+             * @example 1
+             */
+            pinOrder?: number;
+            /**
+             * @description Attachment file group ID / Mã nhóm tệp đính kèm
+             * @example 3f2b1c9e-8a7d-4e6f-9b0a-1c2d3e4f5a6b
+             */
+            attachmentFileId?: string;
+        };
+        BannerRequest: {
+            /**
+             * @description Banner title / Tiêu đề banner
+             * @example Main Screen Big Banner
+             */
+            title: string;
+            /**
+             * @description Position: screen ID or menu ID of the banner area / Vị trí (mã màn hình hoặc menu)
+             * @example MAIN_TOP
+             */
+            positionId: string;
+            /**
+             * Format: int32
+             * @description Display order in the position / Thứ tự hiển thị
+             * @example 1
+             */
+            order: number;
+            /**
+             * @description Target URL (empty = no link) / Đường dẫn khi bấm (trống = không liên kết)
+             * @example https://sangiaodichno.sbvamc.vn/tai-san-bao-dam/event
+             */
+            linkUrl?: string;
+            /**
+             * @description Image file group ID from POST /api/v1/contents/banners/images / Mã nhóm ảnh banner
+             * @example 7c1d2e3f-4a5b-6c7d-8e9f-0a1b2c3d4e5f
+             */
+            imageFileId: string;
+        };
+        ApiResponseBannerResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["BannerResponse"];
+        };
+        BannerResponse: {
+            /**
+             * @description Banner ID / Mã banner
+             * @example 3f2b1c9e-8a7d-4e6f-9b0a-1c2d3e4f5a6b
+             */
+            bannerId?: string;
+            /**
+             * @description In use (Y/N) / Đang sử dụng
+             * @example Y
+             */
+            useYn?: string;
+            /**
+             * Format: int32
+             * @description Display order / Thứ tự
+             * @example 1
+             */
+            order?: number;
+            /**
+             * @description Position ID / Vị trí
+             * @example MAIN_TOP
+             */
+            positionId?: string;
+            /**
+             * @description Banner title / Tiêu đề
+             * @example Main Screen Big Banner
+             */
+            title?: string;
+            /**
+             * @description Target URL / Đường dẫn
+             * @example https://sangiaodichno.sbvamc.vn
+             */
+            linkUrl?: string;
+            /**
+             * @description Link connected (Y/N) / Có liên kết
+             * @example Y
+             */
+            linked?: string;
+            /**
+             * @description Image file group ID / Mã nhóm ảnh
+             * @example 7c1d2e3f-4a5b-6c7d-8e9f-0a1b2c3d4e5f
+             */
+            imageFileId?: string;
+            /**
+             * @description Image preview URL / Đường dẫn xem ảnh
+             * @example /api/v1/attachments/7c1d2e3f-4a5b-6c7d-8e9f-0a1b2c3d4e5f/1/preview
+             */
+            imagePreviewUrl?: string;
+            /**
+             * @description Editable (only when not in use) / Có thể sửa (chỉ khi không sử dụng)
+             * @example false
+             */
+            editable?: boolean;
+            /**
+             * Format: date-time
+             * @description Created at / Ngày tạo
+             */
+            crtDt?: string;
+            /**
+             * @description Creator / Người tạo
+             * @example admin
+             */
+            crtBy?: string;
+            /**
+             * @description Creator name / Tên người tạo
+             * @example Mr. Park
+             */
+            crtByNm?: string;
+            /**
+             * Format: date-time
+             * @description Modified at / Ngày sửa
+             */
+            mdfcnDt?: string;
+            /**
+             * @description Modifier / Người sửa
+             * @example admin
+             */
+            mdfcnBy?: string;
+        };
+        AboutSectionRequest: {
+            /**
+             * @description Section: CEOM, HIST, HSTI, MSSN, FUNC, ORGS, DIRC, BEXB, BDIR, BSPV, PRTN (create only) / Section (chỉ khi tạo)
+             * @example HIST
+             */
+            section?: string;
+            /**
+             * @description PST_TAG (period, icon, division code, coordinates, gender M/F, partner group DOMESTIC/FOREIGN) / Giá trị thẻ
+             * @example 2013
+             */
+            tag?: string;
+            /**
+             * @description Title / Tiêu đề
+             * @example Thành lập VAMC
+             */
+            title: string;
+            /**
+             * @description Content / Nội dung
+             * @example VAMC được thành lập theo Quyết định 1459/QĐ-NHNN
+             */
+            content?: string;
+            /**
+             * @description English title / Tiêu đề tiếng Anh
+             * @example Establishment of VAMC
+             */
+            titleEn?: string;
+            /** @description English content / Nội dung tiếng Anh */
+            contentEn?: string;
+            /**
+             * @description PST_SMRY_CN (overview, address) / Tóm tắt
+             * @example 300
+             */
+            summary?: string;
+            /**
+             * @description INQRY_NM (signatory, organization name, board member name) / Tên
+             * @example Nguyễn Tiến Đông
+             */
+            name?: string;
+            /**
+             * @description INQRY_EML_ADDR (DIRC e-mail; ignored for CEOM) / E-mail (DIRC; bỏ qua với CEOM)
+             * @example sangiaodichno@sbvamc.vn
+             */
+            email?: string;
+            /**
+             * @description INQRY_TELNO (DIRC phone; ignored for CEOM) / Điện thoại (DIRC; bỏ qua với CEOM)
+             * @example (+84-024) 3935-2884
+             */
+            phone?: string;
+            /**
+             * @description INQRY_ANS_CN JSON: ORGS = department array or {"vi": [...], "en": [...]}; DIRC = {workingHours, lunchTime, closedDays, fax} with string or {"vi", "en"} values; PRTN = {"url": "https://..."} / JSON phụ theo section
+             * @example {
+             *       "vi": [
+             *         "Phòng Kế hoạch",
+             *         "Phòng Tài chính"
+             *       ],
+             *       "en": [
+             *         "Planning",
+             *         "Finance"
+             *       ]
+             *     }
+             */
+            extraJson?: string;
+            /**
+             * @description Image file group (ATCH_FILE; CEO photo, history illustration, portrait, partner logo) / Mã nhóm ảnh
+             * @example 7c1d2e3f-4a5b-6c7d-8e9f-0a1b2c3d4e5f
+             */
+            imageFileId?: string;
+            /**
+             * @description Secondary image group (THMB_FILE_UNQ_ID; CEOM signature image) / Mã nhóm ảnh phụ (chữ ký CEO)
+             * @example 9a8b7c6d-5e4f-3a2b-1c0d-9e8f7a6b5c4d
+             */
+            thumbnailFileId?: string;
+            /**
+             * @description Attachment file group ID / Mã nhóm tệp đính kèm
+             * @example 3f2b1c9e-8a7d-4e6f-9b0a-1c2d3e4f5a6b
+             */
+            attachmentFileId?: string;
+            /**
+             * @description Published (Y/N, default Y) / Đăng (mặc định Y)
+             * @example Y
+             */
+            published?: string;
+        };
+        /** @description Common Code Group Update Request / Yêu cầu cập nhật Nhóm mã dùng chung */
+        UpdateCodeGroupRequest: {
+            /**
+             * @description Code Group Name / Tên nhóm mã
+             * @example Customer Type Code / Mã phân loại khách hàng
+             */
+            groupNm: string;
+            /**
+             * @description Code Group Description / Mô tả nhóm mã
+             * @example Classification codes for customer categories
+             */
+            groupExpln?: string;
+            /**
+             * @description Use Status (Y/N) / Trạng thái sử dụng (Y/N)
+             * @example Y
+             */
+            useYn?: string;
+        };
+        ApiResponseCodeGroupResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["CodeGroupResponse"];
+        };
+        /** @description Common Code Group Response / Thông tin Nhóm mã dùng chung */
+        CodeGroupResponse: {
+            /**
+             * @description Code Group ID / Mã nhóm mã
+             * @example CUST_TYPE_CD
+             */
+            groupCd?: string;
+            /**
+             * @description Code Group Name / Tên nhóm mã
+             * @example Customer Type Code
+             */
+            groupNm?: string;
+            /**
+             * @description Code Group Description / Mô tả nhóm mã
+             * @example Classification codes for customer categories
+             */
+            groupExpln?: string;
+            /**
+             * @description Use Status (Y/N) / Trạng thái sử dụng (Y/N)
+             * @example Y
+             */
+            useYn?: string;
+            /**
+             * @description Multilingual Label Code / Mã nhãn đa ngôn ngữ
+             * @example lbl.code.cust_type_cd
+             */
+            lblCd?: string;
+            /**
+             * Format: int32
+             * @description Total child codes count / Số lượng mã chi tiết trực thuộc
+             * @example 5
+             */
+            codeCount?: number;
+            /**
+             * Format: date-time
+             * @description Creation timestamp / Thời điểm tạo
+             */
+            crtDt?: string;
+            /**
+             * @description Creator user ID / Người tạo
+             * @example ADMIN
+             */
+            crtBy?: string;
+            /**
+             * Format: date-time
+             * @description Modification timestamp / Thời điểm cập nhật
+             */
+            mdfcnDt?: string;
+            /**
+             * @description Modifier user ID / Người cập nhật
+             * @example ADMIN
+             */
+            mdfcnBy?: string;
+        };
+        /** @description Menu Registration & Modification Request / Yêu cầu Đăng ký & Cập nhật Menu */
+        MenuSaveRequest: {
+            /**
+             * @description Menu code (9 chars, business PK; 1st char W: User Web / A: Admin Web, followed by 2-digit depth segments; immutable after creation) / Mã menu (9 ký tự, khóa chính nghiệp vụ; ký tự đầu W: Web người dùng / A: Web quản trị, tiếp theo là các cặp 2 số theo cấp độ sâu; không thể sửa sau khi tạo)
+             * @example A01010000
+             */
+            menuCd: string;
+            /**
+             * @description Parent menu code (9 chars; for root menu, points to itself; for child menus, points to direct parent menuCd) / Mã menu cấp trên/cấp cha (9 ký tự; đối với menu gốc, trỏ đến chính mã hiện tại; đối với menu con, trỏ đến mã menu cha trực tiếp)
+             * @example A01000000
+             */
+            upMenuCd: string;
+            /**
+             * @description Menu category classification code (W: User Web, A: Admin Web; default: A) / Mã phân loại menu (W: Web người dùng, A: Web quản trị; mặc định: A)
+             * @example A
+             */
+            menuSeCd?: string;
+            /**
+             * @description Multilingual label code mapped to LANG_LBL (defaults to lbl.menu.{menuCd} if omitted) / Mã nhãn đa ngôn ngữ liên kết bảng LANG_LBL (mặc định tự sinh lbl.menu.{menuCd} nếu để trống)
+             * @example lbl.menu.A01010000
+             */
+            lblCd?: string;
+            /**
+             * @description Frontend screen URL route address or program screen ID / Địa chỉ đường dẫn URL màn hình giao diện hoặc mã màn hình chương trình (ví dụ: /admin/users, SYS030101SC)
+             * @example /admin/users
+             */
+            menuUrlAddr?: string;
+            /**
+             * @description Base menu name / description (used as default title and fallback display name) / Tên menu gốc / mô tả mặc định (dùng làm tên hiển thị mặc định và dự phòng)
+             * @example User Management
+             */
+            menuExpln: string;
+            /**
+             * Format: int32
+             * @description Display sort sequence order within same parent menu (integer >= 0, e.g. 10, 20) / Thứ tự sắp xếp hiển thị trong cùng menu cấp cha (số nguyên >= 0, ví dụ: 10, 20)
+             * @example 10
+             */
+            menuSeq?: number;
+            /**
+             * @description Usage status flag (Y: Active / In use, N: Inactive / Disabled; default: Y) / Trạng thái sử dụng (Y: Đang sử dụng / Kích hoạt, N: Không sử dụng / Vô hiệu hóa; mặc định: Y)
+             * @example Y
+             */
+            useYn?: string;
+            /**
+             * @description Target translation language code (KR: Korean, EN: English, VN: Vietnamese) / Mã ngôn ngữ dịch đích (KR: Tiếng Hàn, EN: Tiếng Anh, VN: Tiếng Việt)
+             * @example VN
+             */
+            langCd?: string;
+            /**
+             * @description Translated menu name in target language (saved/updated to LANG_LBL_TRSL) / Tên menu đã dịch theo ngôn ngữ đích chỉ định (lưu/cập nhật vào bảng LANG_LBL_TRSL)
+             * @example Quản lý người dùng
+             */
+            menuLblVal?: string;
+        };
+        /** @description Batch job configuration request / Yêu cầu cấu hình batch job */
+        BatchJobConfigRequest: {
+            /**
+             * @description Batch job name (matches @BatchJob.name) / Tên batch job (khớp với @BatchJob.name)
+             * @example demo-loan-status-summary
+             */
+            btchJobNm: string;
+            /**
+             * @description Batch group / Nhóm batch
+             * @example DEMO
+             */
+            btchGroup?: string;
+            /** @description Job description / Mô tả công việc */
+            jobExpln?: string;
+            /**
+             * @description Cron expression (manual execution only if null) / Biểu thức Cron (thực thi thủ công nếu null)
+             * @example 0
+             */
+            cronExpression?: string;
+            /** @description Schedule enabled status (0/1) / Trạng thái kích hoạt lịch chạy (0/1) */
+            scheduleVtlzYn?: boolean;
+            /** @description JSON format parameters / Tham số định dạng JSON */
+            jobParameters?: string;
+        };
+        ApiResponseBatchJobConfigResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["BatchJobConfigResponse"];
+        };
+        /** @description Batch job configuration response / Phản hồi cấu hình batch job */
+        BatchJobConfigResponse: {
+            /**
+             * Format: int64
+             * @description Batch configuration ID / Mã cấu hình batch
+             */
+            btchStngId?: number;
+            /** @description Batch job name / Tên batch job */
+            btchJobNm?: string;
+            /** @description Batch group / Nhóm batch */
+            btchGroup?: string;
+            /** @description Job description / Mô tả công việc */
+            jobExpln?: string;
+            /** @description Cron expression / Biểu thức Cron */
+            cronExpression?: string;
+            /** @description Schedule enabled status (0/1) / Trạng thái kích hoạt lịch chạy (0/1) */
+            scheduleVtlzYn?: boolean;
+            /** @description JSON format parameters / Tham số định dạng JSON */
+            jobParameters?: string;
+            /**
+             * Format: date-time
+             * @description Last execution time / Thời điểm thực thi lần cuối
+             */
+            lastExcnAt?: string;
+            /**
+             * Format: date-time
+             * @description Creation timestamp / Thời điểm tạo
+             */
+            crtDt?: string;
+            /** @description Creator / Người tạo */
+            crtBy?: string;
+            /**
+             * Format: date-time
+             * @description Modification timestamp / Thời điểm cập nhật
+             */
+            mdfcnDt?: string;
+            /** @description Modifier / Người cập nhật */
+            mdfcnBy?: string;
+        };
+        /** @description Batch schedule update request / Yêu cầu cập nhật lịch chạy batch */
+        ScheduleUpdateRequest: {
+            /**
+             * @description Cron expression (manual execution only if null) / Biểu thức Cron (thực thi thủ công nếu null)
+             * @example 0
+             */
+            cronExpression?: string;
+            /** @description Schedule enabled status (0/1) / Trạng thái kích hoạt lịch chạy (0/1) */
+            scheduleVtlzYn?: boolean;
+        };
+        CreateRoleRequest: {
+            /**
+             * @description Role ID (max 7 characters, uppercase letters/digits) / Mã vai trò (tối đa 7 ký tự, chữ hoa/số)
+             * @example RCPT
+             */
+            roleId: string;
+            /**
+             * @description Role Name / Tên vai trò
+             * @example Receptionist
+             */
+            roleNm: string;
+            /**
+             * @description Role Group ID to assign this role to / Mã nhóm vai trò cần gán vai trò này vào
+             * @example RG00001
+             */
+            roleGroupId: string;
+            /**
+             * @description Use status (Y: Active, N: Inactive) / Trạng thái sử dụng (Y: Hoạt động, N: Không hoạt động)
+             * @example Y
+             */
+            useYn: string;
+        };
+        /** @description Single role menu permission request / Yêu cầu gán quyền menu đơn lẻ cho vai trò */
+        RoleMenuPermissionRequest: {
+            /**
+             * @description Menu code / Mã menu
+             * @example A01010000
+             */
+            menuCd: string;
+            /**
+             * @description Authority level (RD: Read-only, WT: Write, AL: All/Read-Write) / Mức quyền (RD: Chỉ đọc, WT: Ghi, AL: Toàn quyền)
+             * @example AL
+             */
+            menuAuthrt: string;
+        };
+        UserRoleAssignRequest: {
+            /**
+             * @description User number (EMP_INFO.EMP_NO or MBR_INFO.MBR_ID) / Mã người dùng (mã nhân viên hoặc mã thành viên)
+             * @example user01
+             */
+            userNo: string;
+            /**
+             * @description Role Group ID / Mã nhóm vai trò
+             * @example RG00001
+             */
+            roleGroupId: string;
+            /**
+             * @description Role ID / Mã vai trò
+             * @example RCPT
+             */
+            roleId: string;
+        };
+        ApiResponseListUserRoleMpngResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["UserRoleMpngResponse"][];
+        };
+        UserRoleMpngResponse: {
+            /**
+             * @description User number / Mã người dùng
+             * @example user01
+             */
+            userNo?: string;
+            /**
+             * @description Role Group ID / Mã nhóm vai trò
+             * @example RG00001
+             */
+            roleGroupId?: string;
+            /**
+             * @description Role Group Name / Tên nhóm vai trò
+             * @example NPL Transaction Department
+             */
+            roleGroupNm?: string;
+            /**
+             * @description Role ID / Mã vai trò
+             * @example RCPT
+             */
+            roleId?: string;
+            /**
+             * @description Role Name / Tên vai trò
+             * @example Receptionist
+             */
+            roleNm?: string;
+            /**
+             * Format: date-time
+             * @description Assignment timestamp / Thời điểm gán vai trò
+             */
+            crtDt?: string;
+            /**
+             * @description Assigned by / Người thực hiện gán vai trò
+             * @example ADMIN
+             */
+            crtBy?: string;
+        };
+        CreateRoleGroupRequest: {
+            /**
+             * @description Role Group ID (format: RG + 5 digits) / Mã nhóm vai trò (định dạng: RG + 5 chữ số)
+             * @example RG00005
+             */
+            roleGroupId: string;
+            /**
+             * @description Role Group Name / Tên nhóm vai trò
+             * @example IT Department
+             */
+            roleGroupNm: string;
+            /**
+             * @description Use status (Y: Active, N: Inactive) / Trạng thái sử dụng (Y: Hoạt động, N: Không hoạt động)
+             * @example Y
+             */
+            useYn: string;
+        };
+        ApiResponseMembershipStatusResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["MembershipStatusResponse"];
+        };
+        MembershipStatusResponse: {
+            /**
+             * @description Member number
+             * @example TV00000001
+             */
+            mbrNo?: string;
+            /**
+             * @description Member status (P: Pending, U: Supplement requested, S: Active, C: Cancelled)
+             * @example S
+             */
+            mbrSttsCd?: string;
+            /**
+             * @description Membership grade (TMP: Temporary, GEN: General, FUL: Full)
+             * @example FUL
+             */
+            mbrGrdCd?: string;
+            /**
+             * @description Documents complete (Y/N)
+             * @example Y
+             */
+            dcmntCmpltYn?: string;
+            /**
+             * @description Membership period start (DD/MM/YYYY)
+             * @example 29/10/2026
+             */
+            mbrshpBgngDt?: string;
+            /**
+             * @description Membership period end (DD/MM/YYYY)
+             * @example 29/10/2027
+             */
+            mbrshpEndDt?: string;
+            /**
+             * @description Membership payment due date (DD/MM/YYYY)
+             * @example 13/11/2026
+             */
+            mbrshpPayDueDt?: string;
+        };
+        CheckMemberDocumentsRequest: {
+            /**
+             * @description Documents complete ('Y': complete, 'N': incomplete -> supplement request)
+             * @example Y
+             */
+            documentsComplete: string;
+            /**
+             * @description Scanned posted documents (file group ID from the file upload API, optional)
+             * @example 7c1d2e3f-4a5b-6c7d-8e9f-0a1b2c3d4e5f
+             */
+            scanFileId?: string;
+            /**
+             * @description What the applicant must supplement (required when documentsComplete = 'N'; shown to the applicant)
+             * @example Please upload a clear copy of the power of attorney.
+             */
+            supplementNote?: string;
+        };
+        ReceiveMemberApprovalRequest: {
+            /**
+             * @description Employee number of the assignee (processing step)
+             * @example EMP0000002
+             */
+            assigneeEmpNo: string;
+        };
+        ApiResponseMemberApprovalResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["MemberApprovalResponse"];
+        };
+        MemberApprovalResponse: {
+            /**
+             * @description Member number
+             * @example TV00000001
+             */
+            mbrNo?: string;
+            /**
+             * @description Approval history ID
+             * @example 3f1c2a9e-7b0d-4c55-9f61-2d8e4b7a1c90
+             */
+            atrzHstryId?: string;
+            /**
+             * @description Approval stage (NOT_RECEIVED, REQUESTED, IN_PROGRESS, APPROVED, REJECTED)
+             * @example REQUESTED
+             */
+            stage?: string;
+            /**
+             * Format: int32
+             * @description Current step number
+             * @example 2
+             */
+            nowStpNo?: number;
+            /**
+             * @description Approval status (INPROGRESS, COMPLETED, REJECTED)
+             * @example INPROGRESS
+             */
+            atrzSttsCd?: string;
+            /**
+             * @description Assignee employee number
+             * @example EMP0000002
+             */
+            assigneeEmpNo?: string;
+        };
+        RequestMemberApprovalRequest: {
+            /**
+             * @description Approver employee number (1st Approval step)
+             * @example EMP0000001
+             */
+            approverEmpNo: string;
+            /**
+             * @description SGDN member code issued by the SGDN internal system
+             * @example SGDN-000123
+             */
+            sgdnMbrCd: string;
+            /**
+             * @description Membership fee exemption ('Y': Exempt, 'N': Charged; default 'N')
+             * @example N
+             */
+            mbrshpFeeExmpYn?: string;
+            /**
+             * @description Membership fee payment status ('Y': Paid, 'N': Unpaid; ignored when exempt)
+             * @example Y
+             */
+            mbrshpPayYn: string;
+            /**
+             * @description Confirmation checkbox
+             * @example true
+             */
+            confirmed: boolean;
+        };
+        /** @description Login account credentials */
+        AccountRequest: {
+            loginType?: string;
+            loginId?: string;
+            /**
+             * Format: password
+             * @description Password
+             */
+            password?: string;
+        };
+        /** @description Data-sharing consent */
+        ConsentRequest: {
+            dataSharingAccepted?: boolean;
+            policyVersion?: string;
+        };
+        /** @description Member registration request DTO aligned with client-side registration schema */
+        CreateMemberRequest: {
+            /**
+             * @description Member type: P - Individual, F - Foreigner, O - Organization
+             * @example P
+             */
+            mbrTypeCd: string;
+            /**
+             * @description Registration upload session ID (optional in admin channel)
+             * @example 3f1c2a9e-7b0d-4c55-9f61-2d8e4b7a1c90
+             */
+            regSessionId?: string;
+            /** @description Terms and data sharing consent (optional in admin channel) */
+            consent?: components["schemas"]["ConsentRequest"];
+            /** @description Account login credentials */
+            account?: components["schemas"]["AccountRequest"];
+            /** @description Contact details (phone and email) */
+            contact?: components["schemas"]["ContactRequest"];
+            /** @description Individual or foreigner profile details (for type P or F) */
+            individual?: components["schemas"]["IndividualRequest"];
+            /** @description Organization profile details (for type O) */
+            organization?: components["schemas"]["OrganizationRequest"];
+            /**
+             * @description Member full name or company name (flat shortcut)
+             * @example Nguyen Van An
+             */
+            mbrNm?: string;
+            /**
+             * @description Account login ID (flat shortcut)
+             * @example member.user01@example.com
+             */
+            lgnId?: string;
+            /**
+             * @description Plain text password (flat shortcut)
+             * @example 1q2w3e4r1!
+             */
+            password?: string;
+            /**
+             * @description International calling code prefix
+             * @default +84
+             * @example +84
+             */
+            intlTelnoNtnNo: string;
+            /**
+             * @description Phone number (flat shortcut)
+             * @example 0912345678
+             */
+            mbrTelno?: string;
+            /**
+             * @description Email address (flat shortcut)
+             * @example member.an@example.com
+             */
+            mbrEmlAddr?: string;
+            /**
+             * @description Nationality code (ISO 3-alpha, e.g. VNM, USA)
+             * @example VNM
+             */
+            ntnCd?: string;
+            /**
+             * @description Identity document category code (CCCD, CMND, PSPT, BSNO)
+             * @example CCCD
+             */
+            uiiSeCd?: string;
+            /**
+             * @description Citizen identification number (CCCD)
+             * @example 001090123456
+             */
+            cccdNo?: string;
+            /**
+             * @description Passport number
+             * @example M12345678
+             */
+            ppNo?: string;
+            /**
+             * @description Tax identification number
+             * @example 0106180376
+             */
+            mstNo?: string;
+            /**
+             * @description Organization business registration number
+             * @example 0106180376
+             */
+            orgnzBrno?: string;
+            /**
+             * @description Birth date in DDMMYYYY format
+             * @example 15081990
+             */
+            brdt?: string;
+            /**
+             * @description Province / City code
+             * @example HNI
+             */
+            mctpvCd?: string;
+            /**
+             * @description District / Ward code
+             * @example 00070
+             */
+            distCd?: string;
+            /**
+             * @description Detailed address line
+             * @example 123
+             */
+            mbrDaddr1?: string;
+            /** @description Attachment file unique ID for Evidence 1 (ID Front / License / Passport) */
+            file1UnqId?: string;
+            /** @description Attachment file unique ID for Evidence 2 (ID Back) */
+            file2UnqId?: string;
+            /** @description Attachment file unique ID for Delegation / Power of Attorney */
+            dlgtAtchFileId?: string;
+        };
+        ApiResponseCreatedMemberDto: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["CreatedMemberDto"];
+        };
+        /** @description Summary of created member (compatible with client MemberRegisterResponse) */
+        CreatedMemberDto: {
+            /**
+             * @description Member number
+             * @example TV00000010
+             */
+            mbrNo?: string;
+            /**
+             * @description Member Name
+             * @example Tran Van Test
+             */
+            mbrNm?: string;
+            /**
+             * @description Member Type Code
+             * @example P
+             */
+            mbrTypeCd?: string;
+            /**
+             * @description Member Type Name
+             * @example Individual
+             */
+            mbrTypeNm?: string;
+            /**
+             * @description Status code
+             * @example P
+             */
+            mbrSttsCd?: string;
+            /**
+             * @description Status name
+             * @example Pending Approval/Join
+             */
+            mbrSttsNm?: string;
+            /**
+             * @description Account login ID (DB column LGN_ID)
+             * @example member.user01@example.com
+             */
+            lgnId?: string;
+            /**
+             * @description Login ID alias for client response parity
+             * @example member.user01@example.com
+             */
+            loginId?: string;
+            /**
+             * @description Email address
+             * @example member.user01@example.com
+             */
+            email?: string;
+            /**
+             * Format: date-time
+             * @description Registration timestamp
+             */
+            registeredAt?: string;
+            /**
+             * @description Registration result message
+             * @example Member registered successfully. Awaiting approval.
+             */
+            message?: string;
+            /**
+             * @description Approval stage
+             * @example NOT_RECEIVED
+             */
+            atrzStage?: string;
+            /**
+             * @description Available user action
+             * @example RECEIVE
+             */
+            availableAction?: string;
+            /** @description Attached verification documents */
+            files?: components["schemas"]["MemberAttachmentDto"][];
+        };
+        /** @description Batch member generation request */
+        BatchCreateMembersRequest: {
+            /**
+             * Format: int32
+             * @description Number of pending members to generate (1 to 50, default: 3)
+             * @example 3
+             */
+            count?: number;
+            /**
+             * @description Optional member type code (P: Individual, O: Organization, F: Foreigner, null: mixed)
+             * @example P
+             */
+            mbrTypeCd?: string;
+            /** @description Optional explicit custom member specifications */
+            members?: components["schemas"]["CreateMemberItemRequest"][];
+        };
+        /** @description Member specification for batch creation */
+        CreateMemberItemRequest: {
+            /**
+             * @description Member Name
+             * @example Tran Van Test
+             */
+            mbrNm?: string;
+            /**
+             * @description Member Type (P: Individual, O: Organization, F: Foreigner)
+             * @example P
+             */
+            mbrTypeCd?: string;
+            /**
+             * @description Email address
+             * @example test.member@example.com
+             */
+            emlAddr?: string;
+            /**
+             * @description Phone number
+             * @example 0912345678
+             */
+            telno?: string;
+            /**
+             * @description Organization name (for Organization type O)
+             * @example VAMC Testing Corp
+             */
+            orgnzNm?: string;
+            /**
+             * @description Organization Business Registration Number (for Organization type O)
+             * @example 0312987654
+             */
+            orgnzBrno?: string;
+        };
+        ApiResponseBatchCreateMembersResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["BatchCreateMembersResponse"];
+        };
+        /** @description Batch member creation response */
+        BatchCreateMembersResponse: {
+            /**
+             * Format: int32
+             * @description Total number of members created
+             * @example 3
+             */
+            createdCount?: number;
+            /** @description List of created member summaries */
+            members?: components["schemas"]["CreatedMemberDto"][];
+        };
+        CreateProvinceRequest: {
+            /**
+             * @description Province/City Code (3 characters, uppercase) / Mã Tỉnh/Thành phố (3 ký tự in hoa)
+             * @example HNI
+             */
+            mctpvCd: string;
+            /**
+             * @description Province/City Name / Tên Tỉnh/Thành phố
+             * @example Thành phố Hà Nội
+             */
+            mctpvNm: string;
+            /**
+             * Format: int32
+             * @description GSO Administrative Province Code / Mã hành chính Tổng cục Thống kê (GSO)
+             * @example 1
+             */
+            admdstCd: number;
+            /**
+             * Format: int32
+             * @description Sort Order / Thứ tự sắp xếp
+             * @example 1
+             */
+            sortSeq: number;
+            /**
+             * @description Use status (Y: Active, N: Inactive) / Trạng thái sử dụng (Y: Hoạt động, N: Không hoạt động)
+             * @example Y
+             */
+            useYn: string;
+        };
+        CreateDistrictRequest: {
+            /**
+             * @description District/Ward Code (5 digits) / Mã Quận/Huyện/Phường/Xã (5 chữ số)
+             * @example 00070
+             */
+            distCd: string;
+            /**
+             * @description Province/City Code (FK → MCTPV_CD) / Mã Tỉnh/Thành phố
+             * @example HNI
+             */
+            mctpvCd: string;
+            /**
+             * @description District/Ward Name / Tên Quận/Huyện/Phường/Xã
+             * @example Phường Hoàn Kiếm
+             */
+            distNm: string;
+            /**
+             * Format: int32
+             * @description Sort Order / Thứ tự sắp xếp
+             * @example 1
+             */
+            sortSeq?: number;
+            /**
+             * @description Use status (Y: Active, N: Inactive) / Trạng thái sử dụng (Y: Hoạt động, N: Không hoạt động)
+             * @example Y
+             */
+            useYn: string;
+        };
+        CreateInstitutionRequest: {
+            /**
+             * Format: int32
+             * @description Financial Institution Code (3 digits) / Mã tổ chức tài chính (3 chữ số)
+             * @example 203
+             */
+            fnstCd: number;
+            /**
+             * @description Financial Institution Full Name / Tên đầy đủ tổ chức tài chính
+             * @example Ngân hàng TMCP Ngoại thương Việt Nam
+             */
+            fnstNm: string;
+            /**
+             * @description Financial Institution Abbreviation / Tên viết tắt tổ chức tài chính
+             * @example Vietcombank
+             */
+            fnstAbbrNm?: string;
+            /**
+             * @description Use status (Y: Active, N: Inactive) / Trạng thái sử dụng (Y: Hoạt động, N: Không hoạt động)
+             * @example Y
+             */
+            useYn: string;
+        };
+        CreateBranchRequest: {
+            /**
+             * Format: int32
+             * @description Branch Code (up to 8 digits) / Mã chi nhánh (tối đa 8 chữ số)
+             * @example 203001
+             */
+            fnstBrnchCd: number;
+            /**
+             * Format: int32
+             * @description Financial Institution Code (FK → FNST_CD) / Mã tổ chức tài chính
+             * @example 203
+             */
+            fnstCd: number;
+            /**
+             * @description Branch Name / Tên chi nhánh
+             * @example Hội sở chính - Vietcombank
+             */
+            fnstBrnchNm: string;
+            /**
+             * @description Sales Branch / Office Name / Tên phòng giao dịch
+             * @example Hội sở chính Ngân hàng TMCP Ngoại thương Việt Nam
+             */
+            fnstSlsbrNm?: string;
+            /**
+             * @description Branch Address / Địa chỉ chi nhánh
+             * @example 198
+             */
+            fnstBrnchAddr?: string;
+            /**
+             * @description Classification Code (FBC01: Head Office, FBC02: Tier 1, FBC03: Tier 2, etc.) / Mã phân loại chi nhánh
+             * @example FBC01
+             */
+            fnstBrnchClsfCd: string;
+            /**
+             * Format: int32
+             * @description GSO Administrative Province Code / Mã tỉnh/thành phố theo GSO
+             * @example 1
+             */
+            admdstCd: number;
+            /**
+             * @description Use status (Y: Active, N: Inactive) / Trạng thái sử dụng (Y: Hoạt động, N: Không hoạt động)
+             * @example Y
+             */
+            useYn: string;
+        };
+        /** @description Create Employee Request / Yêu cầu Tạo mới Nhân viên */
+        CreateEmpRequest: {
+            /**
+             * @description Employee number / login ID (3-10 alphanumeric characters) / Mã nhân viên / ID đăng nhập (3-10 ký tự chữ và số)
+             * @example user02
+             */
+            empNo: string;
+            /**
+             * @description Employee full name / Họ và tên nhân viên
+             * @example Nguyen Van A
+             */
+            empNm: string;
+            /**
+             * Format: email
+             * @description Email address / Địa chỉ email
+             * @example nguyenvana@vamc.com.vn
+             */
+            empEmlAddr: string;
+            /**
+             * @description Office landline phone number (02XX...) / Số điện thoại bàn văn phòng (02XX...)
+             * @example 02431234567
+             */
+            empTelno?: string;
+            /**
+             * @description Mobile phone number / Số điện thoại di động
+             * @example 0912345678
+             */
+            empMoblTelno?: string;
+            /**
+             * @description Initial login password (min 8 chars) / Mật khẩu khởi tạo (tối thiểu 8 ký tự)
+             * @example Password123!
+             */
+            password: string;
+            /**
+             * @description Employee status code (H: Active, L: Leave/Locked, R: Retired, S: Suspended) / Mã trạng thái nhân viên (H: Đang làm việc, L: Nghỉ phép/Khóa, R: Nghỉ việc, S: Đình chỉ)
+             * @example H
+             */
+            empSttsCd: string;
+            /**
+             * @description Job position name / Chức danh vị trí công việc
+             * @example Senior Specialist / Chuyên viên chính
+             */
+            jbpsNm?: string;
+        };
+        CreateServiceGuideSectionRequest: {
+            /**
+             * @description Guide page: TRD trading, BUY purchase, SELL sale, CNSL consulting, FEE fee schedule / Trang hướng dẫn
+             * @example BUY
+             */
+            page: string;
+            /**
+             * @description Section key read by the platform (PST_TAG), e.g. OVERVIEW, ELIGIBLE_ASSETS, PROCESS_STEPS / Khóa section
+             * @example PROCESS_STEPS
+             */
+            sectionKey: string;
+            /**
+             * @description Vietnamese title / Tiêu đề tiếng Việt
+             * @example Quy trình mua nợ xấu
+             */
+            title: string;
+            /**
+             * @description Vietnamese content / Nội dung tiếng Việt
+             * @example Bước 1: Tìm kiếm và kiểm tra thông tin
+             */
+            content: string;
+            /**
+             * @description English title / Tiêu đề tiếng Anh
+             * @example NPL Purchase Process
+             */
+            titleEn?: string;
+            /**
+             * @description English content / Nội dung tiếng Anh
+             * @example STEP 1: Search and check information
+             */
+            contentEn?: string;
+            /**
+             * @description Summary (PST_SMRY_CN) / Tóm tắt
+             * @example Quy trình 5 bước mua khoản nợ xấu
+             */
+            summary?: string;
+            /**
+             * @description Published (Y/N, default Y) / Đăng (mặc định Y)
+             * @example Y
+             */
+            published?: string;
+            /**
+             * @description Attachment file group ID, e.g. the fee schedule document of FEE / FEE_SCHEDULE / Mã nhóm tệp đính kèm
+             * @example 3f2b1c9e-8a7d-4e6f-9b0a-1c2d3e4f5a6b
+             */
+            attachmentFileId?: string;
+        };
+        CreateNplAnnouncementRequest: {
+            /**
+             * @description Announcement type (NPL_NTC_TYPE: APPR appraisal, SALE sale, AUCT auction) / Loại thông báo
+             * @example APPR
+             */
+            category: string;
+            /**
+             * @description Title / Tiêu đề
+             * @example Thông báo lựa chọn tổ chức thẩm định giá
+             */
+            title: string;
+            /**
+             * @description Content (HTML from editor) / Nội dung (HTML)
+             * @example <p>VAMC thông báo...</p>
+             */
+            content: string;
+            /**
+             * @description English title / Tiêu đề tiếng Anh
+             * @example Notice on selecting an appraisal organization
+             */
+            titleEn?: string;
+            /**
+             * @description English content / Nội dung tiếng Anh
+             * @example <p>VAMC announces...</p>
+             */
+            contentEn?: string;
+            /**
+             * @description Document number shown on the platform (PST_TAG) / Số văn bản
+             * @example TB-VAMC-SGDN 359
+             */
+            docNumber?: string;
+            /**
+             * @description Summary shown in the list (PST_SMRY_CN) / Tóm tắt
+             * @example Sàn giao dịch nợ VAMC thông báo lựa chọn tổ chức thẩm định giá
+             */
+            summary?: string;
+            /**
+             * @description Published (Y/N, default N) / Đăng bài (mặc định N)
+             * @example N
+             */
+            published?: string;
+            /**
+             * @description Top display (Y/N, default N) / Hiển thị đầu trang
+             * @example N
+             */
+            pinned?: string;
+            /**
+             * Format: int32
+             * @description Top display order (1~5, required when pinned) / Thứ tự hiển thị đầu trang
+             * @example 1
+             */
+            pinOrder?: number;
+            /**
+             * @description Attachment file group ID from POST /api/v1/contents/files / Mã nhóm tệp đính kèm
+             * @example 3f2b1c9e-8a7d-4e6f-9b0a-1c2d3e4f5a6b
+             */
+            attachmentFileId?: string;
+        };
+        CreateNoticeRequest: {
+            /**
+             * @description Notice type (NTC_MTTR_SE_CD: SVC service notice, BID bid notice) / Loại thông báo (SVC: dịch vụ, BID: đấu thầu)
+             * @example SVC
+             */
+            category: string;
+            /**
+             * @description Title / Tiêu đề
+             * @example Thông báo bảo trì hệ thống
+             */
+            title: string;
+            /**
+             * @description Content (HTML from editor) / Nội dung (HTML từ trình soạn thảo)
+             * @example <p>Hệ thống sẽ bảo trì từ 22:00.</p>
+             */
+            content: string;
+            /**
+             * @description English title / Tiêu đề tiếng Anh
+             * @example System maintenance notice
+             */
+            titleEn?: string;
+            /**
+             * @description English content / Nội dung tiếng Anh
+             * @example <p>The system will be under maintenance from 22:00.</p>
+             */
+            contentEn?: string;
+            /**
+             * @description Published (Y/N, default N) / Đăng bài (Y/N, mặc định N)
+             * @example N
+             */
+            published?: string;
+            /**
+             * @description Pin to top (Y/N, default N) / Ghim đầu trang (Y/N, mặc định N)
+             * @example N
+             */
+            pinned?: string;
+            /**
+             * Format: int32
+             * @description Pin order (1~5, required when pinned) / Thứ tự ghim (1~5, bắt buộc khi ghim)
+             * @example 1
+             */
+            pinOrder?: number;
+            /**
+             * @description Attachment file group ID from POST /api/v1/contents/files / Mã nhóm tệp đính kèm
+             * @example 3f2b1c9e-8a7d-4e6f-9b0a-1c2d3e4f5a6b
+             */
+            attachmentFileId?: string;
+        };
+        ApiResponseContentFileGroupResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["ContentFileGroupResponse"];
+        };
+        ContentFileGroupResponse: {
+            /**
+             * @description File group ID to pass as attachmentFileId / Mã nhóm tệp dùng cho attachmentFileId
+             * @example 7c1d2e3f-4a5b-6c7d-8e9f-0a1b2c3d4e5f
+             */
+            fileUnqId?: string;
+            /** @description Active files of the group / Các tệp còn hiệu lực trong nhóm */
+            files?: components["schemas"]["ContentFileResponse"][];
+        };
+        CreateFaqRequest: {
+            /**
+             * @description FAQ category (FAQ_CTGRY_CD) / Danh mục FAQ
+             * @example MEMB
+             */
+            category: string;
+            /**
+             * @description Question / Câu hỏi
+             * @example Làm thế nào để đăng ký hội viên?
+             */
+            question: string;
+            /**
+             * @description Answer (HTML) / Câu trả lời (HTML)
+             * @example <p>Chọn Đăng ký ở góc trên bên phải.</p>
+             */
+            answer: string;
+            /**
+             * @description English question / Câu hỏi tiếng Anh
+             * @example How do I register as a member?
+             */
+            questionEn?: string;
+            /**
+             * @description English answer / Câu trả lời tiếng Anh
+             * @example <p>Click Sign up at the top right.</p>
+             */
+            answerEn?: string;
+            /**
+             * @description Published (Y/N, default N) / Đăng bài (Y/N, mặc định N)
+             * @example N
+             */
+            published?: string;
+        };
+        /** @description Common Code Group Creation Request / Yêu cầu tạo mới Nhóm mã dùng chung */
+        CreateCodeGroupRequest: {
+            /**
+             * @description Code Group ID / Mã nhóm mã (VD: USER_STTS_CD, LN_DOC_TYPE)
+             * @example CUST_TYPE_CD
+             */
+            groupCd: string;
+            /**
+             * @description Code Group Name / Tên nhóm mã
+             * @example Customer Type Code / Mã phân loại khách hàng
+             */
+            groupNm: string;
+            /**
+             * @description Code Group Description / Mô tả nhóm mã
+             * @example Classification codes for customer categories
+             */
+            groupExpln?: string;
+            /**
+             * @description Use Status (Y/N) / Trạng thái sử dụng (Y/N)
+             * @default Y
+             * @example Y
+             */
+            useYn: string;
+        };
+        /** @description Common Code Batch Save Request / Yêu cầu lưu / xóa hàng loạt mã chi tiết */
+        BatchSaveCodesRequest: {
+            /** @description List of codes to insert or update / Danh sách mã cần thêm mới hoặc cập nhật */
+            toSave?: components["schemas"]["SaveCodeItemRequest"][];
+            /**
+             * @description List of code values to delete / Danh sách giá trị mã cần xóa
+             * @example [
+             *       "TEMP_01",
+             *       "OBSOLETE"
+             *     ]
+             */
+            deleteCodes?: string[];
+        };
+        /** @description Common Code Detail Item Request / Yêu cầu bản ghi mã chi tiết */
+        SaveCodeItemRequest: {
+            /**
+             * @description Code value / Giá trị mã
+             * @example VIP
+             */
+            cd: string;
+            /**
+             * @description Code display name / Tên hiển thị mã
+             * @example VIP Customer / Khách hàng VIP
+             */
+            cdNm: string;
+            /**
+             * @description Code description / Mô tả mã
+             * @example High priority customer category
+             */
+            cdExpln?: string;
+            /**
+             * Format: int32
+             * @description Sort sequence (0 - 999) / Thứ tự hiển thị
+             * @default 1
+             * @example 1
+             */
+            sortSeq: number;
+            /**
+             * @description Use Status (Y/N) / Trạng thái sử dụng (Y/N)
+             * @default Y
+             * @example Y
+             */
+            useYn: string;
+            /**
+             * @description Multilingual Label Code (optional, auto-generated if omitted) / Mã nhãn đa ngôn ngữ (tùy chọn)
+             * @example lbl.code.cust_type_cd.vip
+             */
+            lblCd?: string;
+        };
+        ApiResponseListCodeResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["CodeResponse"][];
+        };
+        /** @description Common Code Detail Response / Thông tin Mã chi tiết */
+        CodeResponse: {
+            /**
+             * @description Code Group ID / Mã nhóm mã
+             * @example CUST_TYPE_CD
+             */
+            groupCd?: string;
+            /**
+             * @description Code Value / Giá trị mã
+             * @example VIP
+             */
+            cd?: string;
+            /**
+             * @description Code Name / Tên mã
+             * @example VIP Customer
+             */
+            cdNm?: string;
+            /**
+             * @description Code Description / Mô tả mã
+             * @example High priority customer category
+             */
+            cdExpln?: string;
+            /**
+             * Format: int32
+             * @description Sort sequence / Thứ tự hiển thị
+             * @example 1
+             */
+            sortSeq?: number;
+            /**
+             * @description Use Status (Y/N) / Trạng thái sử dụng (Y/N)
+             * @example Y
+             */
+            useYn?: string;
+            /**
+             * @description Multilingual Label Code / Mã nhãn đa ngôn ngữ
+             * @example lbl.code.cust_type_cd.vip
+             */
+            lblCd?: string;
+            /**
+             * Format: date-time
+             * @description Creation timestamp / Thời điểm tạo
+             */
+            crtDt?: string;
+            /**
+             * @description Creator user ID / Người tạo
+             * @example ADMIN
+             */
+            crtBy?: string;
+            /**
+             * Format: date-time
+             * @description Modification timestamp / Thời điểm cập nhật
+             */
+            mdfcnDt?: string;
+            /**
+             * @description Modifier user ID / Người cập nhật
+             * @example ADMIN
+             */
+            mdfcnBy?: string;
+        };
+        /** @description Common Code Group Domain Copy Request / Yêu cầu sao chép nhóm mã */
+        CopyCodeGroupRequest: {
+            /**
+             * @description Source Code Group ID / Mã nhóm mã nguồn
+             * @example BANK_TYPE_CD
+             */
+            sourceGroupCd: string;
+            /**
+             * @description Target Code Group ID / Mã nhóm mã đích mới
+             * @example FINANCE_TYPE_CD
+             */
+            targetGroupCd: string;
+            /**
+             * @description Target Code Group Name / Tên nhóm mã đích
+             * @example Financial Organization Type / Phân loại tổ chức tài chính
+             */
+            targetGroupNm: string;
+        };
+        RejectApprovalRequest: {
+            /**
+             * @description Rejection reason
+             * @example Identification documents are illegible or blurry
+             */
+            rjctRsn: string;
+            /**
+             * @description Confirmation checkbox
+             * @example true
+             */
+            confirmed: boolean;
+        };
+        ApiResponseApprovalDetailResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["ApprovalDetailResponse"];
+        };
+        /** @description Approval session details */
+        ApprovalDetailResponse: {
+            /**
+             * @description Approval session ID
+             * @example a1b2c3d4-e5f6-7890-abcd-ef1234567890
+             */
+            atrzHstryId?: string;
+            /**
+             * @description Approval process code
+             * @example PROC_MBR_JOIN
+             */
+            atrzProcCd?: string;
+            /**
+             * @description Approval process name
+             * @example Member Join Approval
+             */
+            atrzProcNm?: string;
+            /**
+             * @description Target type code
+             * @example MBR
+             */
+            atrzTrgtSeCd?: string;
+            /**
+             * @description Target ID
+             * @example TV00000001
+             */
+            atrzTrgtId?: string;
+            /**
+             * Format: int32
+             * @description Current step number
+             * @example 3
+             */
+            nowStpNo?: number;
+            /**
+             * @description Session status (INPROGRESS, COMPLETED, REJECTED)
+             * @example COMPLETED
+             */
+            atrzSttsCd?: string;
+            /**
+             * Format: date-time
+             * @description Completion datetime
+             * @example 2026-10-16T15:00:00
+             */
+            atrzCmptnDt?: string;
+            /**
+             * @description Receiver employee number
+             * @example EMP0000001
+             */
+            rtsoEmpNo?: string;
+            /**
+             * Format: date-time
+             * @description Receipt datetime
+             * @example 2026-10-16T10:00:00
+             */
+            rtsoDt?: string;
+            /**
+             * @description List of steps and their history
+             * @example []
+             */
+            steps?: components["schemas"]["ApprovalStepDetailDto"][];
+        };
+        /** @description Approval step detail */
+        ApprovalStepDetailDto: {
+            /**
+             * Format: int32
+             * @description Step number (1: Receipt, 2: Processing, 3: 1st Approval)
+             * @example 1
+             */
+            stpNo?: number;
+            /**
+             * @description Step name
+             * @example Receipt
+             */
+            stpNm?: string;
+            /**
+             * @description Step status (WAITING, INPROGRESS, APPROVED, REJECTED)
+             * @example APPROVED
+             */
+            status?: string;
+            /**
+             * @description Processing employee number
+             * @example admin
+             */
+            empNo?: string;
+            /**
+             * @description Processing employee name
+             * @example Admin User
+             */
+            empNm?: string;
+            /**
+             * Format: date-time
+             * @description Processing datetime
+             * @example 2026-10-16T10:00:00
+             */
+            processedAt?: string;
+            /**
+             * @description Comment or rejection reason
+             * @example Documents verified
+             */
+            comment?: string;
+        };
+        ApproveApprovalRequest: {
+            /**
+             * @description Confirmation checkbox
+             * @example true
+             */
+            confirmed: boolean;
+            /**
+             * @description Approval comment
+             * @example Application verified and approved
+             */
+            cmntCn?: string;
+        };
+        ApiResponseExcelParseResult: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["ExcelParseResult"];
+        };
+        ExcelParseResult: {
+            success?: boolean;
+            /** Format: int32 */
+            totalRows?: number;
+            /** Format: int32 */
+            failRows?: number;
+            errors?: components["schemas"]["ExcelRowError"][];
+            data?: {
+                [key: string]: string;
+            }[];
+            rowNums?: number[];
+        };
+        ExcelRowError: {
+            /** Format: int32 */
+            row?: number;
+            col?: string;
+            header?: string;
+            value?: string;
+            message?: string;
+        };
+        LblSaveItem: {
+            lblCd: string;
+            scrnId: string;
+            lblSeCd: string;
+            lblExpln?: string;
+            langCd?: string;
+            trslLtr?: string;
+        };
+        /** @description File Upload Response / Phản hồi tải lên tập tin */
+        FileUploadResponse: {
+            /**
+             * @description Stored file name / Tên tập tin đã lưu
+             * @example 550e8400-e29b-41d4-a716-446655440000.pdf
+             */
+            fileName?: string;
+            /**
+             * @description File download URI / Đường dẫn tải về tập tin
+             * @example /api/files/download/550e8400-e29b-41d4-a716-446655440000.pdf
+             */
+            fileDownloadUri?: string;
+            /**
+             * @description File MIME type / Loại MIME của tập tin
+             * @example application/pdf
+             */
+            fileType?: string;
+            /**
+             * Format: int64
+             * @description File size in bytes / Kích thước tập tin (bytes)
+             * @example 102400
+             */
+            size?: number;
+        };
+        /** @description Dữ liệu hồ sơ nhân viên / Employee profile data */
+        EmployeeProfileDto: {
+            /**
+             * @description Employee number / login ID / Mã nhân viên / ID đăng nhập
+             * @example userxxx
+             */
+            empNo?: string;
+            /**
+             * @description Employee full name / Họ và tên nhân viên
+             * @example Nguyen Van A
+             */
+            empNm?: string;
+            /**
+             * @description Masked email address / Địa chỉ email đã che mặt nạ
+             * @example us***@vamc.com.vn
+             */
+            empEmlAddr?: string;
+            /**
+             * @description Office landline phone number / Số điện thoại bàn văn phòng
+             * @example 02431234567
+             */
+            empTelno?: string;
+            /**
+             * @description Masked mobile phone number / Số điện thoại di động đã che mặt nạ
+             * @example 091****5678
+             */
+            empMoblTelno?: string;
+            /**
+             * @description Employee status code (H, L, R, S) / Mã trạng thái nhân viên (H, L, R, S)
+             * @example H
+             */
+            empSttsCd?: string;
+            /**
+             * @description Job position name / Chức danh vị trí công việc
+             * @example Senior Specialist
+             */
+            jbpsNm?: string;
+        };
+        /** @description Login Response / Phản hồi đăng nhập */
+        LoginResponse: {
+            /** @description Access token / Token truy cập (Access Token) */
+            accessToken?: string;
+            /** @description Refresh token / Token làm mới (Refresh Token) */
+            refreshToken?: string;
+            /**
+             * @description Token type / Loại Token
+             * @example Bearer
+             */
+            tokenType?: string;
+            /**
+             * Format: int64
+             * @description Token expiration duration in milliseconds / Thời gian hết hạn của token (mili giây)
+             */
+            expiresIn?: number;
+            /** @description Flag indicating password change required (initial default password or >90 days) */
+            requirePasswordChange?: boolean;
+            /** @description Employee Profile Information */
+            employee?: components["schemas"]["EmployeeProfileDto"];
+            /** @description List of assigned Role IDs */
+            roles?: string[];
+            /** @description Role-based Admin Menu Hierarchy (MENU_SE_CD = 'A') */
+            menuTrees?: components["schemas"]["MenuMng"][];
+        };
+        MenuMng: {
+            menuId?: string;
+            menuCd?: string;
+            upMenuId?: string;
+            upMenuCd?: string;
+            menuSeCd?: string;
+            lblCd?: string;
+            menuUrlAddr?: string;
+            menuExpln?: string;
+            /** Format: int32 */
+            menuSeq?: number;
+            /** Format: int32 */
+            menuDpth?: number;
+            useYn?: string;
+            /** Format: date-time */
+            crtDt?: string;
+            crtBy?: string;
+            /** Format: date-time */
+            mdfcnDt?: string;
+            mdfcnBy?: string;
+            menuNmDisplay?: string;
+            sortPath?: string;
+            menuLblVal?: string;
+            menuAuthrt?: string;
+        };
+        /** @description Login Request / Yêu cầu đăng nhập */
+        LoginRequest: {
+            /**
+             * @description Login ID (Employee number EMP_INFO.EMP_NO) / Mã đăng nhập (Mã nhân viên EMP_INFO.EMP_NO)
+             * @example admin
+             */
+            loginId: string;
+            /**
+             * @description Password / Mật khẩu
+             * @example admin1234!
+             */
+            password: string;
+        };
+        ApiResponseObject: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: unknown;
+        };
+        FeeIdsRequest: {
+            /**
+             * @description Fee item IDs selected in the grid / Mã mục phí được chọn
+             * @example [
+             *       "FEE-CNS-0001"
+             *     ]
+             */
+            feeIds: string[];
+            /**
+             * @description Use flag for PATCH /use (Y/N); ignored by DELETE / Trạng thái sử dụng
+             * @example Y
+             */
+            useYn?: string;
+        };
+        ApiResponseInteger: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            /** Format: int32 */
+            data?: number;
+        };
+        ReorderFaqRequest: {
+            /**
+             * @description FAQ category (FAQ_CTGRY_CD) / Danh mục FAQ
+             * @example MEMB
+             */
+            category: string;
+            /**
+             * @description Every FAQ of the category in the desired display order / Toàn bộ FAQ của danh mục theo thứ tự mong muốn
+             * @example [
+             *       "faq-2",
+             *       "faq-1"
+             *     ]
+             */
+            pstNos: string[];
+        };
+        PublishPostsRequest: {
+            /**
+             * @description Post numbers selected in the grid / Danh sách mã bài viết được chọn
+             * @example [
+             *       "3f2b1c9e-8a7d-4e6f-9b0a-1c2d3e4f5a6b"
+             *     ]
+             */
+            pstNos: string[];
+            /**
+             * @description Y: post, N: stop posting / Y: đăng, N: dừng đăng
+             * @example Y
+             */
+            published: string;
+        };
+        UpdatePostStatusRequest: {
+            /**
+             * @description Post category (notice type / FAQ category) / Danh mục bài viết
+             * @example SVC
+             */
+            category: string;
+            /**
+             * @description Published (Y/N) / Đăng bài (Y/N)
+             * @example Y
+             */
+            published: string;
+            /**
+             * @description Pin to top (Y/N, notices only) / Ghim đầu trang (Y/N, chỉ cho thông báo)
+             * @example N
+             */
+            pinned?: string;
+            /**
+             * Format: int32
+             * @description Pin order (1~5, required when pinned) / Thứ tự ghim (1~5, bắt buộc khi ghim)
+             * @example 1
+             */
+            pinOrder?: number;
+        };
+        BannerIdsRequest: {
+            /**
+             * @description Banner IDs selected in the grid / Mã banner được chọn
+             * @example [
+             *       "3f2b1c9e-8a7d-4e6f-9b0a-1c2d3e4f5a6b"
+             *     ]
+             */
+            bannerIds: string[];
+            /**
+             * @description Use flag for PATCH /use (Y/N) / Trạng thái sử dụng
+             * @example Y
+             */
+            useYn?: string;
+        };
+        /** @description Pagination Request / Yêu cầu phân trang */
+        PageRequest: {
+            /**
+             * Format: int32
+             * @description Page number (1-based) / Số trang (bắt đầu từ 1)
+             * @default 1
+             * @example 1
+             */
+            page: number;
+            /**
+             * Format: int32
+             * @description Page size / Số lượng bản ghi mỗi trang
+             * @default 10
+             * @example 10
+             */
+            size: number;
+            /**
+             * @description Sort column / Cột cần sắp xếp
+             * @example created_at
+             */
+            sortBy?: string;
+            /**
+             * @description Sort direction (ASC/DESC) / Hướng sắp xếp (ASC/DESC)
+             * @default ASC
+             * @example DESC
+             */
+            sortDirection: string;
+            safeSortBy?: string;
+            safeSortDirection?: string;
+            /** Format: int32 */
+            offset?: number;
+        };
+        ApiResponsePageResponseRoleResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["PageResponseRoleResponse"];
+        };
+        /** @description Paginated Response / Phản hồi phân trang */
+        PageResponseRoleResponse: {
+            /** @description Data list / Danh sách dữ liệu */
+            content?: components["schemas"]["RoleResponse"][];
+            /**
+             * Format: int32
+             * @description Current page number (1-based) / Số trang hiện tại
+             */
+            page?: number;
+            /**
+             * Format: int32
+             * @description Page size / Số lượng bản ghi mỗi trang
+             */
+            size?: number;
+            /**
+             * Format: int64
+             * @description Total number of records / Tổng số bản ghi
+             */
+            totalElements?: number;
+            /**
+             * Format: int32
+             * @description Total number of pages / Tổng số trang
+             */
+            totalPages?: number;
+        };
+        ApiResponseListRoleMenuPermissionResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["RoleMenuPermissionResponse"][];
+        };
+        /** @description Role menu permission matrix item / Mục ma trận phân quyền menu theo vai trò */
+        RoleMenuPermissionResponse: {
+            /**
+             * @description Menu code / Mã menu
+             * @example A01010000
+             */
+            menuCd?: string;
+            /**
+             * @description Parent menu code / Mã menu cha
+             * @example A01000000
+             */
+            upMenuCd?: string;
+            /**
+             * @description Menu name display (with indentation) / Tên hiển thị menu (kèm thụt lề)
+             * @example User Management
+             */
+            menuNmDisplay?: string;
+            /**
+             * @description Multilingual translated label value / Giá trị nhãn đa ngôn ngữ đã dịch
+             * @example Quản lý người dùng
+             */
+            menuLblVal?: string;
+            /**
+             * @description Menu URL address / Địa chỉ đường dẫn URL của menu
+             * @example /system/users
+             */
+            menuUrlAddr?: string;
+            /**
+             * Format: int32
+             * @description Menu hierarchy depth / Cấp độ sâu phân tầng của menu
+             * @example 2
+             */
+            menuDpth?: number;
+            /**
+             * Format: int32
+             * @description Display sequence order / Thứ tự sắp xếp hiển thị
+             * @example 1
+             */
+            menuSeq?: number;
+            /**
+             * @description Hierarchy sort path / Đường dẫn sắp xếp cây phân cấp
+             * @example 001-001
+             */
+            sortPath?: string;
+            /**
+             * @description Role group ID / Mã nhóm vai trò
+             * @example RG00001
+             */
+            roleGroupId?: string;
+            /**
+             * @description Role ID / Mã vai trò
+             * @example RCPT
+             */
+            roleId?: string;
+            /**
+             * @description Assigned authority level (AL, WT, RD, or null if unassigned) / Mức quyền được gán (AL, WT, RD, hoặc null nếu chưa gán)
+             * @example AL
+             */
+            menuAuthrt?: string;
+            /**
+             * Format: date-time
+             * @description Created date / Ngày tạo
+             * @example 2026-09-24 10:00:00
+             */
+            crtDt?: string;
+            /**
+             * @description Created by user ID / Người tạo
+             * @example admin
+             */
+            crtBy?: string;
+            /**
+             * Format: date-time
+             * @description Modified date / Ngày chỉnh sửa
+             * @example 2026-09-24 10:00:00
+             */
+            mdfcnDt?: string;
+            /**
+             * @description Modified by user ID / Người chỉnh sửa
+             * @example admin
+             */
+            mdfcnBy?: string;
+        };
+        ApiResponseRoleMenuPermissionResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["RoleMenuPermissionResponse"];
+        };
+        ApiResponsePageResponseRoleUserResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["PageResponseRoleUserResponse"];
+        };
+        /** @description Paginated Response / Phản hồi phân trang */
+        PageResponseRoleUserResponse: {
+            /** @description Data list / Danh sách dữ liệu */
+            content?: components["schemas"]["RoleUserResponse"][];
+            /**
+             * Format: int32
+             * @description Current page number (1-based) / Số trang hiện tại
+             */
+            page?: number;
+            /**
+             * Format: int32
+             * @description Page size / Số lượng bản ghi mỗi trang
+             */
+            size?: number;
+            /**
+             * Format: int64
+             * @description Total number of records / Tổng số bản ghi
+             */
+            totalElements?: number;
+            /**
+             * Format: int32
+             * @description Total number of pages / Tổng số trang
+             */
+            totalPages?: number;
+        };
+        /** @description Response DTO for users assigned to a role / Phản hồi danh sách người dùng được gán theo vai trò */
+        RoleUserResponse: {
+            /**
+             * @description User number (EMP_NO or MBR_NO) / Mã người dùng (mã nhân viên hoặc thành viên)
+             * @example admin
+             */
+            userNo?: string;
+            /**
+             * @description User full name / Họ và tên người dùng
+             * @example Admin / Quản trị viên
+             */
+            userNm?: string;
+            /**
+             * @description Masked email address / Địa chỉ email đã che mặt nạ
+             * @example ad***@vamc.com.vn
+             */
+            email?: string;
+            /**
+             * @description Office landline phone number / Số điện thoại bàn
+             * @example 02431234567
+             */
+            telno?: string;
+            /**
+             * @description Masked mobile phone number / Số điện thoại di động đã che mặt nạ
+             * @example 091-****-5678
+             */
+            mobilePhone?: string;
+            /**
+             * @description Employee status code (H: Active, L: Leave, R: Retired, S: Suspended) / Mã trạng thái nhân viên
+             * @example H
+             */
+            empSttsCd?: string;
+            /**
+             * @description Job position name / Chức danh vị trí công việc
+             * @example Senior Specialist / Chuyên viên chính
+             */
+            jbpsNm?: string;
+            /**
+             * @description Role Group ID / Mã nhóm vai trò
+             * @example RG00001
+             */
+            roleGroupId?: string;
+            /**
+             * @description Role Group Name / Tên nhóm vai trò
+             * @example NPL Transaction Department
+             */
+            roleGroupNm?: string;
+            /**
+             * @description Role ID / Mã vai trò
+             * @example RCPT
+             */
+            roleId?: string;
+            /**
+             * @description Role Name / Tên vai trò
+             * @example Receptionist
+             */
+            roleNm?: string;
+            /**
+             * Format: date-time
+             * @description Assignment timestamp / Thời điểm gán vai trò
+             */
+            assignedAt?: string;
+            /**
+             * @description Assigned by user ID / Người thực hiện gán vai trò
+             * @example ADMIN
+             */
+            assignedBy?: string;
+        };
+        ApiResponseListRoleUserResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["RoleUserResponse"][];
+        };
+        ApiResponseListRoleResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["RoleResponse"][];
+        };
+        ApiResponsePageResponseRoleGroupResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["PageResponseRoleGroupResponse"];
+        };
+        /** @description Paginated Response / Phản hồi phân trang */
+        PageResponseRoleGroupResponse: {
+            /** @description Data list / Danh sách dữ liệu */
+            content?: components["schemas"]["RoleGroupResponse"][];
+            /**
+             * Format: int32
+             * @description Current page number (1-based) / Số trang hiện tại
+             */
+            page?: number;
+            /**
+             * Format: int32
+             * @description Page size / Số lượng bản ghi mỗi trang
+             */
+            size?: number;
+            /**
+             * Format: int64
+             * @description Total number of records / Tổng số bản ghi
+             */
+            totalElements?: number;
+            /**
+             * Format: int32
+             * @description Total number of pages / Tổng số trang
+             */
+            totalPages?: number;
+        };
+        ApiResponseListRoleGroupResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["RoleGroupResponse"][];
+        };
+        FeeSearchRequest: {
+            /**
+             * @description In use filter (Y/N, empty = all) / Lọc trạng thái sử dụng
+             * @example Y
+             */
+            useYn?: string;
+            /**
+             * @description Fee category (ANFE, CNSLT, MDT) / Loại phí
+             * @example CNSLT
+             */
+            category?: string;
+            /**
+             * Format: date
+             * @description Registration date from (dd/MM/yyyy) / Ngày đăng ký từ
+             * @example 01/01/2021
+             */
+            fromDate?: string;
+            /**
+             * Format: date
+             * @description Registration date to (dd/MM/yyyy) / Ngày đăng ký đến
+             * @example 31/12/2026
+             */
+            toDate?: string;
+            /**
+             * @description Keyword on fee ID, item name or description / Từ khóa theo mã, tên hoặc mô tả
+             * @example Consulting
+             */
+            keyword?: string;
+        };
+        ApiResponsePageResponseFeeResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["PageResponseFeeResponse"];
+        };
+        /** @description Paginated Response / Phản hồi phân trang */
+        PageResponseFeeResponse: {
+            /** @description Data list / Danh sách dữ liệu */
+            content?: components["schemas"]["FeeResponse"][];
+            /**
+             * Format: int32
+             * @description Current page number (1-based) / Số trang hiện tại
+             */
+            page?: number;
+            /**
+             * Format: int32
+             * @description Page size / Số lượng bản ghi mỗi trang
+             */
+            size?: number;
+            /**
+             * Format: int64
+             * @description Total number of records / Tổng số bản ghi
+             */
+            totalElements?: number;
+            /**
+             * Format: int32
+             * @description Total number of pages / Tổng số trang
+             */
+            totalPages?: number;
+        };
+        MemberSearchRequest: {
+            /**
+             * @description Raw member status codes (MBR_STTS_CD: P, U, S, R, C, L, D). For the classification filter of the list screen use mbrClsCds
+             * @example [
+             *       "P",
+             *       "S"
+             *     ]
+             */
+            mbrSttsCds?: string[];
+            /**
+             * @description Member classification (VPA000801): PENDING_APPROVAL, SUPPLEMENT_REQUESTED, PENDING_PAYMENT, VERIFIED, REJECTED, CANCELLED
+             * @example [
+             *       "PENDING_PAYMENT",
+             *       "VERIFIED"
+             *     ]
+             */
+            mbrClsCds?: string[];
+            /**
+             * @description Member type codes (P: General, F: Foreigner, O: Organization)
+             * @example [
+             *       "P",
+             *       "O"
+             *     ]
+             */
+            mbrTypeCds?: string[];
+            /**
+             * @description Approval stages (NOT_RECEIVED, REQUESTED, IN_PROGRESS, APPROVED, REJECTED, SUPPLEMENT_REQUESTED)
+             * @example [
+             *       "NOT_RECEIVED",
+             *       "REQUESTED"
+             *     ]
+             */
+            atrzStages?: string[];
+            /**
+             * @description Account status codes (ACTIVE, LOCKED)
+             * @example [
+             *       "ACTIVE"
+             *     ]
+             */
+            acntSttsCds?: string[];
+            /**
+             * @description Member name or assignee name keyword
+             * @example Nguyen
+             */
+            mbrNm?: string;
+            /**
+             * @description Organization or company name keyword
+             * @example ABC Bank
+             */
+            orgnzNm?: string;
+            /**
+             * @description Phone number keyword
+             * @example 0900000019
+             */
+            telno?: string;
+            /**
+             * @description Member number keyword
+             * @example TV00000001
+             */
+            mbrNo?: string;
+            /**
+             * @description Email address keyword
+             * @example demo@example.com
+             */
+            emlAddr?: string;
+            /**
+             * Format: date
+             * @description Registration period start date (YYYY-MM-DD)
+             * @example 2026-01-01
+             */
+            regFromDt?: string;
+            /**
+             * Format: date
+             * @description Registration period end date (YYYY-MM-DD)
+             * @example 2026-12-31
+             */
+            regToDt?: string;
+        };
+        ApiResponsePageResponseMemberResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["PageResponseMemberResponse"];
+        };
+        MemberResponse: {
+            /**
+             * Format: int64
+             * @description Sequence number in table
+             * @example 1
+             */
+            no?: number;
+            /**
+             * @description Member number (TV + 8 digits)
+             * @example TV00000001
+             */
+            mbrNo?: string;
+            /**
+             * @description Member status code (P, T, S, R, L, D)
+             * @example P
+             */
+            mbrSttsCd?: string;
+            /**
+             * @description Member status display name
+             * @example Pending (Approval)
+             */
+            mbrSttsNm?: string;
+            /**
+             * @description Account login ID
+             * @example user01
+             */
+            lgnId?: string;
+            /**
+             * @description Member type code (P, F, O)
+             * @example P
+             */
+            mbrTypeCd?: string;
+            /**
+             * @description Member type display name
+             * @example General
+             */
+            mbrTypeNm?: string;
+            /**
+             * @description Member full name
+             * @example Nguyen Van An
+             */
+            mbrNm?: string;
+            /**
+             * @description Approval stage (NOT_RECEIVED, REQUESTED, IN_PROGRESS, APPROVED, REJECTED)
+             * @example NOT_RECEIVED
+             */
+            atrzStage?: string;
+            /**
+             * @description Membership grade (TMP: Temporary, GEN: General, FUL: Full)
+             * @example GEN
+             */
+            mbrGrdCd?: string;
+            /**
+             * @description Member classification: PENDING_APPROVAL, SUPPLEMENT_REQUESTED, PENDING_PAYMENT, VERIFIED, REJECTED, CANCELLED, DELETED
+             * @example PENDING_PAYMENT
+             */
+            mbrClsCd?: string;
+            /**
+             * @description Approval session ID
+             * @example 3fa85f64-5717-4562-b3fc-2c963f66afa6
+             */
+            atrzHstryId?: string;
+            /**
+             * Format: int32
+             * @description Current step number in workflow
+             * @example 1
+             */
+            nowStpNo?: number;
+            /**
+             * @description Assignee employee number
+             * @example EMP0000002
+             */
+            assigneeEmpNo?: string;
+            /**
+             * @description Assignee employee name
+             * @example Vo Ngoc Lan
+             */
+            assigneeNm?: string;
+            /**
+             * Format: date-time
+             * @description Application date
+             * @example 2026-09-17T08:30:00
+             */
+            aplyDt?: string;
+            /**
+             * Format: date-time
+             * @description Receipt date (step 1 completion date)
+             * @example 2026-09-17T09:15:00
+             */
+            rcptDt?: string;
+            /**
+             * Format: int32
+             * @description Attachments count
+             * @example 2
+             */
+            atchFileCnt?: number;
+            /**
+             * @description Organization or company name
+             * @example MB Bank
+             */
+            orgnzNm?: string;
+            /**
+             * Format: date-time
+             * @description Approval completion date
+             * @example 2026-09-17T14:00:00
+             */
+            aprvDt?: string;
+            /**
+             * @description Masked phone number
+             * @example 090-****-0019
+             */
+            telno?: string;
+            /**
+             * @description Masked email address
+             * @example de**@example.com
+             */
+            emlAddr?: string;
+            /**
+             * @description Account status (ACTIVE, LOCKED)
+             * @example ACTIVE
+             */
+            acntSttsCd?: string;
+            /**
+             * @description Available user action for popup (RECEIVE, REQUEST, DECIDE, VIEW)
+             * @example RECEIVE
+             */
+            availableAction?: string;
+        };
+        /** @description Paginated Response / Phản hồi phân trang */
+        PageResponseMemberResponse: {
+            /** @description Data list / Danh sách dữ liệu */
+            content?: components["schemas"]["MemberResponse"][];
+            /**
+             * Format: int32
+             * @description Current page number (1-based) / Số trang hiện tại
+             */
+            page?: number;
+            /**
+             * Format: int32
+             * @description Page size / Số lượng bản ghi mỗi trang
+             */
+            size?: number;
+            /**
+             * Format: int64
+             * @description Total number of records / Tổng số bản ghi
+             */
+            totalElements?: number;
+            /**
+             * Format: int32
+             * @description Total number of pages / Tổng số trang
+             */
+            totalPages?: number;
+        };
+        ApiResponseMemberApprovalContextResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["MemberApprovalContextResponse"];
+        };
+        /** @description Approval Actor details */
+        ApprovalActorDto: {
+            /**
+             * @description Employee number
+             * @example EMP0000001
+             */
+            empNo?: string;
+            /**
+             * @description Employee name
+             * @example Hong Gil-dong
+             */
+            empNm?: string;
+            /**
+             * @description Position
+             * @example Specialist
+             */
+            jbpsNm?: string;
+            /**
+             * @description Department name
+             * @example NPL Assessment Department
+             */
+            deptNm?: string;
+        };
+        /** @description Member application summary */
+        MemberApplicationSummaryDto: {
+            /**
+             * @description Application ID (Member number)
+             * @example TV00000001
+             */
+            applicationId?: string;
+            /**
+             * Format: date-time
+             * @description Application date
+             * @example 2026-10-16T09:30:00
+             */
+            aplyDt?: string;
+            /**
+             * @description Member name
+             * @example Nguyen Van A
+             */
+            mbrNm?: string;
+            /**
+             * @description Member type code (P: Individual, F: Foreigner, O: Organization)
+             * @example P
+             */
+            mbrTypeCd?: string;
+            /**
+             * @description Member type name
+             * @example Individual
+             */
+            mbrTypeNm?: string;
+            /**
+             * @description Member classification
+             * @example General
+             */
+            mbrClassification?: string;
+            /**
+             * @description Company or organization name (for O)
+             * @example Shinhan Bank Vietnam
+             */
+            companyName?: string;
+            /**
+             * @description Member status code
+             * @example P
+             */
+            mbrSttsCd?: string;
+            /**
+             * @description Member status name
+             * @example Pending Approval
+             */
+            mbrSttsNm?: string;
+        };
+        /** @description Member Approval Context */
+        MemberApprovalContextResponse: {
+            /**
+             * @description Member number
+             * @example TV00000001
+             */
+            mbrNo?: string;
+            /**
+             * @description Approval Session ID
+             * @example a1b2c3d4-e5f6-7890-abcd-ef1234567890
+             */
+            atrzHstryId?: string;
+            /**
+             * @description Approval process code
+             * @example PROC_MBR_JOIN
+             */
+            atrzProcCd?: string;
+            /**
+             * @description Overall stage (NOT_RECEIVED, REQUESTED, IN_PROGRESS, APPROVED, REJECTED)
+             * @example REQUESTED
+             */
+            stage?: string;
+            /**
+             * Format: int32
+             * @description Current step number (1: RCPT, 2: PRCS, 3: 1ST_ATRZ, 4: COMPLETED)
+             * @example 2
+             */
+            nowStpNo?: number;
+            /**
+             * @description Available action for current user (RECEIVE, REQUEST, DECIDE, VIEW)
+             * @example REQUEST
+             */
+            availableAction?: string;
+            /** @description Application summary */
+            application?: components["schemas"]["MemberApplicationSummaryDto"];
+            /** @description Assignee details (Step 2 - Processing) */
+            assignee?: components["schemas"]["ApprovalActorDto"];
+            /** @description Approver details (Step 3 - Approval) */
+            approver?: components["schemas"]["ApprovalActorDto"];
+            /**
+             * @description Membership payment status ('Paid' | 'Unpaid')
+             * @example Paid
+             */
+            membershipPayment?: string;
+            /**
+             * @description Rejection reason if rejected
+             * @example Identification documents blurred
+             */
+            rejectionReason?: string;
+            /** @description Approval steps timeline */
+            steps?: components["schemas"]["ApprovalStepDetailDto"][];
+            /** @description Verification attachments for review */
+            files?: components["schemas"]["MemberAttachmentDto"][];
+        };
+        ApiResponsePageResponseProvinceResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["PageResponseProvinceResponse"];
+        };
+        /** @description Paginated Response / Phản hồi phân trang */
+        PageResponseProvinceResponse: {
+            /** @description Data list / Danh sách dữ liệu */
+            content?: components["schemas"]["ProvinceResponse"][];
+            /**
+             * Format: int32
+             * @description Current page number (1-based) / Số trang hiện tại
+             */
+            page?: number;
+            /**
+             * Format: int32
+             * @description Page size / Số lượng bản ghi mỗi trang
+             */
+            size?: number;
+            /**
+             * Format: int64
+             * @description Total number of records / Tổng số bản ghi
+             */
+            totalElements?: number;
+            /**
+             * Format: int32
+             * @description Total number of pages / Tổng số trang
+             */
+            totalPages?: number;
+        };
+        ApiResponseProvinceDetailResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["ProvinceDetailResponse"];
+        };
+        ProvinceDetailResponse: {
+            /**
+             * @description Province/City Code (PK) / Mã Tỉnh/Thành phố
+             * @example HNI
+             */
+            mctpvCd?: string;
+            /**
+             * @description Province/City Name / Tên Tỉnh/Thành phố
+             * @example Thành phố Hà Nội
+             */
+            mctpvNm?: string;
+            /**
+             * Format: int32
+             * @description GSO Administrative Province Code / Mã hành chính Tổng cục Thống kê (GSO)
+             * @example 1
+             */
+            admdstCd?: number;
+            /**
+             * Format: int32
+             * @description Sort Order / Thứ tự sắp xếp
+             * @example 1
+             */
+            sortSeq?: number;
+            /**
+             * @description Use status (Y/N) / Trạng thái sử dụng (Y/N)
+             * @example Y
+             */
+            useYn?: string;
+            /** @description List of child districts/wards / Danh sách các quận/huyện trực thuộc */
+            districts?: components["schemas"]["DistrictResponse"][];
+            /**
+             * Format: date-time
+             * @description Creation timestamp / Thời điểm tạo
+             */
+            crtDt?: string;
+            /**
+             * @description Creator user ID / Mã người tạo
+             * @example ADMIN
+             */
+            crtBy?: string;
+            /**
+             * Format: date-time
+             * @description Modification timestamp / Thời điểm cập nhật
+             */
+            mdfcnDt?: string;
+            /**
+             * @description Modifier user ID / Mã người cập nhật
+             * @example ADMIN
+             */
+            mdfcnBy?: string;
+        };
+        ApiResponseListDistrictResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["DistrictResponse"][];
+        };
+        ApiResponsePageResponseDistrictResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["PageResponseDistrictResponse"];
+        };
+        /** @description Paginated Response / Phản hồi phân trang */
+        PageResponseDistrictResponse: {
+            /** @description Data list / Danh sách dữ liệu */
+            content?: components["schemas"]["DistrictResponse"][];
+            /**
+             * Format: int32
+             * @description Current page number (1-based) / Số trang hiện tại
+             */
+            page?: number;
+            /**
+             * Format: int32
+             * @description Page size / Số lượng bản ghi mỗi trang
+             */
+            size?: number;
+            /**
+             * Format: int64
+             * @description Total number of records / Tổng số bản ghi
+             */
+            totalElements?: number;
+            /**
+             * Format: int32
+             * @description Total number of pages / Tổng số trang
+             */
+            totalPages?: number;
+        };
+        ApiResponsePageResponseInstitutionResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["PageResponseInstitutionResponse"];
+        };
+        /** @description Paginated Response / Phản hồi phân trang */
+        PageResponseInstitutionResponse: {
+            /** @description Data list / Danh sách dữ liệu */
+            content?: components["schemas"]["InstitutionResponse"][];
+            /**
+             * Format: int32
+             * @description Current page number (1-based) / Số trang hiện tại
+             */
+            page?: number;
+            /**
+             * Format: int32
+             * @description Page size / Số lượng bản ghi mỗi trang
+             */
+            size?: number;
+            /**
+             * Format: int64
+             * @description Total number of records / Tổng số bản ghi
+             */
+            totalElements?: number;
+            /**
+             * Format: int32
+             * @description Total number of pages / Tổng số trang
+             */
+            totalPages?: number;
+        };
+        ApiResponseInstitutionDetailResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["InstitutionDetailResponse"];
+        };
+        InstitutionDetailResponse: {
+            /**
+             * Format: int32
+             * @description Financial Institution ID / Mã định danh tổ chức tài chính
+             * @example 6
+             */
+            fnstId?: number;
+            /**
+             * Format: int32
+             * @description Financial Institution Code / Mã tổ chức tài chính
+             * @example 203
+             */
+            fnstCd?: number;
+            /**
+             * @description Financial Institution Full Name / Tên đầy đủ tổ chức tài chính
+             * @example Ngân hàng TMCP Ngoại thương Việt Nam
+             */
+            fnstNm?: string;
+            /**
+             * @description Financial Institution Abbreviation / Tên viết tắt tổ chức tài chính
+             * @example Vietcombank
+             */
+            fnstAbbrNm?: string;
+            /**
+             * @description Use status (Y: Active, N: Inactive) / Trạng thái sử dụng
+             * @example Y
+             */
+            useYn?: string;
+            /** @description Child branches / Danh sách chi nhánh trực thuộc */
+            branches?: components["schemas"]["BranchResponse"][];
+            /**
+             * Format: date-time
+             * @description Creation Timestamp / Thời gian tạo
+             */
+            crtDt?: string;
+            /**
+             * @description Created By / Người tạo
+             * @example admin
+             */
+            crtBy?: string;
+            /**
+             * Format: date-time
+             * @description Last Modification Timestamp / Thời gian cập nhật
+             */
+            mdfcnDt?: string;
+            /**
+             * @description Modified By / Người cập nhật
+             * @example admin
+             */
+            mdfcnBy?: string;
+        };
+        ApiResponseListBranchResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["BranchResponse"][];
+        };
+        ApiResponsePageResponseBranchResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["PageResponseBranchResponse"];
+        };
+        /** @description Paginated Response / Phản hồi phân trang */
+        PageResponseBranchResponse: {
+            /** @description Data list / Danh sách dữ liệu */
+            content?: components["schemas"]["BranchResponse"][];
+            /**
+             * Format: int32
+             * @description Current page number (1-based) / Số trang hiện tại
+             */
+            page?: number;
+            /**
+             * Format: int32
+             * @description Page size / Số lượng bản ghi mỗi trang
+             */
+            size?: number;
+            /**
+             * Format: int64
+             * @description Total number of records / Tổng số bản ghi
+             */
+            totalElements?: number;
+            /**
+             * Format: int32
+             * @description Total number of pages / Tổng số trang
+             */
+            totalPages?: number;
+        };
+        ApiResponsePageResponseEmpResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["PageResponseEmpResponse"];
+        };
+        /** @description Employee List Item Response / Phản hồi phần tử danh sách nhân viên */
+        EmpResponse: {
+            /**
+             * @description Employee number / login ID / Mã nhân viên / ID đăng nhập
+             * @example user01
+             */
+            empNo?: string;
+            /**
+             * @description Employee full name / Họ và tên nhân viên
+             * @example Nguyen Van A
+             */
+            empNm?: string;
+            /**
+             * @description Masked email address / Địa chỉ email đã che mặt nạ
+             * @example us***@vamc.com.vn
+             */
+            empEmlAddr?: string;
+            /**
+             * @description Office landline phone number / Số điện thoại bàn văn phòng
+             * @example 02431234567
+             */
+            empTelno?: string;
+            /**
+             * @description Masked mobile phone number / Số điện thoại di động đã che mặt nạ
+             * @example 091****5678
+             */
+            empMoblTelno?: string;
+            /**
+             * @description Employee status code (H, L, R, S) / Mã trạng thái nhân viên (H, L, R, S)
+             * @example H
+             */
+            empSttsCd?: string;
+            /**
+             * @description Job position name / Chức danh vị trí công việc
+             * @example Senior Specialist
+             */
+            jbpsNm?: string;
+            /**
+             * Format: int32
+             * @description Password failure attempt count / Số lần đăng nhập sai mật khẩu
+             * @example 0
+             */
+            pswdFailNmtm?: number;
+            /**
+             * Format: date-time
+             * @description Last modification date / Thời điểm cập nhật cuối
+             * @example 2026-09-14T08:00:00
+             */
+            updatedAt?: string;
+        };
+        /** @description Paginated Response / Phản hồi phân trang */
+        PageResponseEmpResponse: {
+            /** @description Data list / Danh sách dữ liệu */
+            content?: components["schemas"]["EmpResponse"][];
+            /**
+             * Format: int32
+             * @description Current page number (1-based) / Số trang hiện tại
+             */
+            page?: number;
+            /**
+             * Format: int32
+             * @description Page size / Số lượng bản ghi mỗi trang
+             */
+            size?: number;
+            /**
+             * Format: int64
+             * @description Total number of records / Tổng số bản ghi
+             */
+            totalElements?: number;
+            /**
+             * Format: int32
+             * @description Total number of pages / Tổng số trang
+             */
+            totalPages?: number;
+        };
+        PostSearchRequest: {
+            /**
+             * @description Published filter (Y/N, empty = all) / Lọc trạng thái đăng (Y/N, trống = tất cả)
+             * @example Y
+             */
+            published?: string;
+            /**
+             * @description Category filter (notice type / FAQ category) / Lọc danh mục
+             * @example SVC
+             */
+            category?: string;
+            /**
+             * Format: date
+             * @description Registration date from (dd/MM/yyyy) / Ngày đăng ký từ
+             * @example 01/10/2026
+             */
+            fromDate?: string;
+            /**
+             * Format: date
+             * @description Registration date to (dd/MM/yyyy) / Ngày đăng ký đến
+             * @example 31/10/2026
+             */
+            toDate?: string;
+            /**
+             * @description Keyword on post number or title / Từ khóa theo mã hoặc tiêu đề
+             * @example bảo trì
+             */
+            keyword?: string;
+            /**
+             * @description Only pinned posts (View Major Notices) / Chỉ bài được ghim
+             * @example false
+             */
+            pinnedOnly?: boolean;
+            /**
+             * @description Legal document group (LAW_GROUP_CD) / Nhóm văn bản
+             * @example LGL
+             */
+            lawGroup?: string;
+            /**
+             * @description Legal document field (LAW_FIELD_CD) / Lĩnh vực
+             * @example BNK
+             */
+            lawField?: string;
+            /**
+             * Format: date
+             * @description Legal issue date from (dd/MM/yyyy) / Ngày ban hành từ
+             * @example 01/01/2017
+             */
+            issueFromDate?: string;
+            /**
+             * Format: date
+             * @description Legal issue date to (dd/MM/yyyy) / Ngày ban hành đến
+             * @example 31/12/2026
+             */
+            issueToDate?: string;
+        };
+        ApiResponsePageResponsePostResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["PageResponsePostResponse"];
+        };
+        /** @description Paginated Response / Phản hồi phân trang */
+        PageResponsePostResponse: {
+            /** @description Data list / Danh sách dữ liệu */
+            content?: components["schemas"]["PostResponse"][];
+            /**
+             * Format: int32
+             * @description Current page number (1-based) / Số trang hiện tại
+             */
+            page?: number;
+            /**
+             * Format: int32
+             * @description Page size / Số lượng bản ghi mỗi trang
+             */
+            size?: number;
+            /**
+             * Format: int64
+             * @description Total number of records / Tổng số bản ghi
+             */
+            totalElements?: number;
+            /**
+             * Format: int32
+             * @description Total number of pages / Tổng số trang
+             */
+            totalPages?: number;
+        };
+        PostResponse: {
+            /**
+             * @description Post number / Mã bài viết
+             * @example 3f2b1c9e-8a7d-4e6f-9b0a-1c2d3e4f5a6b
+             */
+            pstNo?: string;
+            /**
+             * @description Category code / Mã danh mục
+             * @example SVC
+             */
+            category?: string;
+            /**
+             * @description Category name / Tên danh mục
+             * @example Service Use Announcement
+             */
+            categoryNm?: string;
+            /**
+             * @description Title (question for FAQ) / Tiêu đề (câu hỏi với FAQ)
+             * @example Thông báo bảo trì hệ thống
+             */
+            title?: string;
+            /**
+             * @description Thumbnail file group ID (news) / Mã nhóm ảnh thumbnail
+             * @example 7c1d2e3f-4a5b-6c7d-8e9f-0a1b2c3d4e5f
+             */
+            thumbnailFileId?: string;
+            /**
+             * @description Legal document number/sign / Số, ký hiệu văn bản
+             * @example 17/2017/QH14
+             */
+            docNumber?: string;
+            /**
+             * @description Legal issue date (DDMMYYYY) / Ngày ban hành
+             * @example 20112017
+             */
+            issueDate?: string;
+            /**
+             * @description Legal document group code / Mã nhóm văn bản
+             * @example LGL
+             */
+            lawGroup?: string;
+            /**
+             * @description Legal document group name / Tên nhóm văn bản
+             * @example Legal Document
+             */
+            lawGroupNm?: string;
+            /**
+             * @description Legal field code / Mã lĩnh vực
+             * @example BNK
+             */
+            lawField?: string;
+            /**
+             * @description Legal field name / Tên lĩnh vực
+             * @example Banking
+             */
+            lawFieldNm?: string;
+            /**
+             * @description Issuing authority code / Mã cơ quan ban hành
+             * @example NA
+             */
+            issuingAuthority?: string;
+            /**
+             * @description Issuing authority name / Tên cơ quan ban hành
+             * @example National Assembly
+             */
+            issuingAuthorityNm?: string;
+            /**
+             * @description INQRY_NM: legal signer or about-section name / Người ký hoặc tên
+             * @example Nguyễn Thị Kim Ngân
+             */
+            name?: string;
+            /**
+             * @description PST_TAG: document number (NPL announcement) or section key (service guide) / Số văn bản hoặc khóa section
+             * @example TB-VAMC-SGDN 359
+             */
+            tag?: string;
+            /**
+             * @description Published (Y/N) / Trạng thái đăng
+             * @example Y
+             */
+            published?: string;
+            /**
+             * @description Pinned to top (Y/N) / Ghim đầu trang
+             * @example N
+             */
+            pinned?: string;
+            /**
+             * Format: int32
+             * @description Pin order / Thứ tự ghim
+             * @example 1
+             */
+            pinOrder?: number;
+            /**
+             * Format: int32
+             * @description Display order inside the category (FAQ) / Thứ tự hiển thị trong danh mục (FAQ)
+             * @example 1
+             */
+            displayOrder?: number;
+            /**
+             * Format: int32
+             * @description Number of attachments / Số tệp đính kèm
+             * @example 2
+             */
+            attachmentCount?: number;
+            /**
+             * Format: int64
+             * @description View count / Số lượt xem
+             * @example 120
+             */
+            viewCount?: number;
+            /**
+             * Format: date-time
+             * @description Created at / Ngày tạo
+             */
+            crtDt?: string;
+            /**
+             * @description Creator employee number / Mã nhân viên tạo
+             * @example E000000001
+             */
+            crtBy?: string;
+            /**
+             * @description Creator name / Tên người tạo
+             * @example Kim Shin-han
+             */
+            crtByNm?: string;
+            /**
+             * Format: date-time
+             * @description Modified at / Ngày sửa
+             */
+            mdfcnDt?: string;
+            /**
+             * @description Modifier employee number / Mã nhân viên sửa
+             * @example E000000001
+             */
+            mdfcnBy?: string;
+            /**
+             * @description Modifier name / Tên người sửa
+             * @example Kim Shin-han
+             */
+            mdfcnByNm?: string;
+        };
+        ApiResponseMapStringListCodeOptionResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: {
+                [key: string]: components["schemas"]["CodeOptionResponse"][];
+            };
+        };
+        CodeOptionResponse: {
+            /**
+             * @description Code / Mã
+             * @example LWO
+             */
+            code?: string;
+            /**
+             * @description Name / Tên
+             * @example Law / Legislation
+             */
+            name?: string;
+        };
+        InquirySearchRequest: {
+            /**
+             * @description Answer status: UNANSWERED (default), ANSWERED, ALL / Trạng thái trả lời: UNANSWERED (mặc định), ANSWERED, ALL
+             * @example UNANSWERED
+             */
+            answerStatus?: string;
+            /**
+             * @description Inquiry type (INQRY_SE_CD: CST consulting, ETC others) / Loại câu hỏi
+             * @example CST
+             */
+            category?: string;
+            /**
+             * Format: date
+             * @description Registration date from (dd/MM/yyyy) / Ngày đăng ký từ
+             * @example 01/10/2026
+             */
+            fromDate?: string;
+            /**
+             * Format: date
+             * @description Registration date to (dd/MM/yyyy) / Ngày đăng ký đến
+             * @example 31/10/2026
+             */
+            toDate?: string;
+            /**
+             * @description Keyword on post number, member number, inquirer name or title (e-mail is encrypted, not searchable) / Từ khóa theo mã bài, mã hội viên, tên hoặc tiêu đề
+             * @example M000000001
+             */
+            keyword?: string;
+        };
+        ApiResponsePageResponseInquiryResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["PageResponseInquiryResponse"];
+        };
+        InquiryResponse: {
+            /**
+             * @description Post number / Mã bài viết
+             * @example 3f2b1c9e-8a7d-4e6f-9b0a-1c2d3e4f5a6b
+             */
+            pstNo?: string;
+            /**
+             * @description Answer status (ANSWERED / UNANSWERED) / Trạng thái trả lời
+             * @example UNANSWERED
+             */
+            answerStatus?: string;
+            /**
+             * @description Inquiry type code / Mã loại câu hỏi
+             * @example CST
+             */
+            category?: string;
+            /**
+             * @description Inquiry type name / Tên loại câu hỏi
+             * @example Consulting
+             */
+            categoryNm?: string;
+            /**
+             * @description Inquiry title / Tiêu đề câu hỏi
+             * @example Tư vấn mua nợ xấu
+             */
+            title?: string;
+            /**
+             * @description Member number (null for guests) / Mã hội viên (null với khách)
+             * @example M000000001
+             */
+            mbrNo?: string;
+            /**
+             * @description Inquirer name (masked) / Tên người hỏi (đã che)
+             * @example Ng*** A
+             */
+            inquirerNm?: string;
+            /**
+             * Format: date-time
+             * @description Registered at / Ngày đăng ký
+             */
+            crtDt?: string;
+            /**
+             * @description Answering employee number / Mã nhân viên trả lời
+             * @example E000000001
+             */
+            ansEmpNo?: string;
+            /**
+             * @description Answering employee name / Tên nhân viên trả lời
+             * @example Kim Shin-han
+             */
+            ansEmpNm?: string;
+            /**
+             * Format: date-time
+             * @description Answered at (INQRY_ANS_DT) / Thời điểm trả lời
+             */
+            answeredAt?: string;
+        };
+        /** @description Paginated Response / Phản hồi phân trang */
+        PageResponseInquiryResponse: {
+            /** @description Data list / Danh sách dữ liệu */
+            content?: components["schemas"]["InquiryResponse"][];
+            /**
+             * Format: int32
+             * @description Current page number (1-based) / Số trang hiện tại
+             */
+            page?: number;
+            /**
+             * Format: int32
+             * @description Page size / Số lượng bản ghi mỗi trang
+             */
+            size?: number;
+            /**
+             * Format: int64
+             * @description Total number of records / Tổng số bản ghi
+             */
+            totalElements?: number;
+            /**
+             * Format: int32
+             * @description Total number of pages / Tổng số trang
+             */
+            totalPages?: number;
+        };
+        BannerSearchRequest: {
+            /**
+             * @description In use filter (Y/N, empty = all) / Lọc trạng thái sử dụng
+             * @example Y
+             */
+            useYn?: string;
+            /**
+             * @description Position ID / Vị trí
+             * @example MAIN_TOP
+             */
+            positionId?: string;
+            /**
+             * Format: date
+             * @description Registration date from (dd/MM/yyyy) / Ngày đăng ký từ
+             * @example 01/10/2026
+             */
+            fromDate?: string;
+            /**
+             * Format: date
+             * @description Registration date to (dd/MM/yyyy) / Ngày đăng ký đến
+             * @example 31/10/2026
+             */
+            toDate?: string;
+            /**
+             * @description Keyword on banner ID or title / Từ khóa theo mã hoặc tiêu đề
+             * @example Main
+             */
+            keyword?: string;
+        };
+        ApiResponsePageResponseBannerResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["PageResponseBannerResponse"];
+        };
+        /** @description Paginated Response / Phản hồi phân trang */
+        PageResponseBannerResponse: {
+            /** @description Data list / Danh sách dữ liệu */
+            content?: components["schemas"]["BannerResponse"][];
+            /**
+             * Format: int32
+             * @description Current page number (1-based) / Số trang hiện tại
+             */
+            page?: number;
+            /**
+             * Format: int32
+             * @description Page size / Số lượng bản ghi mỗi trang
+             */
+            size?: number;
+            /**
+             * Format: int64
+             * @description Total number of records / Tổng số bản ghi
+             */
+            totalElements?: number;
+            /**
+             * Format: int32
+             * @description Total number of pages / Tổng số trang
+             */
+            totalPages?: number;
+        };
+        ApiResponsePageResponseCodeGroupResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["PageResponseCodeGroupResponse"];
+        };
+        /** @description Paginated Response / Phản hồi phân trang */
+        PageResponseCodeGroupResponse: {
+            /** @description Data list / Danh sách dữ liệu */
+            content?: components["schemas"]["CodeGroupResponse"][];
+            /**
+             * Format: int32
+             * @description Current page number (1-based) / Số trang hiện tại
+             */
+            page?: number;
+            /**
+             * Format: int32
+             * @description Page size / Số lượng bản ghi mỗi trang
+             */
+            size?: number;
+            /**
+             * Format: int64
+             * @description Total number of records / Tổng số bản ghi
+             */
+            totalElements?: number;
+            /**
+             * Format: int32
+             * @description Total number of pages / Tổng số trang
+             */
+            totalPages?: number;
+        };
+        ApiResponseListCodeGroupResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["CodeGroupResponse"][];
+        };
+        ApiResponseListApprovalCandidateResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["ApprovalCandidateResponse"][];
+        };
+        /** @description Approval step candidate employee */
+        ApprovalCandidateResponse: {
+            /**
+             * @description Employee number
+             * @example EMP0000001
+             */
+            empNo?: string;
+            /**
+             * @description Employee name
+             * @example Hong Gil-dong
+             */
+            empNm?: string;
+            /**
+             * @description Position
+             * @example Specialist
+             */
+            jbpsNm?: string;
+            /**
+             * @description Role Group ID
+             * @example RG00001
+             */
+            roleGroupId?: string;
+            /**
+             * @description Role ID
+             * @example PRCS
+             */
+            roleId?: string;
+            /**
+             * @description Role Name
+             * @example Processing
+             */
+            roleNm?: string;
+        };
+        ApiResponseListLblSaveItem: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["LblSaveItem"][];
+        };
+        ApiResponseListLangMngItem: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["LangMngItem"][];
+        };
+        LangMngItem: {
+            langCd?: string;
+            langNm?: string;
+            /** Format: int32 */
+            sortSeq?: number;
+        };
+        ApiResponseMapStringString: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: {
+                [key: string]: string;
+            };
+        };
+        ApiResponseListPrgrmMng: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["PrgrmMng"][];
+        };
+        PrgrmMng: {
+            prgrmCd?: string;
+            menuCd?: string;
+            prgrmSeCd?: string;
+            prgrmNm?: string;
+            prgrmExpln?: string;
+            /** Format: int32 */
+            prgrmSeq?: number;
+            useYn?: string;
+            /** Format: date-time */
+            crtDt?: string;
+            crtBy?: string;
+            /** Format: date-time */
+            mdfcnDt?: string;
+            mdfcnBy?: string;
+        };
+        ApiResponseListMenuRoleMpng: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["MenuRoleMpng"][];
+        };
+        MenuRoleMpng: {
+            menuCd?: string;
+            roleGroupId?: string;
+            roleId?: string;
+            menuAuthrt?: string;
+            /** Format: date-time */
+            crtDt?: string;
+            crtBy?: string;
+            /** Format: date-time */
+            mdfcnDt?: string;
+            mdfcnBy?: string;
+        };
+        ApiResponseListMenuMng: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["MenuMng"][];
+        };
+        ApiResponseListProvinceResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["ProvinceResponse"][];
+        };
+        ApiResponseListInstitutionResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["InstitutionResponse"][];
+        };
+        ApiResponseMapStringListCommonCode: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: {
+                [key: string]: components["schemas"]["CommonCode"][];
+            };
+        };
+        CommonCode: {
+            groupCd?: string;
+            cd?: string;
+            cdNm?: string;
+            cdExpln?: string;
+            /** Format: int32 */
+            sortSeq?: number;
+            useYn?: string;
+            lblCd?: string;
+            /** Format: date-time */
+            crtDt?: string;
+            crtBy?: string;
+            /** Format: date-time */
+            mdfcnDt?: string;
+            mdfcnBy?: string;
+        };
+        ApiResponseListCommonCode: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["CommonCode"][];
+        };
+        ApiResponseCommonCode: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["CommonCode"];
+        };
+        ApiResponseUserProfileResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["UserProfileResponse"];
+        };
+        /** @description Authenticated User Profile & Roles Response / Phản hồi thông tin tài khoản và vai trò người dùng hiện tại */
+        UserProfileResponse: {
+            /**
+             * @description Employee number / login ID / Mã nhân viên / ID đăng nhập
+             * @example admin
+             */
+            empNo?: string;
+            /**
+             * @description Employee full name / Họ và tên nhân viên
+             * @example System Administrator
+             */
+            empNm?: string;
+            /**
+             * @description Masked email address / Địa chỉ email đã che mặt nạ
+             * @example ad***@vamc.com.vn
+             */
+            empEmlAddr?: string;
+            /**
+             * @description Office landline phone number / Số điện thoại bàn văn phòng
+             * @example 02431234567
+             */
+            empTelno?: string;
+            /**
+             * @description Masked mobile phone number / Số điện thoại di động đã che mặt nạ
+             * @example 091****5678
+             */
+            empMoblTelno?: string;
+            /**
+             * @description Employee status code (H, L, R, S) / Mã trạng thái nhân viên (H, L, R, S)
+             * @example H
+             */
+            empSttsCd?: string;
+            /**
+             * @description Job position name / Chức danh vị trí công việc
+             * @example Senior Specialist
+             */
+            jbpsNm?: string;
+            /**
+             * @description Last password change date (DDMMYYYY) / Ngày đổi mật khẩu gần nhất (DDMMYYYY)
+             * @example 14092026
+             */
+            pswdChgDmy?: string;
+            /**
+             * @description Flag indicating password change required (initial default password or >90 days) / Cờ yêu cầu đổi mật khẩu
+             * @example false
+             */
+            requirePasswordChange?: boolean;
+            /** @description Employee profile summary object / Đối tượng tóm tắt hồ sơ nhân viên */
+            employee?: components["schemas"]["EmployeeProfileDto"];
+            /**
+             * @description List of assigned Role IDs / Danh sách mã vai trò được gán
+             * @example [
+             *       "ADMIN"
+             *     ]
+             */
+            roles?: string[];
+            /** @description Role-based Admin Menu Hierarchy / Cây menu phân quyền theo vai trò */
+            menuTrees?: components["schemas"]["MenuMng"][];
+        };
+        ApiResponseMapStringObject: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: {
+                [key: string]: unknown;
+            };
+        };
+        ApiResponsePageResponseBatchJobConfigResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["PageResponseBatchJobConfigResponse"];
+        };
+        /** @description Paginated Response / Phản hồi phân trang */
+        PageResponseBatchJobConfigResponse: {
+            /** @description Data list / Danh sách dữ liệu */
+            content?: components["schemas"]["BatchJobConfigResponse"][];
+            /**
+             * Format: int32
+             * @description Current page number (1-based) / Số trang hiện tại
+             */
+            page?: number;
+            /**
+             * Format: int32
+             * @description Page size / Số lượng bản ghi mỗi trang
+             */
+            size?: number;
+            /**
+             * Format: int64
+             * @description Total number of records / Tổng số bản ghi
+             */
+            totalElements?: number;
+            /**
+             * Format: int32
+             * @description Total number of pages / Tổng số trang
+             */
+            totalPages?: number;
+        };
+        ApiResponsePageResponseBatchJobHistoryResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["PageResponseBatchJobHistoryResponse"];
+        };
+        /** @description Batch job execution history response / Phản hồi lịch sử thực thi batch job */
+        BatchJobHistoryResponse: {
+            /**
+             * Format: int64
+             * @description Batch history ID / Mã lịch sử batch
+             */
+            btchHstryId?: number;
+            /** @description Batch job name / Tên batch job */
+            btchJobNm?: string;
+            /** @description Batch group / Nhóm batch */
+            btchGroup?: string;
+            /** @description Batch status (RUNNING/COMPLETED/FAILED) / Trạng thái batch (RUNNING/COMPLETED/FAILED) */
+            btchStts?: string;
+            /**
+             * Format: date-time
+             * @description Start timestamp / Thời điểm bắt đầu
+             */
+            bgngDt?: string;
+            /**
+             * Format: date-time
+             * @description End timestamp / Thời điểm kết thúc
+             */
+            endDt?: string;
+            /**
+             * Format: int64
+             * @description Duration in milliseconds / Thời gian thực thi (ms)
+             */
+            prgrsHr?: number;
+            /**
+             * Format: int64
+             * @description Total processed count / Tổng số lượng xử lý
+             */
+            tprcsNocs?: number;
+            /**
+             * Format: int64
+             * @description Success count / Số lượng thành công
+             */
+            scsNocs?: number;
+            /**
+             * Format: int64
+             * @description Failure count / Số lượng thất bại
+             */
+            failNocs?: number;
+            /** @description Error message / Thông báo lỗi */
+            errMsg?: string;
+            /** @description Executor / Người thực thi */
+            excnBy?: string;
+            /** @description Trigger type (SCHEDULED/MANUAL) / Loại kích hoạt (SCHEDULED/MANUAL) */
+            trgrType?: string;
+        };
+        /** @description Paginated Response / Phản hồi phân trang */
+        PageResponseBatchJobHistoryResponse: {
+            /** @description Data list / Danh sách dữ liệu */
+            content?: components["schemas"]["BatchJobHistoryResponse"][];
+            /**
+             * Format: int32
+             * @description Current page number (1-based) / Số trang hiện tại
+             */
+            page?: number;
+            /**
+             * Format: int32
+             * @description Page size / Số lượng bản ghi mỗi trang
+             */
+            size?: number;
+            /**
+             * Format: int64
+             * @description Total number of records / Tổng số bản ghi
+             */
+            totalElements?: number;
+            /**
+             * Format: int32
+             * @description Total number of pages / Tổng số trang
+             */
+            totalPages?: number;
+        };
+        ApiResponseLoginAttemptStatusResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["LoginAttemptStatusResponse"];
+        };
+        /** @description Login failure & lockout status response / Phản hồi trạng thái thất bại & khóa đăng nhập */
+        LoginAttemptStatusResponse: {
+            /**
+             * @description Login ID (Employee number EMP_INFO.EMP_NO) / Mã đăng nhập (Mã nhân viên EMP_INFO.EMP_NO)
+             * @example admin
+             */
+            loginId?: string;
+            /** @description Blocked status / Trạng thái khóa */
+            blocked?: boolean;
+            /**
+             * Format: int32
+             * @description Current login failure count / Số lần đăng nhập thất bại hiện tại
+             * @example 5
+             */
+            failCount?: number;
+            /**
+             * Format: int64
+             * @description Remaining lockout time (minutes, rounded up) / Thời gian khóa còn lại (phút, làm tròn lên)
+             * @example 27
+             */
+            remainingLockMinutes?: number;
+        };
+        ApiResponseListLockedAccountResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["LockedAccountResponse"][];
+        };
+        /** @description Locked employee account details / Chi tiết tài khoản nhân viên bị khóa */
+        LockedAccountResponse: {
+            /**
+             * @description Employee number / Login ID / Mã nhân viên / ID đăng nhập
+             * @example user01
+             */
+            empNo?: string;
+            /**
+             * @description Employee full name / Họ và tên nhân viên
+             * @example Nguyen Van A
+             */
+            empNm?: string;
+            /**
+             * @description Masked email address / Địa chỉ email đã che mặt nạ
+             * @example us***@vamc.com.vn
+             */
+            empEmlAddr?: string;
+            /**
+             * @description Office landline phone number / Số điện thoại bàn
+             * @example 02431234567
+             */
+            empTelno?: string;
+            /**
+             * @description Masked mobile phone number / Số điện thoại di động đã che mặt nạ
+             * @example 091****5678
+             */
+            empMoblTelno?: string;
+            /**
+             * @description Employee status code (H, L, R, S) / Mã trạng thái nhân viên
+             * @example L
+             */
+            empSttsCd?: string;
+            /**
+             * @description Job position name / Chức danh vị trí công việc
+             * @example Senior Specialist
+             */
+            jbpsNm?: string;
+            /**
+             * Format: int32
+             * @description Login failure attempt count / Số lần đăng nhập sai
+             * @example 5
+             */
+            failCount?: number;
+            /**
+             * @description Whether account is blocked / Trạng thái đang bị khóa
+             * @example true
+             */
+            blocked?: boolean;
+            /**
+             * Format: int64
+             * @description Remaining lockout time in minutes (Redis TTL) / Thời gian khóa còn lại (phút)
+             * @example 30
+             */
+            remainingLockMinutes?: number;
+            /**
+             * @description Lockout source (DATABASE, REDIS, BOTH) / Nguồn khóa tài khoản
+             * @example BOTH
+             */
+            lockoutSource?: string;
+            /**
+             * Format: date-time
+             * @description Last updated / locked timestamp / Thời điểm cập nhật / khóa gần nhất
+             * @example 2026-09-28T09:15:00
+             */
+            updatedAt?: string;
+        };
+        DeletePostsRequest: {
+            /**
+             * @description Post numbers selected in the grid / Danh sách mã bài viết được chọn
+             * @example [
+             *       "3f2b1c9e-8a7d-4e6f-9b0a-1c2d3e4f5a6b"
+             *     ]
+             */
+            pstNos: string[];
+        };
+    };
     responses: never;
     parameters: never;
     requestBodies: never;
@@ -14,4 +9254,6133 @@ export interface components {
     pathItems: never;
 }
 export type $defs = Record<string, never>;
-export type operations = Record<string, never>;
+export interface operations {
+    getRole: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Role ID / Mã vai trò
+                 * @example RCPT
+                 */
+                roleId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseRoleResponse"];
+                };
+            };
+        };
+    };
+    updateRole: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Role ID / Mã vai trò
+                 * @example RCPT
+                 */
+                roleId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateRoleRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseRoleResponse"];
+                };
+            };
+        };
+    };
+    deleteRole: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Role ID / Mã vai trò
+                 * @example RCPT
+                 */
+                roleId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseVoid"];
+                };
+            };
+        };
+    };
+    getRoleMenuPermissions: {
+        parameters: {
+            query?: {
+                /**
+                 * @description Language code for translations / Mã ngôn ngữ dịch
+                 * @example VN
+                 */
+                langCd?: string;
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Role ID / Mã vai trò
+                 * @example RCPT
+                 */
+                roleId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseListRoleMenuPermissionResponse"];
+                };
+            };
+        };
+    };
+    batchSaveRoleMenuPermissions: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Role ID / Mã vai trò
+                 * @example RCPT
+                 */
+                roleId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BatchRoleMenuPermissionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseVoid"];
+                };
+            };
+        };
+    };
+    assignRoleMenuPermission: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Role ID / Mã vai trò
+                 * @example RCPT
+                 */
+                roleId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RoleMenuPermissionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseVoid"];
+                };
+            };
+        };
+    };
+    revokeAllRoleMenuPermissions: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Role ID / Mã vai trò
+                 * @example RCPT
+                 */
+                roleId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseVoid"];
+                };
+            };
+        };
+    };
+    getRoleGroup: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Role Group ID / Mã nhóm vai trò
+                 * @example RG00001
+                 */
+                roleGroupId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseRoleGroupResponse"];
+                };
+            };
+        };
+    };
+    updateRoleGroup: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Role Group ID / Mã nhóm vai trò
+                 * @example RG00001
+                 */
+                roleGroupId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateRoleGroupRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseRoleGroupResponse"];
+                };
+            };
+        };
+    };
+    deleteRoleGroup: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Role Group ID / Mã nhóm vai trò
+                 * @example RG00001
+                 */
+                roleGroupId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseVoid"];
+                };
+            };
+        };
+    };
+    getFee: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Fee item ID / Mã mục phí
+                 * @example FEE-CNS-0001
+                 */
+                feeId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseFeeResponse"];
+                };
+            };
+        };
+    };
+    updateFee: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Fee item ID / Mã mục phí
+                 * @example FEE-CNS-0001
+                 */
+                feeId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["FeeRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseFeeResponse"];
+                };
+            };
+        };
+    };
+    getMember: {
+        parameters: {
+            query?: {
+                /** @description Whether to unmask sensitive personal information (PII) */
+                unmask?: boolean;
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Member number
+                 * @example TV00000001
+                 */
+                mbrNo: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseMemberDetailResponse"];
+                };
+            };
+        };
+    };
+    updateMember: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Member number
+                 * @example TV00000001
+                 */
+                mbrNo: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateMemberRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseMemberDetailResponse"];
+                };
+            };
+        };
+    };
+    getProvinceDetail: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Province code / Mã Tỉnh/Thành phố
+                 * @example HNI
+                 */
+                mctpvCd: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseProvinceDetailResponse"];
+                };
+            };
+        };
+    };
+    updateProvince: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Province code / Mã Tỉnh/Thành phố
+                 * @example HNI
+                 */
+                mctpvCd: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateProvinceRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseProvinceResponse"];
+                };
+            };
+        };
+    };
+    deleteProvince: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Province code / Mã Tỉnh/Thành phố
+                 * @example HNI
+                 */
+                mctpvCd: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseVoid"];
+                };
+            };
+        };
+    };
+    getDistrictDetail: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description District code / Mã Quận/Huyện
+                 * @example 00070
+                 */
+                distCd: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseDistrictResponse"];
+                };
+            };
+        };
+    };
+    updateDistrict: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description District code / Mã Quận/Huyện
+                 * @example 00070
+                 */
+                distCd: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateDistrictRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseDistrictResponse"];
+                };
+            };
+        };
+    };
+    deleteDistrict: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description District code / Mã Quận/Huyện
+                 * @example 00070
+                 */
+                distCd: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseVoid"];
+                };
+            };
+        };
+    };
+    getInstitutionDetail: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Financial Institution Code / Mã tổ chức tài chính
+                 * @example 203
+                 */
+                fnstCd: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseInstitutionDetailResponse"];
+                };
+            };
+        };
+    };
+    updateInstitution: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Financial Institution Code / Mã tổ chức tài chính
+                 * @example 203
+                 */
+                fnstCd: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateInstitutionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseInstitutionResponse"];
+                };
+            };
+        };
+    };
+    deleteInstitution: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Financial Institution Code / Mã tổ chức tài chính
+                 * @example 203
+                 */
+                fnstCd: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseVoid"];
+                };
+            };
+        };
+    };
+    getBranchDetail: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Branch Code / Mã chi nhánh
+                 * @example 203001
+                 */
+                fnstBrnchCd: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseBranchResponse"];
+                };
+            };
+        };
+    };
+    updateBranch: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Branch Code / Mã chi nhánh
+                 * @example 203001
+                 */
+                fnstBrnchCd: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateBranchRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseBranchResponse"];
+                };
+            };
+        };
+    };
+    deleteBranch: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Branch Code / Mã chi nhánh
+                 * @example 203001
+                 */
+                fnstBrnchCd: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseVoid"];
+                };
+            };
+        };
+    };
+    getEmployee: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Employee number / Mã nhân viên
+                 * @example user01
+                 */
+                empNo: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseEmpDetailResponse"];
+                };
+            };
+        };
+    };
+    updateEmployee: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Employee number / Mã nhân viên
+                 * @example user01
+                 */
+                empNo: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateEmpRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseEmpDetailResponse"];
+                };
+            };
+        };
+    };
+    deleteEmployee: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Employee number / Mã nhân viên
+                 * @example user01
+                 */
+                empNo: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseVoid"];
+                };
+            };
+        };
+    };
+    unlockAccount: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Employee number / Mã nhân viên
+                 * @example user01
+                 */
+                empNo: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseVoid"];
+                };
+            };
+        };
+    };
+    updateStatus: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Employee number / Mã nhân viên
+                 * @example user01
+                 */
+                empNo: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateEmpStatusRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseVoid"];
+                };
+            };
+        };
+    };
+    changePassword: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Employee number / Mã nhân viên
+                 * @example user01
+                 */
+                empNo: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ChangeEmpPasswordRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseVoid"];
+                };
+            };
+        };
+    };
+    getSection: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Post number / Mã bài viết */
+                pstNo: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponsePostDetailResponse"];
+                };
+            };
+        };
+    };
+    updateSection: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Post number / Mã bài viết */
+                pstNo: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateServiceGuideSectionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponsePostDetailResponse"];
+                };
+            };
+        };
+    };
+    getAnnouncement: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Post number / Mã bài viết */
+                pstNo: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponsePostDetailResponse"];
+                };
+            };
+        };
+    };
+    updateAnnouncement: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Post number / Mã bài viết */
+                pstNo: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateNplAnnouncementRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponsePostDetailResponse"];
+                };
+            };
+        };
+    };
+    getNotice: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Post number / Mã bài viết */
+                pstNo: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponsePostDetailResponse"];
+                };
+            };
+        };
+    };
+    updateNotice: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Post number / Mã bài viết */
+                pstNo: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateNoticeRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponsePostDetailResponse"];
+                };
+            };
+        };
+    };
+    detail: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Post number / Mã bài viết */
+                pstNo: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponsePostDetailResponse"];
+                };
+            };
+        };
+    };
+    update: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Post number / Mã bài viết */
+                pstNo: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["NewsRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponsePostDetailResponse"];
+                };
+            };
+        };
+    };
+    detail_1: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Post number / Mã bài viết */
+                pstNo: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponsePostDetailResponse"];
+                };
+            };
+        };
+    };
+    update_1: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Post number / Mã bài viết */
+                pstNo: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LegalDocumentRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponsePostDetailResponse"];
+                };
+            };
+        };
+    };
+    answerInquiry: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Post number / Mã bài viết */
+                pstNo: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AnswerInquiryRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseInquiryDetailResponse"];
+                };
+            };
+        };
+    };
+    getFaq: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Post number / Mã bài viết */
+                pstNo: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponsePostDetailResponse"];
+                };
+            };
+        };
+    };
+    updateFaq: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Post number / Mã bài viết */
+                pstNo: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateFaqRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponsePostDetailResponse"];
+                };
+            };
+        };
+    };
+    detail_2: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Post number / Mã bài viết */
+                pstNo: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponsePostDetailResponse"];
+                };
+            };
+        };
+    };
+    update_2: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Post number / Mã bài viết */
+                pstNo: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CareerRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponsePostDetailResponse"];
+                };
+            };
+        };
+    };
+    detail_3: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Banner ID / Mã banner */
+                bannerId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseBannerResponse"];
+                };
+            };
+        };
+    };
+    update_3: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Banner ID / Mã banner */
+                bannerId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BannerRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseBannerResponse"];
+                };
+            };
+        };
+    };
+    detail_4: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Post number / Mã bài viết */
+                pstNo: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponsePostDetailResponse"];
+                };
+            };
+        };
+    };
+    update_4: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Post number / Mã bài viết */
+                pstNo: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AboutSectionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponsePostDetailResponse"];
+                };
+            };
+        };
+    };
+    getGroupDetail: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Code Group ID / Mã nhóm mã
+                 * @example CUST_TYPE_CD
+                 */
+                groupCd: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseCodeGroupResponse"];
+                };
+            };
+        };
+    };
+    updateGroup: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Code Group ID / Mã nhóm mã
+                 * @example CUST_TYPE_CD
+                 */
+                groupCd: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateCodeGroupRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseCodeGroupResponse"];
+                };
+            };
+        };
+    };
+    deleteGroup: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Code Group ID / Mã nhóm mã
+                 * @example CUST_TYPE_CD
+                 */
+                groupCd: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseVoid"];
+                };
+            };
+        };
+    };
+    updateMenu: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Target menu code to update / Mã menu cần cập nhật
+                 * @example A01010000
+                 */
+                menuCd: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MenuSaveRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseVoid"];
+                };
+            };
+        };
+    };
+    deleteMenu: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Target menu code to delete / Mã menu cần xóa
+                 * @example A01010000
+                 */
+                menuCd: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseVoid"];
+                };
+            };
+        };
+    };
+    getJob: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                jobName: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseBatchJobConfigResponse"];
+                };
+            };
+        };
+    };
+    updateJob: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                jobName: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BatchJobConfigRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseBatchJobConfigResponse"];
+                };
+            };
+        };
+    };
+    updateSchedule: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                jobName: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ScheduleUpdateRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseBatchJobConfigResponse"];
+                };
+            };
+        };
+    };
+    getRoles: {
+        parameters: {
+            query: {
+                pageRequest: components["schemas"]["PageRequest"];
+                /**
+                 * @description Role Group ID filter / Bộ lọc mã nhóm vai trò
+                 * @example RG00001
+                 */
+                roleGroupId?: string;
+                /**
+                 * @description Use status filter (Y/N, empty = all) / Bộ lọc trạng thái sử dụng
+                 * @example Y
+                 */
+                useYn?: string;
+                /**
+                 * @description Search keyword (ID or name) / Từ khóa tìm kiếm (mã hoặc tên)
+                 * @example RCPT
+                 */
+                keyword?: string;
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponsePageResponseRoleResponse"];
+                };
+            };
+        };
+    };
+    createRole: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateRoleRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseRoleResponse"];
+                };
+            };
+        };
+    };
+    batchSaveRoleMenuPermissionsAlias: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Role ID / Mã vai trò
+                 * @example RCPT
+                 */
+                roleId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BatchRoleMenuPermissionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseVoid"];
+                };
+            };
+        };
+    };
+    getUserRoles: {
+        parameters: {
+            query: {
+                /**
+                 * @description User number (employee or member ID) / Mã người dùng (nhân viên hoặc thành viên)
+                 * @example user01
+                 */
+                userNo: string;
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseListUserRoleMpngResponse"];
+                };
+            };
+        };
+    };
+    assignRole: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UserRoleAssignRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseListUserRoleMpngResponse"];
+                };
+            };
+        };
+    };
+    revokeRole: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UserRoleAssignRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseVoid"];
+                };
+            };
+        };
+    };
+    getRoleGroups: {
+        parameters: {
+            query: {
+                pageRequest: components["schemas"]["PageRequest"];
+                /**
+                 * @description Use status filter (Y/N, empty = all) / Bộ lọc trạng thái (Y/N, trống = tất cả)
+                 * @example Y
+                 */
+                useYn?: string;
+                /**
+                 * @description Search keyword (ID or name) / Từ khóa tìm kiếm (mã hoặc tên)
+                 * @example NPL
+                 */
+                keyword?: string;
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponsePageResponseRoleGroupResponse"];
+                };
+            };
+        };
+    };
+    createRoleGroup: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateRoleGroupRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseRoleGroupResponse"];
+                };
+            };
+        };
+    };
+    getFees: {
+        parameters: {
+            query: {
+                pageRequest: components["schemas"]["PageRequest"];
+                cond: components["schemas"]["FeeSearchRequest"];
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponsePageResponseFeeResponse"];
+                };
+            };
+        };
+    };
+    createFee: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["FeeRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseFeeResponse"];
+                };
+            };
+        };
+    };
+    deleteFees: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["FeeIdsRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseInteger"];
+                };
+            };
+        };
+    };
+    confirmMembershipFee: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Member number
+                 * @example TV00000001
+                 */
+                mbrNo: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseMembershipStatusResponse"];
+                };
+            };
+        };
+    };
+    checkDocuments: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Member number
+                 * @example TV00000001
+                 */
+                mbrNo: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CheckMemberDocumentsRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseMembershipStatusResponse"];
+                };
+            };
+        };
+    };
+    receive: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Member number
+                 * @example TV00000001
+                 */
+                mbrNo: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ReceiveMemberApprovalRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseMemberApprovalResponse"];
+                };
+            };
+        };
+    };
+    getApprovalContext: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Member number
+                 * @example TV00000001
+                 */
+                mbrNo: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseMemberApprovalContextResponse"];
+                };
+            };
+        };
+    };
+    requestApproval: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Member number
+                 * @example TV00000001
+                 */
+                mbrNo: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RequestMemberApprovalRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseMemberApprovalResponse"];
+                };
+            };
+        };
+    };
+    createMember: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateMemberRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseCreatedMemberDto"];
+                };
+            };
+        };
+    };
+    getMembers: {
+        parameters: {
+            query: {
+                pageRequest: components["schemas"]["PageRequest"];
+                searchRequest: components["schemas"]["MemberSearchRequest"];
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponsePageResponseMemberResponse"];
+                };
+            };
+        };
+    };
+    createMember_1: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateMemberRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseCreatedMemberDto"];
+                };
+            };
+        };
+    };
+    batchGenerate: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["BatchCreateMembersRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseBatchCreateMembersResponse"];
+                };
+            };
+        };
+    };
+    getProvinces: {
+        parameters: {
+            query: {
+                pageRequest: components["schemas"]["PageRequest"];
+                /**
+                 * @description Use status filter (Y/N, empty = all) / Bộ lọc trạng thái
+                 * @example Y
+                 */
+                useYn?: string;
+                /**
+                 * @description Search keyword (code or name) / Từ khóa tìm kiếm
+                 * @example Hà Nội
+                 */
+                keyword?: string;
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponsePageResponseProvinceResponse"];
+                };
+            };
+        };
+    };
+    createProvince: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateProvinceRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseProvinceResponse"];
+                };
+            };
+        };
+    };
+    getDistricts: {
+        parameters: {
+            query: {
+                pageRequest: components["schemas"]["PageRequest"];
+                /**
+                 * @description Province code filter / Bộ lọc mã Tỉnh/Thành phố
+                 * @example HNI
+                 */
+                mctpvCd?: string;
+                /**
+                 * @description Use status filter (Y/N, empty = all) / Bộ lọc trạng thái
+                 * @example Y
+                 */
+                useYn?: string;
+                /**
+                 * @description Search keyword (code or name) / Từ khóa tìm kiếm
+                 * @example Hoàn Kiếm
+                 */
+                keyword?: string;
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponsePageResponseDistrictResponse"];
+                };
+            };
+        };
+    };
+    createDistrict: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateDistrictRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseDistrictResponse"];
+                };
+            };
+        };
+    };
+    getInstitutions: {
+        parameters: {
+            query: {
+                pageRequest: components["schemas"]["PageRequest"];
+                /**
+                 * @description Use status filter (Y/N, empty = all) / Bộ lọc trạng thái
+                 * @example Y
+                 */
+                useYn?: string;
+                /**
+                 * @description Search keyword (code or name) / Từ khóa tìm kiếm
+                 * @example Vietcombank
+                 */
+                keyword?: string;
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponsePageResponseInstitutionResponse"];
+                };
+            };
+        };
+    };
+    createInstitution: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateInstitutionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseInstitutionResponse"];
+                };
+            };
+        };
+    };
+    getBranches: {
+        parameters: {
+            query: {
+                pageRequest: components["schemas"]["PageRequest"];
+                /**
+                 * @description Financial Institution Code filter / Bộ lọc mã tổ chức tài chính
+                 * @example 203
+                 */
+                fnstCd?: number;
+                /**
+                 * @description GSO Province Code filter / Bộ lọc mã tỉnh
+                 * @example 1
+                 */
+                admdstCd?: number;
+                /**
+                 * @description Branch Classification Code / Bộ lọc mã phân loại
+                 * @example FBC01
+                 */
+                fnstBrnchClsfCd?: string;
+                /**
+                 * @description Use status filter (Y/N, empty = all) / Bộ lọc trạng thái
+                 * @example Y
+                 */
+                useYn?: string;
+                /**
+                 * @description Search keyword (code or name) / Từ khóa tìm kiếm
+                 * @example Hội sở
+                 */
+                keyword?: string;
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponsePageResponseBranchResponse"];
+                };
+            };
+        };
+    };
+    createBranch: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateBranchRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseBranchResponse"];
+                };
+            };
+        };
+    };
+    getEmployees: {
+        parameters: {
+            query: {
+                pageRequest: components["schemas"]["PageRequest"];
+                /**
+                 * @description Employee number search keyword / Từ khóa tìm kiếm mã nhân viên
+                 * @example user
+                 */
+                empNo?: string;
+                /**
+                 * @description Employee name search keyword / Từ khóa tìm kiếm tên nhân viên
+                 * @example Nguyen
+                 */
+                empNm?: string;
+                /**
+                 * @description Employee status filter (H, L, R, S) / Bộ lọc trạng thái nhân viên (H, L, R, S)
+                 * @example H
+                 */
+                empSttsCd?: string;
+                /**
+                 * @description Position name search keyword / Từ khóa tìm kiếm chức vụ
+                 * @example Specialist
+                 */
+                jbpsNm?: string;
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponsePageResponseEmpResponse"];
+                };
+            };
+        };
+    };
+    createEmployee: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateEmpRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseEmpDetailResponse"];
+                };
+            };
+        };
+    };
+    getSections: {
+        parameters: {
+            query: {
+                pageRequest: components["schemas"]["PageRequest"];
+                cond: components["schemas"]["PostSearchRequest"];
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponsePageResponsePostResponse"];
+                };
+            };
+        };
+    };
+    createSection: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateServiceGuideSectionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponsePostDetailResponse"];
+                };
+            };
+        };
+    };
+    deleteSections: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DeletePostsRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseInteger"];
+                };
+            };
+        };
+    };
+    getAnnouncements: {
+        parameters: {
+            query: {
+                pageRequest: components["schemas"]["PageRequest"];
+                cond: components["schemas"]["PostSearchRequest"];
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponsePageResponsePostResponse"];
+                };
+            };
+        };
+    };
+    createAnnouncement: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateNplAnnouncementRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponsePostDetailResponse"];
+                };
+            };
+        };
+    };
+    deleteAnnouncements: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DeletePostsRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseInteger"];
+                };
+            };
+        };
+    };
+    getNotices: {
+        parameters: {
+            query: {
+                pageRequest: components["schemas"]["PageRequest"];
+                cond: components["schemas"]["PostSearchRequest"];
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponsePageResponsePostResponse"];
+                };
+            };
+        };
+    };
+    createNotice: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateNoticeRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponsePostDetailResponse"];
+                };
+            };
+        };
+    };
+    deleteNotices: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DeletePostsRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseInteger"];
+                };
+            };
+        };
+    };
+    list: {
+        parameters: {
+            query: {
+                pageRequest: components["schemas"]["PageRequest"];
+                cond: components["schemas"]["PostSearchRequest"];
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponsePageResponsePostResponse"];
+                };
+            };
+        };
+    };
+    create: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["NewsRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponsePostDetailResponse"];
+                };
+            };
+        };
+    };
+    delete: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DeletePostsRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseInteger"];
+                };
+            };
+        };
+    };
+    list_1: {
+        parameters: {
+            query: {
+                pageRequest: components["schemas"]["PageRequest"];
+                cond: components["schemas"]["PostSearchRequest"];
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponsePageResponsePostResponse"];
+                };
+            };
+        };
+    };
+    create_1: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LegalDocumentRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponsePostDetailResponse"];
+                };
+            };
+        };
+    };
+    delete_1: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DeletePostsRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseInteger"];
+                };
+            };
+        };
+    };
+    upload: {
+        parameters: {
+            query: {
+                /**
+                 * @description Board the files belong to (NOTICE, FAQ) / Bảng tin sở hữu tệp
+                 * @example NOTICE
+                 */
+                board: "NOTICE" | "FAQ" | "INQUIRY" | "NPL_ANNOUNCEMENT" | "SERVICE_GUIDE" | "LEGAL" | "NEWS" | "CAREER" | "ABOUT";
+                /** @description Existing group to append to / Nhóm tệp cần thêm vào */
+                fileUnqId?: string;
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "multipart/form-data": {
+                    files: string[];
+                };
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseContentFileGroupResponse"];
+                };
+            };
+        };
+    };
+    getFaqs: {
+        parameters: {
+            query: {
+                pageRequest: components["schemas"]["PageRequest"];
+                cond: components["schemas"]["PostSearchRequest"];
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponsePageResponsePostResponse"];
+                };
+            };
+        };
+    };
+    createFaq: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateFaqRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponsePostDetailResponse"];
+                };
+            };
+        };
+    };
+    deleteFaqs: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DeletePostsRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseInteger"];
+                };
+            };
+        };
+    };
+    list_2: {
+        parameters: {
+            query: {
+                pageRequest: components["schemas"]["PageRequest"];
+                cond: components["schemas"]["PostSearchRequest"];
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponsePageResponsePostResponse"];
+                };
+            };
+        };
+    };
+    create_2: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CareerRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponsePostDetailResponse"];
+                };
+            };
+        };
+    };
+    delete_2: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DeletePostsRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseInteger"];
+                };
+            };
+        };
+    };
+    list_3: {
+        parameters: {
+            query: {
+                pageRequest: components["schemas"]["PageRequest"];
+                cond: components["schemas"]["BannerSearchRequest"];
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponsePageResponseBannerResponse"];
+                };
+            };
+        };
+    };
+    create_3: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BannerRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseBannerResponse"];
+                };
+            };
+        };
+    };
+    delete_3: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BannerIdsRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseInteger"];
+                };
+            };
+        };
+    };
+    uploadImage: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "multipart/form-data": {
+                    files: string[];
+                };
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseContentFileGroupResponse"];
+                };
+            };
+        };
+    };
+    list_4: {
+        parameters: {
+            query: {
+                pageRequest: components["schemas"]["PageRequest"];
+                cond: components["schemas"]["PostSearchRequest"];
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponsePageResponsePostResponse"];
+                };
+            };
+        };
+    };
+    create_4: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AboutSectionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponsePostDetailResponse"];
+                };
+            };
+        };
+    };
+    delete_4: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DeletePostsRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseInteger"];
+                };
+            };
+        };
+    };
+    getCodeGroups: {
+        parameters: {
+            query: {
+                pageRequest: components["schemas"]["PageRequest"];
+                /**
+                 * @description Use status filter (Y/N, empty = all) / Bộ lọc trạng thái
+                 * @example Y
+                 */
+                useYn?: string;
+                /**
+                 * @description Search keyword (groupCd or groupNm) / Từ khóa tìm kiếm
+                 * @example USER
+                 */
+                keyword?: string;
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponsePageResponseCodeGroupResponse"];
+                };
+            };
+        };
+    };
+    createGroup: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateCodeGroupRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseCodeGroupResponse"];
+                };
+            };
+        };
+    };
+    saveCodesBatch: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Code Group ID / Mã nhóm mã
+                 * @example CUST_TYPE_CD
+                 */
+                groupCd: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BatchSaveCodesRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseListCodeResponse"];
+                };
+            };
+        };
+    };
+    copyGroup: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CopyCodeGroupRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseCodeGroupResponse"];
+                };
+            };
+        };
+    };
+    reject: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Approval session ID
+                 * @example a1b2c3d4-e5f6-7890-abcd-ef1234567890
+                 */
+                atrzHstryId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RejectApprovalRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseApprovalDetailResponse"];
+                };
+            };
+        };
+    };
+    approve: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Approval session ID
+                 * @example a1b2c3d4-e5f6-7890-abcd-ef1234567890
+                 */
+                atrzHstryId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ApproveApprovalRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseApprovalDetailResponse"];
+                };
+            };
+        };
+    };
+    uploadExcel: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": {
+                    /** Format: binary */
+                    file: string;
+                };
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseExcelParseResult"];
+                };
+            };
+        };
+    };
+    saveBatch: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LblSaveItem"][];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseVoid"];
+                };
+            };
+        };
+    };
+    uploadFile: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "multipart/form-data": {
+                    /** Format: binary */
+                    file: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Upload successful / Tải lên thành công */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["FileUploadResponse"];
+                };
+            };
+            /** @description Bad request (empty file, etc.) / Yêu cầu không hợp lệ (tập tin rỗng...) */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal server error (storage failed) / Lỗi máy chủ nội bộ (lưu trữ thất bại) */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    uploadFileWithData: {
+        parameters: {
+            query: {
+                title: string;
+                description: string;
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "multipart/form-data": {
+                    /** Format: binary */
+                    file: string;
+                };
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["FileUploadResponse"];
+                };
+            };
+        };
+    };
+    uploadMultipleFiles: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "multipart/form-data": {
+                    files: string[];
+                };
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["FileUploadResponse"][];
+                };
+            };
+        };
+    };
+    createMenu: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MenuSaveRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseVoid"];
+                };
+            };
+        };
+    };
+    refresh: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: {
+                refresh_token?: string;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["LoginResponse"];
+                };
+            };
+        };
+    };
+    logout: {
+        parameters: {
+            query?: never;
+            header?: {
+                Authorization?: string;
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    login: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Lang"?: string;
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LoginRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["LoginResponse"];
+                };
+            };
+        };
+    };
+    refreshSchedules: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseVoid"];
+                };
+            };
+        };
+    };
+    getJobs: {
+        parameters: {
+            query: {
+                pageRequest: components["schemas"]["PageRequest"];
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponsePageResponseBatchJobConfigResponse"];
+                };
+            };
+        };
+    };
+    createJob: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BatchJobConfigRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseBatchJobConfigResponse"];
+                };
+            };
+        };
+    };
+    executeJob: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                jobName: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseObject"];
+                };
+            };
+        };
+    };
+    updateUse: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["FeeIdsRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseInteger"];
+                };
+            };
+        };
+    };
+    reorderSections: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ReorderFaqRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseVoid"];
+                };
+            };
+        };
+    };
+    publishSections: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PublishPostsRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseInteger"];
+                };
+            };
+        };
+    };
+    updateAnnouncementStatus: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Post number / Mã bài viết */
+                pstNo: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdatePostStatusRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponsePostDetailResponse"];
+                };
+            };
+        };
+    };
+    publishAnnouncements: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PublishPostsRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseInteger"];
+                };
+            };
+        };
+    };
+    updateNoticeStatus: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Post number / Mã bài viết */
+                pstNo: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdatePostStatusRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponsePostDetailResponse"];
+                };
+            };
+        };
+    };
+    publishNotices: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PublishPostsRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseInteger"];
+                };
+            };
+        };
+    };
+    updateStatus_1: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Post number / Mã bài viết */
+                pstNo: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdatePostStatusRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponsePostDetailResponse"];
+                };
+            };
+        };
+    };
+    publish: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PublishPostsRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseInteger"];
+                };
+            };
+        };
+    };
+    publish_1: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PublishPostsRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseInteger"];
+                };
+            };
+        };
+    };
+    updateFaqStatus: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Post number / Mã bài viết */
+                pstNo: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdatePostStatusRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponsePostDetailResponse"];
+                };
+            };
+        };
+    };
+    reorderFaqs: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ReorderFaqRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseVoid"];
+                };
+            };
+        };
+    };
+    publishFaqs: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PublishPostsRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseInteger"];
+                };
+            };
+        };
+    };
+    publish_2: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PublishPostsRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseInteger"];
+                };
+            };
+        };
+    };
+    updateUse_1: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BannerIdsRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseInteger"];
+                };
+            };
+        };
+    };
+    reorder: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ReorderFaqRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseVoid"];
+                };
+            };
+        };
+    };
+    publish_3: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PublishPostsRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseInteger"];
+                };
+            };
+        };
+    };
+    getRoleMenuPermission: {
+        parameters: {
+            query?: {
+                /**
+                 * @description Language code for translations / Mã ngôn ngữ dịch
+                 * @example VN
+                 */
+                langCd?: string;
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Role ID / Mã vai trò
+                 * @example RCPT
+                 */
+                roleId: string;
+                /**
+                 * @description Menu code / Mã menu
+                 * @example A01010000
+                 */
+                menuCd: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseRoleMenuPermissionResponse"];
+                };
+            };
+        };
+    };
+    revokeRoleMenuPermission: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Role ID / Mã vai trò
+                 * @example RCPT
+                 */
+                roleId: string;
+                /**
+                 * @description Menu code / Mã menu
+                 * @example A01010000
+                 */
+                menuCd: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseVoid"];
+                };
+            };
+        };
+    };
+    getUsersByRole: {
+        parameters: {
+            query: {
+                pageRequest: components["schemas"]["PageRequest"];
+                /**
+                 * @description Role Group ID filter / Bộ lọc mã nhóm vai trò
+                 * @example RG00001
+                 */
+                roleGroupId?: string;
+                /**
+                 * @description Role ID filter / Bộ lọc mã vai trò
+                 * @example RCPT
+                 */
+                roleId?: string;
+                /**
+                 * @description Search keyword (userNo, name, role) / Từ khóa tìm kiếm
+                 * @example user01
+                 */
+                keyword?: string;
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponsePageResponseRoleUserResponse"];
+                };
+            };
+        };
+    };
+    getAllUsersByRole: {
+        parameters: {
+            query?: {
+                /**
+                 * @description Role Group ID filter / Bộ lọc mã nhóm vai trò
+                 * @example RG00001
+                 */
+                roleGroupId?: string;
+                /**
+                 * @description Role ID filter / Bộ lọc mã vai trò
+                 * @example RCPT
+                 */
+                roleId?: string;
+                /**
+                 * @description Search keyword (userNo, name, role) / Từ khóa tìm kiếm
+                 * @example user01
+                 */
+                keyword?: string;
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseListRoleUserResponse"];
+                };
+            };
+        };
+    };
+    getAllRoles: {
+        parameters: {
+            query?: {
+                /**
+                 * @description Role Group ID filter / Bộ lọc mã nhóm vai trò
+                 * @example RG00001
+                 */
+                roleGroupId?: string;
+                /**
+                 * @description Use status filter (Y/N, empty = all) / Bộ lọc trạng thái sử dụng
+                 * @example Y
+                 */
+                useYn?: string;
+                /**
+                 * @description Search keyword (ID or name) / Từ khóa tìm kiếm (mã hoặc tên)
+                 * @example RCPT
+                 */
+                keyword?: string;
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseListRoleResponse"];
+                };
+            };
+        };
+    };
+    getAllRoleGroups: {
+        parameters: {
+            query?: {
+                /**
+                 * @description Use status filter (Y/N, empty = all) / Bộ lọc trạng thái (Y/N, trống = tất cả)
+                 * @example Y
+                 */
+                useYn?: string;
+                /**
+                 * @description Search keyword (ID or name) / Từ khóa tìm kiếm (mã hoặc tên)
+                 * @example NPL
+                 */
+                keyword?: string;
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseListRoleGroupResponse"];
+                };
+            };
+        };
+    };
+    getDistrictsByProvince: {
+        parameters: {
+            query?: {
+                /**
+                 * @description Use status filter (Y/N, empty = all) / Bộ lọc trạng thái
+                 * @example Y
+                 */
+                useYn?: string;
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Province code / Mã Tỉnh/Thành phố
+                 * @example HNI
+                 */
+                mctpvCd: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseListDistrictResponse"];
+                };
+            };
+        };
+    };
+    getBranchesByInstitution: {
+        parameters: {
+            query?: {
+                /**
+                 * @description Use status filter (Y/N, empty = all) / Bộ lọc trạng thái
+                 * @example Y
+                 */
+                useYn?: string;
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Financial Institution Code / Mã tổ chức tài chính
+                 * @example 203
+                 */
+                fnstCd: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseListBranchResponse"];
+                };
+            };
+        };
+    };
+    options: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseMapStringListCodeOptionResponse"];
+                };
+            };
+        };
+    };
+    excel: {
+        parameters: {
+            query: {
+                cond: components["schemas"]["PostSearchRequest"];
+                sortBy?: string;
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    getInquiries: {
+        parameters: {
+            query: {
+                pageRequest: components["schemas"]["PageRequest"];
+                cond: components["schemas"]["InquirySearchRequest"];
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponsePageResponseInquiryResponse"];
+                };
+            };
+        };
+    };
+    getInquiry: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Post number / Mã bài viết */
+                pstNo: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseInquiryDetailResponse"];
+                };
+            };
+        };
+    };
+    excel_1: {
+        parameters: {
+            query: {
+                cond: components["schemas"]["InquirySearchRequest"];
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    getGroup: {
+        parameters: {
+            query: {
+                /**
+                 * @description Board the files belong to / Bảng tin sở hữu tệp
+                 * @example NOTICE
+                 */
+                board: "NOTICE" | "FAQ" | "INQUIRY" | "NPL_ANNOUNCEMENT" | "SERVICE_GUIDE" | "LEGAL" | "NEWS" | "CAREER" | "ABOUT";
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description File group ID / Mã nhóm tệp */
+                fileUnqId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseContentFileGroupResponse"];
+                };
+            };
+        };
+    };
+    excel_2: {
+        parameters: {
+            query: {
+                cond: components["schemas"]["PostSearchRequest"];
+                sortBy?: string;
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    excel_3: {
+        parameters: {
+            query: {
+                cond: components["schemas"]["PostSearchRequest"];
+                sortBy?: string;
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    excel_4: {
+        parameters: {
+            query: {
+                cond: components["schemas"]["BannerSearchRequest"];
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    getCodesByGroup: {
+        parameters: {
+            query?: {
+                /**
+                 * @description Use status filter (Y/N, empty = all) / Bộ lọc trạng thái
+                 * @example Y
+                 */
+                useYn?: string;
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Code Group ID / Mã nhóm mã
+                 * @example CUST_TYPE_CD
+                 */
+                groupCd: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseListCodeResponse"];
+                };
+            };
+        };
+    };
+    getAllCodeGroups: {
+        parameters: {
+            query?: {
+                /**
+                 * @description Use status filter (Y/N, empty = all) / Bộ lọc trạng thái
+                 * @example Y
+                 */
+                useYn?: string;
+                /**
+                 * @description Search keyword (groupCd or groupNm) / Từ khóa tìm kiếm
+                 * @example USER
+                 */
+                keyword?: string;
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseListCodeGroupResponse"];
+                };
+            };
+        };
+    };
+    preview: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description File Unique ID
+                 * @example ATCH20261019001
+                 */
+                fileUnqId: string;
+                /**
+                 * @description File Sequence
+                 * @example 1
+                 */
+                fileSeq: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": string;
+                };
+            };
+        };
+    };
+    download: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description File Unique ID
+                 * @example ATCH20261019001
+                 */
+                fileUnqId: string;
+                /**
+                 * @description File Sequence
+                 * @example 1
+                 */
+                fileSeq: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": string;
+                };
+            };
+        };
+    };
+    getDetail: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Approval session ID
+                 * @example a1b2c3d4-e5f6-7890-abcd-ef1234567890
+                 */
+                atrzHstryId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseApprovalDetailResponse"];
+                };
+            };
+        };
+    };
+    getCandidates: {
+        parameters: {
+            query: {
+                /**
+                 * @description Approval process code
+                 * @example PROC_MBR_JOIN
+                 */
+                atrzProcCd: string;
+                /**
+                 * @description Step number (e.g. 2: PRCS, 3: 1ST_ATRZ)
+                 * @example 2
+                 */
+                stpNo: number;
+                /**
+                 * @description Search keyword (empNo or empNm)
+                 * @example admin
+                 */
+                keyword?: string;
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseListApprovalCandidateResponse"];
+                };
+            };
+        };
+    };
+    getLabelsByScrn: {
+        parameters: {
+            query: {
+                scrnId: string;
+                langCd?: string;
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseListLblSaveItem"];
+                };
+            };
+        };
+    };
+    deleteLabel: {
+        parameters: {
+            query: {
+                lblCd: string;
+                scrnId: string;
+                lblSeCd: string;
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseVoid"];
+                };
+            };
+        };
+    };
+    getLabelRows: {
+        parameters: {
+            query?: {
+                scrnId?: string;
+                lblCd?: string;
+                lblSeCd?: string;
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseListLblSaveItem"];
+                };
+            };
+        };
+    };
+    getLanguages: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseListLangMngItem"];
+                };
+            };
+        };
+    };
+    downloadTemplate: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    downloadExcel: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    getBulkLabels: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Lang"?: string;
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseMapStringString"];
+                };
+            };
+        };
+    };
+    downloadFile: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                fileName: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Download successful / Tải về thành công */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": string;
+                };
+            };
+            /** @description File not found / Không tìm thấy tập tin */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    getProgramsByMenuCd: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Menu code / Mã menu
+                 * @example A01010000
+                 */
+                menuCd: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseListPrgrmMng"];
+                };
+            };
+        };
+    };
+    getMyPermissions: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseListMenuRoleMpng"];
+                };
+            };
+        };
+    };
+    getMyMenus: {
+        parameters: {
+            query?: {
+                /**
+                 * @description Language code (EN, VN, KR) / Mã ngôn ngữ (EN, VN, KR)
+                 * @example VN
+                 */
+                langCd?: string;
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseListMenuMng"];
+                };
+            };
+        };
+    };
+    getAllMenus: {
+        parameters: {
+            query?: {
+                /**
+                 * @description Language code for translation label lookup / Mã ngôn ngữ tra cứu nhãn bản dịch
+                 * @example VN
+                 */
+                langCd?: string;
+                /**
+                 * @description Menu code search keyword / Từ khóa tìm kiếm mã menu
+                 * @example A01
+                 */
+                menuCd?: string;
+                /**
+                 * @description Menu name search keyword / Từ khóa tìm kiếm tên menu
+                 * @example User
+                 */
+                menuNm?: string;
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseListMenuMng"];
+                };
+            };
+        };
+    };
+    getActiveProvinces: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseListProvinceResponse"];
+                };
+            };
+        };
+    };
+    getActiveDistrictsByProvince: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Province code / Mã Tỉnh/Thành phố
+                 * @example HNI
+                 */
+                mctpvCd: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseListDistrictResponse"];
+                };
+            };
+        };
+    };
+    getActiveInstitutions: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseListInstitutionResponse"];
+                };
+            };
+        };
+    };
+    getActiveBranchesByInstitution: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Financial Institution Code / Mã tổ chức tài chính
+                 * @example 203
+                 */
+                fnstCd: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseListBranchResponse"];
+                };
+            };
+        };
+    };
+    getCodesByGroups: {
+        parameters: {
+            query: {
+                /**
+                 * @description List of Code Group IDs / Danh sách mã nhóm
+                 * @example [
+                 *       "USER_STTS_CD",
+                 *       "LN_DOC_TYPE"
+                 *     ]
+                 */
+                groups: string[];
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseMapStringListCommonCode"];
+                };
+            };
+        };
+    };
+    getCodesByGroup_1: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Code Group ID / Mã nhóm mã
+                 * @example USER_STTS_CD
+                 */
+                groupCode: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseListCommonCode"];
+                };
+            };
+        };
+    };
+    getCode: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Code Group ID / Mã nhóm mã
+                 * @example USER_STTS_CD
+                 */
+                groupCode: string;
+                /**
+                 * @description Code Value / Giá trị mã
+                 * @example H
+                 */
+                code: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseCommonCode"];
+                };
+            };
+        };
+    };
+    getPublicKey: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseMapStringString"];
+                };
+            };
+        };
+    };
+    getMe: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Lang"?: string;
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseUserProfileResponse"];
+                };
+            };
+        };
+    };
+    getRegistry: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseMapStringObject"];
+                };
+            };
+        };
+    };
+    getJobHistory: {
+        parameters: {
+            query: {
+                pageRequest: components["schemas"]["PageRequest"];
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                jobName: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponsePageResponseBatchJobHistoryResponse"];
+                };
+            };
+        };
+    };
+    getAllHistory: {
+        parameters: {
+            query: {
+                pageRequest: components["schemas"]["PageRequest"];
+                jobName?: string;
+                status?: string;
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponsePageResponseBatchJobHistoryResponse"];
+                };
+            };
+        };
+    };
+    getStatus: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                loginId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseLoginAttemptStatusResponse"];
+                };
+            };
+        };
+    };
+    reset: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                loginId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseVoid"];
+                };
+            };
+        };
+    };
+    getStatus_1: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                loginId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseLoginAttemptStatusResponse"];
+                };
+            };
+        };
+    };
+    reset_1: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                loginId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseVoid"];
+                };
+            };
+        };
+    };
+    getLockedAccounts: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseListLockedAccountResponse"];
+                };
+            };
+        };
+    };
+    resetAll: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseVoid"];
+                };
+            };
+        };
+    };
+    getLockedAccounts_1: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseListLockedAccountResponse"];
+                };
+            };
+        };
+    };
+    resetAll_1: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseVoid"];
+                };
+            };
+        };
+    };
+    delete_5: {
+        parameters: {
+            query: {
+                /**
+                 * @description Board the files belong to / Bảng tin sở hữu tệp
+                 * @example NOTICE
+                 */
+                board: "NOTICE" | "FAQ" | "INQUIRY" | "NPL_ANNOUNCEMENT" | "SERVICE_GUIDE" | "LEGAL" | "NEWS" | "CAREER" | "ABOUT";
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description File group ID / Mã nhóm tệp */
+                fileUnqId: string;
+                /** @description File sequence / Số thứ tự tệp */
+                fileSeq: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseVoid"];
+                };
+            };
+        };
+    };
+    deleteFile: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                fileName: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Deletion successful / Xóa thành công */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": {
+                        [key: string]: string;
+                    };
+                };
+            };
+            /** @description File not found / Không tìm thấy tập tin */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+}
