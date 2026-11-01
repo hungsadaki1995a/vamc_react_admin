@@ -1,0 +1,399 @@
+.memberPageContainer {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 16px 24px;
+  background-color: var(--content-bg, #f4f6f9);
+  overflow-y: auto;
+  gap: 16px;
+  font-family: inherit;
+}
+
+/* Page Top Header */
+.pageHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.pageTitle {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-primary, #111827);
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--text-secondary, #64748b);
+}
+
+.breadcrumbItem {
+  color: var(--text-secondary, #64748b);
+}
+
+.breadcrumbActive {
+  font-weight: 600;
+  color: var(--text-primary, #1e293b);
+}
+
+/* Filter Card */
+.filterCard {
+  background: var(--flyout-bg, #ffffff);
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: 8px;
+  padding: 18px 20px 14px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  flex-shrink: 0;
+}
+
+.filterRow {
+  display: grid;
+  grid-template-columns: 1.4fr 1.1fr 1fr;
+  gap: 20px;
+  align-items: center;
+}
+
+.filterField {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.filterLabel {
+  min-width: 135px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary, #374151);
+  flex-shrink: 0;
+  line-height: 1.3;
+}
+
+.filterControl {
+  flex: 1;
+  min-width: 0;
+}
+
+.filterCheckboxGroup {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+
+.filterCheckboxGroup :global(.ant-checkbox-wrapper) {
+  font-size: 13px;
+  color: var(--text-primary, #374151);
+  margin-inline-start: 0;
+  margin-inline-end: 0;
+}
+
+/* Filter Action Row */
+.filterActionRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 2px;
+  padding-top: 8px;
+}
+
+.filterActionButtons {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: auto;
+}
+
+.btnReset {
+  height: 36px;
+  padding: 0 16px;
+  font-size: 13px;
+  font-weight: 500;
+  border-radius: 6px;
+  border: 1px solid var(--border-color, #d1d5db);
+  background: #ffffff;
+  color: #4b5563;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.15s ease;
+  box-shadow: none;
+}
+
+.btnReset:hover {
+  background: #f9fafb !important;
+  color: #111827 !important;
+  border-color: #9ca3af !important;
+}
+
+.btnSearch {
+  height: 36px;
+  padding: 0 20px;
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 6px;
+  background: #1f2937;
+  color: #ffffff;
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.15s ease;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.btnSearch:hover {
+  background: #111827 !important;
+  color: #ffffff !important;
+}
+
+/* Results Toolbar */
+.resultsToolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-shrink: 0;
+  margin-top: 4px;
+}
+
+.resultsSummary {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.resultsTitle {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary, #111827);
+}
+
+.resultsCount {
+  font-size: 13px;
+  color: var(--text-secondary, #6b7280);
+  font-weight: 500;
+}
+
+.resultsActions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.btnNew {
+  height: 34px;
+  padding: 0 18px;
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 6px;
+  background: #374151;
+  color: #ffffff;
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.15s ease;
+}
+
+.btnNew:hover {
+  background: #1f2937 !important;
+  color: #ffffff !important;
+}
+
+.btnExcel {
+  height: 34px;
+  padding: 0 14px;
+  font-size: 13px;
+  font-weight: 500;
+  border-radius: 6px;
+  background: #ffffff;
+  color: #374151;
+  border: 1px solid var(--border-color, #d1d5db);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: none;
+  transition: all 0.15s ease;
+}
+
+.btnExcel:hover {
+  background: #f9fafb !important;
+  border-color: #9ca3af !important;
+  color: #111827 !important;
+}
+
+.excelIconWrapper {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 3px;
+  background: #107c41;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+/* Table Card Container */
+.tableCard {
+  background: var(--flyout-bg, #ffffff);
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  overflow: hidden;
+  flex: 1;
+  min-height: 400px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Table Cell Badges & Buttons */
+.badgePendingApproval {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3px 10px;
+  border-radius: 9999px;
+  background: #e2e8f0;
+  color: #475569;
+  font-size: 11.5px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.badgePendingPayment {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3px 10px;
+  border-radius: 9999px;
+  background: #e2e8f0;
+  color: #475569;
+  font-size: 11.5px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.badgeVerified {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3px 12px;
+  border-radius: 9999px;
+  background: #334155;
+  color: #ffffff;
+  font-size: 11.5px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.badgeRejected {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3px 12px;
+  border-radius: 9999px;
+  background: #475569;
+  color: #ffffff;
+  font-size: 11.5px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* Member Code Link */
+.memberCodeLink {
+  color: #1d4ed8;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.memberCodeLink:hover {
+  color: #1e40af;
+  text-decoration: underline;
+}
+
+/* Approval Status Pill Buttons */
+.statusPill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border-radius: 9999px;
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+  background: transparent;
+  user-select: none;
+}
+
+.statusPill:hover {
+  transform: translateY(-1px);
+  filter: brightness(0.95);
+}
+
+.statusNotReceived {
+  border: 1px solid #f97316;
+  color: #ea580c;
+  background: #fff7ed;
+}
+
+.statusRequested {
+  border: 1px solid #38bdf8;
+  color: #0284c7;
+  background: #f0f9ff;
+}
+
+.statusInProgress {
+  border: 1px solid #34d399;
+  color: #059669;
+  background: #ecfdf5;
+}
+
+.statusRejected {
+  border: 1px solid #f87171;
+  color: #e11d48;
+  background: #fff1f2;
+}
+
+.statusApproved {
+  border: 1px solid #2dd4bf;
+  color: #0891b2;
+  background: #f0fdfa;
+}
+
+/* Account Status */
+.accountActive {
+  color: #16a34a;
+  font-weight: 500;
+}
+
+.accountLocked {
+  color: #dc2626;
+  font-weight: 600;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1280px) {
+  .filterRow {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+}
+

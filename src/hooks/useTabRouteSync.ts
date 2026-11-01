@@ -5,7 +5,7 @@ import { useMenuStore } from '@/stores/menuStore';
 import { useSettingsStore } from '@/stores/settingsStore';
 import { useAllMenus } from '@/hooks/useAllMenus';
 import { menuConfig } from '@/config/menuConfig';
-import { findMenuByKey, findTopLevelMenuKey } from '@/utils/menuUtils';
+import { findMenuByKey, findTopLevelMenuKey, findMenuByComponentPath } from '@/utils/menuUtils';
 
 /**
  * Bidirectional sync between tab system and browser history.
@@ -73,7 +73,10 @@ export function useTabRouteSync() {
       pendingTabKeyRef.current = null;
       if (activeTabKey !== tabKey) setActiveTab(tabKey);
     } else {
-      const menuItem = findMenuByKey(allMenus, tabKey);
+      let menuItem = findMenuByKey(allMenus, tabKey) || findMenuByComponentPath(allMenus, tabKey);
+      if (menuItem && !menuItem.componentPath && menuItem.children?.[0]?.componentPath) {
+        menuItem = menuItem.children[0];
+      }
       if (menuItem && menuItem.componentPath) {
         pendingTabKeyRef.current = null;
         openTab(menuItem);
@@ -96,7 +99,10 @@ export function useTabRouteSync() {
     // 메뉴가 아직 안 왔으면 다음 변화를 기다린다 (섣불리 포기하면 URL 이 날아간다).
     if (useMenuStore.getState().serverMenus.length === 0) return;
 
-    const menuItem = findMenuByKey(allMenus, pending);
+    let menuItem = findMenuByKey(allMenus, pending) || findMenuByComponentPath(allMenus, pending);
+    if (menuItem && !menuItem.componentPath && menuItem.children?.[0]?.componentPath) {
+      menuItem = menuItem.children[0];
+    }
     if (menuItem && menuItem.componentPath) {
       openTab(menuItem);
       syncRailFromKey(pending);

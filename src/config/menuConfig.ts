@@ -18,6 +18,20 @@ export const DEV_TOOLS_ENABLED =
   import.meta.env.DEV || import.meta.env.VITE_ENABLE_DEV_TOOLS === 'true';
 
 // Dev-only menu tree.
+// Member management menu tree
+export const memberMenu: MenuItem = {
+  key: 'member',
+  label: 'Member Management',
+  icon: 'UserOutlined',
+  children: [
+    {
+      key: 'member.list',
+      label: 'Member Management',
+      componentPath: 'MemberList',
+    },
+  ],
+};
+
 const devMenu: MenuItem = {
   key: 'dev',
   label: '개발 도구',
@@ -104,5 +118,6 @@ export const menuConfig: MenuItem[] = [
   // 업무 메뉴는 여기 두지 않는다 — 서버(MENU_MNG)가 IA 기준 트리를 내려준다.
   // 정적으로 중복 정의하면 같은 화면이 좌측 레일에 두 번 나온다.
   // 개발 도구 — DEV_TOOLS_ENABLED 가 false 인 빌드에서는 트리셰이킹으로 사라진다.
+  memberMenu,
   ...(DEV_TOOLS_ENABLED ? [devMenu] : []),
 ];

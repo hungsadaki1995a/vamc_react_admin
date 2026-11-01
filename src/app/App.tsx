@@ -111,6 +111,9 @@ export default function App() {
                 </AuthGuard>
               }
             />
+            <Route path="/member" element={<Navigate to="/app/member.list" replace />} />
+            <Route path="/member/list" element={<Navigate to="/app/member.list" replace />} />
+            <Route path="/member-management" element={<Navigate to="/app/member.list" replace />} />
             <Route path="*" element={<Navigate to="/app" replace />} />
           </Routes>
         </BrowserRouter>
