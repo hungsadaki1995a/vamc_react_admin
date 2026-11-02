@@ -2,7 +2,7 @@
 
 import { type Client, type ClientMeta, formDataBodySerializer, type Options as Options2, type RequestResult, type TDataShape } from './client';
 import { client } from './client.gen';
-import type { AnswerInquiryData, AnswerInquiryResponses, ApproveData, ApproveResponses, AssignRoleData, AssignRoleMenuPermissionData, AssignRoleMenuPermissionResponses, AssignRoleResponses, BatchGenerateData, BatchGenerateResponses, BatchSaveRoleMenuPermissionsAliasData, BatchSaveRoleMenuPermissionsAliasResponses, BatchSaveRoleMenuPermissionsData, BatchSaveRoleMenuPermissionsResponses, ChangePasswordData, ChangePasswordResponses, CheckDocumentsData, CheckDocumentsResponses, ConfirmMembershipFeeData, ConfirmMembershipFeeResponses, CopyGroupData, CopyGroupResponses, Create1Data, Create1Responses, Create2Data, Create2Responses, Create3Data, Create3Responses, Create4Data, Create4Responses, CreateAnnouncementData, CreateAnnouncementResponses, CreateBranchData, CreateBranchResponses, CreateData, CreateDistrictData, CreateDistrictResponses, CreateEmployeeData, CreateEmployeeResponses, CreateFaqData, CreateFaqResponses, CreateFeeData, CreateFeeResponses, CreateGroupData, CreateGroupResponses, CreateInstitutionData, CreateInstitutionResponses, CreateJobData, CreateJobResponses, CreateMember1Data, CreateMember1Responses, CreateMemberData, CreateMemberResponses, CreateMenuData, CreateMenuResponses, CreateNoticeData, CreateNoticeResponses, CreateProvinceData, CreateProvinceResponses, CreateResponses, CreateRoleData, CreateRoleGroupData, CreateRoleGroupResponses, CreateRoleResponses, CreateSectionData, CreateSectionResponses, Delete1Data, Delete1Responses, Delete2Data, Delete2Responses, Delete3Data, Delete3Responses, Delete4Data, Delete4Responses, Delete5Data, Delete5Responses, DeleteAnnouncementsData, DeleteAnnouncementsResponses, DeleteBranchData, DeleteBranchResponses, DeleteData, DeleteDistrictData, DeleteDistrictResponses, DeleteEmployeeData, DeleteEmployeeResponses, DeleteFaqsData, DeleteFaqsResponses, DeleteFeesData, DeleteFeesResponses, DeleteFileData, DeleteFileErrors, DeleteFileResponses, DeleteGroupData, DeleteGroupResponses, DeleteInstitutionData, DeleteInstitutionResponses, DeleteLabelData, DeleteLabelResponses, DeleteMenuData, DeleteMenuResponses, DeleteNoticesData, DeleteNoticesResponses, DeleteProvinceData, DeleteProvinceResponses, DeleteResponses, DeleteRoleData, DeleteRoleGroupData, DeleteRoleGroupResponses, DeleteRoleResponses, DeleteSectionsData, DeleteSectionsResponses, Detail1Data, Detail1Responses, Detail2Data, Detail2Responses, Detail3Data, Detail3Responses, Detail4Data, Detail4Responses, DetailData, DetailResponses, DownloadData, DownloadExcelData, DownloadExcelResponses, DownloadFileData, DownloadFileErrors, DownloadFileResponses, DownloadResponses, DownloadTemplateData, DownloadTemplateResponses, Excel1Data, Excel1Responses, Excel2Data, Excel2Responses, Excel3Data, Excel3Responses, Excel4Data, Excel4Responses, ExcelData, ExcelResponses, ExecuteJobData, ExecuteJobResponses, GetActiveBranchesByInstitutionData, GetActiveBranchesByInstitutionResponses, GetActiveDistrictsByProvinceData, GetActiveDistrictsByProvinceResponses, GetActiveInstitutionsData, GetActiveInstitutionsResponses, GetActiveProvincesData, GetActiveProvincesResponses, GetAllCodeGroupsData, GetAllCodeGroupsResponses, GetAllHistoryData, GetAllHistoryResponses, GetAllMenusData, GetAllMenusResponses, GetAllRoleGroupsData, GetAllRoleGroupsResponses, GetAllRolesData, GetAllRolesResponses, GetAllUsersByRoleData, GetAllUsersByRoleResponses, GetAnnouncementData, GetAnnouncementResponses, GetAnnouncementsData, GetAnnouncementsResponses, GetApprovalContextData, GetApprovalContextResponses, GetBranchDetailData, GetBranchDetailResponses, GetBranchesByInstitutionData, GetBranchesByInstitutionResponses, GetBranchesData, GetBranchesResponses, GetBulkLabelsData, GetBulkLabelsResponses, GetCandidatesData, GetCandidatesResponses, GetCodeData, GetCodeGroupsData, GetCodeGroupsResponses, GetCodeResponses, GetCodesByGroup1Data, GetCodesByGroup1Responses, GetCodesByGroupData, GetCodesByGroupResponses, GetCodesByGroupsData, GetCodesByGroupsResponses, GetDetailData, GetDetailResponses, GetDistrictDetailData, GetDistrictDetailResponses, GetDistrictsByProvinceData, GetDistrictsByProvinceResponses, GetDistrictsData, GetDistrictsResponses, GetEmployeeData, GetEmployeeResponses, GetEmployeesData, GetEmployeesResponses, GetFaqData, GetFaqResponses, GetFaqsData, GetFaqsResponses, GetFeeData, GetFeeResponses, GetFeesData, GetFeesResponses, GetGroupData, GetGroupDetailData, GetGroupDetailResponses, GetGroupResponses, GetInquiriesData, GetInquiriesResponses, GetInquiryData, GetInquiryResponses, GetInstitutionDetailData, GetInstitutionDetailResponses, GetInstitutionsData, GetInstitutionsResponses, GetJobData, GetJobHistoryData, GetJobHistoryResponses, GetJobResponses, GetJobsData, GetJobsResponses, GetLabelRowsData, GetLabelRowsResponses, GetLabelsByScrnData, GetLabelsByScrnResponses, GetLanguagesData, GetLanguagesResponses, GetLockedAccounts1Data, GetLockedAccounts1Responses, GetLockedAccountsData, GetLockedAccountsResponses, GetMeData, GetMemberData, GetMemberResponses, GetMembersData, GetMembersResponses, GetMeResponses, GetMyMenusData, GetMyMenusResponses, GetMyPermissionsData, GetMyPermissionsResponses, GetNoticeData, GetNoticeResponses, GetNoticesData, GetNoticesResponses, GetProgramsByMenuCdData, GetProgramsByMenuCdResponses, GetProvinceDetailData, GetProvinceDetailResponses, GetProvincesData, GetProvincesResponses, GetPublicKeyData, GetPublicKeyResponses, GetRegistryData, GetRegistryResponses, GetRoleData, GetRoleGroupData, GetRoleGroupResponses, GetRoleGroupsData, GetRoleGroupsResponses, GetRoleMenuPermissionData, GetRoleMenuPermissionResponses, GetRoleMenuPermissionsData, GetRoleMenuPermissionsResponses, GetRoleResponses, GetRolesData, GetRolesResponses, GetSectionData, GetSectionResponses, GetSectionsData, GetSectionsResponses, GetStatus1Data, GetStatus1Responses, GetStatusData, GetStatusResponses, GetUserRolesData, GetUserRolesResponses, GetUsersByRoleData, GetUsersByRoleResponses, List1Data, List1Responses, List2Data, List2Responses, List3Data, List3Responses, List4Data, List4Responses, ListData, ListResponses, LoginData, LoginResponses, LogoutData, LogoutResponses, OptionsData, OptionsResponses, PreviewData, PreviewResponses, Publish1Data, Publish1Responses, Publish2Data, Publish2Responses, Publish3Data, Publish3Responses, PublishAnnouncementsData, PublishAnnouncementsResponses, PublishData, PublishFaqsData, PublishFaqsResponses, PublishNoticesData, PublishNoticesResponses, PublishResponses, PublishSectionsData, PublishSectionsResponses, ReceiveData, ReceiveResponses, RefreshData, RefreshResponses, RefreshSchedulesData, RefreshSchedulesResponses, RejectData, RejectResponses, ReorderData, ReorderFaqsData, ReorderFaqsResponses, ReorderResponses, ReorderSectionsData, ReorderSectionsResponses, RequestApprovalData, RequestApprovalResponses, Reset1Data, Reset1Responses, ResetAll1Data, ResetAll1Responses, ResetAllData, ResetAllResponses, ResetData, ResetResponses, RevokeAllRoleMenuPermissionsData, RevokeAllRoleMenuPermissionsResponses, RevokeRoleData, RevokeRoleMenuPermissionData, RevokeRoleMenuPermissionResponses, RevokeRoleResponses, SaveBatchData, SaveBatchResponses, SaveCodesBatchData, SaveCodesBatchResponses, UnlockAccountData, UnlockAccountResponses, Update1Data, Update1Responses, Update2Data, Update2Responses, Update3Data, Update3Responses, Update4Data, Update4Responses, UpdateAnnouncementData, UpdateAnnouncementResponses, UpdateAnnouncementStatusData, UpdateAnnouncementStatusResponses, UpdateBranchData, UpdateBranchResponses, UpdateData, UpdateDistrictData, UpdateDistrictResponses, UpdateEmployeeData, UpdateEmployeeResponses, UpdateFaqData, UpdateFaqResponses, UpdateFaqStatusData, UpdateFaqStatusResponses, UpdateFeeData, UpdateFeeResponses, UpdateGroupData, UpdateGroupResponses, UpdateInstitutionData, UpdateInstitutionResponses, UpdateJobData, UpdateJobResponses, UpdateMemberData, UpdateMemberResponses, UpdateMenuData, UpdateMenuResponses, UpdateNoticeData, UpdateNoticeResponses, UpdateNoticeStatusData, UpdateNoticeStatusResponses, UpdateProvinceData, UpdateProvinceResponses, UpdateResponses, UpdateRoleData, UpdateRoleGroupData, UpdateRoleGroupResponses, UpdateRoleResponses, UpdateScheduleData, UpdateScheduleResponses, UpdateSectionData, UpdateSectionResponses, UpdateStatus1Data, UpdateStatus1Responses, UpdateStatusData, UpdateStatusResponses, UpdateUse1Data, UpdateUse1Responses, UpdateUseData, UpdateUseResponses, UploadData, UploadExcelData, UploadExcelResponses, UploadFileData, UploadFileErrors, UploadFileResponses, UploadFileWithDataData, UploadFileWithDataResponses, UploadImageData, UploadImageResponses, UploadMultipleFilesData, UploadMultipleFilesResponses, UploadResponses } from './types.gen';
+import type { AnswerInquiryData, AnswerInquiryResponses, ApproveData, ApproveResponses, AssignConsultantData, AssignConsultantResponses, AssignRoleData, AssignRoleMenuPermissionData, AssignRoleMenuPermissionResponses, AssignRoleResponses, AttachScan1Data, AttachScan1Responses, AttachScan2Data, AttachScan2Responses, AttachScanData, AttachScanResponses, AttachSignedScan1Data, AttachSignedScan1Responses, AttachSignedScan2Data, AttachSignedScan2Responses, AttachSignedScanData, AttachSignedScanResponses, AttachTerminationScan1Data, AttachTerminationScan1Responses, AttachTerminationScan2Data, AttachTerminationScan2Responses, AttachTerminationScanData, AttachTerminationScanResponses, BatchGenerateData, BatchGenerateResponses, BatchSaveRoleMenuPermissionsAliasData, BatchSaveRoleMenuPermissionsAliasResponses, BatchSaveRoleMenuPermissionsData, BatchSaveRoleMenuPermissionsResponses, Cancel1Data, Cancel1Responses, Cancel2Data, Cancel2Responses, CancelData, CancelResponses, ChangeCategoryData, ChangeCategoryResponses, ChangePasswordData, ChangePasswordResponses, CheckDocuments1Data, CheckDocuments1Responses, CheckDocuments2Data, CheckDocuments2Responses, CheckDocuments3Data, CheckDocuments3Responses, CheckDocumentsData, CheckDocumentsResponses, CompleteAdditionalConsultationData, CompleteAdditionalConsultationResponses, CompleteReportData, CompleteReportResponses, CompleteTermination1Data, CompleteTermination1Responses, CompleteTermination2Data, CompleteTermination2Responses, CompleteTerminationData, CompleteTerminationResponses, CompleteTrade1Data, CompleteTrade1Responses, CompleteTradeData, CompleteTradeResponses, Conclude1Data, Conclude1Responses, Conclude2Data, Conclude2Responses, ConcludeData, ConcludeResponses, ConfirmFeeReceipt1Data, ConfirmFeeReceipt1Responses, ConfirmFeeReceipt2Data, ConfirmFeeReceipt2Responses, ConfirmFeeReceiptData, ConfirmFeeReceiptResponses, ConfirmMembershipFeeData, ConfirmMembershipFeeResponses, CopyGroupData, CopyGroupResponses, Create1Data, Create1Responses, Create2Data, Create2Responses, Create3Data, Create3Responses, Create4Data, Create4Responses, Create5Data, Create5Responses, Create6Data, Create6Responses, Create7Data, Create7Responses, CreateAnnex1Data, CreateAnnex1Responses, CreateAnnexData, CreateAnnexResponses, CreateAnnouncementData, CreateAnnouncementResponses, CreateBranchData, CreateBranchResponses, CreateData, CreateDistrictData, CreateDistrictResponses, CreateEmployeeData, CreateEmployeeResponses, CreateFaqData, CreateFaqResponses, CreateFeeData, CreateFeeResponses, CreateGroupData, CreateGroupResponses, CreateInstitutionData, CreateInstitutionResponses, CreateJobData, CreateJobResponses, CreateMember1Data, CreateMember1Responses, CreateMemberData, CreateMemberResponses, CreateMenuData, CreateMenuResponses, CreateNoticeData, CreateNoticeResponses, CreateProvinceData, CreateProvinceResponses, CreateResponses, CreateRoleData, CreateRoleGroupData, CreateRoleGroupResponses, CreateRoleResponses, CreateSectionData, CreateSectionResponses, DecideRenewal1Data, DecideRenewal1Responses, DecideRenewalData, DecideRenewalResponses, Delete1Data, Delete1Responses, Delete2Data, Delete2Responses, Delete3Data, Delete3Responses, Delete4Data, Delete4Responses, Delete5Data, Delete5Responses, DeleteAnnouncementsData, DeleteAnnouncementsResponses, DeleteBranchData, DeleteBranchResponses, DeleteData, DeleteDistrictData, DeleteDistrictResponses, DeleteEmployeeData, DeleteEmployeeResponses, DeleteFaqsData, DeleteFaqsResponses, DeleteFeesData, DeleteFeesResponses, DeleteFileData, DeleteFileErrors, DeleteFileResponses, DeleteGroupData, DeleteGroupResponses, DeleteInstitutionData, DeleteInstitutionResponses, DeleteLabelData, DeleteLabelResponses, DeleteMenuData, DeleteMenuResponses, DeleteNoticesData, DeleteNoticesResponses, DeleteProvinceData, DeleteProvinceResponses, DeleteResponses, DeleteRoleData, DeleteRoleGroupData, DeleteRoleGroupResponses, DeleteRoleResponses, DeleteSectionsData, DeleteSectionsResponses, Detail1Data, Detail1Responses, Detail2Data, Detail2Responses, Detail3Data, Detail3Responses, Detail4Data, Detail4Responses, DetailData, DetailResponses, DownloadData, DownloadExcelData, DownloadExcelResponses, DownloadFileData, DownloadFileErrors, DownloadFileResponses, DownloadResponses, DownloadTemplateData, DownloadTemplateResponses, Excel1Data, Excel1Responses, Excel2Data, Excel2Responses, Excel3Data, Excel3Responses, Excel4Data, Excel4Responses, ExcelData, ExcelResponses, ExecuteJobData, ExecuteJobResponses, GetActiveBranchesByInstitutionData, GetActiveBranchesByInstitutionResponses, GetActiveDistrictsByProvinceData, GetActiveDistrictsByProvinceResponses, GetActiveInstitutionsData, GetActiveInstitutionsResponses, GetActiveProvincesData, GetActiveProvincesResponses, GetAdditionalConsultingSettingData, GetAdditionalConsultingSettingResponses, GetAllCodeGroupsData, GetAllCodeGroupsResponses, GetAllHistoryData, GetAllHistoryResponses, GetAllMenusData, GetAllMenusResponses, GetAllRoleGroupsData, GetAllRoleGroupsResponses, GetAllRolesData, GetAllRolesResponses, GetAllUsersByRoleData, GetAllUsersByRoleResponses, GetAnnouncementData, GetAnnouncementResponses, GetAnnouncementsData, GetAnnouncementsResponses, GetApplication1Data, GetApplication1Responses, GetApplication2Data, GetApplication2Responses, GetApplicationData, GetApplicationResponses, GetApplications1Data, GetApplications1Responses, GetApplications2Data, GetApplications2Responses, GetApplicationsData, GetApplicationsResponses, GetApprovalContextData, GetApprovalContextResponses, GetApprovalHistories1Data, GetApprovalHistories1Responses, GetApprovalHistories2Data, GetApprovalHistories2Responses, GetApprovalHistoriesData, GetApprovalHistoriesResponses, GetApprovalSummaryData, GetApprovalSummaryResponses, GetBranchDetailData, GetBranchDetailResponses, GetBranchesByInstitutionData, GetBranchesByInstitutionResponses, GetBranchesData, GetBranchesResponses, GetBulkLabelsData, GetBulkLabelsResponses, GetCandidatesData, GetCandidatesResponses, GetCodeData, GetCodeGroupsData, GetCodeGroupsResponses, GetCodeResponses, GetCodesByGroup1Data, GetCodesByGroup1Responses, GetCodesByGroupData, GetCodesByGroupResponses, GetCodesByGroupsData, GetCodesByGroupsResponses, GetContract1Data, GetContract1Responses, GetContract2Data, GetContract2Responses, GetContractData, GetContractResponses, GetContracts1Data, GetContracts1Responses, GetContracts2Data, GetContracts2Responses, GetContractsData, GetContractsResponses, GetDetailData, GetDetailResponses, GetDistrictDetailData, GetDistrictDetailResponses, GetDistrictsByProvinceData, GetDistrictsByProvinceResponses, GetDistrictsData, GetDistrictsResponses, GetEmployeeData, GetEmployeeResponses, GetEmployeesData, GetEmployeesResponses, GetFaqData, GetFaqResponses, GetFaqsData, GetFaqsResponses, GetFeeData, GetFeeResponses, GetFees1Data, GetFees1Responses, GetFees2Data, GetFees2Responses, GetFees3Data, GetFees3Responses, GetFeesData, GetFeesResponses, GetGroup1Data, GetGroup1Responses, GetGroupData, GetGroupDetailData, GetGroupDetailResponses, GetGroupResponses, GetHistories1Data, GetHistories1Responses, GetHistories2Data, GetHistories2Responses, GetHistoriesData, GetHistoriesResponses, GetInboxData, GetInboxResponses, GetInboxSummaryData, GetInboxSummaryResponses, GetInquiriesData, GetInquiriesResponses, GetInquiryData, GetInquiryResponses, GetInstitutionDetailData, GetInstitutionDetailResponses, GetInstitutionsData, GetInstitutionsResponses, GetJobData, GetJobHistoryData, GetJobHistoryResponses, GetJobResponses, GetJobsData, GetJobsResponses, GetLabelRowsData, GetLabelRowsResponses, GetLabelsByScrnData, GetLabelsByScrnResponses, GetLanguagesData, GetLanguagesResponses, GetLockedAccounts1Data, GetLockedAccounts1Responses, GetLockedAccountsData, GetLockedAccountsResponses, GetMeData, GetMemberData, GetMemberResponses, GetMembersData, GetMembersResponses, GetMeResponses, GetMyMenusData, GetMyMenusResponses, GetMyPermissionsData, GetMyPermissionsResponses, GetNoticeData, GetNoticeResponses, GetNoticesData, GetNoticesResponses, GetProgramsByMenuCdData, GetProgramsByMenuCdResponses, GetProvinceDetailData, GetProvinceDetailResponses, GetProvincesData, GetProvincesResponses, GetPublicKeyData, GetPublicKeyResponses, GetRegistryData, GetRegistryResponses, GetRoleData, GetRoleGroupData, GetRoleGroupResponses, GetRoleGroupsData, GetRoleGroupsResponses, GetRoleMenuPermissionData, GetRoleMenuPermissionResponses, GetRoleMenuPermissionsData, GetRoleMenuPermissionsResponses, GetRoleResponses, GetRolesData, GetRolesResponses, GetSectionData, GetSectionResponses, GetSectionsData, GetSectionsResponses, GetStatus1Data, GetStatus1Responses, GetStatusData, GetStatusResponses, GetUserRolesData, GetUserRolesResponses, GetUsersByRoleData, GetUsersByRoleResponses, List1Data, List1Responses, List2Data, List2Responses, List3Data, List3Responses, List4Data, List4Responses, ListData, ListResponses, LoginData, LoginResponses, LogoutData, LogoutResponses, OptionsData, OptionsResponses, PreviewData, PreviewResponses, Publish1Data, Publish1Responses, Publish2Data, Publish2Responses, Publish3Data, Publish3Responses, PublishAnnouncementsData, PublishAnnouncementsResponses, PublishData, PublishFaqsData, PublishFaqsResponses, PublishNoticesData, PublishNoticesResponses, PublishResponses, PublishSectionsData, PublishSectionsResponses, ReassignData, ReassignOfficer1Data, ReassignOfficer1Responses, ReassignOfficer2Data, ReassignOfficer2Responses, ReassignOfficerData, ReassignOfficerResponses, ReassignResponses, Receive1Data, Receive1Responses, Receive2Data, Receive2Responses, Receive3Data, Receive3Responses, ReceiveAdditionalConsultationData, ReceiveAdditionalConsultationResponses, ReceiveData, ReceiveResponses, RecordDeliveryData, RecordDeliveryResponses, RefreshData, RefreshResponses, RefreshSchedulesData, RefreshSchedulesResponses, RefundFee1Data, RefundFee1Responses, RefundFee2Data, RefundFee2Responses, RefundFeeData, RefundFeeResponses, RegisterDraft1Data, RegisterDraft1Responses, RegisterDraft2Data, RegisterDraft2Responses, RegisterDraftData, RegisterDraftResponses, RegisterTerminationDraft1Data, RegisterTerminationDraft1Responses, RegisterTerminationDraft2Data, RegisterTerminationDraft2Responses, RegisterTerminationDraftData, RegisterTerminationDraftResponses, RejectData, RejectResponses, ReorderData, ReorderFaqsData, ReorderFaqsResponses, ReorderResponses, ReorderSectionsData, ReorderSectionsResponses, RequestApproval1Data, RequestApproval1Responses, RequestApproval2Data, RequestApproval2Responses, RequestApproval3Data, RequestApproval3Responses, RequestApprovalData, RequestApprovalResponses, RequestDraftApproval1Data, RequestDraftApproval1Responses, RequestDraftApproval2Data, RequestDraftApproval2Responses, RequestDraftApprovalData, RequestDraftApprovalResponses, RequestReportApprovalData, RequestReportApprovalResponses, RequestSignatureApproval1Data, RequestSignatureApproval1Responses, RequestSignatureApproval2Data, RequestSignatureApproval2Responses, RequestSignatureApprovalData, RequestSignatureApprovalResponses, RequestTerminationApproval1Data, RequestTerminationApproval1Responses, RequestTerminationApproval2Data, RequestTerminationApproval2Responses, RequestTerminationApprovalData, RequestTerminationApprovalResponses, RequestTerminationSignature1Data, RequestTerminationSignature1Responses, RequestTerminationSignature2Data, RequestTerminationSignature2Responses, RequestTerminationSignatureData, RequestTerminationSignatureResponses, Reset1Data, Reset1Responses, ResetAll1Data, ResetAll1Responses, ResetAllData, ResetAllResponses, ResetData, ResetResponses, RevokeAllRoleMenuPermissionsData, RevokeAllRoleMenuPermissionsResponses, RevokeRoleData, RevokeRoleMenuPermissionData, RevokeRoleMenuPermissionResponses, RevokeRoleResponses, SaveBatchData, SaveBatchResponses, SaveCodesBatchData, SaveCodesBatchResponses, SaveReportData, SaveReportResponses, StartTermination1Data, StartTermination1Responses, StartTermination2Data, StartTermination2Responses, StartTerminationData, StartTerminationResponses, UnlockAccountData, UnlockAccountResponses, Update1Data, Update1Responses, Update2Data, Update2Responses, Update3Data, Update3Responses, Update4Data, Update4Responses, Update5Data, Update5Responses, Update6Data, Update6Responses, Update7Data, Update7Responses, UpdateAdditionalConsultingSettingData, UpdateAdditionalConsultingSettingResponses, UpdateAnnouncementData, UpdateAnnouncementResponses, UpdateAnnouncementStatusData, UpdateAnnouncementStatusResponses, UpdateBranchData, UpdateBranchResponses, UpdateData, UpdateDisclosureData, UpdateDisclosureResponses, UpdateDistrictData, UpdateDistrictResponses, UpdateDraft1Data, UpdateDraft1Responses, UpdateDraft2Data, UpdateDraft2Responses, UpdateDraftData, UpdateDraftResponses, UpdateEmployeeData, UpdateEmployeeResponses, UpdateFaqData, UpdateFaqResponses, UpdateFaqStatusData, UpdateFaqStatusResponses, UpdateFeeData, UpdateFeeResponses, UpdateGroupData, UpdateGroupResponses, UpdateInstitutionData, UpdateInstitutionResponses, UpdateJobData, UpdateJobResponses, UpdateMemberData, UpdateMemberResponses, UpdateMenuData, UpdateMenuResponses, UpdateNoticeData, UpdateNoticeResponses, UpdateNoticeStatusData, UpdateNoticeStatusResponses, UpdateProvinceData, UpdateProvinceResponses, UpdateResponses, UpdateRoleData, UpdateRoleGroupData, UpdateRoleGroupResponses, UpdateRoleResponses, UpdateScheduleData, UpdateScheduleResponses, UpdateSectionData, UpdateSectionResponses, UpdateStatus1Data, UpdateStatus1Responses, UpdateStatusData, UpdateStatusResponses, UpdateUse1Data, UpdateUse1Responses, UpdateUseData, UpdateUseResponses, Upload1Data, Upload1Responses, UploadData, UploadExcelData, UploadExcelResponses, UploadFileData, UploadFileErrors, UploadFileResponses, UploadFileWithDataData, UploadFileWithDataResponses, UploadImageData, UploadImageResponses, UploadMultipleFilesData, UploadMultipleFilesResponses, UploadResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean, TResponse = unknown> = Options2<TData, ThrowOnError, TResponse> & {
     /**
@@ -17,6 +17,155 @@ export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends 
      */
     meta?: keyof ClientMeta extends never ? Record<string, unknown> : ClientMeta;
 };
+
+/**
+ * Get application
+ *
+ * Detail with NPLs, scanned documents, approval steps and processing history (VPA0004P04). Requires READ permission.
+ */
+export const getApplication = <ThrowOnError extends boolean = false>(options: Options<GetApplicationData, ThrowOnError>): RequestResult<GetApplicationResponses, unknown, ThrowOnError> => (options.client ?? client).get<GetApplicationResponses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/service-applications/sale/{srvcAplyId}',
+    ...options
+});
+
+/**
+ * Edit a application
+ *
+ * Contract kind, base contract, currency, desired price and scan, before approval is requested. Requires WRITE permission.
+ */
+export const update = <ThrowOnError extends boolean = false>(options: Options<UpdateData, ThrowOnError>): RequestResult<UpdateResponses, unknown, ThrowOnError> => (options.client ?? client).put<UpdateResponses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/service-applications/sale/{srvcAplyId}',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Change the officer in charge
+ *
+ * Hands the application (and its contracts) to another employee holding the processing role; an open officer step of the approval session follows. Requires WRITE permission.
+ */
+export const reassignOfficer = <ThrowOnError extends boolean = false>(options: Options<ReassignOfficerData, ThrowOnError>): RequestResult<ReassignOfficerResponses, unknown, ThrowOnError> => (options.client ?? client).put<ReassignOfficerResponses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/service-applications/sale/{srvcAplyId}/officer',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Get application
+ *
+ * Detail with NPLs, scanned documents, approval steps and processing history (VPA0004P04). Requires READ permission.
+ */
+export const getApplication1 = <ThrowOnError extends boolean = false>(options: Options<GetApplication1Data, ThrowOnError>): RequestResult<GetApplication1Responses, unknown, ThrowOnError> => (options.client ?? client).get<GetApplication1Responses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/service-applications/purchase/{srvcAplyId}',
+    ...options
+});
+
+/**
+ * Edit a application
+ *
+ * Contract kind, base contract, currency, desired price and scan, before approval is requested. Requires WRITE permission.
+ */
+export const update1 = <ThrowOnError extends boolean = false>(options: Options<Update1Data, ThrowOnError>): RequestResult<Update1Responses, unknown, ThrowOnError> => (options.client ?? client).put<Update1Responses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/service-applications/purchase/{srvcAplyId}',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Change the officer in charge
+ *
+ * Hands the application (and its contracts) to another employee holding the processing role; an open officer step of the approval session follows. Requires WRITE permission.
+ */
+export const reassignOfficer1 = <ThrowOnError extends boolean = false>(options: Options<ReassignOfficer1Data, ThrowOnError>): RequestResult<ReassignOfficer1Responses, unknown, ThrowOnError> => (options.client ?? client).put<ReassignOfficer1Responses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/service-applications/purchase/{srvcAplyId}/officer',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Get application
+ *
+ * Detail with NPLs, scanned documents, approval steps and processing history (VPA0004P04). Requires READ permission.
+ */
+export const getApplication2 = <ThrowOnError extends boolean = false>(options: Options<GetApplication2Data, ThrowOnError>): RequestResult<GetApplication2Responses, unknown, ThrowOnError> => (options.client ?? client).get<GetApplication2Responses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/service-applications/consulting/{srvcAplyId}',
+    ...options
+});
+
+/**
+ * Edit a application
+ *
+ * Contract kind, base contract, currency, desired price and scan, before approval is requested. Requires WRITE permission.
+ */
+export const update2 = <ThrowOnError extends boolean = false>(options: Options<Update2Data, ThrowOnError>): RequestResult<Update2Responses, unknown, ThrowOnError> => (options.client ?? client).put<Update2Responses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/service-applications/consulting/{srvcAplyId}',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Change the officer in charge
+ *
+ * Hands the application (and its contracts) to another employee holding the processing role; an open officer step of the approval session follows. Requires WRITE permission.
+ */
+export const reassignOfficer2 = <ThrowOnError extends boolean = false>(options: Options<ReassignOfficer2Data, ThrowOnError>): RequestResult<ReassignOfficer2Responses, unknown, ThrowOnError> => (options.client ?? client).put<ReassignOfficer2Responses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/service-applications/consulting/{srvcAplyId}/officer',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Get contract
+ *
+ * Contract or annex with NPLs, draft / signed documents, fees, annexes and terminations. Requires READ permission.
+ */
+export const getContract = <ThrowOnError extends boolean = false>(options: Options<GetContractData, ThrowOnError>): RequestResult<GetContractResponses, unknown, ThrowOnError> => (options.client ?? client).get<GetContractResponses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/sale-brokerage-contracts/{ctrtCd}',
+    ...options
+});
+
+/**
+ * Edit the contract draft
+ *
+ * Step 13 / annex 2 (PREPR only): period (end defaults to start + 1 year), price, auto-termination clause, fee terms (LUMP, STAG + advance %, AFTR). Requires WRITE permission.
+ */
+export const updateDraft = <ThrowOnError extends boolean = false>(options: Options<UpdateDraftData, ThrowOnError>): RequestResult<UpdateDraftResponses, unknown, ThrowOnError> => (options.client ?? client).put<UpdateDraftResponses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/sale-brokerage-contracts/{ctrtCd}',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
 
 /**
  * Delete role / Xóa vai trò
@@ -145,6 +294,32 @@ export const updateRoleGroup = <ThrowOnError extends boolean = false>(options: O
 });
 
 /**
+ * Get contract
+ *
+ * Contract or annex with NPLs, draft / signed documents, fees, annexes and terminations. Requires READ permission.
+ */
+export const getContract1 = <ThrowOnError extends boolean = false>(options: Options<GetContract1Data, ThrowOnError>): RequestResult<GetContract1Responses, unknown, ThrowOnError> => (options.client ?? client).get<GetContract1Responses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/purchase-brokerage-contracts/{ctrtCd}',
+    ...options
+});
+
+/**
+ * Edit the contract draft
+ *
+ * Step 13 / annex 2 (PREPR only): period (end defaults to start + 1 year), price, auto-termination clause, fee terms (LUMP, STAG + advance %, AFTR). Requires WRITE permission.
+ */
+export const updateDraft1 = <ThrowOnError extends boolean = false>(options: Options<UpdateDraft1Data, ThrowOnError>): RequestResult<UpdateDraft1Responses, unknown, ThrowOnError> => (options.client ?? client).put<UpdateDraft1Responses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/purchase-brokerage-contracts/{ctrtCd}',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
  * Get fee item / Chi tiết mục phí
  *
  * editable=false while the item is in use. / editable=false khi đang sử dụng.
@@ -189,6 +364,21 @@ export const getMember = <ThrowOnError extends boolean = false>(options: Options
 export const updateMember = <ThrowOnError extends boolean = false>(options: Options<UpdateMemberData, ThrowOnError>): RequestResult<UpdateMemberResponses, unknown, ThrowOnError> => (options.client ?? client).put<UpdateMemberResponses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/api/v1/members/{mbrNo}',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Reassign the officer in charge
+ *
+ * Step 12-1: hands a received sign-up whose processing step is open to another employee holding the processing role. Requires WRITE permission.
+ */
+export const reassign = <ThrowOnError extends boolean = false>(options: Options<ReassignData, ThrowOnError>): RequestResult<ReassignResponses, unknown, ThrowOnError> => (options.client ?? client).put<ReassignResponses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/members/{mbrNo}/approvals/assignee',
     ...options,
     headers: {
         'Content-Type': 'application/json',
@@ -516,7 +706,7 @@ export const detail = <ThrowOnError extends boolean = false>(options: Options<De
  *
  * Returns 409 (CNT001) while published. Category, publication and featured flags are changed with PATCH /{pstNo}/status. / Trả 409 khi đang đăng.
  */
-export const update = <ThrowOnError extends boolean = false>(options: Options<UpdateData, ThrowOnError>): RequestResult<UpdateResponses, unknown, ThrowOnError> => (options.client ?? client).put<UpdateResponses, unknown, ThrowOnError>({
+export const update3 = <ThrowOnError extends boolean = false>(options: Options<Update3Data, ThrowOnError>): RequestResult<Update3Responses, unknown, ThrowOnError> => (options.client ?? client).put<Update3Responses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/api/v1/contents/news/{pstNo}',
     ...options,
@@ -542,7 +732,7 @@ export const detail1 = <ThrowOnError extends boolean = false>(options: Options<D
  *
  * Updates content, document type and publication status in one call. / Cập nhật nội dung, loại và trạng thái.
  */
-export const update1 = <ThrowOnError extends boolean = false>(options: Options<Update1Data, ThrowOnError>): RequestResult<Update1Responses, unknown, ThrowOnError> => (options.client ?? client).put<Update1Responses, unknown, ThrowOnError>({
+export const update4 = <ThrowOnError extends boolean = false>(options: Options<Update4Data, ThrowOnError>): RequestResult<Update4Responses, unknown, ThrowOnError> => (options.client ?? client).put<Update4Responses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/api/v1/contents/legal-documents/{pstNo}',
     ...options,
@@ -609,7 +799,7 @@ export const detail2 = <ThrowOnError extends boolean = false>(options: Options<D
  *
  * Updates content, publication status and pin in one call. / Cập nhật nội dung, trạng thái và ghim.
  */
-export const update2 = <ThrowOnError extends boolean = false>(options: Options<Update2Data, ThrowOnError>): RequestResult<Update2Responses, unknown, ThrowOnError> => (options.client ?? client).put<Update2Responses, unknown, ThrowOnError>({
+export const update5 = <ThrowOnError extends boolean = false>(options: Options<Update5Data, ThrowOnError>): RequestResult<Update5Responses, unknown, ThrowOnError> => (options.client ?? client).put<Update5Responses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/api/v1/contents/careers/{pstNo}',
     ...options,
@@ -635,7 +825,7 @@ export const detail3 = <ThrowOnError extends boolean = false>(options: Options<D
  *
  * Returns 409 (BNR001) while in use. / Trả 409 khi đang sử dụng.
  */
-export const update3 = <ThrowOnError extends boolean = false>(options: Options<Update3Data, ThrowOnError>): RequestResult<Update3Responses, unknown, ThrowOnError> => (options.client ?? client).put<Update3Responses, unknown, ThrowOnError>({
+export const update6 = <ThrowOnError extends boolean = false>(options: Options<Update6Data, ThrowOnError>): RequestResult<Update6Responses, unknown, ThrowOnError> => (options.client ?? client).put<Update6Responses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/api/v1/contents/banners/{bannerId}',
     ...options,
@@ -661,9 +851,91 @@ export const detail4 = <ThrowOnError extends boolean = false>(options: Options<D
  *
  * Updates every value and the publication status; the section cannot change. / Cập nhật toàn bộ giá trị và trạng thái.
  */
-export const update4 = <ThrowOnError extends boolean = false>(options: Options<Update4Data, ThrowOnError>): RequestResult<Update4Responses, unknown, ThrowOnError> => (options.client ?? client).put<Update4Responses, unknown, ThrowOnError>({
+export const update7 = <ThrowOnError extends boolean = false>(options: Options<Update7Data, ThrowOnError>): RequestResult<Update7Responses, unknown, ThrowOnError> => (options.client ?? client).put<Update7Responses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/api/v1/contents/about/{pstNo}',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Get contract
+ *
+ * Contract or annex with NPLs, draft / signed documents, fees, annexes and terminations. Requires READ permission.
+ */
+export const getContract2 = <ThrowOnError extends boolean = false>(options: Options<GetContract2Data, ThrowOnError>): RequestResult<GetContract2Responses, unknown, ThrowOnError> => (options.client ?? client).get<GetContract2Responses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/consulting-contracts/{ctrtCd}',
+    ...options
+});
+
+/**
+ * Edit the contract draft
+ *
+ * Step 13 / annex 2 (PREPR only): period (end defaults to start + 1 year), price, auto-termination clause, fee terms (LUMP, STAG + advance %, AFTR). Requires WRITE permission.
+ */
+export const updateDraft2 = <ThrowOnError extends boolean = false>(options: Options<UpdateDraft2Data, ThrowOnError>): RequestResult<UpdateDraft2Responses, unknown, ThrowOnError> => (options.client ?? client).put<UpdateDraft2Responses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/consulting-contracts/{ctrtCd}',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Save the consulting report
+ *
+ * 수행 1: report PDF and summary (DRFT) once the contract runs and the advance is paid. Consultant or officer. Requires WRITE permission.
+ */
+export const saveReport = <ThrowOnError extends boolean = false>(options: Options<SaveReportData, ThrowOnError>): RequestResult<SaveReportResponses, unknown, ThrowOnError> => (options.client ?? client).put<SaveReportResponses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/consulting-contracts/{ctrtCd}/report',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Assign the consultant
+ *
+ * Step 20 (after the draft approval): consultant in charge of the report and additional consultations. Requires WRITE permission.
+ */
+export const assignConsultant = <ThrowOnError extends boolean = false>(options: Options<AssignConsultantData, ThrowOnError>): RequestResult<AssignConsultantResponses, unknown, ThrowOnError> => (options.client ?? client).put<AssignConsultantResponses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/consulting-contracts/{ctrtCd}/consultant',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Get the additional consulting switch
+ *
+ * 추가 12: whether members see the additional consulting button. Requires READ permission.
+ */
+export const getAdditionalConsultingSetting = <ThrowOnError extends boolean = false>(options?: Options<GetAdditionalConsultingSettingData, ThrowOnError>): RequestResult<GetAdditionalConsultingSettingResponses, unknown, ThrowOnError> => (options?.client ?? client).get<GetAdditionalConsultingSettingResponses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/consulting-contracts/settings/additional-consulting',
+    ...options
+});
+
+/**
+ * Change the additional consulting switch
+ *
+ * 추가 12: show (Y) or hide (N) the additional consulting button to members. Requires WRITE permission.
+ */
+export const updateAdditionalConsultingSetting = <ThrowOnError extends boolean = false>(options: Options<UpdateAdditionalConsultingSettingData, ThrowOnError>): RequestResult<UpdateAdditionalConsultingSettingResponses, unknown, ThrowOnError> => (options.client ?? client).put<UpdateAdditionalConsultingSettingResponses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/consulting-contracts/settings/additional-consulting',
     ...options,
     headers: {
         'Content-Type': 'application/json',
@@ -762,6 +1034,561 @@ export const updateJob = <ThrowOnError extends boolean = false>(options: Options
 export const updateSchedule = <ThrowOnError extends boolean = false>(options: Options<UpdateScheduleData, ThrowOnError>): RequestResult<UpdateScheduleResponses, unknown, ThrowOnError> => (options.client ?? client).put<UpdateScheduleResponses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/api/admin/batch/jobs/{jobName}/schedule',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Upload trade documents
+ *
+ * Creates a new ATCH_FILE group, or appends to fileUnqId. Requires WRITE permission on the contract menu (scope=contract, default) or the application menu (scope=application) of the kind.
+ */
+export const upload = <ThrowOnError extends boolean = false>(options: Options<UploadData, ThrowOnError>): RequestResult<UploadResponses, unknown, ThrowOnError> => (options.client ?? client).post<UploadResponses, unknown, ThrowOnError>({
+    ...formDataBodySerializer,
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/trade-files',
+    ...options,
+    headers: {
+        'Content-Type': null,
+        ...options.headers
+    }
+});
+
+/**
+ * Search applications
+ *
+ * Paginated list (VPA001101) with the derived approval stage and the action available to the current employee. Drafts are excluded. Requires READ permission.
+ */
+export const getApplications = <ThrowOnError extends boolean = false>(options: Options<GetApplicationsData, ThrowOnError>): RequestResult<GetApplicationsResponses, unknown, ThrowOnError> => (options.client ?? client).get<GetApplicationsResponses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/service-applications/sale',
+    ...options
+});
+
+/**
+ * Register a paper application
+ *
+ * Manual registration (VPA0011P01) for an active member and a registered NPL or lot. aplySttsCd PRCS receives it at once for tkcgEmpNo. Requires WRITE permission.
+ */
+export const create = <ThrowOnError extends boolean = false>(options: Options<CreateData, ThrowOnError>): RequestResult<CreateResponses, unknown, ThrowOnError> => (options.client ?? client).post<CreateResponses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/service-applications/sale',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Attach scanned documents
+ *
+ * Steps 11 / 11-1c: the officer in charge attaches the scan of the posted documents (file group from POST /api/files/upload). Requires WRITE permission.
+ */
+export const attachScan = <ThrowOnError extends boolean = false>(options: Options<AttachScanData, ThrowOnError>): RequestResult<AttachScanResponses, unknown, ThrowOnError> => (options.client ?? client).post<AttachScanResponses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/service-applications/sale/{srvcAplyId}/scans',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Receive a application
+ *
+ * Step 7: RCPT -> PRCS, starts PROC_DSPSL_MDT_RCPT, assigns the officer in charge and mails the applicant the documents to post. Requires WRITE permission.
+ */
+export const receive = <ThrowOnError extends boolean = false>(options: Options<ReceiveData, ThrowOnError>): RequestResult<ReceiveResponses, unknown, ThrowOnError> => (options.client ?? client).post<ReceiveResponses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/service-applications/sale/{srvcAplyId}/receipt',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Check documents
+ *
+ * Steps 11-1 / 11-1a / 11-2 by the officer in charge: 'Y' -> DCOK (approval can be requested), 'N' -> DCIN with the missing documents. Requires WRITE permission.
+ */
+export const checkDocuments = <ThrowOnError extends boolean = false>(options: Options<CheckDocumentsData, ThrowOnError>): RequestResult<CheckDocumentsResponses, unknown, ThrowOnError> => (options.client ?? client).post<CheckDocumentsResponses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/service-applications/sale/{srvcAplyId}/documents',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Cancel a application
+ *
+ * 취소 1-2: cancels an application that is not approved yet (CNCL) and closes its open approval session. Requires WRITE permission.
+ */
+export const cancel = <ThrowOnError extends boolean = false>(options: Options<CancelData, ThrowOnError>): RequestResult<CancelResponses, unknown, ThrowOnError> => (options.client ?? client).post<CancelResponses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/service-applications/sale/{srvcAplyId}/cancel',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Request approval
+ *
+ * Step 11-3 by the officer in charge, only with complete documents (DCOK). Approval through POST /api/v1/approvals/{atrzHstryId}/approve creates the contract draft (11-5); a rejection keeps DCOK. Requires WRITE permission.
+ */
+export const requestApproval = <ThrowOnError extends boolean = false>(options: Options<RequestApprovalData, ThrowOnError>): RequestResult<RequestApprovalResponses, unknown, ThrowOnError> => (options.client ?? client).post<RequestApprovalResponses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/service-applications/sale/{srvcAplyId}/approval',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Search applications
+ *
+ * Paginated list (VPA001101) with the derived approval stage and the action available to the current employee. Drafts are excluded. Requires READ permission.
+ */
+export const getApplications1 = <ThrowOnError extends boolean = false>(options: Options<GetApplications1Data, ThrowOnError>): RequestResult<GetApplications1Responses, unknown, ThrowOnError> => (options.client ?? client).get<GetApplications1Responses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/service-applications/purchase',
+    ...options
+});
+
+/**
+ * Register a paper application
+ *
+ * Manual registration (VPA0011P01) for an active member and a registered NPL or lot. aplySttsCd PRCS receives it at once for tkcgEmpNo. Requires WRITE permission.
+ */
+export const create1 = <ThrowOnError extends boolean = false>(options: Options<Create1Data, ThrowOnError>): RequestResult<Create1Responses, unknown, ThrowOnError> => (options.client ?? client).post<Create1Responses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/service-applications/purchase',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Attach scanned documents
+ *
+ * Steps 11 / 11-1c: the officer in charge attaches the scan of the posted documents (file group from POST /api/files/upload). Requires WRITE permission.
+ */
+export const attachScan1 = <ThrowOnError extends boolean = false>(options: Options<AttachScan1Data, ThrowOnError>): RequestResult<AttachScan1Responses, unknown, ThrowOnError> => (options.client ?? client).post<AttachScan1Responses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/service-applications/purchase/{srvcAplyId}/scans',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Receive a application
+ *
+ * Step 7: RCPT -> PRCS, starts PROC_DSPSL_MDT_RCPT, assigns the officer in charge and mails the applicant the documents to post. Requires WRITE permission.
+ */
+export const receive1 = <ThrowOnError extends boolean = false>(options: Options<Receive1Data, ThrowOnError>): RequestResult<Receive1Responses, unknown, ThrowOnError> => (options.client ?? client).post<Receive1Responses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/service-applications/purchase/{srvcAplyId}/receipt',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Check documents
+ *
+ * Steps 11-1 / 11-1a / 11-2 by the officer in charge: 'Y' -> DCOK (approval can be requested), 'N' -> DCIN with the missing documents. Requires WRITE permission.
+ */
+export const checkDocuments1 = <ThrowOnError extends boolean = false>(options: Options<CheckDocuments1Data, ThrowOnError>): RequestResult<CheckDocuments1Responses, unknown, ThrowOnError> => (options.client ?? client).post<CheckDocuments1Responses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/service-applications/purchase/{srvcAplyId}/documents',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Cancel a application
+ *
+ * 취소 1-2: cancels an application that is not approved yet (CNCL) and closes its open approval session. Requires WRITE permission.
+ */
+export const cancel1 = <ThrowOnError extends boolean = false>(options: Options<Cancel1Data, ThrowOnError>): RequestResult<Cancel1Responses, unknown, ThrowOnError> => (options.client ?? client).post<Cancel1Responses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/service-applications/purchase/{srvcAplyId}/cancel',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Request approval
+ *
+ * Step 11-3 by the officer in charge, only with complete documents (DCOK). Approval through POST /api/v1/approvals/{atrzHstryId}/approve creates the contract draft (11-5); a rejection keeps DCOK. Requires WRITE permission.
+ */
+export const requestApproval1 = <ThrowOnError extends boolean = false>(options: Options<RequestApproval1Data, ThrowOnError>): RequestResult<RequestApproval1Responses, unknown, ThrowOnError> => (options.client ?? client).post<RequestApproval1Responses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/service-applications/purchase/{srvcAplyId}/approval',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Search applications
+ *
+ * Paginated list (VPA001101) with the derived approval stage and the action available to the current employee. Drafts are excluded. Requires READ permission.
+ */
+export const getApplications2 = <ThrowOnError extends boolean = false>(options: Options<GetApplications2Data, ThrowOnError>): RequestResult<GetApplications2Responses, unknown, ThrowOnError> => (options.client ?? client).get<GetApplications2Responses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/service-applications/consulting',
+    ...options
+});
+
+/**
+ * Register a paper application
+ *
+ * Manual registration (VPA0011P01) for an active member and a registered NPL or lot. aplySttsCd PRCS receives it at once for tkcgEmpNo. Requires WRITE permission.
+ */
+export const create2 = <ThrowOnError extends boolean = false>(options: Options<Create2Data, ThrowOnError>): RequestResult<Create2Responses, unknown, ThrowOnError> => (options.client ?? client).post<Create2Responses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/service-applications/consulting',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Attach scanned documents
+ *
+ * Steps 11 / 11-1c: the officer in charge attaches the scan of the posted documents (file group from POST /api/files/upload). Requires WRITE permission.
+ */
+export const attachScan2 = <ThrowOnError extends boolean = false>(options: Options<AttachScan2Data, ThrowOnError>): RequestResult<AttachScan2Responses, unknown, ThrowOnError> => (options.client ?? client).post<AttachScan2Responses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/service-applications/consulting/{srvcAplyId}/scans',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Receive a application
+ *
+ * Step 7: RCPT -> PRCS, starts PROC_DSPSL_MDT_RCPT, assigns the officer in charge and mails the applicant the documents to post. Requires WRITE permission.
+ */
+export const receive2 = <ThrowOnError extends boolean = false>(options: Options<Receive2Data, ThrowOnError>): RequestResult<Receive2Responses, unknown, ThrowOnError> => (options.client ?? client).post<Receive2Responses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/service-applications/consulting/{srvcAplyId}/receipt',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Check documents
+ *
+ * Steps 11-1 / 11-1a / 11-2 by the officer in charge: 'Y' -> DCOK (approval can be requested), 'N' -> DCIN with the missing documents. Requires WRITE permission.
+ */
+export const checkDocuments2 = <ThrowOnError extends boolean = false>(options: Options<CheckDocuments2Data, ThrowOnError>): RequestResult<CheckDocuments2Responses, unknown, ThrowOnError> => (options.client ?? client).post<CheckDocuments2Responses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/service-applications/consulting/{srvcAplyId}/documents',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Cancel a application
+ *
+ * 취소 1-2: cancels an application that is not approved yet (CNCL) and closes its open approval session. Requires WRITE permission.
+ */
+export const cancel2 = <ThrowOnError extends boolean = false>(options: Options<Cancel2Data, ThrowOnError>): RequestResult<Cancel2Responses, unknown, ThrowOnError> => (options.client ?? client).post<Cancel2Responses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/service-applications/consulting/{srvcAplyId}/cancel',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Request approval
+ *
+ * Step 11-3 by the officer in charge, only with complete documents (DCOK). Approval through POST /api/v1/approvals/{atrzHstryId}/approve creates the contract draft (11-5); a rejection keeps DCOK. Requires WRITE permission.
+ */
+export const requestApproval2 = <ThrowOnError extends boolean = false>(options: Options<RequestApproval2Data, ThrowOnError>): RequestResult<RequestApproval2Responses, unknown, ThrowOnError> => (options.client ?? client).post<RequestApproval2Responses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/service-applications/consulting/{srvcAplyId}/approval',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Register a termination
+ *
+ * Termination 1: PROGS -> ENDING with the reason and the fee handling. With the auto-termination clause the contract ends at once. Requires WRITE permission.
+ */
+export const startTermination = <ThrowOnError extends boolean = false>(options: Options<StartTerminationData, ThrowOnError>): RequestResult<StartTerminationResponses, unknown, ThrowOnError> => (options.client ?? client).post<StartTerminationResponses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/sale-brokerage-contracts/{ctrtCd}/termination',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Attach the signed settlement minutes
+ *
+ * Termination 17 (SGNCP). Requires WRITE permission.
+ */
+export const attachTerminationScan = <ThrowOnError extends boolean = false>(options: Options<AttachTerminationScanData, ThrowOnError>): RequestResult<AttachTerminationScanResponses, unknown, ThrowOnError> => (options.client ?? client).post<AttachTerminationScanResponses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/sale-brokerage-contracts/{ctrtCd}/termination/signed-scan',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Request settlement minutes signature approval
+ *
+ * Termination 15-1 (PROC_DSPSL_MDT_END_SIGN); approval -> SGNCP. Requires WRITE permission.
+ */
+export const requestTerminationSignature = <ThrowOnError extends boolean = false>(options: Options<RequestTerminationSignatureData, ThrowOnError>): RequestResult<RequestTerminationSignatureResponses, unknown, ThrowOnError> => (options.client ?? client).post<RequestTerminationSignatureResponses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/sale-brokerage-contracts/{ctrtCd}/termination/signature-approval',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Register the settlement minutes for signature
+ *
+ * Termination 9: form 12 draft, DRFAPR -> SGNWT; mails the member. Requires WRITE permission.
+ */
+export const registerTerminationDraft = <ThrowOnError extends boolean = false>(options: Options<RegisterTerminationDraftData, ThrowOnError>): RequestResult<RegisterTerminationDraftResponses, unknown, ThrowOnError> => (options.client ?? client).post<RegisterTerminationDraftResponses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/sale-brokerage-contracts/{ctrtCd}/termination/draft-registration',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Complete the termination
+ *
+ * Termination 18: contract CMPTN (performed) or CNCLN; unsold NPLs hidden; collected fees refunded (RFPL) or open claims cancelled (CLCN); mails the member. Requires WRITE permission.
+ */
+export const completeTermination = <ThrowOnError extends boolean = false>(options: Options<CompleteTerminationData, ThrowOnError>): RequestResult<CompleteTerminationResponses, unknown, ThrowOnError> => (options.client ?? client).post<CompleteTerminationResponses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/sale-brokerage-contracts/{ctrtCd}/termination/completion',
+    ...options
+});
+
+/**
+ * Request termination approval
+ *
+ * Termination 2 (PROC_DSPSL_MDT_END); approval -> DRFAPR. Requires WRITE permission.
+ */
+export const requestTerminationApproval = <ThrowOnError extends boolean = false>(options: Options<RequestTerminationApprovalData, ThrowOnError>): RequestResult<RequestTerminationApprovalResponses, unknown, ThrowOnError> => (options.client ?? client).post<RequestTerminationApprovalResponses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/sale-brokerage-contracts/{ctrtCd}/termination/approval',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Attach the signed scan
+ *
+ * Step 31 / annex 18 (SGNCP). Requires WRITE permission.
+ */
+export const attachSignedScan = <ThrowOnError extends boolean = false>(options: Options<AttachSignedScanData, ThrowOnError>): RequestResult<AttachSignedScanResponses, unknown, ThrowOnError> => (options.client ?? client).post<AttachSignedScanResponses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/sale-brokerage-contracts/{ctrtCd}/signed-scan',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Request signature approval
+ *
+ * Step 29-1 / annex 16-1: the approver checks the member-signed document and signs for VAMC (PROC_DSPSL_MDT_SIGN); approval -> SGNCP. Requires WRITE permission.
+ */
+export const requestSignatureApproval = <ThrowOnError extends boolean = false>(options: Options<RequestSignatureApprovalData, ThrowOnError>): RequestResult<RequestSignatureApprovalResponses, unknown, ThrowOnError> => (options.client ?? client).post<RequestSignatureApprovalResponses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/sale-brokerage-contracts/{ctrtCd}/signature-approval',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Record the sale completion
+ *
+ * Step 39: actual price and sale date, NPLs marked sold (SD), remaining fee issued for STAG / AFTR and mailed. Requires WRITE permission.
+ */
+export const completeTrade = <ThrowOnError extends boolean = false>(options: Options<CompleteTradeData, ThrowOnError>): RequestResult<CompleteTradeResponses, unknown, ThrowOnError> => (options.client ?? client).post<CompleteTradeResponses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/sale-brokerage-contracts/{ctrtCd}/sale-completion',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Decide the renewal of an expiring contract
+ *
+ * Expiry 2: EXTEND_ANNEX creates an extension annex; NEW_CONTRACT registers the termination (expired) and a new contract draft; NO_EXTEND registers the termination (expired). Requires WRITE permission.
+ */
+export const decideRenewal = <ThrowOnError extends boolean = false>(options: Options<DecideRenewalData, ThrowOnError>): RequestResult<DecideRenewalResponses, unknown, ThrowOnError> => (options.client ?? client).post<DecideRenewalResponses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/sale-brokerage-contracts/{ctrtCd}/renewal-decision',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Record a fee refund
+ *
+ * Termination 18: refund transferred (RFPL -> RFCP). Requires WRITE permission.
+ */
+export const refundFee = <ThrowOnError extends boolean = false>(options: Options<RefundFeeData, ThrowOnError>): RequestResult<RefundFeeResponses, unknown, ThrowOnError> => (options.client ?? client).post<RefundFeeResponses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/sale-brokerage-contracts/{ctrtCd}/fees/{feeId}/refund',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Confirm a fee transfer
+ *
+ * Step 37 / annex 24. Requires WRITE permission.
+ */
+export const confirmFeeReceipt = <ThrowOnError extends boolean = false>(options: Options<ConfirmFeeReceiptData, ThrowOnError>): RequestResult<ConfirmFeeReceiptResponses, unknown, ThrowOnError> => (options.client ?? client).post<ConfirmFeeReceiptResponses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/sale-brokerage-contracts/{ctrtCd}/fees/{feeId}/receipt',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Register the draft for signature
+ *
+ * Step 23 / annex 10: DRFAPR -> SGNWT with the PDF the member prints, signs and posts; mails the member. Requires WRITE permission.
+ */
+export const registerDraft = <ThrowOnError extends boolean = false>(options: Options<RegisterDraftData, ThrowOnError>): RequestResult<RegisterDraftResponses, unknown, ThrowOnError> => (options.client ?? client).post<RegisterDraftResponses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/sale-brokerage-contracts/{ctrtCd}/draft-registration',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Conclude the contract
+ *
+ * Step 32 / annex 19: SGNCP with a scan -> PROGS; first installment (LUMP / STAG advance); NPLs published (step 38) for brokerage contracts and base contract annexes; extension / price annexes update the parent. Requires WRITE permission.
+ */
+export const conclude = <ThrowOnError extends boolean = false>(options: Options<ConcludeData, ThrowOnError>): RequestResult<ConcludeResponses, unknown, ThrowOnError> => (options.client ?? client).post<ConcludeResponses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/sale-brokerage-contracts/{ctrtCd}/conclusion',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Request draft approval
+ *
+ * Step 16 / annex 3: PROC_DSPSL_MDT_CTRT (contract) or PROC_DSPSL_MDT_ANX (annex); approval -> DRFAPR. Requires WRITE permission.
+ */
+export const requestDraftApproval = <ThrowOnError extends boolean = false>(options: Options<RequestDraftApprovalData, ThrowOnError>): RequestResult<RequestDraftApprovalResponses, unknown, ThrowOnError> => (options.client ?? client).post<RequestDraftApprovalResponses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/sale-brokerage-contracts/{ctrtCd}/approval',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Create an annex
+ *
+ * Annex 2: extension (new end date), price change (new price), after-sale or other annex of a brokerage contract in progress. Requires WRITE permission.
+ */
+export const createAnnex = <ThrowOnError extends boolean = false>(options: Options<CreateAnnexData, ThrowOnError>): RequestResult<CreateAnnexResponses, unknown, ThrowOnError> => (options.client ?? client).post<CreateAnnexResponses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/sale-brokerage-contracts/{ctrtCd}/annexes',
     ...options,
     headers: {
         'Content-Type': 'application/json',
@@ -878,6 +1705,257 @@ export const createRoleGroup = <ThrowOnError extends boolean = false>(options: O
 });
 
 /**
+ * Record the trade conclusion
+ *
+ * Step 38: purchase contract with the holder signed (date, actual price; see dspslCtrtCd for the linked sale contract), remaining fee issued and mailed. Requires WRITE permission.
+ */
+export const completeTrade1 = <ThrowOnError extends boolean = false>(options: Options<CompleteTrade1Data, ThrowOnError>): RequestResult<CompleteTrade1Responses, unknown, ThrowOnError> => (options.client ?? client).post<CompleteTrade1Responses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/purchase-brokerage-contracts/{ctrtCd}/trade-conclusion',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Register a termination
+ *
+ * Termination 1: PROGS -> ENDING with the reason and the fee handling. With the auto-termination clause the contract ends at once. Requires WRITE permission.
+ */
+export const startTermination1 = <ThrowOnError extends boolean = false>(options: Options<StartTermination1Data, ThrowOnError>): RequestResult<StartTermination1Responses, unknown, ThrowOnError> => (options.client ?? client).post<StartTermination1Responses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/purchase-brokerage-contracts/{ctrtCd}/termination',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Attach the signed settlement minutes
+ *
+ * Termination 17 (SGNCP). Requires WRITE permission.
+ */
+export const attachTerminationScan1 = <ThrowOnError extends boolean = false>(options: Options<AttachTerminationScan1Data, ThrowOnError>): RequestResult<AttachTerminationScan1Responses, unknown, ThrowOnError> => (options.client ?? client).post<AttachTerminationScan1Responses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/purchase-brokerage-contracts/{ctrtCd}/termination/signed-scan',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Request settlement minutes signature approval
+ *
+ * Termination 15-1 (PROC_DSPSL_MDT_END_SIGN); approval -> SGNCP. Requires WRITE permission.
+ */
+export const requestTerminationSignature1 = <ThrowOnError extends boolean = false>(options: Options<RequestTerminationSignature1Data, ThrowOnError>): RequestResult<RequestTerminationSignature1Responses, unknown, ThrowOnError> => (options.client ?? client).post<RequestTerminationSignature1Responses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/purchase-brokerage-contracts/{ctrtCd}/termination/signature-approval',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Register the settlement minutes for signature
+ *
+ * Termination 9: form 12 draft, DRFAPR -> SGNWT; mails the member. Requires WRITE permission.
+ */
+export const registerTerminationDraft1 = <ThrowOnError extends boolean = false>(options: Options<RegisterTerminationDraft1Data, ThrowOnError>): RequestResult<RegisterTerminationDraft1Responses, unknown, ThrowOnError> => (options.client ?? client).post<RegisterTerminationDraft1Responses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/purchase-brokerage-contracts/{ctrtCd}/termination/draft-registration',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Complete the termination
+ *
+ * Termination 18: contract CMPTN (performed) or CNCLN; unsold NPLs hidden; collected fees refunded (RFPL) or open claims cancelled (CLCN); mails the member. Requires WRITE permission.
+ */
+export const completeTermination1 = <ThrowOnError extends boolean = false>(options: Options<CompleteTermination1Data, ThrowOnError>): RequestResult<CompleteTermination1Responses, unknown, ThrowOnError> => (options.client ?? client).post<CompleteTermination1Responses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/purchase-brokerage-contracts/{ctrtCd}/termination/completion',
+    ...options
+});
+
+/**
+ * Request termination approval
+ *
+ * Termination 2 (PROC_DSPSL_MDT_END); approval -> DRFAPR. Requires WRITE permission.
+ */
+export const requestTerminationApproval1 = <ThrowOnError extends boolean = false>(options: Options<RequestTerminationApproval1Data, ThrowOnError>): RequestResult<RequestTerminationApproval1Responses, unknown, ThrowOnError> => (options.client ?? client).post<RequestTerminationApproval1Responses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/purchase-brokerage-contracts/{ctrtCd}/termination/approval',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Attach the signed scan
+ *
+ * Step 31 / annex 18 (SGNCP). Requires WRITE permission.
+ */
+export const attachSignedScan1 = <ThrowOnError extends boolean = false>(options: Options<AttachSignedScan1Data, ThrowOnError>): RequestResult<AttachSignedScan1Responses, unknown, ThrowOnError> => (options.client ?? client).post<AttachSignedScan1Responses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/purchase-brokerage-contracts/{ctrtCd}/signed-scan',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Request signature approval
+ *
+ * Step 29-1 / annex 16-1: the approver checks the member-signed document and signs for VAMC (PROC_DSPSL_MDT_SIGN); approval -> SGNCP. Requires WRITE permission.
+ */
+export const requestSignatureApproval1 = <ThrowOnError extends boolean = false>(options: Options<RequestSignatureApproval1Data, ThrowOnError>): RequestResult<RequestSignatureApproval1Responses, unknown, ThrowOnError> => (options.client ?? client).post<RequestSignatureApproval1Responses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/purchase-brokerage-contracts/{ctrtCd}/signature-approval',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Decide the renewal of an expiring contract
+ *
+ * 만료 2 (after the end date passed without a trade): EXTEND_ANNEX creates an extension annex; NEW_CONTRACT registers the termination (expired) and a new contract draft; NO_EXTEND registers the termination (expired). Requires WRITE permission.
+ */
+export const decideRenewal1 = <ThrowOnError extends boolean = false>(options: Options<DecideRenewal1Data, ThrowOnError>): RequestResult<DecideRenewal1Responses, unknown, ThrowOnError> => (options.client ?? client).post<DecideRenewal1Responses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/purchase-brokerage-contracts/{ctrtCd}/renewal-decision',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Record a fee refund
+ *
+ * Termination 18: refund transferred (RFPL -> RFCP). Requires WRITE permission.
+ */
+export const refundFee1 = <ThrowOnError extends boolean = false>(options: Options<RefundFee1Data, ThrowOnError>): RequestResult<RefundFee1Responses, unknown, ThrowOnError> => (options.client ?? client).post<RefundFee1Responses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/purchase-brokerage-contracts/{ctrtCd}/fees/{feeId}/refund',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Confirm a fee transfer
+ *
+ * Step 37 / annex 24. Requires WRITE permission.
+ */
+export const confirmFeeReceipt1 = <ThrowOnError extends boolean = false>(options: Options<ConfirmFeeReceipt1Data, ThrowOnError>): RequestResult<ConfirmFeeReceipt1Responses, unknown, ThrowOnError> => (options.client ?? client).post<ConfirmFeeReceipt1Responses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/purchase-brokerage-contracts/{ctrtCd}/fees/{feeId}/receipt',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Register the draft for signature
+ *
+ * Step 23 / annex 10: DRFAPR -> SGNWT with the PDF the member prints, signs and posts; mails the member. Requires WRITE permission.
+ */
+export const registerDraft1 = <ThrowOnError extends boolean = false>(options: Options<RegisterDraft1Data, ThrowOnError>): RequestResult<RegisterDraft1Responses, unknown, ThrowOnError> => (options.client ?? client).post<RegisterDraft1Responses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/purchase-brokerage-contracts/{ctrtCd}/draft-registration',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Record the delivery
+ *
+ * Step 40: handover completed after the trade conclusion. Requires WRITE permission.
+ */
+export const recordDelivery = <ThrowOnError extends boolean = false>(options: Options<RecordDeliveryData, ThrowOnError>): RequestResult<RecordDeliveryResponses, unknown, ThrowOnError> => (options.client ?? client).post<RecordDeliveryResponses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/purchase-brokerage-contracts/{ctrtCd}/delivery',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Conclude the contract
+ *
+ * Step 32 / annex 19: SGNCP with a scan -> PROGS; first installment (LUMP / STAG advance); NPLs published (step 38) for brokerage contracts and base contract annexes; extension / price annexes update the parent. Requires WRITE permission.
+ */
+export const conclude1 = <ThrowOnError extends boolean = false>(options: Options<Conclude1Data, ThrowOnError>): RequestResult<Conclude1Responses, unknown, ThrowOnError> => (options.client ?? client).post<Conclude1Responses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/purchase-brokerage-contracts/{ctrtCd}/conclusion',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Request draft approval
+ *
+ * Step 16 / annex 3: PROC_DSPSL_MDT_CTRT (contract) or PROC_DSPSL_MDT_ANX (annex); approval -> DRFAPR. Requires WRITE permission.
+ */
+export const requestDraftApproval1 = <ThrowOnError extends boolean = false>(options: Options<RequestDraftApproval1Data, ThrowOnError>): RequestResult<RequestDraftApproval1Responses, unknown, ThrowOnError> => (options.client ?? client).post<RequestDraftApproval1Responses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/purchase-brokerage-contracts/{ctrtCd}/approval',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Create an annex
+ *
+ * 연장 1 - 4: extension annex (new end date) of a purchase brokerage contract in progress; then the shared lifecycle with PROC_PUR_MDT_ANX. Requires WRITE permission.
+ */
+export const createAnnex1 = <ThrowOnError extends boolean = false>(options: Options<CreateAnnex1Data, ThrowOnError>): RequestResult<CreateAnnex1Responses, unknown, ThrowOnError> => (options.client ?? client).post<CreateAnnex1Responses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/purchase-brokerage-contracts/{ctrtCd}/annexes',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
  * Delete fee items / Xóa mục phí
  *
  * Only items not in use and not referenced by an application fee group. / Chỉ mục không sử dụng và chưa được tham chiếu.
@@ -934,7 +2012,7 @@ export const confirmMembershipFee = <ThrowOnError extends boolean = false>(optio
  *
  * After receipt: 'Y' marks the mandatory documents complete (optional scan file group) so the assignee can request approval; 'N' closes the approval session, sends the application back to the applicant (status U) with the supplement note and e-mails them. 'N' must be done by the assignee of the processing step. Requires WRITE permission.
  */
-export const checkDocuments = <ThrowOnError extends boolean = false>(options: Options<CheckDocumentsData, ThrowOnError>): RequestResult<CheckDocumentsResponses, unknown, ThrowOnError> => (options.client ?? client).post<CheckDocumentsResponses, unknown, ThrowOnError>({
+export const checkDocuments3 = <ThrowOnError extends boolean = false>(options: Options<CheckDocuments3Data, ThrowOnError>): RequestResult<CheckDocuments3Responses, unknown, ThrowOnError> => (options.client ?? client).post<CheckDocuments3Responses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/api/v1/members/{mbrNo}/documents',
     ...options,
@@ -949,7 +2027,7 @@ export const checkDocuments = <ThrowOnError extends boolean = false>(options: Op
  *
  * Starts the approval workflow of a pending, not yet received sign-up and assigns it to an employee holding the processing role. Requires WRITE permission.
  */
-export const receive = <ThrowOnError extends boolean = false>(options: Options<ReceiveData, ThrowOnError>): RequestResult<ReceiveResponses, unknown, ThrowOnError> => (options.client ?? client).post<ReceiveResponses, unknown, ThrowOnError>({
+export const receive3 = <ThrowOnError extends boolean = false>(options: Options<Receive3Data, ThrowOnError>): RequestResult<Receive3Responses, unknown, ThrowOnError> => (options.client ?? client).post<Receive3Responses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/api/v1/members/{mbrNo}/approvals/receive',
     ...options,
@@ -975,7 +2053,7 @@ export const getApprovalContext = <ThrowOnError extends boolean = false>(options
  *
  * Step 2 -> 3: Assignee submits the member sign-up to a designated 1st approver with the SGDN member code and the membership fee terms (ADF1234_P09). The documents must have been checked as complete (409 otherwise). Requires WRITE permission.
  */
-export const requestApproval = <ThrowOnError extends boolean = false>(options: Options<RequestApprovalData, ThrowOnError>): RequestResult<RequestApprovalResponses, unknown, ThrowOnError> => (options.client ?? client).post<RequestApprovalResponses, unknown, ThrowOnError>({
+export const requestApproval3 = <ThrowOnError extends boolean = false>(options: Options<RequestApproval3Data, ThrowOnError>): RequestResult<RequestApproval3Responses, unknown, ThrowOnError> => (options.client ?? client).post<RequestApproval3Responses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/api/v1/members/{mbrNo}/approval',
     ...options,
@@ -1325,7 +2403,7 @@ export const list = <ThrowOnError extends boolean = false>(options: Options<List
  *
  * category = NWS, MED or RSC. Default unpublished. / Mặc định chưa đăng.
  */
-export const create = <ThrowOnError extends boolean = false>(options: Options<CreateData, ThrowOnError>): RequestResult<CreateResponses, unknown, ThrowOnError> => (options.client ?? client).post<CreateResponses, unknown, ThrowOnError>({
+export const create3 = <ThrowOnError extends boolean = false>(options: Options<Create3Data, ThrowOnError>): RequestResult<Create3Responses, unknown, ThrowOnError> => (options.client ?? client).post<Create3Responses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/api/v1/contents/news',
     ...options,
@@ -1366,7 +2444,7 @@ export const list1 = <ThrowOnError extends boolean = false>(options: Options<Lis
  *
  * Default published. Required: type, number/sign, issue date, title. / Mặc định công bố.
  */
-export const create1 = <ThrowOnError extends boolean = false>(options: Options<Create1Data, ThrowOnError>): RequestResult<Create1Responses, unknown, ThrowOnError> => (options.client ?? client).post<Create1Responses, unknown, ThrowOnError>({
+export const create4 = <ThrowOnError extends boolean = false>(options: Options<Create4Data, ThrowOnError>): RequestResult<Create4Responses, unknown, ThrowOnError> => (options.client ?? client).post<Create4Responses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/api/v1/contents/legal-documents',
     ...options,
@@ -1381,7 +2459,7 @@ export const create1 = <ThrowOnError extends boolean = false>(options: Options<C
  *
  * Creates a new group, or appends to fileUnqId. board decides the write permission checked (NOTICE, FAQ). / Tạo nhóm mới hoặc thêm vào nhóm có sẵn.
  */
-export const upload = <ThrowOnError extends boolean = false>(options: Options<UploadData, ThrowOnError>): RequestResult<UploadResponses, unknown, ThrowOnError> => (options.client ?? client).post<UploadResponses, unknown, ThrowOnError>({
+export const upload1 = <ThrowOnError extends boolean = false>(options: Options<Upload1Data, ThrowOnError>): RequestResult<Upload1Responses, unknown, ThrowOnError> => (options.client ?? client).post<Upload1Responses, unknown, ThrowOnError>({
     ...formDataBodySerializer,
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/api/v1/contents/files',
@@ -1464,7 +2542,7 @@ export const list2 = <ThrowOnError extends boolean = false>(options: Options<Lis
  *
  * Default published. / Mặc định công bố.
  */
-export const create2 = <ThrowOnError extends boolean = false>(options: Options<Create2Data, ThrowOnError>): RequestResult<Create2Responses, unknown, ThrowOnError> => (options.client ?? client).post<Create2Responses, unknown, ThrowOnError>({
+export const create5 = <ThrowOnError extends boolean = false>(options: Options<Create5Data, ThrowOnError>): RequestResult<Create5Responses, unknown, ThrowOnError> => (options.client ?? client).post<Create5Responses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/api/v1/contents/careers',
     ...options,
@@ -1505,7 +2583,7 @@ export const list3 = <ThrowOnError extends boolean = false>(options: Options<Lis
  *
  * Starts not in use. / Mặc định không sử dụng.
  */
-export const create3 = <ThrowOnError extends boolean = false>(options: Options<Create3Data, ThrowOnError>): RequestResult<Create3Responses, unknown, ThrowOnError> => (options.client ?? client).post<Create3Responses, unknown, ThrowOnError>({
+export const create6 = <ThrowOnError extends boolean = false>(options: Options<Create6Data, ThrowOnError>): RequestResult<Create6Responses, unknown, ThrowOnError> => (options.client ?? client).post<Create6Responses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/api/v1/contents/banners',
     ...options,
@@ -1562,9 +2640,252 @@ export const list4 = <ThrowOnError extends boolean = false>(options: Options<Lis
  *
  * section = CEOM, HIST, HSTI, MSSN, FUNC, ORGS, DIRC, BEXB, BDIR, BSPV or PRTN. extraJson must be valid JSON matching the section format (CNT015): ORGS = department array or {"vi": [...], "en": [...]}, DIRC values = string or {"vi", "en"}, PRTN = {"url": "https://..."}. BEXB/BDIR/BSPV need name and tag = M or F; PRTN needs tag = DOMESTIC or FOREIGN (CNT017). CEOM ignores email/phone (company name and signatory title are platform i18n labels). / extraJson phải là JSON hợp lệ đúng định dạng section; ban lãnh đạo cần tên và giới tính M/F; đối tác cần nhóm DOMESTIC/FOREIGN; CEOM bỏ qua email/phone.
  */
-export const create4 = <ThrowOnError extends boolean = false>(options: Options<Create4Data, ThrowOnError>): RequestResult<Create4Responses, unknown, ThrowOnError> => (options.client ?? client).post<Create4Responses, unknown, ThrowOnError>({
+export const create7 = <ThrowOnError extends boolean = false>(options: Options<Create7Data, ThrowOnError>): RequestResult<Create7Responses, unknown, ThrowOnError> => (options.client ?? client).post<Create7Responses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/api/v1/contents/about',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Register a termination
+ *
+ * Termination 1: PROGS -> ENDING with the reason and the fee handling. With the auto-termination clause the contract ends at once. Requires WRITE permission.
+ */
+export const startTermination2 = <ThrowOnError extends boolean = false>(options: Options<StartTermination2Data, ThrowOnError>): RequestResult<StartTermination2Responses, unknown, ThrowOnError> => (options.client ?? client).post<StartTermination2Responses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/consulting-contracts/{ctrtCd}/termination',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Attach the signed settlement minutes
+ *
+ * Termination 17 (SGNCP). Requires WRITE permission.
+ */
+export const attachTerminationScan2 = <ThrowOnError extends boolean = false>(options: Options<AttachTerminationScan2Data, ThrowOnError>): RequestResult<AttachTerminationScan2Responses, unknown, ThrowOnError> => (options.client ?? client).post<AttachTerminationScan2Responses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/consulting-contracts/{ctrtCd}/termination/signed-scan',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Request settlement minutes signature approval
+ *
+ * Termination 15-1 (PROC_DSPSL_MDT_END_SIGN); approval -> SGNCP. Requires WRITE permission.
+ */
+export const requestTerminationSignature2 = <ThrowOnError extends boolean = false>(options: Options<RequestTerminationSignature2Data, ThrowOnError>): RequestResult<RequestTerminationSignature2Responses, unknown, ThrowOnError> => (options.client ?? client).post<RequestTerminationSignature2Responses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/consulting-contracts/{ctrtCd}/termination/signature-approval',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Register the settlement minutes for signature
+ *
+ * Termination 9: form 12 draft, DRFAPR -> SGNWT; mails the member. Requires WRITE permission.
+ */
+export const registerTerminationDraft2 = <ThrowOnError extends boolean = false>(options: Options<RegisterTerminationDraft2Data, ThrowOnError>): RequestResult<RegisterTerminationDraft2Responses, unknown, ThrowOnError> => (options.client ?? client).post<RegisterTerminationDraft2Responses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/consulting-contracts/{ctrtCd}/termination/draft-registration',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Complete the termination
+ *
+ * Termination 18: contract CMPTN (performed) or CNCLN; unsold NPLs hidden; collected fees refunded (RFPL) or open claims cancelled (CLCN); mails the member. Requires WRITE permission.
+ */
+export const completeTermination2 = <ThrowOnError extends boolean = false>(options: Options<CompleteTermination2Data, ThrowOnError>): RequestResult<CompleteTermination2Responses, unknown, ThrowOnError> => (options.client ?? client).post<CompleteTermination2Responses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/consulting-contracts/{ctrtCd}/termination/completion',
+    ...options
+});
+
+/**
+ * Request termination approval
+ *
+ * Termination 2 (PROC_DSPSL_MDT_END); approval -> DRFAPR. Requires WRITE permission.
+ */
+export const requestTerminationApproval2 = <ThrowOnError extends boolean = false>(options: Options<RequestTerminationApproval2Data, ThrowOnError>): RequestResult<RequestTerminationApproval2Responses, unknown, ThrowOnError> => (options.client ?? client).post<RequestTerminationApproval2Responses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/consulting-contracts/{ctrtCd}/termination/approval',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Attach the signed scan
+ *
+ * Step 31 / annex 18 (SGNCP). Requires WRITE permission.
+ */
+export const attachSignedScan2 = <ThrowOnError extends boolean = false>(options: Options<AttachSignedScan2Data, ThrowOnError>): RequestResult<AttachSignedScan2Responses, unknown, ThrowOnError> => (options.client ?? client).post<AttachSignedScan2Responses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/consulting-contracts/{ctrtCd}/signed-scan',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Request signature approval
+ *
+ * Step 29-1 / annex 16-1: the approver checks the member-signed document and signs for VAMC (PROC_DSPSL_MDT_SIGN); approval -> SGNCP. Requires WRITE permission.
+ */
+export const requestSignatureApproval2 = <ThrowOnError extends boolean = false>(options: Options<RequestSignatureApproval2Data, ThrowOnError>): RequestResult<RequestSignatureApproval2Responses, unknown, ThrowOnError> => (options.client ?? client).post<RequestSignatureApproval2Responses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/consulting-contracts/{ctrtCd}/signature-approval',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Complete the report
+ *
+ * 수행 6: APRV -> RDY (not published); the remaining fee is issued and mailed. The report is published when the fee is confirmed (수행 11-1). Requires WRITE permission.
+ */
+export const completeReport = <ThrowOnError extends boolean = false>(options: Options<CompleteReportData, ThrowOnError>): RequestResult<CompleteReportResponses, unknown, ThrowOnError> => (options.client ?? client).post<CompleteReportResponses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/consulting-contracts/{ctrtCd}/report/completion',
+    ...options
+});
+
+/**
+ * Request report approval
+ *
+ * 수행 2: PROC_CNSLT_RPTP; approval -> APRV, rejection -> DRFT. Requires WRITE permission.
+ */
+export const requestReportApproval = <ThrowOnError extends boolean = false>(options: Options<RequestReportApprovalData, ThrowOnError>): RequestResult<RequestReportApprovalResponses, unknown, ThrowOnError> => (options.client ?? client).post<RequestReportApprovalResponses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/consulting-contracts/{ctrtCd}/report/approval',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Record a fee refund
+ *
+ * Termination 18: refund transferred (RFPL -> RFCP). Requires WRITE permission.
+ */
+export const refundFee2 = <ThrowOnError extends boolean = false>(options: Options<RefundFee2Data, ThrowOnError>): RequestResult<RefundFee2Responses, unknown, ThrowOnError> => (options.client ?? client).post<RefundFee2Responses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/consulting-contracts/{ctrtCd}/fees/{feeId}/refund',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Confirm a fee transfer
+ *
+ * Step 37 / annex 24. Requires WRITE permission.
+ */
+export const confirmFeeReceipt2 = <ThrowOnError extends boolean = false>(options: Options<ConfirmFeeReceipt2Data, ThrowOnError>): RequestResult<ConfirmFeeReceipt2Responses, unknown, ThrowOnError> => (options.client ?? client).post<ConfirmFeeReceipt2Responses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/consulting-contracts/{ctrtCd}/fees/{feeId}/receipt',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Register the draft for signature
+ *
+ * Step 23 / annex 10: DRFAPR -> SGNWT with the PDF the member prints, signs and posts; mails the member. Requires WRITE permission.
+ */
+export const registerDraft2 = <ThrowOnError extends boolean = false>(options: Options<RegisterDraft2Data, ThrowOnError>): RequestResult<RegisterDraft2Responses, unknown, ThrowOnError> => (options.client ?? client).post<RegisterDraft2Responses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/consulting-contracts/{ctrtCd}/draft-registration',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Conclude the contract
+ *
+ * Step 32 / annex 19: SGNCP with a scan -> PROGS; first installment (LUMP / STAG advance); NPLs published (step 38) for brokerage contracts and base contract annexes; extension / price annexes update the parent. Requires WRITE permission.
+ */
+export const conclude2 = <ThrowOnError extends boolean = false>(options: Options<Conclude2Data, ThrowOnError>): RequestResult<Conclude2Responses, unknown, ThrowOnError> => (options.client ?? client).post<Conclude2Responses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/consulting-contracts/{ctrtCd}/conclusion',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Request draft approval
+ *
+ * Step 16 / annex 3: PROC_DSPSL_MDT_CTRT (contract) or PROC_DSPSL_MDT_ANX (annex); approval -> DRFAPR. Requires WRITE permission.
+ */
+export const requestDraftApproval2 = <ThrowOnError extends boolean = false>(options: Options<RequestDraftApproval2Data, ThrowOnError>): RequestResult<RequestDraftApproval2Responses, unknown, ThrowOnError> => (options.client ?? client).post<RequestDraftApproval2Responses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/consulting-contracts/{ctrtCd}/approval',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Receive an additional consultation
+ *
+ * 추가 15: RQST -> RCPT. Consultant or officer. Requires WRITE permission.
+ */
+export const receiveAdditionalConsultation = <ThrowOnError extends boolean = false>(options: Options<ReceiveAdditionalConsultationData, ThrowOnError>): RequestResult<ReceiveAdditionalConsultationResponses, unknown, ThrowOnError> => (options.client ?? client).post<ReceiveAdditionalConsultationResponses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/consulting-contracts/{ctrtCd}/additional-consultations/{adtnId}/receipt',
+    ...options
+});
+
+/**
+ * Complete an additional consultation
+ *
+ * 추가 21: result recorded and mailed to the member. Requires WRITE permission.
+ */
+export const completeAdditionalConsultation = <ThrowOnError extends boolean = false>(options: Options<CompleteAdditionalConsultationData, ThrowOnError>): RequestResult<CompleteAdditionalConsultationResponses, unknown, ThrowOnError> => (options.client ?? client).post<CompleteAdditionalConsultationResponses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/consulting-contracts/{ctrtCd}/additional-consultations/{adtnId}/completion',
     ...options,
     headers: {
         'Content-Type': 'application/json',
@@ -1844,6 +3165,21 @@ export const updateUse = <ThrowOnError extends boolean = false>(options: Options
 });
 
 /**
+ * Change the NPL disclosure
+ *
+ * Shows / hides an NPL and its collaterals on the platform and optionally sets the NPL status (SA, UC, SD), with a reason. The contract flow publishes at conclusion and marks sold at the sale completion. Requires WRITE permission.
+ */
+export const updateDisclosure = <ThrowOnError extends boolean = false>(options: Options<UpdateDisclosureData, ThrowOnError>): RequestResult<UpdateDisclosureResponses, unknown, ThrowOnError> => (options.client ?? client).patch<UpdateDisclosureResponses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/npls/{bndCd}/disclosure',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
  * Reorder sections of a page / Sắp xếp section trong trang
  *
  * category = page; pstNos must list every section of the page. / pstNos gồm toàn bộ section của trang.
@@ -1979,6 +3315,21 @@ export const publish1 = <ThrowOnError extends boolean = false>(options: Options<
 });
 
 /**
+ * Change inquiry category
+ *
+ * Re-classifies the inquiry, e.g. to consulting (CNS) before answering with the consulting application link (consulting flow step 1). Returns 400 (CNT018) for an unknown category.
+ */
+export const changeCategory = <ThrowOnError extends boolean = false>(options: Options<ChangeCategoryData, ThrowOnError>): RequestResult<ChangeCategoryResponses, unknown, ThrowOnError> => (options.client ?? client).patch<ChangeCategoryResponses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/contents/inquiries/{pstNo}/category',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
  * Update FAQ status / Cập nhật trạng thái FAQ
  *
  * Category and published flag (pinning is not supported for FAQ). / Danh mục và trạng thái đăng (FAQ không hỗ trợ ghim).
@@ -2084,6 +3435,83 @@ export const publish3 = <ThrowOnError extends boolean = false>(options: Options<
 });
 
 /**
+ * Get trade document group
+ *
+ * Active files of a group. Requires READ permission on the contract or application menu of the kind.
+ */
+export const getGroup = <ThrowOnError extends boolean = false>(options: Options<GetGroupData, ThrowOnError>): RequestResult<GetGroupResponses, unknown, ThrowOnError> => (options.client ?? client).get<GetGroupResponses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/trade-files/{fileUnqId}',
+    ...options
+});
+
+/**
+ * Get processing history
+ *
+ * Status changes of the application, oldest first. Requires READ permission.
+ */
+export const getHistories = <ThrowOnError extends boolean = false>(options: Options<GetHistoriesData, ThrowOnError>): RequestResult<GetHistoriesResponses, unknown, ThrowOnError> => (options.client ?? client).get<GetHistoriesResponses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/service-applications/sale/{srvcAplyId}/process-histories',
+    ...options
+});
+
+/**
+ * Get processing history
+ *
+ * Status changes of the application, oldest first. Requires READ permission.
+ */
+export const getHistories1 = <ThrowOnError extends boolean = false>(options: Options<GetHistories1Data, ThrowOnError>): RequestResult<GetHistories1Responses, unknown, ThrowOnError> => (options.client ?? client).get<GetHistories1Responses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/service-applications/purchase/{srvcAplyId}/process-histories',
+    ...options
+});
+
+/**
+ * Get processing history
+ *
+ * Status changes of the application, oldest first. Requires READ permission.
+ */
+export const getHistories2 = <ThrowOnError extends boolean = false>(options: Options<GetHistories2Data, ThrowOnError>): RequestResult<GetHistories2Responses, unknown, ThrowOnError> => (options.client ?? client).get<GetHistories2Responses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/service-applications/consulting/{srvcAplyId}/process-histories',
+    ...options
+});
+
+/**
+ * Search contracts
+ *
+ * Contracts and annexes with the remaining days (D-xx), fee stage and latest approval. Requires READ permission.
+ */
+export const getContracts = <ThrowOnError extends boolean = false>(options: Options<GetContractsData, ThrowOnError>): RequestResult<GetContractsResponses, unknown, ThrowOnError> => (options.client ?? client).get<GetContractsResponses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/sale-brokerage-contracts',
+    ...options
+});
+
+/**
+ * Get fee installments
+ *
+ * Installments, receipts and refunds. Requires READ permission.
+ */
+export const getFees1 = <ThrowOnError extends boolean = false>(options: Options<GetFees1Data, ThrowOnError>): RequestResult<GetFees1Responses, unknown, ThrowOnError> => (options.client ?? client).get<GetFees1Responses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/sale-brokerage-contracts/{ctrtCd}/fees',
+    ...options
+});
+
+/**
+ * Get approval history
+ *
+ * Approval sessions of the contract and of its terminations. Requires READ permission.
+ */
+export const getApprovalHistories = <ThrowOnError extends boolean = false>(options: Options<GetApprovalHistoriesData, ThrowOnError>): RequestResult<GetApprovalHistoriesResponses, unknown, ThrowOnError> => (options.client ?? client).get<GetApprovalHistoriesResponses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/sale-brokerage-contracts/{ctrtCd}/approval-histories',
+    ...options
+});
+
+/**
  * Revoke single menu permission from role / Thu hồi phân quyền menu đơn lẻ của vai trò
  *
  * Removes permission mapping for a specific menu and role. Requires WRITE permission. / Xóa ánh xạ phân quyền của một menu cụ thể khỏi vai trò. Yêu cầu quyền GHI.
@@ -2146,6 +3574,50 @@ export const getAllRoles = <ThrowOnError extends boolean = false>(options?: Opti
 export const getAllRoleGroups = <ThrowOnError extends boolean = false>(options?: Options<GetAllRoleGroupsData, ThrowOnError>): RequestResult<GetAllRoleGroupsResponses, unknown, ThrowOnError> => (options?.client ?? client).get<GetAllRoleGroupsResponses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/api/v1/role-groups/all',
+    ...options
+});
+
+/**
+ * Search contracts
+ *
+ * Contracts and annexes with the remaining days (D-xx), fee stage and latest approval. Requires READ permission.
+ */
+export const getContracts1 = <ThrowOnError extends boolean = false>(options: Options<GetContracts1Data, ThrowOnError>): RequestResult<GetContracts1Responses, unknown, ThrowOnError> => (options.client ?? client).get<GetContracts1Responses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/purchase-brokerage-contracts',
+    ...options
+});
+
+/**
+ * Get fee installments
+ *
+ * Installments, receipts and refunds. Requires READ permission.
+ */
+export const getFees2 = <ThrowOnError extends boolean = false>(options: Options<GetFees2Data, ThrowOnError>): RequestResult<GetFees2Responses, unknown, ThrowOnError> => (options.client ?? client).get<GetFees2Responses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/purchase-brokerage-contracts/{ctrtCd}/fees',
+    ...options
+});
+
+/**
+ * Get approval history
+ *
+ * Approval sessions of the contract and of its terminations. Requires READ permission.
+ */
+export const getApprovalHistories1 = <ThrowOnError extends boolean = false>(options: Options<GetApprovalHistories1Data, ThrowOnError>): RequestResult<GetApprovalHistories1Responses, unknown, ThrowOnError> => (options.client ?? client).get<GetApprovalHistories1Responses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/purchase-brokerage-contracts/{ctrtCd}/approval-histories',
+    ...options
+});
+
+/**
+ * Get sign-up work counters
+ *
+ * Step 5: counters for the admin header badge - new applications waiting for receipt, supplement requests, applications assigned to me and awaiting my decision. Requires READ permission.
+ */
+export const getApprovalSummary = <ThrowOnError extends boolean = false>(options?: Options<GetApprovalSummaryData, ThrowOnError>): RequestResult<GetApprovalSummaryResponses, unknown, ThrowOnError> => (options?.client ?? client).get<GetApprovalSummaryResponses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/members/approval-summary',
     ...options
 });
 
@@ -2231,7 +3703,7 @@ export const excel1 = <ThrowOnError extends boolean = false>(options: Options<Ex
  *
  * Active files of a group. / Các tệp còn hiệu lực của nhóm.
  */
-export const getGroup = <ThrowOnError extends boolean = false>(options: Options<GetGroupData, ThrowOnError>): RequestResult<GetGroupResponses, unknown, ThrowOnError> => (options.client ?? client).get<GetGroupResponses, unknown, ThrowOnError>({
+export const getGroup1 = <ThrowOnError extends boolean = false>(options: Options<GetGroup1Data, ThrowOnError>): RequestResult<GetGroup1Responses, unknown, ThrowOnError> => (options.client ?? client).get<GetGroup1Responses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/api/v1/contents/files/{fileUnqId}',
     ...options
@@ -2267,6 +3739,39 @@ export const excel3 = <ThrowOnError extends boolean = false>(options: Options<Ex
 export const excel4 = <ThrowOnError extends boolean = false>(options: Options<Excel4Data, ThrowOnError>): RequestResult<Excel4Responses, unknown, ThrowOnError> => (options.client ?? client).get<Excel4Responses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/api/v1/contents/banners/excel',
+    ...options
+});
+
+/**
+ * Search contracts
+ *
+ * Contracts and annexes with the remaining days (D-xx), fee stage and latest approval. Requires READ permission.
+ */
+export const getContracts2 = <ThrowOnError extends boolean = false>(options: Options<GetContracts2Data, ThrowOnError>): RequestResult<GetContracts2Responses, unknown, ThrowOnError> => (options.client ?? client).get<GetContracts2Responses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/consulting-contracts',
+    ...options
+});
+
+/**
+ * Get fee installments
+ *
+ * Installments, receipts and refunds. Requires READ permission.
+ */
+export const getFees3 = <ThrowOnError extends boolean = false>(options: Options<GetFees3Data, ThrowOnError>): RequestResult<GetFees3Responses, unknown, ThrowOnError> => (options.client ?? client).get<GetFees3Responses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/consulting-contracts/{ctrtCd}/fees',
+    ...options
+});
+
+/**
+ * Get approval history
+ *
+ * Approval sessions of the contract and of its terminations. Requires READ permission.
+ */
+export const getApprovalHistories2 = <ThrowOnError extends boolean = false>(options: Options<GetApprovalHistories2Data, ThrowOnError>): RequestResult<GetApprovalHistories2Responses, unknown, ThrowOnError> => (options.client ?? client).get<GetApprovalHistories2Responses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/consulting-contracts/{ctrtCd}/approval-histories',
     ...options
 });
 
@@ -2322,6 +3827,28 @@ export const download = <ThrowOnError extends boolean = false>(options: Options<
 export const getDetail = <ThrowOnError extends boolean = false>(options: Options<GetDetailData, ThrowOnError>): RequestResult<GetDetailResponses, unknown, ThrowOnError> => (options.client ?? client).get<GetDetailResponses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/api/v1/approvals/{atrzHstryId}',
+    ...options
+});
+
+/**
+ * Get my approval inbox
+ *
+ * In-progress approval sessions whose current step is assigned to the signed-in employee, newest first, with a navigation hint (processKind, targetScreen, menuCd, tradeKind, srvcAplyId, srvcCtrtCd, ctrtEndId, mbrNo). Any authenticated employee; only their own items are returned.
+ */
+export const getInbox = <ThrowOnError extends boolean = false>(options: Options<GetInboxData, ThrowOnError>): RequestResult<GetInboxResponses, unknown, ThrowOnError> => (options.client ?? client).get<GetInboxResponses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/approvals/inbox',
+    ...options
+});
+
+/**
+ * Get my approval inbox counts
+ *
+ * Number of sessions waiting for the signed-in employee per process kind (member, sale, purchase, consulting, other). Any authenticated employee.
+ */
+export const getInboxSummary = <ThrowOnError extends boolean = false>(options?: Options<GetInboxSummaryData, ThrowOnError>): RequestResult<GetInboxSummaryResponses, unknown, ThrowOnError> => (options?.client ?? client).get<GetInboxSummaryResponses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/approvals/inbox/summary',
     ...options
 });
 

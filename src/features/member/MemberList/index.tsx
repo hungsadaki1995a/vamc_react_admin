@@ -29,6 +29,7 @@ import type {
   AccountStatus,
 } from './member.types';
 import { initialMemberData } from './member.mock';
+import { useMembers } from './useMembers';
 import MemberDetailModal from './MemberDetailModal';
 import ApprovalStatusModal from './ApprovalStatusModal';
 import NewMemberModal from './NewMemberModal';
@@ -56,8 +57,13 @@ const ALL_APPROVAL_STATUSES: ApprovalStatus[] = [
 ];
 
 export default function MemberList() {
-  // ── Data State ─────────────────────────────────────────────────────────────
-  const [data, setData] = useState<MemberItem[]>(initialMemberData);
+  // ── Pagination State ───────────────────────────────────────────────────────
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(20);
+
+  // ── Local State & Overrides ────────────────────────────────────────────────
+  const [addedMembers, setAddedMembers] = useState<MemberItem[]>([]);
+  const [memberOverrides, setMemberOverrides] = useState<Record<string, Partial<MemberItem>>>({});
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
 
   // ── Modals State ───────────────────────────────────────────────────────────
@@ -117,6 +123,18 @@ export default function MemberList() {
     phoneNumber: '',
     email: '',
     dateRange: null as [dayjs.Dayjs | null, dayjs.Dayjs | null] | null,
+  });
+
+  // ── API Member Query Hook ──────────────────────────────────────────────────
+  const {
+    data: memberResult,
+    items: memberItems,
+    isLoading,
+    isFetching,
+  } = useMembers({
+    page,
+    pageSize,
+    ...appliedFilters,
   });
 
   // ── Filter Checkbox Handlers ───────────────────────────────────────────────
@@ -180,6 +198,7 @@ export default function MemberList() {
 
   // ── Search & Reset ─────────────────────────────────────────────────────────
   const handleSearch = () => {
+    setPage(1);
     setAppliedFilters({
       classificationAll,
       selectedClassifications,
@@ -214,6 +233,7 @@ export default function MemberList() {
     setFilterPhoneNumber('');
     setFilterEmail('');
     setDateRange(null);
+    setPage(1);
 
     setAppliedFilters({
       classificationAll: false,
@@ -234,9 +254,23 @@ export default function MemberList() {
     message.info('Filters reset to default');
   };
 
+  // ── Combined Members Memo ─────────────────────────────────────────────────
+  const allMembers = useMemo(() => {
+    const base = memberResult ? memberItems : initialMemberData;
+    return [...addedMembers, ...base].map((item) => {
+      const override = memberOverrides[item.id];
+      return override ? { ...item, ...override } : item;
+    });
+  }, [memberResult, memberItems, addedMembers, memberOverrides]);
+
   // ── Filtered Data Memo ─────────────────────────────────────────────────────
   const filteredData = useMemo(() => {
-    return data.filter((item) => {
+    // If API returned data from backend, it is already filtered and paginated on server
+    if (memberResult) {
+      return allMembers;
+    }
+
+    return allMembers.filter((item) => {
       // 1. Classification
       if (
         !appliedFilters.classificationAll &&
@@ -328,7 +362,7 @@ export default function MemberList() {
 
       return true;
     });
-  }, [data, appliedFilters]);
+  }, [allMembers, memberResult, appliedFilters]);
 
   // ── Actions ────────────────────────────────────────────────────────────────
   const handleOpenDetail = (member: MemberItem) => {
@@ -343,9 +377,10 @@ export default function MemberList() {
   };
 
   const handleUpdateAccountStatus = (memberId: string, newAccountStatus: AccountStatus) => {
-    setData((prev) =>
-      prev.map((item) => (item.id === memberId ? { ...item, accountStatus: newAccountStatus } : item))
-    );
+    setMemberOverrides((prev) => ({
+      ...prev,
+      [memberId]: { ...prev[memberId], accountStatus: newAccountStatus },
+    }));
     if (selectedMember && selectedMember.id === memberId) {
       setSelectedMember({ ...selectedMember, accountStatus: newAccountStatus });
     }
@@ -357,18 +392,14 @@ export default function MemberList() {
     newAssignee?: string,
     _note?: string
   ) => {
-    setData((prev) =>
-      prev.map((item) => {
-        if (item.id === memberId) {
-          return {
-            ...item,
-            approvalStatus: newApprovalStatus,
-            assignee: newAssignee !== undefined ? newAssignee : item.assignee,
-          };
-        }
-        return item;
-      })
-    );
+    setMemberOverrides((prev) => ({
+      ...prev,
+      [memberId]: {
+        ...prev[memberId],
+        approvalStatus: newApprovalStatus,
+        ...(newAssignee !== undefined ? { assignee: newAssignee } : {}),
+      },
+    }));
     if (selectedMember && selectedMember.id === memberId) {
       setSelectedMember({
         ...selectedMember,
@@ -379,13 +410,13 @@ export default function MemberList() {
   };
 
   const handleAddMember = (newMemberData: Omit<MemberItem, 'id' | 'no'>) => {
-    const nextNo = (Math.max(...data.map((d) => d.no), 199) + 1);
+    const nextNo = Math.max(...allMembers.map((d) => d.no), 199) + 1;
     const newEntry: MemberItem = {
       ...newMemberData,
       id: `mem-${nextNo}`,
       no: nextNo,
     };
-    setData([newEntry, ...data]);
+    setAddedMembers((prev) => [newEntry, ...prev]);
   };
 
   // ── Excel Export ───────────────────────────────────────────────────────────
@@ -829,7 +860,9 @@ export default function MemberList() {
       <div className={styles.resultsToolbar}>
         <div className={styles.resultsSummary}>
           <span className={styles.resultsTitle}>Search Results</span>
-          <span className={styles.resultsCount}>Total {filteredData.length} items</span>
+          <span className={styles.resultsCount}>
+            Total {memberResult ? memberResult.total : filteredData.length} items
+          </span>
         </div>
 
         <div className={styles.resultsActions}>
@@ -856,11 +889,18 @@ export default function MemberList() {
           columns={columns}
           dataSource={filteredData}
           rowSelection={rowSelection}
+          loading={isLoading || isFetching}
           pagination={{
-            defaultPageSize: 20,
+            current: page,
+            pageSize: pageSize,
+            total: memberResult ? memberResult.total : filteredData.length,
             showSizeChanger: true,
             pageSizeOptions: ['10', '20', '50', '100'],
             showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
+            onChange: (newPage, newPageSize) => {
+              setPage(newPage);
+              setPageSize(newPageSize);
+            },
           }}
           scroll={{ x: 'max-content', y: 560 }}
           size="middle"

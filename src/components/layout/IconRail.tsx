@@ -73,25 +73,20 @@ export default function IconRail() {
     [allMenus],
   );
 
-  // Static leaf items (dashboard) + server business menus
+  // Static items (member, etc.) + server business menus
   const mainRailItems = useMemo(() => {
-    const staticLeafItems = allMenus.filter(
+    const staticItems = allMenus.filter(
       (m) => !serverMenus.some((sm) => sm.key === m.key)
         && m.key !== BOTTOM_RAIL_KEY
         && !EXCLUDED_RAIL_KEYS.has(m.key)
-        && (!m.children || m.children.length === 0)
     );
-    return [...staticLeafItems, ...serverMenus];
+    return [...staticItems, ...serverMenus];
   }, [allMenus, serverMenus]);
   const confirmLogout = useLogout();
   // 레일은 어느 화면 안에서 그려지느냐와 무관하므로 화면 라벨이 아니라 공용 컴포넌트 라벨을 쓴다
   const { tvt, tvb } = useComponentLabel();
 
   // 현재 활성 탭이 속한 1단 카테고리(레일 아이콘).
-  //
-  // 정적 메뉴는 점 구분 키('dev.overview')라 첫 마디가 곧 레일 키지만,
-  // 서버 메뉴는 'A06040300' 처럼 계층이 키에 드러나지 않아 트리를 타야 한다.
-  // 종전에는 split('.')[0] 만 써서 서버 메뉴 화면에서는 아이콘이 켜지지 않았다.
   const activeTab = tabs.find((t) => t.key === activeTabKey);
   const activeTopKey = useMemo(() => {
     const key = activeTab?.menuKey;
@@ -118,7 +113,6 @@ export default function IconRail() {
     // children 있는 아이콘 → flyout 토글
     toggleFlyout(item.key);
   };
-
 
   return (
     <div className="icon-rail">

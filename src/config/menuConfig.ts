@@ -20,12 +20,13 @@ export const DEV_TOOLS_ENABLED =
 // Dev-only menu tree.
 // Member management menu tree
 export const memberMenu: MenuItem = {
-  key: 'member',
+  key: 'members',
   label: 'Member Management',
   icon: 'UserOutlined',
+  componentPath: 'MemberList',
   children: [
     {
-      key: 'member.list',
+      key: 'members',
       label: 'Member Management',
       componentPath: 'MemberList',
     },

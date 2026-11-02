@@ -2,9 +2,12 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Form, Input, Button, Alert, Checkbox, Typography } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
-import { login } from '@/api/common/authApi';
+import { login } from '@/api/generated/sdk.gen';
+import { fetchPublicKey } from '@/api/common/authApi';
+import { encryptPassword } from '@/lib/crypto';
 import { useAuthStore } from '@/stores/authStore';
 import { jwtToMeResponse } from '@/utils/jwtUtils';
+import { setRefreshToken } from '@/utils/tokenStorage';
 
 import { useTabStore } from '@/stores/tabStore';
 import { useMenuStore } from '@/stores/menuStore';
@@ -45,23 +48,52 @@ export default function LoginPage() {
     setLoading(true);
     setErrorMsg(null);
     try {
-      // Step 1: Login — get accessToken + refreshToken
-      const loginRes = await login(loginReq);
-      if (loginRes.success && loginRes.data) {
+      let password = loginReq.password;
+      if (window.isSecureContext && window.crypto?.subtle) {
+        const publicKey = await fetchPublicKey();
+        if (publicKey) {
+          password = await encryptPassword(publicKey, loginReq.password);
+        }
+      }
+
+      // Step 1: Login — call API login in src/api/generated/sdk.gen.ts
+      const loginRes = await login({
+        body: {
+          loginId: loginReq.loginId,
+          password,
+        },
+        throwOnError: true,
+      });
+
+      if (loginRes.data?.accessToken) {
         // Step 2: Extract user info from JWT claims (no separate API call needed)
         const me = jwtToMeResponse(loginRes.data.accessToken);
+        if (loginRes.data.employee) {
+          if (loginRes.data.employee.empNm) me.usrNm = loginRes.data.employee.empNm;
+          if (loginRes.data.employee.empEmlAddr) me.email = loginRes.data.employee.empEmlAddr;
+          if (loginRes.data.employee.empMoblTelno) me.phnNo = loginRes.data.employee.empMoblTelno;
+        }
+
+        // Store refresh token if provided
+        if (loginRes.data.refreshToken) {
+          setRefreshToken(loginRes.data.refreshToken);
+        }
+
         setAuth(loginRes.data.accessToken, me);
 
-        // Always reset tabs on login and open only the home tab
+        // Always reset tabs on login and open home + member list tab
         resetTabs();
         const homeMenu = findMenuByKey(menuConfig, homeMenuKey);
         if (homeMenu) openTab(homeMenu);
+        const memberMenu = findMenuByKey(menuConfig, 'members') || findMenuByKey(menuConfig, 'member.list');
+        if (memberMenu) openTab(memberMenu);
 
         fetchAuthMenuList().then(setServerMenus).catch(() => { /* silent */ });
 
-        navigate('/app', { replace: true });
+        // Step 3: Navigate to the members page
+        navigate('/members', { replace: true });
       } else {
-        setErrorMsg(loginRes.message || '로그인에 실패했습니다.');
+        setErrorMsg('로그인에 실패했습니다.');
       }
     } catch (err) {
       const apiErr = ApiError.from(err);

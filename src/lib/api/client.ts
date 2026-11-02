@@ -3,6 +3,7 @@ import type { AxiosError, InternalAxiosRequestConfig } from 'axios';
 import { ApiError } from './error';
 import { apiNotify } from './apiNotify';
 import { useAuthStore } from '@/stores/authStore';
+import { getAccessToken, setAccessToken as setStoredAccessToken, clearTokens } from '@/utils/tokenStorage';
 import { useProjectStore } from '@/stores/projectStore';
 import { useLocaleStore } from '@/stores/localeStore';
 import { useLabelStore } from '@/stores/labelStore';
@@ -63,7 +64,7 @@ function processQueue(token: string | null, error: unknown = null): void {
 // ─── Axios instance ───────────────────────────────────────────────────────────
 // baseURL: '' (empty → Vite proxy: /api → http://127.0.0.1:8080)
 export const apiClient = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL as string,
+  baseURL: ((import.meta.env.VITE_API_BASE_URL as string | undefined) ?? '').replace(/\/+$/, ''),
   timeout: 30_000,
   withCredentials: true, // required for httpOnly refresh token cookie
   headers: {
@@ -74,7 +75,7 @@ export const apiClient = axios.create({
 
 // ─── Request interceptor: inject Access Token + loading ───────────────────────
 apiClient.interceptors.request.use((config) => {
-  const accessToken = useAuthStore.getState().accessToken;
+  const accessToken = useAuthStore.getState().accessToken || getAccessToken();
   const activeProject = useProjectStore.getState().activeProject;
   const locale = useLocaleStore.getState().locale;
 
@@ -161,12 +162,14 @@ apiClient.interceptors.response.use(
 
       if (config?.url?.includes('/api/auth/refresh')) {
         processQueue(null, error);
+        clearTokens();
         useAuthStore.getState().logout();
         return Promise.reject(ApiError.fromAxiosError(error));
       }
 
       if (config?._retry) {
         processQueue(null, error);
+        clearTokens();
         useAuthStore.getState().logout();
         if (window.location.pathname !== '/login') {
           window.location.href = '/login';
@@ -200,12 +203,14 @@ apiClient.interceptors.response.use(
         const newToken = data.accessToken;
         if (!newToken) throw new Error('No access token in refresh response');
 
+        setStoredAccessToken(newToken);
         useAuthStore.getState().setAccessToken(newToken);
         processQueue(newToken);
         config.headers.Authorization = `Bearer ${newToken}`;
         return apiClient(config);
       } catch (refreshError) {
         processQueue(null, refreshError);
+        clearTokens();
         useAuthStore.getState().logout();
         if (window.location.pathname !== '/login') {
           window.location.href = '/login';

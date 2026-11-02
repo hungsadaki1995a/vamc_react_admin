@@ -12,7 +12,8 @@ import { useComcdStore } from '@/stores/comcdStore';
 import { useLabelStore } from '@/stores/labelStore';
 import { refreshToken } from '@/api/common/authApi';
 import { apiNotify } from '@/lib/api/apiNotify';
-import { jwtToMeResponse } from '@/utils/jwtUtils';
+import { jwtToMeResponse, isTokenExpired } from '@/utils/jwtUtils';
+import { getAccessToken } from '@/utils/tokenStorage';
 import AuthGuard from '@/components/auth/AuthGuard';
 import LoginPage from '@/features/auth/LoginPage';
 import AppLayout from './AppLayout';
@@ -34,29 +35,56 @@ export default function App() {
   const antLocale = locale === 'en' ? enUS : locale === 'vn' ? viVN : koKR;
   const { setLoading, setAuth, logout } = useAuthStore();
 
-  // Restore session on app load: refresh_token cookie → new accessToken
+  // Restore session on app load: verify token expiration → keep on current page
   useEffect(() => {
     async function restoreSession() {
-      // Skip session restore if no stored user (logged out) or on login page
-      if (window.location.pathname === '/login' || !useAuthStore.getState().user) {
+      // Skip session restore if explicitly on login page
+      if (window.location.pathname === '/login') {
         setLoading(false);
         return;
       }
 
+      const token = useAuthStore.getState().accessToken || getAccessToken();
+
+      // No token found → user is not logged in
+      if (!token) {
+        logout();
+        setLoading(false);
+        return;
+      }
+
+      // Check if token is still valid
+      if (!isTokenExpired(token)) {
+        // Token is NOT expired! Keep user authenticated on current page
+        const currentUser = useAuthStore.getState().user;
+        const me = jwtToMeResponse(token);
+        setAuth(token, {
+          ...me,
+          usrNm: currentUser?.usrNm || me.usrNm,
+          email: currentUser?.email || me.email,
+          phnNo: currentUser?.phnNo || me.phnNo,
+        });
+        setLoading(false);
+
+        // Load project menus
+        useMenuStore.getState().loadMenuForProject();
+        return;
+      }
+
+      // Token IS expired → attempt silent refresh
       setLoading(true);
       try {
-        // Attempt silent refresh using httpOnly cookie (sent automatically by browser)
         const refreshRes = await refreshToken();
-        if (refreshRes.success && refreshRes.data?.accessToken) {
-          // Extract user info from new JWT claims (no separate /me API call needed)
-          const me = jwtToMeResponse(refreshRes.data.accessToken);
-          setAuth(refreshRes.data.accessToken, me);
+        if (refreshRes.success && refreshRes.data?.accessToken && !isTokenExpired(refreshRes.data.accessToken)) {
+          const newToken = refreshRes.data.accessToken;
+          const me = jwtToMeResponse(newToken);
+          setAuth(newToken, me);
           useMenuStore.getState().loadMenuForProject();
         } else {
           logout();
         }
       } catch {
-        // refresh token expired, missing, or invalid → go to login
+        // Refresh token expired, missing, or invalid → go to login
         logout();
       } finally {
         setLoading(false);
@@ -104,6 +132,14 @@ export default function App() {
           <Routes>
             <Route path="/login" element={<LoginPage />} />
             <Route
+              path="/members"
+              element={
+                <AuthGuard>
+                  <AppLayout />
+                </AuthGuard>
+              }
+            />
+            <Route
               path="/app/:tabKey?"
               element={
                 <AuthGuard>
@@ -111,9 +147,11 @@ export default function App() {
                 </AuthGuard>
               }
             />
-            <Route path="/member" element={<Navigate to="/app/member.list" replace />} />
-            <Route path="/member/list" element={<Navigate to="/app/member.list" replace />} />
-            <Route path="/member-management" element={<Navigate to="/app/member.list" replace />} />
+            <Route path="/app/member.list" element={<Navigate to="/members" replace />} />
+            <Route path="/app/members" element={<Navigate to="/members" replace />} />
+            <Route path="/member" element={<Navigate to="/members" replace />} />
+            <Route path="/member/list" element={<Navigate to="/members" replace />} />
+            <Route path="/member-management" element={<Navigate to="/members" replace />} />
             <Route path="*" element={<Navigate to="/app" replace />} />
           </Routes>
         </BrowserRouter>

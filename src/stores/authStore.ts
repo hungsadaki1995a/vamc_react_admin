@@ -1,15 +1,18 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { UserInfo, MeResponse } from '@/lib/api/types';
+import {
+  getAccessToken,
+  setAccessToken as setStoredToken,
+  clearTokens,
+} from '@/utils/tokenStorage';
+import { isTokenExpired, jwtToMeResponse } from '@/utils/jwtUtils';
 
 interface AuthState {
-  // In-memory only — NOT persisted (security)
   accessToken: string | null;
-  // Refresh token is managed as httpOnly cookie by the browser — not stored in JS
   isAuthenticated: boolean;
   isLoading: boolean;
 
-  // Persisted to localStorage
   user: UserInfo | null;
   roles: string[];
 }
@@ -24,20 +27,48 @@ interface AuthActions {
 
 type AuthStore = AuthState & AuthActions;
 
+// Synchronously inspect stored token on module evaluation so the first render is authenticated
+function getInitialAuthState() {
+  const token = getAccessToken();
+  if (token && !isTokenExpired(token)) {
+    const me = jwtToMeResponse(token);
+    return {
+      accessToken: token,
+      isAuthenticated: true,
+      isLoading: false,
+      user: {
+        usrId: me.usrId,
+        usrNm: me.usrNm,
+      },
+      roles: me.roles,
+    };
+  }
+  return {
+    accessToken: null,
+    isAuthenticated: false,
+    isLoading: false,
+    user: null,
+    roles: [],
+  };
+}
+
+const initialAuth = getInitialAuthState();
+
 export const useAuthStore = create<AuthStore>()(
   persist(
     (set, get) => ({
       // State
-      accessToken: null,
-      isAuthenticated: false,
-      isLoading: true,
-      user: null,
-      roles: [],
+      accessToken: initialAuth.accessToken,
+      isAuthenticated: initialAuth.isAuthenticated,
+      isLoading: initialAuth.isLoading,
+      user: initialAuth.user,
+      roles: initialAuth.roles,
 
       // Actions
 
-      // Set full auth state after login
+      // Set full auth state after login or session restore
       setAuth: (accessToken: string, me: MeResponse) => {
+        setStoredToken(accessToken);
         set({
           accessToken,
           isAuthenticated: true,
@@ -54,12 +85,14 @@ export const useAuthStore = create<AuthStore>()(
         });
       },
 
-      // Silent Refresh: update accessToken only
+      // Update accessToken only (e.g. silent refresh)
       setAccessToken: (token: string) => {
+        setStoredToken(token);
         set({ accessToken: token, isAuthenticated: true });
       },
 
       logout: () => {
+        clearTokens();
         set({
           accessToken: null,
           isAuthenticated: false,
@@ -79,18 +112,39 @@ export const useAuthStore = create<AuthStore>()(
     }),
     {
       name: 'vamc-auth',
-      // accessToken stays in memory only; refresh token is managed as httpOnly cookie.
-      // Persisted `user` is trimmed to non-PII display fields (usrId/usrNm) only —
-      // email/phnNo/dpCd/usrCCd must NOT hit localStorage. The full in-memory `user`
-      // (set via setAuth) is unaffected; App.tsx's restoreSession() re-fetches it via
-      // refreshToken()/JWT claims on every app load, so the persisted copy only needs
-      // to survive the brief window before that refresh completes.
       partialize: (state) => ({
+        accessToken: state.accessToken,
+        isAuthenticated: state.isAuthenticated,
         user: state.user
-          ? { usrId: state.user.usrId, usrNm: state.user.usrNm }
+          ? {
+              usrId: state.user.usrId,
+              usrNm: state.user.usrNm,
+              email: state.user.email,
+              dpCd: state.user.dpCd,
+              usrCCd: state.user.usrCCd,
+              phnNo: state.user.phnNo,
+            }
           : null,
         roles: state.roles,
       }),
+      onRehydrateStorage: () => (state) => {
+        if (!state) return;
+        const token = state.accessToken || getAccessToken();
+        if (token && !isTokenExpired(token)) {
+          state.accessToken = token;
+          state.isAuthenticated = true;
+          state.isLoading = false;
+          if (!state.user) {
+            const me = jwtToMeResponse(token);
+            state.user = { usrId: me.usrId, usrNm: me.usrNm };
+            state.roles = me.roles;
+          }
+        } else {
+          state.accessToken = null;
+          state.isAuthenticated = false;
+          state.isLoading = false;
+        }
+      },
     },
   ),
 );

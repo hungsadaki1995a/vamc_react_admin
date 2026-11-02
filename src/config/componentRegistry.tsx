@@ -43,10 +43,11 @@ const autoRegistry: Record<string, ComponentType> = Object.fromEntries(
 //   ),
 const overrides: Record<string, ComponentType> = {
   member: lazy(() => import('@/features/member/MemberList')),
+  members: lazy(() => import('@/features/member/MemberList')),
+  'member.list': lazy(() => import('@/features/member/MemberList')),
   'member-management': lazy(() => import('@/features/member/MemberList')),
   MemberManagement: lazy(() => import('@/features/member/MemberList')),
   MemberList: lazy(() => import('@/features/member/MemberList')),
-  // 현재 없음 — 모든 메뉴가 MENU_URL_ADDR 에 화면ID(폴더명)를 담고 있어 자동 발견으로 해결된다.
 };
 
 export const componentRegistry: Record<string, ComponentType> = {

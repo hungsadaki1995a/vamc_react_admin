@@ -4,6 +4,162 @@
  */
 
 export interface paths {
+    "/api/v1/service-applications/sale/{srvcAplyId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get application
+         * @description Detail with NPLs, scanned documents, approval steps and processing history (VPA0004P04). Requires READ permission.
+         */
+        get: operations["getApplication"];
+        /**
+         * Edit a application
+         * @description Contract kind, base contract, currency, desired price and scan, before approval is requested. Requires WRITE permission.
+         */
+        put: operations["update"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/service-applications/sale/{srvcAplyId}/officer": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Change the officer in charge
+         * @description Hands the application (and its contracts) to another employee holding the processing role; an open officer step of the approval session follows. Requires WRITE permission.
+         */
+        put: operations["reassignOfficer"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/service-applications/purchase/{srvcAplyId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get application
+         * @description Detail with NPLs, scanned documents, approval steps and processing history (VPA0004P04). Requires READ permission.
+         */
+        get: operations["getApplication_1"];
+        /**
+         * Edit a application
+         * @description Contract kind, base contract, currency, desired price and scan, before approval is requested. Requires WRITE permission.
+         */
+        put: operations["update_1"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/service-applications/purchase/{srvcAplyId}/officer": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Change the officer in charge
+         * @description Hands the application (and its contracts) to another employee holding the processing role; an open officer step of the approval session follows. Requires WRITE permission.
+         */
+        put: operations["reassignOfficer_1"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/service-applications/consulting/{srvcAplyId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get application
+         * @description Detail with NPLs, scanned documents, approval steps and processing history (VPA0004P04). Requires READ permission.
+         */
+        get: operations["getApplication_2"];
+        /**
+         * Edit a application
+         * @description Contract kind, base contract, currency, desired price and scan, before approval is requested. Requires WRITE permission.
+         */
+        put: operations["update_2"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/service-applications/consulting/{srvcAplyId}/officer": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Change the officer in charge
+         * @description Hands the application (and its contracts) to another employee holding the processing role; an open officer step of the approval session follows. Requires WRITE permission.
+         */
+        put: operations["reassignOfficer_2"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/sale-brokerage-contracts/{ctrtCd}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get contract
+         * @description Contract or annex with NPLs, draft / signed documents, fees, annexes and terminations. Requires READ permission.
+         */
+        get: operations["getContract"];
+        /**
+         * Edit the contract draft
+         * @description Step 13 / annex 2 (PREPR only): period (end defaults to start + 1 year), price, auto-termination clause, fee terms (LUMP, STAG + advance %, AFTR). Requires WRITE permission.
+         */
+        put: operations["updateDraft"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/roles/{roleId}": {
         parameters: {
             query?: never;
@@ -92,6 +248,30 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/purchase-brokerage-contracts/{ctrtCd}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get contract
+         * @description Contract or annex with NPLs, draft / signed documents, fees, annexes and terminations. Requires READ permission.
+         */
+        get: operations["getContract_1"];
+        /**
+         * Edit the contract draft
+         * @description Step 13 / annex 2 (PREPR only): period (end defaults to start + 1 year), price, auto-termination clause, fee terms (LUMP, STAG + advance %, AFTR). Requires WRITE permission.
+         */
+        put: operations["updateDraft_1"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/platform/fees/{feeId}": {
         parameters: {
             query?: never;
@@ -133,6 +313,26 @@ export interface paths {
          * @description Screens VPA0002P01 and VPA0008P01 Edit button: updates member profile information. Requires WRITE permission on sign-up (A01010000) or member management (A01020000).
          */
         put: operations["updateMember"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/members/{mbrNo}/approvals/assignee": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Reassign the officer in charge
+         * @description Step 12-1: hands a received sign-up whose processing step is open to another employee holding the processing role. Requires WRITE permission.
+         */
+        put: operations["reassign"];
         post?: never;
         delete?: never;
         options?: never;
@@ -428,7 +628,7 @@ export interface paths {
          * Edit news content / Sửa nội dung tin
          * @description Returns 409 (CNT001) while published. Category, publication and featured flags are changed with PATCH /{pstNo}/status. / Trả 409 khi đang đăng.
          */
-        put: operations["update"];
+        put: operations["update_3"];
         post?: never;
         delete?: never;
         options?: never;
@@ -452,7 +652,7 @@ export interface paths {
          * Edit legal document / Sửa văn bản
          * @description Updates content, document type and publication status in one call. / Cập nhật nội dung, loại và trạng thái.
          */
-        put: operations["update_1"];
+        put: operations["update_4"];
         post?: never;
         delete?: never;
         options?: never;
@@ -520,7 +720,7 @@ export interface paths {
          * Edit career posting / Sửa tin tuyển dụng
          * @description Updates content, publication status and pin in one call. / Cập nhật nội dung, trạng thái và ghim.
          */
-        put: operations["update_2"];
+        put: operations["update_5"];
         post?: never;
         delete?: never;
         options?: never;
@@ -544,7 +744,7 @@ export interface paths {
          * Edit banner / Sửa banner
          * @description Returns 409 (BNR001) while in use. / Trả 409 khi đang sử dụng.
          */
-        put: operations["update_3"];
+        put: operations["update_6"];
         post?: never;
         delete?: never;
         options?: never;
@@ -568,7 +768,95 @@ export interface paths {
          * Edit item / Sửa mục
          * @description Updates every value and the publication status; the section cannot change. / Cập nhật toàn bộ giá trị và trạng thái.
          */
-        put: operations["update_4"];
+        put: operations["update_7"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/consulting-contracts/{ctrtCd}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get contract
+         * @description Contract or annex with NPLs, draft / signed documents, fees, annexes and terminations. Requires READ permission.
+         */
+        get: operations["getContract_2"];
+        /**
+         * Edit the contract draft
+         * @description Step 13 / annex 2 (PREPR only): period (end defaults to start + 1 year), price, auto-termination clause, fee terms (LUMP, STAG + advance %, AFTR). Requires WRITE permission.
+         */
+        put: operations["updateDraft_2"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/consulting-contracts/{ctrtCd}/report": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Save the consulting report
+         * @description 수행 1: report PDF and summary (DRFT) once the contract runs and the advance is paid. Consultant or officer. Requires WRITE permission.
+         */
+        put: operations["saveReport"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/consulting-contracts/{ctrtCd}/consultant": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Assign the consultant
+         * @description Step 20 (after the draft approval): consultant in charge of the report and additional consultations. Requires WRITE permission.
+         */
+        put: operations["assignConsultant"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/consulting-contracts/settings/additional-consulting": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get the additional consulting switch
+         * @description 추가 12: whether members see the additional consulting button. Requires READ permission.
+         */
+        get: operations["getAdditionalConsultingSetting"];
+        /**
+         * Change the additional consulting switch
+         * @description 추가 12: show (Y) or hide (N) the additional consulting button to members. Requires WRITE permission.
+         */
+        put: operations["updateAdditionalConsultingSetting"];
         post?: never;
         delete?: never;
         options?: never;
@@ -657,6 +945,718 @@ export interface paths {
         /** Update batch schedule / Cập nhật lịch chạy batch (cron + enabled) */
         put: operations["updateSchedule"];
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/trade-files": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Upload trade documents
+         * @description Creates a new ATCH_FILE group, or appends to fileUnqId. Requires WRITE permission on the contract menu (scope=contract, default) or the application menu (scope=application) of the kind.
+         */
+        post: operations["upload"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/service-applications/sale": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Search applications
+         * @description Paginated list (VPA001101) with the derived approval stage and the action available to the current employee. Drafts are excluded. Requires READ permission.
+         */
+        get: operations["getApplications"];
+        put?: never;
+        /**
+         * Register a paper application
+         * @description Manual registration (VPA0011P01) for an active member and a registered NPL or lot. aplySttsCd PRCS receives it at once for tkcgEmpNo. Requires WRITE permission.
+         */
+        post: operations["create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/service-applications/sale/{srvcAplyId}/scans": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Attach scanned documents
+         * @description Steps 11 / 11-1c: the officer in charge attaches the scan of the posted documents (file group from POST /api/files/upload). Requires WRITE permission.
+         */
+        post: operations["attachScan"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/service-applications/sale/{srvcAplyId}/receipt": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Receive a application
+         * @description Step 7: RCPT -> PRCS, starts PROC_DSPSL_MDT_RCPT, assigns the officer in charge and mails the applicant the documents to post. Requires WRITE permission.
+         */
+        post: operations["receive"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/service-applications/sale/{srvcAplyId}/documents": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Check documents
+         * @description Steps 11-1 / 11-1a / 11-2 by the officer in charge: 'Y' -> DCOK (approval can be requested), 'N' -> DCIN with the missing documents. Requires WRITE permission.
+         */
+        post: operations["checkDocuments"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/service-applications/sale/{srvcAplyId}/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Cancel a application
+         * @description 취소 1-2: cancels an application that is not approved yet (CNCL) and closes its open approval session. Requires WRITE permission.
+         */
+        post: operations["cancel"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/service-applications/sale/{srvcAplyId}/approval": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Request approval
+         * @description Step 11-3 by the officer in charge, only with complete documents (DCOK). Approval through POST /api/v1/approvals/{atrzHstryId}/approve creates the contract draft (11-5); a rejection keeps DCOK. Requires WRITE permission.
+         */
+        post: operations["requestApproval"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/service-applications/purchase": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Search applications
+         * @description Paginated list (VPA001101) with the derived approval stage and the action available to the current employee. Drafts are excluded. Requires READ permission.
+         */
+        get: operations["getApplications_1"];
+        put?: never;
+        /**
+         * Register a paper application
+         * @description Manual registration (VPA0011P01) for an active member and a registered NPL or lot. aplySttsCd PRCS receives it at once for tkcgEmpNo. Requires WRITE permission.
+         */
+        post: operations["create_1"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/service-applications/purchase/{srvcAplyId}/scans": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Attach scanned documents
+         * @description Steps 11 / 11-1c: the officer in charge attaches the scan of the posted documents (file group from POST /api/files/upload). Requires WRITE permission.
+         */
+        post: operations["attachScan_1"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/service-applications/purchase/{srvcAplyId}/receipt": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Receive a application
+         * @description Step 7: RCPT -> PRCS, starts PROC_DSPSL_MDT_RCPT, assigns the officer in charge and mails the applicant the documents to post. Requires WRITE permission.
+         */
+        post: operations["receive_1"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/service-applications/purchase/{srvcAplyId}/documents": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Check documents
+         * @description Steps 11-1 / 11-1a / 11-2 by the officer in charge: 'Y' -> DCOK (approval can be requested), 'N' -> DCIN with the missing documents. Requires WRITE permission.
+         */
+        post: operations["checkDocuments_1"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/service-applications/purchase/{srvcAplyId}/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Cancel a application
+         * @description 취소 1-2: cancels an application that is not approved yet (CNCL) and closes its open approval session. Requires WRITE permission.
+         */
+        post: operations["cancel_1"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/service-applications/purchase/{srvcAplyId}/approval": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Request approval
+         * @description Step 11-3 by the officer in charge, only with complete documents (DCOK). Approval through POST /api/v1/approvals/{atrzHstryId}/approve creates the contract draft (11-5); a rejection keeps DCOK. Requires WRITE permission.
+         */
+        post: operations["requestApproval_1"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/service-applications/consulting": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Search applications
+         * @description Paginated list (VPA001101) with the derived approval stage and the action available to the current employee. Drafts are excluded. Requires READ permission.
+         */
+        get: operations["getApplications_2"];
+        put?: never;
+        /**
+         * Register a paper application
+         * @description Manual registration (VPA0011P01) for an active member and a registered NPL or lot. aplySttsCd PRCS receives it at once for tkcgEmpNo. Requires WRITE permission.
+         */
+        post: operations["create_2"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/service-applications/consulting/{srvcAplyId}/scans": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Attach scanned documents
+         * @description Steps 11 / 11-1c: the officer in charge attaches the scan of the posted documents (file group from POST /api/files/upload). Requires WRITE permission.
+         */
+        post: operations["attachScan_2"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/service-applications/consulting/{srvcAplyId}/receipt": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Receive a application
+         * @description Step 7: RCPT -> PRCS, starts PROC_DSPSL_MDT_RCPT, assigns the officer in charge and mails the applicant the documents to post. Requires WRITE permission.
+         */
+        post: operations["receive_2"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/service-applications/consulting/{srvcAplyId}/documents": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Check documents
+         * @description Steps 11-1 / 11-1a / 11-2 by the officer in charge: 'Y' -> DCOK (approval can be requested), 'N' -> DCIN with the missing documents. Requires WRITE permission.
+         */
+        post: operations["checkDocuments_2"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/service-applications/consulting/{srvcAplyId}/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Cancel a application
+         * @description 취소 1-2: cancels an application that is not approved yet (CNCL) and closes its open approval session. Requires WRITE permission.
+         */
+        post: operations["cancel_2"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/service-applications/consulting/{srvcAplyId}/approval": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Request approval
+         * @description Step 11-3 by the officer in charge, only with complete documents (DCOK). Approval through POST /api/v1/approvals/{atrzHstryId}/approve creates the contract draft (11-5); a rejection keeps DCOK. Requires WRITE permission.
+         */
+        post: operations["requestApproval_2"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/sale-brokerage-contracts/{ctrtCd}/termination": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Register a termination
+         * @description Termination 1: PROGS -> ENDING with the reason and the fee handling. With the auto-termination clause the contract ends at once. Requires WRITE permission.
+         */
+        post: operations["startTermination"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/sale-brokerage-contracts/{ctrtCd}/termination/signed-scan": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Attach the signed settlement minutes
+         * @description Termination 17 (SGNCP). Requires WRITE permission.
+         */
+        post: operations["attachTerminationScan"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/sale-brokerage-contracts/{ctrtCd}/termination/signature-approval": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Request settlement minutes signature approval
+         * @description Termination 15-1 (PROC_DSPSL_MDT_END_SIGN); approval -> SGNCP. Requires WRITE permission.
+         */
+        post: operations["requestTerminationSignature"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/sale-brokerage-contracts/{ctrtCd}/termination/draft-registration": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Register the settlement minutes for signature
+         * @description Termination 9: form 12 draft, DRFAPR -> SGNWT; mails the member. Requires WRITE permission.
+         */
+        post: operations["registerTerminationDraft"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/sale-brokerage-contracts/{ctrtCd}/termination/completion": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Complete the termination
+         * @description Termination 18: contract CMPTN (performed) or CNCLN; unsold NPLs hidden; collected fees refunded (RFPL) or open claims cancelled (CLCN); mails the member. Requires WRITE permission.
+         */
+        post: operations["completeTermination"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/sale-brokerage-contracts/{ctrtCd}/termination/approval": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Request termination approval
+         * @description Termination 2 (PROC_DSPSL_MDT_END); approval -> DRFAPR. Requires WRITE permission.
+         */
+        post: operations["requestTerminationApproval"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/sale-brokerage-contracts/{ctrtCd}/signed-scan": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Attach the signed scan
+         * @description Step 31 / annex 18 (SGNCP). Requires WRITE permission.
+         */
+        post: operations["attachSignedScan"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/sale-brokerage-contracts/{ctrtCd}/signature-approval": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Request signature approval
+         * @description Step 29-1 / annex 16-1: the approver checks the member-signed document and signs for VAMC (PROC_DSPSL_MDT_SIGN); approval -> SGNCP. Requires WRITE permission.
+         */
+        post: operations["requestSignatureApproval"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/sale-brokerage-contracts/{ctrtCd}/sale-completion": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Record the sale completion
+         * @description Step 39: actual price and sale date, NPLs marked sold (SD), remaining fee issued for STAG / AFTR and mailed. Requires WRITE permission.
+         */
+        post: operations["completeTrade"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/sale-brokerage-contracts/{ctrtCd}/renewal-decision": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Decide the renewal of an expiring contract
+         * @description Expiry 2: EXTEND_ANNEX creates an extension annex; NEW_CONTRACT registers the termination (expired) and a new contract draft; NO_EXTEND registers the termination (expired). Requires WRITE permission.
+         */
+        post: operations["decideRenewal"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/sale-brokerage-contracts/{ctrtCd}/fees/{feeId}/refund": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Record a fee refund
+         * @description Termination 18: refund transferred (RFPL -> RFCP). Requires WRITE permission.
+         */
+        post: operations["refundFee"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/sale-brokerage-contracts/{ctrtCd}/fees/{feeId}/receipt": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Confirm a fee transfer
+         * @description Step 37 / annex 24. Requires WRITE permission.
+         */
+        post: operations["confirmFeeReceipt"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/sale-brokerage-contracts/{ctrtCd}/draft-registration": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Register the draft for signature
+         * @description Step 23 / annex 10: DRFAPR -> SGNWT with the PDF the member prints, signs and posts; mails the member. Requires WRITE permission.
+         */
+        post: operations["registerDraft"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/sale-brokerage-contracts/{ctrtCd}/conclusion": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Conclude the contract
+         * @description Step 32 / annex 19: SGNCP with a scan -> PROGS; first installment (LUMP / STAG advance); NPLs published (step 38) for brokerage contracts and base contract annexes; extension / price annexes update the parent. Requires WRITE permission.
+         */
+        post: operations["conclude"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/sale-brokerage-contracts/{ctrtCd}/approval": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Request draft approval
+         * @description Step 16 / annex 3: PROC_DSPSL_MDT_CTRT (contract) or PROC_DSPSL_MDT_ANX (annex); approval -> DRFAPR. Requires WRITE permission.
+         */
+        post: operations["requestDraftApproval"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/sale-brokerage-contracts/{ctrtCd}/annexes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Create an annex
+         * @description Annex 2: extension (new end date), price change (new price), after-sale or other annex of a brokerage contract in progress. Requires WRITE permission.
+         */
+        post: operations["createAnnex"];
         delete?: never;
         options?: never;
         head?: never;
@@ -759,6 +1759,346 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/purchase-brokerage-contracts/{ctrtCd}/trade-conclusion": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Record the trade conclusion
+         * @description Step 38: purchase contract with the holder signed (date, actual price; see dspslCtrtCd for the linked sale contract), remaining fee issued and mailed. Requires WRITE permission.
+         */
+        post: operations["completeTrade_1"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/purchase-brokerage-contracts/{ctrtCd}/termination": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Register a termination
+         * @description Termination 1: PROGS -> ENDING with the reason and the fee handling. With the auto-termination clause the contract ends at once. Requires WRITE permission.
+         */
+        post: operations["startTermination_1"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/purchase-brokerage-contracts/{ctrtCd}/termination/signed-scan": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Attach the signed settlement minutes
+         * @description Termination 17 (SGNCP). Requires WRITE permission.
+         */
+        post: operations["attachTerminationScan_1"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/purchase-brokerage-contracts/{ctrtCd}/termination/signature-approval": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Request settlement minutes signature approval
+         * @description Termination 15-1 (PROC_DSPSL_MDT_END_SIGN); approval -> SGNCP. Requires WRITE permission.
+         */
+        post: operations["requestTerminationSignature_1"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/purchase-brokerage-contracts/{ctrtCd}/termination/draft-registration": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Register the settlement minutes for signature
+         * @description Termination 9: form 12 draft, DRFAPR -> SGNWT; mails the member. Requires WRITE permission.
+         */
+        post: operations["registerTerminationDraft_1"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/purchase-brokerage-contracts/{ctrtCd}/termination/completion": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Complete the termination
+         * @description Termination 18: contract CMPTN (performed) or CNCLN; unsold NPLs hidden; collected fees refunded (RFPL) or open claims cancelled (CLCN); mails the member. Requires WRITE permission.
+         */
+        post: operations["completeTermination_1"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/purchase-brokerage-contracts/{ctrtCd}/termination/approval": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Request termination approval
+         * @description Termination 2 (PROC_DSPSL_MDT_END); approval -> DRFAPR. Requires WRITE permission.
+         */
+        post: operations["requestTerminationApproval_1"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/purchase-brokerage-contracts/{ctrtCd}/signed-scan": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Attach the signed scan
+         * @description Step 31 / annex 18 (SGNCP). Requires WRITE permission.
+         */
+        post: operations["attachSignedScan_1"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/purchase-brokerage-contracts/{ctrtCd}/signature-approval": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Request signature approval
+         * @description Step 29-1 / annex 16-1: the approver checks the member-signed document and signs for VAMC (PROC_DSPSL_MDT_SIGN); approval -> SGNCP. Requires WRITE permission.
+         */
+        post: operations["requestSignatureApproval_1"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/purchase-brokerage-contracts/{ctrtCd}/renewal-decision": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Decide the renewal of an expiring contract
+         * @description 만료 2 (after the end date passed without a trade): EXTEND_ANNEX creates an extension annex; NEW_CONTRACT registers the termination (expired) and a new contract draft; NO_EXTEND registers the termination (expired). Requires WRITE permission.
+         */
+        post: operations["decideRenewal_1"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/purchase-brokerage-contracts/{ctrtCd}/fees/{feeId}/refund": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Record a fee refund
+         * @description Termination 18: refund transferred (RFPL -> RFCP). Requires WRITE permission.
+         */
+        post: operations["refundFee_1"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/purchase-brokerage-contracts/{ctrtCd}/fees/{feeId}/receipt": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Confirm a fee transfer
+         * @description Step 37 / annex 24. Requires WRITE permission.
+         */
+        post: operations["confirmFeeReceipt_1"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/purchase-brokerage-contracts/{ctrtCd}/draft-registration": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Register the draft for signature
+         * @description Step 23 / annex 10: DRFAPR -> SGNWT with the PDF the member prints, signs and posts; mails the member. Requires WRITE permission.
+         */
+        post: operations["registerDraft_1"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/purchase-brokerage-contracts/{ctrtCd}/delivery": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Record the delivery
+         * @description Step 40: handover completed after the trade conclusion. Requires WRITE permission.
+         */
+        post: operations["recordDelivery"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/purchase-brokerage-contracts/{ctrtCd}/conclusion": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Conclude the contract
+         * @description Step 32 / annex 19: SGNCP with a scan -> PROGS; first installment (LUMP / STAG advance); NPLs published (step 38) for brokerage contracts and base contract annexes; extension / price annexes update the parent. Requires WRITE permission.
+         */
+        post: operations["conclude_1"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/purchase-brokerage-contracts/{ctrtCd}/approval": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Request draft approval
+         * @description Step 16 / annex 3: PROC_DSPSL_MDT_CTRT (contract) or PROC_DSPSL_MDT_ANX (annex); approval -> DRFAPR. Requires WRITE permission.
+         */
+        post: operations["requestDraftApproval_1"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/purchase-brokerage-contracts/{ctrtCd}/annexes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Create an annex
+         * @description 연장 1 - 4: extension annex (new end date) of a purchase brokerage contract in progress; then the shared lifecycle with PROC_PUR_MDT_ANX. Requires WRITE permission.
+         */
+        post: operations["createAnnex_1"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/platform/fees": {
         parameters: {
             query?: never;
@@ -820,7 +2160,7 @@ export interface paths {
          * Check posted sign-up documents
          * @description After receipt: 'Y' marks the mandatory documents complete (optional scan file group) so the assignee can request approval; 'N' closes the approval session, sends the application back to the applicant (status U) with the supplement note and e-mails them. 'N' must be done by the assignee of the processing step. Requires WRITE permission.
          */
-        post: operations["checkDocuments"];
+        post: operations["checkDocuments_3"];
         delete?: never;
         options?: never;
         head?: never;
@@ -840,7 +2180,7 @@ export interface paths {
          * Receive member sign-up
          * @description Starts the approval workflow of a pending, not yet received sign-up and assigns it to an employee holding the processing role. Requires WRITE permission.
          */
-        post: operations["receive"];
+        post: operations["receive_3"];
         delete?: never;
         options?: never;
         head?: never;
@@ -864,7 +2204,7 @@ export interface paths {
          * Request member sign-up approval
          * @description Step 2 -> 3: Assignee submits the member sign-up to a designated 1st approver with the SGDN member code and the membership fee terms (ADF1234_P09). The documents must have been checked as complete (409 otherwise). Requires WRITE permission.
          */
-        post: operations["requestApproval"];
+        post: operations["requestApproval_3"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1156,7 +2496,7 @@ export interface paths {
          * Register news / Đăng ký tin
          * @description category = NWS, MED or RSC. Default unpublished. / Mặc định chưa đăng.
          */
-        post: operations["create"];
+        post: operations["create_3"];
         /**
          * Delete / Xóa
          * @description Soft-deletes the selected posts. / Xóa mềm các bài được chọn.
@@ -1184,7 +2524,7 @@ export interface paths {
          * Register legal document / Đăng ký văn bản
          * @description Default published. Required: type, number/sign, issue date, title. / Mặc định công bố.
          */
-        post: operations["create_1"];
+        post: operations["create_4"];
         /**
          * Delete / Xóa
          * @description Soft-deletes the selected posts. / Xóa mềm các bài được chọn.
@@ -1208,7 +2548,7 @@ export interface paths {
          * Upload attachments / Tải lên tệp đính kèm
          * @description Creates a new group, or appends to fileUnqId. board decides the write permission checked (NOTICE, FAQ). / Tạo nhóm mới hoặc thêm vào nhóm có sẵn.
          */
-        post: operations["upload"];
+        post: operations["upload_1"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1260,7 +2600,7 @@ export interface paths {
          * Register career posting / Đăng ký tin tuyển dụng
          * @description Default published. / Mặc định công bố.
          */
-        post: operations["create_2"];
+        post: operations["create_5"];
         /**
          * Delete / Xóa
          * @description Soft-deletes the selected posts. / Xóa mềm các bài được chọn.
@@ -1288,7 +2628,7 @@ export interface paths {
          * Register banner / Đăng ký banner
          * @description Starts not in use. / Mặc định không sử dụng.
          */
-        post: operations["create_3"];
+        post: operations["create_6"];
         /**
          * Delete banners / Xóa banner
          * @description BNR_MNG has no deletion flag: banners are switched off (USE_YN = 'N'). / Banner được tắt sử dụng.
@@ -1336,12 +2676,352 @@ export interface paths {
          * Add item / Thêm mục
          * @description section = CEOM, HIST, HSTI, MSSN, FUNC, ORGS, DIRC, BEXB, BDIR, BSPV or PRTN. extraJson must be valid JSON matching the section format (CNT015): ORGS = department array or {"vi": [...], "en": [...]}, DIRC values = string or {"vi", "en"}, PRTN = {"url": "https://..."}. BEXB/BDIR/BSPV need name and tag = M or F; PRTN needs tag = DOMESTIC or FOREIGN (CNT017). CEOM ignores email/phone (company name and signatory title are platform i18n labels). / extraJson phải là JSON hợp lệ đúng định dạng section; ban lãnh đạo cần tên và giới tính M/F; đối tác cần nhóm DOMESTIC/FOREIGN; CEOM bỏ qua email/phone.
          */
-        post: operations["create_4"];
+        post: operations["create_7"];
         /**
          * Delete / Xóa
          * @description Soft-deletes the selected posts. / Xóa mềm các bài được chọn.
          */
         delete: operations["delete_4"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/consulting-contracts/{ctrtCd}/termination": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Register a termination
+         * @description Termination 1: PROGS -> ENDING with the reason and the fee handling. With the auto-termination clause the contract ends at once. Requires WRITE permission.
+         */
+        post: operations["startTermination_2"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/consulting-contracts/{ctrtCd}/termination/signed-scan": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Attach the signed settlement minutes
+         * @description Termination 17 (SGNCP). Requires WRITE permission.
+         */
+        post: operations["attachTerminationScan_2"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/consulting-contracts/{ctrtCd}/termination/signature-approval": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Request settlement minutes signature approval
+         * @description Termination 15-1 (PROC_DSPSL_MDT_END_SIGN); approval -> SGNCP. Requires WRITE permission.
+         */
+        post: operations["requestTerminationSignature_2"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/consulting-contracts/{ctrtCd}/termination/draft-registration": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Register the settlement minutes for signature
+         * @description Termination 9: form 12 draft, DRFAPR -> SGNWT; mails the member. Requires WRITE permission.
+         */
+        post: operations["registerTerminationDraft_2"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/consulting-contracts/{ctrtCd}/termination/completion": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Complete the termination
+         * @description Termination 18: contract CMPTN (performed) or CNCLN; unsold NPLs hidden; collected fees refunded (RFPL) or open claims cancelled (CLCN); mails the member. Requires WRITE permission.
+         */
+        post: operations["completeTermination_2"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/consulting-contracts/{ctrtCd}/termination/approval": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Request termination approval
+         * @description Termination 2 (PROC_DSPSL_MDT_END); approval -> DRFAPR. Requires WRITE permission.
+         */
+        post: operations["requestTerminationApproval_2"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/consulting-contracts/{ctrtCd}/signed-scan": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Attach the signed scan
+         * @description Step 31 / annex 18 (SGNCP). Requires WRITE permission.
+         */
+        post: operations["attachSignedScan_2"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/consulting-contracts/{ctrtCd}/signature-approval": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Request signature approval
+         * @description Step 29-1 / annex 16-1: the approver checks the member-signed document and signs for VAMC (PROC_DSPSL_MDT_SIGN); approval -> SGNCP. Requires WRITE permission.
+         */
+        post: operations["requestSignatureApproval_2"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/consulting-contracts/{ctrtCd}/report/completion": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Complete the report
+         * @description 수행 6: APRV -> RDY (not published); the remaining fee is issued and mailed. The report is published when the fee is confirmed (수행 11-1). Requires WRITE permission.
+         */
+        post: operations["completeReport"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/consulting-contracts/{ctrtCd}/report/approval": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Request report approval
+         * @description 수행 2: PROC_CNSLT_RPTP; approval -> APRV, rejection -> DRFT. Requires WRITE permission.
+         */
+        post: operations["requestReportApproval"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/consulting-contracts/{ctrtCd}/fees/{feeId}/refund": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Record a fee refund
+         * @description Termination 18: refund transferred (RFPL -> RFCP). Requires WRITE permission.
+         */
+        post: operations["refundFee_2"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/consulting-contracts/{ctrtCd}/fees/{feeId}/receipt": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Confirm a fee transfer
+         * @description Step 37 / annex 24. Requires WRITE permission.
+         */
+        post: operations["confirmFeeReceipt_2"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/consulting-contracts/{ctrtCd}/draft-registration": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Register the draft for signature
+         * @description Step 23 / annex 10: DRFAPR -> SGNWT with the PDF the member prints, signs and posts; mails the member. Requires WRITE permission.
+         */
+        post: operations["registerDraft_2"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/consulting-contracts/{ctrtCd}/conclusion": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Conclude the contract
+         * @description Step 32 / annex 19: SGNCP with a scan -> PROGS; first installment (LUMP / STAG advance); NPLs published (step 38) for brokerage contracts and base contract annexes; extension / price annexes update the parent. Requires WRITE permission.
+         */
+        post: operations["conclude_2"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/consulting-contracts/{ctrtCd}/approval": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Request draft approval
+         * @description Step 16 / annex 3: PROC_DSPSL_MDT_CTRT (contract) or PROC_DSPSL_MDT_ANX (annex); approval -> DRFAPR. Requires WRITE permission.
+         */
+        post: operations["requestDraftApproval_2"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/consulting-contracts/{ctrtCd}/additional-consultations/{adtnId}/receipt": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Receive an additional consultation
+         * @description 추가 15: RQST -> RCPT. Consultant or officer. Requires WRITE permission.
+         */
+        post: operations["receiveAdditionalConsultation"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/consulting-contracts/{ctrtCd}/additional-consultations/{adtnId}/completion": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Complete an additional consultation
+         * @description 추가 21: result recorded and mailed to the member. Requires WRITE permission.
+         */
+        post: operations["completeAdditionalConsultation"];
+        delete?: never;
         options?: never;
         head?: never;
         patch?: never;
@@ -1703,6 +3383,26 @@ export interface paths {
         patch: operations["updateUse"];
         trace?: never;
     };
+    "/api/v1/npls/{bndCd}/disclosure": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Change the NPL disclosure
+         * @description Shows / hides an NPL and its collaterals on the platform and optionally sets the NPL status (SA, UC, SD), with a reason. The contract flow publishes at conclusion and marks sold at the sale completion. Requires WRITE permission.
+         */
+        patch: operations["updateDisclosure"];
+        trace?: never;
+    };
     "/api/v1/contents/service-guides/reorder": {
         parameters: {
             query?: never;
@@ -1883,6 +3583,26 @@ export interface paths {
         patch: operations["publish_1"];
         trace?: never;
     };
+    "/api/v1/contents/inquiries/{pstNo}/category": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Change inquiry category
+         * @description Re-classifies the inquiry, e.g. to consulting (CNS) before answering with the consulting application link (consulting flow step 1). Returns 400 (CNT018) for an unknown category.
+         */
+        patch: operations["changeCategory"];
+        trace?: never;
+    };
     "/api/v1/contents/faqs/{pstNo}/status": {
         parameters: {
             query?: never;
@@ -2023,6 +3743,146 @@ export interface paths {
         patch: operations["publish_3"];
         trace?: never;
     };
+    "/api/v1/trade-files/{fileUnqId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get trade document group
+         * @description Active files of a group. Requires READ permission on the contract or application menu of the kind.
+         */
+        get: operations["getGroup"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/service-applications/sale/{srvcAplyId}/process-histories": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get processing history
+         * @description Status changes of the application, oldest first. Requires READ permission.
+         */
+        get: operations["getHistories"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/service-applications/purchase/{srvcAplyId}/process-histories": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get processing history
+         * @description Status changes of the application, oldest first. Requires READ permission.
+         */
+        get: operations["getHistories_1"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/service-applications/consulting/{srvcAplyId}/process-histories": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get processing history
+         * @description Status changes of the application, oldest first. Requires READ permission.
+         */
+        get: operations["getHistories_2"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/sale-brokerage-contracts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Search contracts
+         * @description Contracts and annexes with the remaining days (D-xx), fee stage and latest approval. Requires READ permission.
+         */
+        get: operations["getContracts"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/sale-brokerage-contracts/{ctrtCd}/fees": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get fee installments
+         * @description Installments, receipts and refunds. Requires READ permission.
+         */
+        get: operations["getFees_1"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/sale-brokerage-contracts/{ctrtCd}/approval-histories": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get approval history
+         * @description Approval sessions of the contract and of its terminations. Requires READ permission.
+         */
+        get: operations["getApprovalHistories"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/roles/{roleId}/menu-permissions/{menuCd}": {
         parameters: {
             query?: never;
@@ -2119,6 +3979,86 @@ export interface paths {
          * @description Returns all role groups without pagination for dropdowns. / Trả về toàn bộ nhóm vai trò không phân trang cho dropdown.
          */
         get: operations["getAllRoleGroups"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/purchase-brokerage-contracts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Search contracts
+         * @description Contracts and annexes with the remaining days (D-xx), fee stage and latest approval. Requires READ permission.
+         */
+        get: operations["getContracts_1"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/purchase-brokerage-contracts/{ctrtCd}/fees": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get fee installments
+         * @description Installments, receipts and refunds. Requires READ permission.
+         */
+        get: operations["getFees_2"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/purchase-brokerage-contracts/{ctrtCd}/approval-histories": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get approval history
+         * @description Approval sessions of the contract and of its terminations. Requires READ permission.
+         */
+        get: operations["getApprovalHistories_1"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/members/approval-summary": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get sign-up work counters
+         * @description Step 5: counters for the admin header badge - new applications waiting for receipt, supplement requests, applications assigned to me and awaiting my decision. Requires READ permission.
+         */
+        get: operations["getApprovalSummary"];
         put?: never;
         post?: never;
         delete?: never;
@@ -2278,7 +4218,7 @@ export interface paths {
          * Get attachment group / Xem nhóm tệp đính kèm
          * @description Active files of a group. / Các tệp còn hiệu lực của nhóm.
          */
-        get: operations["getGroup"];
+        get: operations["getGroup_1"];
         put?: never;
         post?: never;
         delete?: never;
@@ -2339,6 +4279,66 @@ export interface paths {
          * @description Exports the list with the same search conditions (max 10,000 rows). / Xuất danh sách theo điều kiện tìm kiếm.
          */
         get: operations["excel_4"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/consulting-contracts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Search contracts
+         * @description Contracts and annexes with the remaining days (D-xx), fee stage and latest approval. Requires READ permission.
+         */
+        get: operations["getContracts_2"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/consulting-contracts/{ctrtCd}/fees": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get fee installments
+         * @description Installments, receipts and refunds. Requires READ permission.
+         */
+        get: operations["getFees_3"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/consulting-contracts/{ctrtCd}/approval-histories": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get approval history
+         * @description Approval sessions of the contract and of its terminations. Requires READ permission.
+         */
+        get: operations["getApprovalHistories_2"];
         put?: never;
         post?: never;
         delete?: never;
@@ -2439,6 +4439,46 @@ export interface paths {
          * @description Retrieves approval session state and complete steps timeline history (A-16, ADF1234_P12). Requires READ permission.
          */
         get: operations["getDetail"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/approvals/inbox": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get my approval inbox
+         * @description In-progress approval sessions whose current step is assigned to the signed-in employee, newest first, with a navigation hint (processKind, targetScreen, menuCd, tradeKind, srvcAplyId, srvcCtrtCd, ctrtEndId, mbrNo). Any authenticated employee; only their own items are returned.
+         */
+        get: operations["getInbox"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/approvals/inbox/summary": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get my approval inbox counts
+         * @description Number of sessions waiting for the signed-in employee per process kind (member, sale, purchase, consulting, other). Any authenticated employee.
+         */
+        get: operations["getInboxSummary"];
         put?: never;
         post?: never;
         delete?: never;
@@ -3062,6 +5102,1003 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        SaveTradeApplicationRequest: {
+            /**
+             * @description Applicant member number (active member, required on registration)
+             * @example TV00000001
+             */
+            mbrNo?: string;
+            /**
+             * @description Registered NPL code (brokerage: one of bndCd / bndLotId is required; consulting: optional)
+             * @example KN1A2B3C4D
+             */
+            bndCd?: string;
+            /**
+             * @description Registered NPL lot ID
+             * @example LOT-2026-1A2B3C4D
+             */
+            bndLotId?: string;
+            /**
+             * @description Sale brokerage only. Contract kind (MDT: brokerage contract, default; BASE_ANX: annex of the member's base contract)
+             * @example MDT
+             */
+            ctrtKndCd?: string;
+            /**
+             * @description Base contract of the member in progress (required when ctrtKndCd = BASE_ANX)
+             * @example 5c2b7d1e-8f4a-4b6c-9d0e-1a2b3c4d5e6f
+             */
+            baseCtrtCd?: string;
+            /**
+             * @description Consulting only (required). Consulting category (CNSLT_DMND_SE_CD)
+             * @example CNSTN_SRVC_01
+             */
+            cnsltDmndSeCd?: string;
+            /**
+             * @description Consulting only (required). What the member wants to be advised on
+             * @example Legal review of the collateral.
+             */
+            cnsltDmndPrpsCn?: string;
+            /**
+             * @description Currency (VND, USD); defaults to VND
+             * @example VND
+             */
+            crncCd?: string;
+            /**
+             * @description Desired sale price
+             * @example 12000000000
+             */
+            prpDsplPrc?: number;
+            /**
+             * @description Scanned paper application and documents (file group ID from POST /api/files/upload)
+             * @example 7c1d2e3f-4a5b-6c7d-8e9f-0a1b2c3d4e5f
+             */
+            scanFileId?: string;
+            /**
+             * @description Registration only. RCPT: received later from the list; PRCS: received now (tkcgEmpNo required)
+             * @example PRCS
+             */
+            aplySttsCd?: string;
+            /**
+             * @description Registration only. Officer in charge when aplySttsCd = PRCS
+             * @example EMP0000002
+             */
+            tkcgEmpNo?: string;
+        };
+        ApiResponseTradeApplicationDetailResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["TradeApplicationDetailResponse"];
+        };
+        /** @description Approval step detail */
+        ApprovalStepDetailDto: {
+            /**
+             * Format: int32
+             * @description Step number (1: Receipt, 2: Processing, 3: 1st Approval)
+             * @example 1
+             */
+            stpNo?: number;
+            /**
+             * @description Step name
+             * @example Receipt
+             */
+            stpNm?: string;
+            /**
+             * @description Step status (WAITING, INPROGRESS, APPROVED, REJECTED)
+             * @example APPROVED
+             */
+            status?: string;
+            /**
+             * @description Processing employee number
+             * @example admin
+             */
+            empNo?: string;
+            /**
+             * @description Processing employee name
+             * @example Admin User
+             */
+            empNm?: string;
+            /**
+             * Format: date-time
+             * @description Processing datetime
+             * @example 2026-10-16T10:00:00
+             */
+            processedAt?: string;
+            /**
+             * @description Comment or rejection reason
+             * @example Documents verified
+             */
+            comment?: string;
+        };
+        /** @description Sale brokerage application detail */
+        TradeApplicationDetailResponse: {
+            /**
+             * @description Application ID
+             * @example SRVC-APLY-2026-1A2B3C4D
+             */
+            srvcAplyId?: string;
+            /**
+             * @description Processing status
+             * @example DCOK
+             */
+            srvcPrcsSttsCd?: string;
+            /**
+             * @description Processing status name
+             * @example Documents Complete
+             */
+            srvcPrcsSttsNm?: string;
+            /**
+             * @description Approval stage
+             * @example IN_APPROVAL
+             */
+            approvalStage?: string;
+            /**
+             * @description Action of the current employee
+             * @example DECIDE
+             */
+            availableAction?: string;
+            /**
+             * @description Application date (DDMMYYYY)
+             * @example 29102026
+             */
+            srvcAplyDmy?: string;
+            /**
+             * @description Application channel (WEB, MANL)
+             * @example WEB
+             */
+            aplyPathCd?: string;
+            /**
+             * @description Contract kind (MDT, BASE_ANX)
+             * @example MDT
+             */
+            ctrtKndCd?: string;
+            /**
+             * @description Base contract (BASE_ANX)
+             * @example 5c2b7d1e-8f4a-4b6c-9d0e-1a2b3c4d5e6f
+             */
+            baseCtrtCd?: string;
+            /**
+             * @description Consulting category (consulting only)
+             * @example CNSTN_SRVC_01
+             */
+            cnsltDmndSeCd?: string;
+            /**
+             * @description Consulting request content (consulting only)
+             * @example Legal review of the collateral.
+             */
+            cnsltDmndPrpsCn?: string;
+            /**
+             * @description Source 1:1 inquiry when applied from an answer link (consulting only)
+             * @example BBS-0001
+             */
+            srcInqryPstNo?: string;
+            /**
+             * @description Member number
+             * @example TV00000001
+             */
+            mbrNo?: string;
+            /**
+             * @description Member name
+             * @example Nguyen Van A
+             */
+            mbrNm?: string;
+            /**
+             * @description Member type (P, F, O)
+             * @example O
+             */
+            mbrTypeCd?: string;
+            /**
+             * @description Applied as a lot (Y/N)
+             * @example N
+             */
+            bndLotYn?: string;
+            /**
+             * @description NPL lot ID
+             * @example LOT-2026-1A2B3C4D
+             */
+            bndLotId?: string;
+            /**
+             * @description NPL lot name
+             * @example NPL Portfolio 2026
+             */
+            bndLotNm?: string;
+            /**
+             * @description Currency
+             * @example VND
+             */
+            crncCd?: string;
+            /**
+             * @description Desired sale price
+             * @example 100000000000
+             */
+            prpDsplPrc?: number;
+            /**
+             * @description Mandatory documents complete (Y/N)
+             * @example Y
+             */
+            dcmntCmpltYn?: string;
+            /**
+             * @description Missing documents note
+             * @example Original loan contract of NPL #2 is missing.
+             */
+            msngDcmntCn?: string;
+            /**
+             * Format: date-time
+             * @description Document check datetime
+             */
+            dcmntChckDt?: string;
+            /**
+             * @description Approval rejection reason (latest)
+             * @example Price is not supported by the appraisal.
+             */
+            rjctRsnCn?: string;
+            /**
+             * @description Cancellation reason
+             * @example The applicant withdrew the application.
+             */
+            cnclRsnCn?: string;
+            /**
+             * @description Officer in charge
+             * @example EMP0000002
+             */
+            tkcgEmpNo?: string;
+            /**
+             * @description Officer in charge name
+             * @example Le Van C
+             */
+            tkcgEmpNm?: string;
+            /**
+             * @description Current approval session
+             * @example 8d2f1c3e-4b5a-6c7d-8e9f-0a1b2c3d4e5f
+             */
+            atrzHstryId?: string;
+            /**
+             * Format: int32
+             * @description Current approval step
+             * @example 3
+             */
+            nowStpNo?: number;
+            /**
+             * @description Approval session status
+             * @example INPROGRESS
+             */
+            atrzSttsCd?: string;
+            /**
+             * @description Contract created on approval
+             * @example 5c2b7d1e-8f4a-4b6c-9d0e-1a2b3c4d5e6f
+             */
+            srvcCtrtCd?: string;
+            /**
+             * @description Scanned mandatory documents (file group)
+             * @example 7c1d2e3f-4a5b-6c7d-8e9f-0a1b2c3d4e5f
+             */
+            esntlDcmntScnFile?: string;
+            /** @description NPLs of the application */
+            npls?: components["schemas"]["TradeNplDto"][];
+            /** @description Scanned documents */
+            files?: components["schemas"]["TradeFileDto"][];
+            /** @description Steps of the current approval session */
+            steps?: components["schemas"]["ApprovalStepDetailDto"][];
+            /** @description Processing history */
+            histories?: components["schemas"]["TradeApplicationHistoryDto"][];
+        };
+        /** @description Processing history row */
+        TradeApplicationHistoryDto: {
+            /**
+             * @description Status reached
+             * @example PRCS
+             */
+            srvcPrcsSttsCd?: string;
+            /**
+             * @description Status name
+             * @example In Progress / Processing
+             */
+            srvcPrcsSttsNm?: string;
+            /**
+             * Format: date-time
+             * @description Processed at
+             */
+            prcsDt?: string;
+            /**
+             * @description Processed by (member or employee number)
+             * @example EMP0000001
+             */
+            prcsBy?: string;
+            /**
+             * @description Note
+             * @example Received, officer in charge EMP0000002
+             */
+            prcsCn?: string;
+        };
+        /** @description Attached scanned document */
+        TradeFileDto: {
+            /**
+             * @description File group ID
+             * @example 7c1d2e3f-4a5b-6c7d-8e9f-0a1b2c3d4e5f
+             */
+            fileUnqId?: string;
+            /**
+             * Format: int32
+             * @description File sequence
+             * @example 1
+             */
+            fileSeq?: number;
+            /**
+             * @description Original file name
+             * @example application_scan.pdf
+             */
+            fileNm?: string;
+            /**
+             * Format: int64
+             * @description File size in bytes
+             * @example 204800
+             */
+            fileSz?: number;
+            /**
+             * @description Download URL
+             * @example /api/v1/attachments/7c1d2e3f-4a5b-6c7d-8e9f-0a1b2c3d4e5f/1/download
+             */
+            downloadUrl?: string;
+        };
+        /** @description NPL of a sale brokerage application */
+        TradeNplDto: {
+            /**
+             * @description NPL code
+             * @example KN1A2B3C4D
+             */
+            bndCd?: string;
+            /**
+             * @description NPL name
+             * @example Khoản nợ Công ty Tân Bình Dương
+             */
+            bndNm?: string;
+            /**
+             * @description Loan contract number
+             * @example HDTD-2021-0899
+             */
+            loanCtrtNo?: string;
+            /**
+             * @description Creditor name
+             * @example Vietcombank
+             */
+            crdtrNm?: string;
+            /**
+             * @description Currency
+             * @example VND
+             */
+            crncCd?: string;
+            /**
+             * @description Principal balance
+             * @example 135000000000
+             */
+            prnBlnc?: number;
+            /**
+             * @description Appraised value
+             * @example 120000000000
+             */
+            bndEvlAmt?: number;
+            /**
+             * @description Shown on the platform (Y/N); published when the contract is concluded
+             * @example N
+             */
+            expsrYn?: string;
+            /**
+             * @description NPL status (SA, UC, SD)
+             * @example SA
+             */
+            bndSttsCd?: string;
+        };
+        ReceiveTradeApplicationRequest: {
+            /**
+             * @description Officer in charge (candidates: GET /api/v1/approvals/candidates?atrzProcCd=PROC_DSPSL_MDT_RCPT&stpNo=2)
+             * @example EMP0000002
+             */
+            tkcgEmpNo: string;
+        };
+        ApiResponseTradeApplicationStatusResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["TradeApplicationStatusResponse"];
+        };
+        /** @description Sale brokerage application workflow state */
+        TradeApplicationStatusResponse: {
+            /**
+             * @description Application ID
+             * @example SRVC-APLY-2026-1A2B3C4D
+             */
+            srvcAplyId?: string;
+            /**
+             * @description Processing status
+             * @example PRCS
+             */
+            srvcPrcsSttsCd?: string;
+            /**
+             * @description Approval stage
+             * @example PROCESSING
+             */
+            approvalStage?: string;
+            /**
+             * @description Current approval session
+             * @example 8d2f1c3e-4b5a-6c7d-8e9f-0a1b2c3d4e5f
+             */
+            atrzHstryId?: string;
+            /**
+             * Format: int32
+             * @description Current approval step (2: officer in charge, 3: approver)
+             * @example 2
+             */
+            nowStpNo?: number;
+            /**
+             * @description Officer in charge
+             * @example EMP0000002
+             */
+            tkcgEmpNo?: string;
+        };
+        UpdateTradeContractRequest: {
+            /**
+             * Format: date
+             * @description Start date; the end date defaults to one year later
+             * @example 2026-11-01
+             */
+            ctrtBgngDt?: string;
+            /**
+             * Format: date
+             * @description End date
+             * @example 2027-10-31
+             */
+            ctrtEndDt?: string;
+            /**
+             * @description Currency
+             * @example VND
+             */
+            crncCd?: string;
+            /**
+             * @description Proposed sale price
+             * @example 100000000000
+             */
+            prpPrc?: number;
+            /**
+             * @description Auto-termination clause (termination skips the settlement minutes)
+             * @example N
+             */
+            autoTrmnYn?: string;
+            /**
+             * @description Annex content (annex only)
+             * @example Extend the brokerage period by 6 months.
+             */
+            anxCn?: string;
+            /**
+             * @description Fee collection: LUMP after conclusion, STAG advance + balance, AFTR after the sale. Empty: no fee (annex only)
+             * @example STAG
+             */
+            feeClclnMthCd?: string;
+            /**
+             * @description Fee schedule item (SRVC_FEE_MNG.FEE_MNG_ID); defaults to the first brokerage item
+             * @example FEE-BRK-0001
+             */
+            feeMngId?: string;
+            /**
+             * @description Agreed total fee (based on the proposed price)
+             * @example 2000000000
+             */
+            feeAmt?: number;
+            /**
+             * @description Advance payment rate (%) for STAG
+             * @example 30
+             */
+            prAmtRt?: number;
+        };
+        ApiResponseTradeContractDetailResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["TradeContractDetailResponse"];
+        };
+        /** @description Additional consultation */
+        TradeAdditionalConsultationDto: {
+            /**
+             * @description Additional consultation ID
+             * @example 4a5b6c7d-...
+             */
+            adtnId?: string;
+            /**
+             * @description Member request
+             * @example Please explain the enforcement timeline.
+             */
+            rqstCn?: string;
+            /**
+             * @description Status (RQST requested, RCPT received, CMPTN completed)
+             * @example RCPT
+             */
+            adtnSttsCd?: string;
+            /**
+             * @description Consultation result
+             * @example Explained by phone on 12/04.
+             */
+            rsltCn?: string;
+            /**
+             * @description Result attachment (file group)
+             * @example 7c1d2e3f-...
+             */
+            rsltFile?: string;
+            /**
+             * @description Received by
+             * @example EMP0000004
+             */
+            rcptEmpNo?: string;
+            /**
+             * Format: date-time
+             * @description Received at
+             */
+            rcptDt?: string;
+            /**
+             * Format: date-time
+             * @description Completed at
+             */
+            cmptnDt?: string;
+            /**
+             * Format: date-time
+             * @description Requested at
+             */
+            crtDt?: string;
+        };
+        /** @description Sale brokerage contract detail */
+        TradeContractDetailResponse: {
+            /**
+             * @description Contract code
+             * @example 5c2b7d1e-...
+             */
+            srvcCtrtCd?: string;
+            /**
+             * @description Contract type
+             * @example CTRT_DSPSL_MDT
+             */
+            ctrtSeCd?: string;
+            /**
+             * @description Parent contract (annex) or the contract itself
+             * @example 5c2b7d1e-...
+             */
+            mstCtrtCd?: string;
+            /**
+             * @description Contract status
+             * @example PROGS
+             */
+            ctrtSttsCd?: string;
+            /**
+             * @description Contract status name
+             * @example In Progress
+             */
+            ctrtSttsNm?: string;
+            /**
+             * @description Source application
+             * @example SRVC-APLY-2026-1A2B3C4D
+             */
+            srvcAplyId?: string;
+            /**
+             * @description Member number
+             * @example TV00000001
+             */
+            mbrNo?: string;
+            /**
+             * @description Member name
+             * @example Nguyen Van A
+             */
+            mbrNm?: string;
+            /**
+             * @description Officer in charge
+             * @example EMP0000002
+             */
+            tkcgEmpNo?: string;
+            /**
+             * @description Officer in charge name
+             * @example Le Van C
+             */
+            tkcgEmpNm?: string;
+            /**
+             * @description Conclusion date (DDMMYYYY)
+             * @example 15112026
+             */
+            ctrtCnclsDmy?: string;
+            /**
+             * @description Start date (DDMMYYYY)
+             * @example 15112026
+             */
+            ctrtBgngDmy?: string;
+            /**
+             * @description End date (DDMMYYYY)
+             * @example 14112027
+             */
+            ctrtEndDmy?: string;
+            /**
+             * @description Currency
+             * @example VND
+             */
+            crncCd?: string;
+            /**
+             * @description Proposed price
+             * @example 100000000000
+             */
+            prpPrc?: number;
+            /**
+             * @description Actual sale price
+             * @example 95000000000
+             */
+            rltrPrc?: number;
+            /**
+             * @description Sale conclusion date (DDMMYYYY)
+             * @example 10032027
+             */
+            trdCnclsDmy?: string;
+            /**
+             * @description Annex purpose
+             * @example EXTN
+             */
+            anxPrpsCd?: string;
+            /**
+             * @description Annex content
+             * @example Extend the brokerage period by 6 months.
+             */
+            anxCn?: string;
+            /**
+             * @description Auto-termination clause (Y/N)
+             * @example N
+             */
+            autoTrmnYn?: string;
+            /**
+             * @description Fee collection method
+             * @example STAG
+             */
+            feeClclnMthCd?: string;
+            /**
+             * @description Fee schedule item
+             * @example FEE-BRK-0001
+             */
+            feeMngId?: string;
+            /**
+             * @description Agreed total fee
+             * @example 2000000000
+             */
+            feeAmt?: number;
+            /**
+             * @description Advance payment rate (%)
+             * @example 30
+             */
+            prAmtRt?: number;
+            /**
+             * @description All fees received (Y/N)
+             * @example N
+             */
+            feeRcptCmptnYn?: string;
+            /**
+             * @description Current approval session
+             * @example 8d2f1c3e-...
+             */
+            atrzHstryId?: string;
+            /**
+             * @description Current approval session status
+             * @example INPROGRESS
+             */
+            atrzSttsCd?: string;
+            /**
+             * @description Draft sent for signature (file group)
+             * @example 7c1d2e3f-...
+             */
+            drftDcmntFile?: string;
+            /**
+             * @description Signed contract scan (file group)
+             * @example 7c1d2e3f-...
+             */
+            ctrtDcmntScnFile?: string;
+            /**
+             * @description Delivery completion date (purchase, DDMMYYYY)
+             * @example 20032027
+             */
+            dlvrCmptnDmy?: string;
+            /**
+             * @description Delivery note (purchase)
+             * @example Documents handed over to the investor.
+             */
+            dlvrCn?: string;
+            /**
+             * @description Investor bought directly from the holder (purchase, Y/N)
+             * @example N
+             */
+            drctTrdYn?: string;
+            /**
+             * @description Linked sale brokerage contract of the same NPL (purchase)
+             * @example 5c2b7d1e-...
+             */
+            dspslCtrtCd?: string;
+            /**
+             * @description Consultant in charge (consulting)
+             * @example EMP0000004
+             */
+            cnsltEmpNo?: string;
+            /**
+             * @description Consultant name (consulting)
+             * @example Do Thi E
+             */
+            cnsltEmpNm?: string;
+            /**
+             * @description Report status (consulting: DRFT, APRQ, APRV, RDY, OPEN)
+             * @example RDY
+             */
+            cnsltRptpSttsCd?: string;
+            /**
+             * @description Report file group (consulting)
+             * @example 7c1d2e3f-...
+             */
+            cnsltRptpFileUnqId?: string;
+            /**
+             * @description Report summary shown to the member (consulting)
+             * @example The collateral title is clean.
+             */
+            cnsltRptpSmryCn?: string;
+            /**
+             * Format: date-time
+             * @description Report published to the member at (consulting)
+             */
+            cnsltRptpOpenDt?: string;
+            /** @description Report files (consulting) */
+            reportFiles?: components["schemas"]["TradeFileDto"][];
+            /** @description Additional consultations (consulting) */
+            additionalConsultations?: components["schemas"]["TradeAdditionalConsultationDto"][];
+            /** @description NPLs of the contract */
+            npls?: components["schemas"]["TradeNplDto"][];
+            /** @description Draft files */
+            draftFiles?: components["schemas"]["TradeFileDto"][];
+            /** @description Signed scan files */
+            scanFiles?: components["schemas"]["TradeFileDto"][];
+            /** @description Fee installments */
+            fees?: components["schemas"]["TradeContractFeeDto"][];
+            /** @description Annexes of the contract */
+            annexes?: components["schemas"]["TradeContractListItemResponse"][];
+            /** @description Terminations */
+            terminations?: components["schemas"]["TradeContractEndDto"][];
+        };
+        /** @description Contract termination */
+        TradeContractEndDto: {
+            /**
+             * @description Termination ID
+             * @example 1b2c3d4e-...
+             */
+            ctrtEndId?: string;
+            /**
+             * @description Reason (CMPL, CNCL, EXPR)
+             * @example CNCL
+             */
+            endRsnCd?: string;
+            /**
+             * @description Fee handling (RFND, CLCN, NONE)
+             * @example CLCN
+             */
+            feeHndlCd?: string;
+            /**
+             * @description Termination status (PREPR, DRFAPR, SGNWT, SGNCP, CMPTN)
+             * @example SGNWT
+             */
+            endSttsCd?: string;
+            /**
+             * @description Current approval session
+             * @example 8d2f1c3e-...
+             */
+            atrzHstryId?: string;
+            /**
+             * @description Settlement minutes draft (file group)
+             * @example 7c1d2e3f-...
+             */
+            drftDcmntFile?: string;
+            /**
+             * @description Signed settlement minutes scan (file group)
+             * @example 7c1d2e3f-...
+             */
+            sgnScnFile?: string;
+            /**
+             * @description Termination date (DDMMYYYY)
+             * @example 31122026
+             */
+            endDmy?: string;
+            /**
+             * @description Note
+             * @example The holder sold the NPL directly.
+             */
+            endRsnCn?: string;
+        };
+        /** @description Fee installment */
+        TradeContractFeeDto: {
+            /**
+             * @description Fee ID
+             * @example 0d9f2c1e-...
+             */
+            feeId?: string;
+            /**
+             * Format: int32
+             * @description Installment number
+             * @example 1
+             */
+            feeSeq?: number;
+            /**
+             * @description PRAMT advance, BALNC balance / lump sum
+             * @example PRAMT
+             */
+            feeSeCd?: string;
+            /**
+             * @description Currency
+             * @example VND
+             */
+            crncCd?: string;
+            /**
+             * @description Amount due
+             * @example 600000000
+             */
+            fee?: number;
+            /**
+             * @description Payment due date (DDMMYYYY)
+             * @example 30112026
+             */
+            feePayTermDmy?: string;
+            /**
+             * @description Received (Y/N)
+             * @example N
+             */
+            feeRcptYn?: string;
+            /**
+             * @description Receipt date (DDMMYYYY)
+             * @example 20112026
+             */
+            feeRcptIdntyDmy?: string;
+            /**
+             * @description Amount received
+             * @example 600000000
+             */
+            rcptAmt?: number;
+            /**
+             * @description Refund status (RFPL, RFCP, CLCN)
+             * @example RFPL
+             */
+            rfndSttsCd?: string;
+            /**
+             * @description Refund date (DDMMYYYY)
+             * @example 05122026
+             */
+            rfndDmy?: string;
+            /**
+             * @description Refunded amount
+             * @example 600000000
+             */
+            rfndAmt?: number;
+        };
+        /** @description Sale brokerage contract / annex row */
+        TradeContractListItemResponse: {
+            /**
+             * Format: int64
+             * @description Row number
+             * @example 1
+             */
+            no?: number;
+            /**
+             * @description Contract code
+             * @example 5c2b7d1e-8f4a-4b6c-9d0e-1a2b3c4d5e6f
+             */
+            srvcCtrtCd?: string;
+            /**
+             * @description Contract type (CTRT_DSPSL_MDT, CTRT_DSPSL_MDT_ANX, CTRT_DSPSL_BASE_ANX)
+             * @example CTRT_DSPSL_MDT
+             */
+            ctrtSeCd?: string;
+            /**
+             * @description Parent contract (annex) or the contract itself
+             * @example 5c2b7d1e-8f4a-4b6c-9d0e-1a2b3c4d5e6f
+             */
+            mstCtrtCd?: string;
+            /**
+             * @description Annex purpose (EXTN, PRCE, POST, ETC)
+             * @example EXTN
+             */
+            anxPrpsCd?: string;
+            /**
+             * @description Contract status
+             * @example PROGS
+             */
+            ctrtSttsCd?: string;
+            /**
+             * @description Contract status name
+             * @example In Progress
+             */
+            ctrtSttsNm?: string;
+            /**
+             * @description Source application
+             * @example SRVC-APLY-2026-1A2B3C4D
+             */
+            srvcAplyId?: string;
+            /**
+             * @description Member number
+             * @example TV00000001
+             */
+            mbrNo?: string;
+            /**
+             * @description Member name
+             * @example Nguyen Van A
+             */
+            mbrNm?: string;
+            /**
+             * @description NPL code (single NPL)
+             * @example KN1A2B3C4D
+             */
+            bndCd?: string;
+            /**
+             * @description NPL lot ID
+             * @example LOT-2026-1A2B3C4D
+             */
+            bndLotId?: string;
+            /**
+             * @description Conclusion date (DDMMYYYY)
+             * @example 15112026
+             */
+            ctrtCnclsDmy?: string;
+            /**
+             * @description End date (DDMMYYYY)
+             * @example 14112027
+             */
+            ctrtEndDmy?: string;
+            /**
+             * Format: int32
+             * @description Days until the end date (D-xx, negative when past)
+             * @example 25
+             */
+            remainingDays?: number;
+            /**
+             * @description Currency
+             * @example VND
+             */
+            crncCd?: string;
+            /**
+             * @description Proposed price
+             * @example 100000000000
+             */
+            prpPrc?: number;
+            /**
+             * @description Actual sale price
+             * @example 95000000000
+             */
+            rltrPrc?: number;
+            /**
+             * @description Fee collection method (LUMP, STAG, AFTR)
+             * @example STAG
+             */
+            feeClclnMthCd?: string;
+            /**
+             * @description Agreed total fee
+             * @example 2000000000
+             */
+            feeAmt?: number;
+            /**
+             * @description Fee installments received / issued
+             * @example 1/2
+             */
+            feeStage?: string;
+            /**
+             * @description Latest approval process
+             * @example PROC_DSPSL_MDT_SIGN
+             */
+            latestAtrzProcCd?: string;
+            /**
+             * @description Latest approval status (INPROGRESS, COMPLETED, REJECTED)
+             * @example INPROGRESS
+             */
+            latestAtrzSttsCd?: string;
+            /**
+             * @description Officer in charge
+             * @example EMP0000002
+             */
+            tkcgEmpNo?: string;
+            /**
+             * @description Officer in charge name
+             * @example Le Van C
+             */
+            tkcgEmpNm?: string;
+        };
         UpdateRoleRequest: {
             /**
              * @description Role Name / Tên vai trò
@@ -4339,6 +7376,52 @@ export interface components {
             address?: components["schemas"]["MemberAddressDto"];
             /** @description Representative attached verification files */
             files?: components["schemas"]["MemberAttachmentDto"][];
+        };
+        ReceiveMemberApprovalRequest: {
+            /**
+             * @description Employee number of the assignee (processing step)
+             * @example EMP0000002
+             */
+            assigneeEmpNo: string;
+        };
+        ApiResponseMemberApprovalResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["MemberApprovalResponse"];
+        };
+        MemberApprovalResponse: {
+            /**
+             * @description Member number
+             * @example TV00000001
+             */
+            mbrNo?: string;
+            /**
+             * @description Approval history ID
+             * @example 3f1c2a9e-7b0d-4c55-9f61-2d8e4b7a1c90
+             */
+            atrzHstryId?: string;
+            /**
+             * @description Approval stage (NOT_RECEIVED, REQUESTED, IN_PROGRESS, APPROVED, REJECTED)
+             * @example REQUESTED
+             */
+            stage?: string;
+            /**
+             * Format: int32
+             * @description Current step number
+             * @example 2
+             */
+            nowStpNo?: number;
+            /**
+             * @description Approval status (INPROGRESS, COMPLETED, REJECTED)
+             * @example INPROGRESS
+             */
+            atrzSttsCd?: string;
+            /**
+             * @description Assignee employee number
+             * @example EMP0000002
+             */
+            assigneeEmpNo?: string;
         };
         UpdateProvinceRequest: {
             /**
@@ -5635,6 +8718,38 @@ export interface components {
              */
             published?: string;
         };
+        SaveConsultingReportRequest: {
+            /**
+             * @description Report file group (PDF) from POST /api/files/upload
+             * @example 7c1d2e3f-4a5b-6c7d-8e9f-0a1b2c3d4e5f
+             */
+            fileUnqId: string;
+            /**
+             * @description Summary shown to the member
+             * @example The collateral title is clean; enforcement is possible within 12 months.
+             */
+            summary: string;
+        };
+        AssignConsultantRequest: {
+            /**
+             * @description Consultant employee number (active employee)
+             * @example EMP0000004
+             */
+            cnsltEmpNo: string;
+        };
+        AdditionalConsultingSettingRequest: {
+            /**
+             * @description Y: members can request additional consultations
+             * @example N
+             */
+            enabled: string;
+        };
+        ApiResponseBoolean: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: boolean;
+        };
         /** @description Common Code Group Update Request / Yêu cầu cập nhật Nhóm mã dùng chung */
         UpdateCodeGroupRequest: {
             /**
@@ -5846,6 +8961,213 @@ export interface components {
             /** @description Schedule enabled status (0/1) / Trạng thái kích hoạt lịch chạy (0/1) */
             scheduleVtlzYn?: boolean;
         };
+        ApiResponseContentFileGroupResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["ContentFileGroupResponse"];
+        };
+        ContentFileGroupResponse: {
+            /**
+             * @description File group ID to pass as attachmentFileId / Mã nhóm tệp dùng cho attachmentFileId
+             * @example 7c1d2e3f-4a5b-6c7d-8e9f-0a1b2c3d4e5f
+             */
+            fileUnqId?: string;
+            /** @description Active files of the group / Các tệp còn hiệu lực trong nhóm */
+            files?: components["schemas"]["ContentFileResponse"][];
+        };
+        AttachTradeScanRequest: {
+            /**
+             * @description File group ID returned by POST /api/files/upload
+             * @example 7c1d2e3f-4a5b-6c7d-8e9f-0a1b2c3d4e5f
+             */
+            fileUnqId: string;
+        };
+        CheckTradeDocumentsRequest: {
+            /**
+             * @description Documents complete ('Y': DCOK, approval can be requested; 'N': DCIN)
+             * @example Y
+             */
+            documentsComplete: string;
+            /**
+             * @description Missing documents (required when documentsComplete = 'N'). The officer contacts the applicant; no mail is sent
+             * @example Original loan contract of NPL #2 is missing.
+             */
+            missingNote?: string;
+        };
+        CancelTradeApplicationRequest: {
+            /**
+             * @description Cancellation reason
+             * @example The applicant withdrew the application by phone.
+             */
+            reason: string;
+        };
+        RequestTradeApprovalRequest: {
+            /**
+             * @description Approver (candidates: GET /api/v1/approvals/candidates?atrzProcCd=PROC_DSPSL_MDT_RCPT&stpNo=3)
+             * @example EMP0000003
+             */
+            approverEmpNo: string;
+            /**
+             * @description Comment for the approver
+             * @example Documents checked, please approve.
+             */
+            comment?: string;
+        };
+        StartTerminationRequest: {
+            /**
+             * @description CMPL performed, CNCL early termination, EXPR expired
+             * @example CNCL
+             */
+            endRsnCd: string;
+            /**
+             * @description Fee handling: RFND refund collected fees, CLCN cancel open claims, NONE (default)
+             * @example CLCN
+             */
+            feeHndlCd?: string;
+            /**
+             * @description Note
+             * @example The holder sold the NPL directly.
+             */
+            note?: string;
+            /**
+             * @description Purchase brokerage only: the investor bought directly from the holder; the advance is not refunded (form 16 art. 3.3.a)
+             * @example N
+             */
+            drctTrdYn?: string;
+        };
+        ApiResponseTradeContractStatusResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["TradeContractStatusResponse"];
+        };
+        /** @description Contract workflow state */
+        TradeContractStatusResponse: {
+            /**
+             * @description Contract code
+             * @example 5c2b7d1e-...
+             */
+            srvcCtrtCd?: string;
+            /**
+             * @description Contract status
+             * @example SGNWT
+             */
+            ctrtSttsCd?: string;
+            /**
+             * @description Current approval session of the contract
+             * @example 8d2f1c3e-...
+             */
+            atrzHstryId?: string;
+            /**
+             * @description Termination in progress (if any)
+             * @example 1b2c3d4e-...
+             */
+            ctrtEndId?: string;
+            /**
+             * @description Termination status
+             * @example PREPR
+             */
+            endSttsCd?: string;
+            /**
+             * @description Consulting report status (DRFT, APRQ, APRV, RDY, OPEN)
+             * @example RDY
+             */
+            cnsltRptpSttsCd?: string;
+        };
+        TradeDocumentRequest: {
+            /**
+             * @description File group ID returned by POST /api/files/upload
+             * @example 7c1d2e3f-4a5b-6c7d-8e9f-0a1b2c3d4e5f
+             */
+            fileUnqId: string;
+        };
+        TradeCompletionRequest: {
+            /**
+             * Format: date
+             * @description Sale (trade) conclusion date
+             * @example 2027-03-10
+             */
+            trdCnclsDt: string;
+            /**
+             * @description Actual sale price
+             * @example 95000000000
+             */
+            rltrPrc: number;
+            /**
+             * @description Final total fee based on the actual price (STAG / AFTR); defaults to the agreed fee
+             * @example 1900000000
+             */
+            finalFeeAmt?: number;
+        };
+        RenewalDecisionRequest: {
+            /**
+             * @description EXTEND_ANNEX: extension annex; NEW_CONTRACT: terminate (expired) and prepare a new contract; NO_EXTEND: terminate (expired)
+             * @example EXTEND_ANNEX
+             */
+            decision: string;
+            /**
+             * Format: date
+             * @description New end date (EXTEND_ANNEX)
+             * @example 2028-04-30
+             */
+            newEndDt?: string;
+            /**
+             * @description Note
+             * @example The member asked for 6 more months.
+             */
+            note?: string;
+        };
+        TradeFeeReceiptRequest: {
+            /**
+             * Format: date
+             * @description Date of the transfer
+             * @example 2026-11-20
+             */
+            transferDt: string;
+            /**
+             * @description Amount transferred
+             * @example 600000000
+             */
+            amount: number;
+        };
+        ApiResponseListTradeContractFeeDto: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["TradeContractFeeDto"][];
+        };
+        ConcludeTradeContractRequest: {
+            /**
+             * Format: date
+             * @description Conclusion date; defaults to today
+             * @example 2026-11-15
+             */
+            cnclsDt?: string;
+        };
+        CreateTradeAnnexRequest: {
+            /**
+             * @description Annex purpose
+             * @example EXTN
+             */
+            anxPrpsCd: string;
+            /**
+             * Format: date
+             * @description New end date (required for EXTN)
+             * @example 2028-04-30
+             */
+            newEndDt?: string;
+            /**
+             * @description New proposed price (required for PRCE)
+             * @example 90000000000
+             */
+            newPrpPrc?: number;
+            /**
+             * @description Annex content
+             * @example Extend the brokerage period by 6 months.
+             */
+            anxCn?: string;
+        };
         CreateRoleRequest: {
             /**
              * @description Role ID (max 7 characters, uppercase letters/digits) / Mã vai trò (tối đa 7 ký tự, chữ hoa/số)
@@ -5958,6 +9280,19 @@ export interface components {
              */
             useYn: string;
         };
+        RecordDeliveryRequest: {
+            /**
+             * Format: date
+             * @description Delivery completion date
+             * @example 2027-03-20
+             */
+            dlvrCmptnDt: string;
+            /**
+             * @description Delivery note
+             * @example Original documents handed over to the investor.
+             */
+            dlvrCn?: string;
+        };
         ApiResponseMembershipStatusResponse: {
             /** Format: int32 */
             status?: number;
@@ -6017,52 +9352,6 @@ export interface components {
              * @example Please upload a clear copy of the power of attorney.
              */
             supplementNote?: string;
-        };
-        ReceiveMemberApprovalRequest: {
-            /**
-             * @description Employee number of the assignee (processing step)
-             * @example EMP0000002
-             */
-            assigneeEmpNo: string;
-        };
-        ApiResponseMemberApprovalResponse: {
-            /** Format: int32 */
-            status?: number;
-            message?: string;
-            data?: components["schemas"]["MemberApprovalResponse"];
-        };
-        MemberApprovalResponse: {
-            /**
-             * @description Member number
-             * @example TV00000001
-             */
-            mbrNo?: string;
-            /**
-             * @description Approval history ID
-             * @example 3f1c2a9e-7b0d-4c55-9f61-2d8e4b7a1c90
-             */
-            atrzHstryId?: string;
-            /**
-             * @description Approval stage (NOT_RECEIVED, REQUESTED, IN_PROGRESS, APPROVED, REJECTED)
-             * @example REQUESTED
-             */
-            stage?: string;
-            /**
-             * Format: int32
-             * @description Current step number
-             * @example 2
-             */
-            nowStpNo?: number;
-            /**
-             * @description Approval status (INPROGRESS, COMPLETED, REJECTED)
-             * @example INPROGRESS
-             */
-            atrzSttsCd?: string;
-            /**
-             * @description Assignee employee number
-             * @example EMP0000002
-             */
-            assigneeEmpNo?: string;
         };
         RequestMemberApprovalRequest: {
             /**
@@ -6680,21 +9969,6 @@ export interface components {
              */
             attachmentFileId?: string;
         };
-        ApiResponseContentFileGroupResponse: {
-            /** Format: int32 */
-            status?: number;
-            message?: string;
-            data?: components["schemas"]["ContentFileGroupResponse"];
-        };
-        ContentFileGroupResponse: {
-            /**
-             * @description File group ID to pass as attachmentFileId / Mã nhóm tệp dùng cho attachmentFileId
-             * @example 7c1d2e3f-4a5b-6c7d-8e9f-0a1b2c3d4e5f
-             */
-            fileUnqId?: string;
-            /** @description Active files of the group / Các tệp còn hiệu lực trong nhóm */
-            files?: components["schemas"]["ContentFileResponse"][];
-        };
         CreateFaqRequest: {
             /**
              * @description FAQ category (FAQ_CTGRY_CD) / Danh mục FAQ
@@ -6726,6 +10000,24 @@ export interface components {
              * @example N
              */
             published?: string;
+        };
+        ApiResponseListTradeAdditionalConsultationDto: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["TradeAdditionalConsultationDto"][];
+        };
+        CompleteAdditionalConsultationRequest: {
+            /**
+             * @description Consultation result shown to the member
+             * @example Explained the enforcement timeline by phone on 12/04.
+             */
+            resultCn: string;
+            /**
+             * @description Result attachment (optional)
+             * @example 7c1d2e3f-4a5b-6c7d-8e9f-0a1b2c3d4e5f
+             */
+            fileUnqId?: string;
         };
         /** @description Common Code Group Creation Request / Yêu cầu tạo mới Nhóm mã dùng chung */
         CreateCodeGroupRequest: {
@@ -6962,46 +10254,6 @@ export interface components {
              */
             steps?: components["schemas"]["ApprovalStepDetailDto"][];
         };
-        /** @description Approval step detail */
-        ApprovalStepDetailDto: {
-            /**
-             * Format: int32
-             * @description Step number (1: Receipt, 2: Processing, 3: 1st Approval)
-             * @example 1
-             */
-            stpNo?: number;
-            /**
-             * @description Step name
-             * @example Receipt
-             */
-            stpNm?: string;
-            /**
-             * @description Step status (WAITING, INPROGRESS, APPROVED, REJECTED)
-             * @example APPROVED
-             */
-            status?: string;
-            /**
-             * @description Processing employee number
-             * @example admin
-             */
-            empNo?: string;
-            /**
-             * @description Processing employee name
-             * @example Admin User
-             */
-            empNm?: string;
-            /**
-             * Format: date-time
-             * @description Processing datetime
-             * @example 2026-10-16T10:00:00
-             */
-            processedAt?: string;
-            /**
-             * @description Comment or rejection reason
-             * @example Documents verified
-             */
-            comment?: string;
-        };
         ApproveApprovalRequest: {
             /**
              * @description Confirmation checkbox
@@ -7200,6 +10452,23 @@ export interface components {
             /** Format: int32 */
             data?: number;
         };
+        NplDisclosureRequest: {
+            /**
+             * @description Shown on the platform
+             * @example Y
+             */
+            expsrYn: string;
+            /**
+             * @description NPL status (SA on sale, UC under contract, SD sold); unchanged when empty
+             * @example SA
+             */
+            bndSttsCd?: string;
+            /**
+             * @description Reason of the manual change
+             * @example Published again after the holder's request.
+             */
+            reason: string;
+        };
         ReorderFaqRequest: {
             /**
              * @description FAQ category (FAQ_CTGRY_CD) / Danh mục FAQ
@@ -7252,6 +10521,13 @@ export interface components {
              */
             pinOrder?: number;
         };
+        ChangeInquiryCategoryRequest: {
+            /**
+             * @description Inquiry category code of the 1:1 board (e.g. CNS: consulting)
+             * @example CNS
+             */
+            category: string;
+        };
         BannerIdsRequest: {
             /**
              * @description Banner IDs selected in the grid / Mã banner được chọn
@@ -7293,10 +10569,406 @@ export interface components {
              * @example DESC
              */
             sortDirection: string;
-            safeSortBy?: string;
             safeSortDirection?: string;
+            safeSortBy?: string;
             /** Format: int32 */
             offset?: number;
+        };
+        TradeApplicationSearchRequest: {
+            /**
+             * Format: date
+             * @description Application date from (inclusive)
+             * @example 2026-10-17
+             */
+            aplyFromDt?: string;
+            /**
+             * Format: date
+             * @description Application date to (inclusive)
+             * @example 2026-10-31
+             */
+            aplyToDt?: string;
+            /**
+             * @description Processing status codes (RCPT, PRCS, DCIN, DCOK, CMPL, CNCL)
+             * @example [
+             *       "RCPT",
+             *       "PRCS"
+             *     ]
+             */
+            sttsCds?: string[];
+            /**
+             * @description Approval stages (NOT_RECEIVED, PROCESSING, IN_APPROVAL, APPROVED, REJECTED)
+             * @example [
+             *       "IN_APPROVAL"
+             *     ]
+             */
+            approvalStages?: string[];
+            /**
+             * @description Contract kinds (MDT: brokerage contract, BASE_ANX: base contract annex)
+             * @example [
+             *       "MDT"
+             *     ]
+             */
+            ctrtKndCds?: string[];
+            /**
+             * @description Member number keyword
+             * @example TV00000001
+             */
+            mbrNo?: string;
+            /**
+             * @description Member name or application ID keyword
+             * @example Nguyen
+             */
+            keyword?: string;
+            /**
+             * @description NPL code keyword
+             * @example KN1A2B3C4D
+             */
+            bndCd?: string;
+            /**
+             * Format: int32
+             * @description Creditor (financial institution code)
+             * @example 203
+             */
+            crdtrCd?: number;
+            /**
+             * @description Desired sale price from
+             * @example 1000000000
+             */
+            minPrice?: number;
+            /**
+             * @description Desired sale price to
+             * @example 50000000000
+             */
+            maxPrice?: number;
+            /**
+             * @description Receiver employee number
+             * @example EMP0000001
+             */
+            rcptEmpNo?: string;
+            /**
+             * @description Officer in charge employee number
+             * @example EMP0000002
+             */
+            tkcgEmpNo?: string;
+        };
+        ApiResponsePageResponseTradeApplicationListItemResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["PageResponseTradeApplicationListItemResponse"];
+        };
+        /** @description Paginated Response / Phản hồi phân trang */
+        PageResponseTradeApplicationListItemResponse: {
+            /** @description Data list / Danh sách dữ liệu */
+            content?: components["schemas"]["TradeApplicationListItemResponse"][];
+            /**
+             * Format: int32
+             * @description Current page number (1-based) / Số trang hiện tại
+             */
+            page?: number;
+            /**
+             * Format: int32
+             * @description Page size / Số lượng bản ghi mỗi trang
+             */
+            size?: number;
+            /**
+             * Format: int64
+             * @description Total number of records / Tổng số bản ghi
+             */
+            totalElements?: number;
+            /**
+             * Format: int32
+             * @description Total number of pages / Tổng số trang
+             */
+            totalPages?: number;
+        };
+        /** @description Sale brokerage application list row */
+        TradeApplicationListItemResponse: {
+            /**
+             * Format: int64
+             * @description Row number
+             * @example 1
+             */
+            no?: number;
+            /**
+             * @description Application ID
+             * @example SRVC-APLY-2026-1A2B3C4D
+             */
+            srvcAplyId?: string;
+            /**
+             * @description Processing status (RCPT, PRCS, DCIN, DCOK, CMPL, CNCL)
+             * @example DCOK
+             */
+            srvcPrcsSttsCd?: string;
+            /**
+             * @description Processing status name
+             * @example Documents Complete
+             */
+            srvcPrcsSttsNm?: string;
+            /**
+             * @description Approval stage (NOT_RECEIVED, PROCESSING, IN_APPROVAL, APPROVED, REJECTED, CANCELLED)
+             * @example PROCESSING
+             */
+            approvalStage?: string;
+            /**
+             * @description Application date (DDMMYYYY)
+             * @example 29102026
+             */
+            srvcAplyDmy?: string;
+            /**
+             * @description Application channel (WEB, MANL)
+             * @example WEB
+             */
+            aplyPathCd?: string;
+            /**
+             * @description Contract kind (MDT, BASE_ANX)
+             * @example MDT
+             */
+            ctrtKndCd?: string;
+            /**
+             * @description Consulting category (consulting only)
+             * @example CNSTN_SRVC_01
+             */
+            cnsltDmndSeCd?: string;
+            /**
+             * @description Member number
+             * @example TV00000001
+             */
+            mbrNo?: string;
+            /**
+             * @description Member name
+             * @example Nguyen Van A
+             */
+            mbrNm?: string;
+            /**
+             * @description Creditor (financial institution) name of the first NPL
+             * @example Vietcombank
+             */
+            crdtrNm?: string;
+            /**
+             * @description Applied as a lot (Y/N)
+             * @example N
+             */
+            bndLotYn?: string;
+            /**
+             * @description NPL code (single NPL)
+             * @example KN1A2B3C4D
+             */
+            bndCd?: string;
+            /**
+             * @description NPL lot ID
+             * @example LOT-2026-1A2B3C4D
+             */
+            bndLotId?: string;
+            /**
+             * @description NPL lot name
+             * @example NPL Portfolio 2026
+             */
+            bndLotNm?: string;
+            /**
+             * Format: int32
+             * @description Number of NPLs
+             * @example 1
+             */
+            bndCnt?: number;
+            /**
+             * @description Currency
+             * @example VND
+             */
+            crncCd?: string;
+            /**
+             * @description Total principal balance of the NPLs
+             * @example 135000000000
+             */
+            totPrnBlnc?: number;
+            /**
+             * @description Total appraised value of the NPLs
+             * @example 120000000000
+             */
+            totEvlAmt?: number;
+            /**
+             * @description Desired sale price
+             * @example 100000000000
+             */
+            prpDsplPrc?: number;
+            /**
+             * Format: date-time
+             * @description Receipt datetime
+             */
+            rcptDt?: string;
+            /**
+             * @description Receiver employee number
+             * @example EMP0000001
+             */
+            rcptEmpNo?: string;
+            /**
+             * @description Receiver name
+             * @example Tran Thi B
+             */
+            rcptEmpNm?: string;
+            /**
+             * @description Officer in charge employee number
+             * @example EMP0000002
+             */
+            tkcgEmpNo?: string;
+            /**
+             * @description Officer in charge name
+             * @example Le Van C
+             */
+            tkcgEmpNm?: string;
+            /**
+             * @description Approver employee number (approval requested)
+             * @example EMP0000003
+             */
+            approverEmpNo?: string;
+            /**
+             * @description Approver name
+             * @example Pham Van D
+             */
+            approverEmpNm?: string;
+            /**
+             * @description Contract created on approval
+             * @example 5c2b7d1e-8f4a-4b6c-9d0e-1a2b3c4d5e6f
+             */
+            srvcCtrtCd?: string;
+            /**
+             * @description Action of the current employee: RECEIVE, CHECK_DOCUMENTS, REQUEST_APPROVAL, DECIDE, VIEW
+             * @example REQUEST_APPROVAL
+             */
+            availableAction?: string;
+        };
+        ApiResponseListTradeApplicationHistoryDto: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["TradeApplicationHistoryDto"][];
+        };
+        TradeContractSearchRequest: {
+            /**
+             * @description Contract types (CTRT_DSPSL_MDT, CTRT_DSPSL_MDT_ANX, CTRT_DSPSL_BASE_ANX)
+             * @example [
+             *       "CTRT_DSPSL_MDT"
+             *     ]
+             */
+            ctrtSeCds?: string[];
+            /**
+             * @description Contract statuses (PREPR, DRFAPR, SGNWT, SGNCP, PROGS, ENDING, CMPTN, CNCLN)
+             * @example [
+             *       "PROGS"
+             *     ]
+             */
+            ctrtSttsCds?: string[];
+            /**
+             * @description Member number keyword
+             * @example TV00000001
+             */
+            mbrNo?: string;
+            /**
+             * @description Member name, contract code or application ID keyword
+             * @example Nguyen
+             */
+            keyword?: string;
+            /**
+             * @description Officer in charge
+             * @example EMP0000002
+             */
+            tkcgEmpNo?: string;
+            /**
+             * Format: int32
+             * @description Only contracts ending within this many days (D-xx)
+             * @example 30
+             */
+            endingWithinDays?: number;
+        };
+        ApiResponsePageResponseTradeContractListItemResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["PageResponseTradeContractListItemResponse"];
+        };
+        /** @description Paginated Response / Phản hồi phân trang */
+        PageResponseTradeContractListItemResponse: {
+            /** @description Data list / Danh sách dữ liệu */
+            content?: components["schemas"]["TradeContractListItemResponse"][];
+            /**
+             * Format: int32
+             * @description Current page number (1-based) / Số trang hiện tại
+             */
+            page?: number;
+            /**
+             * Format: int32
+             * @description Page size / Số lượng bản ghi mỗi trang
+             */
+            size?: number;
+            /**
+             * Format: int64
+             * @description Total number of records / Tổng số bản ghi
+             */
+            totalElements?: number;
+            /**
+             * Format: int32
+             * @description Total number of pages / Tổng số trang
+             */
+            totalPages?: number;
+        };
+        ApiResponseListTradeApprovalSessionDto: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["TradeApprovalSessionDto"][];
+        };
+        /** @description Approval session */
+        TradeApprovalSessionDto: {
+            /**
+             * @description Approval session ID
+             * @example 8d2f1c3e-...
+             */
+            atrzHstryId?: string;
+            /**
+             * @description Process (PROC_DSPSL_MDT_CTRT, _ANX, _SIGN, _END, _END_SIGN)
+             * @example PROC_DSPSL_MDT_SIGN
+             */
+            atrzProcCd?: string;
+            /**
+             * @description Target type (SRVC_CTRT, CTRT_END)
+             * @example SRVC_CTRT
+             */
+            atrzTrgtSeCd?: string;
+            /**
+             * @description Session status
+             * @example COMPLETED
+             */
+            atrzSttsCd?: string;
+            /**
+             * @description Requested by
+             * @example EMP0000002
+             */
+            requesterEmpNo?: string;
+            /**
+             * @description Approver
+             * @example EMP0000001
+             */
+            approverEmpNo?: string;
+            /**
+             * @description Approver name
+             * @example Pham Van D
+             */
+            approverEmpNm?: string;
+            /**
+             * Format: date-time
+             * @description Requested at
+             */
+            requestedAt?: string;
+            /**
+             * Format: date-time
+             * @description Decided at
+             */
+            decidedAt?: string;
+            /**
+             * @description Approver comment or rejection reason
+             * @example Price must follow the appraisal.
+             */
+            comment?: string;
         };
         ApiResponsePageResponseRoleResponse: {
             /** Format: int32 */
@@ -7999,6 +11671,39 @@ export interface components {
             steps?: components["schemas"]["ApprovalStepDetailDto"][];
             /** @description Verification attachments for review */
             files?: components["schemas"]["MemberAttachmentDto"][];
+        };
+        ApiResponseMemberApprovalSummaryResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["MemberApprovalSummaryResponse"];
+        };
+        /** @description Member sign-up work counters */
+        MemberApprovalSummaryResponse: {
+            /**
+             * Format: int64
+             * @description New or re-submitted applications waiting for receipt
+             * @example 3
+             */
+            notReceived?: number;
+            /**
+             * Format: int64
+             * @description Applications sent back for supplement, waiting for the applicant
+             * @example 1
+             */
+            supplementRequested?: number;
+            /**
+             * Format: int64
+             * @description Received applications assigned to the current employee
+             * @example 2
+             */
+            assignedToMe?: number;
+            /**
+             * Format: int64
+             * @description Applications waiting for the current employee's approval decision
+             * @example 1
+             */
+            awaitingMyDecision?: number;
         };
         ApiResponsePageResponseProvinceResponse: {
             /** Format: int32 */
@@ -8793,6 +12498,200 @@ export interface components {
             message?: string;
             data?: components["schemas"]["CodeGroupResponse"][];
         };
+        ApprovalInboxSearchRequest: {
+            /**
+             * @description Process kind (member, sale, purchase, consulting)
+             * @example sale
+             */
+            kind?: string;
+            /**
+             * @description Approval process code or code prefix
+             * @example PROC_DSPSL_MDT_
+             */
+            atrzProcCd?: string;
+            /**
+             * @description Approval target type (MBR, SRVC_APLY, SRVC_CTRT, CTRT_END)
+             * @example SRVC_CTRT
+             */
+            atrzTrgtSeCd?: string;
+        };
+        ApiResponsePageResponseApprovalInboxItemResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["PageResponseApprovalInboxItemResponse"];
+        };
+        /** @description Approval inbox item */
+        ApprovalInboxItemResponse: {
+            /**
+             * @description Approval session ID
+             * @example a1b2c3d4-e5f6-7890-abcd-ef1234567890
+             */
+            atrzHstryId?: string;
+            /**
+             * @description Approval process code
+             * @example PROC_DSPSL_MDT_CTRT
+             */
+            atrzProcCd?: string;
+            /**
+             * @description Approval process name
+             * @example Sale Brokerage Contract Draft
+             */
+            atrzProcNm?: string;
+            /**
+             * @description Target type code (MBR, SRVC_APLY, SRVC_CTRT, CTRT_END)
+             * @example SRVC_CTRT
+             */
+            atrzTrgtSeCd?: string;
+            /**
+             * @description Target ID (member number, application ID, contract code or termination ID)
+             * @example CT2026000001
+             */
+            atrzTrgtId?: string;
+            /**
+             * Format: int32
+             * @description Current step number
+             * @example 2
+             */
+            nowStpNo?: number;
+            /**
+             * @description Current step name
+             * @example 1ST_ATRZ
+             */
+            stpNm?: string;
+            /**
+             * @description Employee who started the session (receipt step)
+             * @example EMP0000002
+             */
+            requesterEmpNo?: string;
+            /**
+             * @description Name of the employee who started the session
+             * @example Nguyen Van B
+             */
+            requesterEmpNm?: string;
+            /**
+             * Format: date-time
+             * @description When the session was started
+             * @example 2026-10-30T09:15:00
+             */
+            requestedAt?: string;
+            /**
+             * Format: date-time
+             * @description Last change of the session (arrival at the current step)
+             * @example 2026-10-31T14:02:00
+             */
+            assignedAt?: string;
+            /**
+             * @description Process kind (MEMBER, SALE, PURCHASE, CONSULTING, OTHER)
+             * @example SALE
+             */
+            processKind?: string;
+            /**
+             * @description Screen to open (MEMBER_SIGNUP, APPLICATION, CONTRACT, TERMINATION, CONSULTING_REPORT, OTHER)
+             * @example CONTRACT
+             */
+            targetScreen?: string;
+            /**
+             * @description Admin menu of the target screen
+             * @example A02020200
+             */
+            menuCd?: string;
+            /**
+             * @description Trade kind (SALE, PURCHASE, CONSULTING), null for members
+             * @example SALE
+             */
+            tradeKind?: string;
+            /**
+             * @description Service application ID (SRVC_APLY targets)
+             * @example AP2026000001
+             */
+            srvcAplyId?: string;
+            /**
+             * @description Contract code (contract, annex, report and termination targets)
+             * @example CT2026000001
+             */
+            srvcCtrtCd?: string;
+            /**
+             * @description Termination ID (CTRT_END targets)
+             * @example f0e1d2c3-b4a5-9687-7869-5a4b3c2d1e0f
+             */
+            ctrtEndId?: string;
+            /**
+             * @description Member number (MBR targets)
+             * @example TV00000001
+             */
+            mbrNo?: string;
+        };
+        /** @description Paginated Response / Phản hồi phân trang */
+        PageResponseApprovalInboxItemResponse: {
+            /** @description Data list / Danh sách dữ liệu */
+            content?: components["schemas"]["ApprovalInboxItemResponse"][];
+            /**
+             * Format: int32
+             * @description Current page number (1-based) / Số trang hiện tại
+             */
+            page?: number;
+            /**
+             * Format: int32
+             * @description Page size / Số lượng bản ghi mỗi trang
+             */
+            size?: number;
+            /**
+             * Format: int64
+             * @description Total number of records / Tổng số bản ghi
+             */
+            totalElements?: number;
+            /**
+             * Format: int32
+             * @description Total number of pages / Tổng số trang
+             */
+            totalPages?: number;
+        };
+        ApiResponseApprovalInboxSummaryResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["ApprovalInboxSummaryResponse"];
+        };
+        /** @description Approval inbox counts */
+        ApprovalInboxSummaryResponse: {
+            /**
+             * Format: int64
+             * @description All waiting sessions
+             * @example 7
+             */
+            total?: number;
+            /**
+             * Format: int64
+             * @description Member sign-up sessions
+             * @example 2
+             */
+            member?: number;
+            /**
+             * Format: int64
+             * @description Sale brokerage sessions
+             * @example 3
+             */
+            sale?: number;
+            /**
+             * Format: int64
+             * @description Purchase brokerage sessions
+             * @example 1
+             */
+            purchase?: number;
+            /**
+             * Format: int64
+             * @description Consulting sessions
+             * @example 1
+             */
+            consulting?: number;
+            /**
+             * Format: int64
+             * @description Sessions of other processes
+             * @example 0
+             */
+            other?: number;
+        };
         ApiResponseListApprovalCandidateResponse: {
             /** Format: int32 */
             status?: number;
@@ -9255,6 +13154,347 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    getApplication: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Application ID
+                 * @example SRVC-APLY-2026-1A2B3C4D
+                 */
+                srvcAplyId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseTradeApplicationDetailResponse"];
+                };
+            };
+        };
+    };
+    update: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Application ID
+                 * @example SRVC-APLY-2026-1A2B3C4D
+                 */
+                srvcAplyId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SaveTradeApplicationRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseTradeApplicationDetailResponse"];
+                };
+            };
+        };
+    };
+    reassignOfficer: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Application ID
+                 * @example SRVC-APLY-2026-1A2B3C4D
+                 */
+                srvcAplyId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ReceiveTradeApplicationRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseTradeApplicationStatusResponse"];
+                };
+            };
+        };
+    };
+    getApplication_1: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Application ID
+                 * @example SRVC-APLY-2026-1A2B3C4D
+                 */
+                srvcAplyId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseTradeApplicationDetailResponse"];
+                };
+            };
+        };
+    };
+    update_1: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Application ID
+                 * @example SRVC-APLY-2026-1A2B3C4D
+                 */
+                srvcAplyId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SaveTradeApplicationRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseTradeApplicationDetailResponse"];
+                };
+            };
+        };
+    };
+    reassignOfficer_1: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Application ID
+                 * @example SRVC-APLY-2026-1A2B3C4D
+                 */
+                srvcAplyId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ReceiveTradeApplicationRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseTradeApplicationStatusResponse"];
+                };
+            };
+        };
+    };
+    getApplication_2: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Application ID
+                 * @example SRVC-APLY-2026-1A2B3C4D
+                 */
+                srvcAplyId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseTradeApplicationDetailResponse"];
+                };
+            };
+        };
+    };
+    update_2: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Application ID
+                 * @example SRVC-APLY-2026-1A2B3C4D
+                 */
+                srvcAplyId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SaveTradeApplicationRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseTradeApplicationDetailResponse"];
+                };
+            };
+        };
+    };
+    reassignOfficer_2: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Application ID
+                 * @example SRVC-APLY-2026-1A2B3C4D
+                 */
+                srvcAplyId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ReceiveTradeApplicationRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseTradeApplicationStatusResponse"];
+                };
+            };
+        };
+    };
+    getContract: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Contract code */
+                ctrtCd: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseTradeContractDetailResponse"];
+                };
+            };
+        };
+    };
+    updateDraft: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Contract code */
+                ctrtCd: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateTradeContractRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseTradeContractDetailResponse"];
+                };
+            };
+        };
+    };
     getRole: {
         parameters: {
             query?: never;
@@ -9567,6 +13807,62 @@ export interface operations {
             };
         };
     };
+    getContract_1: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Contract code */
+                ctrtCd: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseTradeContractDetailResponse"];
+                };
+            };
+        };
+    };
+    updateDraft_1: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Contract code */
+                ctrtCd: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateTradeContractRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseTradeContractDetailResponse"];
+                };
+            };
+        };
+    };
     getFee: {
         parameters: {
             query?: never;
@@ -9690,6 +13986,39 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["ApiResponseMemberDetailResponse"];
+                };
+            };
+        };
+    };
+    reassign: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Member number
+                 * @example TV00000001
+                 */
+                mbrNo: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ReceiveMemberApprovalRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseMemberApprovalResponse"];
                 };
             };
         };
@@ -10438,7 +14767,7 @@ export interface operations {
             };
         };
     };
-    update: {
+    update_3: {
         parameters: {
             query?: never;
             header?: {
@@ -10494,7 +14823,7 @@ export interface operations {
             };
         };
     };
-    update_1: {
+    update_4: {
         parameters: {
             query?: never;
             header?: {
@@ -10636,7 +14965,7 @@ export interface operations {
             };
         };
     };
-    update_2: {
+    update_5: {
         parameters: {
             query?: never;
             header?: {
@@ -10692,7 +15021,7 @@ export interface operations {
             };
         };
     };
-    update_3: {
+    update_6: {
         parameters: {
             query?: never;
             header?: {
@@ -10748,7 +15077,7 @@ export interface operations {
             };
         };
     };
-    update_4: {
+    update_7: {
         parameters: {
             query?: never;
             header?: {
@@ -10774,6 +15103,172 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["ApiResponsePostDetailResponse"];
+                };
+            };
+        };
+    };
+    getContract_2: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Contract code */
+                ctrtCd: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseTradeContractDetailResponse"];
+                };
+            };
+        };
+    };
+    updateDraft_2: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Contract code */
+                ctrtCd: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateTradeContractRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseTradeContractDetailResponse"];
+                };
+            };
+        };
+    };
+    saveReport: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Contract code */
+                ctrtCd: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SaveConsultingReportRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseTradeContractDetailResponse"];
+                };
+            };
+        };
+    };
+    assignConsultant: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Contract code */
+                ctrtCd: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AssignConsultantRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseTradeContractDetailResponse"];
+                };
+            };
+        };
+    };
+    getAdditionalConsultingSetting: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseBoolean"];
+                };
+            };
+        };
+    };
+    updateAdditionalConsultingSetting: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AdditionalConsultingSettingRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseBoolean"];
                 };
             };
         };
@@ -11010,6 +15505,1183 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["ApiResponseBatchJobConfigResponse"];
+                };
+            };
+        };
+    };
+    upload: {
+        parameters: {
+            query: {
+                /**
+                 * @description Trade kind (sale, purchase, consulting)
+                 * @example sale
+                 */
+                kind: string;
+                /**
+                 * @description Screen uploading the files (application, contract)
+                 * @example contract
+                 */
+                scope?: string;
+                /** @description Existing group to append to */
+                fileUnqId?: string;
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "multipart/form-data": {
+                    /** @description Files to upload */
+                    files?: string[];
+                };
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseContentFileGroupResponse"];
+                };
+            };
+        };
+    };
+    getApplications: {
+        parameters: {
+            query: {
+                pageRequest: components["schemas"]["PageRequest"];
+                searchRequest: components["schemas"]["TradeApplicationSearchRequest"];
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponsePageResponseTradeApplicationListItemResponse"];
+                };
+            };
+        };
+    };
+    create: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SaveTradeApplicationRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseTradeApplicationStatusResponse"];
+                };
+            };
+        };
+    };
+    attachScan: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Application ID
+                 * @example SRVC-APLY-2026-1A2B3C4D
+                 */
+                srvcAplyId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AttachTradeScanRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseTradeApplicationStatusResponse"];
+                };
+            };
+        };
+    };
+    receive: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Application ID
+                 * @example SRVC-APLY-2026-1A2B3C4D
+                 */
+                srvcAplyId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ReceiveTradeApplicationRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseTradeApplicationStatusResponse"];
+                };
+            };
+        };
+    };
+    checkDocuments: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Application ID
+                 * @example SRVC-APLY-2026-1A2B3C4D
+                 */
+                srvcAplyId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CheckTradeDocumentsRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseTradeApplicationStatusResponse"];
+                };
+            };
+        };
+    };
+    cancel: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Application ID
+                 * @example SRVC-APLY-2026-1A2B3C4D
+                 */
+                srvcAplyId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CancelTradeApplicationRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseTradeApplicationStatusResponse"];
+                };
+            };
+        };
+    };
+    requestApproval: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Application ID
+                 * @example SRVC-APLY-2026-1A2B3C4D
+                 */
+                srvcAplyId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RequestTradeApprovalRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseTradeApplicationStatusResponse"];
+                };
+            };
+        };
+    };
+    getApplications_1: {
+        parameters: {
+            query: {
+                pageRequest: components["schemas"]["PageRequest"];
+                searchRequest: components["schemas"]["TradeApplicationSearchRequest"];
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponsePageResponseTradeApplicationListItemResponse"];
+                };
+            };
+        };
+    };
+    create_1: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SaveTradeApplicationRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseTradeApplicationStatusResponse"];
+                };
+            };
+        };
+    };
+    attachScan_1: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Application ID
+                 * @example SRVC-APLY-2026-1A2B3C4D
+                 */
+                srvcAplyId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AttachTradeScanRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseTradeApplicationStatusResponse"];
+                };
+            };
+        };
+    };
+    receive_1: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Application ID
+                 * @example SRVC-APLY-2026-1A2B3C4D
+                 */
+                srvcAplyId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ReceiveTradeApplicationRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseTradeApplicationStatusResponse"];
+                };
+            };
+        };
+    };
+    checkDocuments_1: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Application ID
+                 * @example SRVC-APLY-2026-1A2B3C4D
+                 */
+                srvcAplyId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CheckTradeDocumentsRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseTradeApplicationStatusResponse"];
+                };
+            };
+        };
+    };
+    cancel_1: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Application ID
+                 * @example SRVC-APLY-2026-1A2B3C4D
+                 */
+                srvcAplyId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CancelTradeApplicationRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseTradeApplicationStatusResponse"];
+                };
+            };
+        };
+    };
+    requestApproval_1: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Application ID
+                 * @example SRVC-APLY-2026-1A2B3C4D
+                 */
+                srvcAplyId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RequestTradeApprovalRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseTradeApplicationStatusResponse"];
+                };
+            };
+        };
+    };
+    getApplications_2: {
+        parameters: {
+            query: {
+                pageRequest: components["schemas"]["PageRequest"];
+                searchRequest: components["schemas"]["TradeApplicationSearchRequest"];
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponsePageResponseTradeApplicationListItemResponse"];
+                };
+            };
+        };
+    };
+    create_2: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SaveTradeApplicationRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseTradeApplicationStatusResponse"];
+                };
+            };
+        };
+    };
+    attachScan_2: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Application ID
+                 * @example SRVC-APLY-2026-1A2B3C4D
+                 */
+                srvcAplyId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AttachTradeScanRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseTradeApplicationStatusResponse"];
+                };
+            };
+        };
+    };
+    receive_2: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Application ID
+                 * @example SRVC-APLY-2026-1A2B3C4D
+                 */
+                srvcAplyId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ReceiveTradeApplicationRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseTradeApplicationStatusResponse"];
+                };
+            };
+        };
+    };
+    checkDocuments_2: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Application ID
+                 * @example SRVC-APLY-2026-1A2B3C4D
+                 */
+                srvcAplyId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CheckTradeDocumentsRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseTradeApplicationStatusResponse"];
+                };
+            };
+        };
+    };
+    cancel_2: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Application ID
+                 * @example SRVC-APLY-2026-1A2B3C4D
+                 */
+                srvcAplyId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CancelTradeApplicationRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseTradeApplicationStatusResponse"];
+                };
+            };
+        };
+    };
+    requestApproval_2: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Application ID
+                 * @example SRVC-APLY-2026-1A2B3C4D
+                 */
+                srvcAplyId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RequestTradeApprovalRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseTradeApplicationStatusResponse"];
+                };
+            };
+        };
+    };
+    startTermination: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Contract code */
+                ctrtCd: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["StartTerminationRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseTradeContractStatusResponse"];
+                };
+            };
+        };
+    };
+    attachTerminationScan: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Contract code */
+                ctrtCd: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TradeDocumentRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseTradeContractStatusResponse"];
+                };
+            };
+        };
+    };
+    requestTerminationSignature: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Contract code */
+                ctrtCd: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RequestTradeApprovalRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseTradeContractStatusResponse"];
+                };
+            };
+        };
+    };
+    registerTerminationDraft: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Contract code */
+                ctrtCd: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TradeDocumentRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseTradeContractStatusResponse"];
+                };
+            };
+        };
+    };
+    completeTermination: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Contract code */
+                ctrtCd: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseTradeContractStatusResponse"];
+                };
+            };
+        };
+    };
+    requestTerminationApproval: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Contract code */
+                ctrtCd: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RequestTradeApprovalRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseTradeContractStatusResponse"];
+                };
+            };
+        };
+    };
+    attachSignedScan: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Contract code */
+                ctrtCd: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TradeDocumentRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseTradeContractStatusResponse"];
+                };
+            };
+        };
+    };
+    requestSignatureApproval: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Contract code */
+                ctrtCd: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RequestTradeApprovalRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseTradeContractStatusResponse"];
+                };
+            };
+        };
+    };
+    completeTrade: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Contract code */
+                ctrtCd: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TradeCompletionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseTradeContractStatusResponse"];
+                };
+            };
+        };
+    };
+    decideRenewal: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Contract code */
+                ctrtCd: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RenewalDecisionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseTradeContractStatusResponse"];
+                };
+            };
+        };
+    };
+    refundFee: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Contract code */
+                ctrtCd: string;
+                /** @description Fee ID */
+                feeId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TradeFeeReceiptRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseListTradeContractFeeDto"];
+                };
+            };
+        };
+    };
+    confirmFeeReceipt: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Contract code */
+                ctrtCd: string;
+                /** @description Fee ID */
+                feeId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TradeFeeReceiptRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseListTradeContractFeeDto"];
+                };
+            };
+        };
+    };
+    registerDraft: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Contract code */
+                ctrtCd: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TradeDocumentRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseTradeContractStatusResponse"];
+                };
+            };
+        };
+    };
+    conclude: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Contract code */
+                ctrtCd: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["ConcludeTradeContractRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseTradeContractStatusResponse"];
+                };
+            };
+        };
+    };
+    requestDraftApproval: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Contract code */
+                ctrtCd: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RequestTradeApprovalRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseTradeContractStatusResponse"];
+                };
+            };
+        };
+    };
+    createAnnex: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Parent contract code */
+                ctrtCd: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateTradeAnnexRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseTradeContractStatusResponse"];
                 };
             };
         };
@@ -11259,6 +16931,516 @@ export interface operations {
             };
         };
     };
+    completeTrade_1: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Contract code */
+                ctrtCd: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TradeCompletionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseTradeContractStatusResponse"];
+                };
+            };
+        };
+    };
+    startTermination_1: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Contract code */
+                ctrtCd: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["StartTerminationRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseTradeContractStatusResponse"];
+                };
+            };
+        };
+    };
+    attachTerminationScan_1: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Contract code */
+                ctrtCd: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TradeDocumentRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseTradeContractStatusResponse"];
+                };
+            };
+        };
+    };
+    requestTerminationSignature_1: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Contract code */
+                ctrtCd: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RequestTradeApprovalRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseTradeContractStatusResponse"];
+                };
+            };
+        };
+    };
+    registerTerminationDraft_1: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Contract code */
+                ctrtCd: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TradeDocumentRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseTradeContractStatusResponse"];
+                };
+            };
+        };
+    };
+    completeTermination_1: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Contract code */
+                ctrtCd: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseTradeContractStatusResponse"];
+                };
+            };
+        };
+    };
+    requestTerminationApproval_1: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Contract code */
+                ctrtCd: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RequestTradeApprovalRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseTradeContractStatusResponse"];
+                };
+            };
+        };
+    };
+    attachSignedScan_1: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Contract code */
+                ctrtCd: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TradeDocumentRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseTradeContractStatusResponse"];
+                };
+            };
+        };
+    };
+    requestSignatureApproval_1: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Contract code */
+                ctrtCd: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RequestTradeApprovalRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseTradeContractStatusResponse"];
+                };
+            };
+        };
+    };
+    decideRenewal_1: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Contract code */
+                ctrtCd: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RenewalDecisionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseTradeContractStatusResponse"];
+                };
+            };
+        };
+    };
+    refundFee_1: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Contract code */
+                ctrtCd: string;
+                /** @description Fee ID */
+                feeId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TradeFeeReceiptRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseListTradeContractFeeDto"];
+                };
+            };
+        };
+    };
+    confirmFeeReceipt_1: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Contract code */
+                ctrtCd: string;
+                /** @description Fee ID */
+                feeId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TradeFeeReceiptRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseListTradeContractFeeDto"];
+                };
+            };
+        };
+    };
+    registerDraft_1: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Contract code */
+                ctrtCd: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TradeDocumentRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseTradeContractStatusResponse"];
+                };
+            };
+        };
+    };
+    recordDelivery: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Contract code */
+                ctrtCd: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RecordDeliveryRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseTradeContractStatusResponse"];
+                };
+            };
+        };
+    };
+    conclude_1: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Contract code */
+                ctrtCd: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["ConcludeTradeContractRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseTradeContractStatusResponse"];
+                };
+            };
+        };
+    };
+    requestDraftApproval_1: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Contract code */
+                ctrtCd: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RequestTradeApprovalRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseTradeContractStatusResponse"];
+                };
+            };
+        };
+    };
+    createAnnex_1: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Parent contract code */
+                ctrtCd: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateTradeAnnexRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseTradeContractStatusResponse"];
+                };
+            };
+        };
+    };
     getFees: {
         parameters: {
             query: {
@@ -11368,7 +17550,7 @@ export interface operations {
             };
         };
     };
-    checkDocuments: {
+    checkDocuments_3: {
         parameters: {
             query?: never;
             header?: {
@@ -11401,7 +17583,7 @@ export interface operations {
             };
         };
     };
-    receive: {
+    receive_3: {
         parameters: {
             query?: never;
             header?: {
@@ -11463,7 +17645,7 @@ export interface operations {
             };
         };
     };
-    requestApproval: {
+    requestApproval_3: {
         parameters: {
             query?: never;
             header?: {
@@ -12209,7 +18391,7 @@ export interface operations {
             };
         };
     };
-    create: {
+    create_3: {
         parameters: {
             query?: never;
             header?: {
@@ -12289,7 +18471,7 @@ export interface operations {
             };
         };
     };
-    create_1: {
+    create_4: {
         parameters: {
             query?: never;
             header?: {
@@ -12343,7 +18525,7 @@ export interface operations {
             };
         };
     };
-    upload: {
+    upload_1: {
         parameters: {
             query: {
                 /**
@@ -12486,7 +18668,7 @@ export interface operations {
             };
         };
     };
-    create_2: {
+    create_5: {
         parameters: {
             query?: never;
             header?: {
@@ -12566,7 +18748,7 @@ export interface operations {
             };
         };
     };
-    create_3: {
+    create_6: {
         parameters: {
             query?: never;
             header?: {
@@ -12675,7 +18857,7 @@ export interface operations {
             };
         };
     };
-    create_4: {
+    create_7: {
         parameters: {
             query?: never;
             header?: {
@@ -12725,6 +18907,512 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["ApiResponseInteger"];
+                };
+            };
+        };
+    };
+    startTermination_2: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Contract code */
+                ctrtCd: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["StartTerminationRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseTradeContractStatusResponse"];
+                };
+            };
+        };
+    };
+    attachTerminationScan_2: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Contract code */
+                ctrtCd: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TradeDocumentRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseTradeContractStatusResponse"];
+                };
+            };
+        };
+    };
+    requestTerminationSignature_2: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Contract code */
+                ctrtCd: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RequestTradeApprovalRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseTradeContractStatusResponse"];
+                };
+            };
+        };
+    };
+    registerTerminationDraft_2: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Contract code */
+                ctrtCd: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TradeDocumentRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseTradeContractStatusResponse"];
+                };
+            };
+        };
+    };
+    completeTermination_2: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Contract code */
+                ctrtCd: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseTradeContractStatusResponse"];
+                };
+            };
+        };
+    };
+    requestTerminationApproval_2: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Contract code */
+                ctrtCd: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RequestTradeApprovalRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseTradeContractStatusResponse"];
+                };
+            };
+        };
+    };
+    attachSignedScan_2: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Contract code */
+                ctrtCd: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TradeDocumentRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseTradeContractStatusResponse"];
+                };
+            };
+        };
+    };
+    requestSignatureApproval_2: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Contract code */
+                ctrtCd: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RequestTradeApprovalRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseTradeContractStatusResponse"];
+                };
+            };
+        };
+    };
+    completeReport: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Contract code */
+                ctrtCd: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseTradeContractStatusResponse"];
+                };
+            };
+        };
+    };
+    requestReportApproval: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Contract code */
+                ctrtCd: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RequestTradeApprovalRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseTradeContractStatusResponse"];
+                };
+            };
+        };
+    };
+    refundFee_2: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Contract code */
+                ctrtCd: string;
+                /** @description Fee ID */
+                feeId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TradeFeeReceiptRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseListTradeContractFeeDto"];
+                };
+            };
+        };
+    };
+    confirmFeeReceipt_2: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Contract code */
+                ctrtCd: string;
+                /** @description Fee ID */
+                feeId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TradeFeeReceiptRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseListTradeContractFeeDto"];
+                };
+            };
+        };
+    };
+    registerDraft_2: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Contract code */
+                ctrtCd: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TradeDocumentRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseTradeContractStatusResponse"];
+                };
+            };
+        };
+    };
+    conclude_2: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Contract code */
+                ctrtCd: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["ConcludeTradeContractRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseTradeContractStatusResponse"];
+                };
+            };
+        };
+    };
+    requestDraftApproval_2: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Contract code */
+                ctrtCd: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RequestTradeApprovalRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseTradeContractStatusResponse"];
+                };
+            };
+        };
+    };
+    receiveAdditionalConsultation: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Contract code */
+                ctrtCd: string;
+                /** @description Additional consultation ID */
+                adtnId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseListTradeAdditionalConsultationDto"];
+                };
+            };
+        };
+    };
+    completeAdditionalConsultation: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Contract code */
+                ctrtCd: string;
+                /** @description Additional consultation ID */
+                adtnId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CompleteAdditionalConsultationRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseListTradeAdditionalConsultationDto"];
                 };
             };
         };
@@ -13309,6 +19997,39 @@ export interface operations {
             };
         };
     };
+    updateDisclosure: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description NPL code
+                 * @example KN1A2B3C4D
+                 */
+                bndCd: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["NplDisclosureRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseVoid"];
+                };
+            };
+        };
+    };
     reorderSections: {
         parameters: {
             query?: never;
@@ -13561,6 +20282,36 @@ export interface operations {
             };
         };
     };
+    changeCategory: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Post number */
+                pstNo: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ChangeInquiryCategoryRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseInquiryDetailResponse"];
+                };
+            };
+        };
+    };
     updateFaqStatus: {
         parameters: {
             query?: never;
@@ -13749,6 +20500,208 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["ApiResponseInteger"];
+                };
+            };
+        };
+    };
+    getGroup: {
+        parameters: {
+            query: {
+                /**
+                 * @description Trade kind (sale, purchase, consulting)
+                 * @example sale
+                 */
+                kind: string;
+                /**
+                 * @description Screen reading the files (application, contract)
+                 * @example contract
+                 */
+                scope?: string;
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description File group ID */
+                fileUnqId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseContentFileGroupResponse"];
+                };
+            };
+        };
+    };
+    getHistories: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Application ID
+                 * @example SRVC-APLY-2026-1A2B3C4D
+                 */
+                srvcAplyId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseListTradeApplicationHistoryDto"];
+                };
+            };
+        };
+    };
+    getHistories_1: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Application ID
+                 * @example SRVC-APLY-2026-1A2B3C4D
+                 */
+                srvcAplyId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseListTradeApplicationHistoryDto"];
+                };
+            };
+        };
+    };
+    getHistories_2: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Application ID
+                 * @example SRVC-APLY-2026-1A2B3C4D
+                 */
+                srvcAplyId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseListTradeApplicationHistoryDto"];
+                };
+            };
+        };
+    };
+    getContracts: {
+        parameters: {
+            query: {
+                pageRequest: components["schemas"]["PageRequest"];
+                searchRequest: components["schemas"]["TradeContractSearchRequest"];
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponsePageResponseTradeContractListItemResponse"];
+                };
+            };
+        };
+    };
+    getFees_1: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Contract code */
+                ctrtCd: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseListTradeContractFeeDto"];
+                };
+            };
+        };
+    };
+    getApprovalHistories: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Contract code */
+                ctrtCd: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseListTradeApprovalSessionDto"];
                 };
             };
         };
@@ -13979,6 +20932,107 @@ export interface operations {
             };
         };
     };
+    getContracts_1: {
+        parameters: {
+            query: {
+                pageRequest: components["schemas"]["PageRequest"];
+                searchRequest: components["schemas"]["TradeContractSearchRequest"];
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponsePageResponseTradeContractListItemResponse"];
+                };
+            };
+        };
+    };
+    getFees_2: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Contract code */
+                ctrtCd: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseListTradeContractFeeDto"];
+                };
+            };
+        };
+    };
+    getApprovalHistories_1: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Contract code */
+                ctrtCd: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseListTradeApprovalSessionDto"];
+                };
+            };
+        };
+    };
+    getApprovalSummary: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseMemberApprovalSummaryResponse"];
+                };
+            };
+        };
+    };
     getDistrictsByProvince: {
         parameters: {
             query?: {
@@ -14171,7 +21225,7 @@ export interface operations {
             };
         };
     };
-    getGroup: {
+    getGroup_1: {
         parameters: {
             query: {
                 /**
@@ -14271,6 +21325,84 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+        };
+    };
+    getContracts_2: {
+        parameters: {
+            query: {
+                pageRequest: components["schemas"]["PageRequest"];
+                searchRequest: components["schemas"]["TradeContractSearchRequest"];
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponsePageResponseTradeContractListItemResponse"];
+                };
+            };
+        };
+    };
+    getFees_3: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Contract code */
+                ctrtCd: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseListTradeContractFeeDto"];
+                };
+            };
+        };
+    };
+    getApprovalHistories_2: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Contract code */
+                ctrtCd: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseListTradeApprovalSessionDto"];
+                };
             };
         };
     };
@@ -14436,6 +21568,55 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["ApiResponseApprovalDetailResponse"];
+                };
+            };
+        };
+    };
+    getInbox: {
+        parameters: {
+            query: {
+                pageRequest: components["schemas"]["PageRequest"];
+                searchRequest: components["schemas"]["ApprovalInboxSearchRequest"];
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponsePageResponseApprovalInboxItemResponse"];
+                };
+            };
+        };
+    };
+    getInboxSummary: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseApprovalInboxSummaryResponse"];
                 };
             };
         };
