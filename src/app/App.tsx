@@ -4,8 +4,13 @@ import { App as AntApp, ConfigProvider, theme as antTheme } from 'antd';
 import koKR from 'antd/locale/ko_KR';
 import enUS from 'antd/locale/en_US';
 import viVN from 'antd/locale/vi_VN';
+import dayjs from 'dayjs';
+import 'dayjs/locale/ko';
+import 'dayjs/locale/vi';
+import 'dayjs/locale/en';
 import { useThemeStore } from '@/stores/themeStore';
 import { useLocaleStore } from '@/stores/localeStore';
+import { toIsoLangTag } from '@/utils/localeStorage';
 import { useAuthStore } from '@/stores/authStore';
 import { useMenuStore } from '@/stores/menuStore';
 import { useComcdStore } from '@/stores/comcdStore';
@@ -97,6 +102,13 @@ export default function App() {
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', mode);
   }, [mode]);
+
+  // Synchronize HTML lang attribute & Dayjs locale on locale change
+  useEffect(() => {
+    const isoTag = toIsoLangTag(locale);
+    dayjs.locale(isoTag);
+    document.documentElement.setAttribute('lang', isoTag);
+  }, [locale]);
 
   // Common codes + menu + labels: reload on locale change
   useEffect(() => {

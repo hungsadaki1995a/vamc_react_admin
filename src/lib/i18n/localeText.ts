@@ -7,9 +7,9 @@ export interface LocaleText {
 }
 
 export function getLocaleText(locale: LocaleKey, text: LocaleText): string {
-  if (locale === 'en') return text.en;
-  if (locale === 'vn') return text.vn;
-  return text.ko;
+  if (locale === 'en') return text.en || text.ko || text.vn;
+  if (locale === 'vn') return text.vn || text.en || text.ko;
+  return text.ko || text.en || text.vn;
 }
 
 export function getCurrentLocaleText(text: LocaleText): string {

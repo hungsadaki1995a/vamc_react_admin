@@ -511,6 +511,52 @@ html, body, #root {
   flex-shrink: 0;
 }
 
+/* ── Header Language Button (Mockup match: [Globe] Kor ⌵) ── */
+.header-lang-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 24px;
+  padding: 0 6px;
+  border-radius: 4px;
+  cursor: pointer;
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 500;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.header-lang-btn:hover {
+  background: var(--tab-scroll-hover-bg, rgba(0, 0, 0, 0.04));
+  color: var(--text-primary);
+}
+
+.header-lang-btn .lang-icon {
+  font-size: 14px;
+  color: var(--text-secondary);
+  transition: color 0.15s;
+}
+
+.header-lang-btn:hover .lang-icon {
+  color: var(--text-primary);
+}
+
+.header-lang-btn .lang-text {
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1;
+}
+
+.header-lang-btn .lang-arrow {
+  font-size: 9px;
+  color: var(--text-tertiary, #999);
+}
+
+.user-badge:hover {
+  background: var(--tab-scroll-hover-bg, rgba(0, 0, 0, 0.04));
+}
+
 /* ── 글로벌 검색 모달 ── */
 .search-overlay {
   position: fixed;

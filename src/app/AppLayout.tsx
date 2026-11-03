@@ -6,6 +6,7 @@ import TabBar from '@/components/tabs/TabBar';
 import TabContent from '@/components/tabs/TabContent';
 import { useTabRouteSync } from '@/hooks/useTabRouteSync';
 import { useMenuStore } from '@/stores/menuStore';
+import { useLocaleStore } from '@/stores/localeStore';
 import { useShallow } from 'zustand/react/shallow';
 
 export default function AppLayout() {
@@ -13,6 +14,14 @@ export default function AppLayout() {
   const { flyoutVisible, toggleSidebar } = useMenuStore(
     useShallow((s) => ({ flyoutVisible: s.flyoutVisible, toggleSidebar: s.toggleSidebar }))
   );
+  const locale = useLocaleStore((s) => s.locale);
+
+  const toggleTitle =
+    locale === 'ko'
+      ? (flyoutVisible ? '메뉴 접기' : '메뉴 펼치기')
+      : locale === 'vn'
+      ? (flyoutVisible ? 'Thu gọn menu' : 'Mở rộng menu')
+      : (flyoutVisible ? 'Collapse menu' : 'Expand menu');
 
   return (
     <div className="app-layout">
@@ -22,7 +31,7 @@ export default function AppLayout() {
         <div
           className={`sidebar-toggle-btn ${flyoutVisible ? 'is-open' : ''}`}
           onClick={toggleSidebar}
-          title={flyoutVisible ? '메뉴 접기' : '메뉴 펼치기'}
+          title={toggleTitle}
         >
           {flyoutVisible ? <LeftOutlined /> : <RightOutlined />}
         </div>

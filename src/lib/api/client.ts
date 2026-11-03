@@ -6,6 +6,7 @@ import { useAuthStore } from '@/stores/authStore';
 import { getAccessToken, setAccessToken as setStoredAccessToken, clearTokens } from '@/utils/tokenStorage';
 import { useProjectStore } from '@/stores/projectStore';
 import { useLocaleStore } from '@/stores/localeStore';
+import { toIsoLangTag } from '@/utils/localeStorage';
 import { useLabelStore } from '@/stores/labelStore';
 import { useLoadingStore } from '@/stores/loadingStore';
 import { useTabStore } from '@/stores/tabStore';
@@ -88,6 +89,7 @@ apiClient.interceptors.request.use((config) => {
   }
 
   config.headers['X-Lang'] = locale;
+  config.headers['Accept-Language'] = toIsoLangTag(locale);
 
   // 현재 화면(활성 탭)의 메뉴코드. 부트스트랩 호출(로그인·라벨·메뉴)은 활성 탭이 없어 생략된다 —
   // 메뉴 컨텍스트가 없는 행위이므로 서버에서 MENU_CD 는 NULL 이 된다.

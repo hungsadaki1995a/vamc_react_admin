@@ -1,9 +1,25 @@
 .container {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
   min-height: 100vh;
   background: var(--bg-secondary, #f0f2f5);
+}
+
+.langSelector {
+  position: absolute;
+  top: 20px;
+  right: 24px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--bg-primary, #ffffff);
+  padding: 4px 10px;
+  border-radius: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  border: 1px solid var(--border-color, #e5e7eb);
+  z-index: 10;
 }
 
 .card {
@@ -29,6 +45,12 @@
   height: auto;
   object-fit: contain;
   margin-bottom: 8px;
+}
+
+[data-theme='dark'] .langSelector {
+  background: #1f1f1f;
+  border-color: #333333;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 [data-theme='dark'] .card {

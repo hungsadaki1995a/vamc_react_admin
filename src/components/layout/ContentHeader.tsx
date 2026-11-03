@@ -1,6 +1,6 @@
 import { useMemo, useState, useCallback, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { Dropdown, Input, Popover, Empty, Select } from 'antd';
+import { Dropdown, Input, Popover, Empty, Avatar } from 'antd';
 import type { MenuProps, InputRef } from 'antd';
 import {
   HomeOutlined,
@@ -18,6 +18,7 @@ import {
   UserOutlined,
   LogoutOutlined,
   GlobalOutlined,
+  DownOutlined,
 } from '@ant-design/icons';
 import { useAllMenus } from '@/hooks/useAllMenus';
 import { useComponentLabel } from '@/hooks/useComponentLabel';
@@ -26,7 +27,8 @@ import { useThemeStore } from '@/stores/themeStore';
 import { useSettingsStore } from '@/stores/settingsStore';
 import { useMenuStore } from '@/stores/menuStore';
 import { useAuthStore } from '@/stores/authStore';
-import { useLocaleStore, type LocaleKey } from '@/stores/localeStore';
+import { useLocaleStore } from '@/stores/localeStore';
+import { getLocaleShortLabel, type LocaleKey } from '@/utils/localeStorage';
 import { useLogout } from '@/hooks/useLogout';
 import { useShallow } from 'zustand/react/shallow';
 import { getMenuBreadcrumb, findMenuByKey } from '@/utils/menuUtils';
@@ -106,10 +108,37 @@ const { tabs, activeTabKey, openTab, setActiveTab } = useTabStore(
   const handleLogout = useLogout();
   const { locale, setLocale } = useLocaleStore();
 
-  const localeOptions: { value: LocaleKey; label: string }[] = [
-    { value: 'ko', label: '한국어' },
-    { value: 'en', label: 'English' },
-    { value: 'vn', label: 'Tiếng Việt' },
+  const languageMenuItems: MenuProps['items'] = [
+    {
+      key: 'en',
+      label: (
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, minWidth: 105 }}>
+          <span>English</span>
+          <span style={{ fontSize: 11, color: 'var(--text-tertiary, #999)' }}>Eng</span>
+        </div>
+      ),
+      icon: locale === 'en' ? <CheckOutlined style={{ color: '#1677ff' }} /> : <span style={{ width: 14 }} />,
+    },
+    {
+      key: 'ko',
+      label: (
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, minWidth: 105 }}>
+          <span>한국어</span>
+          <span style={{ fontSize: 11, color: 'var(--text-tertiary, #999)' }}>Kor</span>
+        </div>
+      ),
+      icon: locale === 'ko' ? <CheckOutlined style={{ color: '#1677ff' }} /> : <span style={{ width: 14 }} />,
+    },
+    {
+      key: 'vn',
+      label: (
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, minWidth: 105 }}>
+          <span>Tiếng Việt</span>
+          <span style={{ fontSize: 11, color: 'var(--text-tertiary, #999)' }}>Vie</span>
+        </div>
+      ),
+      icon: locale === 'vn' ? <CheckOutlined style={{ color: '#1677ff' }} /> : <span style={{ width: 14 }} />,
+    },
   ];
 
   const userMenuItems: MenuProps['items'] = [
@@ -442,27 +471,52 @@ const { tabs, activeTabKey, openTab, setActiveTab } = useTabStore(
 
         <span className="header-divider" />
 
-        {/* Language selector */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-          <GlobalOutlined style={{ fontSize: 12, color: 'var(--text-secondary)' }} />
-          <Select
-            value={locale}
-            onChange={setLocale}
-            options={localeOptions}
-            size="small"
-            variant="borderless"
-            style={{ width: 100 }}
-            popupMatchSelectWidth={false}
-          />
-        </div>
+        {/* Language selector — as in header mockup: [Globe] Kor ⌵ */}
+        <Dropdown
+          menu={{
+            items: languageMenuItems,
+            selectedKeys: [locale],
+            onClick: ({ key }) => setLocale(key as LocaleKey),
+          }}
+          trigger={['click']}
+          placement="bottomRight"
+        >
+          <div
+            className="header-lang-btn"
+            title={tvt('selectLanguage', '언어 선택 / Select Language')}
+          >
+            <GlobalOutlined className="lang-icon" />
+            <span className="lang-text">{getLocaleShortLabel(locale)}</span>
+            <DownOutlined className="lang-arrow" />
+          </div>
+        </Dropdown>
 
         <span className="header-divider" />
 
         {/* User info + logout */}
         <Dropdown menu={{ items: userMenuItems }} trigger={['click']} placement="bottomRight">
-          <div className="user-badge" style={{ display: 'flex', alignItems: 'center', gap: 4, cursor: 'pointer', padding: '1px 4px', borderRadius: 4 }}>
-            <UserOutlined style={{ fontSize: 12 }} />
-            <span style={{ fontSize: 12 }}>{user?.usrNm ?? tvt('user', '사용자')}</span>
+          <div
+            className="user-badge"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 6,
+              cursor: 'pointer',
+              padding: '2px 6px',
+              borderRadius: 4,
+            }}
+          >
+            <Avatar
+              size={20}
+              icon={<UserOutlined />}
+              style={{
+                backgroundColor: '#bfbfbf',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            />
+            <span style={{ fontSize: 12, color: 'var(--text-primary)' }}>{user?.usrNm ?? 'admin'}</span>
           </div>
         </Dropdown>
       </div>
