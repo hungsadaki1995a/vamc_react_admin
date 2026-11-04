@@ -33,6 +33,45 @@ export const memberMenu: MenuItem = {
   ],
 };
 
+// Content management menu tree
+export const contentManagementMenu: MenuItem = {
+  key: 'content-management',
+  label: 'Content Management',
+  icon: 'ReadOutlined',
+  children: [
+    {
+      key: 'notice-management',
+      label: 'Notice Management',
+      componentPath: 'InquiryManagement',
+    },
+    {
+      key: 'vamc-news-management',
+      label: 'VAMC News Management',
+      componentPath: 'InquiryManagement',
+    },
+    {
+      key: 'npl-announcement-management',
+      label: 'NPL Announcement Management',
+      componentPath: 'InquiryManagement',
+    },
+    {
+      key: 'inquiry-management',
+      label: '1:1 Inquiry Management',
+      componentPath: 'InquiryManagement',
+    },
+    {
+      key: 'faq-management',
+      label: 'FAQ Management',
+      componentPath: 'InquiryManagement',
+    },
+    {
+      key: 'banner-management',
+      label: 'Banner Management',
+      componentPath: 'InquiryManagement',
+    },
+  ],
+};
+
 const devMenu: MenuItem = {
   key: 'dev',
   label: '개발 도구',
@@ -120,5 +159,6 @@ export const menuConfig: MenuItem[] = [
   // 정적으로 중복 정의하면 같은 화면이 좌측 레일에 두 번 나온다.
   // 개발 도구 — DEV_TOOLS_ENABLED 가 false 인 빌드에서는 트리셰이킹으로 사라진다.
   memberMenu,
+  contentManagementMenu,
   ...(DEV_TOOLS_ENABLED ? [devMenu] : []),
 ];

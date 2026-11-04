@@ -30,11 +30,13 @@ const TabPanel = memo(function TabPanel({
     >
       <TabContext.Provider value={{ tab }}>
         <PageHeaderSlotContext.Provider value={setHeaderSlot}>
-          <PageHeader
-            actions={headerSlot?.actions}
-            inlineFilters={headerSlot?.inlineFilters}
-            titleExtra={headerSlot?.titleExtra}
-          />
+          {(tab.componentKey !== 'MemberList' && tab.componentKey !== 'InquiryManagement') && (
+            <PageHeader
+              actions={headerSlot?.actions}
+              inlineFilters={headerSlot?.inlineFilters}
+              titleExtra={headerSlot?.titleExtra}
+            />
+          )}
           {Component ? (
             <Suspense
               fallback={

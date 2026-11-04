@@ -26,16 +26,23 @@ export function useTabRouteSync() {
   const pendingTabKeyRef = useRef<string | null>(null);
 
   const isMembersPath = location.pathname === '/members';
-  const effectiveTabKey = isMembersPath
-    ? 'members'
-    : tabKey === 'member.list'
+  const isInquiryPath = location.pathname === '/content-management/inquiry-management';
+  const effectiveTabKey = isInquiryPath
+    ? 'inquiry-management'
+    : isMembersPath
       ? 'members'
-      : tabKey;
+      : tabKey === 'member.list'
+        ? 'members'
+        : tabKey;
 
   // Sync Rail active icon from a tab key.
   const syncRailFromKey = useCallback(
     (key: string) => {
       setSelectedKey(key);
+      if (key === 'inquiry-management' || key === 'content-management' || key === 'InquiryManagement') {
+        setActiveRailKey('content-management');
+        return;
+      }
       const staticTopKey = key.split('.')[0];
 
       // Top-level leaf (e.g. dashboard) → close flyout and clear rail highlight
@@ -72,7 +79,8 @@ export function useTabRouteSync() {
     const existingTab = tabs.find(
       (t) =>
         t.key === effectiveTabKey ||
-        (effectiveTabKey === 'members' && (t.key === 'member.list' || t.componentKey === 'MemberList')),
+        (effectiveTabKey === 'members' && (t.key === 'member.list' || t.componentKey === 'MemberList')) ||
+        (effectiveTabKey === 'inquiry-management' && (t.key === 'inquiry-management' || t.componentKey === 'InquiryManagement')),
     );
 
     if (existingTab) {
@@ -82,8 +90,10 @@ export function useTabRouteSync() {
       let menuItem =
         findMenuByKey(allMenus, effectiveTabKey) ||
         (effectiveTabKey === 'members' ? findMenuByKey(allMenus, 'member.list') : null) ||
+        (effectiveTabKey === 'inquiry-management' ? findMenuByKey(allMenus, 'inquiry-management') : null) ||
         findMenuByComponentPath(allMenus, effectiveTabKey) ||
-        (effectiveTabKey === 'members' ? findMenuByComponentPath(allMenus, 'MemberList') : null);
+        (effectiveTabKey === 'members' ? findMenuByComponentPath(allMenus, 'MemberList') : null) ||
+        (effectiveTabKey === 'inquiry-management' ? findMenuByComponentPath(allMenus, 'InquiryManagement') : null);
 
       if (menuItem && !menuItem.componentPath && menuItem.children?.[0]?.componentPath) {
         menuItem = menuItem.children[0];
@@ -99,7 +109,7 @@ export function useTabRouteSync() {
 
     syncRailFromKey(effectiveTabKey);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [effectiveTabKey, isMembersPath]);
+  }, [effectiveTabKey, isMembersPath, isInquiryPath]);
 
   // 서버 메뉴 도착 후 보류된 URL 탭 재시도
   useEffect(() => {
@@ -110,8 +120,10 @@ export function useTabRouteSync() {
     let menuItem =
       findMenuByKey(allMenus, pending) ||
       (pending === 'members' ? findMenuByKey(allMenus, 'member.list') : null) ||
+      (pending === 'inquiry-management' ? findMenuByKey(allMenus, 'inquiry-management') : null) ||
       findMenuByComponentPath(allMenus, pending) ||
-      (pending === 'members' ? findMenuByComponentPath(allMenus, 'MemberList') : null);
+      (pending === 'members' ? findMenuByComponentPath(allMenus, 'MemberList') : null) ||
+      (pending === 'inquiry-management' ? findMenuByComponentPath(allMenus, 'InquiryManagement') : null);
 
     if (menuItem && !menuItem.componentPath && menuItem.children?.[0]?.componentPath) {
       menuItem = menuItem.children[0];
@@ -126,6 +138,8 @@ export function useTabRouteSync() {
         isNavigatingRef.current = true;
         if (active === 'members' || active === 'member.list') {
           navigate('/members', { replace: true });
+        } else if (active === 'inquiry-management' || active === 'InquiryManagement') {
+          navigate('/content-management/inquiry-management', { replace: true });
         } else {
           navigate(`/app/${active}`, { replace: true });
         }
@@ -147,6 +161,15 @@ export function useTabRouteSync() {
         navigate('/members', { replace: false });
       }
       syncRailFromKey('members');
+      return;
+    }
+
+    if (activeTabKey === 'inquiry-management' || activeTabKey === 'InquiryManagement') {
+      if (location.pathname !== '/content-management/inquiry-management') {
+        isNavigatingRef.current = true;
+        navigate('/content-management/inquiry-management', { replace: false });
+      }
+      syncRailFromKey('inquiry-management');
       return;
     }
 
@@ -182,12 +205,14 @@ export function useTabRouteSync() {
 
   // 최초 진입 시 URL 보정 (1회)
   useEffect(() => {
-    if (location.pathname === '/members') return;
+    if (location.pathname === '/members' || location.pathname === '/content-management/inquiry-management') return;
     if (tabKey) return;
     const homeKey = useSettingsStore.getState().homeMenuKey;
     const currentActive = useTabStore.getState().activeTabKey;
     if (currentActive === 'members' || currentActive === 'member.list') {
       navigate('/members', { replace: true });
+    } else if (currentActive === 'inquiry-management' || currentActive === 'InquiryManagement') {
+      navigate('/content-management/inquiry-management', { replace: true });
     } else {
       navigate(`/app/${currentActive ?? homeKey}`, { replace: true });
     }

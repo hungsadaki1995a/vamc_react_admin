@@ -152,6 +152,14 @@ export default function App() {
               }
             />
             <Route
+              path="/content-management/inquiry-management"
+              element={
+                <AuthGuard>
+                  <AppLayout />
+                </AuthGuard>
+              }
+            />
+            <Route
               path="/app/:tabKey?"
               element={
                 <AuthGuard>
@@ -164,6 +172,11 @@ export default function App() {
             <Route path="/member" element={<Navigate to="/members" replace />} />
             <Route path="/member/list" element={<Navigate to="/members" replace />} />
             <Route path="/member-management" element={<Navigate to="/members" replace />} />
+            <Route path="/content-management" element={<Navigate to="/content-management/inquiry-management" replace />} />
+            <Route path="/inquiry-management" element={<Navigate to="/content-management/inquiry-management" replace />} />
+            <Route path="/app/inquiry-management" element={<Navigate to="/content-management/inquiry-management" replace />} />
+            <Route path="/app/content-management.inquiry-management" element={<Navigate to="/content-management/inquiry-management" replace />} />
+            <Route path="/app/content-management/inquiry-management" element={<Navigate to="/content-management/inquiry-management" replace />} />
             <Route path="*" element={<Navigate to="/app" replace />} />
           </Routes>
         </BrowserRouter>
