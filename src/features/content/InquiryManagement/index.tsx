@@ -19,8 +19,8 @@ import styles from './InquiryManagement.module.css';
 const { RangePicker } = DatePicker;
 
 // Default filter values as required:
-// 1. answerStatus is empty (All)
-// 2. category is empty (All)
+// 1. answerStatus is ALL
+// 2. category is ALL
 // 3. fromDate: 30 days from today
 // 4. toDay: current day
 // 5. keyword empty
@@ -45,12 +45,12 @@ function formatDateTime(val?: string | null): { date: string; time?: string } {
 
 export default function InquiryManagement() {
   // ── Filter UI State ────────────────────────────────────────────────────────
-  // 1. answerStatus empty (All): All, Completed, Incomplete all checked
+  // 1. answerStatus ALL: All, Completed, Incomplete all checked
   const [responseStatusAll, setResponseStatusAll] = useState(true);
   const [statusCompleted, setStatusCompleted] = useState(true);
   const [statusIncomplete, setStatusIncomplete] = useState(true);
 
-  // 2. category empty (All): All, Consulting, General all checked
+  // 2. category ALL: All, Consulting, General all checked
   const [inquiryTypeAll, setInquiryTypeAll] = useState(true);
   const [typeConsulting, setTypeConsulting] = useState(true);
   const [typeGeneral, setTypeGeneral] = useState(true);
@@ -69,8 +69,8 @@ export default function InquiryManagement() {
 
   // ── Applied Filters (passed to getInquiries API) ───────────────────────────
   const [appliedFilters, setAppliedFilters] = useState({
-    answerStatus: '', // 1. answerStatus is empty (All)
-    category: '',     // 2. category is empty (All)
+    answerStatus: 'ALL', // 1. answerStatus is ALL
+    category: '',     // 2. category is ALL
     fromDate: getDefaultFromDate().format('DD/MM/YYYY'), // 3. fromDate: 30 days from today
     toDate: getDefaultToDate().format('DD/MM/YYYY'),     // 4. toDay: current day
     keyword: '',      // 5. keyword empty
@@ -86,6 +86,7 @@ export default function InquiryManagement() {
     total,
     isLoading,
     isFetching,
+    refetch,
   } = useInquiries({
     page,
     pageSize,
@@ -154,16 +155,16 @@ export default function InquiryManagement() {
 
   // ── Action Handlers ────────────────────────────────────────────────────────
   const handleView = () => {
-    // Determine answerStatus: empty string for All
-    let answerStatus = '';
+    // Determine answerStatus: 'ALL' for All
+    let answerStatus = 'ALL';
     if (statusCompleted && !statusIncomplete) {
       answerStatus = 'ANSWERED';
     } else if (statusIncomplete && !statusCompleted) {
       answerStatus = 'UNANSWERED';
     }
 
-    // Determine category: empty string for All
-    let category = '';
+    // Determine category: 'ALL' for All
+    let category = 'ALL';
     if (typeConsulting && !typeGeneral) {
       category = 'CST';
     } else if (typeGeneral && !typeConsulting) {
@@ -185,8 +186,8 @@ export default function InquiryManagement() {
 
   const handleReset = () => {
     // Reset to requirements:
-    // 1. answerStatus is empty (All)
-    // 2. category is empty (All)
+    // 1. answerStatus is ALL
+    // 2. category is ALL
     // 3. fromDate: 30 days from today
     // 4. toDay: current day
     // 5. keyword empty
@@ -203,8 +204,8 @@ export default function InquiryManagement() {
     setDateRange([defaultFrom, defaultTo]);
 
     setAppliedFilters({
-      answerStatus: '',
-      category: '',
+      answerStatus: 'ALL',
+      category: 'ALL',
       fromDate: defaultFrom.format('DD/MM/YYYY'),
       toDate: defaultTo.format('DD/MM/YYYY'),
       keyword: '',
@@ -222,15 +223,15 @@ export default function InquiryManagement() {
       setSelectedInquiry((prev) =>
         prev
           ? {
-              ...prev,
-              answerStatus: 'ANSWERED',
-              status: 'Completed',
-              responder: responderName,
-              ansEmpNm: responderName,
-              responseDate: dayjs().format('DD/MM/YYYY HH:mm:ss'),
-              answeredAt: dayjs().format('DD/MM/YYYY HH:mm:ss'),
-              responseContent: responseText,
-            }
+            ...prev,
+            answerStatus: 'ANSWERED',
+            status: 'Completed',
+            responder: responderName,
+            ansEmpNm: responderName,
+            responseDate: dayjs().format('DD/MM/YYYY HH:mm:ss'),
+            answeredAt: dayjs().format('DD/MM/YYYY HH:mm:ss'),
+            responseContent: responseText,
+          }
           : null
       );
     }
@@ -383,7 +384,7 @@ export default function InquiryManagement() {
       {/* ── Filter Card ─────────────────────────────────────────────────────── */}
       {!filterCollapsed && (
         <div className={styles.filterCard}>
-          {/* Response Status (1. answerStatus empty = All) */}
+          {/* Response Status (1. answerStatus ALL = All) */}
           <div className={styles.filterGroup}>
             <span className={styles.filterLabel}>Response Status</span>
             <div className={styles.filterCheckboxes}>
@@ -399,7 +400,7 @@ export default function InquiryManagement() {
             </div>
           </div>
 
-          {/* Inquiry Type (2. category empty = All) */}
+          {/* Inquiry Type (2. category ALL = All) */}
           <div className={styles.filterGroup}>
             <span className={styles.filterLabel}>Inquiry Type</span>
             <div className={styles.filterCheckboxes}>
@@ -510,6 +511,7 @@ export default function InquiryManagement() {
         visible={modalVisible}
         inquiry={selectedInquiry}
         onClose={() => setModalVisible(false)}
+        onRefresh={refetch}
         onResponseSubmit={handleResponseSubmit}
       />
     </div>

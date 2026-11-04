@@ -258,3 +258,26 @@ export const initialInquiryData: InquiryItem[] = [
   },
 ];
 
+export function updateMockInquiryAnswer(
+  pstNo: string,
+  answer: string,
+  responderName = 'Hong Gil Dong'
+) {
+  const item = initialInquiryData.find(
+    (i) =>
+      i.pstNo === pstNo ||
+      i.id === pstNo ||
+      String(i.no) === pstNo ||
+      i.id === `inq-${pstNo}`
+  );
+  if (item) {
+    item.status = 'Completed';
+    item.answerStatus = 'ANSWERED';
+    item.responseContent = answer;
+    item.responseDate = '09/03/2026 11:00:00';
+    item.answeredAt = '09/03/2026 11:00:00';
+    item.responder = responderName;
+    item.ansEmpNm = responderName;
+  }
+}
+

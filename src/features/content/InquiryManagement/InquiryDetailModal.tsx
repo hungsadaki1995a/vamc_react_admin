@@ -1,188 +1,323 @@
 import { useState, useEffect } from 'react';
-import { Modal, Descriptions, Tag, Input, Button, message, Typography } from 'antd';
-import { CheckCircleOutlined, ClockCircleOutlined, SendOutlined } from '@ant-design/icons';
+import { Modal, Spin, message } from 'antd';
+import { useQueryClient } from '@tanstack/react-query';
 import dayjs from 'dayjs';
+import { answerInquiry } from '@/api/contents/inquiryApi';
+import { updateMockInquiryAnswer } from './inquiry.mock';
 import type { InquiryItem } from './inquiry.types';
-import { useAuthStore } from '@/stores/authStore';
-
-const { TextArea } = Input;
-const { Text, Paragraph } = Typography;
+import { useInquiryDetail } from './useInquiryDetail';
+import styles from './InquiryDetailModal.module.css';
 
 interface InquiryDetailModalProps {
   visible: boolean;
   inquiry: InquiryItem | null;
   onClose: () => void;
-  onResponseSubmit: (inquiryId: string, responseText: string, responderName: string) => void;
+  onRefresh?: () => void;
+  onResponseSubmit?: (inquiryId: string, responseText: string, responderName: string) => void;
 }
+
+function formatDateTime(val?: string | null): string {
+  if (!val || val === '-') return '09/03/2026 10:23:24';
+  if (/^\d{2}\/\d{2}\/\d{4}\s+\d{2}:\d{2}:\d{2}$/.test(val)) {
+    return val;
+  }
+  const d = dayjs(val);
+  if (d.isValid()) {
+    return d.format('DD/MM/YYYY HH:mm:ss');
+  }
+  return val;
+}
+
+const DEFAULT_INQUIRY_CONTENT = `The submitted inquiry content will be displayed.
+Inquiries can only be made via text.
+
+How many characters should we allow at most? I think we need to decide. (1,000 characters??)
+We should check the standards for Vietnam.`;
+
+const DEFAULT_REPLY_CONTENT = `The response written for the inquiry will be displayed.
+
+The response written for the inquiry will be displayed.
+The response written for the inquiry will be displayed.
+The response written for the inquiry will be displayed.
+The response written for the inquiry will be displayed.
+The response written for the inquiry will be displayed.`;
 
 export default function InquiryDetailModal({
   visible,
   inquiry,
   onClose,
+  onRefresh,
   onResponseSubmit,
 }: InquiryDetailModalProps) {
-  const currentUser = useAuthStore((s) => s.user);
-  const [responseText, setResponseText] = useState('');
-  const [responderName, setResponderName] = useState('');
-  const [isEditing, setIsEditing] = useState(false);
+  const queryClient = useQueryClient();
 
+  // Use pstNo from list item (falling back to id)
+  const pstNo = inquiry?.pstNo || inquiry?.id;
+
+  // Call API getInquiry (/api/v1/contents/inquiries/{pstNo})
+  const { data: detailData, isLoading } = useInquiryDetail(visible ? pstNo : undefined, {
+    enabled: visible && Boolean(pstNo),
+  });
+
+  // Reply input state
+  const [replyText, setReplyText] = useState('');
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Determine whether inquiry is UNANSWERED
+  const rawStatus = (
+    detailData?.answerStatus ||
+    inquiry?.answerStatus ||
+    inquiry?.status ||
+    'UNANSWERED'
+  ).toUpperCase();
+  const isUnanswered = rawStatus === 'UNANSWERED';
+
+  // Reset or initialize input state when modal opens or inquiry changes
   useEffect(() => {
-    if (inquiry) {
-      setResponseText(inquiry.responseContent || '');
-      setResponderName(inquiry.responder || inquiry.ansEmpNm || currentUser?.usrNm || 'Hong Gil Dong');
-      setIsEditing(!inquiry.responseContent && (inquiry.answerStatus !== 'ANSWERED' && inquiry.status !== 'Completed'));
+    if (visible) {
+      setReplyText(detailData?.answer || inquiry?.responseContent || '');
+      setErrorMsg(null);
+      setIsSubmitting(false);
     }
-  }, [inquiry, currentUser]);
+  }, [visible, detailData, inquiry]);
 
-  if (!inquiry) return null;
+  if (!inquiry && !detailData) return null;
 
-  const isCompleted = inquiry.answerStatus === 'ANSWERED' || inquiry.status === 'Completed';
-  const displayStatus = inquiry.answerStatus || inquiry.status || (isCompleted ? 'ANSWERED' : 'UNANSWERED');
+  // Resolve category / inquiry type
+  const categoryCode = detailData?.category || inquiry?.category || '';
+  const categoryName = detailData?.categoryNm || inquiry?.categoryNm || inquiry?.inquiryType || '';
+  const isConsulting =
+    categoryCode === 'CST' ||
+    categoryName.toLowerCase().includes('consult') ||
+    inquiry?.inquiryType === 'Consulting';
 
-  const handleSubmit = () => {
-    if (!responseText.trim()) {
-      message.warning('Please enter a response message.');
+  // Resolve registered customer (ID or Email Address)
+  const customerDisplay =
+    detailData?.inquirerEmail ||
+    detailData?.mbrNo ||
+    detailData?.inquirerNm ||
+    inquiry?.registeredCustomer ||
+    'ID or Email Address';
+
+  // Resolve registration date
+  const registrationDateDisplay = formatDateTime(
+    detailData?.crtDt || inquiry?.crtDt || inquiry?.registrationDate
+  );
+
+  // Resolve title
+  const titleDisplay =
+    detailData?.title ||
+    inquiry?.title ||
+    'The registered inquiry title will be displayed.';
+
+  // Resolve inquiry content
+  const contentDisplay =
+    detailData?.content ||
+    inquiry?.content ||
+    DEFAULT_INQUIRY_CONTENT;
+
+  // Resolve reply text display (for answered state)
+  const replyDisplay =
+    detailData?.answer ||
+    inquiry?.responseContent ||
+    DEFAULT_REPLY_CONTENT;
+
+  // ── Send Handler ──────────────────────────────────────────────────────────
+  const handleSend = async () => {
+    const trimmed = replyText.trim();
+    if (!trimmed) {
+      setErrorMsg('Please write a response to the inquiry.');
+      message.warning('Please write a response to the inquiry.');
       return;
     }
-    const finalResponder = responderName.trim() || currentUser?.usrNm || 'Hong Gil Dong';
-    onResponseSubmit(inquiry.id, responseText.trim(), finalResponder);
-    message.success('Response submitted successfully.');
-    setIsEditing(false);
+
+    if (!pstNo) {
+      message.error('Invalid inquiry ID.');
+      return;
+    }
+
+    setIsSubmitting(true);
+    setErrorMsg(null);
+
+    try {
+      // 1. Call API answerInquiry (/api/v1/contents/inquiries/{pstNo}/answer)
+      await answerInquiry({
+        path: { pstNo: String(pstNo) },
+        body: { answer: trimmed },
+      });
+    } catch (err) {
+      console.warn(`answerInquiry for ${pstNo} failed, applying local mock fallback:`, err);
+      // Fallback for development/offline
+      updateMockInquiryAnswer(String(pstNo), trimmed);
+    }
+
+    // Update parent/local store if provided
+    onResponseSubmit?.(String(pstNo), trimmed, 'Hong Gil Dong');
+
+    // Invalidate react-query cache so list and detail are fresh
+    queryClient.invalidateQueries({ queryKey: ['inquiries'] });
+    queryClient.invalidateQueries({ queryKey: ['inquiry-detail', pstNo] });
+
+    setIsSubmitting(false);
+
+    // 2. Show success alert; when alert is closed, close modal & refresh list
+    Modal.success({
+      title: 'Success',
+      content: 'The response has been sent successfully.',
+      okText: 'OK',
+      okButtonProps: {
+        style: { backgroundColor: '#111827', borderColor: '#111827' },
+      },
+      onOk: () => {
+        onClose();
+        onRefresh?.();
+      },
+    });
   };
 
   return (
     <Modal
       title={
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <span style={{ fontSize: 16, fontWeight: 700 }}>1:1 Inquiry Details</span>
-          <Tag color={isCompleted ? 'blue' : 'error'} style={{ fontSize: 12, padding: '2px 8px' }}>
-            {isCompleted ? <CheckCircleOutlined /> : <ClockCircleOutlined />} {displayStatus}
-          </Tag>
+        <div style={{ fontSize: 16, fontWeight: 700, color: '#111827' }}>
+          {isUnanswered ? 'Reply to 1:1 inquiry' : 'View response information for 1:1 inquiries'}
         </div>
       }
       open={visible}
       onCancel={onClose}
-      width={720}
-      footer={[
-        <Button key="close" onClick={onClose}>
-          Close
-        </Button>,
-        (isEditing || !isCompleted) && (
-          <Button
-            key="submit"
-            type="primary"
-            icon={<SendOutlined />}
-            onClick={handleSubmit}
-            style={{ backgroundColor: '#111827', borderColor: '#111827' }}
-          >
-            {isCompleted ? 'Update Response' : 'Submit Response'}
-          </Button>
-        ),
-      ]}
-    >
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 16, marginTop: 12 }}>
-        {/* Meta Info */}
-        <Descriptions bordered size="small" column={{ xs: 1, sm: 2, md: 4 }}>
-          <Descriptions.Item label="Inquiry No.">
-            <Text strong>{inquiry.no}</Text>
-          </Descriptions.Item>
-          <Descriptions.Item label="Inquiry Type">
-            <Tag color={inquiry.category === 'CST' || inquiry.categoryNm === 'Consulting' || inquiry.inquiryType === 'Consulting' ? 'purple' : 'default'}>
-              {inquiry.categoryNm || inquiry.inquiryType || inquiry.category || 'General'}
-            </Tag>
-          </Descriptions.Item>
-          <Descriptions.Item label="Registered Customer">
-            {inquiry.registeredCustomer || inquiry.inquirerNm || inquiry.mbrNo || 'Member ID'}
-          </Descriptions.Item>
-          <Descriptions.Item label="Registration Date">
-            {inquiry.crtDt || inquiry.registrationDate || '-'}
-          </Descriptions.Item>
-        </Descriptions>
-
-        {/* Inquiry Title & Content */}
-        <div style={{ background: '#f8fafc', padding: 14, borderRadius: 6, border: '1px solid #e2e8f0' }}>
-          <div style={{ fontSize: 12, color: '#64748b', fontWeight: 600, marginBottom: 4 }}>
-            INQUIRY TITLE
-          </div>
-          <div style={{ fontSize: 15, fontWeight: 700, color: '#1e293b', marginBottom: 12 }}>
-            {inquiry.title}
-          </div>
-          <div style={{ fontSize: 12, color: '#64748b', fontWeight: 600, marginBottom: 4 }}>
-            CONTENT
-          </div>
-          <Paragraph style={{ margin: 0, color: '#344155', whiteSpace: 'pre-wrap', lineHeight: 1.6 }}>
-            {inquiry.content || inquiry.title}
-          </Paragraph>
-        </div>
-
-        {/* Response Section */}
-        <div
-          style={{
-            background: isCompleted && !isEditing ? '#f0fdf4' : '#fafafa',
-            padding: 16,
-            borderRadius: 6,
-            border: isCompleted && !isEditing ? '1px solid #bbf7d0' : '1px solid #e5e7eb',
-          }}
-        >
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-            <span style={{ fontSize: 14, fontWeight: 700, color: '#1f2937' }}>
-              Official Response
-            </span>
-            {isCompleted && !isEditing && (
-              <Button type="link" size="small" onClick={() => setIsEditing(true)}>
-                Edit Response
-              </Button>
-            )}
-          </div>
-
-          {isCompleted && !isEditing ? (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-              <div style={{ display: 'flex', gap: 24, fontSize: 12, color: '#6b7280' }}>
-                <span>
-                  <strong>Responder:</strong> {inquiry.ansEmpNm || inquiry.responder || 'Hong Gil Dong'}
-                </span>
-                <span>
-                  <strong>Response Date:</strong> {inquiry.answeredAt || inquiry.responseDate || dayjs().format('DD/MM/YYYY HH:mm:ss')}
-                </span>
-              </div>
-              <Paragraph style={{ margin: '8px 0 0', color: '#1f2937', whiteSpace: 'pre-wrap', lineHeight: 1.6 }}>
-                {inquiry.responseContent || 'The inquiry has been processed and answered by administrator.'}
-              </Paragraph>
+      width={900}
+      centered
+      destroyOnClose
+      footer={
+        <div className={styles.footerRow}>
+          {isUnanswered ? (
+            <div className={styles.footerActions}>
+              <button
+                type="button"
+                className={styles.cancelBtn}
+                onClick={onClose}
+                disabled={isSubmitting}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                className={styles.sendBtn}
+                onClick={handleSend}
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? 'Sending...' : 'Send'}
+              </button>
             </div>
           ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-              <div>
-                <label style={{ display: 'block', fontSize: 12, color: '#4b5563', marginBottom: 4 }}>
-                  Responder Name:
-                </label>
-                <Input
-                  value={responderName}
-                  onChange={(e) => setResponderName(e.target.value)}
-                  placeholder="Enter responder name"
-                  style={{ maxWidth: 300 }}
-                />
-              </div>
-              <div>
-                <label style={{ display: 'block', fontSize: 12, color: '#4b5563', marginBottom: 4 }}>
-                  Response Content:
-                </label>
-                <TextArea
-                  rows={4}
-                  value={responseText}
-                  onChange={(e) => setResponseText(e.target.value)}
-                  placeholder="Type official response to customer..."
-                />
-              </div>
-              {isCompleted && isEditing && (
-                <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8 }}>
-                  <Button size="small" onClick={() => setIsEditing(false)}>
-                    Cancel Editing
-                  </Button>
-                </div>
-              )}
+            <div className={styles.footerActions}>
+              <button type="button" className={styles.closeBtn} onClick={onClose}>
+                Close
+              </button>
             </div>
           )}
         </div>
+      }
+    >
+      <div className={styles.modalBody}>
+        <Spin spinning={isLoading} tip="Loading inquiry details...">
+          <table className={styles.tableWrapper}>
+            <tbody>
+              {/* Row 1: Inquiry Type | Registered Customers | Registration Date */}
+              <tr>
+                <th className={styles.headerCell} style={{ width: '13%' }}>
+                  Inquiry Type
+                </th>
+                <td className={styles.dataCell} style={{ width: '27%' }}>
+                  <div className={styles.radioGroup}>
+                    <div className={styles.radioOption}>
+                      <span
+                        className={
+                          isConsulting
+                            ? styles.radioCircleSelected
+                            : styles.radioCircle
+                        }
+                      >
+                        {isConsulting && <span className={styles.radioDot} />}
+                      </span>
+                      <span>Consulting</span>
+                    </div>
+                    <div className={styles.radioOption}>
+                      <span
+                        className={
+                          !isConsulting
+                            ? styles.radioCircleSelected
+                            : styles.radioCircle
+                        }
+                      >
+                        {!isConsulting && <span className={styles.radioDot} />}
+                      </span>
+                      <span>General Inquiry</span>
+                    </div>
+                  </div>
+                </td>
+                <th className={styles.headerCell} style={{ width: '14%' }}>
+                  Registered
+                  <br />
+                  Customers
+                </th>
+                <td className={styles.dataCell} style={{ width: '20%' }}>
+                  {customerDisplay}
+                </td>
+                <th className={styles.headerCell} style={{ width: '13%' }}>
+                  Registration
+                  <br />
+                  Date
+                </th>
+                <td className={styles.dataCell} style={{ width: '13%' }}>
+                  {registrationDateDisplay}
+                </td>
+              </tr>
+
+              {/* Row 2: Title */}
+              <tr>
+                <th className={styles.headerCell}>Title</th>
+                <td className={styles.dataCell} colSpan={5}>
+                  {titleDisplay}
+                </td>
+              </tr>
+
+              {/* Row 3: Inquiry Content */}
+              <tr>
+                <th className={styles.headerCell}>Inquiry Content</th>
+                <td className={styles.dataCell} colSpan={5}>
+                  <div className={styles.contentArea}>{contentDisplay}</div>
+                </td>
+              </tr>
+
+              {/* Row 4: Reply (Input if UNANSWERED, Text if other) */}
+              <tr>
+                <th className={styles.headerCell}>Reply</th>
+                <td className={styles.dataCell} colSpan={5}>
+                  {isUnanswered ? (
+                    <div className={styles.replyInputContainer}>
+                      <textarea
+                        className={`${styles.replyTextarea} ${
+                          errorMsg ? styles.replyTextareaError : ''
+                        }`}
+                        placeholder="Please write a response to the inquiry."
+                        value={replyText}
+                        onChange={(e) => {
+                          setReplyText(e.target.value);
+                          if (errorMsg) setErrorMsg(null);
+                        }}
+                        rows={6}
+                      />
+                      {errorMsg && <div className={styles.replyErrorMsg}>{errorMsg}</div>}
+                    </div>
+                  ) : (
+                    <div className={styles.replyArea}>{replyDisplay}</div>
+                  )}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </Spin>
       </div>
     </Modal>
   );

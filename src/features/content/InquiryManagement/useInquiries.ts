@@ -176,9 +176,25 @@ export function useInquiries(
         console.warn('getInquiries API call failed or offline, falling back to mock data:', err);
         const currentPage = pageRequest.page ?? 1;
         const currentSize = pageRequest.size ?? 15;
-        const total = initialInquiryData.length;
+
+        let filtered = [...initialInquiryData];
+        if (cond.answerStatus && cond.answerStatus !== 'ALL') {
+          const targetStatus = cond.answerStatus === 'ANSWERED' ? 'Completed' : 'Unanswered';
+          filtered = filtered.filter(
+            (item) => item.status === targetStatus || item.answerStatus === cond.answerStatus
+          );
+        }
+
+        if (cond.category && cond.category !== 'ALL') {
+          const targetType = cond.category === 'CST' ? 'Consulting' : 'General';
+          filtered = filtered.filter(
+            (item) => item.inquiryType === targetType || item.category === cond.category
+          );
+        }
+
+        const total = filtered.length;
         const start = (currentPage - 1) * currentSize;
-        const pagedMock: InquiryItem[] = initialInquiryData.slice(start, start + currentSize).map((item, idx) => ({
+        const pagedMock: InquiryItem[] = filtered.slice(start, start + currentSize).map((item, idx) => ({
           ...item,
           no: start + idx + 1,
           answerStatus: item.status === 'Completed' ? 'ANSWERED' : 'UNANSWERED',
