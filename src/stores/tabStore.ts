@@ -22,6 +22,17 @@ interface TabStore {
   resetTabs: () => void;
 }
 
+// Menu keys that must always render a specific screen. Guards against stale persisted
+// tabs (localStorage 'vamc-tabs') created while the menu still pointed to another component.
+const COMPONENT_KEY_OVERRIDES: Record<string, string> = {
+  'faq-management': 'FaqManagement',
+};
+
+function fixTabComponentKey(tab: Tab): Tab {
+  const forced = COMPONENT_KEY_OVERRIDES[tab.menuKey] ?? COMPONENT_KEY_OVERRIDES[tab.key];
+  return forced && tab.componentKey !== forced ? { ...tab, componentKey: forced } : tab;
+}
+
 export const useTabStore = create<TabStore>()(
   persist(
     (set, get) => ({
@@ -53,7 +64,8 @@ export const useTabStore = create<TabStore>()(
           key: menuItem.key,
           menuKey: menuItem.key,
           title: menuItem.label,
-          componentKey: menuItem.componentPath ?? '',
+          componentKey:
+            COMPONENT_KEY_OVERRIDES[menuItem.key] ?? menuItem.componentPath ?? '',
           sceId: menuItem.sceId,
           labelKey: menuItem.labelKey,
           params,
@@ -172,6 +184,14 @@ export const useTabStore = create<TabStore>()(
     }),
     {
       name: 'vamc-tabs',
+      merge: (persisted, current) => {
+        const p = persisted as Partial<TabStore> | undefined;
+        return {
+          ...current,
+          ...p,
+          tabs: (p?.tabs ?? current.tabs).map(fixTabComponentKey),
+        };
+      },
       partialize: (state) => ({
         tabs: state.tabs,
         activeTabKey: state.activeTabKey,

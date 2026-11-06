@@ -52,6 +52,10 @@ const overrides: Record<string, ComponentType> = {
   'inquiry-management': lazy(() => import('@/features/content/InquiryManagement')),
   '1:1 Inquiry Management': lazy(() => import('@/features/content/InquiryManagement')),
   InquiryManagement: lazy(() => import('@/features/content/InquiryManagement')),
+  faq: lazy(() => import('@/features/content/FaqManagement')),
+  'faq-management': lazy(() => import('@/features/content/FaqManagement')),
+  'FAQ Management': lazy(() => import('@/features/content/FaqManagement')),
+  FaqManagement: lazy(() => import('@/features/content/FaqManagement')),
 };
 
 export const componentRegistry: Record<string, ComponentType> = {

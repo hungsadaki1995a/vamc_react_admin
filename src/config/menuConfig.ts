@@ -62,7 +62,7 @@ export const contentManagementMenu: MenuItem = {
     {
       key: 'faq-management',
       label: 'FAQ Management',
-      componentPath: 'InquiryManagement',
+      componentPath: 'FaqManagement',
     },
     {
       key: 'banner-management',

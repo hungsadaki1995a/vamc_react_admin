@@ -27,19 +27,29 @@ export function useTabRouteSync() {
 
   const isMembersPath = location.pathname === '/members';
   const isInquiryPath = location.pathname === '/content-management/inquiry-management';
+  const isFaqPath = location.pathname === '/content-management/faq';
   const effectiveTabKey = isInquiryPath
     ? 'inquiry-management'
-    : isMembersPath
-      ? 'members'
-      : tabKey === 'member.list'
+    : isFaqPath
+      ? 'faq-management'
+      : isMembersPath
         ? 'members'
-        : tabKey;
+        : tabKey === 'member.list'
+          ? 'members'
+          : tabKey;
 
   // Sync Rail active icon from a tab key.
   const syncRailFromKey = useCallback(
     (key: string) => {
       setSelectedKey(key);
-      if (key === 'inquiry-management' || key === 'content-management' || key === 'InquiryManagement') {
+      if (
+        key === 'inquiry-management' ||
+        key === 'faq-management' ||
+        key === 'faq' ||
+        key === 'content-management' ||
+        key === 'InquiryManagement' ||
+        key === 'FaqManagement'
+      ) {
         setActiveRailKey('content-management');
         return;
       }
@@ -80,7 +90,8 @@ export function useTabRouteSync() {
       (t) =>
         t.key === effectiveTabKey ||
         (effectiveTabKey === 'members' && (t.key === 'member.list' || t.componentKey === 'MemberList')) ||
-        (effectiveTabKey === 'inquiry-management' && (t.key === 'inquiry-management' || t.componentKey === 'InquiryManagement')),
+        (effectiveTabKey === 'inquiry-management' && (t.key === 'inquiry-management' || t.componentKey === 'InquiryManagement')) ||
+        (effectiveTabKey === 'faq-management' && (t.key === 'faq-management' || t.key === 'faq' || t.componentKey === 'FaqManagement')),
     );
 
     if (existingTab) {
@@ -91,9 +102,11 @@ export function useTabRouteSync() {
         findMenuByKey(allMenus, effectiveTabKey) ||
         (effectiveTabKey === 'members' ? findMenuByKey(allMenus, 'member.list') : null) ||
         (effectiveTabKey === 'inquiry-management' ? findMenuByKey(allMenus, 'inquiry-management') : null) ||
+        (effectiveTabKey === 'faq-management' ? findMenuByKey(allMenus, 'faq-management') : null) ||
         findMenuByComponentPath(allMenus, effectiveTabKey) ||
         (effectiveTabKey === 'members' ? findMenuByComponentPath(allMenus, 'MemberList') : null) ||
-        (effectiveTabKey === 'inquiry-management' ? findMenuByComponentPath(allMenus, 'InquiryManagement') : null);
+        (effectiveTabKey === 'inquiry-management' ? findMenuByComponentPath(allMenus, 'InquiryManagement') : null) ||
+        (effectiveTabKey === 'faq-management' ? findMenuByComponentPath(allMenus, 'FaqManagement') : null);
 
       if (menuItem && !menuItem.componentPath && menuItem.children?.[0]?.componentPath) {
         menuItem = menuItem.children[0];
@@ -109,7 +122,7 @@ export function useTabRouteSync() {
 
     syncRailFromKey(effectiveTabKey);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [effectiveTabKey, isMembersPath, isInquiryPath]);
+  }, [effectiveTabKey, isMembersPath, isInquiryPath, isFaqPath]);
 
   // 서버 메뉴 도착 후 보류된 URL 탭 재시도
   useEffect(() => {
@@ -121,9 +134,11 @@ export function useTabRouteSync() {
       findMenuByKey(allMenus, pending) ||
       (pending === 'members' ? findMenuByKey(allMenus, 'member.list') : null) ||
       (pending === 'inquiry-management' ? findMenuByKey(allMenus, 'inquiry-management') : null) ||
+      (pending === 'faq-management' ? findMenuByKey(allMenus, 'faq-management') : null) ||
       findMenuByComponentPath(allMenus, pending) ||
       (pending === 'members' ? findMenuByComponentPath(allMenus, 'MemberList') : null) ||
-      (pending === 'inquiry-management' ? findMenuByComponentPath(allMenus, 'InquiryManagement') : null);
+      (pending === 'inquiry-management' ? findMenuByComponentPath(allMenus, 'InquiryManagement') : null) ||
+      (pending === 'faq-management' ? findMenuByComponentPath(allMenus, 'FaqManagement') : null);
 
     if (menuItem && !menuItem.componentPath && menuItem.children?.[0]?.componentPath) {
       menuItem = menuItem.children[0];
@@ -140,6 +155,8 @@ export function useTabRouteSync() {
           navigate('/members', { replace: true });
         } else if (active === 'inquiry-management' || active === 'InquiryManagement') {
           navigate('/content-management/inquiry-management', { replace: true });
+        } else if (active === 'faq-management' || active === 'faq' || active === 'FaqManagement') {
+          navigate('/content-management/faq', { replace: true });
         } else {
           navigate(`/app/${active}`, { replace: true });
         }
@@ -170,6 +187,15 @@ export function useTabRouteSync() {
         navigate('/content-management/inquiry-management', { replace: false });
       }
       syncRailFromKey('inquiry-management');
+      return;
+    }
+
+    if (activeTabKey === 'faq-management' || activeTabKey === 'faq' || activeTabKey === 'FaqManagement') {
+      if (location.pathname !== '/content-management/faq') {
+        isNavigatingRef.current = true;
+        navigate('/content-management/faq', { replace: false });
+      }
+      syncRailFromKey('faq-management');
       return;
     }
 
@@ -205,7 +231,13 @@ export function useTabRouteSync() {
 
   // 최초 진입 시 URL 보정 (1회)
   useEffect(() => {
-    if (location.pathname === '/members' || location.pathname === '/content-management/inquiry-management') return;
+    if (
+      location.pathname === '/members' ||
+      location.pathname === '/content-management/inquiry-management' ||
+      location.pathname === '/content-management/faq'
+    ) {
+      return;
+    }
     if (tabKey) return;
     const homeKey = useSettingsStore.getState().homeMenuKey;
     const currentActive = useTabStore.getState().activeTabKey;
@@ -213,6 +245,8 @@ export function useTabRouteSync() {
       navigate('/members', { replace: true });
     } else if (currentActive === 'inquiry-management' || currentActive === 'InquiryManagement') {
       navigate('/content-management/inquiry-management', { replace: true });
+    } else if (currentActive === 'faq-management' || currentActive === 'faq' || currentActive === 'FaqManagement') {
+      navigate('/content-management/faq', { replace: true });
     } else {
       navigate(`/app/${currentActive ?? homeKey}`, { replace: true });
     }
