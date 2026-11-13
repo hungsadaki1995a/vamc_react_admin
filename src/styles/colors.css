@@ -1,0 +1,120 @@
+﻿/* Primitive colors from VNPL Admin Design System (Figma 4377:11).
+   Overrides Tailwind's default palette: only the colors below exist. */
+@theme {
+  --color-*: initial;
+  --color-white: #ffffff;
+  --color-black: #000000;
+  --color-transparent: transparent;
+  --color-current: currentColor;
+  --color-inherit: inherit;
+
+  /* Gray */
+  --color-gray-50: #f1f4f8;
+  --color-gray-100: #e9ecf1;
+  --color-gray-200: #dee2ea;
+  --color-gray-300: #d3d9e3;
+  --color-gray-400: #c9cfdd;
+  --color-gray-500: #a8b2c8;
+  --color-gray-600: #929fba;
+  --color-gray-700: #6f7b95;
+  --color-gray-800: #545c6d;
+  --color-gray-900: #3a404a;
+
+  /* Navy */
+  --color-navy-50: #f6f6f9;
+  --color-navy-100: #eaeaf1;
+  --color-navy-200: #d1d1e0;
+  --color-navy-300: #b3b3cc;
+  --color-navy-400: #8e8eb4;
+  --color-navy-500: #666699;
+  --color-navy-600: #505077;
+  --color-navy-700: #3b3b59;
+  --color-navy-800: #29293d;
+  --color-navy-900: #181824;
+
+  /* Blue */
+  --color-blue-50: #eaf8ff;
+  --color-blue-100: #d5ebff;
+  --color-blue-200: #b6d8ff;
+  --color-blue-300: #8bbdff;
+  --color-blue-400: #529aff;
+  --color-blue-500: #1876ff;
+  --color-blue-600: #005be2;
+  --color-blue-700: #0040c6;
+  --color-blue-800: #0022aa;
+  --color-blue-900: #000088;
+
+  /* Red */
+  --color-red-50: #fff0f1;
+  --color-red-100: #ffdbe0;
+  --color-red-200: #ffadb7;
+  --color-red-300: #ff8593;
+  --color-red-400: #ff5c6a;
+  --color-red-500: #ff334b;
+  --color-red-600: #e62e44;
+  --color-red-700: #bf2639;
+  --color-red-800: #801a26;
+  --color-red-900: #610006;
+
+  /* Green */
+  --color-green-50: #edf8f1;
+  --color-green-100: #d3eedd;
+  --color-green-200: #a1dcba;
+  --color-green-300: #72ca97;
+  --color-green-400: #45b675;
+  --color-green-500: #17a452;
+  --color-green-600: #149048;
+  --color-green-700: #107037;
+  --color-green-800: #0c5229;
+  --color-green-900: #0a4121;
+
+  /* Yellow */
+  --color-yellow-50: #fff9cc;
+  --color-yellow-100: #ffee99;
+  --color-yellow-200: #ffd86b;
+  --color-yellow-300: #ffc53d;
+  --color-yellow-400: #fcb321;
+  --color-yellow-500: #faa21e;
+  --color-yellow-600: #eb9114;
+  --color-yellow-700: #ba7412;
+  --color-yellow-800: #7d4f0f;
+  --color-yellow-900: #643f0c;
+
+  /* Orange */
+  --color-orange-50: #fff2e6;
+  --color-orange-100: #ffd7ae;
+  --color-orange-200: #ffbf7f;
+  --color-orange-300: #fe9e3d;
+  --color-orange-400: #ff860c;
+  --color-orange-500: #ff6e15;
+  --color-orange-600: #f65e00;
+  --color-orange-700: #ce4f00;
+  --color-orange-800: #ab4100;
+  --color-orange-900: #6a2800;
+
+  /* Violet */
+  --color-violet-50: #f2edfe;
+  --color-violet-100: #eae2ff;
+  --color-violet-200: #d7c9fd;
+  --color-violet-300: #b69cfc;
+  --color-violet-400: #916bfa;
+  --color-violet-500: #794bf8;
+  --color-violet-600: #6c3eea;
+  --color-violet-700: #522db6;
+  --color-violet-800: #3c257c;
+  --color-violet-900: #24164a;
+
+  /* Opacity */
+  --color-white-0: rgb(255 255 255 / 0%);
+  --color-white-10: rgb(255 255 255 / 10%);
+  --color-white-20: rgb(255 255 255 / 20%);
+  --color-white-30: rgb(255 255 255 / 30%);
+  --color-white-40: rgb(255 255 255 / 40%);
+  --color-white-50: rgb(255 255 255 / 50%);
+  --color-white-60: rgb(255 255 255 / 60%);
+  --color-white-70: rgb(255 255 255 / 70%);
+  --color-white-80: rgb(255 255 255 / 80%);
+  --color-white-90: rgb(255 255 255 / 90%);
+  --color-black-60: rgb(0 0 0 / 60%);
+  --color-black-80: rgb(0 0 0 / 80%);
+}

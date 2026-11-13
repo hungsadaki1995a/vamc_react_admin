@@ -1,0 +1,41 @@
+/* Typography from VNPL Admin Design System (Figma 4376:18).
+   Font family: Pretendard. Usage: className="typo-h1-bold", "typo-b1-regular", ... */
+
+@theme {
+  --font-sans: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont,
+    system-ui, Roboto, "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo",
+    "Noto Sans KR", "Malgun Gothic", sans-serif;
+}
+
+/* H1 — 20 / 28 */
+@utility typo-h1-bold { font-size: 20px; line-height: 28px; font-weight: 700; letter-spacing: -0.02em; }
+@utility typo-h1-semibold { font-size: 20px; line-height: 28px; font-weight: 600; letter-spacing: -0.02em; }
+
+/* H2 — 18 / 26 */
+@utility typo-h2-bold { font-size: 18px; line-height: 26px; font-weight: 700; letter-spacing: -0.02em; }
+@utility typo-h2-semibold { font-size: 18px; line-height: 26px; font-weight: 600; letter-spacing: -0.02em; }
+
+/* H3 — 16 / 24 */
+@utility typo-h3-bold { font-size: 16px; line-height: 24px; font-weight: 700; letter-spacing: -0.02em; }
+@utility typo-h3-semibold { font-size: 16px; line-height: 24px; font-weight: 600; letter-spacing: -0.02em; }
+@utility typo-h3-medium { font-size: 16px; line-height: 24px; font-weight: 500; letter-spacing: -0.02em; }
+
+/* H4 — 14 / 20 */
+@utility typo-h4-bold { font-size: 14px; line-height: 20px; font-weight: 700; letter-spacing: -0.02em; }
+@utility typo-h4-semibold { font-size: 14px; line-height: 20px; font-weight: 600; letter-spacing: -0.02em; }
+@utility typo-h4-medium { font-size: 14px; line-height: 20px; font-weight: 500; letter-spacing: -0.02em; }
+
+/* B1 — 13 / 18 */
+@utility typo-b1-semibold { font-size: 13px; line-height: 18px; font-weight: 600; letter-spacing: -0.02em; }
+@utility typo-b1-medium { font-size: 13px; line-height: 18px; font-weight: 500; letter-spacing: -0.02em; }
+@utility typo-b1-regular { font-size: 13px; line-height: 18px; font-weight: 400; letter-spacing: -0.02em; }
+
+/* B2 — 12 / 16 */
+@utility typo-b2-semibold { font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: -0.02em; }
+@utility typo-b2-medium { font-size: 12px; line-height: 16px; font-weight: 500; letter-spacing: -0.02em; }
+@utility typo-b2-regular { font-size: 12px; line-height: 16px; font-weight: 400; letter-spacing: -0.02em; }
+
+/* B3 — 10 / 14 */
+@utility typo-b3-medium { font-size: 10px; line-height: 14px; font-weight: 500; letter-spacing: -0.02em; }
+@utility typo-b3-regular { font-size: 10px; line-height: 14px; font-weight: 400; letter-spacing: -0.02em; }
+
