@@ -23,7 +23,7 @@ dist-ssr
 claudedocs/
 config.json
 events.jsonl
-images/
+/images/
 labels/
 sessions/
 statuses/

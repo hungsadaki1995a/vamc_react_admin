@@ -1,0 +1,76 @@
+﻿/* Semantic color tokens from VNPL Admin Design System (Figma 4377:538, "1. Color").
+   Each token references a primitive from colors.css.
+   Usage: text-text-primary, bg-bg-secondary, border-border-primary, bg-btn-primary ...
+   Typos in Figma names are normalized: nagative->negative, teriary->tertiary, disabled_brand->disabled-brand. */
+@theme inline {
+  /* Text */
+  --color-text-primary: var(--color-gray-900);
+  --color-text-secondary: var(--color-gray-800);
+  --color-text-tertiary: var(--color-gray-700);
+  --color-text-quaternary: var(--color-gray-600);
+  --color-text-disabled: var(--color-gray-500);
+  --color-text-placeholder: var(--color-gray-500);
+  --color-text-brand: var(--color-blue-600);
+  --color-text-success: var(--color-blue-600);
+  --color-text-negative: var(--color-red-600);
+  --color-text-white: var(--color-white);
+
+  /* Border */
+  --color-border-primary: var(--color-navy-200);
+  --color-border-secondary: var(--color-navy-100);
+  --color-border-accent: var(--color-navy-600);
+  --color-border-disabled: var(--color-navy-300);
+  --color-border-active: var(--color-blue-500);
+  --color-border-negative: var(--color-red-500);
+  --color-border-brand: var(--color-blue-200);
+  --color-border-disabled-brand: var(--color-blue-200);
+
+  /* Background */
+  --color-bg-primary: var(--color-white);
+  --color-bg-secondary: var(--color-navy-50);
+  --color-bg-tertiary: var(--color-navy-100);
+  --color-bg-inverse-primary: var(--color-navy-900);
+  --color-bg-inverse-secondary: var(--color-navy-700);
+  --color-bg-inverse-tertiary: var(--color-navy-500);
+  --color-bg-inverse-quaternary: var(--color-navy-300);
+  --color-bg-inverse-disabled: var(--color-navy-200);
+  --color-bg-primary-hover: var(--color-navy-50);
+  --color-bg-disabled: var(--color-navy-50);
+  --color-bg-inverse-hover: var(--color-blue-700);
+  --color-bg-brand: var(--color-blue-500);
+  --color-bg-negative: var(--color-red-500);
+  --color-bg-brand-hover: var(--color-blue-50);
+
+  /* Button */
+  --color-btn-primary: var(--color-blue-600);
+  --color-btn-primary-fill-hover: var(--color-blue-700);
+  --color-btn-primary-fill-pressed: var(--color-blue-800);
+  --color-btn-secondary: var(--color-navy-600);
+  --color-btn-secondary-fill-hover: var(--color-navy-700);
+  --color-btn-secondary-fill-pressed: var(--color-navy-800);
+  --color-btn-quaternary-fill-hover: var(--color-gray-800);
+  --color-btn-quaternary-fill-pressed: var(--color-gray-900);
+  --color-btn-quaternary: var(--color-gray-700);
+  --color-btn-line-quaternary: var(--color-gray-300);
+  --color-btn-line-subtle-hover: var(--color-gray-200);
+  --color-btn-line-subtle-pressed: var(--color-gray-300);
+  --color-btn-line-hover: var(--color-gray-100);
+  --color-btn-line-pressed: var(--color-gray-200);
+  --color-btn-disabled-fill: var(--color-gray-300);
+  --color-btn-disabled-border: var(--color-gray-300);
+  --color-btn-icon-primary: var(--color-navy-500);
+  --color-btn-icon-primary-hover: var(--color-navy-700);
+  --color-btn-icon-primary-pressed: var(--color-navy-900);
+  --color-btn-icon-secondary: var(--color-navy-200);
+  --color-btn-icon-primary-inverse: var(--color-white);
+  --color-btn-icon-disabled: var(--color-navy-300);
+  --color-btn-icon-secondary-inverse: var(--color-navy-100);
+  --color-btn-icon-tertiary-inverse: var(--color-navy-300);
+  --color-btn-icon-brand-inverse: var(--color-blue-500);
+
+  /* Selection */
+  --color-selection-border: var(--color-navy-300);
+  --color-selection-select: var(--color-blue-500);
+  --color-selection-border-disabled: var(--color-navy-200);
+  --color-selection-select-disabled: var(--color-blue-300);
+}
