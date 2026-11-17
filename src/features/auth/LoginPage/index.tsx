@@ -333,7 +333,7 @@ export default function LoginPage() {
           <button
             type="button"
             className={styles.linkBtn}
-            onClick={() => message.info(t.findNotReady)}
+            onClick={() => navigate('/find-id')}
           >
             {t.findLoginId}
           </button>
