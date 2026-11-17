@@ -9,7 +9,7 @@ import {
   UploadOutlined,
 } from '@ant-design/icons';
 import type { ICellRendererParams } from 'ag-grid-community';
-import AppModal from '@/components/common/app-modal';
+import AppModal from '@/components/common/modals/app-modal';
 import GridTable, { type ColDefEx } from '@/components/grid/grid-table';
 import { useLabelStore } from '@/stores/label-store';
 import type { ExcelProcessResult, ExcelRowError, ExcelUploadResult } from '@/types/excel';

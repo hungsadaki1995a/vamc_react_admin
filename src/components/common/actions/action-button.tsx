@@ -7,7 +7,7 @@ import {
   SearchOutlined,
   UploadOutlined,
 } from '@ant-design/icons';
-import './action-button.css';
+import './action-button.scss';
 
 export type ActionButtonAction =
   | 'reset'

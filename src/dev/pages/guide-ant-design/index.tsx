@@ -50,7 +50,7 @@ import {
   LogoutOutlined,
   FolderOutlined,
 } from '@ant-design/icons';
-import CodeSnippet from '@/components/common/code-snippet';
+import CodeSnippet from '@/components/common/utilities/code-snippet';
 import DevPageHeader from '@/dev/dev-page-header';
 
 const { TextArea, Password } = Input;

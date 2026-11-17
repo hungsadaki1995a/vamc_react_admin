@@ -1,6 +1,6 @@
-﻿import { Tabs, Tag, Space, Card, Alert, Table, Typography } from 'antd';
+import { Tabs, Tag, Space, Card, Alert, Table, Typography } from 'antd';
 import type { TableColumnsType } from 'antd';
-import CodeSnippet from '@/components/common/code-snippet';
+import CodeSnippet from '@/components/common/utilities/code-snippet';
 import { useScreenLabel } from '@/hooks/use-screen-label';
 import { useMenuPermission } from '@/hooks/use-menu-permission';
 import { useLocaleStore } from '@/stores/locale-store';
@@ -8,7 +8,7 @@ import DevPageHeader from '@/dev/dev-page-header';
 
 const { Text } = Typography;
 
-// ─── useScreenLabel function list ────────────────────────────────────────────
+// --- useScreenLabel function list --------------------------------------------
 const helperCols: TableColumnsType<{ fn: string; context: string; pattern: string; desc: string }> = [
   { title: 'Function', dataIndex: 'fn', key: 'fn', width: 150, render: (v) => <Text code>{v}</Text> },
   { title: 'Context', dataIndex: 'context', key: 'context', width: 90 },
@@ -28,23 +28,23 @@ const helperRows = [
   { fn: 'tmc(code)', context: 'MESSAGE', pattern: 'MESSAGE.CONFIRM.TEXT_{code}', desc: 'Global confirmation messages (screen-independent)' },
   { fn: 'tmi(code)', context: 'MESSAGE', pattern: 'MESSAGE.INFO.TEXT_{code}', desc: 'Global info messages (screen-independent)' },
   { fn: 'tme(code)', context: 'MESSAGE', pattern: 'MESSAGE.ERROR.TEXT_{code}', desc: 'Global error messages (screen-independent)' },
-  { fn: 't(key)', context: '—', pattern: '(full key)', desc: 'Look up a full key directly (falls back to returning the key itself)' },
-  { fn: 'labels', context: '—', pattern: '—', desc: 'For useMemo deps only — triggers recalculation when the language changes' },
+  { fn: 't(key)', context: '�', pattern: '(full key)', desc: 'Look up a full key directly (falls back to returning the key itself)' },
+  { fn: 'labels', context: '�', pattern: '�', desc: 'For useMemo deps only � triggers recalculation when the language changes' },
 ];
 
-// ─── Label key examples ──────────────────────────────────────────────────────
+// --- Label key examples ------------------------------------------------------
 const exampleCols: TableColumnsType<{ key: string; ko: string; en: string }> = [
   { title: 'LABEL_KEY', dataIndex: 'key', key: 'key', render: (v) => <Text code style={{ fontSize: 11 }}>{v}</Text> },
   { title: 'Korean', dataIndex: 'ko', key: 'ko' },
   { title: 'English', dataIndex: 'en', key: 'en' },
 ];
 const exampleRows = [
-  { key: 'SYS030101SC.VIEW.TEXT_usrId', ko: '사용자ID', en: 'User ID' },
-  { key: 'SYS030101SC.VIEW.BTN_save', ko: '저장', en: 'Save' },
-  { key: 'SYS030101SC.VIEW.TITLE_inputPanel', ko: '입력 패널', en: 'Input Panel' },
-  { key: 'SYS030101SC.SCRIPT.GRID_usrId', ko: '사용자ID', en: 'User ID' },
-  { key: 'SYS030101SC.SCRIPT.MSG_updateSuccess', ko: '수정되었습니다.', en: 'Updated successfully.' },
-  { key: 'SYS030101SC.VIEW.BTN_delete', ko: '삭제', en: 'Delete' },
+  { key: 'SYS030101SC.VIEW.TEXT_usrId', ko: '???ID', en: 'User ID' },
+  { key: 'SYS030101SC.VIEW.BTN_save', ko: '??', en: 'Save' },
+  { key: 'SYS030101SC.VIEW.TITLE_inputPanel', ko: '?? ??', en: 'Input Panel' },
+  { key: 'SYS030101SC.SCRIPT.GRID_usrId', ko: '???ID', en: 'User ID' },
+  { key: 'SYS030101SC.SCRIPT.MSG_updateSuccess', ko: '???????.', en: 'Updated successfully.' },
+  { key: 'SYS030101SC.VIEW.BTN_delete', ko: '??', en: 'Delete' },
 ];
 
 export default function GuideI18nPermission() {
@@ -164,41 +164,41 @@ const { tvt } = useScreenLabel('SYS030101SC');`}
                 <Alert
                   type="info"
                   title="API details"
-                  description="GET /api/lbl/bulk — no authentication required (permitAll). The X-Project-Id and X-Lang headers are injected automatically."
+                  description="GET /api/lbl/bulk � no authentication required (permitAll). The X-Project-Id and X-Lang headers are injected automatically."
                   style={{ marginBottom: 16 }}
                 />
 
                 <Card title="Current state" size="small" style={{ marginBottom: 16 }}>
                   <Space>
                     <Text>Current language: <Tag color="blue">{locale}</Tag></Text>
-                    <Text><Text code>t('SAVE')</Text> → <Text strong>{t('SAVE') || '(none)'}</Text></Text>
-                    <Text><Text code>t('CANCEL')</Text> → <Text strong>{t('CANCEL') || '(none)'}</Text></Text>
-                    <Text><Text code>t('SEARCH')</Text> → <Text strong>{t('SEARCH') || '(none)'}</Text></Text>
+                    <Text><Text code>t('SAVE')</Text> ? <Text strong>{t('SAVE') || '(none)'}</Text></Text>
+                    <Text><Text code>t('CANCEL')</Text> ? <Text strong>{t('CANCEL') || '(none)'}</Text></Text>
+                    <Text><Text code>t('SEARCH')</Text> ? <Text strong>{t('SEARCH') || '(none)'}</Text></Text>
                   </Space>
                 </Card>
 
                 <CodeSnippet
-                  title="useScreenLabel — every label through one hook"
+                  title="useScreenLabel � every label through one hook"
                   code={`import { useScreenLabel } from '@/hooks/use-screen-label';
 
 function MyComponent() {
-  // t, tmc/tmi/tme, tvt/tvb/tsg/tsm — all of them come from here
+  // t, tmc/tmi/tme, tvt/tvb/tsg/tsm � all of them come from here
   const { t, tmc, tmi, tme, tvt, tsm } = useScreenLabel();
 
   return <Button>{t('SAVE')}</Button>;
 }
 
 // Fallback when a key is missing: the key itself is returned (never an empty string)
-t('NON_EXISTENT') // → 'NON_EXISTENT'
+t('NON_EXISTENT') // ? 'NON_EXISTENT'
 
-// Outside React (axios interceptors, utility functions, …)
+// Outside React (axios interceptors, utility functions, �)
 import { useLabelStore } from '@/stores/label-store';
 useLabelStore.getState().tme('E100001')`}
                 />
 
                 <CodeSnippet
                   title="When it loads (called automatically from App.tsx)"
-                  code={`// App.tsx — triggers the labelStore load (reference only, nothing to edit)
+                  code={`// App.tsx � triggers the labelStore load (reference only, nothing to edit)
 useEffect(() => {
   labelStore.loadLabels();
 }, [activeProjectId, locale]); // reloads automatically when the project or language changes
@@ -247,15 +247,15 @@ field   : camelCase field name  e.g. usrId, save`}
 
                 <CodeSnippet
                   title="Choosing the CONTEXT"
-                  code={`// VIEW — inside the JSX return block
-<Form.Item label={tvt('usrId')}>    // ← VIEW.TEXT_usrId
-<Button>{tvb('save')}</Button>       // ← VIEW.BTN_save
-<h3>{tvh('inputPanel')}</h3>         // ← VIEW.TITLE_inputPanel
+                  code={`// VIEW � inside the JSX return block
+<Form.Item label={tvt('usrId')}>    // ? VIEW.TEXT_usrId
+<Button>{tvb('save')}</Button>       // ? VIEW.BTN_save
+<h3>{tvh('inputPanel')}</h3>         // ? VIEW.TITLE_inputPanel
 
-// SCRIPT — in JS code (headers, handlers)
-headerName: tsg('usrId'),            // ← SCRIPT.GRID_usrId
-message.success(tsm('saved')),       // ← SCRIPT.MSG_saved
-okText: tvb('confirm'),              // ← VIEW.BTN_confirm`}
+// SCRIPT � in JS code (headers, handlers)
+headerName: tsg('usrId'),            // ? SCRIPT.GRID_usrId
+message.success(tsm('saved')),       // ? SCRIPT.MSG_saved
+okText: tvb('confirm'),              // ? VIEW.BTN_confirm`}
                 />
 
                 <CodeSnippet
@@ -266,7 +266,7 @@ VALUES ('SYS030101SC.VIEW.TEXT_usrId', 'SYS030101SC', 'VIEW', 'TEXT', 'usrId', '
 
 -- Korean translation
 INSERT INTO t_cco_lbl_trn (LABEL_KEY, LANG_CODE, TRANSLATED_TEXT)
-VALUES ('SYS030101SC.VIEW.TEXT_usrId', 'ko', '사용자ID');  -- Korean text stays as data
+VALUES ('SYS030101SC.VIEW.TEXT_usrId', 'ko', '???ID');  -- Korean text stays as data
 
 -- English translation
 INSERT INTO t_cco_lbl_trn (LABEL_KEY, LANG_CODE, TRANSLATED_TEXT)
@@ -303,10 +303,10 @@ VALUES ('SYS030101SC.VIEW.TEXT_usrId', 'PJ001', 'en', 'Employee ID');`}
                       <tr><th>permType</th><th>Meaning</th><th>canRead</th><th>canWrite</th></tr>
                     </thead>
                     <tbody>
-                      <tr><td><Tag color="green">AL</Tag></td><td>Full (read + write)</td><td>✅</td><td>✅</td></tr>
-                      <tr><td><Tag color="cyan">WT</Tag></td><td>Write (includes read)</td><td>✅</td><td>✅</td></tr>
-                      <tr><td><Tag color="blue">RD</Tag></td><td>Read only</td><td>✅</td><td>❌</td></tr>
-                      <tr><td><Tag>none</Tag></td><td>No permission</td><td>❌</td><td>❌</td></tr>
+                      <tr><td><Tag color="green">AL</Tag></td><td>Full (read + write)</td><td>?</td><td>?</td></tr>
+                      <tr><td><Tag color="cyan">WT</Tag></td><td>Write (includes read)</td><td>?</td><td>?</td></tr>
+                      <tr><td><Tag color="blue">RD</Tag></td><td>Read only</td><td>?</td><td>?</td></tr>
+                      <tr><td><Tag>none</Tag></td><td>No permission</td><td>?</td><td>?</td></tr>
                     </tbody>
                   </table>
                 </Card>
@@ -356,9 +356,9 @@ function MyPage() {
                 <CodeSnippet
                   title="How it works"
                   code={`// Server response (GET /api/common/menus/all)
-//   └─ MnuResponse.permType ('M' | 'S' | '')
-//        └─ buildServerMenuTree() -> preserves MenuItem.permType
-//             └─ stored in menuStore.serverMenus
+//   +- MnuResponse.permType ('M' | 'S' | '')
+//        +- buildServerMenuTree() -> preserves MenuItem.permType
+//             +- stored in menuStore.serverMenus
 
 // What useMenuPermission does internally
 const activeTabKey = useTabStore((s) => s.activeTabKey);
@@ -421,20 +421,20 @@ function TabPanel({ tab, visible }) {
 
 // What PageHeader shows
 // [SYS030101SC] User management
-//  └─ tab.sceId -> tab.componentKey  : [code]
-//  └─ t(tab.labelKey) -> tab.title   : title`}
+//  +- tab.sceId -> tab.componentKey  : [code]
+//  +- t(tab.labelKey) -> tab.title   : title`}
                 />
 
                 <CodeSnippet
                   title="Development checklist"
                   code={`// Check these when building a new screen
-□ Use the page-master or page-container class
-□ Never add <PageHeader /> yourself
-□ Use useScreenLabel() — no hardcoded strings
-□ Grid headerName: use tsg()
-□ Messages and confirms: use tsm(); buttons use tvb()
-□ Save and delete buttons: render conditionally on canWrite
-□ Include [labels] in the useMemo deps of columnDefs`}
+? Use the page-master or page-container class
+? Never add <PageHeader /> yourself
+? Use useScreenLabel() � no hardcoded strings
+? Grid headerName: use tsg()
+? Messages and confirms: use tsm(); buttons use tvb()
+? Save and delete buttons: render conditionally on canWrite
+? Include [labels] in the useMemo deps of columnDefs`}
                 />
               </div>
             ),
@@ -471,7 +471,7 @@ function LocaleSelector() {
       options={[
         { label: 'Korean', value: 'ko' },
         { label: 'English', value: 'en' },
-        { label: 'Tiếng Việt', value: 'vn' },
+        { label: 'Ti?ng Vi?t', value: 'vn' },
       ]}
     />
   );
@@ -488,7 +488,7 @@ function LocaleSelector() {
 
                 <CodeSnippet
                   title="Automatic axios header injection (client.ts)"
-                  code={`// src/lib/api/client.ts — the interceptor (reference)
+                  code={`// src/lib/api/client.ts � the interceptor (reference)
 apiClient.interceptors.request.use((config) => {
   const locale = useLocaleStore.getState().locale;
   const activeProject = useProjectStore.getState().activeProject;

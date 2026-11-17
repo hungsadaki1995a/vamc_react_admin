@@ -146,7 +146,7 @@ export default function CNT010001SC() {
 export const CODE_CRUD = `import { Form, Row, Col, Input, Select } from 'antd';
 import { useQueryClient } from '@tanstack/react-query';
 import FormPanel from '@/components/layout/form-panel';
-import ActionButtonGroup from '@/components/common/action-button-group';
+import ActionButtonGroup from '@/components/common/actions/action-button-group';
 import TipInput from '@/components/inputs/tip-input';
 import { useApiMutation } from '@/hooks/use-api-mutation';
 import { useNotify } from '@/hooks/use-notify';

@@ -1,7 +1,7 @@
 import { Space, type SpaceProps } from 'antd';
 import { Children, cloneElement, isValidElement, type ReactNode } from 'react';
 import ActionButton, { type ActionButtonAction, type ActionButtonProps } from './action-button';
-import './action-button-group.css';
+import './action-button-group.scss';
 
 export type ActionButtonGroupPreset =
   | 'gridEdit'

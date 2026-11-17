@@ -7,7 +7,7 @@ import {
 import ComcdSelect from '@/components/inputs/comcd-select';
 import SearchSelectField from '@/components/inputs/search-select-field';
 import type { SearchSelectValue } from '@/components/inputs/search-select-field';
-import CodeSnippet from '@/components/common/code-snippet';
+import CodeSnippet from '@/components/common/utilities/code-snippet';
 import styles from './index.module.css';
 import DevPageHeader from '@/dev/dev-page-header';
 

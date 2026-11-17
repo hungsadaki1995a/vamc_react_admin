@@ -1,5 +1,5 @@
 import { Checkbox as AntCheckbox, type CheckboxGroupProps, type CheckboxProps } from 'antd';
-import './checkbox.css';
+import './checkbox.scss';
 
 export type { CheckboxGroupProps, CheckboxProps };
 

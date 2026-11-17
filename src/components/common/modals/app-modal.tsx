@@ -12,7 +12,7 @@ import type { ModalProps } from 'antd';
 import { Modal } from 'antd';
 import { CloseOutlined, FullscreenExitOutlined } from '@ant-design/icons';
 import { useLabelStore } from '@/stores/label-store';
-import './app-modal.css';
+import './app-modal.scss';
 
 type AppModalResizeSize = {
   width: number;

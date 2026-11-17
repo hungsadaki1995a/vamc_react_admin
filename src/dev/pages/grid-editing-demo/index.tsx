@@ -1,4 +1,4 @@
-﻿/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useMemo, useCallback, useEffect } from 'react';
 import { Tabs, Tag, Card, Alert, Divider, Button, App } from 'antd';
 import { PlusOutlined, DeleteOutlined } from '@ant-design/icons';
@@ -16,7 +16,7 @@ import TagsCellEditor from '@/components/grid/cell-editors/tags-cell-editor';
 import { ComcdSelectCellRenderer, ComcdSelectCellEditor } from '@/components/grid/comcd-select-cell';
 import { SearchSelectCellRenderer, SearchSelectCellEditor, searchSelectValueFormatter } from '@/components/grid/search-select-cell';
 import type { SearchSelectOption } from '@/components/inputs/search-select-field';
-import CodeSnippet from '@/components/common/code-snippet';
+import CodeSnippet from '@/components/common/utilities/code-snippet';
 import { useComcdStore } from '@/stores/comcd-store';
 import DevPageHeader from '@/dev/dev-page-header';
 
@@ -25,7 +25,7 @@ import styles from './index.module.css';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
-/* ─── Code snippets (existing) ─── */
+/* --- Code snippets (existing) --- */
 const basicGridCode = `import GridTable from '@/components/grid/grid-table';
 import type { ColDef } from 'ag-grid-community';
 
@@ -96,8 +96,8 @@ const selectionGridCode = `<GridTable
   onSelectionChanged={(rows) => console.log('Selected:', rows)}
 />`;
 
-/* ─── Code snippets (cell renderers and formatters) ─── */
-const formatterCode = `// valueFormatter: formats the display only — the underlying data is untouched
+/* --- Code snippets (cell renderers and formatters) --- */
+const formatterCode = `// valueFormatter: formats the display only � the underlying data is untouched
 
 const columnDefs: ColDef[] = [
   {
@@ -228,7 +228,7 @@ const columnDefs: ColDef[] = [
   {...props}
 />`;
 
-/* ─── Code snippets (cell editors) ─── */
+/* --- Code snippets (cell editors) --- */
 const cellEditorBasicCode = `// The built-in cell editors
 
 const columnDefs: ColDef[] = [
@@ -320,7 +320,7 @@ const columnDefs: ColDef[] = [
   },
 ];`;
 
-/* ─── Code snippets (header grouping) ─── */
+/* --- Code snippets (header grouping) --- */
 const headerGroupCode = `// Header grouping: a children array makes a column group
 const [columnDefs] = useState<(ColDef | ColGroupDef)[]>([
   { field: 'name', headerName: 'Name', width: 120, pinned: 'left' },
@@ -381,7 +381,7 @@ const columnDefs2 = [
   },
 ];`;
 
-/* ─── Code snippets (cell and row spanning) ─── */
+/* --- Code snippets (cell and row spanning) --- */
 const colSpanCode = `// colSpan: let a cell span several columns under a condition
 const columnDefs: ColDef[] = [
   {
@@ -425,7 +425,7 @@ const columnDefs: ColDef[] = [
   enableCellSpan={true}
 />`;
 
-/* ─── Code snippets (footer and pinned rows) ─── */
+/* --- Code snippets (footer and pinned rows) --- */
 const pinnedRowCode = `// pinnedTopRowData: rows pinned to the top, below the header
 // pinnedBottomRowData: rows pinned to the bottom (a footer)
 const pinnedTopRowData = useMemo(() => [
@@ -525,7 +525,7 @@ const columnDefs: ColDef[] = [
   pinnedBottomRowData={totalRow}
 />`;
 
-/* ─── Code snippets (column pinning) ─── */
+/* --- Code snippets (column pinning) --- */
 const columnPinningCode = `// Column pinning
 const columnDefs: ColDef[] = [
   // Pinned left: ID and name
@@ -583,7 +583,7 @@ const colDef: ColDef = {
 // The context menu can pin columns too
 // Right-click a column header -> "Pin Column" -> Left / Right / No Pin`;
 
-/* ─── Code snippets (copy and paste) ─── */
+/* --- Code snippets (copy and paste) --- */
 const clipboardBasicCode = `// Turn on enableClipboard on the GridTable component
 <GridTable
   columnDefs={columnDefs}
@@ -663,20 +663,20 @@ import type { GetContextMenuItemsParams } from 'ag-grid-community';
     {
       name: \`View "\${params.node?.data?.name}"\`,
       action: () => openDetail(params.node?.data),
-      icon: '<span>🔍</span>',
+      icon: '<span>??</span>',
     },
     {
       name: 'Edit',
       disabled: !canWrite,
       action: () => openEdit(params.node?.data),
-      icon: '<span>✏️</span>',
+      icon: '<span>??</span>',
     },
     'separator',
     {
       name: 'Delete',
       disabled: !canWrite,
       action: () => handleDelete(params.node?.data?.id),
-      icon: '<span>🗑️</span>',
+      icon: '<span>???</span>',
     },
     'separator',
     'copy',           // a built-in AG Grid item
@@ -693,7 +693,7 @@ getContextMenuItems={() => ['copy', 'copyWithHeaders', 'separator', 'export']}
 // Disabling it entirely
 <GridTable suppressContextMenu={true} ... />`;
 
-/* ─── Mock data (existing) ─── */
+/* --- Mock data (existing) --- */
 interface Employee {
   id: string;
   name: string;
@@ -750,7 +750,7 @@ const statusColors: Record<string, string> = { planned: 'default', in_progress: 
 const statusLabels: Record<string, string> = { planned: 'Planned', in_progress: 'In progress', completed: 'Completed' };
 const priorityColors: Record<string, string> = { 'Critical': 'red', 'High': 'orange', 'Medium': 'blue', 'Low': 'default' };
 
-/* ─── Mock data (new) ─── */
+/* --- Mock data (new) --- */
 interface GroupDemoRow {
   id: number;
   name: string;
@@ -810,7 +810,7 @@ const rowSpanDemoData: RowSpanDemoRow[] = [
   { id: 8, department: 'Corporate', team: 'Finance', name: 'Mira Yoon', role: 'Team lead' },
 ];
 
-// ── Code snippets (DatePicker cells) ────────────────────────────────────────
+// -- Code snippets (DatePicker cells) ----------------------------------------
 
 const dateCellCode = `import DateCellEditor, { DateCellRenderer } from '@/components/grid/cell-editors/date-cell-editor';
 
@@ -845,7 +845,7 @@ const columnDefs: ColDef[] = [
   pagination={false}
 />`;
 
-// ── Code snippets (tree structure) ──────────────────────────────────────────
+// -- Code snippets (tree structure) ------------------------------------------
 
 const treeCellCode = `import { useTreeGrid } from '@/components/grid/use-tree-grid';
 import { TreeCellRenderer } from '@/components/grid/tree-cell-renderer';
@@ -890,7 +890,7 @@ const columnDefs: ColDef[] = [
   pagination={false}
 />`;
 
-// ── Code snippets (ComcdSelect chaining) ────────────────────────────────────
+// -- Code snippets (ComcdSelect chaining) ------------------------------------
 
 const comcdChainCellCode = `import { ComcdSelectCellRenderer, ComcdSelectCellEditor } from '@/components/grid/comcd-select-cell';
 import type { CodeDetail } from '@/api/common/com-cd-api';
@@ -908,7 +908,7 @@ const columnDefs: ColDef[] = [
     cellEditor: ComcdSelectCellEditor,
     cellEditorParams: { cdDmnId: 'PARENT_CD' },
   },
-  // Child column — cellEditorParams as a function so it can read the parent value
+  // Child column � cellEditorParams as a function so it can read the parent value
   {
     field: 'childCd',
     headerName: 'Subcategory',
@@ -916,7 +916,7 @@ const columnDefs: ColDef[] = [
     cellRenderer: ComcdSelectCellRenderer,
     cellRendererParams: { cdDmnId: 'CHILD_CD' },
     cellEditor: ComcdSelectCellEditor,
-    // Function form — reads parentCd from the same row via params.data
+    // Function form � reads parentCd from the same row via params.data
     cellEditorParams: (params: any) => ({
       cdDmnId: 'CHILD_CD',
       filterFn: (code: CodeDetail) => code.bzLrgCzCd === params.data.parentCd,
@@ -924,7 +924,7 @@ const columnDefs: ColDef[] = [
   },
 ];`;
 
-// ── Code snippets for ComcdSelect / SearchSelect cell demo ───────────────────
+// -- Code snippets for ComcdSelect / SearchSelect cell demo -------------------
 
 const comcdCellCode = `import { ComcdSelectCellRenderer, ComcdSelectCellEditor } from '@/components/grid/comcd-select-cell';
 
@@ -987,7 +987,7 @@ const columnDefs: ColDef[] = [
   },
 ];`;
 
-// ── ComcdSearchCellDemo (sub-component) ──────────────────────────────────────
+// -- ComcdSearchCellDemo (sub-component) --------------------------------------
 
 interface ComcdDemoRow {
   id: number;
@@ -1007,7 +1007,7 @@ const SAMPLE_DEPTS: SearchSelectOption[] = [
   { label: 'Finance', value: 'D007', upDept: 'Corporate' },
 ];
 
-// ── Data for the chained-select grid demo ───────────────────────────────────
+// -- Data for the chained-select grid demo -----------------------------------
 
 const CHAIN_PARENT_OPTS = [
   { label: 'Software', value: 'SW' },
@@ -1076,7 +1076,7 @@ function ComcdChainGridDemo() {
           ? <span style={{ background: '#f6ffed', color: '#52c41a', padding: '1px 7px', borderRadius: 10, fontSize: 12 }}>{label}</span>
           : <span style={{ color: '#bfbfbf', fontSize: 12 }}>None</span>;
       },
-      // cellEditorParams as a function — filters options by params.data.parentCd
+      // cellEditorParams as a function � filters options by params.data.parentCd
       cellEditorParams: (p: any) => {
         const opts = CHAIN_CHILD_MAP[p.data?.parentCd] ?? [];
         return { values: opts.map(o => o.value), valueLabels: Object.fromEntries(opts.map(o => [o.value, o.label])) };
@@ -1099,7 +1099,7 @@ function ComcdChainGridDemo() {
       <Alert
         type="info"
         showIcon
-        title="Click a Category cell, change the value, then click the Subcategory cell — only that category's items appear. Without a category, Subcategory cannot be edited."
+        title="Click a Category cell, change the value, then click the Subcategory cell � only that category's items appear. Without a category, Subcategory cannot be edited."
         style={{ marginBottom: 10 }}
       />
       <div style={{ height: 180 }}>
@@ -1211,12 +1211,12 @@ function ComcdSearchCellDemo() {
         </tbody>
       </table>
 
-      <h3>ComcdSelectCell — the common-code cell renderer and editor</h3>
+      <h3>ComcdSelectCell � the common-code cell renderer and editor</h3>
       <p className={styles.demoDesc}>
         <code>ComcdSelectCellRenderer</code> looks the code name up in comcdStore and displays it.
         <code>ComcdSelectCellEditor</code> is a ComcdSelect dropdown popup editor.
         <br />
-        <strong>Names only appear once comcdStore has loaded.</strong> Seeing raw code values in a dev environment is expected — the store has not loaded.
+        <strong>Names only appear once comcdStore has loaded.</strong> Seeing raw code values in a dev environment is expected � the store has not loaded.
       </p>
 
       <Alert
@@ -1241,7 +1241,7 @@ function ComcdSearchCellDemo() {
       <Divider titlePlacement="left" style={{ marginTop: 20 }}>Using ComcdSelectCell</Divider>
       <CodeSnippet code={comcdCellCode} title="ComcdSelectCell (renderer + editor)" />
 
-      <Divider titlePlacement="left" style={{ marginTop: 16 }}>ComcdSelectCell chaining — live demo</Divider>
+      <Divider titlePlacement="left" style={{ marginTop: 16 }}>ComcdSelectCell chaining � live demo</Divider>
       <p className={styles.demoDesc}>
         Make <code>cellEditorParams</code> a <strong>function</strong> and it can read another column of the same row
         from <code>params.data</code> to filter the subcategory options on the fly.
@@ -1263,7 +1263,7 @@ function ComcdSearchCellDemo() {
   );
 }
 
-// ── DatePicker Cell Demo ───────────────────────────────────────────────────────
+// -- DatePicker Cell Demo -------------------------------------------------------
 
 interface DateDemoRow {
   id: number;
@@ -1359,7 +1359,7 @@ function DateCellDemo() {
   );
 }
 
-// ── Tree Demo ─────────────────────────────────────────────────────────────────
+// -- Tree Demo -----------------------------------------------------------------
 
 interface OrgNode {
   id: string;
@@ -1429,7 +1429,7 @@ function TreeDemo() {
         </tbody>
       </table>
 
-      <h3>Tree structure — useTreeGrid + TreeCellRenderer</h3>
+      <h3>Tree structure � useTreeGrid + TreeCellRenderer</h3>
       <p className={styles.demoDesc}>
         This works around the Community edition's limits: flat data is reordered depth-first and a custom
         cell renderer draws the hierarchy. No Enterprise license required.
@@ -1437,7 +1437,7 @@ function TreeDemo() {
       <Alert
         type="info"
         showIcon
-        title="Click the ▶ icon next to an organization to collapse or expand its children."
+        title="Click the ? icon next to an organization to collapse or expand its children."
         style={{ marginBottom: 12 }}
       />
       <div style={{ marginBottom: 8, display: 'flex', gap: 8 }}>
@@ -1466,7 +1466,7 @@ function TreeDemo() {
   );
 }
 
-// ── ToolbarActionDemo ───────────────────────────────────────────────────────────
+// -- ToolbarActionDemo -----------------------------------------------------------
 
 interface MemberRow { id: number; name: string; role: string; team: string; }
 
@@ -1543,7 +1543,7 @@ function ToolbarActionDemo() {
   );
 }
 
-// ── ClipboardDemo ──────────────────────────────────────────────────────────────
+// -- ClipboardDemo --------------------------------------------------------------
 
 interface ClipboardRow { id: number; name: string; dept: string; score: number; }
 
@@ -1581,14 +1581,14 @@ function ClipboardDemo() {
   );
 }
 
-// ── Main Component ─────────────────────────────────────────────────────────────
+// -- Main Component -------------------------------------------------------------
 
 export default function GridEditingDemo() {
   const [tasks, setTasks] = useState(editableData);
   const [changeLog, setChangeLog] = useState<string[]>([]);
   const [selectedRows, setSelectedRows] = useState<Employee[]>([]);
 
-  /* ── Existing columns ── */
+  /* -- Existing columns -- */
   const basicCols = useMemo<ColDef<Employee>[]>(() => [
     { field: 'id', headerName: 'ID', width: 80, flex: 0 },
     { field: 'name', headerName: 'Name', width: 100, flex: 0 },
@@ -1647,12 +1647,12 @@ export default function GridEditingDemo() {
 
   const handleCellValueChanged = useCallback((e: CellValueChangedEvent<EditableTask>) => {
     const field = e.colDef.field ?? 'unknown';
-    const log = `[${e.data?.id}] ${field}: ${JSON.stringify(e.oldValue)} → ${JSON.stringify(e.newValue)}`;
+    const log = `[${e.data?.id}] ${field}: ${JSON.stringify(e.oldValue)} ? ${JSON.stringify(e.newValue)}`;
     setChangeLog((prev) => [log, ...prev].slice(0, 10));
     setTasks((prev) => prev.map((t) => t.id === e.data?.id ? { ...t, [field]: e.newValue } : t));
   }, []);
 
-  /* ── Header grouping columns ── */
+  /* -- Header grouping columns -- */
   const [headerGroupColDefs] = useState<(ColDef<GroupDemoRow> | ColGroupDef)[]>([
     { field: 'name', headerName: 'Name', width: 120, pinned: 'left' },
     {
@@ -1686,7 +1686,7 @@ export default function GridEditingDemo() {
     },
   ]);
 
-  /* ── ColSpan demo columns ── */
+  /* -- ColSpan demo columns -- */
   const [spanColDefs] = useState<ColDef<SpanDemoRow>[]>([
     {
       field: 'category', headerName: 'Category', width: 120,
@@ -1709,7 +1709,7 @@ export default function GridEditingDemo() {
     { field: 'q4', headerName: 'Q4', width: 100, type: 'numericColumn', valueFormatter: (p) => p.value?.toLocaleString(), cellStyle: (p) => p.data?.category?.includes('Subtotal') ? { fontWeight: 'bold', backgroundColor: 'var(--content-header-bg, #f5f5f5)' } : undefined },
   ]);
 
-  /* ── RowSpan demo columns ── */
+  /* -- RowSpan demo columns -- */
   const [rowSpanColDefs] = useState<ColDef<RowSpanDemoRow>[]>([
     { field: 'department', headerName: 'Division', width: 130, spanRows: true, sort: 'asc' as const, cellStyle: { fontWeight: 'bold' } },
     { field: 'team', headerName: 'Team', width: 130, spanRows: true, sort: 'asc' as const },
@@ -1717,7 +1717,7 @@ export default function GridEditingDemo() {
     { field: 'role', headerName: 'Grade', width: 100 },
   ]);
 
-  /* ── Footer demo ── */
+  /* -- Footer demo -- */
   const pinnedBottomData = useMemo<Partial<GroupDemoRow>[]>(() => [{
     id: 0,
     name: 'Total',
@@ -1737,7 +1737,7 @@ export default function GridEditingDemo() {
     { field: 'bonus', headerName: 'Bonus', width: 120, valueFormatter: (p) => p.value ? 'KRW ' + p.value.toLocaleString('en-US') : '' },
   ], []);
 
-  /* ── Manual grouping demo ── */
+  /* -- Manual grouping demo -- */
   const groupedRowData = useMemo(() => spanDemoData, []);
 
   const groupTotalRow = useMemo<Partial<SpanDemoRow>[]>(() => [{
@@ -1797,7 +1797,7 @@ export default function GridEditingDemo() {
     { field: 'q4', headerName: 'Q4', width: 110, type: 'numericColumn', valueFormatter: (p) => p.value?.toLocaleString(), cellStyle: (p) => (p.data?.category?.includes('Subtotal') || p.node?.rowPinned) ? { fontWeight: 'bold', backgroundColor: 'var(--content-header-bg, #f0f0f0)' } : undefined },
   ], [categoryValueFormatter, groupCellStyle]);
 
-  /* ── Column pinning columns ── */
+  /* -- Column pinning columns -- */
   const pinnedColDefs = useMemo<ColDef<GroupDemoRow>[]>(() => [
     { field: 'id', headerName: 'ID', width: 70, pinned: 'left', lockPinned: true },
     { field: 'name', headerName: 'Name', width: 100, pinned: 'left', lockPinned: true },
@@ -1819,7 +1819,7 @@ export default function GridEditingDemo() {
       <Tabs
         defaultActiveKey="toolbar"
         items={[
-          /* ── GridToolbar ── */
+          /* -- GridToolbar -- */
           {
             key: 'toolbar',
             label: 'GridToolbar',
@@ -1835,8 +1835,8 @@ export default function GridEditingDemo() {
                   <tbody>
                     <tr><td><code>totalCount</code></td><td><code>number</code></td><td>Row count display (e.g. "102 total")</td></tr>
                     <tr><td><code>countLabel</code></td><td><code>string</code></td><td>Label in front of the count (default: "Total")</td></tr>
-                    <tr><td><code>left</code></td><td><code>ReactNode</code></td><td>Extra content on the left (search terms, filter tags, …)</td></tr>
-                    <tr><td><code>actions</code></td><td><code>ReactNode</code></td><td>Action buttons on the right (new, delete, Excel, …)</td></tr>
+                    <tr><td><code>left</code></td><td><code>ReactNode</code></td><td>Extra content on the left (search terms, filter tags, �)</td></tr>
+                    <tr><td><code>actions</code></td><td><code>ReactNode</code></td><td>Action buttons on the right (new, delete, Excel, �)</td></tr>
                   </tbody>
                 </table>
 
@@ -1907,7 +1907,7 @@ import { PlusOutlined, DeleteOutlined } from '@ant-design/icons';
             ),
           },
 
-          /* ── GridPanel ── */
+          /* -- GridPanel -- */
           {
             key: 'grid-panel',
             label: 'GridPanel',
@@ -1925,11 +1925,11 @@ import { PlusOutlined, DeleteOutlined } from '@ant-design/icons';
                     <tr><td><code>countLabel</code></td><td><code>string</code></td><td>Label in front of the count (default: "Total")</td></tr>
                     <tr><td><code>toolbarLeft</code></td><td><code>ReactNode</code></td><td>Extra content on the left of the toolbar</td></tr>
                     <tr><td><code>actions</code></td><td><code>ReactNode</code></td><td>Action buttons on the right of the toolbar</td></tr>
-                    <tr><td colSpan={3} style={{ color: 'var(--text-secondary)', fontSize: 12 }}>+ every GridTable prop (columnDefs, rowData, rowSelection, onSelectionChanged, …)</td></tr>
+                    <tr><td colSpan={3} style={{ color: 'var(--text-secondary)', fontSize: 12 }}>+ every GridTable prop (columnDefs, rowData, rowSelection, onSelectionChanged, �)</td></tr>
                   </tbody>
                 </table>
 
-                <Card title="Live demo — new/delete buttons with a row count" style={{ marginBottom: 24 }}>
+                <Card title="Live demo � new/delete buttons with a row count" style={{ marginBottom: 24 }}>
                   <p style={{ fontSize: 13, color: 'var(--text-secondary)', marginBottom: 8 }}>
                     Select a row and the delete button becomes enabled.
                   </p>
@@ -1990,8 +1990,8 @@ function MyPage() {
                   <strong>Key points</strong>
                   <ul style={{ margin: '8px 0 0', paddingLeft: 20, color: 'var(--text-secondary)' }}>
                     <li><code>totalCount={'{data.length}'}</code>: updates itself whenever the data changes</li>
-                    <li><code>actions</code>: any ReactNode — new, delete, Excel, whatever you need</li>
-                    <li><code>onSelectionChanged</code>: the array of selected rows — use it to enable the delete button</li>
+                    <li><code>actions</code>: any ReactNode � new, delete, Excel, whatever you need</li>
+                    <li><code>onSelectionChanged</code>: the array of selected rows � use it to enable the delete button</li>
                     <li>Every GridTable prop works: <code>rowSelection</code>, <code>editable</code>, <code>pagination</code>, <code>getContextMenuItems</code> and the rest</li>
                   </ul>
                 </div>
@@ -1999,7 +1999,7 @@ function MyPage() {
             ),
           },
 
-          /* ── Basic grid ── */
+          /* -- Basic grid -- */
           {
             key: 'basic',
             label: 'GridTable',
@@ -2034,7 +2034,7 @@ function MyPage() {
             ),
           },
 
-          /* ── Cell editing ── */
+          /* -- Cell editing -- */
           {
             key: 'editable',
             label: 'Cell editing',
@@ -2079,7 +2079,7 @@ function MyPage() {
             ),
           },
 
-          /* ── Row selection ── */
+          /* -- Row selection -- */
           {
             key: 'selection',
             label: 'Row selection',
@@ -2118,7 +2118,7 @@ function MyPage() {
             ),
           },
 
-          /* ── Cell renderers and formatters ── */
+          /* -- Cell renderers and formatters -- */
           {
             key: 'renderer',
             label: 'Renderers & formatters',
@@ -2130,8 +2130,8 @@ function MyPage() {
                 <table className={styles.demoPropsTable} style={{ marginBottom: 24 }}>
                   <thead><tr><th style={{ width: 200 }}>ColDef option</th><th>Type</th><th>Description</th></tr></thead>
                   <tbody>
-                    <tr><td><code>valueFormatter</code></td><td><code>(params) =&gt; string</code></td><td>Transforms the displayed value. The data is untouched — only the screen and clipboard change</td></tr>
-                    <tr><td><code>cellRenderer</code></td><td><code>Component | string</code></td><td>Renders the cell with your own React component (Tag, Avatar, …)</td></tr>
+                    <tr><td><code>valueFormatter</code></td><td><code>(params) =&gt; string</code></td><td>Transforms the displayed value. The data is untouched � only the screen and clipboard change</td></tr>
+                    <tr><td><code>cellRenderer</code></td><td><code>Component | string</code></td><td>Renders the cell with your own React component (Tag, Avatar, �)</td></tr>
                     <tr><td><code>cellRendererParams</code></td><td><code>object</code></td><td>Extra parameters passed to the cellRenderer</td></tr>
                     <tr><td><code>cellStyle</code></td><td><code>CSSProperties | (params) =&gt; CSSProperties</code></td><td>Inline cell style, optionally conditional</td></tr>
                     <tr><td><code>cellClass</code></td><td><code>string | (params) =&gt; string</code></td><td>Assigns a CSS class to the cell dynamically</td></tr>
@@ -2140,7 +2140,7 @@ function MyPage() {
                   </tbody>
                 </table>
 
-                <Card title="Live demo — valueFormatter / cellStyle / cellRenderer" style={{ marginBottom: 24 }}>
+                <Card title="Live demo � valueFormatter / cellStyle / cellRenderer" style={{ marginBottom: 24 }}>
                   <div style={{ height: 260 }}>
                     <GridTable<Employee>
                       columnDefs={[
@@ -2193,7 +2193,7 @@ function MyPage() {
             ),
           },
 
-          /* ── Cell editor guide ── */
+          /* -- Cell editor guide -- */
           {
             key: 'celleditor',
             label: 'Cell editor guide',
@@ -2208,13 +2208,13 @@ function MyPage() {
                     <tr><td><code>editable</code></td><td><code>boolean | (params) =&gt; boolean</code></td><td>Enables cell editing. Pass a function for conditional control</td></tr>
                     <tr><td><code>cellEditor</code></td><td><code>Component | string</code></td><td>The editor component. Defaults to agTextCellEditor</td></tr>
                     <tr><td><code>cellEditorParams</code></td><td><code>object | (params) =&gt; object</code></td><td>Parameters passed to the editor. Pass a function to derive them from the row data</td></tr>
-                    <tr><td><code>cellEditorPopup</code></td><td><code>boolean</code></td><td>Popup-mode editor (text area, DatePicker, …)</td></tr>
+                    <tr><td><code>cellEditorPopup</code></td><td><code>boolean</code></td><td>Popup-mode editor (text area, DatePicker, �)</td></tr>
                     <tr><td><code>singleClickEdit</code></td><td><code>boolean</code></td><td>Start editing on a single click instead of a double click</td></tr>
                     <tr><td><code>onCellValueChanged</code></td><td><code>(event) =&gt; void</code></td><td>Fires once a cell value has changed. Provides event.oldValue and event.newValue</td></tr>
                   </tbody>
                 </table>
 
-                <Card title="Live demo — the built-in editors (double-click to edit)" style={{ marginBottom: 24 }}>
+                <Card title="Live demo � the built-in editors (double-click to edit)" style={{ marginBottom: 24 }}>
                   <div style={{ height: 220 }}>
                     <GridTable<MemberRow>
                       columnDefs={[
@@ -2259,14 +2259,14 @@ function MyPage() {
             ),
           },
 
-          /* ── Common-code and search cells ── */
+          /* -- Common-code and search cells -- */
           {
             key: 'comcd-search-cell',
             label: 'Common-code & search cells',
             children: <ComcdSearchCellDemo />,
           },
 
-          /* ── Header grouping ── */
+          /* -- Header grouping -- */
           {
             key: 'headergroup',
             label: 'Header grouping',
@@ -2281,7 +2281,7 @@ function MyPage() {
                   <thead><tr><th style={{ width: 200 }}>ColGroupDef option</th><th>Type</th><th>Description</th></tr></thead>
                   <tbody>
                     <tr><td><code>headerName</code></td><td><code>string</code></td><td>Group header text</td></tr>
-                    <tr><td><code>children</code> <span style={{ color: '#ff4d4f' }}>*</span></td><td><code>(ColDef | ColGroupDef)[]</code></td><td>The columns or subgroups in this group — its presence makes it a group</td></tr>
+                    <tr><td><code>children</code> <span style={{ color: '#ff4d4f' }}>*</span></td><td><code>(ColDef | ColGroupDef)[]</code></td><td>The columns or subgroups in this group � its presence makes it a group</td></tr>
                     <tr><td><code>openByDefault</code></td><td><code>boolean</code></td><td>Whether the group starts expanded (default: false)</td></tr>
                     <tr><td><code>marryChildren</code></td><td><code>boolean</code></td><td>When true, columns cannot be dragged out of the group</td></tr>
                     <tr><td><code>columnGroupShow</code></td><td><code>'open' | 'closed'</code></td><td>Shows the column only while the group is expanded or only while collapsed</td></tr>
@@ -2289,7 +2289,7 @@ function MyPage() {
                   </tbody>
                 </table>
 
-                <Card title="Live demo — header grouping" style={{ marginBottom: 24 }}>
+                <Card title="Live demo � header grouping" style={{ marginBottom: 24 }}>
                   <div className="ds-data-grid" style={{ height: 280 }}>
                     <AgGridReact
                       rowData={groupDemoData}
@@ -2323,7 +2323,7 @@ function MyPage() {
             ),
           },
 
-          /* ── Cell and row spanning ── */
+          /* -- Cell and row spanning -- */
           {
             key: 'spanning',
             label: 'Cell & row spanning',
@@ -2335,7 +2335,7 @@ function MyPage() {
                   Useful for subtotal rows and section headings.
                 </p>
 
-                <Card title="Live demo — colSpan (merged cells on subtotal rows)" style={{ marginBottom: 24 }}>
+                <Card title="Live demo � colSpan (merged cells on subtotal rows)" style={{ marginBottom: 24 }}>
                   <div style={{ height: 280 }}>
                     <GridTable<SpanDemoRow>
                       columnDefs={spanColDefs}
@@ -2355,7 +2355,7 @@ function MyPage() {
                   It uses <code>CellSpanModule</code> from AG Grid v35+ Community (included in <code>AllCommunityModule</code>).
                 </p>
 
-                <Card title="Live demo — spanRows (division and team merged automatically)" style={{ marginBottom: 24 }}>
+                <Card title="Live demo � spanRows (division and team merged automatically)" style={{ marginBottom: 24 }}>
                   <div style={{ height: 320 }}>
                     <GridTable<RowSpanDemoRow>
                       columnDefs={rowSpanColDefs}
@@ -2373,7 +2373,7 @@ function MyPage() {
                 <div style={{ marginTop: 16, padding: 12, background: 'var(--content-header-bg)', borderRadius: 4 }}>
                   <strong>Key points</strong>
                   <ul style={{ margin: '8px 0 0', paddingLeft: 20, color: 'var(--text-secondary)' }}>
-                    <li><code>colSpan</code>: a function — <code>(params) =&gt; number</code> (1 means no spanning)</li>
+                    <li><code>colSpan</code>: a function � <code>(params) =&gt; number</code> (1 means no spanning)</li>
                     <li><code>spanRows: true</code>: merges consecutive identical values (the data must be sorted)</li>
                     <li>Row spanning only works when the <code>enableCellSpan</code> prop is set on GridTable</li>
                     <li>Style spanned cells separately through the <code>cellStyle</code> callback</li>
@@ -2383,7 +2383,7 @@ function MyPage() {
             ),
           },
 
-          /* ── Footer and pinned rows ── */
+          /* -- Footer and pinned rows -- */
           {
             key: 'footer',
             label: 'Footer & pinned rows',
@@ -2396,7 +2396,7 @@ function MyPage() {
                   <Tag color="green">Community</Tag>
                 </p>
 
-                <Card title="Live demo — footer (a total row at the bottom)" style={{ marginBottom: 24 }}>
+                <Card title="Live demo � footer (a total row at the bottom)" style={{ marginBottom: 24 }}>
                   <div style={{ height: 300 }}>
                     <GridTable<GroupDemoRow>
                       columnDefs={footerColDefs}
@@ -2427,11 +2427,11 @@ function MyPage() {
 
                 <h3 style={{ marginTop: 24 }}>Recreating grouping by hand</h3>
                 <p className={styles.demoDesc}>
-                  Sort the data by group, insert subtotal rows, then combine valueFormatter (hide repeated values), colSpan, cellStyle (a separator line) and pinnedBottomRowData (the grand total footer) —
+                  Sort the data by group, insert subtotal rows, then combine valueFormatter (hide repeated values), colSpan, cellStyle (a separator line) and pinnedBottomRowData (the grand total footer) �
                   and the Community edition gets a grouping effect of its own.
                 </p>
 
-                <Card title="Live demo — hand-rolled grouping (hidden repeats + colSpan + grand total footer)" style={{ marginBottom: 24 }}>
+                <Card title="Live demo � hand-rolled grouping (hidden repeats + colSpan + grand total footer)" style={{ marginBottom: 24 }}>
                   <div style={{ height: 380 }}>
                     <GridTable<SpanDemoRow>
                       columnDefs={groupColDefs}
@@ -2460,7 +2460,7 @@ function MyPage() {
             ),
           },
 
-          /* ── Column pinning ── */
+          /* -- Column pinning -- */
           {
             key: 'pinning',
             label: 'Column pinning',
@@ -2473,7 +2473,7 @@ function MyPage() {
                   <Tag color="green" style={{ marginLeft: 8 }}>Community</Tag>
                 </p>
 
-                <Card title="Live demo — pinned left (ID, name) and right (salary)" style={{ marginBottom: 24 }}>
+                <Card title="Live demo � pinned left (ID, name) and right (salary)" style={{ marginBottom: 24 }}>
                   <div style={{ height: 280 }}>
                     <GridTable<GroupDemoRow>
                       columnDefs={pinnedColDefs}
@@ -2498,7 +2498,7 @@ function MyPage() {
                   <strong>Key points</strong>
                   <ul style={{ margin: '8px 0 0', paddingLeft: 20, color: 'var(--text-secondary)' }}>
                     <li><code>pinned: 'left'</code>: pinned to the left while scrolling</li>
-                    <li><code>pinned: 'right'</code>: pinned to the right — handy for action buttons</li>
+                    <li><code>pinned: 'right'</code>: pinned to the right � handy for action buttons</li>
                     <li><code>lockPinned: true</code>: the user cannot unpin it by dragging</li>
                     <li><code>lockPosition: 'left'</code>: the column cannot be moved at all</li>
                     <li>Change it at runtime: <code>api.setColumnsPinned(['col'], 'left')</code></li>
@@ -2509,7 +2509,7 @@ function MyPage() {
             ),
           },
 
-          /* ── Copy and paste ── */
+          /* -- Copy and paste -- */
           {
             key: 'clipboard',
             label: 'Copy & paste',
@@ -2543,7 +2543,7 @@ function MyPage() {
                   </table>
                 </Card>
 
-                <Card title="Live demo — select rows and Ctrl+C, then double-click a Score cell and Ctrl+V" style={{ marginBottom: 16 }}>
+                <Card title="Live demo � select rows and Ctrl+C, then double-click a Score cell and Ctrl+V" style={{ marginBottom: 16 }}>
                   <App>
                     <ClipboardDemo />
                   </App>
@@ -2562,7 +2562,7 @@ function MyPage() {
                   <strong>Key points</strong>
                   <ul style={{ margin: '8px 0 0', paddingLeft: 20, color: 'var(--text-secondary)' }}>
                     <li><code>enableClipboard</code>: a GridTable prop, enabled per grid</li>
-                    <li><strong>Ctrl+C</strong>: copies the selected rows — header and data — as tab-separated text (Excel compatible)</li>
+                    <li><strong>Ctrl+C</strong>: copies the selected rows � header and data � as tab-separated text (Excel compatible)</li>
                     <li><strong>Ctrl+V</strong>: parses the clipboard and writes it into cells from the focused cell onward (edit mode only)</li>
                     <li>Registering in the capture phase (<code>true</code>) bypasses AG Grid's event blocking</li>
                   </ul>
@@ -2571,7 +2571,7 @@ function MyPage() {
             ),
           },
 
-          /* ── Context menu ── */
+          /* -- Context menu -- */
           {
             key: 'context-menu',
             label: 'Context menu',
@@ -2591,7 +2591,7 @@ function MyPage() {
                     <tr><td><code>suppressContextMenu</code></td><td><code>boolean</code></td><td>Disables the context menu entirely</td></tr>
                     <tr><td><code>MenuItemDef.name</code></td><td><code>string</code></td><td>The item's display text</td></tr>
                     <tr><td><code>MenuItemDef.action</code></td><td><code>() =&gt; void</code></td><td>The function run when the item is clicked</td></tr>
-                    <tr><td><code>MenuItemDef.icon</code></td><td><code>string</code></td><td>Icon as an HTML string (e.g. <code>{'<span>🔍</span>'}</code>)</td></tr>
+                    <tr><td><code>MenuItemDef.icon</code></td><td><code>string</code></td><td>Icon as an HTML string (e.g. <code>{'<span>??</span>'}</code>)</td></tr>
                     <tr><td><code>MenuItemDef.disabled</code></td><td><code>boolean</code></td><td>Disables the item</td></tr>
                     <tr><td><code>'separator'</code></td><td><code>string</code></td><td>A separator. Insert the string <code>'separator'</code> into the item array</td></tr>
                     <tr><td><code>'copy' | 'copyWithHeaders'</code></td><td><code>string</code></td><td>Built-in items (copy to clipboard)</td></tr>
@@ -2606,7 +2606,7 @@ function MyPage() {
                   style={{ marginBottom: 16 }}
                 />
 
-                <Card title="Live demo — try right-clicking a cell" style={{ marginBottom: 24 }}>
+                <Card title="Live demo � try right-clicking a cell" style={{ marginBottom: 24 }}>
                   <div style={{ display: 'flex', gap: 16, alignItems: 'flex-start' }}>
                     <div style={{ flex: 1, height: 240 }}>
                       <GridTable
@@ -2625,12 +2625,12 @@ function MyPage() {
                           {
                             name: `View "${params.node?.data?.name}"`,
                             action: () => alert(`Details:\n${JSON.stringify(params.node?.data, null, 2)}`),
-                            icon: '<span>🔍</span>',
+                            icon: '<span>??</span>',
                           },
                           {
                             name: 'Copy email',
                             action: () => navigator.clipboard.writeText(params.node?.data?.email ?? ''),
-                            icon: '<span>📧</span>',
+                            icon: '<span>??</span>',
                           },
                           'separator',
                           'copy',
@@ -2650,8 +2650,8 @@ function MyPage() {
                         fontSize: 13,
                       }}>
                         {[
-                          { icon: '🔍', label: 'View "Steve Kim"' },
-                          { icon: '📧', label: 'Copy email' },
+                          { icon: '??', label: 'View "Steve Kim"' },
+                          { icon: '??', label: 'Copy email' },
                           null,
                           { icon: null, label: 'Copy' },
                           { icon: null, label: 'Copy with Headers' },
@@ -2697,21 +2697,21 @@ function MyPage() {
             ),
           },
 
-          /* ── DatePicker cells ── */
+          /* -- DatePicker cells -- */
           {
             key: 'datepicker-cell',
             label: 'DatePicker cells',
             children: <DateCellDemo />,
           },
 
-          /* ── Tree structure ── */
+          /* -- Tree structure -- */
           {
             key: 'tree',
             label: 'Tree structure',
             children: <TreeDemo />,
           },
 
-          /* ── API reference ── */
+          /* -- API reference -- */
           {
             key: 'api',
             label: 'API reference',
@@ -2723,19 +2723,19 @@ function MyPage() {
                   <table className={styles.demoPropsTable}>
                     <thead><tr><th style={{ width: 180 }}>Prop</th><th>Type</th><th style={{ width: 100 }}>Default</th><th>Description</th></tr></thead>
                     <tbody>
-                      <tr><td><code>columnDefs</code> <span style={{ color: '#ff4d4f' }}>*</span></td><td><code>ColDef&lt;T&gt;[]</code></td><td>—</td><td>The column definitions (AG Grid ColDef)</td></tr>
-                      <tr><td><code>rowData</code> <span style={{ color: '#ff4d4f' }}>*</span></td><td><code>T[]</code></td><td>—</td><td>The row data array</td></tr>
+                      <tr><td><code>columnDefs</code> <span style={{ color: '#ff4d4f' }}>*</span></td><td><code>ColDef&lt;T&gt;[]</code></td><td>�</td><td>The column definitions (AG Grid ColDef)</td></tr>
+                      <tr><td><code>rowData</code> <span style={{ color: '#ff4d4f' }}>*</span></td><td><code>T[]</code></td><td>�</td><td>The row data array</td></tr>
                       <tr><td><code>rowKey</code></td><td><code>string</code></td><td><code>"id"</code></td><td>The unique row key field</td></tr>
-                      <tr><td><code>defaultColDef</code></td><td><code>ColDef&lt;T&gt;</code></td><td>—</td><td>A default ColDef applied to every column</td></tr>
+                      <tr><td><code>defaultColDef</code></td><td><code>ColDef&lt;T&gt;</code></td><td>�</td><td>A default ColDef applied to every column</td></tr>
                       <tr><td><code>editable</code></td><td><code>boolean</code></td><td><code>false</code></td><td>Enables editing on every cell</td></tr>
                       <tr><td><code>enableClipboard</code></td><td><code>boolean</code></td><td><code>false</code></td><td>Enables Ctrl+C / Ctrl+V clipboard copy and paste</td></tr>
-                      <tr><td><code>rowSelection</code></td><td><code>'singleRow' | 'multiRow'</code></td><td>—</td><td>Row selection mode (omit it and selection is off)</td></tr>
+                      <tr><td><code>rowSelection</code></td><td><code>'singleRow' | 'multiRow'</code></td><td>�</td><td>Row selection mode (omit it and selection is off)</td></tr>
                       <tr><td><code>pagination</code></td><td><code>boolean</code></td><td><code>true</code></td><td>Enables pagination</td></tr>
                       <tr><td><code>pageSize</code></td><td><code>number</code></td><td><code>20</code></td><td>Rows per page</td></tr>
                       <tr><td><code>height</code></td><td><code>string | number</code></td><td><code>"100%"</code></td><td>Grid height. "100%" applies flex:1</td></tr>
                       <tr><td><code>autoHeight</code></td><td><code>boolean</code></td><td><code>false</code></td><td>Sizes the grid to fit the number of rows</td></tr>
-                      <tr><td><code>rowHeight</code></td><td><code>number</code></td><td>—</td><td>Row height in px</td></tr>
-                      <tr><td><code>headerHeight</code></td><td><code>number</code></td><td>—</td><td>Header height in px</td></tr>
+                      <tr><td><code>rowHeight</code></td><td><code>number</code></td><td>�</td><td>Row height in px</td></tr>
+                      <tr><td><code>headerHeight</code></td><td><code>number</code></td><td>�</td><td>Header height in px</td></tr>
                       <tr><td><code>loading</code></td><td><code>boolean</code></td><td><code>false</code></td><td>Shows the loading overlay</td></tr>
                       <tr><td><code>noRowsMessage</code></td><td><code>string</code></td><td><code>"No data."</code></td><td>Message shown when there are no rows</td></tr>
                       <tr><td><code>enableCellSpan</code></td><td><code>boolean</code></td><td><code>false</code></td><td>Enables cell merging via colSpan / rowSpan</td></tr>
@@ -2789,7 +2789,7 @@ function MyPage() {
                 </section>
 
                 <section>
-                  <h3 style={{ fontSize: 14, fontWeight: 700, margin: '0 0 8px', borderBottom: '2px solid var(--primary-color)', display: 'inline-block', paddingBottom: 4 }}>Events — rows</h3>
+                  <h3 style={{ fontSize: 14, fontWeight: 700, margin: '0 0 8px', borderBottom: '2px solid var(--primary-color)', display: 'inline-block', paddingBottom: 4 }}>Events � rows</h3>
                   <table className={styles.demoPropsTable}>
                     <thead><tr><th style={{ width: 220 }}>Event</th><th>Signature</th><th>Description</th></tr></thead>
                     <tbody>
@@ -2805,7 +2805,7 @@ function MyPage() {
                 </section>
 
                 <section>
-                  <h3 style={{ fontSize: 14, fontWeight: 700, margin: '0 0 8px', borderBottom: '2px solid var(--primary-color)', display: 'inline-block', paddingBottom: 4 }}>Events — cells</h3>
+                  <h3 style={{ fontSize: 14, fontWeight: 700, margin: '0 0 8px', borderBottom: '2px solid var(--primary-color)', display: 'inline-block', paddingBottom: 4 }}>Events � cells</h3>
                   <table className={styles.demoPropsTable}>
                     <thead><tr><th style={{ width: 220 }}>Event</th><th>Signature</th><th>Description</th></tr></thead>
                     <tbody>
@@ -2821,7 +2821,7 @@ function MyPage() {
                 </section>
 
                 <section>
-                  <h3 style={{ fontSize: 14, fontWeight: 700, margin: '0 0 8px', borderBottom: '2px solid var(--primary-color)', display: 'inline-block', paddingBottom: 4 }}>Events — grid state</h3>
+                  <h3 style={{ fontSize: 14, fontWeight: 700, margin: '0 0 8px', borderBottom: '2px solid var(--primary-color)', display: 'inline-block', paddingBottom: 4 }}>Events � grid state</h3>
                   <table className={styles.demoPropsTable}>
                     <thead><tr><th style={{ width: 220 }}>Event</th><th>Signature</th><th>Description</th></tr></thead>
                     <tbody>

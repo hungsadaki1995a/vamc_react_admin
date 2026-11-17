@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Typography } from 'antd';
 import { CodeOutlined, CopyOutlined, CheckOutlined } from '@ant-design/icons';
-import './code-snippet.css';
+import './code-snippet.scss';
 
 interface CodeSnippetProps {
   code: string;

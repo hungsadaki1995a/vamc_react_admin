@@ -1,5 +1,5 @@
 import type { ButtonProps } from 'antd';
-import ActionButton from '@/components/common/action-button';
+import ActionButton from '@/components/common/actions/action-button';
 import { useLabelStore } from '@/stores/label-store';
 import './excel-download-button.css';
 

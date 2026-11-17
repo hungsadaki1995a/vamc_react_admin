@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Tabs, Card } from 'antd';
-import CodeSnippet from '@/components/common/code-snippet';
+import CodeSnippet from '@/components/common/utilities/code-snippet';
 import RichTextEditor from '@/components/editors/rich-text-editor';
 import DevPageHeader from '@/dev/dev-page-header';
 

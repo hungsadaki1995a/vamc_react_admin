@@ -1,5 +1,5 @@
 import { Radio as AntRadio, type RadioGroupProps, type RadioProps } from 'antd';
-import './radio.css';
+import './radio.scss';
 
 export type { RadioGroupProps, RadioProps };
 

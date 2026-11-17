@@ -1,5 +1,5 @@
 import { Tabs, Card, Alert } from 'antd';
-import CodeSnippet from '@/components/common/code-snippet';
+import CodeSnippet from '@/components/common/utilities/code-snippet';
 import DevPageHeader from '@/dev/dev-page-header';
 
 // Base configuration

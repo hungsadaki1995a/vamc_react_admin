@@ -2,7 +2,7 @@ import { useState, useMemo, useCallback, useRef } from 'react';
 import type { AgGridReact } from 'ag-grid-react';
 import { Input, Form, Row, Col, Select } from 'antd';
 import GridPanel from '@/components/grid/grid-panel';
-import ActionButtonGroup from '@/components/common/action-button-group';
+import ActionButtonGroup from '@/components/common/actions/action-button-group';
 import FilterPanel from '@/components/layout/filter-panel';
 import FormPanel from '@/components/layout/form-panel';
 import TipInput from '@/components/inputs/tip-input';
