@@ -3,7 +3,6 @@ import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 import Header from '@/components/layout/header';
 import IconRail from '@/components/layout/icon-rail';
 import FlyoutPanel from '@/components/layout/flyout-panel';
-import ContentHeader from '@/components/layout/content-header';
 import TabBar from '@/components/tabs/tab-bar';
 import TabContent from '@/components/tabs/tab-content';
 import { useTabRouteSync } from '@/hooks/use-tab-route-sync';
@@ -37,7 +36,6 @@ export default function AppLayout() {
         <div className="main-area">
           <TabBar />
           <TabContent />
-          <ContentHeader />
         </div>
       </div>
     </div>
