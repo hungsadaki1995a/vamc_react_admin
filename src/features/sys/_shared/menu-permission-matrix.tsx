@@ -139,14 +139,7 @@ export default function MenuPermissionMatrixScreen({ menuSeCd }: Props) {
         <Alert
           type="warning"
           showIcon
-          message={
-            isWeb
-              ? tvt(
-                  'webNotSupported',
-                  'The backend does not provide the Web menu permission matrix yet (only admin menus are supported).',
-                )
-              : tvt('loadFailed', 'The permission matrix could not be loaded.')
-          }
+          message={tvt('loadFailed', 'The permission matrix could not be loaded.')}
           description={error.message}
         />
       )}

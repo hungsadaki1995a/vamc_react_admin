@@ -2,8 +2,7 @@ import { apiGet, apiPut } from '@/api/common/api-util';
 import type { MenuSeCd } from './menu-setting-api';
 
 // Menu Permission matrix API — MenuPermissionController (`/api/v1/menu-permissions`).
-// Guard menu A06020400 (VPA004701). The backend currently supports menuSeCd=A only:
-// menuSeCd=W (VPA004301, Web menu permissions) answers 400 PRM003.
+// Supports both menuSeCd=A (Admin, A06020400) and menuSeCd=W (Web, A06010400).
 
 export interface MatrixColumn {
   roleGroupId: string;

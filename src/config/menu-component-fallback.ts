@@ -4,6 +4,22 @@
 // carry no component path yet, so the menu would render and do nothing on click.
 // The DB value always wins — drop an entry once MENU_MNG is updated.
 const MENU_COMPONENT_FALLBACK: Record<string, string> = {
+  // Member Management
+  A01010000: 'MemberList',
+  A01020000: 'MemberList',
+  A01030000: 'MemberList',
+  // Trade Management
+  A02010100: 'PurchaseApplicationManagement',
+  A02010200: 'SaleApplicationManagement',
+  A02010300: 'ConsultingApplicationManagement',
+  A02020100: 'PurchaseContractManagement',
+  A02020200: 'SaleContractManagement',
+  A02020300: 'ConsultingContractManagement',
+  // NPL Info Management
+  A03010100: 'NplManagement',
+  A03010200: 'CollateralAssetManagement',
+  A03010300: 'DebtorManagement',
+  A03010400: 'NplLotManagement',
   // Content Management
   A04010000: 'NoticeManagement',
   A04020100: 'NewsManagement',
@@ -29,10 +45,24 @@ const MENU_COMPONENT_FALLBACK: Record<string, string> = {
   A06010200: 'SYS020102SC', // Form Management
   A06010300: 'SYS020103SC', // Fee Management
   A06010400: 'SYS020104SC', // Web Menu Permission Management
+  A06010500: 'ExchangeRateManagement',
+  A06010700: 'TermsManagement',
   A06020100: 'SYS030101SC', // Admin Menu Management
   A06020200: 'SYS030102SC', // User Management
   A06020300: 'SYS030103SC', // User Group Management
   A06020400: 'SYS030104SC', // Admin Menu Permission Management
+  A06030100: 'CommonCodeManagement',
+  A06030200: 'RegionCodeManagement',
+  A06030300: 'FinanceCodeManagement',
+  A06040100: 'ProgramManagement',
+  A06040200: 'ScreenManagement',
+  A06040400: 'BatchManagement',
+  A06060100: 'NotificationMessageManagement',
+  A06060200: 'NotificationHistoryManagement',
+  // Auction Management
+  A07010000: 'AuctionManagement',
+  A07020000: 'BidderManagement',
+  A07030000: 'LiveAuctionManagement',
 };
 
 /** Component key (screen ID) a server menu opens — DB path first, then the fallback. */

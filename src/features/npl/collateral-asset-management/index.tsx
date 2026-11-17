@@ -1,0 +1,146 @@
+import { useState } from 'react';
+import { Descriptions, Input, Modal, Radio, Table } from 'antd';
+import type { TableColumnsType } from 'antd';
+import { keepPreviousData } from '@tanstack/react-query';
+import { useApiQuery } from '@/hooks/use-api-query';
+import {
+  downloadCollateralAssetsExcel,
+  getCollateralAsset,
+  getCollateralAssets,
+  type CollateralAssetItem,
+  type CollateralSearch,
+} from '@/api/npl/npl-api';
+import type { PageResponse } from '@/api/common/api-util';
+import { SysPageHeader, SysPagination } from '@/features/sys/_shared/sys-ui';
+import { rowNumber } from '@/features/sys/_shared/sys-utils';
+import styles from '@/features/sys/_shared/sys-page.module.css';
+
+const PAGE_SIZE = 15;
+
+/** Collateral Asset Management (menu A03010200). */
+export default function CollateralAssetManagement() {
+  const [expsrYn, setExpsrYn] = useState<'' | 'Y' | 'N'>('');
+  const [notarYn, setNotarYn] = useState<'' | 'Y' | 'N'>('');
+  const [cltrAstCd, setCltrAstCd] = useState('');
+  const [cltrAstNm, setCltrAstNm] = useState('');
+  const [applied, setApplied] = useState<CollateralSearch>({});
+  const [page, setPage] = useState(1);
+  const [filterCollapsed, setFilterCollapsed] = useState(false);
+  const [detailId, setDetailId] = useState<string | null>(null);
+
+  const { data, isFetching } = useApiQuery<PageResponse<CollateralAssetItem>>(
+    ['npl', 'collaterals', applied, page],
+    () => getCollateralAssets(applied, page, PAGE_SIZE),
+    { placeholderData: keepPreviousData },
+  );
+  const { data: detail } = useApiQuery<Record<string, unknown>>(
+    ['npl', 'collateral-detail', detailId],
+    () => getCollateralAsset(detailId as string),
+    { enabled: !!detailId },
+  );
+
+  const rows = data?.content ?? [];
+  const total = data?.totalElements ?? 0;
+
+  const handleSearch = () => {
+    setApplied({
+      expsrYn: expsrYn || undefined,
+      notarYn: notarYn || undefined,
+      cltrAstCd: cltrAstCd.trim() || undefined,
+      cltrAstNm: cltrAstNm.trim() || undefined,
+    });
+    setPage(1);
+  };
+
+  const handleReset = () => {
+    setExpsrYn('');
+    setNotarYn('');
+    setCltrAstCd('');
+    setCltrAstNm('');
+    setApplied({});
+    setPage(1);
+  };
+
+  const columns: TableColumnsType<CollateralAssetItem> = [
+    { title: 'No', key: 'no', width: 60, align: 'center', render: (_v, _r, i) => rowNumber(total, page, PAGE_SIZE, i) },
+    {
+      title: 'Asset Code',
+      dataIndex: 'cltrAstCd',
+      width: 150,
+      render: (v: string) => <a className={styles.cellLink} onClick={() => setDetailId(v)}>{v}</a>,
+    },
+    { title: 'Asset Name', dataIndex: 'cltrAstNm', width: 280 },
+    { title: 'Type', dataIndex: 'cltrAstTypeNm', width: 140, render: (v?: string) => v || '-' },
+    { title: 'Rep NPL', dataIndex: 'rprsBndCd', width: 140, render: (v?: string) => v || '-' },
+    { title: 'NPL Count', dataIndex: 'bndCnt', width: 90, align: 'center' },
+    {
+      title: 'Displayed',
+      dataIndex: 'expsrYn',
+      width: 90,
+      align: 'center',
+      render: (v?: string) => <span className={v === 'Y' ? styles.useY : styles.useN}>{v ?? 'N'}</span>,
+    },
+  ];
+
+  return (
+    <div className={styles.container}>
+      <SysPageHeader
+        breadcrumb={['NPL Info Management', 'NPL Registration', 'Collateral Asset Management']}
+        title="Collateral Asset Management"
+        onReset={handleReset}
+        onSearch={handleSearch}
+        filterCollapsed={filterCollapsed}
+        onToggleFilter={() => setFilterCollapsed((v) => !v)}
+      />
+      {!filterCollapsed && (
+        <div className={styles.filterCard}>
+          <div className={styles.filterGroup}>
+            <span className={styles.filterLabel}>Displayed</span>
+            <Radio.Group value={expsrYn} onChange={(e) => setExpsrYn(e.target.value)}>
+              <Radio value="">All</Radio>
+              <Radio value="Y">Y</Radio>
+              <Radio value="N">N</Radio>
+            </Radio.Group>
+          </div>
+          <div className={styles.filterGroup}>
+            <span className={styles.filterLabel}>Notarized</span>
+            <Radio.Group value={notarYn} onChange={(e) => setNotarYn(e.target.value)}>
+              <Radio value="">All</Radio>
+              <Radio value="Y">Y</Radio>
+              <Radio value="N">N</Radio>
+            </Radio.Group>
+          </div>
+          <div className={styles.filterGroup}>
+            <span className={styles.filterLabel}>Asset Code</span>
+            <Input className={styles.filterInput} placeholder="Asset Code" value={cltrAstCd} onChange={(e) => setCltrAstCd(e.target.value)} onPressEnter={handleSearch} allowClear />
+          </div>
+          <div className={styles.filterGroup}>
+            <span className={styles.filterLabel}>Asset Name</span>
+            <Input className={styles.filterInput} placeholder="Asset Name" value={cltrAstNm} onChange={(e) => setCltrAstNm(e.target.value)} onPressEnter={handleSearch} allowClear />
+          </div>
+        </div>
+      )}
+      <div className={styles.summaryRow}>
+        <span className={styles.totalCount}>Total ({total})</span>
+        <button type="button" className={`${styles.btn} ${styles.btnSmall}`} onClick={() => void downloadCollateralAssetsExcel(applied as Record<string, unknown>)}>Excel Download</button>
+      </div>
+      <div className={styles.tableWrapper}>
+        <Table<CollateralAssetItem> rowKey="cltrAstCd" columns={columns} dataSource={rows} loading={isFetching} pagination={false} size="small" scroll={{ x: 'max-content' }} />
+      </div>
+      <SysPagination page={page} pageSize={PAGE_SIZE} total={total} onChange={setPage} />
+
+      <Modal open={!!detailId} width={760} centered title={`Collateral Asset: ${detailId ?? ''}`} onCancel={() => setDetailId(null)} footer={<button type="button" className={styles.btn} onClick={() => setDetailId(null)}>Close</button>}>
+        {detail && (
+          <Descriptions bordered size="small" column={2}>
+            <Descriptions.Item label="Asset Code">{String(detail.cltrAstCd ?? '-')}</Descriptions.Item>
+            <Descriptions.Item label="Type">{String(detail.cltrAstTypeCd ?? '-')}</Descriptions.Item>
+            <Descriptions.Item label="Name (VI)" span={2}>{String(detail.cltrAstNm ?? '-')}</Descriptions.Item>
+            <Descriptions.Item label="Name (EN)" span={2}>{String(detail.cltrAstEngNm ?? '-')}</Descriptions.Item>
+            <Descriptions.Item label="Contract No">{String(detail.cltrCtrtNo ?? '-')}</Descriptions.Item>
+            <Descriptions.Item label="Contract Date">{String(detail.ctrtDmy ?? '-')}</Descriptions.Item>
+          </Descriptions>
+        )}
+      </Modal>
+    </div>
+  );
+}
