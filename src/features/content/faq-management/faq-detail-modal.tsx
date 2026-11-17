@@ -9,6 +9,8 @@ import {
 } from '@/api/contents/faq-api';
 import type { FaqItem } from './faq.types';
 import { useFaqDetail } from './use-faq-detail';
+import { useFaqCategories } from './use-faq-categories';
+import { ApiError } from '@/lib/api/error';
 import styles from './faq-detail-modal.module.css';
 
 interface FaqDetailModalProps {
@@ -46,7 +48,8 @@ export default function FaqDetailModal({
     enabled: visible && !isCreate && Boolean(pstNo),
   });
 
-  const [category, setCategory] = useState('AUCTION');
+  const categoryOptions = useFaqCategories();
+  const [category, setCategory] = useState('');
   const [published, setPublished] = useState<'Y' | 'N'>('N');
   const [question, setQuestion] = useState('');
   const [answer, setAnswer] = useState('');
@@ -59,23 +62,30 @@ export default function FaqDetailModal({
     setIsSubmitting(false);
 
     if (isCreate) {
-      setCategory('AUCTION');
+      setCategory(categoryOptions[0]?.value ?? '');
       setPublished('N');
       setQuestion('');
       setAnswer('');
       setQuestionEn('');
       setAnswerEn('');
     } else {
-      setCategory(detailData?.category || faq?.category || 'AUCTION');
+      setCategory(detailData?.category || faq?.category || '');
       setPublished(((detailData?.published || faq?.published || 'N') === 'Y' ? 'Y' : 'N'));
       setQuestion(detailData?.title || faq?.title || '');
       setAnswer(detailData?.content || faq?.content || '');
       setQuestionEn(detailData?.titleEn || faq?.titleEn || '');
       setAnswerEn(detailData?.contentEn || faq?.contentEn || '');
     }
-  }, [visible, isCreate, detailData, faq]);
+  }, [visible, isCreate, detailData, faq, categoryOptions]);
+
+  // The API rejects text changes while the FAQ is posted — stop posting first.
+  const contentLocked = !isCreate && detailData?.contentEditable === false;
 
   const handleSave = async () => {
+    if (!category) {
+      message.warning('Please select a category.');
+      return;
+    }
     if (!question.trim()) {
       message.warning('Please enter a FAQ question.');
       return;
@@ -100,21 +110,27 @@ export default function FaqDetailModal({
           throwOnError: true,
         });
       } else if (pstNo) {
+        // Content can only be edited while the FAQ is not posted (contentEditable),
+        // so the text is saved first and the category / posting status afterwards.
+        if (!contentLocked) {
+          await updateFaq({
+            path: { pstNo: String(pstNo) },
+            body: {
+              question: question.trim(),
+              answer: answer.trim(),
+              questionEn: questionEn.trim() || undefined,
+              answerEn: answerEn.trim() || undefined,
+            },
+            throwOnError: true,
+          });
+        }
         await updateFaqStatus({
           path: { pstNo: String(pstNo) },
           body: {
             category,
             published,
           },
-        });
-        await updateFaq({
-          path: { pstNo: String(pstNo) },
-          body: {
-            question: question.trim(),
-            answer: answer.trim(),
-            questionEn: questionEn.trim() || undefined,
-            answerEn: answerEn.trim() || undefined,
-          },
+          throwOnError: true,
         });
       }
 
@@ -138,8 +154,7 @@ export default function FaqDetailModal({
         },
       });
     } catch (err) {
-      console.warn('FAQ save operation encountered error:', err);
-      message.error('Failed to save FAQ. Please check if the FAQ is currently published or try again.');
+      message.error(ApiError.from(err).message);
     } finally {
       setIsSubmitting(false);
     }
@@ -193,11 +208,7 @@ export default function FaqDetailModal({
                     value={category}
                     onChange={(val) => setCategory(val)}
                     style={{ width: 180 }}
-                    options={[
-                      { label: 'Auction', value: 'AUCTION' },
-                      { label: 'Sale', value: 'SALE' },
-                      { label: 'Purchase', value: 'PURCHASE' },
-                    ]}
+                    options={categoryOptions}
                   />
                 </td>
                 <th className={styles.headerCell} style={{ width: '15%' }}>
@@ -227,6 +238,14 @@ export default function FaqDetailModal({
                 </tr>
               )}
 
+              {contentLocked && (
+                <tr>
+                  <td className={styles.dataCell} colSpan={4} style={{ color: '#b45309' }}>
+                    A posted FAQ cannot be edited. Set it to Not Posted and save, then reopen to edit the text.
+                  </td>
+                </tr>
+              )}
+
               <tr>
                 <th className={styles.headerCell}>Question</th>
                 <td className={styles.dataCell} colSpan={3}>
@@ -234,6 +253,7 @@ export default function FaqDetailModal({
                     type="text"
                     className={styles.inputField}
                     placeholder="Enter the FAQ question"
+                    disabled={contentLocked}
                     value={question}
                     onChange={(e) => setQuestion(e.target.value)}
                   />
@@ -246,6 +266,7 @@ export default function FaqDetailModal({
                   <textarea
                     className={styles.textareaField}
                     placeholder="Enter the FAQ answer"
+                    disabled={contentLocked}
                     value={answer}
                     onChange={(e) => setAnswer(e.target.value)}
                     rows={5}
@@ -260,6 +281,7 @@ export default function FaqDetailModal({
                     type="text"
                     className={styles.inputField}
                     placeholder="Enter the English FAQ question (optional)"
+                    disabled={contentLocked}
                     value={questionEn}
                     onChange={(e) => setQuestionEn(e.target.value)}
                   />
@@ -272,6 +294,7 @@ export default function FaqDetailModal({
                   <textarea
                     className={styles.textareaField}
                     placeholder="Enter the English FAQ answer (optional)"
+                    disabled={contentLocked}
                     value={answerEn}
                     onChange={(e) => setAnswerEn(e.target.value)}
                     rows={4}

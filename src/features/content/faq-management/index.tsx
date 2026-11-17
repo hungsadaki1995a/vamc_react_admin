@@ -12,30 +12,20 @@ import {
 } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import { deleteFaqs } from '@/api/contents/faq-api';
+import { ApiError } from '@/lib/api/error';
 import type { FaqItem } from './faq.types';
 import {
   useFaqs,
-  DEFAULT_FAQ_CATEGORY,
-  DEFAULT_FAQ_FROM_DATE,
-  getDefaultFaqToDate,
 } from './use-faqs';
 import FaqDetailModal from './faq-detail-modal';
+import { useFaqCategories } from './use-faq-categories';
 import styles from './faq-management.module.css';
 
 const { RangePicker } = DatePicker;
 
-// Category filter options (wireframe: dropdown, default "All").
-// "All" keeps the required default API param category=FAQS.
+// "All" sends no category; the options come from COM_CD FAQ_CTGRY_CD.
 const CATEGORY_ALL = 'ALL';
-const CATEGORY_OPTIONS = [
-  { label: 'All', value: CATEGORY_ALL },
-  { label: 'Auction', value: 'AUCTION' },
-  { label: 'Sale', value: 'SALE' },
-  { label: 'Purchase', value: 'PURCHASE' },
-];
 
-const getDefaultFromDayjs = () => dayjs('2026-10-01');
-const getDefaultToDayjs = () => dayjs();
 
 function formatDateTime(val?: string | null): { date: string; time?: string } {
   if (!val || val === '-') return { date: '-' };
@@ -64,23 +54,22 @@ function DateTimeCell({ value }: { value?: string | null }) {
 export default function FaqManagement() {
   // ── Filter UI State ────────────────────────────────────────────────────────
   const [category, setCategory] = useState<string>(CATEGORY_ALL);
+  const faqCategories = useFaqCategories();
+  const categoryOptions = [{ label: 'All', value: CATEGORY_ALL }, ...faqCategories];
 
   const [statusAll, setStatusAll] = useState(true);
   const [statusPost, setStatusPost] = useState(true);
   const [statusStop, setStatusStop] = useState(true);
 
-  const [dateRange, setDateRange] = useState<[dayjs.Dayjs | null, dayjs.Dayjs | null] | null>([
-    getDefaultFromDayjs(),
-    getDefaultToDayjs(),
-  ]);
+  const [dateRange, setDateRange] = useState<[dayjs.Dayjs | null, dayjs.Dayjs | null] | null>(null);
 
   const [filterCollapsed, setFilterCollapsed] = useState(false);
 
   // ── Applied Filters (passed to getFaqs API) ────────────────────────────────
   const [appliedFilters, setAppliedFilters] = useState({
-    category: DEFAULT_FAQ_CATEGORY,
-    fromDate: DEFAULT_FAQ_FROM_DATE,
-    toDate: getDefaultFaqToDate(),
+    category: CATEGORY_ALL,
+    fromDate: '',
+    toDate: '',
     published: '',
   });
 
@@ -146,9 +135,9 @@ export default function FaqManagement() {
     else if (statusStop && !statusPost) published = 'N';
 
     setAppliedFilters({
-      category: category === CATEGORY_ALL ? DEFAULT_FAQ_CATEGORY : category,
-      fromDate: dateRange?.[0] ? dateRange[0].format('DD/MM/YYYY') : DEFAULT_FAQ_FROM_DATE,
-      toDate: dateRange?.[1] ? dateRange[1].format('DD/MM/YYYY') : getDefaultFaqToDate(),
+      category,
+      fromDate: dateRange?.[0] ? dateRange[0].format('DD/MM/YYYY') : '',
+      toDate: dateRange?.[1] ? dateRange[1].format('DD/MM/YYYY') : '',
       published,
     });
     setSelectedRowKeys([]);
@@ -160,12 +149,12 @@ export default function FaqManagement() {
     setStatusAll(true);
     setStatusPost(true);
     setStatusStop(true);
-    setDateRange([getDefaultFromDayjs(), getDefaultToDayjs()]);
+    setDateRange(null);
     setSelectedRowKeys([]);
     setAppliedFilters({
-      category: DEFAULT_FAQ_CATEGORY,
-      fromDate: DEFAULT_FAQ_FROM_DATE,
-      toDate: getDefaultFaqToDate(),
+      category: CATEGORY_ALL,
+      fromDate: '',
+      toDate: '',
       published: '',
     });
     setPage(1);
@@ -204,8 +193,7 @@ export default function FaqManagement() {
           setSelectedRowKeys([]);
           refetch();
         } catch (err) {
-          console.warn('deleteFaqs failed:', err);
-          message.error('Failed to delete selected FAQs.');
+          message.error(ApiError.from(err).message);
         }
       },
     });
@@ -359,7 +347,7 @@ export default function FaqManagement() {
               value={category}
               onChange={(val) => setCategory(val)}
               style={{ width: 220 }}
-              options={CATEGORY_OPTIONS}
+              options={categoryOptions}
             />
           </div>
 

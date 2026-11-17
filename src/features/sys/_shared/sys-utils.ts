@@ -1,0 +1,32 @@
+import dayjs from 'dayjs';
+
+/** Message of a rejected API call (the 4xx body message is already on ApiError). */
+export function errorMessage(error: unknown, fallback = 'The request could not be processed.'): string {
+  return error instanceof Error && error.message ? error.message : fallback;
+}
+
+/** Splits a server timestamp into the wireframe's two-line `dd/MM/yyyy` + `HH:mm:ss`. */
+export function splitDateTime(value?: string | null): { date: string; time?: string } | null {
+  if (!value) return null;
+  const parsed = dayjs(value);
+  if (!parsed.isValid()) return { date: value };
+  return { date: parsed.format('DD/MM/YYYY'), time: parsed.format('HH:mm:ss') };
+}
+
+/** Thousand-separated amount; `-` when empty. */
+export function formatAmount(value?: number | null): string {
+  if (value === undefined || value === null) return '-';
+  return Number(value).toLocaleString('en-US', { maximumFractionDigits: 2 });
+}
+
+/** Descending row number for a 1-based page (newest row gets the highest number). */
+export function rowNumber(total: number, page: number, size: number, index: number): number {
+  return total - (page - 1) * size - index;
+}
+
+/** `[all, yes, no]` checkbox trio → server filter value (undefined = no filter). */
+export function toUseYnFilter(yes: boolean, no: boolean): 'Y' | 'N' | undefined {
+  if (yes && !no) return 'Y';
+  if (no && !yes) return 'N';
+  return undefined;
+}

@@ -1,11 +1,11 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { MenuItem, MenuTreeItem } from '@/types/menu';
-import { fetchAuthMenuList } from '@/api/common/my-menu-api';
+import { fetchAuthMenuResult } from '@/api/common/my-menu-api';
 import { idbGet, idbSet, idbDelete } from '@/lib/cache/idb-cache';
 import { useAuthStore } from '@/stores/auth-store';
 import { useProjectStore } from '@/stores/project-store';
-import { useLocaleStore } from '@/stores/locale-store';
+import { useLocaleStore, type LocaleKey } from '@/stores/locale-store';
 import { mapMenuTreesToMenuItems } from '@/utils/menu-tree-utils';
 
 interface MenuStore {
@@ -14,6 +14,7 @@ interface MenuStore {
   openKeys: string[];
   selectedKey: string | null;
   menuTrees: MenuTreeItem[];
+  menuLocale: LocaleKey | null;
   serverMenus: MenuItem[];
   menuLoading: boolean;
   setOpenKeys: (keys: string[]) => void;
@@ -46,6 +47,7 @@ export const useMenuStore = create<MenuStore>()(
       openKeys: [],
       selectedKey: null,
       menuTrees: [],
+      menuLocale: null,
       serverMenus: [],
       menuLoading: false,
 
@@ -79,37 +81,41 @@ export const useMenuStore = create<MenuStore>()(
       setMenuTrees: (trees) =>
         set({
           menuTrees: trees,
+          menuLocale: useLocaleStore.getState().locale,
           serverMenus: mapMenuTreesToMenuItems(trees),
         }),
       setServerMenus: (menus) => set({ serverMenus: menus }),
-      clearServerMenus: () => set({ menuTrees: [], serverMenus: [] }),
+      clearServerMenus: () => set({ menuTrees: [], menuLocale: null, serverMenus: [] }),
       resetNavState: () => set({ activeRailKey: null, flyoutVisible: false, openKeys: [], selectedKey: null }),
 
       loadMenuForProject: async () => {
         if (get().menuLoading) return;
-
-        // If login already provided menuTrees, keep them as the source of truth.
-        const existingTrees = get().menuTrees;
-        if (existingTrees.length > 0) {
-          if (get().serverMenus.length === 0) {
-            set({ serverMenus: mapMenuTreesToMenuItems(existingTrees) });
-          }
-          return;
-        }
 
         const userId    = useAuthStore.getState().user?.usrId ?? '_';
         const projectId = useProjectStore.getState().activeProject?.id ?? '_';
         const locale    = useLocaleStore.getState().locale;
         const cacheKey  = `menus:${userId}:${projectId}:${locale}`;
 
-        const cached = await idbGet<MenuItem[]>(cacheKey);
+        // Only reuse login menuTrees when they were fetched for the active locale.
+        const existingTrees = get().menuTrees;
+        if (existingTrees.length > 0 && get().menuLocale === locale) {
+          if (get().serverMenus.length === 0) {
+            set({ serverMenus: mapMenuTreesToMenuItems(existingTrees) });
+          }
+          return;
+        }
+
+        const cached = await idbGet<{ trees: MenuTreeItem[]; items: MenuItem[] } | MenuItem[]>(cacheKey);
         if (cached) {
-          // 캐시 즉시 반영 — 로딩 없이 바로 표시
-          set({ serverMenus: cached.data });
+          if (Array.isArray(cached.data)) {
+            set({ serverMenus: cached.data });
+          } else {
+            set({ menuTrees: cached.data.trees, menuLocale: locale, serverMenus: cached.data.items });
+          }
           // 항상 백그라운드 재검증 (SWR)
-          fetchAuthMenuList()
+          fetchAuthMenuResult()
             .then((fresh) => {
-              set({ serverMenus: fresh });
+              set({ menuTrees: fresh.trees, menuLocale: locale, serverMenus: fresh.items });
               idbSet(cacheKey, fresh);
             })
             .catch(() => { /* 오류 시 캐시 유지 */ });
@@ -119,9 +125,9 @@ export const useMenuStore = create<MenuStore>()(
         // 캐시 없음: 로딩 표시 후 서버 fetch
         set({ menuLoading: true });
         try {
-          const menus = await fetchAuthMenuList();
-          set({ serverMenus: menus, menuLoading: false });
-          idbSet(cacheKey, menus);
+          const fresh = await fetchAuthMenuResult();
+          set({ menuTrees: fresh.trees, menuLocale: locale, serverMenus: fresh.items, menuLoading: false });
+          idbSet(cacheKey, fresh);
         } catch {
           set({ menuLoading: false });
         }
@@ -140,7 +146,7 @@ export const useMenuStore = create<MenuStore>()(
     }),
     {
       name: 'vamc-menu-trees',
-      partialize: (state) => ({ menuTrees: state.menuTrees }),
+      partialize: (state) => ({ menuTrees: state.menuTrees, menuLocale: state.menuLocale }),
       onRehydrateStorage: () => (state) => {
         if (state?.menuTrees?.length) {
           state.serverMenus = mapMenuTreesToMenuItems(state.menuTrees);

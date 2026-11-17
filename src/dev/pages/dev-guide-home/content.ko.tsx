@@ -193,11 +193,11 @@ export const CONTENT_KO: Record<string, React.ReactNode> = {
         head={['규칙', '이유']}
         rows={[
           [<>폴더는 <code>features/{'{도메인}'}/{'{화면ID}'}/</code> 2단계</>,
-           '글롭이 2단계 고정. 더 깊으면 발견되지 않는다'],
+            '글롭이 2단계 고정. 더 깊으면 발견되지 않는다'],
           [<>팝업은 자식 폴더 <code>{'{화면ID}'}/{'{화면ID}'}1P/</code></>,
-           '3단계라 자동 제외 — 메뉴로 열리지 않게 하려는 의도'],
+            '3단계라 자동 제외 — 메뉴로 열리지 않게 하려는 의도'],
           [<>데모·샘플은 <code>src/dev/pages/</code></>,
-           '운영 빌드에서 통째로 빠진다'],
+            '운영 빌드에서 통째로 빠진다'],
         ]}
       />
 
@@ -296,11 +296,11 @@ export const CONTENT_KO: Record<string, React.ReactNode> = {
         head={['항목', '이유']}
         rows={[
           [<>저장 후 <code>invalidateQueries</code> (접두)</>,
-           <><code>refetch()</code> 는 지금 조건의 캐시만 갱신한다. 조건을 바꿔 조회하면 낡은 결과가 나온다</>],
+          <><code>refetch()</code> 는 지금 조건의 캐시만 갱신한다. 조건을 바꿔 조회하면 낡은 결과가 나온다</>],
           [<><code>onError</code> 를 달지 않는다</>,
-           <>에러 토스트는 <code>apiClient</code> 인터셉터가 이미 띄운다. 달면 두 번 뜬다</>],
+          <>에러 토스트는 <code>apiClient</code> 인터셉터가 이미 띄운다. 달면 두 번 뜬다</>],
           [<>버튼은 <code>ActionButtonGroup</code></>,
-           '버튼 순서·아이콘·권한 연동이 프리셋으로 통일된다'],
+            '버튼 순서·아이콘·권한 연동이 프리셋으로 통일된다'],
         ]}
       />
 
@@ -372,9 +372,9 @@ export const CONTENT_KO: Record<string, React.ReactNode> = {
         head={['섹션', '무엇', '예']}
         rows={[
           [<code>VIEW</code>, <>JSX 에 그대로 박히는 문구. <b>화면을 열면 바로 보인다</b></>,
-           <>항목명(<code>tvt</code>), 버튼(<code>tvb</code>), 패널 제목(<code>tvh</code>)</>],
+          <>항목명(<code>tvt</code>), 버튼(<code>tvb</code>), 패널 제목(<code>tvh</code>)</>],
           [<code>SCRIPT</code>, <>코드가 만들어 내는 문구. <b>무언가 한 뒤에 나타나거나</b> 배열·설정에서 온다</>,
-           <>그리드 헤더(<code>tsg</code>), 확인·안내 메시지(<code>tsm</code>)</>],
+          <>그리드 헤더(<code>tsg</code>), 확인·안내 메시지(<code>tsm</code>)</>],
         ]}
       />
 

@@ -203,11 +203,11 @@ Số thứ tự (2) = 01, Loại (2) = SC
         head={['Quy tắc', 'Lý do']}
         rows={[
           [<>Thư mục có hai cấp: <code>features/{'{miền}'}/{'{mã màn hình}'}/</code></>,
-           'Glob cố định hai cấp; sâu hơn sẽ không được phát hiện'],
+            'Glob cố định hai cấp; sâu hơn sẽ không được phát hiện'],
           [<>Cửa sổ bật lên đặt ở thư mục con <code>{'{mã màn hình}'}/{'{mã màn hình}'}1P/</code></>,
-           'Ba cấp nên tự động bị loại — cố ý, để chúng không mở được từ menu'],
+            'Ba cấp nên tự động bị loại — cố ý, để chúng không mở được từ menu'],
           [<>Demo và mẫu đặt ở <code>src/dev/pages/</code></>,
-           'Bị loại hoàn toàn khỏi bản dựng vận hành'],
+            'Bị loại hoàn toàn khỏi bản dựng vận hành'],
         ]}
       />
 
@@ -308,11 +308,11 @@ Số thứ tự (2) = 01, Loại (2) = SC
         head={['Hạng mục', 'Lý do']}
         rows={[
           [<>Sau khi lưu gọi <code>invalidateQueries</code> (theo tiền tố)</>,
-           <><code>refetch()</code> chỉ làm mới bộ đệm của điều kiện hiện tại; đổi điều kiện rồi tìm lại sẽ ra dữ liệu cũ</>],
+          <><code>refetch()</code> chỉ làm mới bộ đệm của điều kiện hiện tại; đổi điều kiện rồi tìm lại sẽ ra dữ liệu cũ</>],
           [<>Không gắn <code>onError</code></>,
-           <>Interceptor của <code>apiClient</code> đã hiện toast lỗi. Gắn thêm sẽ hiện hai lần</>],
+          <>Interceptor của <code>apiClient</code> đã hiện toast lỗi. Gắn thêm sẽ hiện hai lần</>],
           [<>Nút dùng <code>ActionButtonGroup</code></>,
-           'Thứ tự nút, biểu tượng và liên kết phân quyền được thống nhất qua preset'],
+            'Thứ tự nút, biểu tượng và liên kết phân quyền được thống nhất qua preset'],
         ]}
       />
 
@@ -384,9 +384,9 @@ Số thứ tự (2) = 01, Loại (2) = SC
         head={['Phần', 'Là gì', 'Ví dụ']}
         rows={[
           [<code>VIEW</code>, <>Chữ viết thẳng trong JSX. <b>Mở màn hình là thấy ngay</b></>,
-           <>Nhãn trường (<code>tvt</code>), nút (<code>tvb</code>), tiêu đề bảng (<code>tvh</code>)</>],
+          <>Nhãn trường (<code>tvt</code>), nút (<code>tvb</code>), tiêu đề bảng (<code>tvh</code>)</>],
           [<code>SCRIPT</code>, <>Chữ do mã sinh ra. <b>Xuất hiện sau khi người dùng thao tác</b>, hoặc đến từ mảng/cấu hình</>,
-           <>Tiêu đề cột lưới (<code>tsg</code>), thông báo xác nhận (<code>tsm</code>)</>],
+          <>Tiêu đề cột lưới (<code>tsg</code>), thông báo xác nhận (<code>tsm</code>)</>],
         ]}
       />
 

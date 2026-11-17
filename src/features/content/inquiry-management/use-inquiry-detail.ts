@@ -10,15 +10,8 @@ export function useInquiryDetail(pstNo?: string, options?: UseInquiryDetailOptio
     queryKey: ['inquiry-detail', pstNo],
     queryFn: async () => {
       if (!pstNo) return null;
-      try {
-        const res = await getInquiry({
-          path: { pstNo },
-        });
-        return res.data?.data ?? null;
-      } catch (err) {
-        console.warn(`getInquiry for pstNo "${pstNo}" failed or offline:`, err);
-        return null;
-      }
+      const res = await getInquiry({ path: { pstNo }, throwOnError: true });
+      return res.data?.data ?? null;
     },
     enabled: Boolean(pstNo) && (options?.enabled ?? true),
     staleTime: 30000,
