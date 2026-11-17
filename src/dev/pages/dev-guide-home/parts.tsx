@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { CheckOutlined, CopyOutlined } from '@ant-design/icons';
 import type { LocaleKey } from '@/stores/locale-store';
 import { PAGE_TEXT } from './sections';
-import styles from './index.module.css';
+import styles from './index.module.scss';
 
 // 가이드 본문이 쓰는 표시 컴포넌트. 이 파일은 컴포넌트만 export 한다 —
 // 섹션 메타·머리말 같은 데이터는 sections.tsx 에 있다.

@@ -1,10 +1,10 @@
-﻿import { useState, useMemo, Fragment } from 'react';
+import { useState, useMemo, Fragment } from 'react';
 import { Select, Button, Checkbox, message } from 'antd';
 import { SaveOutlined } from '@ant-design/icons';
 import { menuConfig } from '@/config/menu-config';
 import type { MenuItem } from '@/types/menu';
 import GridToolbar from '@/components/layout/grid-toolbar';
-import styles from './index.module.css';
+import styles from './index.module.scss';
 import DevPageHeader from '@/dev/dev-page-header';
 
 // Roles definition

@@ -1,6 +1,6 @@
 import { Code, Note, DataTable } from './parts';
 import { BACKEND_TUTORIAL_URL } from './sections';
-import styles from './index.module.css';
+import styles from './index.module.scss';
 import {
   TERMINAL, SQL_ROLE, CODE_EMPTY, CODE_API, CODE_LIST, CODE_CRUD,
   CODE_PERM, CODE_LABEL, CODE_STATE,

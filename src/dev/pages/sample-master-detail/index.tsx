@@ -1,8 +1,8 @@
-﻿import { useState } from 'react';
+import { useState } from 'react';
 import { Tag, Button, Space, Empty, Input } from 'antd';
 import { SearchOutlined, PlusOutlined } from '@ant-design/icons';
 import GridToolbar from '@/components/layout/grid-toolbar';
-import styles from './index.module.css';
+import styles from './index.module.scss';
 
 interface Project {
   id: string;

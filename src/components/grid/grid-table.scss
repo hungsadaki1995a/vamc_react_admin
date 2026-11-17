@@ -1,0 +1,110 @@
+.ds-grid-table {
+  width: 100%;
+  min-height: 0;
+
+  /* ── outer wrapper: rounded + shadow ── */
+  .ag-root-wrapper {
+    border: 1px solid var(--border-color, #e0e0e0);
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    /* ── dark mode correction ── */
+    --ag-border-color: var(--border-color, #e0e0e0);
+  }
+
+  /* ── header ── */
+  .ag-header {
+    border-bottom: 2px solid var(--border-color, #e0e0e0);
+
+    &-cell-text {
+      font-weight: 600;
+      letter-spacing: 0.01em;
+      color: var(--text-secondary, #595959);
+      font-size: 12px;
+    }
+  }
+
+  /* ── rows ── */
+  .ag-row {
+    transition: background-color 0.15s ease;
+  }
+
+  /* ── pagination panel ── */
+  .ag-paging-panel {
+    border-top: 1px solid var(--border-color, #e0e0e0);
+    background: var(--content-header-bg, #fafafa);
+    font-size: 12px;
+    min-height: 40px;
+  }
+
+  .ag-paging-button {
+    cursor: pointer;
+  }
+
+  /* ── cell focus border: hide by default, show only in editable grids ── */
+  /* Hide focus outline but preserve right border (column separator) */
+  .ag-cell-focus:not(.ag-cell-range-selected) {
+    border-color: transparent !important;
+    border-right-color: var(--ag-cell-horizontal-border, var(--border-color, #e0e0e0)) !important;
+  }
+
+  &.ds-grid-editable .ag-cell-focus:not(.ag-cell-range-selected) {
+    border-color: #1677ff !important;
+  }
+
+  /* ── cell editor: antd Select fills cell exactly ── */
+  /* ag-cell-inline-editing = 편집 중인 셀 (AG Grid 35) */
+  .ag-cell-inline-editing {
+    padding: 0 !important;
+    overflow: hidden;
+
+    .ant-select {
+      width: 100%;
+      height: 100%;
+
+      .ant-select-selector {
+        height: 100% !important;
+        min-height: 0 !important;
+        border-radius: 0 !important;
+        border: none !important;
+        box-shadow: none !important;
+        padding-block: 0 !important;
+      }
+
+      .ant-select-selection-item,
+      .ant-select-selection-placeholder {
+        display: flex;
+        align-items: center;
+        line-height: 1 !important;
+      }
+    }
+  }
+
+  /* fallback: ag-cell-editor (이전 버전 호환) */
+  .ag-cell-editor .ant-select .ant-select-selector {
+    min-height: 0 !important;
+    border-radius: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+}
+
+/* ── no rows overlay ── */
+.ds-grid-no-rows {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 32px 16px;
+  color: var(--text-secondary, rgba(0, 0, 0, 0.45));
+
+  &-icon {
+    font-size: 32px;
+    line-height: 1;
+  }
+
+  &-text {
+    font-size: 14px;
+  }
+}

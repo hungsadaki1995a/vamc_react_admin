@@ -27,7 +27,7 @@ import { ApiError } from '@/lib/api/error';
 import type { LoginRequest } from '@/lib/api/types';
 import { useLocaleStore, type LocaleKey } from '@/stores/locale-store';
 import { getLocaleShortLabel } from '@/utils/locale-storage';
-import styles from './index.module.css';
+import styles from './index.module.scss';
 import vamcLogoLogin from '@/assets/vamc_logo_login-28c7ab.png';
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;

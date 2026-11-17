@@ -2,7 +2,7 @@
 @import './colors.css';
 @import './semantic-colors.css';
 @import './typography.css';
-@import './variables.css';
+@import './variables.scss';
 @import "pretendard/dist/web/variable/pretendardvariable.css";
 
 * {

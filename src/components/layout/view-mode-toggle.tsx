@@ -1,6 +1,6 @@
 import type { CSSProperties, ReactNode } from 'react';
 import { Tooltip } from 'antd';
-import './view-mode-toggle.css';
+import './view-mode-toggle.scss';
 
 export interface ViewModeToggleOption<T extends string> {
   value: T;

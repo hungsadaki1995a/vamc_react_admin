@@ -44,7 +44,7 @@ import {
 } from '@ant-design/icons';
 import { Tooltip, Dropdown } from 'antd';
 import type { MenuProps } from 'antd';
-import './rich-text-editor.css';
+import './rich-text-editor.scss';
 
 const lowlight = createLowlight(common);
 

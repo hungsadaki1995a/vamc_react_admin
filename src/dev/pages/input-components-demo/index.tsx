@@ -8,7 +8,7 @@ import ComcdSelect from '@/components/inputs/comcd-select';
 import SearchSelectField from '@/components/inputs/search-select-field';
 import type { SearchSelectValue } from '@/components/inputs/search-select-field';
 import CodeSnippet from '@/components/common/utilities/code-snippet';
-import styles from './index.module.css';
+import styles from './index.module.scss';
 import DevPageHeader from '@/dev/dev-page-header';
 
 const { TextArea, Search, Password } = Input;

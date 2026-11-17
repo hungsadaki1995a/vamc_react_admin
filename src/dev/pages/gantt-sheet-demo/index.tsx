@@ -4,7 +4,7 @@ import { ThunderboltOutlined } from '@ant-design/icons';
 import { GanttSheet } from '@/components/gantt-sheet';
 import type { GanttTask, GanttViewMode } from '@/components/gantt-sheet';
 import CodeSnippet from '@/components/common/utilities/code-snippet';
-import styles from './index.module.css';
+import styles from './index.module.scss';
 import DevPageHeader from '@/dev/dev-page-header';
 
 /* ─── Sample data (for the basic demo) ─── */

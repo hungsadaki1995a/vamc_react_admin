@@ -20,7 +20,7 @@ import {
   getDefaultFaqToDate,
 } from './use-faqs';
 import FaqDetailModal from './faq-detail-modal';
-import styles from './faq-management.module.css';
+import styles from './faq-management.module.scss';
 
 const { RangePicker } = DatePicker;
 

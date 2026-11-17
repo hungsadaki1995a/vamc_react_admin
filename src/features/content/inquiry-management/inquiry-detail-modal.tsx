@@ -6,7 +6,7 @@ import { answerInquiry } from '@/api/contents/inquiry-api';
 import { updateMockInquiryAnswer } from './inquiry.mock';
 import type { InquiryItem } from './inquiry.types';
 import { useInquiryDetail } from './use-inquiry-detail';
-import styles from './inquiry-detail-modal.module.css';
+import styles from './inquiry-detail-modal.module.scss';
 
 interface InquiryDetailModalProps {
   visible: boolean;

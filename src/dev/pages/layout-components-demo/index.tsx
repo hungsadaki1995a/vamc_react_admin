@@ -13,7 +13,7 @@ import ActionButton from '@/components/common/actions/action-button';
 import ActionButtonGroup from '@/components/common/actions/action-button-group';
 import AppModal from '@/components/common/modals/app-modal';
 import ModalInfoFields from '@/components/common/modals/modal-info-fields';
-import styles from './index.module.css';
+import styles from './index.module.scss';
 import DevPageHeader from '@/dev/dev-page-header';
 
 const actionButtonCode = `import ActionButton from '@/components/common/actions/action-button';
@@ -260,7 +260,7 @@ export default function LayoutComponentsDemo() {
                     <tbody>
                       <tr><td><code>title</code></td><td>ReactNode</td><td>Title on the left of the header</td></tr>
                       <tr><td><code>actions</code></td><td>ReactNode</td><td>Button group on the right of the header (left of the collapse button)</td></tr>
-                      <tr><td><code>editMode</code></td><td>boolean</td><td>Edit mode — the bottom border turns blue</td></tr>
+                      <tr><td><code>editMode</code></td><td>boolean</td><td>Edit mode ï¿½ the bottom border turns blue</td></tr>
                       <tr><td><code>collapsed</code></td><td>boolean</td><td>Collapsed state (controlled)</td></tr>
                       <tr><td><code>onCollapsedChange</code></td><td>(v: boolean) =&gt; void</td><td>Collapse toggle callback</td></tr>
                       <tr><td><code>children</code></td><td>ReactNode</td><td>Form content</td></tr>
@@ -319,8 +319,8 @@ export default function LayoutComponentsDemo() {
                   </FormPanel>
                   <div style={{ marginTop: 8, fontSize: 12, color: 'var(--text-secondary)' }}>
                     {isFormEditMode
-                      ? 'Edit mode — the bottom border is blue'
-                      : 'New mode — the border keeps its default color'}
+                      ? 'Edit mode ï¿½ the bottom border is blue'
+                      : 'New mode ï¿½ the border keeps its default color'}
                   </div>
                 </div>
                 <CodeSnippet code={formPanelCode} />
@@ -473,7 +473,7 @@ export default function LayoutComponentsDemo() {
                 <div className={styles.demoDesc}>
                   <h3>ActionButton / ActionButtonGroup</h3>
                   <p>
-                    Standard action buttons (search, save, delete, Excel, …) plus preset-ordered groups.
+                    Standard action buttons (search, save, delete, Excel, ï¿½) plus preset-ordered groups.
                     When <code>canWrite</code> is false, write buttons are disabled automatically.
                   </p>
                 </div>

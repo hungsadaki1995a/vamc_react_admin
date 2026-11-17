@@ -1,0 +1,47 @@
+.ds-form-panel {
+  flex-shrink: 0;
+  border-bottom: 2px solid var(--border-color);
+  background: var(--content-header-bg);
+  transition: border-color 0.2s;
+
+  /* Edit mode — bottom border highlights in primary color */
+  &[data-edit] {
+    border-bottom-color: var(--primary-color);
+  }
+
+  /* ── Header ── */
+  &-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 5px 12px;
+    background: var(--tab-bar-bg);
+    border-bottom: 1px solid var(--border-color);
+    min-height: 36px;
+    gap: 8px;
+
+    /* Vertical dividers inside header */
+    .ant-divider-vertical {
+      height: 16px;
+      border-color: var(--border-color);
+      margin: 0 2px;
+    }
+  }
+
+  &-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-primary);
+    flex-shrink: 0;
+  }
+
+  /* ── Body ── */
+  &-body {
+    padding: 12px 16px 10px;
+
+    /* Form label font size inside FormPanel */
+    .ant-form-item-label > label {
+      font-size: 12px;
+    }
+  }
+}

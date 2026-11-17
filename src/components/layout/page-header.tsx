@@ -6,7 +6,7 @@ import { useScreenLabel } from '@/hooks/use-screen-label';
 import { useComponentLabel } from '@/hooks/use-component-label';
 import { useAllMenus } from '@/hooks/use-all-menus';
 import { findMenuByKey } from '@/utils/menu-utils';
-import './page-header.css';
+import './page-header.scss';
 
 interface PageHeaderProps {
   /** Screen code displayed in brackets. Auto-derived from tab.sceId if omitted. */

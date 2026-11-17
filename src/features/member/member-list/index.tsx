@@ -33,7 +33,7 @@ import { useMembers } from './use-members';
 import MemberDetailModal from './member-detail-modal';
 import ApprovalStatusModal from './approval-status-modal';
 import NewMemberModal from './new-member-modal';
-import styles from './member-list.module.css';
+import styles from './member-list.module.scss';
 
 const { RangePicker } = DatePicker;
 

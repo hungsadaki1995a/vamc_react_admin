@@ -9,7 +9,7 @@ import {
 } from '@/api/contents/faq-api';
 import type { FaqItem } from './faq.types';
 import { useFaqDetail } from './use-faq-detail';
-import styles from './faq-detail-modal.module.css';
+import styles from './faq-detail-modal.module.scss';
 
 interface FaqDetailModalProps {
   visible: boolean;

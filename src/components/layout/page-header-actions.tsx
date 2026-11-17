@@ -3,7 +3,7 @@ import { Badge } from 'antd';
 import { DownOutlined, UpOutlined } from '@ant-design/icons';
 import ActionButton from '@/components/common/actions/action-button';
 import ActionButtonGroup from '@/components/common/actions/action-button-group';
-import './page-header-actions.css';
+import './page-header-actions.scss';
 
 interface PageHeaderActionsProps {
   className?: string;

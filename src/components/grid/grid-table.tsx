@@ -47,7 +47,7 @@ import { useLocaleStore } from '@/stores/locale-store';
 import { useComponentLabel } from '@/hooks/use-component-label';
 import { getAgGridLocale } from './ag-grid-locale';
 import { ComcdSelectCellEditor, ComcdSelectCellRenderer } from './comcd-select-cell';
-import './grid-table.css';
+import './grid-table.scss';
 
 export type GridCellAlign = 'left' | 'center' | 'right';
 
