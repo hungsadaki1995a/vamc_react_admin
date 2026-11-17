@@ -1,6 +1,5 @@
 import { useCallback } from 'react';
 import Editor from '@monaco-editor/react';
-import { useThemeStore } from '@/stores/theme-store';
 
 interface CodeEditorProps {
   value?: string;
@@ -23,8 +22,6 @@ export default function CodeEditor({
   lineNumbers = true,
   className,
 }: CodeEditorProps) {
-  const themeMode = useThemeStore((s) => s.mode);
-
   const handleChange = useCallback(
     (val: string | undefined) => {
       onChange?.(val ?? '');
@@ -39,7 +36,7 @@ export default function CodeEditor({
         language={language}
         value={value}
         onChange={handleChange}
-        theme={themeMode === 'dark' ? 'vs-dark' : 'vs'}
+        theme="vs"
         options={{
           readOnly,
           minimap: { enabled: minimap },

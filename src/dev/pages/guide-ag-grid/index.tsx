@@ -4,8 +4,7 @@ import { AgGridReact } from 'ag-grid-react';
 import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
 import type { ColDef, ColGroupDef, CellClassParams, CellStyle } from 'ag-grid-community';
 import CodeSnippet from '@/components/common/code-snippet';
-import { lightTheme, darkTheme } from '@/components/grid/grid-table';
-import { useThemeStore } from '@/stores/theme-store';
+import { lightTheme } from '@/components/grid/grid-table';
 import '@/components/grid/grid-table.css';
 import DevPageHeader from '@/dev/dev-page-header';
 
@@ -976,8 +975,6 @@ interface SampleEmployee {
 }
 
 export default function GuideAgGrid() {
-  const mode = useThemeStore((s) => s.mode);
-
   const [sampleData] = useState<SampleEmployee[]>([
     { id: 1, name: 'Michael Chen', department: 'Engineering', position: 'Team lead', hireDate: '2020-01-15', salary: 6500000 },
     { id: 2, name: 'Emily Park', department: 'Planning', position: 'Manager', hireDate: '2021-03-20', salary: 5500000 },
@@ -1219,7 +1216,7 @@ export default function GuideAgGrid() {
                 rowData={sampleData}
                 columnDefs={sampleColDefs}
                 defaultColDef={defaultColDef}
-                theme={mode === 'dark' ? darkTheme : lightTheme}
+                theme={lightTheme}
               />
             </div>
           </Card>
@@ -1362,7 +1359,7 @@ export default function GuideAgGrid() {
                 rowData={groupDemoData}
                 columnDefs={headerGroupColDefs}
                 defaultColDef={defaultColDef}
-                theme={mode === 'dark' ? darkTheme : lightTheme}
+                theme={lightTheme}
               />
             </div>
           </Card>
@@ -1406,7 +1403,7 @@ export default function GuideAgGrid() {
                 rowData={spanDemoData}
                 columnDefs={spanColDefs}
                 defaultColDef={{ resizable: true }}
-                theme={mode === 'dark' ? darkTheme : lightTheme}
+                theme={lightTheme}
               />
             </div>
           </Card>
@@ -1426,7 +1423,7 @@ export default function GuideAgGrid() {
                 columnDefs={rowSpanColDefs}
                 defaultColDef={{ resizable: true, flex: 1 }}
                 enableCellSpan={true}
-                theme={mode === 'dark' ? darkTheme : lightTheme}
+                theme={lightTheme}
               />
             </div>
           </Card>
@@ -1464,7 +1461,7 @@ export default function GuideAgGrid() {
                 columnDefs={sampleColDefs}
                 defaultColDef={footerDefaultColDef}
                 pinnedBottomRowData={pinnedBottomData}
-                theme={mode === 'dark' ? darkTheme : lightTheme}
+                theme={lightTheme}
               />
             </div>
           </Card>
@@ -1490,7 +1487,7 @@ export default function GuideAgGrid() {
                 columnDefs={groupColDefs}
                 defaultColDef={{ resizable: true }}
                 pinnedBottomRowData={groupTotalRow}
-                theme={mode === 'dark' ? darkTheme : lightTheme}
+                theme={lightTheme}
               />
             </div>
           </Card>
@@ -1528,7 +1525,7 @@ export default function GuideAgGrid() {
                 rowData={sampleData}
                 columnDefs={pinnedColDefs}
                 defaultColDef={{ resizable: true, filter: true, sortable: true }}
-                theme={mode === 'dark' ? darkTheme : lightTheme}
+                theme={lightTheme}
               />
             </div>
           </Card>

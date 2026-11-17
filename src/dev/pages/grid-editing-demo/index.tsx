@@ -5,7 +5,7 @@ import { PlusOutlined, DeleteOutlined } from '@ant-design/icons';
 import { AgGridReact } from 'ag-grid-react';
 import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
 import type { ColDef, ColGroupDef, CellValueChangedEvent, CellClassParams, CellStyle } from 'ag-grid-community';
-import GridTable, { lightTheme, darkTheme } from '@/components/grid/grid-table';
+import GridTable, { lightTheme } from '@/components/grid/grid-table';
 import GridPanel from '@/components/grid/grid-panel';
 import GridToolbar from '@/components/layout/grid-toolbar';
 import DateCellEditor, { DateCellRenderer } from '@/components/grid/cell-editors/date-cell-editor';
@@ -17,7 +17,6 @@ import { ComcdSelectCellRenderer, ComcdSelectCellEditor } from '@/components/gri
 import { SearchSelectCellRenderer, SearchSelectCellEditor, searchSelectValueFormatter } from '@/components/grid/search-select-cell';
 import type { SearchSelectOption } from '@/components/inputs/search-select-field';
 import CodeSnippet from '@/components/common/code-snippet';
-import { useThemeStore } from '@/stores/theme-store';
 import { useComcdStore } from '@/stores/comcd-store';
 import DevPageHeader from '@/dev/dev-page-header';
 
@@ -1585,7 +1584,6 @@ function ClipboardDemo() {
 // ── Main Component ─────────────────────────────────────────────────────────────
 
 export default function GridEditingDemo() {
-  const mode = useThemeStore((s) => s.mode);
   const [tasks, setTasks] = useState(editableData);
   const [changeLog, setChangeLog] = useState<string[]>([]);
   const [selectedRows, setSelectedRows] = useState<Employee[]>([]);
@@ -2297,7 +2295,7 @@ function MyPage() {
                       rowData={groupDemoData}
                       columnDefs={headerGroupColDefs as ColDef[]}
                       defaultColDef={{ sortable: true, filter: true, resizable: true }}
-                      theme={mode === 'dark' ? darkTheme : lightTheme}
+                      theme={lightTheme}
                     />
                   </div>
                 </Card>

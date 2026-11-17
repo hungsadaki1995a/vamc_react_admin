@@ -4,8 +4,6 @@ import { Dropdown, Input, Popover, Empty, Avatar } from 'antd';
 import type { MenuProps, InputRef } from 'antd';
 import {
   HomeOutlined,
-  SunOutlined,
-  MoonOutlined,
   RightOutlined,
   BellOutlined,
   SearchOutlined,
@@ -23,7 +21,6 @@ import {
 import { useAllMenus } from '@/hooks/use-all-menus';
 import { useComponentLabel } from '@/hooks/use-component-label';
 import { useTabStore } from '@/stores/tab-store';
-import { useThemeStore } from '@/stores/theme-store';
 import { useSettingsStore } from '@/stores/settings-store';
 import { useMenuStore } from '@/stores/menu-store';
 import { useAuthStore } from '@/stores/auth-store';
@@ -97,7 +94,6 @@ const { tabs, activeTabKey, openTab, setActiveTab } = useTabStore(
       setActiveTab: s.setActiveTab,
     }))
   );
-  const { mode, toggleMode } = useThemeStore();
   const toggleFlyout = useMenuStore((s) => s.toggleFlyout);
   const homeMenuKey = useSettingsStore((s) => s.homeMenuKey);
   const { tvt, tvb, tvh } = useComponentLabel();
@@ -453,21 +449,6 @@ const { tabs, activeTabKey, openTab, setActiveTab } = useTabStore(
             {unreadCount > 0 && <span className="icon-btn-badge" />}
           </div>
         </Popover>
-
-        <span className="header-divider" />
-
-        {/* Theme toggle */}
-        <div
-          className="header-icon-btn"
-          onClick={toggleMode}
-          title={mode === 'dark' ? tvt('lightMode', '라이트 모드') : tvt('darkMode', '다크 모드')}
-        >
-          {mode === 'dark' ? (
-            <SunOutlined style={{ fontSize: 13 }} />
-          ) : (
-            <MoonOutlined style={{ fontSize: 13 }} />
-          )}
-        </div>
 
         <span className="header-divider" />
 

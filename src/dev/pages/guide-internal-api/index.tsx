@@ -5,7 +5,6 @@ import { useNotify } from '@/hooks/use-notify';
 import { useAuthStore } from '@/stores/auth-store';
 import { useTabStore } from '@/stores/tab-store';
 import { useProjectStore } from '@/stores/project-store';
-import { useThemeStore } from '@/stores/theme-store';
 import { useLocaleStore } from '@/stores/locale-store';
 import DevPageHeader from '@/dev/dev-page-header';
 
@@ -23,7 +22,6 @@ const storeRows: StoreRow[] = [
   { key: '2', name: 'tabStore',      persist: '✅',   desc: 'Open tabs and the active tab (localStorage: vamc-tabs)' },
   { key: '3', name: 'menuStore',     persist: '❌',   desc: 'Rail / flyout state and the server menu tree' },
   { key: '4', name: 'projectStore',  persist: '✅',   desc: 'Active project and the list of my projects' },
-  { key: '5', name: 'themeStore',    persist: '✅',   desc: 'Light / dark theme (localStorage: vamc-theme)' },
   { key: '6', name: 'localeStore',   persist: '✅',   desc: 'Language setting ko/en/vn (localStorage: vamc-locale)' },
   { key: '7', name: 'labelStore',    persist: '❌',   desc: 'i18n label cache (reloaded on every mount)' },
   { key: '8', name: 'comcdStore',    persist: '❌',   desc: 'Common code cache (reloaded on every mount)' },
@@ -86,7 +84,6 @@ export default function GuideInternalApi() {
   const { user, isAuthenticated } = useAuthStore();
   const { tabs, activeTabKey } = useTabStore();
   const { activeProject } = useProjectStore();
-  const { mode } = useThemeStore();
   const { locale } = useLocaleStore();
 
   return (
@@ -313,7 +310,6 @@ dialog.confirm({
                     <Text>Project: <Tag color="blue">{activeProject?.name ?? 'none'}</Tag></Text>
                     <Text>Open tabs: <Tag>{tabs.length}</Tag></Text>
                     <Text>Active tab: <Tag>{activeTabKey ?? '-'}</Tag></Text>
-                    <Text>Theme: <Tag>{mode}</Tag></Text>
                     <Text>Language: <Tag>{locale}</Tag></Text>
                   </Space>
                 </Card>

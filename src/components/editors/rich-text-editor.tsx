@@ -44,7 +44,6 @@ import {
 } from '@ant-design/icons';
 import { Tooltip, Dropdown } from 'antd';
 import type { MenuProps } from 'antd';
-import { useThemeStore } from '@/stores/theme-store';
 import './rich-text-editor.css';
 
 const lowlight = createLowlight(common);
@@ -114,7 +113,6 @@ export default function RichTextEditor({
   className,
   onImageUpload,
 }: RichTextEditorProps) {
-  const themeMode = useThemeStore((s) => s.mode);
   const isUpdatingRef = useRef(false);
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -374,7 +372,6 @@ export default function RichTextEditor({
 
   const wrapperClass = [
     'ds-rich-editor',
-    themeMode === 'dark' ? 'ds-rich-editor-dark' : '',
     readOnly ? 'ds-rich-editor-readonly' : '',
     className ?? '',
   ].filter(Boolean).join(' ');

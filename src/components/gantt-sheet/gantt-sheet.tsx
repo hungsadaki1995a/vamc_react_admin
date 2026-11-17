@@ -6,7 +6,6 @@ import React, {
   useState,
 } from 'react';
 import { useVirtualizer } from '@tanstack/react-virtual';
-import { useThemeStore } from '@/stores/theme-store';
 import { calculateCriticalPath } from './critical-path';
 import { useGanttDateEngine } from './use-gantt-date-engine';
 import { useGanttDrag } from './use-gantt-drag';
@@ -88,8 +87,6 @@ export default function GanttSheet({
   rowBuffer = 5,
   columnWidth: columnWidthOverride,
 }: GanttSheetProps) {
-  const themeMode = useThemeStore((s) => s.mode);
-
   // ── 타임라인을 헤더 div + 바디 div 로 분리
   // 헤더 div: overflow: hidden (수평 스크롤 동기화 수신만)
   // 바디 div: overflow: auto (실제 스크롤 컨테이너)
@@ -286,7 +283,7 @@ export default function GanttSheet({
     return { ...task, start: ds.previewStart.toISOString().slice(0, 10), end: ds.previewEnd.toISOString().slice(0, 10), progress: ds.previewProgress };
   };
 
-  const rootClass = ['ds-gantt-sheet', themeMode === 'dark' ? 'ds-gantt-sheet-dark' : '', className ?? ''].filter(Boolean).join(' ');
+  const rootClass = ['ds-gantt-sheet', className ?? ''].filter(Boolean).join(' ');
 
   if (tasks.length === 0) {
     return (

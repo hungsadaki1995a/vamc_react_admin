@@ -55,10 +55,6 @@
   z-index: 2;
 }
 
-:global([data-theme="dark"]) .permMatrix thead th {
-  background: #1a1f2e;
-}
-
 /* Column widths */
 .permColId {
   width: 140px;
@@ -83,10 +79,6 @@
 /* Parent row highlight */
 .permRowParent td {
   background: rgba(22, 119, 255, 0.05);
-}
-
-:global([data-theme="dark"]) .permRowParent td {
-  background: rgba(22, 119, 255, 0.1);
 }
 
 /* Row hover */

@@ -289,21 +289,3 @@
   border-color: transparent;
   box-shadow: none;
 }
-
-/* ===== Dark Theme ===== */
-.ds-rich-editor-dark .tiptap code {
-  background: rgba(255, 255, 255, 0.1);
-}
-
-.ds-rich-editor-dark .tiptap pre {
-  background: #0d0d14;
-}
-
-.ds-rich-editor-dark .tiptap mark {
-  background-color: rgba(255, 243, 176, 0.25);
-  color: inherit;
-}
-
-.ds-rich-editor-dark .tiptap blockquote {
-  background: rgba(22, 119, 255, 0.08);
-}

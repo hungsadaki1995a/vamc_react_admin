@@ -1,5 +1,5 @@
 /* eslint-disable react-refresh/only-export-components */
-// lightTheme / darkTheme are exported alongside GridTable (intentional co-location)
+// lightTheme is exported alongside GridTable (intentional co-location)
 import { useMemo, useCallback, useRef, useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import dayjs from 'dayjs';
@@ -43,7 +43,6 @@ import type {
 import type { AgGridReactProps } from 'ag-grid-react';
 import { App } from 'antd';
 import DOMPurify from 'dompurify';
-import { useThemeStore } from '@/stores/theme-store';
 import { useLocaleStore } from '@/stores/locale-store';
 import { useComponentLabel } from '@/hooks/use-component-label';
 import { getAgGridLocale } from './ag-grid-locale';
@@ -86,28 +85,6 @@ export const lightTheme = themeQuartz.withParams({
   wrapperBorderRadius: 6,
   headerColumnBorder: true,
   headerColumnResizeHandleColor: '#bfbfbf',
-  cellHorizontalPaddingScale: 0.8,
-  rowVerticalPaddingScale: 0.9,
-});
-
-export const darkTheme = themeQuartz.withParams({
-  backgroundColor: '#141414',
-  headerBackgroundColor: '#1f1f1f',
-  borderColor: '#363636',
-  borderRadius: 6,
-  foregroundColor: 'rgba(255, 255, 255, 0.85)',
-  fontFamily: 'inherit',
-  fontSize: 13,
-  headerFontSize: 12,
-  headerFontWeight: 600,
-  rowHoverColor: 'rgba(22, 119, 255, 0.10)',
-  selectedRowBackgroundColor: 'rgba(22, 119, 255, 0.15)',
-  accentColor: '#1677ff',
-  oddRowBackgroundColor: '#1a1a1a',
-  columnBorder: true,
-  wrapperBorderRadius: 6,
-  headerColumnBorder: true,
-  headerColumnResizeHandleColor: '#555',
   cellHorizontalPaddingScale: 0.8,
   rowVerticalPaddingScale: 0.9,
 });
@@ -371,13 +348,7 @@ export default function GridTable<TData = any>({
   const containerRef = useRef<HTMLDivElement>(null);
   const rowDataRef = useRef(rowData);
   rowDataRef.current = rowData;
-  const themeMode = useThemeStore((s) => s.mode);
   const { message } = App.useApp();
-
-  const theme = useMemo(
-    () => (themeMode === 'dark' ? darkTheme : lightTheme),
-    [themeMode],
-  );
 
   // 그리드 내부 문구(필터·컬럼 메뉴·페이지네이션 등)는 로케일 상수에서 온다.
   // 종전에는 한국어 상수가 고정돼 있어 언어를 바꿔도 이 부분만 한국어로 남았다.
@@ -692,7 +663,7 @@ export default function GridTable<TData = any>({
         rowData={rowData}
         columnDefs={processedColumnDefs}
         defaultColDef={mergedDefaultColDef}
-        theme={theme}
+        theme={lightTheme}
         localeText={localeText}
         getRowId={rowKey
           ? (params) => typeof rowKey === 'function'

@@ -6,7 +6,6 @@ import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
 import 'dayjs/locale/vi';
 import 'dayjs/locale/en';
-import { useThemeStore } from '@/stores/theme-store';
 import { useLocaleStore } from '@/stores/locale-store';
 import { useAuthStore } from '@/stores/auth-store';
 import { useComcdStore } from '@/stores/comcd-store';
@@ -15,15 +14,10 @@ import { useLabelStore } from '@/stores/label-store';
 import { toIsoLangTag } from '@/utils/locale-storage';
 import i18n from '@/lib/i18n';
 
-/** Syncs theme, Dayjs/HTML locale, and locale-dependent stores (common codes, menus, labels). */
+/** Syncs Dayjs/HTML locale and locale-dependent stores (common codes, menus, labels). */
 export function useAppSync() {
-  const mode = useThemeStore((s) => s.mode);
   const locale = useLocaleStore((s) => s.locale);
   const antLocale = locale === 'en' ? enUS : locale === 'vn' ? viVN : koKR;
-
-  useEffect(() => {
-    document.documentElement.setAttribute('data-theme', mode);
-  }, [mode]);
 
   useEffect(() => {
     const isoTag = toIsoLangTag(locale);
@@ -45,5 +39,5 @@ export function useAppSync() {
     useLabelStore.getState().loadLabels();
   }, [locale]);
 
-  return { mode, antLocale };
+  return { antLocale };
 }

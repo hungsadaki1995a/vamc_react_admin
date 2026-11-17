@@ -97,17 +97,3 @@
   min-width: 50px;
   transition: border-color 0.2s;
 }
-
-/* Dark theme overrides */
-[data-theme='dark'] .ssf-tags-area {
-  border-color: #434343;
-  background: #1f1f1f;
-}
-
-[data-theme='dark'] .ssf-tags-area.ssf-disabled {
-  background: #2a2a2a;
-}
-
-[data-theme='dark'] .ssf-code-input {
-  border-color: #434343 !important;
-}

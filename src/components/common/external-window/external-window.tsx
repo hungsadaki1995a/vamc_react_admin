@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
-import { App as AntApp, ConfigProvider, theme as antTheme } from 'antd';
+import { App as AntApp, ConfigProvider } from 'antd';
 import { apiNotify } from '@/lib/api/api-notify';
 import { getLocaleText } from '@/lib/i18n/locale-text';
 import koKR from 'antd/locale/ko_KR';
@@ -8,7 +8,6 @@ import enUS from 'antd/locale/en_US';
 import viVN from 'antd/locale/vi_VN';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { queryClient } from '@/lib/api/query-client';
-import { useThemeStore } from '@/stores/theme-store';
 import { useLocaleStore } from '@/stores/locale-store';
 import { PopupDocumentContext } from '@/contexts/popup-document-context';
 
@@ -44,7 +43,6 @@ export function ExternalWindow({
     onCloseRef.current = onClose;
   });
 
-  const mode = useThemeStore((state) => state.mode);
   const locale = useLocaleStore((state) => state.locale);
   const resolvedTitle = title ?? getLocaleText(locale, {
     ko: '팝업',
@@ -96,10 +94,6 @@ export function ExternalWindow({
     });
     observer.observe(document.head, { childList: true });
 
-    popup.document.documentElement.setAttribute(
-      'data-theme',
-      document.documentElement.getAttribute('data-theme') ?? 'light',
-    );
     popup.document.title = resolvedTitle;
 
     const mainFavicon = document.querySelector<HTMLLinkElement>('link[rel~="icon"]');
@@ -136,12 +130,6 @@ export function ExternalWindow({
     };
   }, [height, locale, open, resolvedTitle, width]);
 
-  useEffect(() => {
-    const popup = winRef.current;
-    if (!popup || popup.closed) return;
-    popup.document.documentElement.setAttribute('data-theme', mode);
-  }, [mode]);
-
   if (!container) return null;
 
   const antLocale = locale === 'en' ? enUS : locale === 'vn' ? viVN : koKR;
@@ -153,7 +141,6 @@ export function ExternalWindow({
           locale={antLocale}
           getPopupContainer={() => container}
           theme={{
-            algorithm: mode === 'dark' ? antTheme.darkAlgorithm : antTheme.defaultAlgorithm,
             token: { colorPrimary: '#1677ff', borderRadius: 6 },
           }}
         >

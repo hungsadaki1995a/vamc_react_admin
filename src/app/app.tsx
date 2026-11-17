@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { App as AntApp, ConfigProvider, theme as antTheme } from 'antd';
+import { App as AntApp, ConfigProvider } from 'antd';
 import { apiNotify } from '@/lib/api/api-notify';
 import { useRestoreSession } from '@/hooks/use-restore-session';
 import { useAppSync } from '@/hooks/use-app-sync';
@@ -18,13 +18,12 @@ function ApiNotifyBridge() {
 
 export default function App() {
   useRestoreSession();
-  const { mode, antLocale } = useAppSync();
+  const { antLocale } = useAppSync();
 
   return (
     <ConfigProvider
       locale={antLocale}
       theme={{
-        algorithm: mode === 'dark' ? antTheme.darkAlgorithm : antTheme.defaultAlgorithm,
         token: {
           colorPrimary: '#1677ff',
           borderRadius: 6,

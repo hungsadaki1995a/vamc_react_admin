@@ -44,10 +44,6 @@
   background-color: rgba(0, 0, 0, 0.04);
 }
 
-:global([data-theme='dark']) .tocItem:hover {
-  background-color: rgba(255, 255, 255, 0.06);
-}
-
 .tocItemActive {
   border-left-color: var(--color-primary, #1677ff);
   background-color: rgba(22, 119, 255, 0.08);
