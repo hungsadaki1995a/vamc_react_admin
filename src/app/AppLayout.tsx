@@ -1,4 +1,5 @@
 import { LeftOutlined, RightOutlined } from '@ant-design/icons';
+import Header from '@/components/layout/Header';
 import IconRail from '@/components/layout/IconRail';
 import FlyoutPanel from '@/components/layout/FlyoutPanel';
 import ContentHeader from '@/components/layout/ContentHeader';
@@ -25,21 +26,24 @@ export default function AppLayout() {
 
   return (
     <div className="app-layout">
-      <div className="sidebar-area">
-        <IconRail />
-        <FlyoutPanel />
-        <div
-          className={`sidebar-toggle-btn ${flyoutVisible ? 'is-open' : ''}`}
-          onClick={toggleSidebar}
-          title={toggleTitle}
-        >
-          {flyoutVisible ? <LeftOutlined /> : <RightOutlined />}
+      <Header />
+      <div className="app-body">
+        <div className="sidebar-area">
+          <IconRail />
+          <FlyoutPanel />
+          <div
+            className={`sidebar-toggle-btn ${flyoutVisible ? 'is-open' : ''}`}
+            onClick={toggleSidebar}
+            title={toggleTitle}
+          >
+            {flyoutVisible ? <LeftOutlined /> : <RightOutlined />}
+          </div>
         </div>
-      </div>
-      <div className="main-area">
-        <TabBar />
-        <TabContent />
-        <ContentHeader />
+        <div className="main-area">
+          <TabBar />
+          <TabContent />
+          <ContentHeader />
+        </div>
       </div>
     </div>
   );

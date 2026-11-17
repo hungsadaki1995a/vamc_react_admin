@@ -1,136 +1,146 @@
 import {
-  MenuFoldOutlined,
-  MenuUnfoldOutlined,
-  BellOutlined,
-  UserOutlined,
-  SearchOutlined,
-  SunOutlined,
-  MoonOutlined,
   LogoutOutlined,
-  SettingOutlined,
+  UserOutlined,
   GlobalOutlined,
-  DownOutlined,
   CheckOutlined,
 } from '@ant-design/icons';
-import { Input, Badge, Avatar, Button, Space, Dropdown, Switch } from 'antd';
+import { Dropdown } from 'antd';
 import type { MenuProps } from 'antd';
-import { useState } from 'react';
-import { useThemeStore } from '@/stores/themeStore';
+import vamcLogo from '@/assets/vamc_logo_login-28c7ab.png';
+import {
+  flagUkRound,
+  flagVnRound,
+  chevronDown,
+  userCircleFill,
+} from '@/assets/images';
+import { useAuthStore } from '@/stores/authStore';
 import { useLocaleStore, type LocaleKey } from '@/stores/localeStore';
+import { useLogout } from '@/hooks/useLogout';
 import { getLocaleShortLabel } from '@/utils/localeStorage';
 
+const FLAG_ICON_MAP: Partial<Record<LocaleKey, string>> = {
+  en: flagUkRound,
+  vn: flagVnRound,
+};
+
 export default function Header() {
-  const [collapsed, setCollapsed] = useState(false);
-  const toggleCollapsed = () => setCollapsed((v) => !v);
-  const { mode, toggleMode } = useThemeStore();
+  const user = useAuthStore((s) => s.user);
   const { locale, setLocale } = useLocaleStore();
+  const confirmLogout = useLogout();
 
   const languageMenuItems: MenuProps['items'] = [
     {
       key: 'en',
       label: (
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, minWidth: 105 }}>
+        <div className="flex items-center justify-between gap-4 min-w-[105px]">
           <span>English</span>
-          <span style={{ fontSize: 11, color: 'var(--text-tertiary, #999)' }}>Eng</span>
+          <span className="typo-b2-regular text-text-tertiary">Eng</span>
         </div>
       ),
-      icon: locale === 'en' ? <CheckOutlined style={{ color: '#1677ff' }} /> : <span style={{ width: 14 }} />,
-    },
-    {
-      key: 'ko',
-      label: (
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, minWidth: 105 }}>
-          <span>한국어</span>
-          <span style={{ fontSize: 11, color: 'var(--text-tertiary, #999)' }}>Kor</span>
-        </div>
-      ),
-      icon: locale === 'ko' ? <CheckOutlined style={{ color: '#1677ff' }} /> : <span style={{ width: 14 }} />,
+      icon: locale === 'en' ? <CheckOutlined style={{ color: '#1677ff' }} /> : <span className="inline-block w-[14px]" />,
     },
     {
       key: 'vn',
       label: (
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, minWidth: 105 }}>
+        <div className="flex items-center justify-between gap-4 min-w-[105px]">
           <span>Tiếng Việt</span>
-          <span style={{ fontSize: 11, color: 'var(--text-tertiary, #999)' }}>Vie</span>
+          <span className="typo-b2-regular text-text-tertiary">Vie</span>
         </div>
       ),
-      icon: locale === 'vn' ? <CheckOutlined style={{ color: '#1677ff' }} /> : <span style={{ width: 14 }} />,
+      icon: locale === 'vn' ? <CheckOutlined style={{ color: '#1677ff' }} /> : <span className="inline-block w-[14px]" />,
+    },
+    {
+      key: 'ko',
+      label: (
+        <div className="flex items-center justify-between gap-4 min-w-[105px]">
+          <span>한국어</span>
+          <span className="typo-b2-regular text-text-tertiary">Kor</span>
+        </div>
+      ),
+      icon: locale === 'ko' ? <CheckOutlined style={{ color: '#1677ff' }} /> : <span className="inline-block w-[14px]" />,
     },
   ];
 
   const profileItems: MenuProps['items'] = [
-    { key: 'profile', icon: <UserOutlined />, label: '프로필' },
-    { key: 'settings', icon: <SettingOutlined />, label: '설정' },
-    { type: 'divider' },
-    { key: 'logout', icon: <LogoutOutlined />, label: '로그아웃', danger: true },
+    {
+      key: 'logout',
+      icon: <LogoutOutlined />,
+      label: locale === 'ko' ? '로그아웃' : locale === 'vn' ? 'Đăng xuất' : 'Sign Out',
+      danger: true,
+      onClick: confirmLogout,
+    },
   ];
 
+  const flagSrc = FLAG_ICON_MAP[locale];
+
   return (
-    <div className="app-header">
-      <div className="header-left">
-        <Button
-          type="text"
-          icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-          onClick={toggleCollapsed}
+    <header className="app-header">
+      <div className="flex items-center gap-4">
+        <img
+          src={vamcLogo}
+          alt="VAMC"
+          className="w-[42px] h-3 object-contain shrink-0"
         />
-        <span className="logo">VAMC NPL ADMIN</span>
+        <span className="typo-h4-semibold text-text-primary whitespace-nowrap">
+          VAMC NPL Admin System
+        </span>
       </div>
-      <div className="header-right">
-        <Input
-          placeholder="검색..."
-          prefix={<SearchOutlined />}
-          style={{ width: 200 }}
-          size="small"
-        />
-        <Space size={12} align="center">
-          <Switch
-            checkedChildren={<MoonOutlined />}
-            unCheckedChildren={<SunOutlined />}
-            checked={mode === 'dark'}
-            onChange={toggleMode}
-            size="small"
-          />
-          <Badge count={5} size="small">
-            <BellOutlined style={{ fontSize: 18, cursor: 'pointer' }} />
-          </Badge>
 
-          {/* Language selector — as in header mockup: [Globe] Kor ⌵ */}
-          <Dropdown
-            menu={{
-              items: languageMenuItems,
-              selectedKeys: [locale],
-              onClick: ({ key }) => setLocale(key as LocaleKey),
-            }}
-            trigger={['click']}
-            placement="bottomRight"
+      <div className="flex items-center gap-4 h-7 shrink-0">
+        <Dropdown
+          menu={{
+            items: languageMenuItems,
+            selectedKeys: [locale],
+            onClick: ({ key }) => setLocale(key as LocaleKey),
+          }}
+          trigger={['click']}
+          placement="bottomRight"
+        >
+          <button
+            type="button"
+            className="flex items-center gap-2 bg-transparent border-0 p-0 cursor-pointer"
           >
-            <div
-              className="header-lang-btn"
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: 5,
-                cursor: 'pointer',
-                padding: '2px 6px',
-                borderRadius: 4,
-                fontSize: 12,
-                color: 'var(--text-secondary)',
-              }}
-            >
-              <GlobalOutlined style={{ fontSize: 14 }} />
-              <span style={{ fontWeight: 500 }}>{getLocaleShortLabel(locale)}</span>
-              <DownOutlined style={{ fontSize: 9, opacity: 0.65 }} />
-            </div>
-          </Dropdown>
+            {flagSrc ? (
+              <img
+                src={flagSrc}
+                alt={getLocaleShortLabel(locale)}
+                className="w-6 h-6 rounded-full object-cover shrink-0"
+              />
+            ) : (
+              <span className="w-6 h-6 rounded-full inline-flex items-center justify-center bg-bg-secondary text-text-tertiary shrink-0">
+                <GlobalOutlined className="text-sm" />
+              </span>
+            )}
+            <span className="flex items-center gap-1">
+              <span className="typo-b1-medium text-text-tertiary">
+                {getLocaleShortLabel(locale)}
+              </span>
+              <img src={chevronDown} alt="" aria-hidden="true" className="w-[14px] h-[14px] shrink-0" />
+            </span>
+          </button>
+        </Dropdown>
 
-          <Dropdown menu={{ items: profileItems }} placement="bottomRight">
-            <Space style={{ cursor: 'pointer' }} size={6}>
-              <Avatar size={20} icon={<UserOutlined />} style={{ backgroundColor: '#bfbfbf' }} />
-              <span style={{ fontSize: 13 }}>관리자</span>
-            </Space>
-          </Dropdown>
-        </Space>
+        <Dropdown menu={{ items: profileItems }} trigger={['click']} placement="bottomRight">
+          <button
+            type="button"
+            className="flex items-center gap-1.5 bg-transparent border-0 p-0 cursor-pointer"
+          >
+            {userCircleFill ? (
+              <img
+                src={userCircleFill}
+                alt=""
+                aria-hidden="true"
+                className="w-6 h-6 shrink-0"
+              />
+            ) : (
+              <UserOutlined className="text-text-tertiary" />
+            )}
+            <span className="typo-b2-semibold text-text-tertiary whitespace-nowrap">
+              {user?.usrNm ?? 'admin'}
+            </span>
+          </button>
+        </Dropdown>
       </div>
-    </div>
+    </header>
   );
 }

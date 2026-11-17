@@ -35,6 +35,8 @@ import eyFilled from './ey-filled.svg';
 import eye from './eye.svg';
 import filePlus from './file-plus.svg';
 import file from './file.svg';
+import flagUkRound from './flag-uk-round.svg';
+import flagVnRound from './flag-vn-round.svg';
 import filterFilled from './filter-filled.svg';
 import filterOutlined from './filter-outlined.svg';
 import folderAdd from './folder-add.svg';
@@ -42,6 +44,15 @@ import folderClose from './folder-close.svg';
 import folderOpen from './folder-open.svg';
 import folderRemove from './folder-remove.svg';
 import gavel from './gavel.svg';
+import gnbBookOpenText from './gnb-book-open-text.svg';
+import gnbBuildingOffice from './gnb-building-office.svg';
+import gnbChartPieSlice from './gnb-chart-pie-slice.svg';
+import gnbGavel from './gnb-gavel.svg';
+import gnbHandshake from './gnb-handshake.svg';
+import gnbLogout from './gnb-logout.svg';
+import gnbNetwork from './gnb-network.svg';
+import gnbSetting from './gnb-setting.svg';
+import gnbUser from './gnb-user.svg';
 import gridNine from './grid-nine.svg';
 import hamburger from './hamburger.svg';
 import handshake from './handshake.svg';
@@ -95,6 +106,7 @@ import treeFolderCloseFilled from './tree-folder-close-filled.svg';
 import treeFolderOpenFilled from './tree-folder-open-filled.svg';
 import treeView from './tree-view.svg';
 import user from './user.svg';
+import userCircleFill from './user-circle-fill.svg';
 import warning from './warning.svg';
 
 export {
@@ -134,6 +146,8 @@ export {
   eye,
   filePlus,
   file,
+  flagUkRound,
+  flagVnRound,
   filterFilled,
   filterOutlined,
   folderAdd,
@@ -141,6 +155,15 @@ export {
   folderOpen,
   folderRemove,
   gavel,
+  gnbBookOpenText,
+  gnbBuildingOffice,
+  gnbChartPieSlice,
+  gnbGavel,
+  gnbHandshake,
+  gnbLogout,
+  gnbNetwork,
+  gnbSetting,
+  gnbUser,
   gridNine,
   hamburger,
   handshake,
@@ -194,5 +217,6 @@ export {
   treeFolderOpenFilled,
   treeView,
   user,
+  userCircleFill,
   warning,
 };

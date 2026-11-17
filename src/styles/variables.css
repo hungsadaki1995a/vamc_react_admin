@@ -1,6 +1,7 @@
 :root {
   /* Layout */
-  --rail-width: 56px;
+  --header-height: 50px;
+  --rail-width: 64px;
   --flyout-width: 220px;
   --content-header-height: 32px;
   --tab-bar-height: 36px;
@@ -8,13 +9,13 @@
   --primary-light: rgba(22, 119, 255, 0.08);
   --primary-glow: rgba(22, 119, 255, 0.4);
 
-  /* Rail (항상 어두운 그라데이션) */
-  --rail-bg-start: #1e1e2e;
-  --rail-bg-end: #13131a;
+  /* Rail (항상 어두운 배경) */
+  --rail-bg-start: #181824;
+  --rail-bg-end: #181824;
   --rail-icon-color: rgba(255, 255, 255, 0.5);
   --rail-icon-hover: rgba(255, 255, 255, 0.85);
-  --rail-item-hover-bg: rgba(255, 255, 255, 0.06);
-  --rail-item-active-bg: rgba(22, 119, 255, 0.18);
+  --rail-item-hover-bg: rgba(255, 255, 255, 0.08);
+  --rail-item-active-bg: #0040c6;
   --rail-divider-color: rgba(255, 255, 255, 0.08);
 
   /* Flyout */

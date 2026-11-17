@@ -1,13 +1,19 @@
 import { useMemo } from 'react';
 import { Tooltip } from 'antd';
-import {
-  LogoutOutlined,
-  ReadOutlined,
-} from '@ant-design/icons';
 import * as Icons from '@ant-design/icons';
 import React from 'react';
 import { CUSTOM_ICON_MAP } from '@/components/icons/CustomIcons';
-import vamcLogo from '@/assets/vamc_logo.png';
+import {
+  gnbUser,
+  gnbHandshake,
+  gnbBuildingOffice,
+  gnbBookOpenText,
+  gnbChartPieSlice,
+  gnbNetwork,
+  gnbGavel,
+  gnbSetting,
+  gnbLogout,
+} from '@/assets/images';
 import type { MenuItem } from '@/types/menu';
 import { useMenuStore } from '@/stores/menuStore';
 import { useTabStore } from '@/stores/tabStore';
@@ -32,20 +38,47 @@ const EXCLUDED_RAIL_KEYS = new Set(['dashboard']);
 // 알림 뱃지를 표시할 메뉴 키
 const badgeKeys = new Set(['notification']);
 
-function getIconComponent(iconName?: string): React.ReactNode {
+const GNB_ICON_BY_KEY: Record<string, string> = {
+  members: gnbUser,
+  member: gnbUser,
+  'content-management': gnbBookOpenText,
+  deal: gnbHandshake,
+  transaction: gnbHandshake,
+  npl: gnbBuildingOffice,
+  statistics: gnbChartPieSlice,
+  stats: gnbChartPieSlice,
+  system: gnbNetwork,
+  auction: gnbGavel,
+};
+
+const GNB_ICON_BY_NAME: Record<string, string> = {
+  UserOutlined: gnbUser,
+  ReadOutlined: gnbBookOpenText,
+  BookOutlined: gnbBookOpenText,
+  BankOutlined: gnbBuildingOffice,
+  PieChartOutlined: gnbChartPieSlice,
+  ApartmentOutlined: gnbNetwork,
+};
+
+function getIconComponent(item: MenuItem): React.ReactNode {
+  const gnbSrc = GNB_ICON_BY_KEY[item.key] ?? (item.icon ? GNB_ICON_BY_NAME[item.icon] : undefined);
+  if (gnbSrc) {
+    return <img src={gnbSrc} alt="" aria-hidden="true" className="w-6 h-6 shrink-0" />;
+  }
+  const iconName = item.icon;
   if (!iconName) return null;
   // Custom SVG icons (prefixed with 'custom:')
   if (iconName.startsWith('custom:')) {
     const name = iconName.slice(7);
     const Comp = CUSTOM_ICON_MAP[name];
-    return Comp ? <Comp style={{ fontSize: 20 }} /> : null;
+    return Comp ? <Comp style={{ fontSize: 24 }} /> : null;
   }
   // Ant Design icons
   const Comp = (Icons as Record<string, unknown>)[iconName] as
     | React.ComponentType<{ style?: React.CSSProperties }>
     | undefined;
   if (!Comp) return null;
-  return <Comp style={{ fontSize: 20 }} />;
+  return <Comp style={{ fontSize: 24 }} />;
 }
 
 export default function IconRail() {
@@ -85,7 +118,7 @@ export default function IconRail() {
   }, [allMenus, serverMenus]);
   const confirmLogout = useLogout();
   // 레일은 어느 화면 안에서 그려지느냐와 무관하므로 화면 라벨이 아니라 공용 컴포넌트 라벨을 쓴다
-  const { tvt, tvb } = useComponentLabel();
+  const { tvb } = useComponentLabel();
   const locale = useLocaleStore((s) => s.locale);
 
   // 현재 활성 탭이 속한 1단 카테고리(레일 아이콘).
@@ -118,11 +151,6 @@ export default function IconRail() {
 
   return (
     <div className="icon-rail">
-      {/* Logo */}
-      <div className="rail-logo">
-        <img src={vamcLogo} alt="VAMC" className="rail-logo-img" />
-      </div>
-
       {/* Menu icons */}
       <div className="rail-items">
         {mainRailItems.map((item) => {
@@ -135,7 +163,7 @@ export default function IconRail() {
                 className={`rail-item ${isActive ? 'active' : ''} ${isFlyoutActive ? 'flyout-open' : ''}`}
                 onClick={() => handleRailClick(item)}
               >
-                {getIconComponent(item.icon)}
+                {getIconComponent(item)}
                 {showBadge && <span className="rail-badge" />}
               </div>
             </Tooltip>
@@ -145,37 +173,38 @@ export default function IconRail() {
 
       {/* Bottom actions */}
       <div className="rail-bottom">
-        {/* Dev tools (settings) */}
-        {bottomRailMenu && (() => {
+        {/* Dev tools / Settings */}
+        {bottomRailMenu ? (() => {
           const isActive = activeTopKey === bottomRailMenu.key;
           const isFlyoutActive = flyoutVisible && activeRailKey === bottomRailMenu.key;
           return (
             <Tooltip title={bottomRailMenu.label} placement="right" mouseEnterDelay={0.3}>
               <div
-                className={`rail-item ${isActive ? 'active' : ''} ${isFlyoutActive ? 'flyout-open' : ''}`}
+                className={`rail-bottom-item ${isActive ? 'active' : ''} ${isFlyoutActive ? 'flyout-open' : ''}`}
                 onClick={() => handleRailClick(bottomRailMenu)}
               >
-                {getIconComponent(bottomRailMenu.icon)}
+                <img src={gnbSetting} alt="" aria-hidden="true" className="w-6 h-6 shrink-0" />
               </div>
             </Tooltip>
           );
-        })()}
-        <Tooltip
-          title={tvt('manual', locale === 'ko' ? '매뉴얼' : locale === 'vn' ? 'Hướng dẫn' : 'User Manual')}
-          placement="right"
-          mouseEnterDelay={0.3}
-        >
-          <div className="rail-item">
-            <ReadOutlined style={{ fontSize: 20 }} />
-          </div>
-        </Tooltip>
+        })() : (
+          <Tooltip
+            title={locale === 'ko' ? '설정' : locale === 'vn' ? 'Cài đặt' : 'Settings'}
+            placement="right"
+            mouseEnterDelay={0.3}
+          >
+            <div className="rail-bottom-item">
+              <img src={gnbSetting} alt="" aria-hidden="true" className="w-6 h-6 shrink-0" />
+            </div>
+          </Tooltip>
+        )}
         <Tooltip
           title={tvb('logout', locale === 'ko' ? '로그아웃' : locale === 'vn' ? 'Đăng xuất' : 'Sign Out')}
           placement="right"
           mouseEnterDelay={0.3}
         >
-          <div className="rail-item" onClick={confirmLogout}>
-            <LogoutOutlined style={{ fontSize: 20 }} />
+          <div className="rail-bottom-item" onClick={confirmLogout}>
+            <img src={gnbLogout} alt="" aria-hidden="true" className="w-6 h-6 shrink-0" />
           </div>
         </Tooltip>
       </div>
