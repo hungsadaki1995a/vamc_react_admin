@@ -1,15 +1,9 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useForm, Controller } from 'react-hook-form';
-import { Form, Input, Button, Alert, Checkbox, Typography, Dropdown } from 'antd';
+import { Form, Input, Button, Alert, Dropdown, App } from 'antd';
 import type { MenuProps } from 'antd';
-import {
-  UserOutlined,
-  LockOutlined,
-  GlobalOutlined,
-  DownOutlined,
-  CheckOutlined,
-} from '@ant-design/icons';
+import { GlobalOutlined, DownOutlined, CheckOutlined } from '@ant-design/icons';
 import { login } from '@/api/generated/sdk.gen';
 import { fetchPublicKey } from '@/api/common/authApi';
 import { encryptPassword } from '@/lib/crypto';
@@ -27,61 +21,68 @@ import type { LoginRequest } from '@/lib/api/types';
 import { useLocaleStore, type LocaleKey } from '@/stores/localeStore';
 import { getLocaleShortLabel } from '@/utils/localeStorage';
 import styles from './index.module.css';
-import vamcLogo from '@/assets/vamc_logo.png';
-
-const { Title, Text } = Typography;
-
-const SAVED_USERNAME_KEY = 'vamc-saved-username';
+import vamcLogoLogin from '@/assets/vamc_logo_login-28c7ab.png';
 
 const LOGIN_I18N: Record<
   LocaleKey,
   {
-    subtitle: string;
-    username: string;
-    usernameRequired: string;
-    password: string;
+    loginIdLabel: string;
+    loginIdPlaceholder: string;
+    loginIdRequired: string;
+    passwordLabel: string;
+    passwordPlaceholder: string;
     passwordRequired: string;
-    rememberUsername: string;
     submit: string;
+    findLoginId: string;
+    findPassword: string;
+    findNotReady: string;
     defaultError: string;
   }
 > = {
   en: {
-    subtitle: 'NPL Management Admin',
-    username: 'Username',
-    usernameRequired: 'Please enter your username.',
-    password: 'Password',
+    loginIdLabel: 'Login ID',
+    loginIdPlaceholder: 'Enter email or phone number',
+    loginIdRequired: 'Please enter your login ID.',
+    passwordLabel: 'Password',
+    passwordPlaceholder: 'Enter password',
     passwordRequired: 'Please enter your password.',
-    rememberUsername: 'Remember ID',
-    submit: 'Sign In',
+    submit: 'Log In',
+    findLoginId: 'Find Login ID',
+    findPassword: 'Find Password',
+    findNotReady: 'Please contact your system administrator.',
     defaultError: 'Login failed.',
   },
   ko: {
-    subtitle: '부실채권 관리 어드민',
-    username: '아이디',
-    usernameRequired: '아이디를 입력해 주세요.',
-    password: '비밀번호',
+    loginIdLabel: '아이디',
+    loginIdPlaceholder: '이메일 또는 휴대폰 번호를 입력해 주세요',
+    loginIdRequired: '아이디를 입력해 주세요.',
+    passwordLabel: '비밀번호',
+    passwordPlaceholder: '비밀번호를 입력해 주세요',
     passwordRequired: '비밀번호를 입력해 주세요.',
-    rememberUsername: '아이디 저장',
     submit: '로그인',
+    findLoginId: '아이디 찾기',
+    findPassword: '비밀번호 찾기',
+    findNotReady: '시스템 관리자에게 문의해 주세요.',
     defaultError: '로그인에 실패했습니다.',
   },
   vn: {
-    subtitle: 'Quản trị quản lý nợ xấu (NPL)',
-    username: 'Tên đăng nhập',
-    usernameRequired: 'Vui lòng nhập tên đăng nhập.',
-    password: 'Mật khẩu',
+    loginIdLabel: 'Tên đăng nhập',
+    loginIdPlaceholder: 'Nhập email hoặc số điện thoại',
+    loginIdRequired: 'Vui lòng nhập tên đăng nhập.',
+    passwordLabel: 'Mật khẩu',
+    passwordPlaceholder: 'Nhập mật khẩu',
     passwordRequired: 'Vui lòng nhập mật khẩu.',
-    rememberUsername: 'Lưu tên đăng nhập',
     submit: 'Đăng nhập',
+    findLoginId: 'Tìm tên đăng nhập',
+    findPassword: 'Tìm mật khẩu',
+    findNotReady: 'Vui lòng liên hệ quản trị viên hệ thống.',
     defaultError: 'Đăng nhập thất bại.',
   },
 };
 
-type LoginFormValues = LoginRequest & { rememberUsername: boolean };
-
 export default function LoginPage() {
   const navigate = useNavigate();
+  const { message } = App.useApp();
   const setAuth = useAuthStore((s) => s.setAuth);
   const { openTab, resetTabs } = useTabStore();
   const { setServerMenus } = useMenuStore();
@@ -91,9 +92,8 @@ export default function LoginPage() {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   const t = LOGIN_I18N[locale] ?? LOGIN_I18N.en;
-  const savedUsername = localStorage.getItem(SAVED_USERNAME_KEY);
-  const { control, handleSubmit } = useForm<LoginFormValues>({
-    defaultValues: { loginId: savedUsername ?? '', password: '', rememberUsername: !!savedUsername },
+  const { control, handleSubmit } = useForm<LoginRequest>({
+    defaultValues: { loginId: '', password: '' },
   });
 
   const languageMenuItems: MenuProps['items'] = [
@@ -129,38 +129,27 @@ export default function LoginPage() {
     },
   ];
 
-  const onFinish = async (values: LoginFormValues) => {
-    const { rememberUsername, ...loginReq } = values;
-
-    // Save or clear remembered username
-    if (rememberUsername) {
-      localStorage.setItem(SAVED_USERNAME_KEY, loginReq.loginId);
-    } else {
-      localStorage.removeItem(SAVED_USERNAME_KEY);
-    }
-
+  const onFinish = async (values: LoginRequest) => {
     setLoading(true);
     setErrorMsg(null);
     try {
-      let password = loginReq.password;
+      let password = values.password;
       if (window.isSecureContext && window.crypto?.subtle) {
         const publicKey = await fetchPublicKey();
         if (publicKey) {
-          password = await encryptPassword(publicKey, loginReq.password);
+          password = await encryptPassword(publicKey, values.password);
         }
       }
 
-      // Step 1: Login — call API login in src/api/generated/sdk.gen.ts
       const loginRes = await login({
         body: {
-          loginId: loginReq.loginId,
+          loginId: values.loginId,
           password,
         },
         throwOnError: true,
       });
 
       if (loginRes.data?.accessToken) {
-        // Step 2: Extract user info from JWT claims (no separate API call needed)
         const me = jwtToMeResponse(loginRes.data.accessToken);
         if (loginRes.data.employee) {
           if (loginRes.data.employee.empNm) me.usrNm = loginRes.data.employee.empNm;
@@ -168,14 +157,12 @@ export default function LoginPage() {
           if (loginRes.data.employee.empMoblTelno) me.phnNo = loginRes.data.employee.empMoblTelno;
         }
 
-        // Store refresh token if provided
         if (loginRes.data.refreshToken) {
           setRefreshToken(loginRes.data.refreshToken);
         }
 
         setAuth(loginRes.data.accessToken, me);
 
-        // Always reset tabs on login and open home + member list tab
         resetTabs();
         const homeMenu = findMenuByKey(menuConfig, homeMenuKey);
         if (homeMenu) openTab(homeMenu);
@@ -184,7 +171,6 @@ export default function LoginPage() {
 
         fetchAuthMenuList().then(setServerMenus).catch(() => { /* silent */ });
 
-        // Step 3: Navigate to the members page
         navigate('/members', { replace: true });
       } else {
         setErrorMsg(t.defaultError);
@@ -221,9 +207,8 @@ export default function LoginPage() {
 
       <div className={styles.card}>
         <div className={styles.header}>
-          <img src={vamcLogo} alt="VAMC" className={styles.logo} />
-          <Title level={3} style={{ margin: 0 }}>VAMC NPL ADMIN</Title>
-          <Text type="secondary">{t.subtitle}</Text>
+          <img src={vamcLogoLogin} alt="VAMC" className={styles.logo} />
+          <h1 className={styles.title}>VAMC NPL Admin System</h1>
         </div>
 
         <Form
@@ -231,40 +216,53 @@ export default function LoginPage() {
           name="login"
           onFinish={handleSubmit(onFinish)}
           autoComplete="off"
-          size="large"
           layout="vertical"
+          className={styles.form}
         >
-          <Controller
-            name="loginId"
-            control={control}
-            rules={{ required: t.usernameRequired }}
-            render={({ field, fieldState }) => (
-              <Form.Item validateStatus={fieldState.error ? 'error' : ''} help={fieldState.error?.message}>
-                <Input {...field} prefix={<UserOutlined />} placeholder={t.username} />
-              </Form.Item>
-            )}
-          />
+          <div className={styles.fields}>
+            <div className={styles.field}>
+              <label htmlFor="login_loginId" className={styles.label}>
+                {t.loginIdLabel}
+              </label>
+              <Controller
+                name="loginId"
+                control={control}
+                rules={{ required: t.loginIdRequired }}
+                render={({ field, fieldState }) => (
+                  <Form.Item validateStatus={fieldState.error ? 'error' : ''} help={fieldState.error?.message}>
+                    <Input
+                      {...field}
+                      id="login_loginId"
+                      placeholder={t.loginIdPlaceholder}
+                      className={styles.input}
+                    />
+                  </Form.Item>
+                )}
+              />
+            </div>
 
-          <Controller
-            name="password"
-            control={control}
-            rules={{ required: t.passwordRequired }}
-            render={({ field, fieldState }) => (
-              <Form.Item validateStatus={fieldState.error ? 'error' : ''} help={fieldState.error?.message}>
-                <Input.Password {...field} prefix={<LockOutlined />} placeholder={t.password} />
-              </Form.Item>
-            )}
-          />
+            <div className={styles.field}>
+              <label htmlFor="login_password" className={styles.label}>
+                {t.passwordLabel}
+              </label>
+              <Controller
+                name="password"
+                control={control}
+                rules={{ required: t.passwordRequired }}
+                render={({ field, fieldState }) => (
+                  <Form.Item validateStatus={fieldState.error ? 'error' : ''} help={fieldState.error?.message}>
+                    <Input.Password
+                      {...field}
+                      id="login_password"
+                      placeholder={t.passwordPlaceholder}
+                      className={styles.passwordInput}
+                    />
+                  </Form.Item>
+                )}
+              />
+            </div>
+          </div>
 
-          <Controller
-            name="rememberUsername"
-            control={control}
-            render={({ field: { value, onChange } }) => (
-              <Form.Item style={{ marginBottom: 12 }}>
-                <Checkbox checked={value} onChange={(e) => onChange(e.target.checked)}>{t.rememberUsername}</Checkbox>
-              </Form.Item>
-            )}
-          />
           {errorMsg && (
             <Form.Item>
               <Alert type="error" title={errorMsg} showIcon />
@@ -277,11 +275,30 @@ export default function LoginPage() {
               htmlType="submit"
               block
               loading={loading}
+              className={styles.submitBtn}
             >
               {t.submit}
             </Button>
           </Form.Item>
         </Form>
+
+        <div className={styles.links}>
+          <button
+            type="button"
+            className={styles.linkBtn}
+            onClick={() => message.info(t.findNotReady)}
+          >
+            {t.findLoginId}
+          </button>
+          <span className={styles.divider} aria-hidden="true" />
+          <button
+            type="button"
+            className={styles.linkBtn}
+            onClick={() => message.info(t.findNotReady)}
+          >
+            {t.findPassword}
+          </button>
+        </div>
       </div>
     </div>
   );
