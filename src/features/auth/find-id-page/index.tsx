@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useForm, useWatch, Controller } from 'react-hook-form';
 import { Form, Input, Button, Select, Dropdown, App } from 'antd';
 import type { MenuProps } from 'antd';
@@ -33,119 +34,6 @@ const COUNTRY_CODE_OPTIONS = [
   { value: '+1', label: '+1' },
 ];
 
-const FIND_ID_I18N: Record<
-  LocaleKey,
-  {
-    title: string;
-    emailTab: string;
-    zaloTab: string;
-    nameLabel: string;
-    namePlaceholder: string;
-    nameRequired: string;
-    emailLabel: string;
-    emailPlaceholder: string;
-    emailRequired: string;
-    emailInvalid: string;
-    phoneLabel: string;
-    phonePlaceholder: string;
-    phoneRequired: string;
-    codePlaceholder: string;
-    codeRequired: string;
-    sendEmail: string;
-    sendCode: string;
-    verify: string;
-    confirm: string;
-    emailSentMsg: string;
-    noAccountMatch: string;
-    codeSentMsg: string;
-    codeVerifiedMsg: string;
-    confirmSuccessMsg: string;
-    verifyFirstMsg: string;
-  }
-> = {
-  en: {
-    title: 'Find Login ID',
-    emailTab: 'Email Verification',
-    zaloTab: 'Zalo Verification',
-    nameLabel: 'Name',
-    namePlaceholder: 'Enter name',
-    nameRequired: 'Please enter your name.',
-    emailLabel: 'Email',
-    emailPlaceholder: 'example@email.com',
-    emailRequired: 'Please enter your email.',
-    emailInvalid: 'Please enter a valid email address.',
-    phoneLabel: 'Phone Number',
-    phonePlaceholder: '090 123 5678',
-    phoneRequired: 'Please enter your phone number.',
-    codePlaceholder: 'Enter code',
-    codeRequired: 'Please enter the verification code.',
-    sendEmail: 'Send Verification Email',
-    sendCode: 'Send Verification Code',
-    verify: 'Verify',
-    confirm: 'Confirm',
-    emailSentMsg: 'Verification email has been sent.',
-    noAccountMatch: 'No account matches the information you entered.',
-    codeSentMsg: 'Verification code has been sent via Zalo.',
-    codeVerifiedMsg: 'Verification code verified.',
-    confirmSuccessMsg: 'Your login ID information has been sent.',
-    verifyFirstMsg: 'Please verify your code first.',
-  },
-  ko: {
-    title: '아이디 찾기',
-    emailTab: '이메일 인증',
-    zaloTab: 'Zalo 인증',
-    nameLabel: '이름',
-    namePlaceholder: '이름을 입력해 주세요',
-    nameRequired: '이름을 입력해 주세요.',
-    emailLabel: '이메일',
-    emailPlaceholder: 'example@email.com',
-    emailRequired: '이메일을 입력해 주세요.',
-    emailInvalid: '올바른 이메일 주소를 입력해 주세요.',
-    phoneLabel: '휴대폰 번호',
-    phonePlaceholder: '090 123 5678',
-    phoneRequired: '휴대폰 번호를 입력해 주세요.',
-    codePlaceholder: '인증번호 입력',
-    codeRequired: '인증번호를 입력해 주세요.',
-    sendEmail: '인증 메일 발송',
-    sendCode: '인증번호 발송',
-    verify: '확인',
-    confirm: '확인',
-    emailSentMsg: '인증 메일이 발송되었습니다.',
-    noAccountMatch: '입력하신 정보와 일치하는 계정이 없습니다.',
-    codeSentMsg: 'Zalo로 인증번호가 발송되었습니다.',
-    codeVerifiedMsg: '인증번호가 확인되었습니다.',
-    confirmSuccessMsg: '아이디 안내가 발송되었습니다.',
-    verifyFirstMsg: '먼저 인증번호 확인을 진행해 주세요.',
-  },
-  vn: {
-    title: 'Tìm tên đăng nhập',
-    emailTab: 'Xác thực Email',
-    zaloTab: 'Xác thực Zalo',
-    nameLabel: 'Họ tên',
-    namePlaceholder: 'Nhập họ tên',
-    nameRequired: 'Vui lòng nhập họ tên.',
-    emailLabel: 'Email',
-    emailPlaceholder: 'example@email.com',
-    emailRequired: 'Vui lòng nhập email.',
-    emailInvalid: 'Vui lòng nhập địa chỉ email hợp lệ.',
-    phoneLabel: 'Số điện thoại',
-    phonePlaceholder: '090 123 5678',
-    phoneRequired: 'Vui lòng nhập số điện thoại.',
-    codePlaceholder: 'Nhập mã',
-    codeRequired: 'Vui lòng nhập mã xác thực.',
-    sendEmail: 'Gửi email xác thực',
-    sendCode: 'Gửi mã xác thực',
-    verify: 'Xác thực',
-    confirm: 'Xác nhận',
-    emailSentMsg: 'Email xác thực đã được gửi.',
-    noAccountMatch: 'Không tìm thấy tài khoản khớp với thông tin bạn đã nhập.',
-    codeSentMsg: 'Mã xác thực đã được gửi qua Zalo.',
-    codeVerifiedMsg: 'Đã xác thực mã thành công.',
-    confirmSuccessMsg: 'Thông tin tên đăng nhập đã được gửi.',
-    verifyFirstMsg: 'Vui lòng xác thực mã trước.',
-  },
-};
-
 function formatCountdown(totalSeconds: number): string {
   const mins = Math.floor(totalSeconds / 60);
   const secs = totalSeconds % 60;
@@ -153,9 +41,9 @@ function formatCountdown(totalSeconds: number): string {
 }
 
 export default function FindIdPage() {
+  const { t } = useTranslation();
   const { message } = App.useApp();
   const { locale, setLocale } = useLocaleStore();
-  const t = FIND_ID_I18N[locale] ?? FIND_ID_I18N.en;
 
   const [activeTab, setActiveTab] = useState<VerificationTab>('email');
   const [emailLoading, setEmailLoading] = useState(false);
@@ -236,10 +124,10 @@ export default function FindIdPage() {
         },
         throwOnError: true,
       });
-      message.success(t.emailSentMsg);
+      message.success(t('auth.findId.emailSentMsg'));
     } catch (err) {
       const apiErr = ApiError.from(err);
-      setEmailErrorMsg(apiErr.statusCode === 404 ? t.noAccountMatch : apiErr.userMessage);
+      setEmailErrorMsg(apiErr.statusCode === 404 ? t('auth.findId.noAccountMatch') : apiErr.userMessage);
     } finally {
       setEmailLoading(false);
     }
@@ -264,10 +152,10 @@ export default function FindIdPage() {
       setCodeSent(true);
       setCodeVerified(false);
       setSecondsLeft(CODE_TTL_SECONDS);
-      message.success(t.codeSentMsg);
+      message.success(t('auth.findId.codeSentMsg'));
     } catch (err) {
       const apiErr = ApiError.from(err);
-      setZaloErrorMsg(apiErr.statusCode === 404 ? t.noAccountMatch : apiErr.userMessage);
+      setZaloErrorMsg(apiErr.statusCode === 404 ? t('auth.findId.noAccountMatch') : apiErr.userMessage);
     } finally {
       setZaloSendLoading(false);
     }
@@ -277,15 +165,15 @@ export default function FindIdPage() {
     const valid = await zaloForm.trigger('code');
     if (!valid) return;
     setCodeVerified(true);
-    message.success(t.codeVerifiedMsg);
+    message.success(t('auth.findId.codeVerifiedMsg'));
   };
 
   const handleZaloConfirm = () => {
     if (!codeVerified) {
-      message.warning(t.verifyFirstMsg);
+      message.warning(t('auth.findId.verifyFirstMsg'));
       return;
     }
-    message.success(t.confirmSuccessMsg);
+    message.success(t('auth.findId.confirmSuccessMsg'));
   };
 
   return (
@@ -313,10 +201,10 @@ export default function FindIdPage() {
       <div className={styles.card}>
         <div className={styles.header}>
           <img src={vamcLogoLogin} alt="VAMC" className={styles.logo} />
-          <h1 className={styles.title}>{t.title}</h1>
+          <h1 className={styles.title}>{t('auth.findId.title')}</h1>
         </div>
 
-        <div className={styles.tabs} role="tablist" aria-label={t.title}>
+        <div className={styles.tabs} role="tablist" aria-label={t('auth.findId.title')}>
           <button
             type="button"
             role="tab"
@@ -324,7 +212,7 @@ export default function FindIdPage() {
             className={`${styles.tabBtn} ${activeTab === 'email' ? styles.tabBtnActive : ''}`}
             onClick={() => setActiveTab('email')}
           >
-            {t.emailTab}
+            {t('auth.findId.emailTab')}
           </button>
           <button
             type="button"
@@ -333,7 +221,7 @@ export default function FindIdPage() {
             className={`${styles.tabBtn} ${activeTab === 'zalo' ? styles.tabBtnActive : ''}`}
             onClick={() => setActiveTab('zalo')}
           >
-            {t.zaloTab}
+            {t('auth.findId.zaloTab')}
           </button>
         </div>
 
@@ -348,18 +236,18 @@ export default function FindIdPage() {
             <div className={styles.fields}>
               <div className={styles.field}>
                 <label htmlFor="findId_email_name" className={styles.label}>
-                  {t.nameLabel}
+                  {t('auth.findId.nameLabel')}
                 </label>
                 <Controller
                   name="name"
                   control={emailForm.control}
-                  rules={{ required: t.nameRequired }}
+                  rules={{ required: t('auth.findId.nameRequired') }}
                   render={({ field, fieldState }) => (
                     <Form.Item validateStatus={fieldState.error ? 'error' : ''} help={fieldState.error?.message}>
                       <Input
                         {...field}
                         id="findId_email_name"
-                        placeholder={t.namePlaceholder}
+                        placeholder={t('auth.findId.namePlaceholder')}
                         className={styles.input}
                         onChange={(e) => {
                           if (emailErrorMsg) setEmailErrorMsg(null);
@@ -373,14 +261,14 @@ export default function FindIdPage() {
 
               <div className={styles.field}>
                 <label htmlFor="findId_email" className={styles.label}>
-                  {t.emailLabel}
+                  {t('auth.findId.emailLabel')}
                 </label>
                 <Controller
                   name="email"
                   control={emailForm.control}
                   rules={{
-                    required: t.emailRequired,
-                    validate: (v) => EMAIL_REGEX.test(v.trim()) || t.emailInvalid,
+                    required: t('auth.findId.emailRequired'),
+                    validate: (v) => EMAIL_REGEX.test(v.trim()) || t('auth.findId.emailInvalid'),
                   }}
                   render={({ field, fieldState }) => (
                     <Form.Item
@@ -391,7 +279,7 @@ export default function FindIdPage() {
                         {...field}
                         id="findId_email"
                         type="email"
-                        placeholder={t.emailPlaceholder}
+                        placeholder={t('auth.findId.emailPlaceholder')}
                         className={styles.input}
                         onChange={(e) => {
                           if (emailErrorMsg) setEmailErrorMsg(null);
@@ -412,7 +300,7 @@ export default function FindIdPage() {
               disabled={isEmailSubmitDisabled}
               className={styles.primaryBtn}
             >
-              {t.sendEmail}
+              {t('auth.findId.sendEmail')}
             </Button>
           </Form>
         ) : (
@@ -426,18 +314,18 @@ export default function FindIdPage() {
             <div className={styles.fields}>
               <div className={styles.field}>
                 <label htmlFor="findId_zalo_name" className={styles.label}>
-                  {t.nameLabel}
+                  {t('auth.findId.nameLabel')}
                 </label>
                 <Controller
                   name="name"
                   control={zaloForm.control}
-                  rules={{ required: t.nameRequired }}
+                  rules={{ required: t('auth.findId.nameRequired') }}
                   render={({ field, fieldState }) => (
                     <Form.Item validateStatus={fieldState.error ? 'error' : ''} help={fieldState.error?.message}>
                       <Input
                         {...field}
                         id="findId_zalo_name"
-                        placeholder={t.namePlaceholder}
+                        placeholder={t('auth.findId.namePlaceholder')}
                         className={styles.input}
                         onChange={(e) => {
                           if (zaloErrorMsg) setZaloErrorMsg(null);
@@ -452,7 +340,7 @@ export default function FindIdPage() {
               <div className={styles.verifySection}>
                 <div className={styles.field}>
                   <label htmlFor="findId_phone" className={styles.label}>
-                    {t.phoneLabel}
+                    {t('auth.findId.phoneLabel')}
                   </label>
                   <div className={styles.phoneRow}>
                     <Controller
@@ -471,7 +359,7 @@ export default function FindIdPage() {
                       <Controller
                         name="phoneNumber"
                         control={zaloForm.control}
-                        rules={{ required: t.phoneRequired }}
+                        rules={{ required: t('auth.findId.phoneRequired') }}
                         render={({ field, fieldState }) => (
                           <Form.Item
                             validateStatus={fieldState.error || zaloErrorMsg ? 'error' : ''}
@@ -480,7 +368,7 @@ export default function FindIdPage() {
                             <Input
                               {...field}
                               id="findId_phone"
-                              placeholder={t.phonePlaceholder}
+                              placeholder={t('auth.findId.phonePlaceholder')}
                               className={styles.input}
                               onChange={(e) => {
                                 if (zaloErrorMsg) setZaloErrorMsg(null);
@@ -504,7 +392,7 @@ export default function FindIdPage() {
                       onClick={handleSendZaloCode}
                       className={secondsLeft > 0 ? styles.sentDisabledBtn : styles.primaryBtn}
                     >
-                      {t.sendCode}
+                      {t('auth.findId.sendCode')}
                     </Button>
 
                     <div className={styles.codeRow}>
@@ -512,13 +400,13 @@ export default function FindIdPage() {
                         <Controller
                           name="code"
                           control={zaloForm.control}
-                          rules={{ required: t.codeRequired }}
+                          rules={{ required: t('auth.findId.codeRequired') }}
                           render={({ field, fieldState }) => (
                             <Form.Item validateStatus={fieldState.error ? 'error' : ''} help={fieldState.error?.message}>
                               <Input
                                 {...field}
                                 id="findId_code"
-                                placeholder={t.codePlaceholder}
+                                placeholder={t('auth.findId.codePlaceholder')}
                                 className={styles.codeInput}
                               />
                             </Form.Item>
@@ -532,7 +420,7 @@ export default function FindIdPage() {
                         onClick={handleVerifyCode}
                         className={styles.verifyBtn}
                       >
-                        {t.verify}
+                        {t('auth.findId.verify')}
                       </Button>
                     </div>
                   </>
@@ -549,11 +437,11 @@ export default function FindIdPage() {
                 onClick={handleSendZaloCode}
                 className={styles.primaryBtn}
               >
-                {t.sendCode}
+                {t('auth.findId.sendCode')}
               </Button>
             ) : (
               <Button type="primary" htmlType="submit" block className={styles.primaryBtn}>
-                {t.confirm}
+                {t('auth.findId.confirm')}
               </Button>
             )}
           </Form>

@@ -1,0 +1,52 @@
+{
+  "common": {
+    "signOut": "Sign Out",
+    "settings": "Settings",
+    "collapseMenu": "Collapse menu",
+    "expandMenu": "Expand menu"
+  },
+  "auth": {
+    "login": {
+      "loginIdLabel": "Login ID",
+      "loginIdPlaceholder": "Enter email or phone number",
+      "loginIdRequired": "Please enter your login ID.",
+      "loginIdInvalid": "Please enter a valid email or phone number.",
+      "passwordLabel": "Password",
+      "passwordPlaceholder": "Enter password",
+      "passwordRequired": "Please enter your password.",
+      "invalidCredentials": "Incorrect Login ID or password. The account will be locked after 5 failed password attempts.",
+      "submit": "Log In",
+      "findLoginId": "Find Login ID",
+      "findPassword": "Find Password",
+      "findNotReady": "Please contact your system administrator.",
+      "defaultError": "Login failed."
+    },
+    "findId": {
+      "title": "Find Login ID",
+      "emailTab": "Email Verification",
+      "zaloTab": "Zalo Verification",
+      "nameLabel": "Name",
+      "namePlaceholder": "Enter name",
+      "nameRequired": "Please enter your name.",
+      "emailLabel": "Email",
+      "emailPlaceholder": "example@email.com",
+      "emailRequired": "Please enter your email.",
+      "emailInvalid": "Please enter a valid email address.",
+      "phoneLabel": "Phone Number",
+      "phonePlaceholder": "090 123 5678",
+      "phoneRequired": "Please enter your phone number.",
+      "codePlaceholder": "Enter code",
+      "codeRequired": "Please enter the verification code.",
+      "sendEmail": "Send Verification Email",
+      "sendCode": "Send Verification Code",
+      "verify": "Verify",
+      "confirm": "Confirm",
+      "emailSentMsg": "Verification email has been sent.",
+      "noAccountMatch": "No account matches the information you entered.",
+      "codeSentMsg": "Verification code has been sent via Zalo.",
+      "codeVerifiedMsg": "Verification code verified.",
+      "confirmSuccessMsg": "Your login ID information has been sent.",
+      "verifyFirstMsg": "Please verify your code first."
+    }
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "common": {
+    "signOut": "Đăng xuất",
+    "settings": "Cài đặt",
+    "collapseMenu": "Thu gọn menu",
+    "expandMenu": "Mở rộng menu"
+  },
+  "auth": {
+    "login": {
+      "loginIdLabel": "Tên đăng nhập",
+      "loginIdPlaceholder": "Nhập email hoặc số điện thoại",
+      "loginIdRequired": "Vui lòng nhập tên đăng nhập.",
+      "loginIdInvalid": "Vui lòng nhập email hoặc số điện thoại hợp lệ.",
+      "passwordLabel": "Mật khẩu",
+      "passwordPlaceholder": "Nhập mật khẩu",
+      "passwordRequired": "Vui lòng nhập mật khẩu.",
+      "invalidCredentials": "Tên đăng nhập hoặc mật khẩu không chính xác. Tài khoản sẽ bị khóa sau 5 lần nhập sai mật khẩu.",
+      "submit": "Đăng nhập",
+      "findLoginId": "Tìm tên đăng nhập",
+      "findPassword": "Tìm mật khẩu",
+      "findNotReady": "Vui lòng liên hệ quản trị viên hệ thống.",
+      "defaultError": "Đăng nhập thất bại."
+    },
+    "findId": {
+      "title": "Tìm tên đăng nhập",
+      "emailTab": "Xác thực Email",
+      "zaloTab": "Xác thực Zalo",
+      "nameLabel": "Họ tên",
+      "namePlaceholder": "Nhập họ tên",
+      "nameRequired": "Vui lòng nhập họ tên.",
+      "emailLabel": "Email",
+      "emailPlaceholder": "example@email.com",
+      "emailRequired": "Vui lòng nhập email.",
+      "emailInvalid": "Vui lòng nhập địa chỉ email hợp lệ.",
+      "phoneLabel": "Số điện thoại",
+      "phonePlaceholder": "090 123 5678",
+      "phoneRequired": "Vui lòng nhập số điện thoại.",
+      "codePlaceholder": "Nhập mã",
+      "codeRequired": "Vui lòng nhập mã xác thực.",
+      "sendEmail": "Gửi email xác thực",
+      "sendCode": "Gửi mã xác thực",
+      "verify": "Xác thực",
+      "confirm": "Xác nhận",
+      "emailSentMsg": "Email xác thực đã được gửi.",
+      "noAccountMatch": "Không tìm thấy tài khoản khớp với thông tin bạn đã nhập.",
+      "codeSentMsg": "Mã xác thực đã được gửi qua Zalo.",
+      "codeVerifiedMsg": "Đã xác thực mã thành công.",
+      "confirmSuccessMsg": "Thông tin tên đăng nhập đã được gửi.",
+      "verifyFirstMsg": "Vui lòng xác thực mã trước."
+    }
+  }
+}

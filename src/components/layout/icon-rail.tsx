@@ -19,8 +19,8 @@ import { useMenuStore } from '@/stores/menu-store';
 import { useTabStore } from '@/stores/tab-store';
 import { useLogout } from '@/hooks/use-logout';
 import { useAllMenus } from '@/hooks/use-all-menus';
+import { useTranslation } from 'react-i18next';
 import { useComponentLabel } from '@/hooks/use-component-label';
-import { useLocaleStore } from '@/stores/locale-store';
 import { useShallow } from 'zustand/react/shallow';
 import { findTopLevelMenuKey } from '@/utils/menu-utils';
 import {
@@ -139,7 +139,7 @@ export default function IconRail() {
   const confirmLogout = useLogout();
   // 레일은 어느 화면 안에서 그려지느냐와 무관하므로 화면 라벨이 아니라 공용 컴포넌트 라벨을 쓴다
   const { tvb } = useComponentLabel();
-  const locale = useLocaleStore((s) => s.locale);
+  const { t } = useTranslation();
 
   // 현재 활성 탭이 속한 1단 카테고리(레일 아이콘).
   const activeTab = tabs.find((t) => t.key === activeTabKey);
@@ -209,7 +209,7 @@ export default function IconRail() {
           );
         })() : (
           <Tooltip
-            title={locale === 'ko' ? '설정' : locale === 'vn' ? 'Cài đặt' : 'Settings'}
+            title={t('common.settings')}
             placement="right"
             mouseEnterDelay={0.3}
           >
@@ -219,7 +219,7 @@ export default function IconRail() {
           </Tooltip>
         )}
         <Tooltip
-          title={tvb('logout', locale === 'ko' ? '로그아웃' : locale === 'vn' ? 'Đăng xuất' : 'Sign Out')}
+          title={tvb('logout', t('common.signOut'))}
           placement="right"
           mouseEnterDelay={0.3}
         >

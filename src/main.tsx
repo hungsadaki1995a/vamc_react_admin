@@ -5,6 +5,7 @@ import { queryClient } from '@/lib/api/query-client';
 import { client as heyApiClient } from '@/api/generated/client.gen';
 import { apiClient } from '@/lib/api/client';
 import App from '@/app/app';
+import '@/lib/i18n';
 import '@/styles/global.css';
 
 // Bind Hey API generated client to use the project's customized Axios instance and base URL

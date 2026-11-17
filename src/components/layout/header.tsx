@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import {
   LogoutOutlined,
   UserOutlined,
@@ -24,6 +25,7 @@ const FLAG_ICON_MAP: Partial<Record<LocaleKey, string>> = {
 };
 
 export default function Header() {
+  const { t } = useTranslation();
   const user = useAuthStore((s) => s.user);
   const { locale, setLocale } = useLocaleStore();
   const confirmLogout = useLogout();
@@ -65,7 +67,7 @@ export default function Header() {
     {
       key: 'logout',
       icon: <LogoutOutlined />,
-      label: locale === 'ko' ? '로그아웃' : locale === 'vn' ? 'Đăng xuất' : 'Sign Out',
+      label: t('common.signOut'),
       danger: true,
       onClick: confirmLogout,
     },

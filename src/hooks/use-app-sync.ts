@@ -13,6 +13,7 @@ import { useComcdStore } from '@/stores/comcd-store';
 import { useMenuStore } from '@/stores/menu-store';
 import { useLabelStore } from '@/stores/label-store';
 import { toIsoLangTag } from '@/utils/locale-storage';
+import i18n from '@/lib/i18n';
 
 /** Syncs theme, Dayjs/HTML locale, and locale-dependent stores (common codes, menus, labels). */
 export function useAppSync() {
@@ -28,6 +29,9 @@ export function useAppSync() {
     const isoTag = toIsoLangTag(locale);
     dayjs.locale(isoTag);
     document.documentElement.setAttribute('lang', isoTag);
+    if (i18n.language !== locale) {
+      i18n.changeLanguage(locale);
+    }
   }, [locale]);
 
   useEffect(() => {

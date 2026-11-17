@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 import Header from '@/components/layout/header';
 import IconRail from '@/components/layout/icon-rail';
@@ -7,22 +8,16 @@ import TabBar from '@/components/tabs/tab-bar';
 import TabContent from '@/components/tabs/tab-content';
 import { useTabRouteSync } from '@/hooks/use-tab-route-sync';
 import { useMenuStore } from '@/stores/menu-store';
-import { useLocaleStore } from '@/stores/locale-store';
 import { useShallow } from 'zustand/react/shallow';
 
 export default function AppLayout() {
   useTabRouteSync();
+  const { t } = useTranslation();
   const { flyoutVisible, toggleSidebar } = useMenuStore(
     useShallow((s) => ({ flyoutVisible: s.flyoutVisible, toggleSidebar: s.toggleSidebar }))
   );
-  const locale = useLocaleStore((s) => s.locale);
 
-  const toggleTitle =
-    locale === 'ko'
-      ? (flyoutVisible ? '메뉴 접기' : '메뉴 펼치기')
-      : locale === 'vn'
-      ? (flyoutVisible ? 'Thu gọn menu' : 'Mở rộng menu')
-      : (flyoutVisible ? 'Collapse menu' : 'Expand menu');
+  const toggleTitle = flyoutVisible ? t('common.collapseMenu') : t('common.expandMenu');
 
   return (
     <div className="app-layout">

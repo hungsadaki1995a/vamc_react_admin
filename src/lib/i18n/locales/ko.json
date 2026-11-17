@@ -1,0 +1,52 @@
+{
+  "common": {
+    "signOut": "로그아웃",
+    "settings": "설정",
+    "collapseMenu": "메뉴 접기",
+    "expandMenu": "메뉴 펼치기"
+  },
+  "auth": {
+    "login": {
+      "loginIdLabel": "아이디",
+      "loginIdPlaceholder": "이메일 또는 휴대폰 번호를 입력해 주세요",
+      "loginIdRequired": "아이디를 입력해 주세요.",
+      "loginIdInvalid": "올바른 이메일 또는 휴대폰 번호를 입력해 주세요.",
+      "passwordLabel": "비밀번호",
+      "passwordPlaceholder": "비밀번호를 입력해 주세요",
+      "passwordRequired": "비밀번호를 입력해 주세요.",
+      "invalidCredentials": "아이디 또는 비밀번호가 일치하지 않습니다. 비밀번호 5회 오류 시 계정이 잠금 처리됩니다.",
+      "submit": "로그인",
+      "findLoginId": "아이디 찾기",
+      "findPassword": "비밀번호 찾기",
+      "findNotReady": "시스템 관리자에게 문의해 주세요.",
+      "defaultError": "로그인에 실패했습니다."
+    },
+    "findId": {
+      "title": "아이디 찾기",
+      "emailTab": "이메일 인증",
+      "zaloTab": "Zalo 인증",
+      "nameLabel": "이름",
+      "namePlaceholder": "이름을 입력해 주세요",
+      "nameRequired": "이름을 입력해 주세요.",
+      "emailLabel": "이메일",
+      "emailPlaceholder": "example@email.com",
+      "emailRequired": "이메일을 입력해 주세요.",
+      "emailInvalid": "올바른 이메일 주소를 입력해 주세요.",
+      "phoneLabel": "휴대폰 번호",
+      "phonePlaceholder": "090 123 5678",
+      "phoneRequired": "휴대폰 번호를 입력해 주세요.",
+      "codePlaceholder": "인증번호 입력",
+      "codeRequired": "인증번호를 입력해 주세요.",
+      "sendEmail": "인증 메일 발송",
+      "sendCode": "인증번호 발송",
+      "verify": "확인",
+      "confirm": "확인",
+      "emailSentMsg": "인증 메일이 발송되었습니다.",
+      "noAccountMatch": "입력하신 정보와 일치하는 계정이 없습니다.",
+      "codeSentMsg": "Zalo로 인증번호가 발송되었습니다.",
+      "codeVerifiedMsg": "인증번호가 확인되었습니다.",
+      "confirmSuccessMsg": "아이디 안내가 발송되었습니다.",
+      "verifyFirstMsg": "먼저 인증번호 확인을 진행해 주세요."
+    }
+  }
+}

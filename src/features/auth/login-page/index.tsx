@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useForm, useWatch, Controller } from 'react-hook-form';
 import { Form, Input, Button, Dropdown, App } from 'antd';
@@ -38,75 +39,8 @@ function isValidEmailOrPhone(value: string): boolean {
   return EMAIL_REGEX.test(trimmed) || PHONE_REGEX.test(trimmed.replace(/[\s-]/g, ''));
 }
 
-const LOGIN_I18N: Record<
-  LocaleKey,
-  {
-    loginIdLabel: string;
-    loginIdPlaceholder: string;
-    loginIdRequired: string;
-    loginIdInvalid: string;
-    passwordLabel: string;
-    passwordPlaceholder: string;
-    passwordRequired: string;
-    invalidCredentials: string;
-    submit: string;
-    findLoginId: string;
-    findPassword: string;
-    findNotReady: string;
-    defaultError: string;
-  }
-> = {
-  en: {
-    loginIdLabel: 'Login ID',
-    loginIdPlaceholder: 'Enter email or phone number',
-    loginIdRequired: 'Please enter your login ID.',
-    loginIdInvalid: 'Please enter a valid email or phone number.',
-    passwordLabel: 'Password',
-    passwordPlaceholder: 'Enter password',
-    passwordRequired: 'Please enter your password.',
-    invalidCredentials:
-      'Incorrect Login ID or password. The account will be locked after 5 failed password attempts.',
-    submit: 'Log In',
-    findLoginId: 'Find Login ID',
-    findPassword: 'Find Password',
-    findNotReady: 'Please contact your system administrator.',
-    defaultError: 'Login failed.',
-  },
-  ko: {
-    loginIdLabel: '아이디',
-    loginIdPlaceholder: '이메일 또는 휴대폰 번호를 입력해 주세요',
-    loginIdRequired: '아이디를 입력해 주세요.',
-    loginIdInvalid: '올바른 이메일 또는 휴대폰 번호를 입력해 주세요.',
-    passwordLabel: '비밀번호',
-    passwordPlaceholder: '비밀번호를 입력해 주세요',
-    passwordRequired: '비밀번호를 입력해 주세요.',
-    invalidCredentials:
-      '아이디 또는 비밀번호가 일치하지 않습니다. 비밀번호 5회 오류 시 계정이 잠금 처리됩니다.',
-    submit: '로그인',
-    findLoginId: '아이디 찾기',
-    findPassword: '비밀번호 찾기',
-    findNotReady: '시스템 관리자에게 문의해 주세요.',
-    defaultError: '로그인에 실패했습니다.',
-  },
-  vn: {
-    loginIdLabel: 'Tên đăng nhập',
-    loginIdPlaceholder: 'Nhập email hoặc số điện thoại',
-    loginIdRequired: 'Vui lòng nhập tên đăng nhập.',
-    loginIdInvalid: 'Vui lòng nhập email hoặc số điện thoại hợp lệ.',
-    passwordLabel: 'Mật khẩu',
-    passwordPlaceholder: 'Nhập mật khẩu',
-    passwordRequired: 'Vui lòng nhập mật khẩu.',
-    invalidCredentials:
-      'Tên đăng nhập hoặc mật khẩu không chính xác. Tài khoản sẽ bị khóa sau 5 lần nhập sai mật khẩu.',
-    submit: 'Đăng nhập',
-    findLoginId: 'Tìm tên đăng nhập',
-    findPassword: 'Tìm mật khẩu',
-    findNotReady: 'Vui lòng liên hệ quản trị viên hệ thống.',
-    defaultError: 'Đăng nhập thất bại.',
-  },
-};
-
 export default function LoginPage() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { message } = App.useApp();
   const setAuth = useAuthStore((s) => s.setAuth);
@@ -118,7 +52,6 @@ export default function LoginPage() {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [failedAttempts, setFailedAttempts] = useState(0);
 
-  const t = LOGIN_I18N[locale] ?? LOGIN_I18N.en;
   const { control, handleSubmit } = useForm<LoginRequest>({
     mode: 'onTouched',
     defaultValues: { loginId: '', password: '' },
@@ -208,14 +141,14 @@ export default function LoginPage() {
         setFailedAttempts(0);
         navigate('/members', { replace: true });
       } else {
-        setErrorMsg(t.defaultError);
+        setErrorMsg(t('auth.login.defaultError'));
       }
     } catch (err) {
       const apiErr = ApiError.from(err);
       if (apiErr.statusCode === 400 || apiErr.statusCode === 401) {
         const nextAttempts = failedAttempts + 1;
         setFailedAttempts(nextAttempts);
-        setErrorMsg(nextAttempts <= 4 ? t.invalidCredentials : apiErr.userMessage);
+        setErrorMsg(nextAttempts <= 4 ? t('auth.login.invalidCredentials') : apiErr.userMessage);
       } else {
         setErrorMsg(apiErr.userMessage);
       }
@@ -263,21 +196,21 @@ export default function LoginPage() {
           <div className={styles.fields}>
             <div className={styles.field}>
               <label htmlFor="login_loginId" className={styles.label}>
-                {t.loginIdLabel}
+                {t('auth.login.loginIdLabel')}
               </label>
               <Controller
                 name="loginId"
                 control={control}
                 rules={{
-                  required: t.loginIdRequired,
-                  validate: (value) => isValidEmailOrPhone(value) || t.loginIdInvalid,
+                  required: t('auth.login.loginIdRequired'),
+                  validate: (value) => isValidEmailOrPhone(value) || t('auth.login.loginIdInvalid'),
                 }}
                 render={({ field, fieldState }) => (
                   <Form.Item validateStatus={fieldState.error ? 'error' : ''} help={fieldState.error?.message}>
                     <Input
                       {...field}
                       id="login_loginId"
-                      placeholder={t.loginIdPlaceholder}
+                      placeholder={t('auth.login.loginIdPlaceholder')}
                       className={styles.input}
                       onChange={(e) => {
                         if (errorMsg) setErrorMsg(null);
@@ -291,12 +224,12 @@ export default function LoginPage() {
 
             <div className={styles.field}>
               <label htmlFor="login_password" className={styles.label}>
-                {t.passwordLabel}
+                {t('auth.login.passwordLabel')}
               </label>
               <Controller
                 name="password"
                 control={control}
-                rules={{ required: t.passwordRequired }}
+                rules={{ required: t('auth.login.passwordRequired') }}
                 render={({ field, fieldState }) => (
                   <Form.Item
                     validateStatus={fieldState.error || errorMsg ? 'error' : ''}
@@ -305,7 +238,7 @@ export default function LoginPage() {
                     <Input.Password
                       {...field}
                       id="login_password"
-                      placeholder={t.passwordPlaceholder}
+                      placeholder={t('auth.login.passwordPlaceholder')}
                       className={styles.passwordInput}
                       iconRender={(visible) => (visible ? <EyeInvisibleOutlined /> : <EyeOutlined />)}
                       onChange={(e) => {
@@ -328,7 +261,7 @@ export default function LoginPage() {
               disabled={isSubmitDisabled}
               className={styles.submitBtn}
             >
-              {t.submit}
+              {t('auth.login.submit')}
             </Button>
           </Form.Item>
         </Form>
@@ -339,15 +272,15 @@ export default function LoginPage() {
             className={styles.linkBtn}
             onClick={() => navigate('/find-id')}
           >
-            {t.findLoginId}
+            {t('auth.login.findLoginId')}
           </button>
           <span className={styles.divider} aria-hidden="true" />
           <button
             type="button"
             className={styles.linkBtn}
-            onClick={() => message.info(t.findNotReady)}
+            onClick={() => message.info(t('auth.login.findNotReady'))}
           >
-            {t.findPassword}
+            {t('auth.login.findPassword')}
           </button>
         </div>
       </div>
