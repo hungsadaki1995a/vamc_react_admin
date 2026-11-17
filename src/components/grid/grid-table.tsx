@@ -43,12 +43,12 @@ import type {
 import type { AgGridReactProps } from 'ag-grid-react';
 import { App } from 'antd';
 import DOMPurify from 'dompurify';
-import { useThemeStore } from '@/stores/themeStore';
-import { useLocaleStore } from '@/stores/localeStore';
-import { useComponentLabel } from '@/hooks/useComponentLabel';
-import { getAgGridLocale } from './agGridLocale';
-import { ComcdSelectCellEditor, ComcdSelectCellRenderer } from './ComcdSelectCell';
-import './GridTable.css';
+import { useThemeStore } from '@/stores/theme-store';
+import { useLocaleStore } from '@/stores/locale-store';
+import { useComponentLabel } from '@/hooks/use-component-label';
+import { getAgGridLocale } from './ag-grid-locale';
+import { ComcdSelectCellEditor, ComcdSelectCellRenderer } from './comcd-select-cell';
+import './grid-table.css';
 
 export type GridCellAlign = 'left' | 'center' | 'right';
 

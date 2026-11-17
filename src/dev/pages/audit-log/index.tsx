@@ -1,9 +1,9 @@
 ﻿import { useState, useMemo } from 'react';
 import { DatePicker, Select, Space, Tag } from 'antd';
-import GridTable from '@/components/grid/GridTable';
+import GridTable from '@/components/grid/grid-table';
 import type { ColDef, ICellRendererParams } from 'ag-grid-community';
 import dayjs from 'dayjs';
-import DevPageHeader from '@/dev/DevPageHeader';
+import DevPageHeader from '@/dev/dev-page-header';
 
 const { RangePicker } = DatePicker;
 

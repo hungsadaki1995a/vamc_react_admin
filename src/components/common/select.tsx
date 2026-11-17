@@ -1,6 +1,6 @@
 import { Select as AntSelect, type SelectProps as AntSelectProps } from 'antd';
 import type { BaseOptionType, DefaultOptionType } from 'antd/es/select';
-import './Select.css';
+import './select.css';
 
 export interface SelectProps<
   ValueType = unknown,

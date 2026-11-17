@@ -1,7 +1,7 @@
 import { apiClient } from '@/lib/api/client';
 import type { ApiResponse } from '@/lib/api/types';
 import { encryptPassword } from '@/lib/crypto';
-import { fetchPublicKey } from '@/api/common/authApi';
+import { fetchPublicKey } from '@/api/common/auth-api';
 
 /**
  * 사용자 비밀번호 변경 API — 시스템 운영 관리 도메인.

@@ -1,5 +1,5 @@
 import type { CSSProperties, ReactNode } from 'react';
-import './ModalInfoFields.css';
+import './modal-info-fields.css';
 
 export interface ModalInfoFieldItem {
   key: string;

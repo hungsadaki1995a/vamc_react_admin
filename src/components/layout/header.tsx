@@ -13,10 +13,10 @@ import {
   chevronDown,
   userCircleFill,
 } from '@/assets/images';
-import { useAuthStore } from '@/stores/authStore';
-import { useLocaleStore, type LocaleKey } from '@/stores/localeStore';
-import { useLogout } from '@/hooks/useLogout';
-import { getLocaleShortLabel } from '@/utils/localeStorage';
+import { useAuthStore } from '@/stores/auth-store';
+import { useLocaleStore, type LocaleKey } from '@/stores/locale-store';
+import { useLogout } from '@/hooks/use-logout';
+import { getLocaleShortLabel } from '@/utils/locale-storage';
 
 const FLAG_ICON_MAP: Partial<Record<LocaleKey, string>> = {
   en: flagUkRound,

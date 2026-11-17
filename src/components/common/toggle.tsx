@@ -1,5 +1,5 @@
 import { Switch as AntSwitch, type SwitchProps } from 'antd';
-import './Toggle.css';
+import './toggle.css';
 
 export type ToggleProps = SwitchProps;
 

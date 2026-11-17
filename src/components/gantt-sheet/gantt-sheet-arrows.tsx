@@ -1,6 +1,6 @@
 import React from 'react';
-import type { DependencyLine } from './ganttTypes';
-import type { DateEngine } from './useGanttDateEngine';
+import type { DependencyLine } from './gantt-types';
+import type { DateEngine } from './use-gantt-date-engine';
 
 interface GanttSheetArrowsProps {
   lines: DependencyLine[];

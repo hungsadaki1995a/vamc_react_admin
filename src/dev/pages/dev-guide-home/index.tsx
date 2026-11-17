@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useLocaleStore } from '@/stores/localeStore';
-import type { LocaleKey } from '@/stores/localeStore';
+import { useLocaleStore } from '@/stores/locale-store';
+import type { LocaleKey } from '@/stores/locale-store';
 import { SECTIONS, PAGE_TEXT } from './sections';
 import styles from './index.module.css';
 import { CONTENT_KO } from './content.ko';

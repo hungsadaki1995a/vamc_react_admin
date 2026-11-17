@@ -1,6 +1,6 @@
 import { Tabs, Card } from 'antd';
-import CodeSnippet from '@/components/common/CodeSnippet';
-import DevPageHeader from '@/dev/DevPageHeader';
+import CodeSnippet from '@/components/common/code-snippet';
+import DevPageHeader from '@/dev/dev-page-header';
 
 // ============================================================
 // Basic routing example
@@ -377,8 +377,8 @@ createRoot(document.getElementById('root')!).render(
 const tabRouteSyncCode = `// src/hooks/useTabRouteSync.ts
 import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useTabStore } from '@/stores/tabStore';
-import { useMenuStore } from '@/stores/menuStore';
+import { useTabStore } from '@/stores/tab-store';
+import { useMenuStore } from '@/stores/menu-store';
 
 /**
  * Hook that keeps tabs and the URL in sync both ways

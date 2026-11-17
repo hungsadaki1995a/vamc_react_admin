@@ -1,7 +1,7 @@
 import type { ButtonProps } from 'antd';
-import ActionButton from '@/components/common/ActionButton';
-import { useLabelStore } from '@/stores/labelStore';
-import './ExcelDownloadButton.css';
+import ActionButton from '@/components/common/action-button';
+import { useLabelStore } from '@/stores/label-store';
+import './excel-download-button.css';
 
 export function ExcelDownloadButton({ children, className, ...props }: ButtonProps) {
   const t = useLabelStore((s) => s.t);

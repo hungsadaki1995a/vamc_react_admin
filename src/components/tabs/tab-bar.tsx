@@ -8,11 +8,11 @@ import {
   historytabLeftFilled,
   historytabRightFilled,
 } from '@/assets/images';
-import { useTabStore } from '@/stores/tabStore';
-import { useSettingsStore } from '@/stores/settingsStore';
-import { useAllMenus } from '@/hooks/useAllMenus';
-import { findMenuByKey } from '@/utils/menuUtils';
-import TabContextMenu from './TabContextMenu';
+import { useTabStore } from '@/stores/tab-store';
+import { useSettingsStore } from '@/stores/settings-store';
+import { useAllMenus } from '@/hooks/use-all-menus';
+import { findMenuByKey } from '@/utils/menu-utils';
+import TabContextMenu from './tab-context-menu';
 import type { Tab } from '@/types/tab';
 
 /** Memoized individual tab item to prevent unnecessary re-renders */

@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Button, Badge } from 'antd';
 import { SearchOutlined, UndoOutlined, UpOutlined, DownOutlined } from '@ant-design/icons';
-import { useComponentLabel } from '@/hooks/useComponentLabel';
-import './FilterPanel.css';
+import { useComponentLabel } from '@/hooks/use-component-label';
+import './filter-panel.css';
 
 interface FilterPanelProps {
   /** 접힘 상태 (controlled) */

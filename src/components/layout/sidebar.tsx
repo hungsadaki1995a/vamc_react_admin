@@ -1,9 +1,9 @@
 import { Menu } from 'antd';
-import { useMenuStore } from '@/stores/menuStore';
-import { useTabStore } from '@/stores/tabStore';
-import { menuConfig } from '@/config/menuConfig';
+import { useMenuStore } from '@/stores/menu-store';
+import { useTabStore } from '@/stores/tab-store';
+import { menuConfig } from '@/config/menu-config';
 import { useShallow } from 'zustand/react/shallow';
-import { buildAntMenuItems, findMenuByKey } from '@/utils/menuUtils';
+import { buildAntMenuItems, findMenuByKey } from '@/utils/menu-utils';
 import type { MenuProps } from 'antd';
 
 export default function Sidebar() {

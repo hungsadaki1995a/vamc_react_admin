@@ -1,5 +1,5 @@
-import GridToolbar from '@/components/layout/GridToolbar';
-import GridTable, { type GridTableProps } from './GridTable';
+import GridToolbar from '@/components/layout/grid-toolbar';
+import GridTable, { type GridTableProps } from './grid-table';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 interface GridPanelProps<TData = any> extends GridTableProps<TData> {

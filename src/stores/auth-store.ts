@@ -5,8 +5,8 @@ import {
   getAccessToken,
   setAccessToken as setStoredToken,
   clearTokens,
-} from '@/utils/tokenStorage';
-import { isTokenExpired, jwtToMeResponse } from '@/utils/jwtUtils';
+} from '@/utils/token-storage';
+import { isTokenExpired, jwtToMeResponse } from '@/utils/jwt-utils';
 
 interface AuthState {
   accessToken: string | null;

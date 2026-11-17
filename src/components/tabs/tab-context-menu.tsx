@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
-import { useTabStore } from '@/stores/tabStore';
-import { useComponentLabel } from '@/hooks/useComponentLabel';
+import { useTabStore } from '@/stores/tab-store';
+import { useComponentLabel } from '@/hooks/use-component-label';
 
 interface TabContextMenuProps {
   visible: boolean;

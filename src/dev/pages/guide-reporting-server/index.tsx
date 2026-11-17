@@ -2,8 +2,8 @@ import { useState } from 'react';
 import { Alert, Button, Card, Divider, Space, Table, Typography, message } from 'antd';
 import type { TableColumnsType } from 'antd';
 import { FilePdfOutlined, EyeOutlined } from '@ant-design/icons';
-import CodeSnippet from '@/components/common/CodeSnippet';
-import DevPageHeader from '@/dev/DevPageHeader';
+import CodeSnippet from '@/components/common/code-snippet';
+import DevPageHeader from '@/dev/dev-page-header';
 
 const { Text, Paragraph } = Typography;
 

@@ -1,4 +1,4 @@
-import type { GanttTask, DependencyType, CriticalPathResult, DependencyLine } from './ganttTypes';
+import type { GanttTask, DependencyType, CriticalPathResult, DependencyLine } from './gantt-types';
 
 const MS_PER_DAY = 1000 * 60 * 60 * 24;
 

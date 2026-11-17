@@ -40,10 +40,10 @@ function CollapseAllIcon() {
   );
 }
 
-import { useAllMenus } from '@/hooks/useAllMenus';
-import { useMenuStore } from '@/stores/menuStore';
-import { findMenuByKey } from '@/utils/menuUtils';
-import { useTabStore } from '@/stores/tabStore';
+import { useAllMenus } from '@/hooks/use-all-menus';
+import { useMenuStore } from '@/stores/menu-store';
+import { findMenuByKey } from '@/utils/menu-utils';
+import { useTabStore } from '@/stores/tab-store';
 
 import { useShallow } from 'zustand/react/shallow';
 import type { MenuItem, MenuTreeItem } from '@/types/menu';

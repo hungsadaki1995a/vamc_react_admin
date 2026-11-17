@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react';
 import { Input, Tooltip } from 'antd';
 import type { InputProps, InputRef } from 'antd';
-import './TipInput.css';
+import './tip-input.css';
 
 /**
  * Input with automatic overflow tooltip.

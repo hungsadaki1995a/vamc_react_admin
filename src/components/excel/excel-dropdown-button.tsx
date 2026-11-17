@@ -2,7 +2,7 @@ import { Dropdown } from 'antd';
 import type { MenuProps } from 'antd';
 import { DownloadOutlined, DownOutlined, FileExcelOutlined, UploadOutlined } from '@ant-design/icons';
 import type { ReactNode } from 'react';
-import ActionButton, { type ActionButtonProps } from '@/components/common/ActionButton';
+import ActionButton, { type ActionButtonProps } from '@/components/common/action-button';
 
 export type ExcelDropdownItemType = 'upload' | 'template' | 'download' | 'custom';
 

@@ -12,9 +12,9 @@ import {
 } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import type { InquiryItem } from './inquiry.types';
-import { useInquiries } from './useInquiries';
-import InquiryDetailModal from './InquiryDetailModal';
-import styles from './InquiryManagement.module.css';
+import { useInquiries } from './use-inquiries';
+import InquiryDetailModal from './inquiry-detail-modal';
+import styles from './inquiry-management.module.css';
 
 const { RangePicker } = DatePicker;
 

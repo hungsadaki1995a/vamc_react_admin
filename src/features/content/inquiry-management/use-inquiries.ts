@@ -8,7 +8,7 @@ import {
   type PageResponseInquiryResponse,
   type PageRequest,
   type InquirySearchRequest,
-} from '@/api/contents/inquiryApi';
+} from '@/api/contents/inquiry-api';
 import type { InquiryItem } from './inquiry.types';
 import { initialInquiryData } from './inquiry.mock';
 

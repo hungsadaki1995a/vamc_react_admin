@@ -14,7 +14,7 @@
  * message.error(tme('E100001'));     // MESSAGE.ERROR.TEXT_E100001
  * modal.confirm({ content: tmc('C100007') });
  */
-import { useLabelStore } from '@/stores/labelStore';
+import { useLabelStore } from '@/stores/label-store';
 
 const get = () => useLabelStore.getState();
 

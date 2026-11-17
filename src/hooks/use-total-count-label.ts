@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
-import { useLabelStore } from '@/stores/labelStore';
-import { useLocaleStore } from '@/stores/localeStore';
-import { formatLabel } from '@/lib/i18n/formatLabel';
+import { useLabelStore } from '@/stores/label-store';
+import { useLocaleStore } from '@/stores/locale-store';
+import { formatLabel } from '@/lib/i18n/format-label';
 
 /** 라벨 미등록 시 로케일별 폴백 — '건' 같은 수량 접미사는 언어마다 자리가 달라 문장을 통째로 둔다 */
 const FALLBACK: Record<string, string> = {

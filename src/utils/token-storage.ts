@@ -1,4 +1,4 @@
-import { isTokenExpired, getTokenExp } from './jwtUtils';
+import { isTokenExpired, getTokenExp } from './jwt-utils';
 
 export const ACCESS_TOKEN_KEY = 'accessToken';
 export const LEGACY_ACCESS_TOKEN_KEY = 'vamc_access_token';

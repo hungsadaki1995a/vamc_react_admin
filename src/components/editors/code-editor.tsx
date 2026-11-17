@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import Editor from '@monaco-editor/react';
-import { useThemeStore } from '@/stores/themeStore';
+import { useThemeStore } from '@/stores/theme-store';
 
 interface CodeEditorProps {
   value?: string;

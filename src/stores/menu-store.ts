@@ -1,11 +1,11 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { MenuItem, MenuTreeItem } from '@/types/menu';
-import { fetchAuthMenuList } from '@/api/common/myMenuApi';
-import { idbGet, idbSet, idbDelete } from '@/lib/cache/idbCache';
-import { useAuthStore } from '@/stores/authStore';
-import { useProjectStore } from '@/stores/projectStore';
-import { useLocaleStore } from '@/stores/localeStore';
+import { fetchAuthMenuList } from '@/api/common/my-menu-api';
+import { idbGet, idbSet, idbDelete } from '@/lib/cache/idb-cache';
+import { useAuthStore } from '@/stores/auth-store';
+import { useProjectStore } from '@/stores/project-store';
+import { useLocaleStore } from '@/stores/locale-store';
 import { mapMenuTreesToMenuItems } from '@/utils/menu-tree-utils';
 
 interface MenuStore {

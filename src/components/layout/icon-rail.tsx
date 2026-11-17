@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { Tooltip } from 'antd';
 import * as Icons from '@ant-design/icons';
 import React from 'react';
-import { CUSTOM_ICON_MAP } from '@/components/icons/CustomIcons';
+import { CUSTOM_ICON_MAP } from '@/components/icons/custom-icons';
 import {
   gnbUser,
   gnbHandshake,
@@ -15,14 +15,14 @@ import {
   gnbLogout,
 } from '@/assets/images';
 import type { MenuItem } from '@/types/menu';
-import { useMenuStore } from '@/stores/menuStore';
-import { useTabStore } from '@/stores/tabStore';
-import { useLogout } from '@/hooks/useLogout';
-import { useAllMenus } from '@/hooks/useAllMenus';
-import { useComponentLabel } from '@/hooks/useComponentLabel';
-import { useLocaleStore } from '@/stores/localeStore';
+import { useMenuStore } from '@/stores/menu-store';
+import { useTabStore } from '@/stores/tab-store';
+import { useLogout } from '@/hooks/use-logout';
+import { useAllMenus } from '@/hooks/use-all-menus';
+import { useComponentLabel } from '@/hooks/use-component-label';
+import { useLocaleStore } from '@/stores/locale-store';
 import { useShallow } from 'zustand/react/shallow';
-import { findTopLevelMenuKey } from '@/utils/menuUtils';
+import { findTopLevelMenuKey } from '@/utils/menu-utils';
 import {
   getMenuIconByCode,
   getTopLevelMenuItems,

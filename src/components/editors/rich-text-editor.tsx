@@ -3,7 +3,7 @@ import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import { Placeholder } from '@tiptap/extension-placeholder';
 import { Link } from '@tiptap/extension-link';
-import { ImageExtension } from './ImageExtension';
+import { ImageExtension } from './image-extension';
 import { Table } from '@tiptap/extension-table';
 import { TableRow } from '@tiptap/extension-table-row';
 import { TableCell } from '@tiptap/extension-table-cell';
@@ -19,7 +19,7 @@ import { CodeBlockLowlight } from '@tiptap/extension-code-block-lowlight';
 import { Youtube } from '@tiptap/extension-youtube';
 import Subscript from '@tiptap/extension-subscript';
 import Superscript from '@tiptap/extension-superscript';
-import ParagraphIndent from './ParagraphIndent';
+import ParagraphIndent from './paragraph-indent';
 import { common, createLowlight } from 'lowlight';
 import {
   BoldOutlined,
@@ -44,8 +44,8 @@ import {
 } from '@ant-design/icons';
 import { Tooltip, Dropdown } from 'antd';
 import type { MenuProps } from 'antd';
-import { useThemeStore } from '@/stores/themeStore';
-import './RichTextEditor.css';
+import { useThemeStore } from '@/stores/theme-store';
+import './rich-text-editor.css';
 
 const lowlight = createLowlight(common);
 

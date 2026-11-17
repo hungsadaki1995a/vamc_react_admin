@@ -1,7 +1,7 @@
 ﻿import { useState } from 'react';
 import { Tag, Button, Space, Empty, Input } from 'antd';
 import { SearchOutlined, PlusOutlined } from '@ant-design/icons';
-import GridToolbar from '@/components/layout/GridToolbar';
+import GridToolbar from '@/components/layout/grid-toolbar';
 import styles from './index.module.css';
 
 interface Project {

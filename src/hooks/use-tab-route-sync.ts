@@ -1,11 +1,11 @@
 import { useEffect, useRef, useCallback } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
-import { useTabStore } from '@/stores/tabStore';
-import { useMenuStore } from '@/stores/menuStore';
-import { useSettingsStore } from '@/stores/settingsStore';
-import { useAllMenus } from '@/hooks/useAllMenus';
-import { menuConfig } from '@/config/menuConfig';
-import { findMenuByKey, findTopLevelMenuKey, findMenuByComponentPath } from '@/utils/menuUtils';
+import { useTabStore } from '@/stores/tab-store';
+import { useMenuStore } from '@/stores/menu-store';
+import { useSettingsStore } from '@/stores/settings-store';
+import { useAllMenus } from '@/hooks/use-all-menus';
+import { menuConfig } from '@/config/menu-config';
+import { findMenuByKey, findTopLevelMenuKey, findMenuByComponentPath } from '@/utils/menu-utils';
 
 /**
  * Bidirectional sync between tab system and browser history.

@@ -1,10 +1,10 @@
 import { useNavigate } from 'react-router-dom';
-import { logout as logoutApi } from '@/api/common/authApi';
-import { useAuthStore } from '@/stores/authStore';
-import { useProjectStore } from '@/stores/projectStore';
-import { useTabStore } from '@/stores/tabStore';
-import { useMenuStore } from '@/stores/menuStore';
-import { useComponentLabel } from '@/hooks/useComponentLabel';
+import { logout as logoutApi } from '@/api/common/auth-api';
+import { useAuthStore } from '@/stores/auth-store';
+import { useProjectStore } from '@/stores/project-store';
+import { useTabStore } from '@/stores/tab-store';
+import { useMenuStore } from '@/stores/menu-store';
+import { useComponentLabel } from '@/hooks/use-component-label';
 import { App } from 'antd';
 export function useLogout() {
   const { modal } = App.useApp();

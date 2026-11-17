@@ -1,4 +1,4 @@
-import TaskStats from '../TaskStats';
+import TaskStats from '../task-stats';
 
 /**
  * Dashboard pattern — stat cards, progress bars and status distribution on one screen.

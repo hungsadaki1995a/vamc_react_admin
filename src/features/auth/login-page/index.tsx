@@ -11,21 +11,21 @@ import {
   EyeInvisibleOutlined,
 } from '@ant-design/icons';
 import { login } from '@/api/generated/sdk.gen';
-import { fetchPublicKey } from '@/api/common/authApi';
+import { fetchPublicKey } from '@/api/common/auth-api';
 import { encryptPassword } from '@/lib/crypto';
-import { useAuthStore } from '@/stores/authStore';
-import { jwtToMeResponse } from '@/utils/jwtUtils';
-import { setRefreshToken } from '@/utils/tokenStorage';
-import { useTabStore } from '@/stores/tabStore';
-import { useMenuStore } from '@/stores/menuStore';
-import { useSettingsStore } from '@/stores/settingsStore';
-import { menuConfig } from '@/config/menuConfig';
-import { findMenuByKey } from '@/utils/menuUtils';
-import { fetchAuthMenuList } from '@/api/common/myMenuApi';
+import { useAuthStore } from '@/stores/auth-store';
+import { jwtToMeResponse } from '@/utils/jwt-utils';
+import { setRefreshToken } from '@/utils/token-storage';
+import { useTabStore } from '@/stores/tab-store';
+import { useMenuStore } from '@/stores/menu-store';
+import { useSettingsStore } from '@/stores/settings-store';
+import { menuConfig } from '@/config/menu-config';
+import { findMenuByKey } from '@/utils/menu-utils';
+import { fetchAuthMenuList } from '@/api/common/my-menu-api';
 import { ApiError } from '@/lib/api/error';
 import type { LoginRequest } from '@/lib/api/types';
-import { useLocaleStore, type LocaleKey } from '@/stores/localeStore';
-import { getLocaleShortLabel } from '@/utils/localeStorage';
+import { useLocaleStore, type LocaleKey } from '@/stores/locale-store';
+import { getLocaleShortLabel } from '@/utils/locale-storage';
 import styles from './index.module.css';
 import vamcLogoLogin from '@/assets/vamc_logo_login-28c7ab.png';
 

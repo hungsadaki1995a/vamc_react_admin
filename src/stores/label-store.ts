@@ -1,7 +1,7 @@
 import { create } from 'zustand';
-import { fetchBulkLabels } from '@/api/common/lblBulkApi';
-import { idbGet, idbSet } from '@/lib/cache/idbCache';
-import { useLocaleStore } from '@/stores/localeStore';
+import { fetchBulkLabels } from '@/api/common/lbl-bulk-api';
+import { idbGet, idbSet } from '@/lib/cache/idb-cache';
+import { useLocaleStore } from '@/stores/locale-store';
 
 /**
  * 라벨 캐시 TTL: 5분. `comcdStore` 와 같은 정책이다.

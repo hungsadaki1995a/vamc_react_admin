@@ -1,6 +1,6 @@
 import type { ReactNode, CSSProperties } from 'react';
 import { LeftOutlined, RightOutlined } from '@ant-design/icons';
-import { useScrollOverflow } from '@/hooks/useScrollOverflow';
+import { useScrollOverflow } from '@/hooks/use-scroll-overflow';
 
 interface Props {
   children: ReactNode;

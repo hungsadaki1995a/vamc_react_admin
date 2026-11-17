@@ -1,6 +1,6 @@
 import { lazy } from 'react';
 import type { ComponentType } from 'react';
-import { DEV_TOOLS_ENABLED } from './menuConfig';
+import { DEV_TOOLS_ENABLED } from './menu-config';
 
 // 업무 화면 자동 발견 — src/features/{도메인}/{화면ID}/index.tsx
 // 레지스트리 키 = **바로 위 폴더명** (= 화면ID = MENU_MNG.MENU_URL_ADDR = sceId)
@@ -23,11 +23,20 @@ const devModules = (
 
 const pageModules: Record<string, PageLoader> = { ...baseModules, ...devModules };
 
+function toPascalCase(kebab: string): string {
+  return kebab.replace(/(^|-)([a-z0-9])/g, (_, __, ch: string) => ch.toUpperCase());
+}
+
 const autoRegistry: Record<string, ComponentType> = Object.fromEntries(
-  Object.entries(pageModules).map(([path, loader]) => {
+  Object.entries(pageModules).flatMap(([path, loader]) => {
     // Take the folder name immediately before /index.tsx
     const name = path.split('/').at(-2)!;
-    return [name, lazy(loader)];
+    const component = lazy(loader);
+    return [
+      [name, component],
+      [toPascalCase(name), component],
+      [name.toUpperCase(), component],
+    ];
   }),
 );
 
@@ -37,25 +46,25 @@ const autoRegistry: Record<string, ComponentType> = Object.fromEntries(
 //
 // 예외가 정당한 경우 — 같은 파일을 다른 props 로 두 메뉴에 걸 때:
 //   'SYS030102SC': lazy(() =>
-//     import('@/features/sys/SYS030101SC/index').then((m) => ({
+//     import('@/features/sys/sys030101-sc/index').then((m) => ({
 //       default: () => <m.default filterStatus="active" />,
 //     }))
 //   ),
 const overrides: Record<string, ComponentType> = {
-  member: lazy(() => import('@/features/member/MemberList')),
-  members: lazy(() => import('@/features/member/MemberList')),
-  'member.list': lazy(() => import('@/features/member/MemberList')),
-  'member-management': lazy(() => import('@/features/member/MemberList')),
-  MemberManagement: lazy(() => import('@/features/member/MemberList')),
-  MemberList: lazy(() => import('@/features/member/MemberList')),
-  inquiry: lazy(() => import('@/features/content/InquiryManagement')),
-  'inquiry-management': lazy(() => import('@/features/content/InquiryManagement')),
-  '1:1 Inquiry Management': lazy(() => import('@/features/content/InquiryManagement')),
-  InquiryManagement: lazy(() => import('@/features/content/InquiryManagement')),
-  faq: lazy(() => import('@/features/content/FaqManagement')),
-  'faq-management': lazy(() => import('@/features/content/FaqManagement')),
-  'FAQ Management': lazy(() => import('@/features/content/FaqManagement')),
-  FaqManagement: lazy(() => import('@/features/content/FaqManagement')),
+  member: lazy(() => import('@/features/member/member-list')),
+  members: lazy(() => import('@/features/member/member-list')),
+  'member.list': lazy(() => import('@/features/member/member-list')),
+  'member-management': lazy(() => import('@/features/member/member-list')),
+  MemberManagement: lazy(() => import('@/features/member/member-list')),
+  MemberList: lazy(() => import('@/features/member/member-list')),
+  inquiry: lazy(() => import('@/features/content/inquiry-management')),
+  'inquiry-management': lazy(() => import('@/features/content/inquiry-management')),
+  '1:1 Inquiry Management': lazy(() => import('@/features/content/inquiry-management')),
+  InquiryManagement: lazy(() => import('@/features/content/inquiry-management')),
+  faq: lazy(() => import('@/features/content/faq-management')),
+  'faq-management': lazy(() => import('@/features/content/faq-management')),
+  'FAQ Management': lazy(() => import('@/features/content/faq-management')),
+  FaqManagement: lazy(() => import('@/features/content/faq-management')),
 };
 
 export const componentRegistry: Record<string, ComponentType> = {

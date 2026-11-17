@@ -3,7 +3,7 @@ import { Select, Button, Space, Drawer, Tag, Progress, Typography } from 'antd';
 import { CalendarOutlined } from '@ant-design/icons';
 import { GanttSheet } from '@/components/gantt-sheet';
 import type { GanttTask, GanttViewMode } from '@/components/gantt-sheet';
-import GridToolbar from '@/components/layout/GridToolbar';
+import GridToolbar from '@/components/layout/grid-toolbar';
 
 const { Text } = Typography;
 

@@ -1,4 +1,4 @@
-import type { LocaleKey } from '@/stores/localeStore';
+import type { LocaleKey } from '@/stores/locale-store';
 import styles from './index.module.css';
 
 // ─────────────────────────────────────────────────────────────────────────────

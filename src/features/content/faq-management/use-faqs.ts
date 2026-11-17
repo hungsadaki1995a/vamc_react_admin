@@ -8,7 +8,7 @@ import {
   type PageResponsePostResponse,
   type PageRequest,
   type PostSearchRequest,
-} from '@/api/contents/faqApi';
+} from '@/api/contents/faq-api';
 import type { FaqItem } from './faq.types';
 import { initialFaqData } from './faq.mock';
 

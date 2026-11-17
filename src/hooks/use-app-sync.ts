@@ -6,13 +6,13 @@ import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
 import 'dayjs/locale/vi';
 import 'dayjs/locale/en';
-import { useThemeStore } from '@/stores/themeStore';
-import { useLocaleStore } from '@/stores/localeStore';
-import { useAuthStore } from '@/stores/authStore';
-import { useComcdStore } from '@/stores/comcdStore';
-import { useMenuStore } from '@/stores/menuStore';
-import { useLabelStore } from '@/stores/labelStore';
-import { toIsoLangTag } from '@/utils/localeStorage';
+import { useThemeStore } from '@/stores/theme-store';
+import { useLocaleStore } from '@/stores/locale-store';
+import { useAuthStore } from '@/stores/auth-store';
+import { useComcdStore } from '@/stores/comcd-store';
+import { useMenuStore } from '@/stores/menu-store';
+import { useLabelStore } from '@/stores/label-store';
+import { toIsoLangTag } from '@/utils/locale-storage';
 
 /** Syncs theme, Dayjs/HTML locale, and locale-dependent stores (common codes, menus, labels). */
 export function useAppSync() {

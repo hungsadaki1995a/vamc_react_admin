@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
-import { useMenuStore } from '@/stores/menuStore';
-import { useTabStore } from '@/stores/tabStore';
-import { findMenuByKey, findMenuByComponentPath, findTopLevelMenuKey } from '@/utils/menuUtils';
+import { useMenuStore } from '@/stores/menu-store';
+import { useTabStore } from '@/stores/tab-store';
+import { findMenuByKey, findMenuByComponentPath, findTopLevelMenuKey } from '@/utils/menu-utils';
 
 /**
  * Returns a `navigateTab(key, params?)` function that finds a menu item by key

@@ -1,10 +1,10 @@
 // StrictMode is intentionally disabled
 import { createRoot } from 'react-dom/client';
 import { QueryClientProvider } from '@tanstack/react-query';
-import { queryClient } from '@/lib/api/queryClient';
+import { queryClient } from '@/lib/api/query-client';
 import { client as heyApiClient } from '@/api/generated/client.gen';
 import { apiClient } from '@/lib/api/client';
-import App from '@/app/App';
+import App from '@/app/app';
 import '@/styles/global.css';
 
 // Bind Hey API generated client to use the project's customized Axios instance and base URL

@@ -1,10 +1,10 @@
 import { Suspense, useRef, useState, memo } from 'react';
 import { Spin } from 'antd';
-import { useTabStore } from '@/stores/tabStore';
-import { componentRegistry } from '@/config/componentRegistry';
-import { TabContext } from '@/contexts/TabContext';
-import PageHeader from '@/components/layout/PageHeader';
-import { PageHeaderSlotContext, type PageHeaderSlot } from '@/components/layout/PageHeaderSlotContext';
+import { useTabStore } from '@/stores/tab-store';
+import { componentRegistry } from '@/config/component-registry';
+import { TabContext } from '@/contexts/tab-context';
+import PageHeader from '@/components/layout/page-header';
+import { PageHeaderSlotContext, type PageHeaderSlot } from '@/components/layout/page-header-slot-context';
 import type { ComponentType } from 'react';
 import type { Tab } from '@/types/tab';
 

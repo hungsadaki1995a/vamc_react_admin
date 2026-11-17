@@ -9,12 +9,12 @@ import {
   UploadOutlined,
 } from '@ant-design/icons';
 import type { ICellRendererParams } from 'ag-grid-community';
-import AppModal from '@/components/common/AppModal';
-import GridTable, { type ColDefEx } from '@/components/grid/GridTable';
-import { useLabelStore } from '@/stores/labelStore';
+import AppModal from '@/components/common/app-modal';
+import GridTable, { type ColDefEx } from '@/components/grid/grid-table';
+import { useLabelStore } from '@/stores/label-store';
 import type { ExcelProcessResult, ExcelRowError, ExcelUploadResult } from '@/types/excel';
-import styles from './ExcelUploadModal.module.css';
-import { formatLabel } from '@/lib/i18n/formatLabel';
+import styles from './excel-upload-modal.module.css';
+import { formatLabel } from '@/lib/i18n/format-label';
 
 export type ExcelUploadModalMode = 'upload' | 'confirm' | 'success' | 'error';
 

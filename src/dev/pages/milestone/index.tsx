@@ -1,6 +1,6 @@
 import { Timeline, Card, Tag, Typography, Space } from 'antd';
 import { CheckCircleOutlined, ClockCircleOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
-import DevPageHeader from '@/dev/DevPageHeader';
+import DevPageHeader from '@/dev/dev-page-header';
 
 const { Text } = Typography;
 

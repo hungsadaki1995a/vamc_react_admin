@@ -3,11 +3,11 @@ import { Tabs, Card, Tag } from 'antd';
 import { AgGridReact } from 'ag-grid-react';
 import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
 import type { ColDef, ColGroupDef, CellClassParams, CellStyle } from 'ag-grid-community';
-import CodeSnippet from '@/components/common/CodeSnippet';
-import { lightTheme, darkTheme } from '@/components/grid/GridTable';
-import { useThemeStore } from '@/stores/themeStore';
-import '@/components/grid/GridTable.css';
-import DevPageHeader from '@/dev/DevPageHeader';
+import CodeSnippet from '@/components/common/code-snippet';
+import { lightTheme, darkTheme } from '@/components/grid/grid-table';
+import { useThemeStore } from '@/stores/theme-store';
+import '@/components/grid/grid-table.css';
+import DevPageHeader from '@/dev/dev-page-header';
 
 // Register AG Grid modules
 ModuleRegistry.registerModules([AllCommunityModule]);
@@ -341,10 +341,10 @@ const columnDefs: ColDef[] = [
 
 const projectEditorsCode = `// The custom editors in this project (src/components/grid/cellEditors/)
 
-import DateCellEditor from '@/components/grid/cellEditors/DateCellEditor';
-import SelectCellEditor from '@/components/grid/cellEditors/SelectCellEditor';
-import TagsCellEditor from '@/components/grid/cellEditors/TagsCellEditor';
-import NumberCellEditor from '@/components/grid/cellEditors/NumberCellEditor';
+import DateCellEditor from '@/components/grid/cell-editors/date-cell-editor';
+import SelectCellEditor from '@/components/grid/cell-editors/select-cell-editor';
+import TagsCellEditor from '@/components/grid/cell-editors/tags-cell-editor';
+import NumberCellEditor from '@/components/grid/cell-editors/number-cell-editor';
 
 const columnDefs: ColDef[] = [
   {

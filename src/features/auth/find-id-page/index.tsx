@@ -5,8 +5,8 @@ import type { MenuProps } from 'antd';
 import { GlobalOutlined, DownOutlined, CheckOutlined } from '@ant-design/icons';
 import { findId } from '@/api/generated/sdk.gen';
 import { ApiError } from '@/lib/api/error';
-import { useLocaleStore, type LocaleKey } from '@/stores/localeStore';
-import { getLocaleShortLabel } from '@/utils/localeStorage';
+import { useLocaleStore, type LocaleKey } from '@/stores/locale-store';
+import { getLocaleShortLabel } from '@/utils/locale-storage';
 import vamcLogoLogin from '@/assets/vamc_logo_login-28c7ab.png';
 import styles from './index.module.css';
 

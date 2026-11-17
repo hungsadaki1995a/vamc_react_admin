@@ -11,16 +11,16 @@ import {
   DoubleRightOutlined,
 } from '@ant-design/icons';
 import dayjs from 'dayjs';
-import { deleteFaqs } from '@/api/contents/faqApi';
+import { deleteFaqs } from '@/api/contents/faq-api';
 import type { FaqItem } from './faq.types';
 import {
   useFaqs,
   DEFAULT_FAQ_CATEGORY,
   DEFAULT_FAQ_FROM_DATE,
   getDefaultFaqToDate,
-} from './useFaqs';
-import FaqDetailModal from './FaqDetailModal';
-import styles from './FaqManagement.module.css';
+} from './use-faqs';
+import FaqDetailModal from './faq-detail-modal';
+import styles from './faq-management.module.css';
 
 const { RangePicker } = DatePicker;
 

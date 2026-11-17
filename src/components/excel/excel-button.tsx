@@ -1,10 +1,10 @@
 import { Button, Dropdown } from 'antd';
 import type { MenuProps } from 'antd';
 import { DownloadOutlined, FileExcelOutlined, UploadOutlined } from '@ant-design/icons';
-import { useExcel } from '@/hooks/useExcel';
-import { ExcelErrorModal } from './ExcelErrorModal';
+import { useExcel } from '@/hooks/use-excel';
+import { ExcelErrorModal } from './excel-error-modal';
 import type { ExcelColumnDef } from '@/types/excel';
-import { useComponentLabel } from '@/hooks/useComponentLabel';
+import { useComponentLabel } from '@/hooks/use-component-label';
 
 interface Props {
   columns: ExcelColumnDef[];

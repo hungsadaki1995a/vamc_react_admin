@@ -3,22 +3,22 @@ import { Tabs, Button, Input, Select, Tag, Descriptions, Space, Divider, Form } 
 import {
   PlusOutlined, EditOutlined, DeleteOutlined,
 } from '@ant-design/icons';
-import FilterPanel from '@/components/layout/FilterPanel';
-import GridToolbar from '@/components/layout/GridToolbar';
-import FormPanel from '@/components/layout/FormPanel';
-import SplitPanel from '@/components/layout/SplitPanel';
-import DetailPanel from '@/components/layout/DetailPanel';
-import CodeSnippet from '@/components/common/CodeSnippet';
-import ActionButton from '@/components/common/ActionButton';
-import ActionButtonGroup from '@/components/common/ActionButtonGroup';
-import AppModal from '@/components/common/AppModal';
-import ModalInfoFields from '@/components/common/ModalInfoFields';
+import FilterPanel from '@/components/layout/filter-panel';
+import GridToolbar from '@/components/layout/grid-toolbar';
+import FormPanel from '@/components/layout/form-panel';
+import SplitPanel from '@/components/layout/split-panel';
+import DetailPanel from '@/components/layout/detail-panel';
+import CodeSnippet from '@/components/common/code-snippet';
+import ActionButton from '@/components/common/action-button';
+import ActionButtonGroup from '@/components/common/action-button-group';
+import AppModal from '@/components/common/app-modal';
+import ModalInfoFields from '@/components/common/modal-info-fields';
 import styles from './index.module.css';
-import DevPageHeader from '@/dev/DevPageHeader';
+import DevPageHeader from '@/dev/dev-page-header';
 
-const actionButtonCode = `import ActionButton from '@/components/common/ActionButton';
-import ActionButtonGroup from '@/components/common/ActionButtonGroup';
-import { useMenuPermission } from '@/hooks/useMenuPermission';
+const actionButtonCode = `import ActionButton from '@/components/common/action-button';
+import ActionButtonGroup from '@/components/common/action-button-group';
+import { useMenuPermission } from '@/hooks/use-menu-permission';
 
 const { canWrite } = useMenuPermission();
 
@@ -29,8 +29,8 @@ const { canWrite } = useMenuPermission();
   <ActionButton action="saveChanges">Save</ActionButton>
 </ActionButtonGroup>`;
 
-const appModalCode = `import AppModal from '@/components/common/AppModal';
-import ModalInfoFields from '@/components/common/ModalInfoFields';
+const appModalCode = `import AppModal from '@/components/common/app-modal';
+import ModalInfoFields from '@/components/common/modal-info-fields';
 
 <AppModal
   open={open}
@@ -52,7 +52,7 @@ import ModalInfoFields from '@/components/common/ModalInfoFields';
 </AppModal>`;
 
 /* ─── Code snippets ─── */
-const formPanelCode = `import FormPanel from '@/components/layout/FormPanel';
+const formPanelCode = `import FormPanel from '@/components/layout/form-panel';
 
 const [isEditMode, setIsEditMode] = useState(false);
 const [formCollapsed, setFormCollapsed] = useState(false);
@@ -78,7 +78,7 @@ const [formCollapsed, setFormCollapsed] = useState(false);
   </Form>
 </FormPanel>`;
 
-const filterPanelCode = `import FilterPanel from '@/components/layout/FilterPanel';
+const filterPanelCode = `import FilterPanel from '@/components/layout/filter-panel';
 
 const [statusFilter, setStatusFilter] = useState('all');
 const activeFilterCount = [statusFilter !== 'all'].filter(Boolean).length;
@@ -100,7 +100,7 @@ const activeFilterCount = [statusFilter !== 'all'].filter(Boolean).length;
   </div>
 </FilterPanel>`;
 
-const splitPanelCode = `import SplitPanel from '@/components/layout/SplitPanel';
+const splitPanelCode = `import SplitPanel from '@/components/layout/split-panel';
 
 <SplitPanel
   direction="horizontal"  // 'horizontal' | 'vertical'
@@ -113,7 +113,7 @@ const splitPanelCode = `import SplitPanel from '@/components/layout/SplitPanel';
   <div>Right (secondary) panel</div>
 </SplitPanel>`;
 
-const detailPanelCode = `import DetailPanel from '@/components/layout/DetailPanel';
+const detailPanelCode = `import DetailPanel from '@/components/layout/detail-panel';
 
 const [visible, setVisible] = useState(false);
 

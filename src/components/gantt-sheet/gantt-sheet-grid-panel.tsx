@@ -1,6 +1,6 @@
 import React, { useCallback, useRef, useState } from 'react';
 import type { VirtualItem } from '@tanstack/react-virtual';
-import type { GanttTask } from './ganttTypes';
+import type { GanttTask } from './gantt-types';
 
 interface ColDef {
   key: string;

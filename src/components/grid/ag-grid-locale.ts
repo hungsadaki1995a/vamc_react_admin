@@ -1,6 +1,6 @@
-import type { LocaleKey } from '@/stores/localeStore';
-import { AG_GRID_LOCALE_KO } from './agGridLocaleKo';
-import { AG_GRID_LOCALE_VI } from './agGridLocaleVi';
+import type { LocaleKey } from '@/stores/locale-store';
+import { AG_GRID_LOCALE_KO } from './ag-grid-locale-ko';
+import { AG_GRID_LOCALE_VI } from './ag-grid-locale-vi';
 
 /**
  * 로케일별 AG Grid 내장 문구(localeText) 선택.

@@ -1,9 +1,9 @@
 import { Children, type ReactNode } from 'react';
 import DOMPurify from 'dompurify';
-import RichTextEditor from '@/components/editors/RichTextEditor';
-import ActionButton from './ActionButton';
-import ActionButtonGroup from './ActionButtonGroup';
-import './ModalDetailView.css';
+import RichTextEditor from '@/components/editors/rich-text-editor';
+import ActionButton from './action-button';
+import ActionButtonGroup from './action-button-group';
+import './modal-detail-view.css';
 
 export interface ModalDetailFooterActionState {
   canEdit?: boolean;

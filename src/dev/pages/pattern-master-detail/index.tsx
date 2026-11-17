@@ -1,9 +1,9 @@
 import { useState, useMemo, useCallback } from 'react';
 import { Input, Tag, Descriptions, Button, Space, Empty } from 'antd';
 import { SearchOutlined, PlusOutlined } from '@ant-design/icons';
-import GridPanel from '@/components/grid/GridPanel';
-import FilterPanel from '@/components/layout/FilterPanel';
-import DetailPanel from '@/components/layout/DetailPanel';
+import GridPanel from '@/components/grid/grid-panel';
+import FilterPanel from '@/components/layout/filter-panel';
+import DetailPanel from '@/components/layout/detail-panel';
 import { mockProjects } from '@/mock/projects';
 import { mockTasks, taskStatusLabels, taskStatusColors, taskPriorityLabels, taskPriorityColors } from '@/mock/tasks';
 import type { Project, ProjectStatus } from '@/mock/projects';

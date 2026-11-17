@@ -1,6 +1,6 @@
 import { apiClient } from '@/lib/api/client';
 import type { ApiResponse } from '@/lib/api/types';
-import type { MnuResponse } from '@/api/common/myMenuApi';
+import type { MnuResponse } from '@/api/common/my-menu-api';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Admin 메뉴 관리 API — 시스템 운영 관리 도메인 (메뉴 A06020100 / 화면 SYS030101SC)

@@ -1,6 +1,6 @@
 import { Tabs, Card, Alert } from 'antd';
-import CodeSnippet from '@/components/common/CodeSnippet';
-import DevPageHeader from '@/dev/DevPageHeader';
+import CodeSnippet from '@/components/common/code-snippet';
+import DevPageHeader from '@/dev/dev-page-header';
 
 // Base configuration
 const setupCode = `// src/main.tsx

@@ -73,9 +73,9 @@ export const CODE_LIST = `import { useState, useMemo, useCallback, useRef } from
 import type { AgGridReact } from 'ag-grid-react';
 import type { ColDef } from 'ag-grid-community';
 import { Input } from 'antd';
-import FilterPanel from '@/components/layout/FilterPanel';
-import GridPanel from '@/components/grid/GridPanel';
-import { useApiQuery } from '@/hooks/useApiQuery';
+import FilterPanel from '@/components/layout/filter-panel';
+import GridPanel from '@/components/grid/grid-panel';
+import { useApiQuery } from '@/hooks/use-api-query';
 import { getNoticeList } from '@/api/cnt/noticeApi';
 import type { Notice, NoticeListParams } from '@/api/cnt/noticeApi';
 
@@ -145,11 +145,11 @@ export default function CNT010001SC() {
 
 export const CODE_CRUD = `import { Form, Row, Col, Input, Select } from 'antd';
 import { useQueryClient } from '@tanstack/react-query';
-import FormPanel from '@/components/layout/FormPanel';
-import ActionButtonGroup from '@/components/common/ActionButtonGroup';
-import TipInput from '@/components/inputs/TipInput';
-import { useApiMutation } from '@/hooks/useApiMutation';
-import { useNotify } from '@/hooks/useNotify';
+import FormPanel from '@/components/layout/form-panel';
+import ActionButtonGroup from '@/components/common/action-button-group';
+import TipInput from '@/components/inputs/tip-input';
+import { useApiMutation } from '@/hooks/use-api-mutation';
+import { useNotify } from '@/hooks/use-notify';
 import { saveNotice, deleteNotice } from '@/api/cnt/noticeApi';
 
 // ── Add this inside the list screen above ───────────────────────
@@ -252,7 +252,7 @@ const handleDelete = useCallback(() => {
   </Form>
 </FormPanel>`;
 
-export const CODE_PERM = `import { useMenuPermission } from '@/hooks/useMenuPermission';
+export const CODE_PERM = `import { useMenuPermission } from '@/hooks/use-menu-permission';
 
 const { canWrite } = useMenuPermission();
 
@@ -263,7 +263,7 @@ const { canWrite } = useMenuPermission();
 // Block inline grid editing as well
 <GridPanel editable={canWrite} ... />`;
 
-export const CODE_LABEL = `import { useScreenLabel } from '@/hooks/useScreenLabel';
+export const CODE_LABEL = `import { useScreenLabel } from '@/hooks/use-screen-label';
 
 // sceId comes from the tab automatically — you never pass it in.
 const { tvt, tvb, tvh, tsg, tsm, tmc, tmi, tme } = useScreenLabel();
@@ -278,7 +278,7 @@ notify.success(tmi('I100002'));                   // global: Registered.
 notify.error(tme('E100001'));                     // global: Please fill in the required fields.
 
 // Never split a sentence that contains a value — use a placeholder
-import { formatLabel } from '@/lib/i18n/formatLabel';
+import { formatLabel } from '@/lib/i18n/format-label';
 formatLabel(tsm('deleteConfirm', '{0}을(를) 삭제하시겠습니까?'), row.ntcMttrTtl);`;
 
 export const CODE_STATE = `// (1) Server data → React Query. Never store it in useState yourself.

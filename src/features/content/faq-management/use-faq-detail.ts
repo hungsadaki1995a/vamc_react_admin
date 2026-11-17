@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { getFaq, type PostDetailResponse } from '@/api/contents/faqApi';
+import { getFaq, type PostDetailResponse } from '@/api/contents/faq-api';
 
 export interface UseFaqDetailOptions {
   enabled?: boolean;

@@ -50,8 +50,8 @@ import {
   LogoutOutlined,
   FolderOutlined,
 } from '@ant-design/icons';
-import CodeSnippet from '@/components/common/CodeSnippet';
-import DevPageHeader from '@/dev/DevPageHeader';
+import CodeSnippet from '@/components/common/code-snippet';
+import DevPageHeader from '@/dev/dev-page-header';
 
 const { TextArea, Password } = Input;
 const { RangePicker } = DatePicker;

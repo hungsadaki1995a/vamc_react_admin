@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { useLoadingStore } from '@/stores/loadingStore';
+import { useLoadingStore } from '@/stores/loading-store';
 
 export default function GlobalLoadingBar() {
   const count = useLoadingStore((s) => s.count);

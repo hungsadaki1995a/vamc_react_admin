@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { Alert, Card, Input, Segmented, Typography } from 'antd';
-import CodeSnippet from '@/components/common/CodeSnippet';
-import DevPageHeader from '@/dev/DevPageHeader';
+import CodeSnippet from '@/components/common/code-snippet';
+import DevPageHeader from '@/dev/dev-page-header';
 
 const { Text } = Typography;
 
@@ -46,7 +46,7 @@ export async function get${Pascal}List(): Promise<ApiResponse<${Pascal}[]>> {
 }`;
 
     case 'query':
-      return `import { useApiQuery } from '@/hooks/useApiQuery';
+      return `import { useApiQuery } from '@/hooks/use-api-query';
 import { get${Pascal}List } from '@/api/sys/${camel}';   // keep it under the domain package
 
 // useApiQuery decides success from ApiResponse.success and returns the unwrapped data.
@@ -57,7 +57,7 @@ export function use${Pascal}List() {
 
     case 'grid':
       return `import { useMemo } from 'react';
-import GridTable from '@/components/grid/GridTable';
+import GridTable from '@/components/grid/grid-table';
 import { use${Pascal}List } from '@/hooks/use${Pascal}List';
 
 export default function ${Pascal}List() {

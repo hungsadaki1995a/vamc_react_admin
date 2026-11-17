@@ -1,8 +1,8 @@
 import { useState, useMemo } from 'react';
 import { Input, Select, Badge, Progress, Button } from 'antd';
 import { SearchOutlined, DownloadOutlined, PlusOutlined } from '@ant-design/icons';
-import GridPanel from '@/components/grid/GridPanel';
-import FilterPanel from '@/components/layout/FilterPanel';
+import GridPanel from '@/components/grid/grid-panel';
+import FilterPanel from '@/components/layout/filter-panel';
 import { mockProjects } from '@/mock/projects';
 import type { Project, ProjectStatus } from '@/mock/projects';
 import type { ColDef, ICellRendererParams } from 'ag-grid-community';

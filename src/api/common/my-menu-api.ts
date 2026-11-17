@@ -1,7 +1,7 @@
 import { apiClient } from '@/lib/api/client';
 import type { ApiResponse } from '@/lib/api/types';
 import type { MenuItem } from '@/types/menu';
-import { useLocaleStore } from '@/stores/localeStore';
+import { useLocaleStore } from '@/stores/locale-store';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 내 권한 메뉴(MENU_MNG) 조회 API — 전역 도메인.

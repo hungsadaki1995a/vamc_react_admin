@@ -1,16 +1,16 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import { App as AntApp, ConfigProvider, theme as antTheme } from 'antd';
-import { apiNotify } from '@/lib/api/apiNotify';
-import { getLocaleText } from '@/lib/i18n/localeText';
+import { apiNotify } from '@/lib/api/api-notify';
+import { getLocaleText } from '@/lib/i18n/locale-text';
 import koKR from 'antd/locale/ko_KR';
 import enUS from 'antd/locale/en_US';
 import viVN from 'antd/locale/vi_VN';
 import { QueryClientProvider } from '@tanstack/react-query';
-import { queryClient } from '@/lib/api/queryClient';
-import { useThemeStore } from '@/stores/themeStore';
-import { useLocaleStore } from '@/stores/localeStore';
-import { PopupDocumentContext } from '@/contexts/PopupDocumentContext';
+import { queryClient } from '@/lib/api/query-client';
+import { useThemeStore } from '@/stores/theme-store';
+import { useLocaleStore } from '@/stores/locale-store';
+import { PopupDocumentContext } from '@/contexts/popup-document-context';
 
 export interface ExternalWindowProps {
   open: boolean;

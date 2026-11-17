@@ -2,27 +2,27 @@ import { useState, useMemo, useCallback, useRef } from 'react';
 import type { AgGridReact } from 'ag-grid-react';
 import type { ColDef, CellValueChangedEvent } from 'ag-grid-community';
 import { Form, Row, Col, Input, Select } from 'antd';
-import GridPanel from '@/components/grid/GridPanel';
-import TipInput from '@/components/inputs/TipInput';
-import ActionButton from '@/components/common/ActionButton';
-import ActionButtonGroup from '@/components/common/ActionButtonGroup';
-import FilterPanel from '@/components/layout/FilterPanel';
-import FormPanel from '@/components/layout/FormPanel';
-import SplitPanel from '@/components/layout/SplitPanel';
-import { useScreenLabel } from '@/hooks/useScreenLabel';
+import GridPanel from '@/components/grid/grid-panel';
+import TipInput from '@/components/inputs/tip-input';
+import ActionButton from '@/components/common/action-button';
+import ActionButtonGroup from '@/components/common/action-button-group';
+import FilterPanel from '@/components/layout/filter-panel';
+import FormPanel from '@/components/layout/form-panel';
+import SplitPanel from '@/components/layout/split-panel';
+import { useScreenLabel } from '@/hooks/use-screen-label';
 import { useQueryClient } from '@tanstack/react-query';
-import { useApiQuery } from '@/hooks/useApiQuery';
-import { useApiMutation } from '@/hooks/useApiMutation';
-import { useNotify } from '@/hooks/useNotify';
-import { useMenuPermission } from '@/hooks/useMenuPermission';
-import { useLabelStore } from '@/stores/labelStore';
-import { formatLabel } from '@/lib/i18n/formatLabel';
-import { getLanguages } from '@/api/common/lblBulkApi';
-import type { LangItem } from '@/api/common/lblBulkApi';
+import { useApiQuery } from '@/hooks/use-api-query';
+import { useApiMutation } from '@/hooks/use-api-mutation';
+import { useNotify } from '@/hooks/use-notify';
+import { useMenuPermission } from '@/hooks/use-menu-permission';
+import { useLabelStore } from '@/stores/label-store';
+import { formatLabel } from '@/lib/i18n/format-label';
+import { getLanguages } from '@/api/common/lbl-bulk-api';
+import type { LangItem } from '@/api/common/lbl-bulk-api';
 import {
   getLabelRows, saveLabelBatch, deleteLabel, groupLabelRows,
-} from '@/api/sys/lblMngApi';
-import type { LblRow, LblMaster, LblKey } from '@/api/sys/lblMngApi';
+} from '@/api/sys/lbl-mng-api';
+import type { LblRow, LblMaster, LblKey } from '@/api/sys/lbl-mng-api';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 다국어 라벨 관리 (A06040300)

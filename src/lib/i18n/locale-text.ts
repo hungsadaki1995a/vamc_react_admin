@@ -1,4 +1,4 @@
-import { useLocaleStore, type LocaleKey } from '@/stores/localeStore';
+import { useLocaleStore, type LocaleKey } from '@/stores/locale-store';
 
 export interface LocaleText {
   ko: string;

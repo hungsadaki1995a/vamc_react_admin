@@ -2,8 +2,8 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { Tab } from '@/types/tab';
 import type { MenuItem } from '@/types/menu';
-import { useSettingsStore } from './settingsStore';
-import { abortTabRequests } from '@/lib/api/tabRequestRegistry';
+import { useSettingsStore } from './settings-store';
+import { abortTabRequests } from '@/lib/api/tab-request-registry';
 
 interface TabStore {
   tabs: Tab[];

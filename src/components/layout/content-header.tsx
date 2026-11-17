@@ -20,18 +20,18 @@ import {
   GlobalOutlined,
   DownOutlined,
 } from '@ant-design/icons';
-import { useAllMenus } from '@/hooks/useAllMenus';
-import { useComponentLabel } from '@/hooks/useComponentLabel';
-import { useTabStore } from '@/stores/tabStore';
-import { useThemeStore } from '@/stores/themeStore';
-import { useSettingsStore } from '@/stores/settingsStore';
-import { useMenuStore } from '@/stores/menuStore';
-import { useAuthStore } from '@/stores/authStore';
-import { useLocaleStore } from '@/stores/localeStore';
-import { getLocaleShortLabel, type LocaleKey } from '@/utils/localeStorage';
-import { useLogout } from '@/hooks/useLogout';
+import { useAllMenus } from '@/hooks/use-all-menus';
+import { useComponentLabel } from '@/hooks/use-component-label';
+import { useTabStore } from '@/stores/tab-store';
+import { useThemeStore } from '@/stores/theme-store';
+import { useSettingsStore } from '@/stores/settings-store';
+import { useMenuStore } from '@/stores/menu-store';
+import { useAuthStore } from '@/stores/auth-store';
+import { useLocaleStore } from '@/stores/locale-store';
+import { getLocaleShortLabel, type LocaleKey } from '@/utils/locale-storage';
+import { useLogout } from '@/hooks/use-logout';
 import { useShallow } from 'zustand/react/shallow';
-import { getMenuBreadcrumb, findMenuByKey } from '@/utils/menuUtils';
+import { getMenuBreadcrumb, findMenuByKey } from '@/utils/menu-utils';
 import type { MenuItem } from '@/types/menu';
 
 // ── 알림 Mock 데이터 ──

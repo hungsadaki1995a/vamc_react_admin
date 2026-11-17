@@ -2,12 +2,12 @@ import { useState } from 'react';
 import { Alert, Button, Card, Divider, Space, Table, Tag, Typography } from 'antd';
 import type { TableColumnsType } from 'antd';
 import { FileExcelOutlined } from '@ant-design/icons';
-import CodeSnippet from '@/components/common/CodeSnippet';
+import CodeSnippet from '@/components/common/code-snippet';
 import { ExcelButton } from '@/components/excel';
 import { ExcelErrorModal } from '@/components/excel';
-import { useExcel } from '@/hooks/useExcel';
+import { useExcel } from '@/hooks/use-excel';
 import type { ExcelColumnDef, ExcelUploadResult } from '@/types/excel';
-import DevPageHeader from '@/dev/DevPageHeader';
+import DevPageHeader from '@/dev/dev-page-header';
 
 const { Text } = Typography;
 
@@ -171,7 +171,7 @@ export default function GuideExcel() {
 
       <CodeSnippet title="Basic usage — ExcelButton" code={`import { ExcelButton } from '@/components/excel';
 import type { ExcelColumnDef } from '@/types/excel';
-import { useMenuPermission } from '@/hooks/useMenuPermission';
+import { useMenuPermission } from '@/hooks/use-menu-permission';
 
 // 1. Column definitions per screen (declared once, shared by download, upload and template)
 const columns: ExcelColumnDef[] = [
@@ -198,7 +198,7 @@ function MyPage() {
   );
 }`} />
 
-      <CodeSnippet title="Using the hook directly — when you build your own buttons" code={`import { useExcel } from '@/hooks/useExcel';
+      <CodeSnippet title="Using the hook directly — when you build your own buttons" code={`import { useExcel } from '@/hooks/use-excel';
 import { ExcelErrorModal } from '@/components/excel';
 
 function MyToolbar() {

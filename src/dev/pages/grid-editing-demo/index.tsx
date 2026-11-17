@@ -5,29 +5,29 @@ import { PlusOutlined, DeleteOutlined } from '@ant-design/icons';
 import { AgGridReact } from 'ag-grid-react';
 import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
 import type { ColDef, ColGroupDef, CellValueChangedEvent, CellClassParams, CellStyle } from 'ag-grid-community';
-import GridTable, { lightTheme, darkTheme } from '@/components/grid/GridTable';
-import GridPanel from '@/components/grid/GridPanel';
-import GridToolbar from '@/components/layout/GridToolbar';
-import DateCellEditor, { DateCellRenderer } from '@/components/grid/cellEditors/DateCellEditor';
-import SelectCellEditor from '@/components/grid/cellEditors/SelectCellEditor';
-import { useTreeGrid } from '@/components/grid/useTreeGrid';
-import { TreeCellRenderer } from '@/components/grid/TreeCellRenderer';
-import TagsCellEditor from '@/components/grid/cellEditors/TagsCellEditor';
-import { ComcdSelectCellRenderer, ComcdSelectCellEditor } from '@/components/grid/ComcdSelectCell';
-import { SearchSelectCellRenderer, SearchSelectCellEditor, searchSelectValueFormatter } from '@/components/grid/SearchSelectCell';
-import type { SearchSelectOption } from '@/components/inputs/SearchSelectField';
-import CodeSnippet from '@/components/common/CodeSnippet';
-import { useThemeStore } from '@/stores/themeStore';
-import { useComcdStore } from '@/stores/comcdStore';
-import DevPageHeader from '@/dev/DevPageHeader';
+import GridTable, { lightTheme, darkTheme } from '@/components/grid/grid-table';
+import GridPanel from '@/components/grid/grid-panel';
+import GridToolbar from '@/components/layout/grid-toolbar';
+import DateCellEditor, { DateCellRenderer } from '@/components/grid/cell-editors/date-cell-editor';
+import SelectCellEditor from '@/components/grid/cell-editors/select-cell-editor';
+import { useTreeGrid } from '@/components/grid/use-tree-grid';
+import { TreeCellRenderer } from '@/components/grid/tree-cell-renderer';
+import TagsCellEditor from '@/components/grid/cell-editors/tags-cell-editor';
+import { ComcdSelectCellRenderer, ComcdSelectCellEditor } from '@/components/grid/comcd-select-cell';
+import { SearchSelectCellRenderer, SearchSelectCellEditor, searchSelectValueFormatter } from '@/components/grid/search-select-cell';
+import type { SearchSelectOption } from '@/components/inputs/search-select-field';
+import CodeSnippet from '@/components/common/code-snippet';
+import { useThemeStore } from '@/stores/theme-store';
+import { useComcdStore } from '@/stores/comcd-store';
+import DevPageHeader from '@/dev/dev-page-header';
 
-const EMPTY_CODES: import('@/api/common/comCdApi').CodeDetail[] = [];
+const EMPTY_CODES: import('@/api/common/com-cd-api').CodeDetail[] = [];
 import styles from './index.module.css';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
 /* ─── Code snippets (existing) ─── */
-const basicGridCode = `import GridTable from '@/components/grid/GridTable';
+const basicGridCode = `import GridTable from '@/components/grid/grid-table';
 import type { ColDef } from 'ag-grid-community';
 
 const columnDefs: ColDef[] = [
@@ -45,10 +45,10 @@ const columnDefs: ColDef[] = [
   onRowClick={(row) => console.log(row)}
 />`;
 
-const editableGridCode = `import GridTable from '@/components/grid/GridTable';
-import DateCellEditor from '@/components/grid/cellEditors/DateCellEditor';
-import SelectCellEditor from '@/components/grid/cellEditors/SelectCellEditor';
-import TagsCellEditor from '@/components/grid/cellEditors/TagsCellEditor';
+const editableGridCode = `import GridTable from '@/components/grid/grid-table';
+import DateCellEditor from '@/components/grid/cell-editors/date-cell-editor';
+import SelectCellEditor from '@/components/grid/cell-editors/select-cell-editor';
+import TagsCellEditor from '@/components/grid/cell-editors/tags-cell-editor';
 
 const columnDefs: ColDef[] = [
   { field: 'name', headerName: 'Task name', editable: true },
@@ -653,7 +653,7 @@ useEffect(() => {
 }, [enableClipboard, columnDefs, editable]);`;
 
 const contextMenuBasicCode = `// getContextMenuItems customizes the right-click menu.
-import GridTable from '@/components/grid/GridTable';
+import GridTable from '@/components/grid/grid-table';
 import type { GetContextMenuItemsParams } from 'ag-grid-community';
 
 <GridTable
@@ -813,7 +813,7 @@ const rowSpanDemoData: RowSpanDemoRow[] = [
 
 // ── Code snippets (DatePicker cells) ────────────────────────────────────────
 
-const dateCellCode = `import DateCellEditor, { DateCellRenderer } from '@/components/grid/cellEditors/DateCellEditor';
+const dateCellCode = `import DateCellEditor, { DateCellRenderer } from '@/components/grid/cell-editors/date-cell-editor';
 
 // DateCellRenderer: displays a date in the given format
 // DateCellEditor:   an Ant Design DatePicker popup editor (editing ends as soon as a date is picked)
@@ -848,8 +848,8 @@ const columnDefs: ColDef[] = [
 
 // ── Code snippets (tree structure) ──────────────────────────────────────────
 
-const treeCellCode = `import { useTreeGrid } from '@/components/grid/useTreeGrid';
-import { TreeCellRenderer } from '@/components/grid/TreeCellRenderer';
+const treeCellCode = `import { useTreeGrid } from '@/components/grid/use-tree-grid';
+import { TreeCellRenderer } from '@/components/grid/tree-cell-renderer';
 
 // 1) The flat source data (the hierarchy lives in parentId)
 const orgData = [
@@ -893,8 +893,8 @@ const columnDefs: ColDef[] = [
 
 // ── Code snippets (ComcdSelect chaining) ────────────────────────────────────
 
-const comcdChainCellCode = `import { ComcdSelectCellRenderer, ComcdSelectCellEditor } from '@/components/grid/ComcdSelectCell';
-import type { CodeDetail } from '@/api/common/comCdApi';
+const comcdChainCellCode = `import { ComcdSelectCellRenderer, ComcdSelectCellEditor } from '@/components/grid/comcd-select-cell';
+import type { CodeDetail } from '@/api/common/com-cd-api';
 
 // Make cellEditorParams a function and you get access to params.data (the row)
 // -> filter the child select's options by another column in the same row
@@ -927,7 +927,7 @@ const columnDefs: ColDef[] = [
 
 // ── Code snippets for ComcdSelect / SearchSelect cell demo ───────────────────
 
-const comcdCellCode = `import { ComcdSelectCellRenderer, ComcdSelectCellEditor } from '@/components/grid/ComcdSelectCell';
+const comcdCellCode = `import { ComcdSelectCellRenderer, ComcdSelectCellEditor } from '@/components/grid/comcd-select-cell';
 
 // cellRenderer: turns the code into its display name (looked up in comcdStore)
 // cellEditor:   the ComcdSelect dropdown popup editor
@@ -950,7 +950,7 @@ const columnDefs: ColDef[] = [
   },
 ];`;
 
-const searchCellCode = `import { SearchSelectCellRenderer, SearchSelectCellEditor, searchSelectValueFormatter } from '@/components/grid/SearchSelectCell';
+const searchCellCode = `import { SearchSelectCellRenderer, SearchSelectCellEditor, searchSelectValueFormatter } from '@/components/grid/search-select-cell';
 import { getOrgList } from '@/api/{domain}/org';   // API calls live under src/api/{domain}/
 
 // cellRenderer:    shows only the label from { label, value } or a plain string
@@ -1881,7 +1881,7 @@ export default function GridEditingDemo() {
                   </div>
                 </Card>
 
-                <CodeSnippet code={`import GridToolbar from '@/components/layout/GridToolbar';
+                <CodeSnippet code={`import GridToolbar from '@/components/layout/grid-toolbar';
 import { Button } from 'antd';
 import { PlusOutlined, DeleteOutlined } from '@ant-design/icons';
 
@@ -1943,7 +1943,7 @@ import { PlusOutlined, DeleteOutlined } from '@ant-design/icons';
                 <CodeSnippet code={`import { useState } from 'react';
 import { App, Button } from 'antd';
 import { PlusOutlined, DeleteOutlined } from '@ant-design/icons';
-import GridPanel from '@/components/grid/GridPanel';
+import GridPanel from '@/components/grid/grid-panel';
 
 function MyPage() {
   const { message, modal } = App.useApp();

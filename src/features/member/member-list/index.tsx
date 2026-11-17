@@ -29,11 +29,11 @@ import type {
   AccountStatus,
 } from './member.types';
 import { initialMemberData } from './member.mock';
-import { useMembers } from './useMembers';
-import MemberDetailModal from './MemberDetailModal';
-import ApprovalStatusModal from './ApprovalStatusModal';
-import NewMemberModal from './NewMemberModal';
-import styles from './MemberList.module.css';
+import { useMembers } from './use-members';
+import MemberDetailModal from './member-detail-modal';
+import ApprovalStatusModal from './approval-status-modal';
+import NewMemberModal from './new-member-modal';
+import styles from './member-list.module.css';
 
 const { RangePicker } = DatePicker;
 

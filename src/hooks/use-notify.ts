@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from 'react';
 import { App } from 'antd';
 import type { ModalFuncProps } from 'antd';
-import { useLabelStore } from '@/stores/labelStore';
+import { useLabelStore } from '@/stores/label-store';
 
 // ── Notify i18n config ────────────────────────────────────────────────────────
 

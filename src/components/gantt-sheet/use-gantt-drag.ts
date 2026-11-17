@@ -1,6 +1,6 @@
 import { useCallback, useRef, useState } from 'react';
-import type { DateEngine } from './useGanttDateEngine';
-import type { GanttTask } from './ganttTypes';
+import type { DateEngine } from './use-gantt-date-engine';
+import type { GanttTask } from './gantt-types';
 
 export type DragHandle = 'move' | 'resize-left' | 'resize-right' | 'progress';
 

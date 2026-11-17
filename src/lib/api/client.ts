@@ -1,16 +1,16 @@
 import axios from 'axios';
 import type { AxiosError, InternalAxiosRequestConfig } from 'axios';
 import { ApiError } from './error';
-import { apiNotify } from './apiNotify';
-import { useAuthStore } from '@/stores/authStore';
-import { getAccessToken, setAccessToken as setStoredAccessToken, clearTokens } from '@/utils/tokenStorage';
-import { useProjectStore } from '@/stores/projectStore';
-import { useLocaleStore } from '@/stores/localeStore';
-import { toIsoLangTag } from '@/utils/localeStorage';
-import { useLabelStore } from '@/stores/labelStore';
-import { useLoadingStore } from '@/stores/loadingStore';
-import { useTabStore } from '@/stores/tabStore';
-import { registerTabRequest, unregisterTabRequest } from './tabRequestRegistry';
+import { apiNotify } from './api-notify';
+import { useAuthStore } from '@/stores/auth-store';
+import { getAccessToken, setAccessToken as setStoredAccessToken, clearTokens } from '@/utils/token-storage';
+import { useProjectStore } from '@/stores/project-store';
+import { useLocaleStore } from '@/stores/locale-store';
+import { toIsoLangTag } from '@/utils/locale-storage';
+import { useLabelStore } from '@/stores/label-store';
+import { useLoadingStore } from '@/stores/loading-store';
+import { useTabStore } from '@/stores/tab-store';
+import { registerTabRequest, unregisterTabRequest } from './tab-request-registry';
 
 // Extend config type to support retry flag + tab binding + toast opt-out
 interface RetryableConfig extends InternalAxiosRequestConfig {

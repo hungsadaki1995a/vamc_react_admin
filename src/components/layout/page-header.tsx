@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { Tooltip, Space } from 'antd';
 import { StarOutlined, StarFilled } from '@ant-design/icons';
-import { useTabContext } from '@/contexts/TabContext';
-import { useScreenLabel } from '@/hooks/useScreenLabel';
-import { useComponentLabel } from '@/hooks/useComponentLabel';
-import { useAllMenus } from '@/hooks/useAllMenus';
-import { findMenuByKey } from '@/utils/menuUtils';
-import './PageHeader.css';
+import { useTabContext } from '@/contexts/tab-context';
+import { useScreenLabel } from '@/hooks/use-screen-label';
+import { useComponentLabel } from '@/hooks/use-component-label';
+import { useAllMenus } from '@/hooks/use-all-menus';
+import { findMenuByKey } from '@/utils/menu-utils';
+import './page-header.css';
 
 interface PageHeaderProps {
   /** Screen code displayed in brackets. Auto-derived from tab.sceId if omitted. */

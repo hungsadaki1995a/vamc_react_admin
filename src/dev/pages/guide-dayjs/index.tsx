@@ -1,7 +1,7 @@
 import { Typography, Card, Divider, Table } from 'antd';
 import type { TableColumnsType } from 'antd';
 import dayjs from 'dayjs';
-import DevPageHeader from '@/dev/DevPageHeader';
+import DevPageHeader from '@/dev/dev-page-header';
 
 const { Paragraph, Text } = Typography;
 

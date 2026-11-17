@@ -1,6 +1,6 @@
 import type { AxiosError } from 'axios';
 import type { ApiErrorResponse } from './types';
-import { useLabelStore } from '@/stores/labelStore';
+import { useLabelStore } from '@/stores/label-store';
 
 const DEFAULT_MESSAGES: Record<number, string> = {
   400: '잘못된 요청입니다.',

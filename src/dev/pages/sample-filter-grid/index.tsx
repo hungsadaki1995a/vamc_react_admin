@@ -1,9 +1,9 @@
 ﻿import { useState, useMemo } from 'react';
 import { Input, Select, Button, Tag } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
-import GridToolbar from '@/components/layout/GridToolbar';
-import FilterPanel from '@/components/layout/FilterPanel';
-import GridTable from '@/components/grid/GridTable';
+import GridToolbar from '@/components/layout/grid-toolbar';
+import FilterPanel from '@/components/layout/filter-panel';
+import GridTable from '@/components/grid/grid-table';
 import type { ColDef } from 'ag-grid-community';
 import styles from './index.module.css';
 

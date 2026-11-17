@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
-import { useLabelStore } from '@/stores/labelStore';
-import { useTabContext } from '@/contexts/TabContext';
+import { useLabelStore } from '@/stores/label-store';
+import { useTabContext } from '@/contexts/tab-context';
 
 /**
  * Screen-scoped label helpers with type-shorthand functions.

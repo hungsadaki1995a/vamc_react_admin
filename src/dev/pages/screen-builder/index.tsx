@@ -1,8 +1,8 @@
 import { Alert, Card, Col, Form, Input, Radio, Row, Select, Typography } from 'antd';
-import ActionButton from '@/components/common/ActionButton';
-import ActionButtonGroup from '@/components/common/ActionButtonGroup';
-import { useNotify } from '@/hooks/useNotify';
-import DevPageHeader from '@/dev/DevPageHeader';
+import ActionButton from '@/components/common/action-button';
+import ActionButtonGroup from '@/components/common/action-button-group';
+import { useNotify } from '@/hooks/use-notify';
+import DevPageHeader from '@/dev/dev-page-header';
 
 const { Text } = Typography;
 

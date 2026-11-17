@@ -1,13 +1,13 @@
 ﻿import { Tabs, Tag, Space, Card, Alert, Table, Typography, Button, Divider } from 'antd';
 import type { TableColumnsType } from 'antd';
-import CodeSnippet from '@/components/common/CodeSnippet';
-import { useNotify } from '@/hooks/useNotify';
-import { useAuthStore } from '@/stores/authStore';
-import { useTabStore } from '@/stores/tabStore';
-import { useProjectStore } from '@/stores/projectStore';
-import { useThemeStore } from '@/stores/themeStore';
-import { useLocaleStore } from '@/stores/localeStore';
-import DevPageHeader from '@/dev/DevPageHeader';
+import CodeSnippet from '@/components/common/code-snippet';
+import { useNotify } from '@/hooks/use-notify';
+import { useAuthStore } from '@/stores/auth-store';
+import { useTabStore } from '@/stores/tab-store';
+import { useProjectStore } from '@/stores/project-store';
+import { useThemeStore } from '@/stores/theme-store';
+import { useLocaleStore } from '@/stores/locale-store';
+import DevPageHeader from '@/dev/dev-page-header';
 
 const { Text } = Typography;
 
@@ -107,7 +107,7 @@ export default function GuideInternalApi() {
                 </div>
                 <Table columns={hookCols} dataSource={hookRows} size="small" pagination={false} style={{ marginBottom: 24 }} />
 
-                <CodeSnippet title="useApiQuery — fetching data" code={`import { useApiQuery } from '@/hooks/useApiQuery';
+                <CodeSnippet title="useApiQuery — fetching data" code={`import { useApiQuery } from '@/hooks/use-api-query';
 import { getTaskList } from '../api/myFeatureApi';
 
 function MyList() {
@@ -119,7 +119,7 @@ function MyList() {
   return <GridTable rowData={tasks} loading={isLoading} />;
 }`} />
 
-                <CodeSnippet title="useApiMutation — changing data" code={`import { useApiMutation } from '@/hooks/useApiMutation';
+                <CodeSnippet title="useApiMutation — changing data" code={`import { useApiMutation } from '@/hooks/use-api-mutation';
 import { saveTask } from '../api/myFeatureApi';
 
 function MyForm() {
@@ -132,7 +132,7 @@ function MyForm() {
   return <Button loading={isPending} onClick={() => mutate(formData)}>Save</Button>;
 }`} />
 
-                <CodeSnippet title="useMenuPermission — permission control" code={`import { useMenuPermission } from '@/hooks/useMenuPermission';
+                <CodeSnippet title="useMenuPermission — permission control" code={`import { useMenuPermission } from '@/hooks/use-menu-permission';
 
 function MyPage() {
   const { canRead, canWrite } = useMenuPermission();
@@ -152,7 +152,7 @@ function MyPage() {
   );
 }`} />
 
-                <CodeSnippet title="useScreenLabel — every label through one hook" code={`import { useScreenLabel } from '@/hooks/useScreenLabel';
+                <CodeSnippet title="useScreenLabel — every label through one hook" code={`import { useScreenLabel } from '@/hooks/use-screen-label';
 
 function MyPage() {
   // t, tmc/tmi/tme (global messages), tvt/tvb/tsg/tsm — all of them come from here
@@ -170,7 +170,7 @@ function MyPage() {
   );
 }`} />
 
-                <CodeSnippet title="useLogout — signing out" code={`import { useLogout } from '@/hooks/useLogout';
+                <CodeSnippet title="useLogout — signing out" code={`import { useLogout } from '@/hooks/use-logout';
 
 function MyComponent() {
   const confirmLogout = useLogout();
@@ -239,7 +239,7 @@ function MyComponent() {
                   </Space>
                 </Card>
 
-                <CodeSnippet title="useNotify — basic usage" code={`import { useNotify } from '@/hooks/useNotify';
+                <CodeSnippet title="useNotify — basic usage" code={`import { useNotify } from '@/hooks/use-notify';
 
 function MyPage() {
   const { toast, notify, dialog } = useNotify();
@@ -318,7 +318,7 @@ dialog.confirm({
                   </Space>
                 </Card>
 
-                <CodeSnippet title="authStore" code={`import { useAuthStore } from '@/stores/authStore';
+                <CodeSnippet title="authStore" code={`import { useAuthStore } from '@/stores/auth-store';
 
 // Inside a component
 const { user, isAuthenticated, roles } = useAuthStore();
@@ -328,9 +328,9 @@ hasRole('ADMIN'); // → boolean
 // Actions
 const { setAuth, setAccessToken, logout } = useAuthStore();`} />
 
-                <CodeSnippet title="tabStore — controlling tabs" code={`import { useTabStore } from '@/stores/tabStore';
-import { findMenuByKey } from '@/utils/menuUtils';
-import { menuConfig } from '@/config/menuConfig';
+                <CodeSnippet title="tabStore — controlling tabs" code={`import { useTabStore } from '@/stores/tab-store';
+import { findMenuByKey } from '@/utils/menu-utils';
+import { menuConfig } from '@/config/menu-config';
 
 const { openTab, closeTab, activeTabKey } = useTabStore();
 
@@ -341,7 +341,7 @@ if (menu) openTab(menu);
 // Close a tab
 closeTab('project.list');`} />
 
-                <CodeSnippet title="projectStore — selecting a project" code={`import { useProjectStore } from '@/stores/projectStore';
+                <CodeSnippet title="projectStore — selecting a project" code={`import { useProjectStore } from '@/stores/project-store';
 
 const { activeProject, fetchMyProjects, setActiveProject } = useProjectStore();
 
@@ -350,7 +350,7 @@ await fetchMyProjects();
 
 // activeProject.id is injected into every API request as the X-Project-Id header`} />
 
-                <CodeSnippet title="comcdStore — common codes" code={`import { useComcdStore } from '@/stores/comcdStore';
+                <CodeSnippet title="comcdStore — common codes" code={`import { useComcdStore } from '@/stores/comcd-store';
 
 const getOptions  = useComcdStore((s) => s.getOptions);
 const getCodeName = useComcdStore((s) => s.getCodeName);
@@ -364,7 +364,7 @@ getCodeName('TASK_STATUS', 'DONE'); // -> 'Done'
 // In JSX, prefer the ComcdSelect component
 <ComcdSelect cdDmnId="TASK_STATUS" value={v} onChange={set} />`} />
 
-                <CodeSnippet title="settingsStore — personal settings" code={`import { useSettingsStore } from '@/stores/settingsStore';
+                <CodeSnippet title="settingsStore — personal settings" code={`import { useSettingsStore } from '@/stores/settings-store';
 
 const { homeMenuKey, setHomeMenuKey } = useSettingsStore();
 // homeMenuKey defaults to 'dashboard'`} />
@@ -384,9 +384,9 @@ const { homeMenuKey, setHomeMenuKey } = useSettingsStore();
                 </div>
                 <Table columns={utilCols} dataSource={utilRows} size="small" pagination={false} style={{ marginBottom: 24 }} />
 
-                <CodeSnippet title="findMenuByKey" code={`import { findMenuByKey } from '@/utils/menuUtils';
-import { menuConfig } from '@/config/menuConfig';
-import { useMenuStore } from '@/stores/menuStore';
+                <CodeSnippet title="findMenuByKey" code={`import { findMenuByKey } from '@/utils/menu-utils';
+import { menuConfig } from '@/config/menu-config';
+import { useMenuStore } from '@/stores/menu-store';
 
 // Searching the static menus
 const menu = findMenuByKey(menuConfig, 'project.list');
@@ -396,7 +396,7 @@ const menu = findMenuByKey(menuConfig, 'project.list');
 const serverMenus = useMenuStore.getState().serverMenus;
 const menu = findMenuByKey(serverMenus, 'M001-1-1');`} />
 
-                <CodeSnippet title="getMenuBreadcrumb + getMenuParentKeys" code={`import { getMenuBreadcrumb, getMenuParentKeys } from '@/utils/menuUtils';
+                <CodeSnippet title="getMenuBreadcrumb + getMenuParentKeys" code={`import { getMenuBreadcrumb, getMenuParentKeys } from '@/utils/menu-utils';
 
 // Building a breadcrumb
 const crumbs = getMenuBreadcrumb(menuConfig, 'project.list');
@@ -406,7 +406,7 @@ const crumbs = getMenuBreadcrumb(menuConfig, 'project.list');
 const parents = getMenuParentKeys(menuConfig, 'project.list');
 // → ['project']`} />
 
-                <CodeSnippet title="buildAntMenuItems" code={`import { buildAntMenuItems } from '@/utils/menuUtils';
+                <CodeSnippet title="buildAntMenuItems" code={`import { buildAntMenuItems } from '@/utils/menu-utils';
 
 // MenuItem[] -> Ant Design menu items (icon strings become React components)
 const antItems = buildAntMenuItems(serverMenus);
@@ -435,7 +435,7 @@ const antItems = buildAntMenuItems(serverMenus);
                   style={{ marginBottom: 16 }}
                 />
 
-                <CodeSnippet title="useTabContext — the current tab" code={`import { useTabContext } from '@/contexts/TabContext';
+                <CodeSnippet title="useTabContext — the current tab" code={`import { useTabContext } from '@/contexts/tab-context';
 import type { Tab } from '@/types/tab';
 
 function MyComponent() {
@@ -576,7 +576,7 @@ const e = ApiError.from(unknownError);`} />
                   <h3>queryClient</h3>
                 </div>
 
-                <CodeSnippet title="Using queryClient" code={`import { queryClient } from '@/lib/api/queryClient';
+                <CodeSnippet title="Using queryClient" code={`import { queryClient } from '@/lib/api/query-client';
 
 // Invalidating the cache (after a successful mutation)
 queryClient.invalidateQueries({ queryKey: ['tasks'] });
@@ -613,7 +613,7 @@ queryClient.setQueryData(['tasks'], (old: Task[]) => [...old, newTask]);
                   style={{ marginBottom: 16 }}
                 />
 
-                <CodeSnippet title="apiNotify (outside React only)" code={`import { apiNotify } from '@/lib/api/apiNotify';
+                <CodeSnippet title="apiNotify (outside React only)" code={`import { apiNotify } from '@/lib/api/api-notify';
 
 // Only for places where React hooks are unavailable — axios interceptors, the service layer, …
 apiNotify.error('A network error occurred.');

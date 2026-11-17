@@ -1,5 +1,5 @@
-import { useTotalCountLabel } from '@/hooks/useTotalCountLabel';
-import './GridToolbar.css';
+import { useTotalCountLabel } from '@/hooks/use-total-count-label';
+import './grid-toolbar.css';
 
 interface GridToolbarProps {
   /**

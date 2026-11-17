@@ -1,8 +1,8 @@
 import { useMemo, useState, type CSSProperties } from 'react';
 import { DownOutlined, UpOutlined } from '@ant-design/icons';
-import ActionButton from '@/components/common/ActionButton';
-import { useLabelStore } from '@/stores/labelStore';
-import './CollapsibleSectionPanel.css';
+import ActionButton from '@/components/common/action-button';
+import { useLabelStore } from '@/stores/label-store';
+import './collapsible-section-panel.css';
 
 type TogglePosition = 'left' | 'right' | 'extra-end';
 

@@ -1,4 +1,4 @@
-import { useScreenLabel } from './useScreenLabel';
+import { useScreenLabel } from './use-screen-label';
 
 /**
  * 공유 컴포넌트 라벨의 화면ID.

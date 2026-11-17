@@ -6,7 +6,7 @@ import {
   dualLocaleStorage,
   normalizeLocale,
   syncSystemLocale,
-} from '@/utils/localeStorage';
+} from '@/utils/locale-storage';
 
 export type { LocaleKey };
 

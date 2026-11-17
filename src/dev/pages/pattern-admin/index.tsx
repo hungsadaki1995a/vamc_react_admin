@@ -1,8 +1,8 @@
 import { Tabs } from 'antd';
-import ProjectCreate from '../ProjectCreate';
-import NotificationCenter from '../NotificationCenter';
-import PermissionManagement from '../PermissionManagement';
-import MenuManagement from '../MenuManagement';
+import ProjectCreate from '../project-create';
+import NotificationCenter from '../notification-center';
+import PermissionManagement from '../permission-management';
+import MenuManagement from '../menu-management';
 
 export default function PatternAdmin() {
   return (

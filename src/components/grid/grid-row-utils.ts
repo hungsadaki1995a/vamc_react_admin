@@ -1,5 +1,5 @@
 import type { CellClassParams, CellStyle, ColGroupDef } from 'ag-grid-community';
-import type { ColDefEx } from './GridTable';
+import type { ColDefEx } from './grid-table';
 
 /**
  * Extracts editable field keys from columnDefs (including nested ColGroupDef children).

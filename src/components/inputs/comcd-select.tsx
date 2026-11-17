@@ -1,8 +1,8 @@
 import { useState, useEffect, useMemo } from 'react';
 import { Select } from 'antd';
 import type { SelectProps } from 'antd';
-import { useComcdStore } from '@/stores/comcdStore';
-import type { CodeDetail } from '@/api/common/comCdApi';
+import { useComcdStore } from '@/stores/comcd-store';
+import type { CodeDetail } from '@/api/common/com-cd-api';
 
 interface ComcdSelectProps extends Omit<SelectProps, 'options'> {
   /** Code domain ID from T_CCO_COM_C (e.g. 'JBC_CD', 'GD_CD') */

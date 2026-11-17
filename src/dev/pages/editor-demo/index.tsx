@@ -1,13 +1,13 @@
 import { lazy, Suspense, useRef, useState } from 'react';
 import { Tabs, Card, Space, Select, Spin } from 'antd';
-import type { SpreadSheetRef } from '@/components/editors/SpreadSheet';
-import CodeSnippet from '@/components/common/CodeSnippet';
-import DevPageHeader from '@/dev/DevPageHeader';
+import type { SpreadSheetRef } from '@/components/editors/spread-sheet';
+import CodeSnippet from '@/components/common/code-snippet';
+import DevPageHeader from '@/dev/dev-page-header';
 
 // Lazy-load heavy editors — each loads its vendor chunk only when the tab is first opened
-const RichTextEditor = lazy(() => import('@/components/editors/RichTextEditor'));
-const CodeEditor = lazy(() => import('@/components/editors/CodeEditor'));
-const SpreadSheet = lazy(() => import('@/components/editors/SpreadSheet'));
+const RichTextEditor = lazy(() => import('@/components/editors/rich-text-editor'));
+const CodeEditor = lazy(() => import('@/components/editors/code-editor'));
+const SpreadSheet = lazy(() => import('@/components/editors/spread-sheet'));
 
 const EditorFallback = <div style={{ textAlign: 'center', padding: 40 }}><Spin /></div>;
 
@@ -50,7 +50,7 @@ WHERE p.status = 'active'
 GROUP BY p.name, t.status
 ORDER BY p.name, t.status;`;
 
-const richEditorCode = `import RichTextEditor from '@/components/editors/RichTextEditor';
+const richEditorCode = `import RichTextEditor from '@/components/editors/rich-text-editor';
 
 const [content, setContent] = useState('<p>Initial content</p>');
 
@@ -64,7 +64,7 @@ const [content, setContent] = useState('<p>Initial content</p>');
   readOnly={false}
 />`;
 
-const codeEditorCode = `import CodeEditor from '@/components/editors/CodeEditor';
+const codeEditorCode = `import CodeEditor from '@/components/editors/code-editor';
 
 const [code, setCode] = useState('// Write your code here');
 
@@ -77,8 +77,8 @@ const [code, setCode] = useState('// Write your code here');
 />`;
 
 const spreadSheetCode = `import { useRef } from 'react';
-import SpreadSheet from '@/components/editors/SpreadSheet';
-import type { SpreadSheetRef } from '@/components/editors/SpreadSheet';
+import SpreadSheet from '@/components/editors/spread-sheet';
+import type { SpreadSheetRef } from '@/components/editors/spread-sheet';
 
 const sheetRef = useRef<SpreadSheetRef>(null);
 

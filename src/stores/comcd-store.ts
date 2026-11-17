@@ -1,8 +1,8 @@
 import { create } from 'zustand';
-import { getAllCodeList, type CodeDetail } from '@/api/common/comCdApi';
-import { idbGet, idbSet } from '@/lib/cache/idbCache';
-import { useProjectStore } from '@/stores/projectStore';
-import { useLocaleStore } from '@/stores/localeStore';
+import { getAllCodeList, type CodeDetail } from '@/api/common/com-cd-api';
+import { idbGet, idbSet } from '@/lib/cache/idb-cache';
+import { useProjectStore } from '@/stores/project-store';
+import { useLocaleStore } from '@/stores/locale-store';
 
 /** Cache TTL: 5 minutes. Within TTL, skip background revalidation to avoid extra XHR. */
 const CACHE_TTL_MS = 5 * 60 * 1000;

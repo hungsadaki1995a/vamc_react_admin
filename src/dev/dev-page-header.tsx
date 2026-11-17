@@ -1,5 +1,5 @@
-import { useLocaleStore } from '@/stores/localeStore';
-import { DEV_PAGE_TEXT } from './devPageText';
+import { useLocaleStore } from '@/stores/locale-store';
+import { DEV_PAGE_TEXT } from './dev-page-text';
 
 /**
  * 개발 도구 화면의 제목 줄.

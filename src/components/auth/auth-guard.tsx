@@ -1,7 +1,7 @@
 import { type ReactNode } from 'react';
 import { Navigate } from 'react-router-dom';
 import { Spin } from 'antd';
-import { useAuthStore } from '@/stores/authStore';
+import { useAuthStore } from '@/stores/auth-store';
 
 interface AuthGuardProps {
   children: ReactNode;

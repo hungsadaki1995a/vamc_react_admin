@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Tabs, Card } from 'antd';
-import CodeSnippet from '@/components/common/CodeSnippet';
-import RichTextEditor from '@/components/editors/RichTextEditor';
-import DevPageHeader from '@/dev/DevPageHeader';
+import CodeSnippet from '@/components/common/code-snippet';
+import RichTextEditor from '@/components/editors/rich-text-editor';
+import DevPageHeader from '@/dev/dev-page-header';
 
 // ============================================================================
 // Code Examples
@@ -455,7 +455,7 @@ function MyEditor() {
   );
 }`;
 
-const richTextEditorUsageCode = `import RichTextEditor from '@/components/editors/RichTextEditor';
+const richTextEditorUsageCode = `import RichTextEditor from '@/components/editors/rich-text-editor';
 
 function MyComponent() {
   const [content, setContent] = useState('<p>Hello World!</p>');

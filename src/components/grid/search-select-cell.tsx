@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { AutoComplete } from 'antd';
 import type { ICellRendererParams, ValueFormatterParams } from 'ag-grid-community';
 import type { CustomCellEditorProps } from 'ag-grid-react';
-import type { SearchSelectOption, SearchSelectValue } from '@/components/inputs/SearchSelectField';
+import type { SearchSelectOption, SearchSelectValue } from '@/components/inputs/search-select-field';
 
 // ── Value Formatter ────────────────────────────────────────────────────────────
 

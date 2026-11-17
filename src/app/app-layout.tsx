@@ -1,13 +1,13 @@
 import { LeftOutlined, RightOutlined } from '@ant-design/icons';
-import Header from '@/components/layout/Header';
-import IconRail from '@/components/layout/IconRail';
-import FlyoutPanel from '@/components/layout/FlyoutPanel';
-import ContentHeader from '@/components/layout/ContentHeader';
-import TabBar from '@/components/tabs/TabBar';
-import TabContent from '@/components/tabs/TabContent';
-import { useTabRouteSync } from '@/hooks/useTabRouteSync';
-import { useMenuStore } from '@/stores/menuStore';
-import { useLocaleStore } from '@/stores/localeStore';
+import Header from '@/components/layout/header';
+import IconRail from '@/components/layout/icon-rail';
+import FlyoutPanel from '@/components/layout/flyout-panel';
+import ContentHeader from '@/components/layout/content-header';
+import TabBar from '@/components/tabs/tab-bar';
+import TabContent from '@/components/tabs/tab-content';
+import { useTabRouteSync } from '@/hooks/use-tab-route-sync';
+import { useMenuStore } from '@/stores/menu-store';
+import { useLocaleStore } from '@/stores/locale-store';
 import { useShallow } from 'zustand/react/shallow';
 
 export default function AppLayout() {

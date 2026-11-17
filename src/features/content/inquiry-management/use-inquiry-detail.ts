@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { getInquiry, type InquiryDetailResponse } from '@/api/contents/inquiryApi';
+import { getInquiry, type InquiryDetailResponse } from '@/api/contents/inquiry-api';
 
 export interface UseInquiryDetailOptions {
   enabled?: boolean;

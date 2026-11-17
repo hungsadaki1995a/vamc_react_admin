@@ -3,9 +3,9 @@ import { Typography, Input, Empty } from 'antd';
 import * as Icons from '@ant-design/icons';
 import type { AntdIconProps } from '@ant-design/icons/lib/components/AntdIcon';
 import type { ComponentType } from 'react';
-import { menuConfig } from '@/config/menuConfig';
+import { menuConfig } from '@/config/menu-config';
 import type { MenuItem } from '@/types/menu';
-import DevPageHeader from '@/dev/DevPageHeader';
+import DevPageHeader from '@/dev/dev-page-header';
 
 const { Title, Text } = Typography;
 

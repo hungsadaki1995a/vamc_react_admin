@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { Card, Divider, Switch, Table, Typography } from 'antd';
-import ActionButton from '@/components/common/ActionButton';
-import ActionButtonGroup from '@/components/common/ActionButtonGroup';
-import CodeSnippet from '@/components/common/CodeSnippet';
-import { useNotify } from '@/hooks/useNotify';
-import DevPageHeader from '@/dev/DevPageHeader';
+import ActionButton from '@/components/common/action-button';
+import ActionButtonGroup from '@/components/common/action-button-group';
+import CodeSnippet from '@/components/common/code-snippet';
+import { useNotify } from '@/hooks/use-notify';
+import DevPageHeader from '@/dev/dev-page-header';
 
 const { Text } = Typography;
 
@@ -33,9 +33,9 @@ const PROP_COLUMNS = [
   { title: 'Description', dataIndex: 'desc' },
 ];
 
-const USAGE = `import ActionButton from '@/components/common/ActionButton';
-import ActionButtonGroup from '@/components/common/ActionButtonGroup';
-import { useMenuPermission } from '@/hooks/useMenuPermission';
+const USAGE = `import ActionButton from '@/components/common/action-button';
+import ActionButtonGroup from '@/components/common/action-button-group';
+import { useMenuPermission } from '@/hooks/use-menu-permission';
 
 const { canWrite } = useMenuPermission();
 

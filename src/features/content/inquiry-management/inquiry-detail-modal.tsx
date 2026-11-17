@@ -2,11 +2,11 @@ import { useState, useEffect } from 'react';
 import { Modal, Spin, message } from 'antd';
 import { useQueryClient } from '@tanstack/react-query';
 import dayjs from 'dayjs';
-import { answerInquiry } from '@/api/contents/inquiryApi';
+import { answerInquiry } from '@/api/contents/inquiry-api';
 import { updateMockInquiryAnswer } from './inquiry.mock';
 import type { InquiryItem } from './inquiry.types';
-import { useInquiryDetail } from './useInquiryDetail';
-import styles from './InquiryDetailModal.module.css';
+import { useInquiryDetail } from './use-inquiry-detail';
+import styles from './inquiry-detail-modal.module.css';
 
 interface InquiryDetailModalProps {
   visible: boolean;

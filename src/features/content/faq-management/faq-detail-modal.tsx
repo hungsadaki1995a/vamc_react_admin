@@ -6,10 +6,10 @@ import {
   createFaq,
   updateFaq,
   updateFaqStatus,
-} from '@/api/contents/faqApi';
+} from '@/api/contents/faq-api';
 import type { FaqItem } from './faq.types';
-import { useFaqDetail } from './useFaqDetail';
-import styles from './FaqDetailModal.module.css';
+import { useFaqDetail } from './use-faq-detail';
+import styles from './faq-detail-modal.module.css';
 
 interface FaqDetailModalProps {
   visible: boolean;

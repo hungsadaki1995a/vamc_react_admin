@@ -1,6 +1,6 @@
 import { Button, Card, Divider, Space } from 'antd';
-import { useNotify } from '@/hooks/useNotify';
-import DevPageHeader from '@/dev/DevPageHeader';
+import { useNotify } from '@/hooks/use-notify';
+import DevPageHeader from '@/dev/dev-page-header';
 
 export default function NotifyDemo() {
   const { toast, notify, dialog } = useNotify();

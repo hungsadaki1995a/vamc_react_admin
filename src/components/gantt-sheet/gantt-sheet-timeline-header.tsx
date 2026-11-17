@@ -1,4 +1,4 @@
-import type { DateEngine } from './useGanttDateEngine';
+import type { DateEngine } from './use-gantt-date-engine';
 
 interface GanttSheetTimelineHeaderProps {
   dateEngine: DateEngine;

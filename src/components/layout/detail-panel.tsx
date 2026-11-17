@@ -1,8 +1,8 @@
 import { useRef, useState, useCallback, useEffect, useMemo } from 'react';
 import { Badge } from 'antd';
 import { CloseOutlined, MinusOutlined } from '@ant-design/icons';
-import { useComponentLabel } from '@/hooks/useComponentLabel';
-import './DetailPanel.css';
+import { useComponentLabel } from '@/hooks/use-component-label';
+import './detail-panel.css';
 
 interface DetailPanelTab {
   key: string;

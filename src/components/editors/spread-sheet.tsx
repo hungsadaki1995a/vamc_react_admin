@@ -21,7 +21,7 @@ import sheetsCoreKoKR from '@univerjs/preset-sheets-core/lib/locales/ko-KR';
 // 서버에서 받은 파일이나 외부 입력을 이 경로로 넣지 말 것. 서버측 파싱이 필요해지면
 // 백엔드(Apache POI)에서 처리하고 이 라이브러리를 쓰지 않는다.
 import * as XLSX from 'xlsx';
-import { useThemeStore } from '@/stores/themeStore';
+import { useThemeStore } from '@/stores/theme-store';
 
 import '@univerjs/preset-sheets-core/lib/index.css';
 

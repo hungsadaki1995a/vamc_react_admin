@@ -1,2 +1,2 @@
-export { ExternalWindow } from './ExternalWindow';
-export type { ExternalWindowProps } from './ExternalWindow';
+export { ExternalWindow } from './external-window';
+export type { ExternalWindowProps } from './external-window';

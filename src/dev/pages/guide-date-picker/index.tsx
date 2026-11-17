@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Typography, Card, Divider, Space } from 'antd';
 import { DatePicker, Calendar } from 'antd';
 import type { Dayjs } from 'dayjs';
-import DevPageHeader from '@/dev/DevPageHeader';
+import DevPageHeader from '@/dev/dev-page-header';
 
 const { Paragraph, Text } = Typography;
 const { RangePicker } = DatePicker;

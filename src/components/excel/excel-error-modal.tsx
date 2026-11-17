@@ -2,9 +2,9 @@ import { useMemo } from 'react';
 import { Modal, Table, Tag } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import type { ExcelRowError, ExcelUploadResult } from '@/types/excel';
-import { useComponentLabel } from '@/hooks/useComponentLabel';
-import { useTotalCountLabel } from '@/hooks/useTotalCountLabel';
-import { formatLabel } from '@/lib/i18n/formatLabel';
+import { useComponentLabel } from '@/hooks/use-component-label';
+import { useTotalCountLabel } from '@/hooks/use-total-count-label';
+import { formatLabel } from '@/lib/i18n/format-label';
 
 interface Props {
   open: boolean;

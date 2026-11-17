@@ -1,10 +1,10 @@
 import { useMemo } from 'react';
-import { useMenuStore } from '@/stores/menuStore';
-import { useLabelStore } from '@/stores/labelStore';
-import { useLocaleStore } from '@/stores/localeStore';
-import type { LocaleKey } from '@/stores/localeStore';
-import { menuConfig, DEV_TOOLS_ENABLED } from '@/config/menuConfig';
-import { DEV_MENU_LABELS } from '@/config/devMenuLabels';
+import { useMenuStore } from '@/stores/menu-store';
+import { useLabelStore } from '@/stores/label-store';
+import { useLocaleStore } from '@/stores/locale-store';
+import type { LocaleKey } from '@/stores/locale-store';
+import { menuConfig, DEV_TOOLS_ENABLED } from '@/config/menu-config';
+import { DEV_MENU_LABELS } from '@/config/dev-menu-labels';
 import type { MenuItem } from '@/types/menu';
 
 /**

@@ -1,10 +1,10 @@
 import { useEffect } from 'react';
 import { App as AntApp, ConfigProvider, theme as antTheme } from 'antd';
-import { apiNotify } from '@/lib/api/apiNotify';
-import { useRestoreSession } from '@/hooks/useRestoreSession';
-import { useAppSync } from '@/hooks/useAppSync';
-import GlobalLoadingBar from '@/components/common/GlobalLoadingBar';
-import AppRoutes from './AppRoutes';
+import { apiNotify } from '@/lib/api/api-notify';
+import { useRestoreSession } from '@/hooks/use-restore-session';
+import { useAppSync } from '@/hooks/use-app-sync';
+import GlobalLoadingBar from '@/components/common/global-loading-bar';
+import AppRoutes from './app-routes';
 
 // Registers axios interceptor error messages into the antd message context.
 // Must be rendered inside <AntApp> to access App.useApp().

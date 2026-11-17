@@ -1,10 +1,10 @@
 ﻿import { Tabs, Tag, Space, Card, Alert, Table, Typography } from 'antd';
 import type { TableColumnsType } from 'antd';
-import CodeSnippet from '@/components/common/CodeSnippet';
-import { useScreenLabel } from '@/hooks/useScreenLabel';
-import { useMenuPermission } from '@/hooks/useMenuPermission';
-import { useLocaleStore } from '@/stores/localeStore';
-import DevPageHeader from '@/dev/DevPageHeader';
+import CodeSnippet from '@/components/common/code-snippet';
+import { useScreenLabel } from '@/hooks/use-screen-label';
+import { useMenuPermission } from '@/hooks/use-menu-permission';
+import { useLocaleStore } from '@/stores/locale-store';
+import DevPageHeader from '@/dev/dev-page-header';
 
 const { Text } = Typography;
 
@@ -82,7 +82,7 @@ export default function GuideI18nPermission() {
 
                 <CodeSnippet
                   title="Basic usage"
-                  code={`import { useScreenLabel } from '@/hooks/useScreenLabel';
+                  code={`import { useScreenLabel } from '@/hooks/use-screen-label';
 
 export default function SYS030101SC() {
   // Every label helper comes from a single hook call
@@ -179,7 +179,7 @@ const { tvt } = useScreenLabel('SYS030101SC');`}
 
                 <CodeSnippet
                   title="useScreenLabel — every label through one hook"
-                  code={`import { useScreenLabel } from '@/hooks/useScreenLabel';
+                  code={`import { useScreenLabel } from '@/hooks/use-screen-label';
 
 function MyComponent() {
   // t, tmc/tmi/tme, tvt/tvb/tsg/tsm — all of them come from here
@@ -192,7 +192,7 @@ function MyComponent() {
 t('NON_EXISTENT') // → 'NON_EXISTENT'
 
 // Outside React (axios interceptors, utility functions, …)
-import { useLabelStore } from '@/stores/labelStore';
+import { useLabelStore } from '@/stores/label-store';
 useLabelStore.getState().tme('E100001')`}
                 />
 
@@ -313,7 +313,7 @@ VALUES ('SYS030101SC.VIEW.TEXT_usrId', 'PJ001', 'en', 'Employee ID');`}
 
                 <CodeSnippet
                   title="Showing and hiding buttons"
-                  code={`import { useMenuPermission } from '@/hooks/useMenuPermission';
+                  code={`import { useMenuPermission } from '@/hooks/use-menu-permission';
 
 function MyPage() {
   const { canWrite } = useMenuPermission();
@@ -397,7 +397,7 @@ return {
 
                 <CodeSnippet
                   title="Using TabContext (inside the component tree)"
-                  code={`import { useTabContext } from '@/contexts/TabContext';
+                  code={`import { useTabContext } from '@/contexts/tab-context';
 
 function MyComponent() {
   const ctx = useTabContext(); // null if rendered outside TabPanel
@@ -458,8 +458,8 @@ function TabPanel({ tab, visible }) {
 
                 <CodeSnippet
                   title="The LocaleSelector component"
-                  code={`import { useLocaleStore } from '@/stores/localeStore';
-import type { LocaleKey } from '@/stores/localeStore';
+                  code={`import { useLocaleStore } from '@/stores/locale-store';
+import type { LocaleKey } from '@/stores/locale-store';
 
 function LocaleSelector() {
   const { locale, setLocale } = useLocaleStore();

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { CheckOutlined, CopyOutlined } from '@ant-design/icons';
-import type { LocaleKey } from '@/stores/localeStore';
+import type { LocaleKey } from '@/stores/locale-store';
 import { PAGE_TEXT } from './sections';
 import styles from './index.module.css';
 

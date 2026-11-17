@@ -15,7 +15,7 @@ import {
   Tooltip,
   Legend,
 } from 'chart.js';
-import DevPageHeader from '@/dev/DevPageHeader';
+import DevPageHeader from '@/dev/dev-page-header';
 
 const { Paragraph, Text } = Typography;
 

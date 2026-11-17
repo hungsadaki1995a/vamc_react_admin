@@ -2,9 +2,9 @@ import { useMemo } from 'react';
 import { DownOutlined, LeftOutlined, RightOutlined } from '@ant-design/icons';
 import { Dropdown } from 'antd';
 import type { MenuProps } from 'antd';
-import { useLabelStore } from '@/stores/labelStore';
-import { useTotalCountLabel } from '@/hooks/useTotalCountLabel';
-import { formatLabel } from '@/lib/i18n/formatLabel';
+import { useLabelStore } from '@/stores/label-store';
+import { useTotalCountLabel } from '@/hooks/use-total-count-label';
+import { formatLabel } from '@/lib/i18n/format-label';
 import './GridExternalPaginationFooter.css';
 
 interface GridExternalPaginationFooterProps {

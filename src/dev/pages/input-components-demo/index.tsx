@@ -4,12 +4,12 @@ import {
   Switch, Slider, InputNumber, AutoComplete, Cascader,
   TreeSelect, Divider, Space, Row, Col, Alert, Tag,
 } from 'antd';
-import ComcdSelect from '@/components/inputs/ComcdSelect';
-import SearchSelectField from '@/components/inputs/SearchSelectField';
-import type { SearchSelectValue } from '@/components/inputs/SearchSelectField';
-import CodeSnippet from '@/components/common/CodeSnippet';
+import ComcdSelect from '@/components/inputs/comcd-select';
+import SearchSelectField from '@/components/inputs/search-select-field';
+import type { SearchSelectValue } from '@/components/inputs/search-select-field';
+import CodeSnippet from '@/components/common/code-snippet';
 import styles from './index.module.css';
-import DevPageHeader from '@/dev/DevPageHeader';
+import DevPageHeader from '@/dev/dev-page-header';
 
 const { TextArea, Search, Password } = Input;
 
@@ -25,7 +25,7 @@ const cascaderOptions = [
 ];
 
 /* ─── ComcdSelect code snippet ─── */
-const comcdCode = `import ComcdSelect from '@/components/inputs/ComcdSelect';
+const comcdCode = `import ComcdSelect from '@/components/inputs/comcd-select';
 
 // cdDmnId: the code domain ID from T_CCO_COM_C
 // The code list for that domain is loaded automatically from comcdStore
@@ -66,8 +66,8 @@ const CHAIN_CHILD_OPTIONS: ChainChildOption[] = [
   { label: 'Security operations', value: 'OPS03', parentCd: 'OPS' },
 ];
 
-const comcdChainCode = `import ComcdSelect from '@/components/inputs/ComcdSelect';
-import type { CodeDetail } from '@/api/common/comCdApi';
+const comcdChainCode = `import ComcdSelect from '@/components/inputs/comcd-select';
+import type { CodeDetail } from '@/api/common/com-cd-api';
 
 // ─ Chaining inside a form ────────────────────────────────
 const [parentVal, setParentVal] = useState('');
@@ -109,8 +109,8 @@ const comcdPrefixCode = `// prefixOption — prepends an empty (value='') entry 
 <ComcdSelect cdDmnId="JBC_CD" prefixOption="" style={{ width: 160 }} />`;
 
 /* ─── SearchSelectField code snippet ─── */
-const ssfSingleCode = `import SearchSelectField from '@/components/inputs/SearchSelectField';
-import type { SearchSelectValue } from '@/components/inputs/SearchSelectField';
+const ssfSingleCode = `import SearchSelectField from '@/components/inputs/search-select-field';
+import type { SearchSelectValue } from '@/components/inputs/search-select-field';
 
 const [value, setValue] = useState<SearchSelectValue | null>(null);
 

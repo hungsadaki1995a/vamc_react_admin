@@ -1,9 +1,9 @@
 import { useEffect } from 'react';
-import { refreshToken } from '@/api/common/authApi';
-import { useAuthStore } from '@/stores/authStore';
-import { useMenuStore } from '@/stores/menuStore';
-import { isTokenExpired, jwtToMeResponse } from '@/utils/jwtUtils';
-import { getAccessToken } from '@/utils/tokenStorage';
+import { refreshToken } from '@/api/common/auth-api';
+import { useAuthStore } from '@/stores/auth-store';
+import { useMenuStore } from '@/stores/menu-store';
+import { isTokenExpired, jwtToMeResponse } from '@/utils/jwt-utils';
+import { getAccessToken } from '@/utils/token-storage';
 
 /** Restores the user session on app mount using the stored or refreshed access token. */
 export function useRestoreSession() {

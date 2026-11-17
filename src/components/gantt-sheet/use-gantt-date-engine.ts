@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import type { GanttTask, GanttViewMode } from './ganttTypes';
+import type { GanttTask, GanttViewMode } from './gantt-types';
 
 export interface HeaderCell {
   label: string;

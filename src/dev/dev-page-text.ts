@@ -1,4 +1,4 @@
-import type { LocaleKey } from '@/stores/localeStore';
+import type { LocaleKey } from '@/stores/locale-store';
 
 // 개발 도구 화면의 제목과 한 줄 설명.
 //

@@ -1,7 +1,7 @@
-import { useTabStore } from '@/stores/tabStore';
-import { useMenuStore } from '@/stores/menuStore';
-import { findMenuByKey } from '@/utils/menuUtils';
-import { menuConfig } from '@/config/menuConfig';
+import { useTabStore } from '@/stores/tab-store';
+import { useMenuStore } from '@/stores/menu-store';
+import { findMenuByKey } from '@/utils/menu-utils';
+import { menuConfig } from '@/config/menu-config';
 
 /** MENU_ROLE_MPNG.MENU_AUTHRT 도메인 */
 export const AUTHRT_READ = 'RD';

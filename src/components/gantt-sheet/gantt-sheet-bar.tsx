@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
-import type { GanttTask, GanttTaskPriority } from './ganttTypes';
-import type { DragHandle } from './useGanttDrag';
+import type { GanttTask, GanttTaskPriority } from './gantt-types';
+import type { DragHandle } from './use-gantt-drag';
 
 interface GanttSheetBarProps {
   task: GanttTask;

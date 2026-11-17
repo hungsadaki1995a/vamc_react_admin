@@ -1,8 +1,8 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import AuthGuard from '@/components/auth/AuthGuard';
-import LoginPage from '@/features/auth/LoginPage';
-import FindIdPage from '@/features/auth/FindIdPage';
-import AppLayout from './AppLayout';
+import AuthGuard from '@/components/auth/auth-guard';
+import LoginPage from '@/features/auth/login-page';
+import FindIdPage from '@/features/auth/find-id-page';
+import AppLayout from './app-layout';
 
 const PROTECTED_PATHS = [
   '/members',

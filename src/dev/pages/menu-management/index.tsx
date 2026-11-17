@@ -2,9 +2,9 @@ import { useState } from 'react';
 import { Typography, Tree, Card, Tag, Button, Input, Space } from 'antd';
 import type { TreeDataNode } from 'antd';
 import { EditOutlined } from '@ant-design/icons';
-import { menuConfig } from '@/config/menuConfig';
+import { menuConfig } from '@/config/menu-config';
 import type { MenuItem } from '@/types/menu';
-import DevPageHeader from '@/dev/DevPageHeader';
+import DevPageHeader from '@/dev/dev-page-header';
 
 const { Text } = Typography;
 
