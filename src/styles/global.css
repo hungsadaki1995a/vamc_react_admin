@@ -3,8 +3,6 @@
 @import './semantic-colors.css';
 @import './typography.css';
 @import './variables.css';
-@import "tw-animate-css";
-@import "shadcn/tailwind.css";
 @import "pretendard/dist/web/variable/pretendardvariable.css";
 
 @custom-variant dark (&:is(.dark *));

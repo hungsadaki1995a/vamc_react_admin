@@ -13,12 +13,16 @@ export interface paths {
         };
         /**
          * Get application
-         * @description Detail with NPLs, scanned documents, approval steps and processing history (VPA0004P04). Requires READ permission.
+         * @description **Screens:** VPA001101, VPA0011P01
+         *
+         *     Detail with NPLs, scanned documents, approval steps and processing history (VPA0004P04). Requires READ permission.
          */
         get: operations["getApplication"];
         /**
          * Edit a application
-         * @description Contract kind, base contract, currency, desired price and scan, before approval is requested. Requires WRITE permission.
+         * @description **Screens:** VPA001101, VPA0011P01
+         *
+         *     Contract kind, base contract, currency, desired price and scan, before approval is requested. Requires WRITE permission.
          */
         put: operations["update"];
         post?: never;
@@ -38,7 +42,9 @@ export interface paths {
         get?: never;
         /**
          * Change the officer in charge
-         * @description Hands the application (and its contracts) to another employee holding the processing role; an open officer step of the approval session follows. Requires WRITE permission.
+         * @description **Screens:** VPA001101, VPA0011P01
+         *
+         *     Hands the application (and its contracts) to another employee holding the processing role; an open officer step of the approval session follows. Requires WRITE permission.
          */
         put: operations["reassignOfficer"];
         post?: never;
@@ -57,12 +63,16 @@ export interface paths {
         };
         /**
          * Get application
-         * @description Detail with NPLs, scanned documents, approval steps and processing history (VPA0004P04). Requires READ permission.
+         * @description **Screens:** VPA001001, VPA0010P01, VPA0004P01, VPA0004P04
+         *
+         *     Detail with NPLs, scanned documents, approval steps and processing history (VPA0004P04). Requires READ permission.
          */
         get: operations["getApplication_1"];
         /**
          * Edit a application
-         * @description Contract kind, base contract, currency, desired price and scan, before approval is requested. Requires WRITE permission.
+         * @description **Screens:** VPA001001, VPA0010P01, VPA0004P01, VPA0004P04
+         *
+         *     Contract kind, base contract, currency, desired price and scan, before approval is requested. Requires WRITE permission.
          */
         put: operations["update_1"];
         post?: never;
@@ -82,7 +92,9 @@ export interface paths {
         get?: never;
         /**
          * Change the officer in charge
-         * @description Hands the application (and its contracts) to another employee holding the processing role; an open officer step of the approval session follows. Requires WRITE permission.
+         * @description **Screens:** VPA001001, VPA0010P01, VPA0004P01, VPA0004P04
+         *
+         *     Hands the application (and its contracts) to another employee holding the processing role; an open officer step of the approval session follows. Requires WRITE permission.
          */
         put: operations["reassignOfficer_1"];
         post?: never;
@@ -101,12 +113,16 @@ export interface paths {
         };
         /**
          * Get application
-         * @description Detail with NPLs, scanned documents, approval steps and processing history (VPA0004P04). Requires READ permission.
+         * @description **Screens:** VPA001201, VPA0012P01
+         *
+         *     Detail with NPLs, scanned documents, approval steps and processing history (VPA0004P04). Requires READ permission.
          */
         get: operations["getApplication_2"];
         /**
          * Edit a application
-         * @description Contract kind, base contract, currency, desired price and scan, before approval is requested. Requires WRITE permission.
+         * @description **Screens:** VPA001201, VPA0012P01
+         *
+         *     Contract kind, base contract, currency, desired price and scan, before approval is requested. Requires WRITE permission.
          */
         put: operations["update_2"];
         post?: never;
@@ -126,7 +142,9 @@ export interface paths {
         get?: never;
         /**
          * Change the officer in charge
-         * @description Hands the application (and its contracts) to another employee holding the processing role; an open officer step of the approval session follows. Requires WRITE permission.
+         * @description **Screens:** VPA001201, VPA0012P01
+         *
+         *     Hands the application (and its contracts) to another employee holding the processing role; an open officer step of the approval session follows. Requires WRITE permission.
          */
         put: operations["reassignOfficer_2"];
         post?: never;
@@ -145,12 +163,16 @@ export interface paths {
         };
         /**
          * Get contract
-         * @description Contract or annex with NPLs, draft / signed documents, fees, annexes and terminations. Requires READ permission.
+         * @description **Screens:** VPA001401, VPA0014P01, VPA0014P02
+         *
+         *     Contract or annex with NPLs, draft / signed documents, fees, annexes and terminations. Requires READ permission.
          */
         get: operations["getContract"];
         /**
          * Edit the contract draft
-         * @description Step 13 / annex 2 (PREPR only): period (end defaults to start + 1 year), price, auto-termination clause, fee terms (LUMP, STAG + advance %, AFTR). Requires WRITE permission.
+         * @description **Screens:** VPA001401, VPA0014P01, VPA0014P02
+         *
+         *     Step 13 / annex 2 (PREPR only): period (end defaults to start + 1 year), price, auto-termination clause, fee terms (LUMP, STAG + advance %, AFTR). Requires WRITE permission.
          */
         put: operations["updateDraft"];
         post?: never;
@@ -169,18 +191,24 @@ export interface paths {
         };
         /**
          * Get role detail / Chi tiết vai trò
-         * @description Returns detail of a single role. / Trả về chi tiết một vai trò.
+         * @description **Screens:** VPA004701
+         *
+         *     Returns detail of a single role. / Trả về chi tiết một vai trò.
          */
         get: operations["getRole"];
         /**
          * Update role / Cập nhật vai trò
-         * @description Updates role name, group, and use status. Requires WRITE permission. / Cập nhật tên, nhóm và trạng thái vai trò. Yêu cầu quyền GHI.
+         * @description **Screens:** VPA004701
+         *
+         *     Updates role name, group, and use status. Requires WRITE permission. / Cập nhật tên, nhóm và trạng thái vai trò. Yêu cầu quyền GHI.
          */
         put: operations["updateRole"];
         post?: never;
         /**
          * Delete role / Xóa vai trò
-         * @description Deletes a role. Fails if any user or menu mappings still reference it. Requires WRITE permission. / Xóa vai trò. Thất bại nếu còn ánh xạ người dùng hoặc menu. Yêu cầu quyền GHI.
+         * @description **Screens:** VPA004701
+         *
+         *     Deletes a role. Fails if any user or menu mappings still reference it. Requires WRITE permission. / Xóa vai trò. Thất bại nếu còn ánh xạ người dùng hoặc menu. Yêu cầu quyền GHI.
          */
         delete: operations["deleteRole"];
         options?: never;
@@ -197,22 +225,30 @@ export interface paths {
         };
         /**
          * Get role menu permissions matrix / Lấy ma trận phân quyền menu của vai trò
-         * @description Returns complete menu tree with assigned permission levels for a given role. / Trả về toàn bộ cây menu kèm mức phân quyền được gán cho vai trò chỉ định.
+         * @description **Screens:** VPA004701
+         *
+         *     Returns complete menu tree with assigned permission levels for a given role. / Trả về toàn bộ cây menu kèm mức phân quyền được gán cho vai trò chỉ định.
          */
         get: operations["getRoleMenuPermissions"];
         /**
          * Batch save role menu permissions / Lưu hàng loạt phân quyền menu cho vai trò
-         * @description Batch updates menu permissions for a role. Items with NONE are revoked. Requires WRITE permission. / Lưu hàng loạt phân quyền menu cho vai trò. Các mục có quyền NONE sẽ bị thu hồi. Yêu cầu quyền GHI.
+         * @description **Screens:** VPA004701
+         *
+         *     Batch updates menu permissions for a role. Items with NONE are revoked. Requires WRITE permission. / Lưu hàng loạt phân quyền menu cho vai trò. Các mục có quyền NONE sẽ bị thu hồi. Yêu cầu quyền GHI.
          */
         put: operations["batchSaveRoleMenuPermissions"];
         /**
          * Assign single menu permission to role / Gán phân quyền menu đơn lẻ cho vai trò
-         * @description Assigns or updates a single menu permission. Requires WRITE permission. / Gán hoặc cập nhật phân quyền của một menu cho vai trò. Yêu cầu quyền GHI.
+         * @description **Screens:** VPA004701
+         *
+         *     Assigns or updates a single menu permission. Requires WRITE permission. / Gán hoặc cập nhật phân quyền của một menu cho vai trò. Yêu cầu quyền GHI.
          */
         post: operations["assignRoleMenuPermission"];
         /**
          * Revoke all menu permissions from role / Thu hồi toàn bộ phân quyền menu của vai trò
-         * @description Removes all menu permission mappings for a role. Requires WRITE permission. / Xóa toàn bộ phân quyền menu của vai trò. Yêu cầu quyền GHI.
+         * @description **Screens:** VPA004701
+         *
+         *     Removes all menu permission mappings for a role. Requires WRITE permission. / Xóa toàn bộ phân quyền menu của vai trò. Yêu cầu quyền GHI.
          */
         delete: operations["revokeAllRoleMenuPermissions"];
         options?: never;
@@ -229,20 +265,48 @@ export interface paths {
         };
         /**
          * Get role group detail / Chi tiết nhóm vai trò
-         * @description Returns role group detail with nested role list. / Trả về chi tiết nhóm vai trò kèm danh sách vai trò con.
+         * @description **Screens:** VPA004601, VPA0046P01
+         *
+         *     Returns role group detail with nested role list. / Trả về chi tiết nhóm vai trò kèm danh sách vai trò con.
          */
         get: operations["getRoleGroup"];
         /**
          * Update role group / Cập nhật nhóm vai trò
-         * @description Updates name and use status of a role group. Requires WRITE permission. / Cập nhật tên và trạng thái sử dụng của nhóm vai trò. Yêu cầu quyền GHI.
+         * @description **Screens:** VPA004601, VPA0046P01
+         *
+         *     Updates name and use status of a role group. Requires WRITE permission. / Cập nhật tên và trạng thái sử dụng của nhóm vai trò. Yêu cầu quyền GHI.
          */
         put: operations["updateRoleGroup"];
         post?: never;
         /**
          * Delete role group / Xóa nhóm vai trò
-         * @description Deletes a role group. Fails if the group still has roles. Requires WRITE permission. / Xóa nhóm vai trò. Thất bại nếu nhóm còn vai trò con. Yêu cầu quyền GHI.
+         * @description **Screens:** VPA004601, VPA0046P01
+         *
+         *     Deletes a role group. Fails if the group still has roles. Requires WRITE permission. / Xóa nhóm vai trò. Thất bại nếu nhóm còn vai trò con. Yêu cầu quyền GHI.
          */
         delete: operations["deleteRoleGroup"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/role-groups/{roleGroupId}/roles/{roleId}/assignees": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Save role assignees / Lưu người phụ trách vai trò
+         * @description **Screens:** VPA004601, VPA0046P01
+         *
+         *     Adds and removes assignees of a role in one call (idempotent). Requires WRITE permission. / Thêm và gỡ người phụ trách của vai trò trong một lần gọi (idempotent). Yêu cầu quyền GHI.
+         */
+        put: operations["saveAssignees"];
+        post?: never;
+        delete?: never;
         options?: never;
         head?: never;
         patch?: never;
@@ -257,12 +321,16 @@ export interface paths {
         };
         /**
          * Get contract
-         * @description Contract or annex with NPLs, draft / signed documents, fees, annexes and terminations. Requires READ permission.
+         * @description **Screens:** VPA001301, VPA0013P01, VPA0013P02
+         *
+         *     Contract or annex with NPLs, draft / signed documents, fees, annexes and terminations. Requires READ permission.
          */
         get: operations["getContract_1"];
         /**
          * Edit the contract draft
-         * @description Step 13 / annex 2 (PREPR only): period (end defaults to start + 1 year), price, auto-termination clause, fee terms (LUMP, STAG + advance %, AFTR). Requires WRITE permission.
+         * @description **Screens:** VPA001301, VPA0013P01, VPA0013P02
+         *
+         *     Step 13 / annex 2 (PREPR only): period (end defaults to start + 1 year), price, auto-termination clause, fee terms (LUMP, STAG + advance %, AFTR). Requires WRITE permission.
          */
         put: operations["updateDraft_1"];
         post?: never;
@@ -281,14 +349,170 @@ export interface paths {
         };
         /**
          * Get fee item / Chi tiết mục phí
-         * @description editable=false while the item is in use. / editable=false khi đang sử dụng.
+         * @description **Screens:** VPA004101, VPA0041P01
+         *
+         *     editable=false while the item is in use. / editable=false khi đang sử dụng.
          */
         get: operations["getFee"];
         /**
          * Update fee item / Sửa mục phí
-         * @description Returns 409 (FEE001) while the item is in use. / Trả 409 khi đang sử dụng.
+         * @description **Screens:** VPA004101, VPA0041P01
+         *
+         *     Returns 409 (FEE001) while the item is in use. / Trả 409 khi đang sử dụng.
          */
         put: operations["updateFee"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/npl-lots/{bndLotId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get NPL LOT
+         * @description **Screens:** VPA001901
+         *
+         *     Selected LOT information. Requires READ on A03010400.
+         */
+        get: operations["getNplLot"];
+        /**
+         * Edit an NPL LOT
+         * @description **Screens:** VPA001901
+         *
+         *     Changes LOT ID and name. Requires WRITE on A03010400.
+         */
+        put: operations["updateNplLot"];
+        post?: never;
+        /**
+         * Delete an NPL LOT
+         * @description **Screens:** VPA001901
+         *
+         *     Hard delete; 409 while any NPL, service application or change history still references the LOT. Requires WRITE on A03010400.
+         */
+        delete: operations["deleteNplLot"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/npl-lots/{bndLotId}/npls": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List NPLs of a LOT
+         * @description **Screens:** VPA001901
+         *
+         *     NPLs currently in the LOT. Requires READ on A03010400.
+         */
+        get: operations["getLotNpls"];
+        /**
+         * Save NPLs of a LOT
+         * @description **Screens:** VPA001901
+         *
+         *     Replaces the LOT members with the given list (add and remove in one transaction). 409 when an NPL is in another LOT or is Under Contract/Sale Completed (UC/SD); 400 for unknown NPL codes. Requires WRITE on A03010400.
+         */
+        put: operations["replaceLotNpls"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/notification-messages/{notiMsgId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get notification template / Chi tiết mẫu thông báo
+         * @description **Screens:** VPA005501, VPA0055P01
+         *
+         *     With the content; editable = false while in use. Requires READ permission.
+         */
+        get: operations["getMessage"];
+        /**
+         * Update notification template / Sửa mẫu thông báo
+         * @description **Screens:** VPA005501, VPA0055P01
+         *
+         *     Only while not in use: 409 (NTF002) otherwise. Requires WRITE permission.
+         */
+        put: operations["updateMessage"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/menus/{menuCd}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get menu / Chi tiết menu
+         * @description **Screens:** VPA004401, VPA0044P01
+         *
+         *     Includes child count. / Kèm số menu con.
+         */
+        get: operations["getMenu"];
+        /**
+         * Update menu / Sửa menu
+         * @description **Screens:** VPA004401, VPA0044P01
+         *
+         *     A menu in use can only be switched to not in use (409 MNU007 otherwise). / Menu đang dùng chỉ được tắt.
+         */
+        put: operations["updateMenu"];
+        post?: never;
+        /**
+         * Delete menu / Xóa menu
+         * @description **Screens:** VPA004401, VPA0044P01
+         *
+         *     Deletes the menu and its subtree; all must be not in use. / Xóa menu và cây con, tất cả phải không sử dụng.
+         */
+        delete: operations["deleteMenu"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/menu-permissions/matrix": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get menu permission matrix / Ma trận phân quyền menu
+         * @description **Screens:** VPA004701
+         *
+         *     Roles as columns (Super Admin fixed first), admin menus as rows. Only menuSeCd=A is supported (400 PRM003). / Cột là vai trò, dòng là menu quản trị.
+         */
+        get: operations["getMatrix"];
+        /**
+         * Save menu permission matrix / Lưu ma trận phân quyền menu
+         * @description **Screens:** VPA004701
+         *
+         *     Replaces the permissions of every role sent. ADMIN is fixed (400 PRM004); a caller cannot edit a role they hold (403 PRM007). / Thay toàn bộ quyền của các vai trò gửi lên.
+         */
+        put: operations["saveMatrix"];
         post?: never;
         delete?: never;
         options?: never;
@@ -305,14 +529,40 @@ export interface paths {
         };
         /**
          * Get member details
-         * @description Retrieves complete member profile details for popup screens VPA0002P01 and VPA0008P01. Requires READ permission on sign-up (A01010000) or member management (A01020000).
+         * @description **Screens:** VPA000801, VPA0002P01, VPA0008P01
+         *
+         *     Retrieves complete member profile details for popup screens VPA0002P01 and VPA0008P01. Requires READ permission on sign-up (A01010000) or member management (A01020000).
          */
         get: operations["getMember"];
         /**
          * Update member information
-         * @description Screens VPA0002P01 and VPA0008P01 Edit button: updates member profile information. Requires WRITE permission on sign-up (A01010000) or member management (A01020000).
+         * @description **Screens:** VPA000801, VPA0002P01, VPA0008P01
+         *
+         *     Screens VPA0002P01 and VPA0008P01 Edit button: updates member profile information. Requires WRITE permission on sign-up (A01010000) or member management (A01020000).
          */
         put: operations["updateMember"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/members/{mbrNo}/unlock": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Unlock member account / Mở khoá tài khoản hội viên
+         * @description **Screens:** VPA000801, VPA0002P01, VPA0008P01
+         *
+         *     VPA030100P02 [Unlock] (I01): a locked account (status L or 5 failed logins) becomes Active and the failed login count is reset. 409 when the account is not locked. Requires WRITE on menu A01010000. / Tài khoản bị khoá chuyển về Hoạt động, đặt lại số lần đăng nhập sai.
+         */
+        put: operations["unlock"];
         post?: never;
         delete?: never;
         options?: never;
@@ -330,7 +580,9 @@ export interface paths {
         get?: never;
         /**
          * Reassign the officer in charge
-         * @description Step 12-1: hands a received sign-up whose processing step is open to another employee holding the processing role. Requires WRITE permission.
+         * @description **Screens:** VPA000801, VPA0002P01, VPA0008P01
+         *
+         *     Step 12-1: hands a received sign-up whose processing step is open to another employee holding the processing role. Requires WRITE permission.
          */
         put: operations["reassign"];
         post?: never;
@@ -349,18 +601,24 @@ export interface paths {
         };
         /**
          * Get province detail / Chi tiết Tỉnh/Thành phố
-         * @description Returns province detail including its district list. / Trả về chi tiết Tỉnh/Thành phố kèm danh sách Quận/Huyện.
+         * @description **Screens:** VPA004901, VPA0049P01
+         *
+         *     Returns province detail including its district list. / Trả về chi tiết Tỉnh/Thành phố kèm danh sách Quận/Huyện.
          */
         get: operations["getProvinceDetail"];
         /**
          * Update province / Cập nhật Tỉnh/Thành phố
-         * @description Updates an existing province. Requires WRITE permission. / Cập nhật Tỉnh/Thành phố. Yêu cầu quyền GHI.
+         * @description **Screens:** VPA004901, VPA0049P01
+         *
+         *     Updates an existing province. Requires WRITE permission. / Cập nhật Tỉnh/Thành phố. Yêu cầu quyền GHI.
          */
         put: operations["updateProvince"];
         post?: never;
         /**
          * Delete province / Xóa Tỉnh/Thành phố
-         * @description Deletes a province. Fails if child districts or references exist. Requires WRITE permission. / Xóa Tỉnh/Thành phố. Yêu cầu quyền GHI.
+         * @description **Screens:** VPA004901, VPA0049P01
+         *
+         *     Deletes a province. Fails if child districts or references exist. Requires WRITE permission. / Xóa Tỉnh/Thành phố. Yêu cầu quyền GHI.
          */
         delete: operations["deleteProvince"];
         options?: never;
@@ -377,20 +635,54 @@ export interface paths {
         };
         /**
          * Get district detail / Chi tiết Quận/Huyện
-         * @description Returns detail of a single district. / Trả về chi tiết một Quận/Huyện.
+         * @description **Screens:** VPA004901, VPA0049P01
+         *
+         *     Returns detail of a single district. / Trả về chi tiết một Quận/Huyện.
          */
         get: operations["getDistrictDetail"];
         /**
          * Update district / Cập nhật Quận/Huyện
-         * @description Updates an existing district. Requires WRITE permission. / Cập nhật Quận/Huyện. Yêu cầu quyền GHI.
+         * @description **Screens:** VPA004901, VPA0049P01
+         *
+         *     Updates an existing district. Requires WRITE permission. / Cập nhật Quận/Huyện. Yêu cầu quyền GHI.
          */
         put: operations["updateDistrict"];
         post?: never;
         /**
          * Delete district / Xóa Quận/Huyện
-         * @description Deletes a district. Fails if member or debtor references exist. Requires WRITE permission. / Xóa Quận/Huyện. Yêu cầu quyền GHI.
+         * @description **Screens:** VPA004901, VPA0049P01
+         *
+         *     Deletes a district. Fails if member or debtor references exist. Requires WRITE permission. / Xóa Quận/Huyện. Yêu cầu quyền GHI.
          */
         delete: operations["deleteDistrict"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/labels": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Update label / Sửa nhãn
+         * @description **Screens:** VPA005301, VPA0053P01
+         *
+         *     Null fields keep stored values; blank translation text removes it. / Trường null giữ nguyên.
+         */
+        put: operations["update_3"];
+        /**
+         * Create label / Tạo nhãn
+         * @description **Screens:** VPA005301, VPA0053P01
+         *
+         *     409 LBL002 if the key exists; 400 LBL004 for menu labels. / Trùng khoá trả 409.
+         */
+        post: operations["create"];
+        delete?: never;
         options?: never;
         head?: never;
         patch?: never;
@@ -405,18 +697,24 @@ export interface paths {
         };
         /**
          * Get financial institution detail / Chi tiết Tổ chức tài chính
-         * @description Returns institution detail including its branch list. / Trả về chi tiết tổ chức tài chính kèm danh sách chi nhánh.
+         * @description **Screens:** VPA005001, VPA0050P01
+         *
+         *     Returns institution detail including its branch list. / Trả về chi tiết tổ chức tài chính kèm danh sách chi nhánh.
          */
         get: operations["getInstitutionDetail"];
         /**
          * Update financial institution / Cập nhật Tổ chức tài chính
-         * @description Updates an existing financial institution. Requires WRITE permission. / Cập nhật tổ chức tài chính. Yêu cầu quyền GHI.
+         * @description **Screens:** VPA005001, VPA0050P01
+         *
+         *     Updates an existing financial institution. Requires WRITE permission. / Cập nhật tổ chức tài chính. Yêu cầu quyền GHI.
          */
         put: operations["updateInstitution"];
         post?: never;
         /**
          * Delete financial institution / Xóa Tổ chức tài chính
-         * @description Deletes a financial institution. Fails if child branches or references exist. Requires WRITE permission. / Xóa tổ chức tài chính. Yêu cầu quyền GHI.
+         * @description **Screens:** VPA005001, VPA0050P01
+         *
+         *     Deletes a financial institution. Fails if child branches or references exist. Requires WRITE permission. / Xóa tổ chức tài chính. Yêu cầu quyền GHI.
          */
         delete: operations["deleteInstitution"];
         options?: never;
@@ -433,18 +731,24 @@ export interface paths {
         };
         /**
          * Get branch detail / Chi tiết Chi nhánh
-         * @description Returns detail of a single branch. / Trả về chi tiết một chi nhánh.
+         * @description **Screens:** VPA005001, VPA0050P01
+         *
+         *     Returns detail of a single branch. / Trả về chi tiết một chi nhánh.
          */
         get: operations["getBranchDetail"];
         /**
          * Update branch / Cập nhật Chi nhánh
-         * @description Updates an existing branch. Requires WRITE permission. / Cập nhật chi nhánh. Yêu cầu quyền GHI.
+         * @description **Screens:** VPA005001, VPA0050P01
+         *
+         *     Updates an existing branch. Requires WRITE permission. / Cập nhật chi nhánh. Yêu cầu quyền GHI.
          */
         put: operations["updateBranch"];
         post?: never;
         /**
          * Delete branch / Xóa Chi nhánh
-         * @description Deletes a branch. Fails if references exist. Requires WRITE permission. / Xóa chi nhánh. Yêu cầu quyền GHI.
+         * @description **Screens:** VPA005001, VPA0050P01
+         *
+         *     Deletes a branch. Fails if references exist. Requires WRITE permission. / Xóa chi nhánh. Yêu cầu quyền GHI.
          */
         delete: operations["deleteBranch"];
         options?: never;
@@ -461,18 +765,24 @@ export interface paths {
         };
         /**
          * Get employee detail / Lấy chi tiết nhân viên
-         * @description Retrieves full profile of an employee by employee number. / Lấy toàn bộ thông tin chi tiết của nhân viên theo mã nhân viên.
+         * @description **Screens:** VPA004501, VPA0045P01
+         *
+         *     Retrieves full profile of an employee by employee number. / Lấy toàn bộ thông tin chi tiết của nhân viên theo mã nhân viên.
          */
         get: operations["getEmployee"];
         /**
          * Update employee profile / Cập nhật hồ sơ nhân viên
-         * @description Updates employee profile attributes (name, email, phone, position, status). / Cập nhật các thông tin hồ sơ của nhân viên.
+         * @description **Screens:** VPA004501, VPA0045P01
+         *
+         *     Updates employee profile attributes (name, email, phone, position, status). / Cập nhật các thông tin hồ sơ của nhân viên.
          */
         put: operations["updateEmployee"];
         post?: never;
         /**
          * Delete employee / Xóa nhân viên
-         * @description Deletes an employee record from the system. / Xóa một bản ghi nhân viên khỏi hệ thống.
+         * @description **Screens:** VPA004501, VPA0045P01
+         *
+         *     Deletes an employee record from the system. / Xóa một bản ghi nhân viên khỏi hệ thống.
          */
         delete: operations["deleteEmployee"];
         options?: never;
@@ -490,7 +800,9 @@ export interface paths {
         get?: never;
         /**
          * Unlock employee account / Mở khóa tài khoản nhân viên
-         * @description Resets login failure attempt count and activates the employee account. / Đặt lại số lần đăng nhập sai và kích hoạt lại tài khoản nhân viên.
+         * @description **Screens:** VPA004501, VPA0045P01
+         *
+         *     Resets login failure attempt count and activates the employee account. / Đặt lại số lần đăng nhập sai và kích hoạt lại tài khoản nhân viên.
          */
         put: operations["unlockAccount"];
         post?: never;
@@ -510,7 +822,9 @@ export interface paths {
         get?: never;
         /**
          * Update employee status / Cập nhật trạng thái nhân viên
-         * @description Updates employee employment/account status (H, L, R, S). / Cập nhật trạng thái làm việc/tài khoản của nhân viên.
+         * @description **Screens:** VPA004501, VPA0045P01
+         *
+         *     Updates employee employment/account status (H, L, R, S). / Cập nhật trạng thái làm việc/tài khoản của nhân viên.
          */
         put: operations["updateStatus"];
         post?: never;
@@ -530,9 +844,35 @@ export interface paths {
         get?: never;
         /**
          * Reset / Change employee password / Đổi hoặc đặt lại mật khẩu nhân viên
-         * @description Resets the login password for the specified employee. / Đặt lại mật khẩu đăng nhập cho nhân viên chỉ định.
+         * @description **Screens:** VPA004501, VPA0045P01
+         *
+         *     Resets the login password for the specified employee. / Đặt lại mật khẩu đăng nhập cho nhân viên chỉ định.
          */
         put: operations["changePassword"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/contents/support-contact": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get contact channels / Xem kênh liên hệ
+         * @description registered = false until the channels are saved once (the user platform then shows its defaults). / registered = false khi chưa lưu lần nào (nền tảng hiển thị giá trị mặc định).
+         */
+        get: operations["get"];
+        /**
+         * Save contact channels / Lưu kênh liên hệ
+         * @description Creates the item on the first save, otherwise updates it, and publishes it. English texts are optional (the platform shows the Vietnamese text instead). / Tạo khi lưu lần đầu, sau đó cập nhật; luôn ở trạng thái đăng. Tiếng Anh không bắt buộc.
+         */
+        put: operations["save"];
         post?: never;
         delete?: never;
         options?: never;
@@ -549,12 +889,16 @@ export interface paths {
         };
         /**
          * Get guide section / Chi tiết section
-         * @description Section detail with attachments. / Chi tiết section kèm tệp.
+         * @description **Screens:** VPA005701, VPA0057P01
+         *
+         *     Section detail with attachments. / Chi tiết section kèm tệp.
          */
         get: operations["getSection"];
         /**
          * Update guide section / Sửa section
-         * @description Editable while published; the section key cannot change. / Sửa được khi đang đăng; không đổi khóa section.
+         * @description **Screens:** VPA005701, VPA0057P01
+         *
+         *     Editable while published; the section key cannot change. / Sửa được khi đang đăng; không đổi khóa section.
          */
         put: operations["updateSection"];
         post?: never;
@@ -573,12 +917,16 @@ export interface paths {
         };
         /**
          * Get NPL announcement detail / Chi tiết thông báo NPL
-         * @description tag = document number. contentEditable=false while published. / tag là số văn bản.
+         * @description **Screens:** VPA002701, VPA002801, VPA002901, VPA0027P01, VPA0028P01, VPA0029P01
+         *
+         *     tag = document number. contentEditable=false while published. / tag là số văn bản.
          */
         get: operations["getAnnouncement"];
         /**
          * Update NPL announcement content / Sửa nội dung thông báo NPL
-         * @description Returns 409 (CNT001) while published. / Trả 409 khi đang đăng.
+         * @description **Screens:** VPA002701, VPA002801, VPA002901, VPA0027P01, VPA0028P01, VPA0029P01
+         *
+         *     Returns 409 (CNT001) while published. / Trả 409 khi đang đăng.
          */
         put: operations["updateAnnouncement"];
         post?: never;
@@ -597,12 +945,16 @@ export interface paths {
         };
         /**
          * Get notice detail / Chi tiết thông báo
-         * @description Notice detail with attachments. contentEditable=false while published. / Chi tiết kèm tệp đính kèm.
+         * @description **Screens:** VPA002301, VPA0023P01
+         *
+         *     Notice detail with attachments. contentEditable=false while published. / Chi tiết kèm tệp đính kèm.
          */
         get: operations["getNotice"];
         /**
          * Update notice content / Sửa nội dung thông báo
-         * @description Edits title, content and attachments. Returns 409 (CNT001) while published. / Sửa tiêu đề, nội dung, tệp. Trả 409 khi đang đăng.
+         * @description **Screens:** VPA002301, VPA0023P01
+         *
+         *     Edits title, content and attachments. Returns 409 (CNT001) while published. / Sửa tiêu đề, nội dung, tệp. Trả 409 khi đang đăng.
          */
         put: operations["updateNotice"];
         post?: never;
@@ -621,14 +973,18 @@ export interface paths {
         };
         /**
          * Detail / Chi tiết
-         * @description Detail with attachments. / Chi tiết kèm tệp đính kèm.
+         * @description **Screens:** VPA002401, VPA002501, VPA002601, VPA0024P01, VPA0025P01, VPA0026P01
+         *
+         *     Detail with attachments. / Chi tiết kèm tệp đính kèm.
          */
         get: operations["detail"];
         /**
          * Edit news content / Sửa nội dung tin
-         * @description Returns 409 (CNT001) while published. Category, publication and featured flags are changed with PATCH /{pstNo}/status. / Trả 409 khi đang đăng.
+         * @description **Screens:** VPA002401, VPA002501, VPA002601, VPA0024P01, VPA0025P01, VPA0026P01
+         *
+         *     Returns 409 (CNT001) while published. Category, publication and featured flags are changed with PATCH /{pstNo}/status. / Trả 409 khi đang đăng.
          */
-        put: operations["update_3"];
+        put: operations["update_4"];
         post?: never;
         delete?: never;
         options?: never;
@@ -645,14 +1001,18 @@ export interface paths {
         };
         /**
          * Detail / Chi tiết
-         * @description Detail with attachments. / Chi tiết kèm tệp đính kèm.
+         * @description **Screens:** VPA003301, VPA0033P01
+         *
+         *     Detail with attachments. / Chi tiết kèm tệp đính kèm.
          */
         get: operations["detail_1"];
         /**
          * Edit legal document / Sửa văn bản
-         * @description Updates content, document type and publication status in one call. / Cập nhật nội dung, loại và trạng thái.
+         * @description **Screens:** VPA003301, VPA0033P01
+         *
+         *     Updates content, document type and publication status in one call. / Cập nhật nội dung, loại và trạng thái.
          */
-        put: operations["update_4"];
+        put: operations["update_5"];
         post?: never;
         delete?: never;
         options?: never;
@@ -670,7 +1030,9 @@ export interface paths {
         get?: never;
         /**
          * Answer inquiry / Trả lời câu hỏi
-         * @description Stores the answer (shown in My Page) and e-mails the inquirer. Returns 409 (CNT008) if already answered. / Lưu câu trả lời và gửi email; trả 409 nếu đã trả lời.
+         * @description **Screens:** VPA003001, VPA0030P01
+         *
+         *     Stores the answer (shown in My Page) and e-mails the inquirer. Returns 409 (CNT008) if already answered. / Lưu câu trả lời và gửi email; trả 409 nếu đã trả lời.
          */
         put: operations["answerInquiry"];
         post?: never;
@@ -689,12 +1051,16 @@ export interface paths {
         };
         /**
          * Get FAQ detail / Chi tiết FAQ
-         * @description title = question, content = answer. / title là câu hỏi, content là câu trả lời.
+         * @description **Screens:** VPA003101, VPA0031P01
+         *
+         *     title = question, content = answer. / title là câu hỏi, content là câu trả lời.
          */
         get: operations["getFaq"];
         /**
          * Update FAQ question/answer / Sửa câu hỏi và câu trả lời
-         * @description Returns 409 (CNT001) while published. / Trả 409 khi đang đăng.
+         * @description **Screens:** VPA003101, VPA0031P01
+         *
+         *     Returns 409 (CNT001) while published. / Trả 409 khi đang đăng.
          */
         put: operations["updateFaq"];
         post?: never;
@@ -713,14 +1079,18 @@ export interface paths {
         };
         /**
          * Detail / Chi tiết
-         * @description Detail with attachments. / Chi tiết kèm tệp đính kèm.
+         * @description **Screens:** VPA003401, VPA0034P01
+         *
+         *     Detail with attachments. / Chi tiết kèm tệp đính kèm.
          */
         get: operations["detail_2"];
         /**
          * Edit career posting / Sửa tin tuyển dụng
-         * @description Updates content, publication status and pin in one call. / Cập nhật nội dung, trạng thái và ghim.
+         * @description **Screens:** VPA003401, VPA0034P01
+         *
+         *     Updates content, publication status and pin in one call. / Cập nhật nội dung, trạng thái và ghim.
          */
-        put: operations["update_5"];
+        put: operations["update_6"];
         post?: never;
         delete?: never;
         options?: never;
@@ -737,14 +1107,18 @@ export interface paths {
         };
         /**
          * Get banner / Chi tiết banner
-         * @description editable=false while in use. / editable=false khi đang sử dụng.
+         * @description **Screens:** VPA003201, VPA0032P01
+         *
+         *     editable=false while in use. / editable=false khi đang sử dụng.
          */
         get: operations["detail_3"];
         /**
          * Edit banner / Sửa banner
-         * @description Returns 409 (BNR001) while in use. / Trả 409 khi đang sử dụng.
+         * @description **Screens:** VPA003201, VPA0032P01
+         *
+         *     Returns 409 (BNR001) while in use. / Trả 409 khi đang sử dụng.
          */
-        put: operations["update_6"];
+        put: operations["update_7"];
         post?: never;
         delete?: never;
         options?: never;
@@ -768,7 +1142,7 @@ export interface paths {
          * Edit item / Sửa mục
          * @description Updates every value and the publication status; the section cannot change. / Cập nhật toàn bộ giá trị và trạng thái.
          */
-        put: operations["update_7"];
+        put: operations["update_8"];
         post?: never;
         delete?: never;
         options?: never;
@@ -785,12 +1159,16 @@ export interface paths {
         };
         /**
          * Get contract
-         * @description Contract or annex with NPLs, draft / signed documents, fees, annexes and terminations. Requires READ permission.
+         * @description **Screens:** VPA001501
+         *
+         *     Contract or annex with NPLs, draft / signed documents, fees, annexes and terminations. Requires READ permission.
          */
         get: operations["getContract_2"];
         /**
          * Edit the contract draft
-         * @description Step 13 / annex 2 (PREPR only): period (end defaults to start + 1 year), price, auto-termination clause, fee terms (LUMP, STAG + advance %, AFTR). Requires WRITE permission.
+         * @description **Screens:** VPA001501
+         *
+         *     Step 13 / annex 2 (PREPR only): period (end defaults to start + 1 year), price, auto-termination clause, fee terms (LUMP, STAG + advance %, AFTR). Requires WRITE permission.
          */
         put: operations["updateDraft_2"];
         post?: never;
@@ -810,7 +1188,9 @@ export interface paths {
         get?: never;
         /**
          * Save the consulting report
-         * @description 수행 1: report PDF and summary (DRFT) once the contract runs and the advance is paid. Consultant or officer. Requires WRITE permission.
+         * @description **Screens:** VPA001501
+         *
+         *     수행 1: report PDF and summary (DRFT) once the contract runs and the advance is paid. Consultant or officer. Requires WRITE permission.
          */
         put: operations["saveReport"];
         post?: never;
@@ -830,7 +1210,9 @@ export interface paths {
         get?: never;
         /**
          * Assign the consultant
-         * @description Step 20 (after the draft approval): consultant in charge of the report and additional consultations. Requires WRITE permission.
+         * @description **Screens:** VPA001501
+         *
+         *     Step 20 (after the draft approval): consultant in charge of the report and additional consultations. Requires WRITE permission.
          */
         put: operations["assignConsultant"];
         post?: never;
@@ -849,12 +1231,16 @@ export interface paths {
         };
         /**
          * Get the additional consulting switch
-         * @description 추가 12: whether members see the additional consulting button. Requires READ permission.
+         * @description **Screens:** VPA001501
+         *
+         *     추가 12: whether members see the additional consulting button. Requires READ permission.
          */
         get: operations["getAdditionalConsultingSetting"];
         /**
          * Change the additional consulting switch
-         * @description 추가 12: show (Y) or hide (N) the additional consulting button to members. Requires WRITE permission.
+         * @description **Screens:** VPA001501
+         *
+         *     추가 12: show (Y) or hide (N) the additional consulting button to members. Requires WRITE permission.
          */
         put: operations["updateAdditionalConsultingSetting"];
         post?: never;
@@ -873,20 +1259,60 @@ export interface paths {
         };
         /**
          * Get code group detail / Chi tiết nhóm mã
-         * @description Returns detail of a single code group. / Trả về thông tin chi tiết một nhóm mã.
+         * @description **Screens:** VPA004801, VPA0048P01
+         *
+         *     Returns detail of a single code group. / Trả về thông tin chi tiết một nhóm mã.
          */
         get: operations["getGroupDetail"];
         /**
          * Update code group / Cập nhật nhóm mã
-         * @description Updates an existing code group. Requires WRITE permission. / Cập nhật thông tin nhóm mã. Yêu cầu quyền GHI.
+         * @description **Screens:** VPA004801, VPA0048P01
+         *
+         *     Updates an existing code group. Requires WRITE permission. / Cập nhật thông tin nhóm mã. Yêu cầu quyền GHI.
          */
         put: operations["updateGroup"];
         post?: never;
         /**
          * Delete code group / Xóa nhóm mã
-         * @description Deletes a code group and its detailed codes. Requires WRITE permission. / Xóa nhóm mã và toàn bộ mã chi tiết. Yêu cầu quyền GHI.
+         * @description **Screens:** VPA004801, VPA0048P01
+         *
+         *     Deletes a code group and its detailed codes. Requires WRITE permission. / Xóa nhóm mã và toàn bộ mã chi tiết. Yêu cầu quyền GHI.
          */
         delete: operations["deleteGroup"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/auctions/{auctnNo}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get auction notice / Chi tiết thông báo đấu giá
+         * @description **Screens:** VPA002001, VPA0020P01
+         *
+         *     Latest cycle, with editable / deletable flags. Requires READ permission.
+         */
+        get: operations["getAuction"];
+        /**
+         * Update auction notice / Sửa thông báo đấu giá
+         * @description **Screens:** VPA002001, VPA0020P01
+         *
+         *     Only while RD/AN with approval DR/RJ: 409 AUC002 otherwise. Requires WRITE permission.
+         */
+        put: operations["updateAuction"];
+        post?: never;
+        /**
+         * Delete one auction notice / Xoá một thông báo đấu giá
+         * @description **Screens:** VPA002001, VPA0020P01
+         *
+         *     Same rules as the bulk delete. Requires WRITE permission.
+         */
+        delete: operations["deleteAuction"];
         options?: never;
         head?: never;
         patch?: never;
@@ -902,15 +1328,19 @@ export interface paths {
         get?: never;
         /**
          * Update menu / Cập nhật menu
-         * @description Updates an existing menu and its associated multilingual labels. Requires ADMIN role and write permission. / Cập nhật menu hiện có và nhãn đa ngôn ngữ liên quan. Yêu cầu vai trò ADMIN và quyền ghi.
+         * @description **Screens:** VPA004401, VPA0044P01
+         *
+         *     Updates an existing menu and its associated multilingual labels. Requires ADMIN role and write permission. / Cập nhật menu hiện có và nhãn đa ngôn ngữ liên quan. Yêu cầu vai trò ADMIN và quyền ghi.
          */
-        put: operations["updateMenu"];
+        put: operations["updateMenu_1"];
         post?: never;
         /**
          * Delete menu / Xóa menu
-         * @description Deletes a menu, its role mappings, and associated labels. Rejects if child menus exist. Requires ADMIN role and write permission. / Xóa menu, phân quyền vai trò và nhãn liên quan. Bị từ chối nếu có menu con. Yêu cầu vai trò ADMIN và quyền ghi.
+         * @description **Screens:** VPA004401, VPA0044P01
+         *
+         *     Deletes a menu, its role mappings, and associated labels. Rejects if child menus exist. Requires ADMIN role and write permission. / Xóa menu, phân quyền vai trò và nhãn liên quan. Bị từ chối nếu có menu con. Yêu cầu vai trò ADMIN và quyền ghi.
          */
-        delete: operations["deleteMenu"];
+        delete: operations["deleteMenu_1"];
         options?: never;
         head?: never;
         patch?: never;
@@ -923,9 +1353,15 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Get batch job config details / Chi tiết cấu hình batch job */
+        /**
+         * Get batch job config details / Chi tiết cấu hình batch job
+         * @description **Screens:** VPA005401, VPA0054P01
+         */
         get: operations["getJob"];
-        /** Update batch job config / Cập nhật cấu hình batch job */
+        /**
+         * Update batch job config / Cập nhật cấu hình batch job
+         * @description **Screens:** VPA005401, VPA0054P01
+         */
         put: operations["updateJob"];
         post?: never;
         delete?: never;
@@ -942,7 +1378,10 @@ export interface paths {
             cookie?: never;
         };
         get?: never;
-        /** Update batch schedule / Cập nhật lịch chạy batch (cron + enabled) */
+        /**
+         * Update batch schedule / Cập nhật lịch chạy batch (cron + enabled)
+         * @description **Screens:** VPA005401, VPA0054P01
+         */
         put: operations["updateSchedule"];
         post?: never;
         delete?: never;
@@ -962,7 +1401,9 @@ export interface paths {
         put?: never;
         /**
          * Upload trade documents
-         * @description Creates a new ATCH_FILE group, or appends to fileUnqId. Requires WRITE permission on the contract menu (scope=contract, default) or the application menu (scope=application) of the kind.
+         * @description **Screens:** VPA0010P01, VPA0011P01, VPA0012P01, VPA0013P01, VPA0014P01
+         *
+         *     Creates a new ATCH_FILE group, or appends to fileUnqId. Requires WRITE permission on the contract menu (scope=contract, default) or the application menu (scope=application) of the kind.
          */
         post: operations["upload"];
         delete?: never;
@@ -980,15 +1421,19 @@ export interface paths {
         };
         /**
          * Search applications
-         * @description Paginated list (VPA001101) with the derived approval stage and the action available to the current employee. Drafts are excluded. Requires READ permission.
+         * @description **Screens:** VPA001101, VPA0011P01
+         *
+         *     Paginated list (VPA001101) with the derived approval stage and the action available to the current employee. Drafts are excluded. Requires READ permission.
          */
         get: operations["getApplications"];
         put?: never;
         /**
          * Register a paper application
-         * @description Manual registration (VPA0011P01) for an active member and a registered NPL or lot. aplySttsCd PRCS receives it at once for tkcgEmpNo. Requires WRITE permission.
+         * @description **Screens:** VPA001101, VPA0011P01
+         *
+         *     Manual registration (VPA0011P01) for an active member and a registered NPL or lot. aplySttsCd PRCS receives it at once for tkcgEmpNo. Requires WRITE permission.
          */
-        post: operations["create"];
+        post: operations["create_1"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1006,7 +1451,9 @@ export interface paths {
         put?: never;
         /**
          * Attach scanned documents
-         * @description Steps 11 / 11-1c: the officer in charge attaches the scan of the posted documents (file group from POST /api/files/upload). Requires WRITE permission.
+         * @description **Screens:** VPA001101, VPA0011P01
+         *
+         *     Steps 11 / 11-1c: the officer in charge attaches the scan of the posted documents (file group from POST /api/files/upload). Requires WRITE permission.
          */
         post: operations["attachScan"];
         delete?: never;
@@ -1026,7 +1473,9 @@ export interface paths {
         put?: never;
         /**
          * Receive a application
-         * @description Step 7: RCPT -> PRCS, starts PROC_DSPSL_MDT_RCPT, assigns the officer in charge and mails the applicant the documents to post. Requires WRITE permission.
+         * @description **Screens:** VPA001101, VPA0011P01
+         *
+         *     Step 7: RCPT -> PRCS, starts PROC_DSPSL_MDT_RCPT, assigns the officer in charge and mails the applicant the documents to post. Requires WRITE permission.
          */
         post: operations["receive"];
         delete?: never;
@@ -1046,7 +1495,9 @@ export interface paths {
         put?: never;
         /**
          * Check documents
-         * @description Steps 11-1 / 11-1a / 11-2 by the officer in charge: 'Y' -> DCOK (approval can be requested), 'N' -> DCIN with the missing documents. Requires WRITE permission.
+         * @description **Screens:** VPA001101, VPA0011P01
+         *
+         *     Steps 11-1 / 11-1a / 11-2 by the officer in charge: 'Y' -> DCOK (approval can be requested), 'N' -> DCIN with the missing documents. Requires WRITE permission.
          */
         post: operations["checkDocuments"];
         delete?: never;
@@ -1066,7 +1517,9 @@ export interface paths {
         put?: never;
         /**
          * Cancel a application
-         * @description 취소 1-2: cancels an application that is not approved yet (CNCL) and closes its open approval session. Requires WRITE permission.
+         * @description **Screens:** VPA001101, VPA0011P01
+         *
+         *     취소 1-2: cancels an application that is not approved yet (CNCL) and closes its open approval session. Requires WRITE permission.
          */
         post: operations["cancel"];
         delete?: never;
@@ -1086,7 +1539,9 @@ export interface paths {
         put?: never;
         /**
          * Request approval
-         * @description Step 11-3 by the officer in charge, only with complete documents (DCOK). Approval through POST /api/v1/approvals/{atrzHstryId}/approve creates the contract draft (11-5); a rejection keeps DCOK. Requires WRITE permission.
+         * @description **Screens:** VPA001101, VPA0011P01
+         *
+         *     Step 11-3 by the officer in charge, only with complete documents (DCOK). Approval through POST /api/v1/approvals/{atrzHstryId}/approve creates the contract draft (11-5); a rejection keeps DCOK. Requires WRITE permission.
          */
         post: operations["requestApproval"];
         delete?: never;
@@ -1104,15 +1559,19 @@ export interface paths {
         };
         /**
          * Search applications
-         * @description Paginated list (VPA001101) with the derived approval stage and the action available to the current employee. Drafts are excluded. Requires READ permission.
+         * @description **Screens:** VPA001001, VPA0010P01, VPA0004P01, VPA0004P04
+         *
+         *     Paginated list (VPA001101) with the derived approval stage and the action available to the current employee. Drafts are excluded. Requires READ permission.
          */
         get: operations["getApplications_1"];
         put?: never;
         /**
          * Register a paper application
-         * @description Manual registration (VPA0011P01) for an active member and a registered NPL or lot. aplySttsCd PRCS receives it at once for tkcgEmpNo. Requires WRITE permission.
+         * @description **Screens:** VPA001001, VPA0010P01, VPA0004P01, VPA0004P04
+         *
+         *     Manual registration (VPA0011P01) for an active member and a registered NPL or lot. aplySttsCd PRCS receives it at once for tkcgEmpNo. Requires WRITE permission.
          */
-        post: operations["create_1"];
+        post: operations["create_2"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1130,7 +1589,9 @@ export interface paths {
         put?: never;
         /**
          * Attach scanned documents
-         * @description Steps 11 / 11-1c: the officer in charge attaches the scan of the posted documents (file group from POST /api/files/upload). Requires WRITE permission.
+         * @description **Screens:** VPA001001, VPA0010P01, VPA0004P01, VPA0004P04
+         *
+         *     Steps 11 / 11-1c: the officer in charge attaches the scan of the posted documents (file group from POST /api/files/upload). Requires WRITE permission.
          */
         post: operations["attachScan_1"];
         delete?: never;
@@ -1150,7 +1611,9 @@ export interface paths {
         put?: never;
         /**
          * Receive a application
-         * @description Step 7: RCPT -> PRCS, starts PROC_DSPSL_MDT_RCPT, assigns the officer in charge and mails the applicant the documents to post. Requires WRITE permission.
+         * @description **Screens:** VPA001001, VPA0010P01, VPA0004P01, VPA0004P04
+         *
+         *     Step 7: RCPT -> PRCS, starts PROC_DSPSL_MDT_RCPT, assigns the officer in charge and mails the applicant the documents to post. Requires WRITE permission.
          */
         post: operations["receive_1"];
         delete?: never;
@@ -1170,7 +1633,9 @@ export interface paths {
         put?: never;
         /**
          * Check documents
-         * @description Steps 11-1 / 11-1a / 11-2 by the officer in charge: 'Y' -> DCOK (approval can be requested), 'N' -> DCIN with the missing documents. Requires WRITE permission.
+         * @description **Screens:** VPA001001, VPA0010P01, VPA0004P01, VPA0004P04
+         *
+         *     Steps 11-1 / 11-1a / 11-2 by the officer in charge: 'Y' -> DCOK (approval can be requested), 'N' -> DCIN with the missing documents. Requires WRITE permission.
          */
         post: operations["checkDocuments_1"];
         delete?: never;
@@ -1190,7 +1655,9 @@ export interface paths {
         put?: never;
         /**
          * Cancel a application
-         * @description 취소 1-2: cancels an application that is not approved yet (CNCL) and closes its open approval session. Requires WRITE permission.
+         * @description **Screens:** VPA001001, VPA0010P01, VPA0004P01, VPA0004P04
+         *
+         *     취소 1-2: cancels an application that is not approved yet (CNCL) and closes its open approval session. Requires WRITE permission.
          */
         post: operations["cancel_1"];
         delete?: never;
@@ -1210,7 +1677,9 @@ export interface paths {
         put?: never;
         /**
          * Request approval
-         * @description Step 11-3 by the officer in charge, only with complete documents (DCOK). Approval through POST /api/v1/approvals/{atrzHstryId}/approve creates the contract draft (11-5); a rejection keeps DCOK. Requires WRITE permission.
+         * @description **Screens:** VPA001001, VPA0010P01, VPA0004P01, VPA0004P04
+         *
+         *     Step 11-3 by the officer in charge, only with complete documents (DCOK). Approval through POST /api/v1/approvals/{atrzHstryId}/approve creates the contract draft (11-5); a rejection keeps DCOK. Requires WRITE permission.
          */
         post: operations["requestApproval_1"];
         delete?: never;
@@ -1228,15 +1697,19 @@ export interface paths {
         };
         /**
          * Search applications
-         * @description Paginated list (VPA001101) with the derived approval stage and the action available to the current employee. Drafts are excluded. Requires READ permission.
+         * @description **Screens:** VPA001201, VPA0012P01
+         *
+         *     Paginated list (VPA001101) with the derived approval stage and the action available to the current employee. Drafts are excluded. Requires READ permission.
          */
         get: operations["getApplications_2"];
         put?: never;
         /**
          * Register a paper application
-         * @description Manual registration (VPA0011P01) for an active member and a registered NPL or lot. aplySttsCd PRCS receives it at once for tkcgEmpNo. Requires WRITE permission.
+         * @description **Screens:** VPA001201, VPA0012P01
+         *
+         *     Manual registration (VPA0011P01) for an active member and a registered NPL or lot. aplySttsCd PRCS receives it at once for tkcgEmpNo. Requires WRITE permission.
          */
-        post: operations["create_2"];
+        post: operations["create_3"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1254,7 +1727,9 @@ export interface paths {
         put?: never;
         /**
          * Attach scanned documents
-         * @description Steps 11 / 11-1c: the officer in charge attaches the scan of the posted documents (file group from POST /api/files/upload). Requires WRITE permission.
+         * @description **Screens:** VPA001201, VPA0012P01
+         *
+         *     Steps 11 / 11-1c: the officer in charge attaches the scan of the posted documents (file group from POST /api/files/upload). Requires WRITE permission.
          */
         post: operations["attachScan_2"];
         delete?: never;
@@ -1274,7 +1749,9 @@ export interface paths {
         put?: never;
         /**
          * Receive a application
-         * @description Step 7: RCPT -> PRCS, starts PROC_DSPSL_MDT_RCPT, assigns the officer in charge and mails the applicant the documents to post. Requires WRITE permission.
+         * @description **Screens:** VPA001201, VPA0012P01
+         *
+         *     Step 7: RCPT -> PRCS, starts PROC_DSPSL_MDT_RCPT, assigns the officer in charge and mails the applicant the documents to post. Requires WRITE permission.
          */
         post: operations["receive_2"];
         delete?: never;
@@ -1294,7 +1771,9 @@ export interface paths {
         put?: never;
         /**
          * Check documents
-         * @description Steps 11-1 / 11-1a / 11-2 by the officer in charge: 'Y' -> DCOK (approval can be requested), 'N' -> DCIN with the missing documents. Requires WRITE permission.
+         * @description **Screens:** VPA001201, VPA0012P01
+         *
+         *     Steps 11-1 / 11-1a / 11-2 by the officer in charge: 'Y' -> DCOK (approval can be requested), 'N' -> DCIN with the missing documents. Requires WRITE permission.
          */
         post: operations["checkDocuments_2"];
         delete?: never;
@@ -1314,7 +1793,9 @@ export interface paths {
         put?: never;
         /**
          * Cancel a application
-         * @description 취소 1-2: cancels an application that is not approved yet (CNCL) and closes its open approval session. Requires WRITE permission.
+         * @description **Screens:** VPA001201, VPA0012P01
+         *
+         *     취소 1-2: cancels an application that is not approved yet (CNCL) and closes its open approval session. Requires WRITE permission.
          */
         post: operations["cancel_2"];
         delete?: never;
@@ -1334,7 +1815,9 @@ export interface paths {
         put?: never;
         /**
          * Request approval
-         * @description Step 11-3 by the officer in charge, only with complete documents (DCOK). Approval through POST /api/v1/approvals/{atrzHstryId}/approve creates the contract draft (11-5); a rejection keeps DCOK. Requires WRITE permission.
+         * @description **Screens:** VPA001201, VPA0012P01
+         *
+         *     Step 11-3 by the officer in charge, only with complete documents (DCOK). Approval through POST /api/v1/approvals/{atrzHstryId}/approve creates the contract draft (11-5); a rejection keeps DCOK. Requires WRITE permission.
          */
         post: operations["requestApproval_2"];
         delete?: never;
@@ -1354,7 +1837,9 @@ export interface paths {
         put?: never;
         /**
          * Register a termination
-         * @description Termination 1: PROGS -> ENDING with the reason and the fee handling. With the auto-termination clause the contract ends at once. Requires WRITE permission.
+         * @description **Screens:** VPA001401, VPA0014P01, VPA0014P02
+         *
+         *     Termination 1: PROGS -> ENDING with the reason and the fee handling. With the auto-termination clause the contract ends at once. Requires WRITE permission.
          */
         post: operations["startTermination"];
         delete?: never;
@@ -1374,7 +1859,9 @@ export interface paths {
         put?: never;
         /**
          * Attach the signed settlement minutes
-         * @description Termination 17 (SGNCP). Requires WRITE permission.
+         * @description **Screens:** VPA001401, VPA0014P01, VPA0014P02
+         *
+         *     Termination 17 (SGNCP). Requires WRITE permission.
          */
         post: operations["attachTerminationScan"];
         delete?: never;
@@ -1394,7 +1881,9 @@ export interface paths {
         put?: never;
         /**
          * Request settlement minutes signature approval
-         * @description Termination 15-1 (PROC_DSPSL_MDT_END_SIGN); approval -> SGNCP. Requires WRITE permission.
+         * @description **Screens:** VPA001401, VPA0014P01, VPA0014P02
+         *
+         *     Termination 15-1 (PROC_DSPSL_MDT_END_SIGN); approval -> SGNCP. Requires WRITE permission.
          */
         post: operations["requestTerminationSignature"];
         delete?: never;
@@ -1414,7 +1903,9 @@ export interface paths {
         put?: never;
         /**
          * Register the settlement minutes for signature
-         * @description Termination 9: form 12 draft, DRFAPR -> SGNWT; mails the member. Requires WRITE permission.
+         * @description **Screens:** VPA001401, VPA0014P01, VPA0014P02
+         *
+         *     Termination 9: form 12 draft, DRFAPR -> SGNWT; mails the member. Requires WRITE permission.
          */
         post: operations["registerTerminationDraft"];
         delete?: never;
@@ -1434,7 +1925,9 @@ export interface paths {
         put?: never;
         /**
          * Complete the termination
-         * @description Termination 18: contract CMPTN (performed) or CNCLN; unsold NPLs hidden; collected fees refunded (RFPL) or open claims cancelled (CLCN); mails the member. Requires WRITE permission.
+         * @description **Screens:** VPA001401, VPA0014P01, VPA0014P02
+         *
+         *     Termination 18: contract CMPTN (performed) or CNCLN; unsold NPLs hidden; collected fees refunded (RFPL) or open claims cancelled (CLCN); mails the member. Purchase: 409 when another active purchase contract exists or termination conditions are not met (CNCL only before delivery); 400 on invalid reason. Requires WRITE permission.
          */
         post: operations["completeTermination"];
         delete?: never;
@@ -1454,7 +1947,9 @@ export interface paths {
         put?: never;
         /**
          * Request termination approval
-         * @description Termination 2 (PROC_DSPSL_MDT_END); approval -> DRFAPR. Requires WRITE permission.
+         * @description **Screens:** VPA001401, VPA0014P01, VPA0014P02
+         *
+         *     Termination 2 (PROC_DSPSL_MDT_END); approval -> DRFAPR. Requires WRITE permission.
          */
         post: operations["requestTerminationApproval"];
         delete?: never;
@@ -1474,7 +1969,9 @@ export interface paths {
         put?: never;
         /**
          * Attach the signed scan
-         * @description Step 31 / annex 18 (SGNCP). Requires WRITE permission.
+         * @description **Screens:** VPA001401, VPA0014P01, VPA0014P02
+         *
+         *     Step 31 / annex 18 (SGNCP). Requires WRITE permission.
          */
         post: operations["attachSignedScan"];
         delete?: never;
@@ -1494,7 +1991,9 @@ export interface paths {
         put?: never;
         /**
          * Request signature approval
-         * @description Step 29-1 / annex 16-1: the approver checks the member-signed document and signs for VAMC (PROC_DSPSL_MDT_SIGN); approval -> SGNCP. Requires WRITE permission.
+         * @description **Screens:** VPA001401, VPA0014P01, VPA0014P02
+         *
+         *     Step 29-1 / annex 16-1: the approver checks the member-signed document and signs for VAMC (PROC_DSPSL_MDT_SIGN); approval -> SGNCP. Requires WRITE permission.
          */
         post: operations["requestSignatureApproval"];
         delete?: never;
@@ -1514,7 +2013,9 @@ export interface paths {
         put?: never;
         /**
          * Record the sale completion
-         * @description Step 39: actual price and sale date, NPLs marked sold (SD), remaining fee issued for STAG / AFTR and mailed. Requires WRITE permission.
+         * @description **Screens:** VPA001401, VPA0014P01, VPA0014P02
+         *
+         *     Step 39: actual price and sale date, NPLs marked sold (SD), remaining fee issued for STAG / AFTR and mailed. Requires WRITE permission.
          */
         post: operations["completeTrade"];
         delete?: never;
@@ -1534,7 +2035,9 @@ export interface paths {
         put?: never;
         /**
          * Decide the renewal of an expiring contract
-         * @description Expiry 2: EXTEND_ANNEX creates an extension annex; NEW_CONTRACT registers the termination (expired) and a new contract draft; NO_EXTEND registers the termination (expired). Requires WRITE permission.
+         * @description **Screens:** VPA001401, VPA0014P01, VPA0014P02
+         *
+         *     Expiry 2: EXTEND_ANNEX creates an extension annex; NEW_CONTRACT registers the termination (expired) and a new contract draft; NO_EXTEND registers the termination (expired). Requires WRITE permission.
          */
         post: operations["decideRenewal"];
         delete?: never;
@@ -1554,7 +2057,9 @@ export interface paths {
         put?: never;
         /**
          * Record a fee refund
-         * @description Termination 18: refund transferred (RFPL -> RFCP). Requires WRITE permission.
+         * @description **Screens:** VPA001401, VPA0014P01, VPA0014P02
+         *
+         *     Termination 18: refund transferred (RFPL -> RFCP). Requires WRITE permission.
          */
         post: operations["refundFee"];
         delete?: never;
@@ -1574,7 +2079,9 @@ export interface paths {
         put?: never;
         /**
          * Confirm a fee transfer
-         * @description Step 37 / annex 24. Requires WRITE permission.
+         * @description **Screens:** VPA001401, VPA0014P01, VPA0014P02
+         *
+         *     Step 37 / annex 24. Requires WRITE permission.
          */
         post: operations["confirmFeeReceipt"];
         delete?: never;
@@ -1594,7 +2101,9 @@ export interface paths {
         put?: never;
         /**
          * Register the draft for signature
-         * @description Step 23 / annex 10: DRFAPR -> SGNWT with the PDF the member prints, signs and posts; mails the member. Requires WRITE permission.
+         * @description **Screens:** VPA001401, VPA0014P01, VPA0014P02
+         *
+         *     Step 23 / annex 10: DRFAPR -> SGNWT with the PDF the member prints, signs and posts; mails the member. Requires WRITE permission.
          */
         post: operations["registerDraft"];
         delete?: never;
@@ -1614,7 +2123,9 @@ export interface paths {
         put?: never;
         /**
          * Conclude the contract
-         * @description Step 32 / annex 19: SGNCP with a scan -> PROGS; first installment (LUMP / STAG advance); NPLs published (step 38) for brokerage contracts and base contract annexes; extension / price annexes update the parent. Requires WRITE permission.
+         * @description **Screens:** VPA001401, VPA0014P01, VPA0014P02
+         *
+         *     Step 32 / annex 19: SGNCP with a scan -> PROGS; first installment (LUMP / STAG advance); NPLs published (step 38) for brokerage contracts and base contract annexes; extension / price annexes update the parent. Requires WRITE permission.
          */
         post: operations["conclude"];
         delete?: never;
@@ -1634,7 +2145,9 @@ export interface paths {
         put?: never;
         /**
          * Request draft approval
-         * @description Step 16 / annex 3: PROC_DSPSL_MDT_CTRT (contract) or PROC_DSPSL_MDT_ANX (annex); approval -> DRFAPR. Requires WRITE permission.
+         * @description **Screens:** VPA001401, VPA0014P01, VPA0014P02
+         *
+         *     Step 16 / annex 3: PROC_DSPSL_MDT_CTRT (contract) or PROC_DSPSL_MDT_ANX (annex); approval -> DRFAPR. Requires WRITE permission.
          */
         post: operations["requestDraftApproval"];
         delete?: never;
@@ -1654,7 +2167,9 @@ export interface paths {
         put?: never;
         /**
          * Create an annex
-         * @description Annex 2: extension (new end date), price change (new price), after-sale or other annex of a brokerage contract in progress. Requires WRITE permission.
+         * @description **Screens:** VPA001401, VPA0014P01, VPA0014P02
+         *
+         *     Annex 2: extension (new end date), price change (new price), after-sale or other annex of a brokerage contract in progress. Requires WRITE permission.
          */
         post: operations["createAnnex"];
         delete?: never;
@@ -1672,13 +2187,17 @@ export interface paths {
         };
         /**
          * List roles / Danh sách vai trò
-         * @description Returns paginated roles with optional group, use status, and keyword filters. / Trả về danh sách vai trò phân trang với bộ lọc nhóm, trạng thái và từ khóa tùy chọn.
+         * @description **Screens:** VPA004701
+         *
+         *     Returns paginated roles with optional group, use status, and keyword filters. / Trả về danh sách vai trò phân trang với bộ lọc nhóm, trạng thái và từ khóa tùy chọn.
          */
         get: operations["getRoles"];
         put?: never;
         /**
          * Create role / Tạo mới vai trò
-         * @description Creates a new role under a role group. Requires WRITE permission. / Tạo mới vai trò trong nhóm vai trò. Yêu cầu quyền GHI.
+         * @description **Screens:** VPA004701
+         *
+         *     Creates a new role under a role group. Requires WRITE permission. / Tạo mới vai trò trong nhóm vai trò. Yêu cầu quyền GHI.
          */
         post: operations["createRole"];
         delete?: never;
@@ -1698,7 +2217,9 @@ export interface paths {
         put?: never;
         /**
          * Batch save role menu permissions (POST alias) / Lưu hàng loạt phân quyền menu (Bí danh POST)
-         * @description POST alias for batch updating menu permissions. Requires WRITE permission. / Bí danh POST để lưu hàng loạt phân quyền menu. Yêu cầu quyền GHI.
+         * @description **Screens:** VPA004701
+         *
+         *     POST alias for batch updating menu permissions. Requires WRITE permission. / Bí danh POST để lưu hàng loạt phân quyền menu. Yêu cầu quyền GHI.
          */
         post: operations["batchSaveRoleMenuPermissionsAlias"];
         delete?: never;
@@ -1716,18 +2237,24 @@ export interface paths {
         };
         /**
          * Get user role assignments / Danh sách vai trò của người dùng
-         * @description Returns all roles assigned to a specific user. / Trả về tất cả vai trò được gán cho người dùng chỉ định.
+         * @description **Screens:** VPA004701
+         *
+         *     Returns all roles assigned to a specific user. / Trả về tất cả vai trò được gán cho người dùng chỉ định.
          */
         get: operations["getUserRoles"];
         put?: never;
         /**
          * Assign role to user / Gán vai trò cho người dùng
-         * @description Assigns a role to a user. Requires WRITE permission. / Gán vai trò cho người dùng. Yêu cầu quyền GHI.
+         * @description **Screens:** VPA004701
+         *
+         *     Assigns a role to a user. Requires WRITE permission. / Gán vai trò cho người dùng. Yêu cầu quyền GHI.
          */
         post: operations["assignRole"];
         /**
          * Revoke role from user / Thu hồi vai trò của người dùng
-         * @description Removes a specific role assignment from a user. Requires WRITE permission. / Xóa gán vai trò cụ thể khỏi người dùng. Yêu cầu quyền GHI.
+         * @description **Screens:** VPA004701
+         *
+         *     Removes a specific role assignment from a user. Requires WRITE permission. / Xóa gán vai trò cụ thể khỏi người dùng. Yêu cầu quyền GHI.
          */
         delete: operations["revokeRole"];
         options?: never;
@@ -1744,13 +2271,17 @@ export interface paths {
         };
         /**
          * List role groups / Danh sách nhóm vai trò
-         * @description Returns paginated role groups with optional use status and keyword filters. / Trả về danh sách nhóm vai trò phân trang theo bộ lọc.
+         * @description **Screens:** VPA004601, VPA0046P01
+         *
+         *     Returns paginated role groups with optional use status and keyword filters. / Trả về danh sách nhóm vai trò phân trang theo bộ lọc.
          */
         get: operations["getRoleGroups"];
         put?: never;
         /**
          * Create role group / Tạo mới nhóm vai trò
-         * @description Creates a new role group. Requires WRITE permission. / Tạo mới một nhóm vai trò. Yêu cầu quyền GHI.
+         * @description **Screens:** VPA004601, VPA0046P01
+         *
+         *     Creates a new role group. Requires WRITE permission. / Tạo mới một nhóm vai trò. Yêu cầu quyền GHI.
          */
         post: operations["createRoleGroup"];
         delete?: never;
@@ -1770,7 +2301,9 @@ export interface paths {
         put?: never;
         /**
          * Record the trade conclusion
-         * @description Step 38: purchase contract with the holder signed (date, actual price; see dspslCtrtCd for the linked sale contract), remaining fee issued and mailed. Requires WRITE permission.
+         * @description **Screens:** VPA001301, VPA0013P01, VPA0013P02
+         *
+         *     Step 38: purchase contract with the holder signed (date, actual price; see dspslCtrtCd for the linked sale contract), remaining fee issued and mailed. Requires WRITE permission.
          */
         post: operations["completeTrade_1"];
         delete?: never;
@@ -1790,7 +2323,9 @@ export interface paths {
         put?: never;
         /**
          * Register a termination
-         * @description Termination 1: PROGS -> ENDING with the reason and the fee handling. With the auto-termination clause the contract ends at once. Requires WRITE permission.
+         * @description **Screens:** VPA001301, VPA0013P01, VPA0013P02
+         *
+         *     Termination 1: PROGS -> ENDING with the reason and the fee handling. With the auto-termination clause the contract ends at once. Requires WRITE permission.
          */
         post: operations["startTermination_1"];
         delete?: never;
@@ -1810,7 +2345,9 @@ export interface paths {
         put?: never;
         /**
          * Attach the signed settlement minutes
-         * @description Termination 17 (SGNCP). Requires WRITE permission.
+         * @description **Screens:** VPA001301, VPA0013P01, VPA0013P02
+         *
+         *     Termination 17 (SGNCP). Requires WRITE permission.
          */
         post: operations["attachTerminationScan_1"];
         delete?: never;
@@ -1830,7 +2367,9 @@ export interface paths {
         put?: never;
         /**
          * Request settlement minutes signature approval
-         * @description Termination 15-1 (PROC_DSPSL_MDT_END_SIGN); approval -> SGNCP. Requires WRITE permission.
+         * @description **Screens:** VPA001301, VPA0013P01, VPA0013P02
+         *
+         *     Termination 15-1 (PROC_DSPSL_MDT_END_SIGN); approval -> SGNCP. Requires WRITE permission.
          */
         post: operations["requestTerminationSignature_1"];
         delete?: never;
@@ -1850,7 +2389,9 @@ export interface paths {
         put?: never;
         /**
          * Register the settlement minutes for signature
-         * @description Termination 9: form 12 draft, DRFAPR -> SGNWT; mails the member. Requires WRITE permission.
+         * @description **Screens:** VPA001301, VPA0013P01, VPA0013P02
+         *
+         *     Termination 9: form 12 draft, DRFAPR -> SGNWT; mails the member. Requires WRITE permission.
          */
         post: operations["registerTerminationDraft_1"];
         delete?: never;
@@ -1870,7 +2411,9 @@ export interface paths {
         put?: never;
         /**
          * Complete the termination
-         * @description Termination 18: contract CMPTN (performed) or CNCLN; unsold NPLs hidden; collected fees refunded (RFPL) or open claims cancelled (CLCN); mails the member. Requires WRITE permission.
+         * @description **Screens:** VPA001301, VPA0013P01, VPA0013P02
+         *
+         *     Termination 18: contract CMPTN (performed) or CNCLN; unsold NPLs hidden; collected fees refunded (RFPL) or open claims cancelled (CLCN); mails the member. Purchase: 409 when another active purchase contract exists or termination conditions are not met (CNCL only before delivery); 400 on invalid reason. Requires WRITE permission.
          */
         post: operations["completeTermination_1"];
         delete?: never;
@@ -1890,7 +2433,9 @@ export interface paths {
         put?: never;
         /**
          * Request termination approval
-         * @description Termination 2 (PROC_DSPSL_MDT_END); approval -> DRFAPR. Requires WRITE permission.
+         * @description **Screens:** VPA001301, VPA0013P01, VPA0013P02
+         *
+         *     Termination 2 (PROC_DSPSL_MDT_END); approval -> DRFAPR. Requires WRITE permission.
          */
         post: operations["requestTerminationApproval_1"];
         delete?: never;
@@ -1910,7 +2455,9 @@ export interface paths {
         put?: never;
         /**
          * Attach the signed scan
-         * @description Step 31 / annex 18 (SGNCP). Requires WRITE permission.
+         * @description **Screens:** VPA001301, VPA0013P01, VPA0013P02
+         *
+         *     Step 31 / annex 18 (SGNCP). Requires WRITE permission.
          */
         post: operations["attachSignedScan_1"];
         delete?: never;
@@ -1930,7 +2477,9 @@ export interface paths {
         put?: never;
         /**
          * Request signature approval
-         * @description Step 29-1 / annex 16-1: the approver checks the member-signed document and signs for VAMC (PROC_DSPSL_MDT_SIGN); approval -> SGNCP. Requires WRITE permission.
+         * @description **Screens:** VPA001301, VPA0013P01, VPA0013P02
+         *
+         *     Step 29-1 / annex 16-1: the approver checks the member-signed document and signs for VAMC (PROC_DSPSL_MDT_SIGN); approval -> SGNCP. Requires WRITE permission.
          */
         post: operations["requestSignatureApproval_1"];
         delete?: never;
@@ -1950,7 +2499,9 @@ export interface paths {
         put?: never;
         /**
          * Decide the renewal of an expiring contract
-         * @description 만료 2 (after the end date passed without a trade): EXTEND_ANNEX creates an extension annex; NEW_CONTRACT registers the termination (expired) and a new contract draft; NO_EXTEND registers the termination (expired). Requires WRITE permission.
+         * @description **Screens:** VPA001301, VPA0013P01, VPA0013P02
+         *
+         *     만료 2 (after the end date passed without a trade): EXTEND_ANNEX creates an extension annex; NEW_CONTRACT registers the termination (expired) and a new contract draft; NO_EXTEND registers the termination (expired). Requires WRITE permission.
          */
         post: operations["decideRenewal_1"];
         delete?: never;
@@ -1970,7 +2521,9 @@ export interface paths {
         put?: never;
         /**
          * Record a fee refund
-         * @description Termination 18: refund transferred (RFPL -> RFCP). Requires WRITE permission.
+         * @description **Screens:** VPA001301, VPA0013P01, VPA0013P02
+         *
+         *     Termination 18: refund transferred (RFPL -> RFCP). Requires WRITE permission.
          */
         post: operations["refundFee_1"];
         delete?: never;
@@ -1990,7 +2543,9 @@ export interface paths {
         put?: never;
         /**
          * Confirm a fee transfer
-         * @description Step 37 / annex 24. Requires WRITE permission.
+         * @description **Screens:** VPA001301, VPA0013P01, VPA0013P02
+         *
+         *     Step 37 / annex 24. Requires WRITE permission.
          */
         post: operations["confirmFeeReceipt_1"];
         delete?: never;
@@ -2010,7 +2565,9 @@ export interface paths {
         put?: never;
         /**
          * Register the draft for signature
-         * @description Step 23 / annex 10: DRFAPR -> SGNWT with the PDF the member prints, signs and posts; mails the member. Requires WRITE permission.
+         * @description **Screens:** VPA001301, VPA0013P01, VPA0013P02
+         *
+         *     Step 23 / annex 10: DRFAPR -> SGNWT with the PDF the member prints, signs and posts; mails the member. Requires WRITE permission.
          */
         post: operations["registerDraft_1"];
         delete?: never;
@@ -2030,7 +2587,9 @@ export interface paths {
         put?: never;
         /**
          * Record the delivery
-         * @description Step 40: handover completed after the trade conclusion. Requires WRITE permission.
+         * @description **Screens:** VPA001301, VPA0013P01, VPA0013P02
+         *
+         *     Step 40: handover completed after the trade conclusion. Requires WRITE permission.
          */
         post: operations["recordDelivery"];
         delete?: never;
@@ -2050,7 +2609,9 @@ export interface paths {
         put?: never;
         /**
          * Conclude the contract
-         * @description Step 32 / annex 19: SGNCP with a scan -> PROGS; first installment (LUMP / STAG advance); NPLs published (step 38) for brokerage contracts and base contract annexes; extension / price annexes update the parent. Requires WRITE permission.
+         * @description **Screens:** VPA001301, VPA0013P01, VPA0013P02
+         *
+         *     Step 32 / annex 19: SGNCP with a scan -> PROGS; first installment (LUMP / STAG advance); NPLs published (step 38) for brokerage contracts and base contract annexes; extension / price annexes update the parent. Requires WRITE permission.
          */
         post: operations["conclude_1"];
         delete?: never;
@@ -2070,7 +2631,9 @@ export interface paths {
         put?: never;
         /**
          * Request draft approval
-         * @description Step 16 / annex 3: PROC_DSPSL_MDT_CTRT (contract) or PROC_DSPSL_MDT_ANX (annex); approval -> DRFAPR. Requires WRITE permission.
+         * @description **Screens:** VPA001301, VPA0013P01, VPA0013P02
+         *
+         *     Step 16 / annex 3: PROC_DSPSL_MDT_CTRT (contract) or PROC_DSPSL_MDT_ANX (annex); approval -> DRFAPR. Requires WRITE permission.
          */
         post: operations["requestDraftApproval_1"];
         delete?: never;
@@ -2090,7 +2653,9 @@ export interface paths {
         put?: never;
         /**
          * Create an annex
-         * @description 연장 1 - 4: extension annex (new end date) of a purchase brokerage contract in progress; then the shared lifecycle with PROC_PUR_MDT_ANX. Requires WRITE permission.
+         * @description **Screens:** VPA001301, VPA0013P01, VPA0013P02
+         *
+         *     연장 1 - 4: extension annex (new end date) of a purchase brokerage contract in progress; then the shared lifecycle with PROC_PUR_MDT_ANX. Requires WRITE permission.
          */
         post: operations["createAnnex_1"];
         delete?: never;
@@ -2108,20 +2673,246 @@ export interface paths {
         };
         /**
          * List fee items / Danh sách mục phí
-         * @description Ordered by batch, category (Annual fee, Consulting, Brokerage) and display order. / Sắp theo đợt, loại phí và thứ tự.
+         * @description **Screens:** VPA004101, VPA0041P01
+         *
+         *     Ordered by batch, category (Annual fee, Consulting, Brokerage) and display order. / Sắp theo đợt, loại phí và thứ tự.
          */
         get: operations["getFees"];
         put?: never;
         /**
          * Register fee item / Đăng ký mục phí
-         * @description Fee code is generated; the item joins the current batch and starts not in use. / Mã phí tự sinh, mặc định không sử dụng.
+         * @description **Screens:** VPA004101, VPA0041P01
+         *
+         *     Fee code is generated; the item joins the current batch and starts not in use. / Mã phí tự sinh, mặc định không sử dụng.
          */
         post: operations["createFee"];
         /**
          * Delete fee items / Xóa mục phí
-         * @description Only items not in use and not referenced by an application fee group. / Chỉ mục không sử dụng và chưa được tham chiếu.
+         * @description **Screens:** VPA004101, VPA0041P01
+         *
+         *     Only items not in use and not referenced by an application fee group. / Chỉ mục không sử dụng và chưa được tham chiếu.
          */
         delete: operations["deleteFees"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/npl-lots": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Search NPL LOTs
+         * @description **Screens:** VPA001901
+         *
+         *     LOT list with filters, sort and paging. Requires READ on A03010400.
+         */
+        get: operations["getNplLots"];
+        put?: never;
+        /**
+         * Register an NPL LOT
+         * @description **Screens:** VPA001901
+         *
+         *     Creates an empty LOT; LOT ID must be unique (case-insensitive), else 409. Requires WRITE on A03010400.
+         */
+        post: operations["createNplLot"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/notification-messages": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List notification templates / Danh sách mẫu thông báo
+         * @description **Screens:** VPA005501, VPA0055P01
+         *
+         *     Filters: registration period, status (useYns), processing type, title. Sort: menuCd, notiMediaSe, prcsSttsCd, notiTtl, mdfcnDt (default newest registration). Requires READ permission.
+         */
+        get: operations["getMessages"];
+        put?: never;
+        /**
+         * Register notification template / Đăng ký mẫu thông báo
+         * @description **Screens:** VPA005501, VPA0055P01
+         *
+         *     Starts not in use unless useYn = Y. Staff recipients (EMP) need roleGroupId. 409 (NTF003) when another template in use has the same menu, processing type, medium, recipient and language. Requires WRITE permission.
+         */
+        post: operations["createMessage"];
+        /**
+         * Delete notification templates / Xoá mẫu thông báo
+         * @description **Screens:** VPA005501, VPA0055P01
+         *
+         *     All or nothing: 404 (NTF001) for an unknown ID, 409 (NTF002) when one is in use. Requires WRITE permission.
+         */
+        delete: operations["deleteMessages"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/menus": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List menus / Danh sách menu
+         * @description **Screens:** VPA004401, VPA0044P01
+         *
+         *     Flat tree of one menu type (W/A) including not-in-use menus, with VN and EN names. / Cây phẳng theo loại menu, gồm menu không sử dụng.
+         */
+        get: operations["getMenus"];
+        put?: never;
+        /**
+         * Create menu / Tạo menu
+         * @description **Screens:** VPA004401, VPA0044P01
+         *
+         *     New menus start not in use. / Menu mới mặc định không sử dụng.
+         */
+        post: operations["createMenu"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/members": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Search members / Tìm kiếm hội viên
+         * @description **Screens:** VPA000801, VPA0002P01, VPA0008P01
+         *
+         *     VPA03010001 member list, paginated. Requires READ on menu A01010000.
+         *     / Danh sách hội viên có phân trang. Cần quyền xem menu A01010000.
+         *
+         *     Filters (optional; different filters = AND, several values of one list = OR):
+         *     - aprvFromDt / aprvToDt: approval date (became a General Member); start after end -> 400 (E07)
+         *     - searchField + searchText: MBR_NO (default), SGDN_MBR_NO, LGN_ID, MBR_NM, TELNO, EML_ADDR, ORGNZ_NM, MST_NO; partial match
+         *     - mbrGrdCds: T, G, F, DELETED (Show Deleted Members). Deleted members are hidden unless DELETED is selected
+         *     - mbrTypeCds: P, F, O
+         *     - sttsCds: PENDING_APPROVAL, SUPPLEMENT_REQUESTED, REJECTED, ACTIVE, LOCKED
+         *     - mbrshpPayCds: PAID, EXEMPT (currently valid period), NONE (no valid period)
+         *     Sort (sortBy / sortDirection): mbrGrdCd, sttsCd, mbrNo, sgdnMbrNo, lgnId, mbrNm, mbrTypeCd, orgnzNm, mbrJoinChnlCd,
+         *     mbrshpPayCd, mbrshpExprDt, aprvDt, payDdlnDt, telno, emlAddr, assigneeNm; default registration date, newest first.
+         *     No is a descending sequence. Login ID, name, phone, email and staff in charge are partially masked.
+         *     Repeat a list parameter for several values: `?mbrGrdCds=G&mbrGrdCds=F`.
+         *     / Lặp lại tham số danh sách cho nhiều giá trị; các tham số legacy vẫn được nhận.
+         */
+        get: operations["getMembers"];
+        put?: never;
+        /**
+         * Register member from admin channel
+         * @description **Screens:** VPA000801, VPA0002P01, VPA0008P01
+         *
+         *     Screen VPA03010001 'New' -> VPA030100P01: registers a new member from the admin channel. Matches client member registration schema. Requires WRITE permission.
+         */
+        post: operations["createMember"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/members/{mbrNo}/temporary-password": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Resend temporary password / Gửi lại mật khẩu tạm thời
+         * @description **Screens:** VPA000801, VPA0002P01, VPA0008P01
+         *
+         *     VPA030100P02 [Resend Temporary Password] (I02): for a member registered by staff (Offline) who has not set a password yet, creates a new temporary password and e-mails it; the previous temporary password and password setup link stop working. 409 for a web sign-up or once the member has set a password. Requires WRITE on menu A01010000. / Tạo mật khẩu tạm mới và gửi mail; mật khẩu tạm cũ hết hiệu lực.
+         */
+        post: operations["resendTemporaryPassword"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/members/{mbrNo}/supplement-request": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Request document supplement / Yêu cầu bổ sung hồ sơ
+         * @description **Screens:** VPA000801, VPA0002P01, VPA0008P01
+         *
+         *     Pending sign-up (status P) -> Supplement Requested (U); the note is mailed to the applicant, who re-applies on the platform. 409 when the member is not pending. Requires WRITE on menu A01010000. / Hồ sơ chờ duyệt chuyển sang Yêu cầu bổ sung, gửi mail cho người đăng ký.
+         */
+        post: operations["requestSupplement"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/members/{mbrNo}/restoration-request": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Request member restoration / Yêu cầu khôi phục hội viên
+         * @description **Screens:** VPA000801, VPA0002P01, VPA0008P01
+         *
+         *     VPA030100P03 (C05): starts the restoration approval (PROC_MBR_RSTR) of a deleted member within the retention period (deleted date + 1 year). When approved the member returns to the status before deletion and can log in again. 409 when not deleted, retention expired or a request is pending. Requires WRITE on menu A01010000. / Trình khôi phục hội viên đã xoá trong thời hạn lưu giữ.
+         */
+        post: operations["requestRestoration"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/members/{mbrNo}/password-setup-link": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Re-issue the password setup link
+         * @description **Screens:** VPA000801, VPA0002P01, VPA0008P01
+         *
+         *     Manual (paper) sign-up, step 22: issues a new one-time password setup link (valid member.signup.password-setup-days) for an active member registered by staff and mails it; the previous link stops working. Local / dev (member.signup.expose-password-setup-link=true) also return devToken. Requires WRITE permission.
+         */
+        post: operations["resendPasswordSetupLink"];
+        delete?: never;
         options?: never;
         head?: never;
         patch?: never;
@@ -2138,7 +2929,9 @@ export interface paths {
         put?: never;
         /**
          * Confirm membership fee deposit
-         * @description Records the membership fee transfer checked by the officer. A general member becomes a full member for one year from today; a full member who received the renewal notice is renewed for one year from the previous period end (the end date cannot be edited). Exempt members have no fee. Requires WRITE permission.
+         * @description **Screens:** VPA000801, VPA0002P01, VPA0008P01
+         *
+         *     Records the membership fee transfer checked by the officer. A general member becomes a full member for one year from today; a full member who received the renewal notice is renewed for one year from the previous period end (the end date cannot be edited). Exempt members have no fee. Requires WRITE permission.
          */
         post: operations["confirmMembershipFee"];
         delete?: never;
@@ -2158,9 +2951,55 @@ export interface paths {
         put?: never;
         /**
          * Check posted sign-up documents
-         * @description After receipt: 'Y' marks the mandatory documents complete (optional scan file group) so the assignee can request approval; 'N' closes the approval session, sends the application back to the applicant (status U) with the supplement note and e-mails them. 'N' must be done by the assignee of the processing step. Requires WRITE permission.
+         * @description **Screens:** VPA000801, VPA0002P01, VPA0008P01
+         *
+         *     After receipt: 'Y' marks the mandatory documents complete (optional scan file group) so the assignee can request approval; 'N' closes the approval session, sends the application back to the applicant (status U) with the supplement note and e-mails them. 'N' must be done by the assignee of the processing step. Requires WRITE permission.
          */
         post: operations["checkDocuments_3"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/members/{mbrNo}/documents/files": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Upload scanned member documents
+         * @description **Screens:** VPA000801, VPA0002P01, VPA0008P01
+         *
+         *     Sign-up steps 10-12: the applicant posts the mandatory documents and the receptionist uploads their scans (PDF, JPG, JPEG, PNG, max 10MB each, several files per call). Creates a file group, or appends to fileUnqId. Send the returned fileUnqId as scanFileId to POST /{mbrNo}/documents (documentsComplete = Y) to link it to the member; it is then listed in the member files as DOCUMENT_SCAN. Only for a received application (status P). Requires WRITE permission.
+         */
+        post: operations["uploadDocumentScans"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/members/{mbrNo}/deletion-request": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Request member deletion / Yêu cầu xoá hội viên
+         * @description **Screens:** VPA000801, VPA0002P01, VPA0008P01
+         *
+         *     VPA030100P03 (C04): starts the deletion approval (PROC_MBR_LOSS) with the reason and the chosen approver. When the approver approves (POST /api/v1/approvals/{atrzHstryId}/approve) the member is soft-deleted: status Deleted, login blocked, hidden from the default list, sign-up data kept 1 year. 409 when deleted already, a request is pending, or an application / contract / bid is in progress (E09). Requires WRITE on menu A01010000. / Trình xoá hội viên; người duyệt đồng ý thì xoá mềm.
+         */
+        post: operations["requestDeletion"];
         delete?: never;
         options?: never;
         head?: never;
@@ -2178,7 +3017,9 @@ export interface paths {
         put?: never;
         /**
          * Receive member sign-up
-         * @description Starts the approval workflow of a pending, not yet received sign-up and assigns it to an employee holding the processing role. Requires WRITE permission.
+         * @description **Screens:** VPA000801, VPA0002P01, VPA0008P01
+         *
+         *     Starts the approval workflow of a pending, not yet received sign-up and assigns it to an employee holding the processing role. Requires WRITE permission.
          */
         post: operations["receive_3"];
         delete?: never;
@@ -2196,59 +3037,19 @@ export interface paths {
         };
         /**
          * Get member approval context
-         * @description Retrieves workflow stage, current actor, summary application data, and steps timeline for popups ADF1234_P08..P12. Requires READ permission.
+         * @description **Screens:** VPA000801, VPA0002P01, VPA0008P01
+         *
+         *     Retrieves workflow stage, current actor, summary application data, and steps timeline for popups ADF1234_P08..P12. Requires READ permission.
          */
         get: operations["getApprovalContext"];
         put?: never;
         /**
          * Request member sign-up approval
-         * @description Step 2 -> 3: Assignee submits the member sign-up to a designated 1st approver with the SGDN member code and the membership fee terms (ADF1234_P09). The documents must have been checked as complete (409 otherwise). Requires WRITE permission.
+         * @description **Screens:** VPA000801, VPA0002P01, VPA0008P01
+         *
+         *     Step 2 -> 3: Assignee submits the member sign-up to a designated 1st approver with the SGDN member code and the membership fee terms (ADF1234_P09). The documents must have been checked as complete (409 otherwise). Requires WRITE permission.
          */
         post: operations["requestApproval_3"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/members/register": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Register member from admin channel
-         * @description Screen VPA000801 'New' button: registers a new member application from the admin channel into pending approval state. Matches client member registration schema. Requires WRITE permission.
-         */
-        post: operations["createMember"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/members": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Search members
-         * @description Retrieves paginated and filtered list of members and sign-up applications (VPA000801). Requires READ permission.
-         */
-        get: operations["getMembers"];
-        put?: never;
-        /**
-         * Register member from admin channel
-         * @description Screen VPA000801 'New' button: registers a new member application from the admin channel into pending approval state. Matches client member registration schema. Requires WRITE permission.
-         */
-        post: operations["createMember_1"];
         delete?: never;
         options?: never;
         head?: never;
@@ -2266,7 +3067,9 @@ export interface paths {
         put?: never;
         /**
          * Batch generate pending members
-         * @description Creates multiple pending member sign-up applications with verification attachments for workflow testing and simulation. Requires WRITE permission.
+         * @description **Screens:** VPA000801, VPA0002P01, VPA0008P01
+         *
+         *     Creates multiple pending member sign-up applications with verification attachments for workflow testing and simulation. Local/dev only (404 when member.batch-generate.enabled=false). Requires WRITE permission.
          */
         post: operations["batchGenerate"];
         delete?: never;
@@ -2284,15 +3087,41 @@ export interface paths {
         };
         /**
          * List provinces / Danh sách Tỉnh/Thành phố
-         * @description Returns paginated provinces with optional use status and search keyword. / Trả về danh sách Tỉnh/Thành phố phân trang với bộ lọc trạng thái và tìm kiếm.
+         * @description **Screens:** VPA004901, VPA0049P01
+         *
+         *     Returns paginated provinces with optional use status and search keyword. / Trả về danh sách Tỉnh/Thành phố phân trang với bộ lọc trạng thái và tìm kiếm.
          */
         get: operations["getProvinces"];
         put?: never;
         /**
          * Create province / Tạo mới Tỉnh/Thành phố
-         * @description Creates a new province. Requires WRITE permission. / Tạo mới Tỉnh/Thành phố. Yêu cầu quyền GHI.
+         * @description **Screens:** VPA004901, VPA0049P01
+         *
+         *     Creates a new province. Requires WRITE permission. / Tạo mới Tỉnh/Thành phố. Yêu cầu quyền GHI.
          */
         post: operations["createProvince"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/locations/provinces/{mctpvCd}/districts/batch": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Batch save / delete districts of a province / Lưu / xóa hàng loạt Quận/Huyện của Tỉnh
+         * @description **Screens:** VPA004901, VPA0049P01
+         *
+         *     Upserts and deletes districts of a province atomically (delete first, then save). Requires WRITE permission. / Thêm, sửa, xóa hàng loạt trong một giao dịch. Yêu cầu quyền GHI.
+         */
+        post: operations["saveDistrictsBatch"];
         delete?: never;
         options?: never;
         head?: never;
@@ -2308,15 +3137,107 @@ export interface paths {
         };
         /**
          * List districts / Danh sách Quận/Huyện
-         * @description Returns paginated districts with optional province, status, and keyword filters. / Trả về danh sách Quận/Huyện phân trang theo các bộ lọc tùy chọn.
+         * @description **Screens:** VPA004901, VPA0049P01
+         *
+         *     Returns paginated districts with optional province, status, and keyword filters. / Trả về danh sách Quận/Huyện phân trang theo các bộ lọc tùy chọn.
          */
         get: operations["getDistricts"];
         put?: never;
         /**
          * Create district / Tạo mới Quận/Huyện
-         * @description Creates a new district under a province. Requires WRITE permission. / Tạo mới Quận/Huyện trong Tỉnh/Thành phố. Yêu cầu quyền GHI.
+         * @description **Screens:** VPA004901, VPA0049P01
+         *
+         *     Creates a new district under a province. Requires WRITE permission. / Tạo mới Quận/Huyện trong Tỉnh/Thành phố. Yêu cầu quyền GHI.
          */
         post: operations["createDistrict"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/live-auctions/{auctnNo}/suspend-repost": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Suspend and repost / Tạm dừng và đăng lại
+         * @description **Screens:** VPA002201, VPA0022P01
+         *
+         *     AN/IP/PS: the cycle is cancelled (CN) with the reason, its valid bids are cancelled and a new cycle starts as AN (optionally with a new schedule). Bidders keep their qualification. Requires WRITE permission.
+         */
+        post: operations["suspendRepost"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/live-auctions/{auctnNo}/start": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Start auction / Bắt đầu đấu giá
+         * @description **Screens:** VPA002201, VPA0022P01
+         *
+         *     AN -> IP once the scheduled start is reached and a bidder is qualified (409 AUC008). Requires WRITE permission.
+         */
+        post: operations["start"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/live-auctions/{auctnNo}/close": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Close and confirm winner / Kết thúc và xác nhận người trúng
+         * @description **Screens:** VPA002201, VPA0022P01
+         *
+         *     IP -> AW (highest valid bid, earliest on a tie; award recorded) or FL (no bid) once the scheduled end is reached (409 AUC009). Cannot be undone. Requires WRITE permission.
+         */
+        post: operations["close"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/labels/cache/reload": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Reload label cache / Nạp lại cache
+         * @description **Screens:** VPA005301, VPA0053P01
+         *
+         *     Clears admin label caches only; the client app expires its own. / Chỉ xoá cache admin.
+         */
+        post: operations["reloadCache"];
         delete?: never;
         options?: never;
         head?: never;
@@ -2332,15 +3253,41 @@ export interface paths {
         };
         /**
          * List financial institutions / Danh sách Tổ chức tài chính
-         * @description Returns paginated financial institutions with optional filters. / Trả về danh sách tổ chức tài chính phân trang theo bộ lọc.
+         * @description **Screens:** VPA005001, VPA0050P01
+         *
+         *     Returns paginated financial institutions with optional filters. / Trả về danh sách tổ chức tài chính phân trang theo bộ lọc.
          */
         get: operations["getInstitutions"];
         put?: never;
         /**
          * Create financial institution / Tạo mới Tổ chức tài chính
-         * @description Creates a new financial institution. Requires WRITE permission. / Tạo mới tổ chức tài chính. Yêu cầu quyền GHI.
+         * @description **Screens:** VPA005001, VPA0050P01
+         *
+         *     Creates a new financial institution. Requires WRITE permission. / Tạo mới tổ chức tài chính. Yêu cầu quyền GHI.
          */
         post: operations["createInstitution"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/institutions/{fnstCd}/branches/batch": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Batch save / delete branches of an institution / Lưu / xóa hàng loạt Chi nhánh của Tổ chức
+         * @description **Screens:** VPA005001, VPA0050P01
+         *
+         *     Upserts and deletes branches of an institution atomically (delete first, then save). Requires WRITE permission. / Thêm, sửa, xóa hàng loạt trong một giao dịch. Yêu cầu quyền GHI.
+         */
+        post: operations["saveBranchesBatch"];
         delete?: never;
         options?: never;
         head?: never;
@@ -2356,13 +3303,17 @@ export interface paths {
         };
         /**
          * List branches / Danh sách Chi nhánh
-         * @description Returns paginated branches with optional filters. / Trả về danh sách chi nhánh phân trang theo các bộ lọc tùy chọn.
+         * @description **Screens:** VPA005001, VPA0050P01
+         *
+         *     Returns paginated branches with optional filters. / Trả về danh sách chi nhánh phân trang theo các bộ lọc tùy chọn.
          */
         get: operations["getBranches"];
         put?: never;
         /**
          * Create branch / Tạo mới Chi nhánh
-         * @description Creates a new branch. Requires WRITE permission. / Tạo mới chi nhánh. Yêu cầu quyền GHI.
+         * @description **Screens:** VPA005001, VPA0050P01
+         *
+         *     Creates a new branch. Requires WRITE permission. / Tạo mới chi nhánh. Yêu cầu quyền GHI.
          */
         post: operations["createBranch"];
         delete?: never;
@@ -2380,13 +3331,17 @@ export interface paths {
         };
         /**
          * Search employees / Tìm kiếm nhân viên
-         * @description Retrieves paginated employee list with optional filters. / Lấy danh sách nhân viên phân trang với các bộ lọc tùy chọn.
+         * @description **Screens:** VPA004501, VPA0045P01
+         *
+         *     Retrieves paginated employee list with optional filters. / Lấy danh sách nhân viên phân trang với các bộ lọc tùy chọn.
          */
         get: operations["getEmployees"];
         put?: never;
         /**
          * Create employee / Thêm mới nhân viên
-         * @description Registers a new employee account. / Đăng ký mới một tài khoản nhân viên vào hệ thống.
+         * @description **Screens:** VPA004501, VPA0045P01
+         *
+         *     Registers a new employee account. / Đăng ký mới một tài khoản nhân viên vào hệ thống.
          */
         post: operations["createEmployee"];
         delete?: never;
@@ -2404,18 +3359,24 @@ export interface paths {
         };
         /**
          * List guide sections / Danh sách section
-         * @description Use category=TRD|BUY|SELL|CNSL|FEE for one page. Ordered by display order (PST_SN); tag = section key. / Lọc theo trang; sắp theo thứ tự hiển thị.
+         * @description **Screens:** VPA005701, VPA0057P01
+         *
+         *     Use category=TRD|BUY|SELL|CNSL|FEE|AUC for one page. Ordered by display order (PST_SN); tag = section key. / Lọc theo trang; sắp theo thứ tự hiển thị.
          */
         get: operations["getSections"];
         put?: never;
         /**
          * Add guide section / Thêm section
-         * @description Section key must be unique per page (409 CNT013). Default published. / Khóa section không trùng trong trang.
+         * @description **Screens:** VPA005701, VPA0057P01
+         *
+         *     Section key must be unique per page (409 CNT013). Default published. / Khóa section không trùng trong trang.
          */
         post: operations["createSection"];
         /**
          * Delete sections / Xóa section
-         * @description Soft-deletes the selected sections. / Xóa mềm các section được chọn.
+         * @description **Screens:** VPA005701, VPA0057P01
+         *
+         *     Soft-deletes the selected sections. / Xóa mềm các section được chọn.
          */
         delete: operations["deleteSections"];
         options?: never;
@@ -2432,18 +3393,24 @@ export interface paths {
         };
         /**
          * List NPL announcements / Danh sách thông báo NPL
-         * @description Filter by type (APPR, SALE, AUCT); pinnedOnly=true for View Major Notices. Keyword matches number, title or document number. / Lọc theo loại; pinnedOnly=true để xem thông báo chính.
+         * @description **Screens:** VPA002701, VPA002801, VPA002901, VPA0027P01, VPA0028P01, VPA0029P01
+         *
+         *     Filter by type (APPR, SALE, AUCT); pinnedOnly=true for View Major Notices. Keyword matches number, title or document number. / Lọc theo loại; pinnedOnly=true để xem thông báo chính.
          */
         get: operations["getAnnouncements"];
         put?: never;
         /**
          * Create NPL announcement / Tạo thông báo NPL
-         * @description Default unpublished. At most 5 announcements can be published with top display. / Mặc định chưa đăng; tối đa 5 bài hiển thị đầu trang.
+         * @description **Screens:** VPA002701, VPA002801, VPA002901, VPA0027P01, VPA0028P01, VPA0029P01
+         *
+         *     Default unpublished. At most 5 announcements can be published with top display. / Mặc định chưa đăng; tối đa 5 bài hiển thị đầu trang.
          */
         post: operations["createAnnouncement"];
         /**
          * Delete NPL announcements / Xóa thông báo NPL
-         * @description Soft-deletes the selected announcements. / Xóa mềm các thông báo được chọn.
+         * @description **Screens:** VPA002701, VPA002801, VPA002901, VPA0027P01, VPA0028P01, VPA0029P01
+         *
+         *     Soft-deletes the selected announcements. / Xóa mềm các thông báo được chọn.
          */
         delete: operations["deleteAnnouncements"];
         options?: never;
@@ -2460,18 +3427,24 @@ export interface paths {
         };
         /**
          * List notices / Danh sách thông báo
-         * @description Paginated notices; pinned first, then newest. sortBy: crtDt, title, viewCount. / Danh sách phân trang; bài ghim trước, sau đó mới nhất.
+         * @description **Screens:** VPA002301, VPA0023P01
+         *
+         *     Paginated notices; pinned first, then newest. sortBy: crtDt, title, viewCount. / Danh sách phân trang; bài ghim trước, sau đó mới nhất.
          */
         get: operations["getNotices"];
         put?: never;
         /**
          * Create notice / Tạo thông báo
-         * @description Creates a notice (default unpublished). At most 5 pinned notices can be published. / Tạo thông báo (mặc định chưa đăng). Tối đa 5 bài ghim đang đăng.
+         * @description **Screens:** VPA002301, VPA0023P01
+         *
+         *     Creates a notice (default unpublished). At most 5 pinned notices can be published. / Tạo thông báo (mặc định chưa đăng). Tối đa 5 bài ghim đang đăng.
          */
         post: operations["createNotice"];
         /**
          * Delete notices / Xóa thông báo
-         * @description Soft-deletes the selected notices. / Xóa mềm các thông báo được chọn.
+         * @description **Screens:** VPA002301, VPA0023P01
+         *
+         *     Soft-deletes the selected notices. / Xóa mềm các thông báo được chọn.
          */
         delete: operations["deleteNotices"];
         options?: never;
@@ -2488,18 +3461,24 @@ export interface paths {
         };
         /**
          * List / Danh sách
-         * @description Paginated list with the board search conditions. / Danh sách phân trang theo điều kiện tìm kiếm.
+         * @description **Screens:** VPA002401, VPA002501, VPA002601, VPA0024P01, VPA0025P01, VPA0026P01
+         *
+         *     Paginated list with the board search conditions. / Danh sách phân trang theo điều kiện tìm kiếm.
          */
         get: operations["list"];
         put?: never;
         /**
          * Register news / Đăng ký tin
-         * @description category = NWS, MED or RSC. Default unpublished. / Mặc định chưa đăng.
+         * @description **Screens:** VPA002401, VPA002501, VPA002601, VPA0024P01, VPA0025P01, VPA0026P01
+         *
+         *     category = NWS, MED or RSC. Default unpublished. / Mặc định chưa đăng.
          */
-        post: operations["create_3"];
+        post: operations["create_4"];
         /**
          * Delete / Xóa
-         * @description Soft-deletes the selected posts. / Xóa mềm các bài được chọn.
+         * @description **Screens:** VPA002401, VPA002501, VPA002601, VPA0024P01, VPA0025P01, VPA0026P01
+         *
+         *     Soft-deletes the selected posts. / Xóa mềm các bài được chọn.
          */
         delete: operations["delete"];
         options?: never;
@@ -2516,18 +3495,24 @@ export interface paths {
         };
         /**
          * List / Danh sách
-         * @description Paginated list with the board search conditions. / Danh sách phân trang theo điều kiện tìm kiếm.
+         * @description **Screens:** VPA003301, VPA0033P01
+         *
+         *     Paginated list with the board search conditions. sortBy: postSn, published, category, docNumber, title, lawGroup, lawField, issuingAuthority, issueDate, attachmentCount, crtBy, mdfcnDt, mdfcnBy, viewCount (ASC/DESC). / Danh sách phân trang theo điều kiện tìm kiếm.
          */
         get: operations["list_1"];
         put?: never;
         /**
          * Register legal document / Đăng ký văn bản
-         * @description Default published. Required: type, number/sign, issue date, title. / Mặc định công bố.
+         * @description **Screens:** VPA003301, VPA0033P01
+         *
+         *     Default published. Required: type, number/sign, issue date, title. / Mặc định công bố.
          */
-        post: operations["create_4"];
+        post: operations["create_5"];
         /**
          * Delete / Xóa
-         * @description Soft-deletes the selected posts. / Xóa mềm các bài được chọn.
+         * @description **Screens:** VPA003301, VPA0033P01
+         *
+         *     Soft-deletes the selected posts. / Xóa mềm các bài được chọn.
          */
         delete: operations["delete_1"];
         options?: never;
@@ -2564,18 +3549,24 @@ export interface paths {
         };
         /**
          * List FAQs / Danh sách FAQ
-         * @description Paginated FAQs. Use sortBy=displayOrder to list in display order per category. / Danh sách phân trang; sortBy=displayOrder để xem theo thứ tự hiển thị.
+         * @description **Screens:** VPA003101, VPA0031P01
+         *
+         *     Paginated FAQs. Use sortBy=displayOrder to list in display order per category. / Danh sách phân trang; sortBy=displayOrder để xem theo thứ tự hiển thị.
          */
         get: operations["getFaqs"];
         put?: never;
         /**
          * Create FAQ / Tạo FAQ
-         * @description Creates an FAQ (default unpublished), appended at the end of its category. / Tạo FAQ (mặc định chưa đăng), xếp cuối danh mục.
+         * @description **Screens:** VPA003101, VPA0031P01
+         *
+         *     Creates an FAQ (default unpublished), appended at the end of its category. / Tạo FAQ (mặc định chưa đăng), xếp cuối danh mục.
          */
         post: operations["createFaq"];
         /**
          * Delete FAQs / Xóa FAQ
-         * @description Soft-deletes the selected FAQs. / Xóa mềm các FAQ được chọn.
+         * @description **Screens:** VPA003101, VPA0031P01
+         *
+         *     Soft-deletes the selected FAQs. / Xóa mềm các FAQ được chọn.
          */
         delete: operations["deleteFaqs"];
         options?: never;
@@ -2592,18 +3583,24 @@ export interface paths {
         };
         /**
          * List / Danh sách
-         * @description Paginated list with the board search conditions. / Danh sách phân trang theo điều kiện tìm kiếm.
+         * @description **Screens:** VPA003401, VPA0034P01
+         *
+         *     Paginated list with the board search conditions. / Danh sách phân trang theo điều kiện tìm kiếm.
          */
         get: operations["list_2"];
         put?: never;
         /**
          * Register career posting / Đăng ký tin tuyển dụng
-         * @description Default published. / Mặc định công bố.
+         * @description **Screens:** VPA003401, VPA0034P01
+         *
+         *     Default published. / Mặc định công bố.
          */
-        post: operations["create_5"];
+        post: operations["create_6"];
         /**
          * Delete / Xóa
-         * @description Soft-deletes the selected posts. / Xóa mềm các bài được chọn.
+         * @description **Screens:** VPA003401, VPA0034P01
+         *
+         *     Soft-deletes the selected posts. / Xóa mềm các bài được chọn.
          */
         delete: operations["delete_2"];
         options?: never;
@@ -2620,18 +3617,24 @@ export interface paths {
         };
         /**
          * List banners / Danh sách banner
-         * @description Ordered by position and display order. / Sắp theo vị trí và thứ tự.
+         * @description **Screens:** VPA003201, VPA0032P01
+         *
+         *     Ordered by position and display order. / Sắp theo vị trí và thứ tự.
          */
         get: operations["list_3"];
         put?: never;
         /**
          * Register banner / Đăng ký banner
-         * @description Starts not in use. / Mặc định không sử dụng.
+         * @description **Screens:** VPA003201, VPA0032P01
+         *
+         *     Starts not in use. / Mặc định không sử dụng.
          */
-        post: operations["create_6"];
+        post: operations["create_7"];
         /**
          * Delete banners / Xóa banner
-         * @description BNR_MNG has no deletion flag: banners are switched off (USE_YN = 'N'). / Banner được tắt sử dụng.
+         * @description **Screens:** VPA003201, VPA0032P01
+         *
+         *     Permanently deletes banners that are not in use; a banner in use returns 409 BNR004. / Chỉ xóa banner không sử dụng.
          */
         delete: operations["delete_3"];
         options?: never;
@@ -2650,7 +3653,9 @@ export interface paths {
         put?: never;
         /**
          * Upload banner image / Tải ảnh banner
-         * @description Returns the file group ID to pass as imageFileId. / Trả mã nhóm ảnh dùng cho imageFileId.
+         * @description **Screens:** VPA003201, VPA0032P01
+         *
+         *     Returns the file group ID to pass as imageFileId. / Trả mã nhóm ảnh dùng cho imageFileId.
          */
         post: operations["uploadImage"];
         delete?: never;
@@ -2674,9 +3679,9 @@ export interface paths {
         put?: never;
         /**
          * Add item / Thêm mục
-         * @description section = CEOM, HIST, HSTI, MSSN, FUNC, ORGS, DIRC, BEXB, BDIR, BSPV or PRTN. extraJson must be valid JSON matching the section format (CNT015): ORGS = department array or {"vi": [...], "en": [...]}, DIRC values = string or {"vi", "en"}, PRTN = {"url": "https://..."}. BEXB/BDIR/BSPV need name and tag = M or F; PRTN needs tag = DOMESTIC or FOREIGN (CNT017). CEOM ignores email/phone (company name and signatory title are platform i18n labels). / extraJson phải là JSON hợp lệ đúng định dạng section; ban lãnh đạo cần tên và giới tính M/F; đối tác cần nhóm DOMESTIC/FOREIGN; CEOM bỏ qua email/phone.
+         * @description section = CEOM, HIST, HSTI, MSSN, FUNC, ORGS, DIRC, BEXB, BDIR, BSPV, PRTN or SPCT (Support > Contact Us). extraJson must be valid JSON matching the section format (CNT015): ORGS = department array or {"vi": [...], "en": [...]}, DIRC values = string or {"vi", "en"}, MSSN = {"keyFunctionsTitle", "organizationTitle"} with string or {"vi", "en"} values, PRTN = {"url": "https://..."}. MSSN: title = mission heading, content = paragraphs separated by a blank line, imageFileId = illustration. ORGS summary = overview as plain text or {"vi", "en"} (CNT015). SPCT: phone = hotline, email = support e-mail, extraJson = {"phoneHours", "portalHours", "portalHoursNote"} with string or {"vi", "en"} values. BEXB/BDIR/BSPV need name and tag = M or F; PRTN needs tag = DOMESTIC or FOREIGN (CNT017). CEOM ignores email/phone (company name and signatory title are platform i18n labels). / extraJson phải là JSON hợp lệ đúng định dạng section; ban lãnh đạo cần tên và giới tính M/F; đối tác cần nhóm DOMESTIC/FOREIGN; CEOM bỏ qua email/phone.
          */
-        post: operations["create_7"];
+        post: operations["create_8"];
         /**
          * Delete / Xóa
          * @description Soft-deletes the selected posts. / Xóa mềm các bài được chọn.
@@ -2698,7 +3703,9 @@ export interface paths {
         put?: never;
         /**
          * Register a termination
-         * @description Termination 1: PROGS -> ENDING with the reason and the fee handling. With the auto-termination clause the contract ends at once. Requires WRITE permission.
+         * @description **Screens:** VPA001501
+         *
+         *     Termination 1: PROGS -> ENDING with the reason and the fee handling. With the auto-termination clause the contract ends at once. Requires WRITE permission.
          */
         post: operations["startTermination_2"];
         delete?: never;
@@ -2718,7 +3725,9 @@ export interface paths {
         put?: never;
         /**
          * Attach the signed settlement minutes
-         * @description Termination 17 (SGNCP). Requires WRITE permission.
+         * @description **Screens:** VPA001501
+         *
+         *     Termination 17 (SGNCP). Requires WRITE permission.
          */
         post: operations["attachTerminationScan_2"];
         delete?: never;
@@ -2738,7 +3747,9 @@ export interface paths {
         put?: never;
         /**
          * Request settlement minutes signature approval
-         * @description Termination 15-1 (PROC_DSPSL_MDT_END_SIGN); approval -> SGNCP. Requires WRITE permission.
+         * @description **Screens:** VPA001501
+         *
+         *     Termination 15-1 (PROC_DSPSL_MDT_END_SIGN); approval -> SGNCP. Requires WRITE permission.
          */
         post: operations["requestTerminationSignature_2"];
         delete?: never;
@@ -2758,7 +3769,9 @@ export interface paths {
         put?: never;
         /**
          * Register the settlement minutes for signature
-         * @description Termination 9: form 12 draft, DRFAPR -> SGNWT; mails the member. Requires WRITE permission.
+         * @description **Screens:** VPA001501
+         *
+         *     Termination 9: form 12 draft, DRFAPR -> SGNWT; mails the member. Requires WRITE permission.
          */
         post: operations["registerTerminationDraft_2"];
         delete?: never;
@@ -2778,7 +3791,9 @@ export interface paths {
         put?: never;
         /**
          * Complete the termination
-         * @description Termination 18: contract CMPTN (performed) or CNCLN; unsold NPLs hidden; collected fees refunded (RFPL) or open claims cancelled (CLCN); mails the member. Requires WRITE permission.
+         * @description **Screens:** VPA001501
+         *
+         *     Termination 18: contract CMPTN (performed) or CNCLN; unsold NPLs hidden; collected fees refunded (RFPL) or open claims cancelled (CLCN); mails the member. Purchase: 409 when another active purchase contract exists or termination conditions are not met (CNCL only before delivery); 400 on invalid reason. Requires WRITE permission.
          */
         post: operations["completeTermination_2"];
         delete?: never;
@@ -2798,7 +3813,9 @@ export interface paths {
         put?: never;
         /**
          * Request termination approval
-         * @description Termination 2 (PROC_DSPSL_MDT_END); approval -> DRFAPR. Requires WRITE permission.
+         * @description **Screens:** VPA001501
+         *
+         *     Termination 2 (PROC_DSPSL_MDT_END); approval -> DRFAPR. Requires WRITE permission.
          */
         post: operations["requestTerminationApproval_2"];
         delete?: never;
@@ -2818,7 +3835,9 @@ export interface paths {
         put?: never;
         /**
          * Attach the signed scan
-         * @description Step 31 / annex 18 (SGNCP). Requires WRITE permission.
+         * @description **Screens:** VPA001501
+         *
+         *     Step 31 / annex 18 (SGNCP). Requires WRITE permission.
          */
         post: operations["attachSignedScan_2"];
         delete?: never;
@@ -2838,7 +3857,9 @@ export interface paths {
         put?: never;
         /**
          * Request signature approval
-         * @description Step 29-1 / annex 16-1: the approver checks the member-signed document and signs for VAMC (PROC_DSPSL_MDT_SIGN); approval -> SGNCP. Requires WRITE permission.
+         * @description **Screens:** VPA001501
+         *
+         *     Step 29-1 / annex 16-1: the approver checks the member-signed document and signs for VAMC (PROC_DSPSL_MDT_SIGN); approval -> SGNCP. Requires WRITE permission.
          */
         post: operations["requestSignatureApproval_2"];
         delete?: never;
@@ -2858,7 +3879,9 @@ export interface paths {
         put?: never;
         /**
          * Complete the report
-         * @description 수행 6: APRV -> RDY (not published); the remaining fee is issued and mailed. The report is published when the fee is confirmed (수행 11-1). Requires WRITE permission.
+         * @description **Screens:** VPA001501
+         *
+         *     수행 6: APRV -> RDY (not published); the remaining fee is issued and mailed. The report is published when the fee is confirmed (수행 11-1). Requires WRITE permission.
          */
         post: operations["completeReport"];
         delete?: never;
@@ -2878,7 +3901,9 @@ export interface paths {
         put?: never;
         /**
          * Request report approval
-         * @description 수행 2: PROC_CNSLT_RPTP; approval -> APRV, rejection -> DRFT. Requires WRITE permission.
+         * @description **Screens:** VPA001501
+         *
+         *     수행 2: PROC_CNSLT_RPTP; approval -> APRV, rejection -> DRFT. Requires WRITE permission.
          */
         post: operations["requestReportApproval"];
         delete?: never;
@@ -2898,7 +3923,9 @@ export interface paths {
         put?: never;
         /**
          * Record a fee refund
-         * @description Termination 18: refund transferred (RFPL -> RFCP). Requires WRITE permission.
+         * @description **Screens:** VPA001501
+         *
+         *     Termination 18: refund transferred (RFPL -> RFCP). Requires WRITE permission.
          */
         post: operations["refundFee_2"];
         delete?: never;
@@ -2918,7 +3945,9 @@ export interface paths {
         put?: never;
         /**
          * Confirm a fee transfer
-         * @description Step 37 / annex 24. Requires WRITE permission.
+         * @description **Screens:** VPA001501
+         *
+         *     Step 37 / annex 24. Requires WRITE permission.
          */
         post: operations["confirmFeeReceipt_2"];
         delete?: never;
@@ -2938,7 +3967,9 @@ export interface paths {
         put?: never;
         /**
          * Register the draft for signature
-         * @description Step 23 / annex 10: DRFAPR -> SGNWT with the PDF the member prints, signs and posts; mails the member. Requires WRITE permission.
+         * @description **Screens:** VPA001501
+         *
+         *     Step 23 / annex 10: DRFAPR -> SGNWT with the PDF the member prints, signs and posts; mails the member. Requires WRITE permission.
          */
         post: operations["registerDraft_2"];
         delete?: never;
@@ -2958,7 +3989,9 @@ export interface paths {
         put?: never;
         /**
          * Conclude the contract
-         * @description Step 32 / annex 19: SGNCP with a scan -> PROGS; first installment (LUMP / STAG advance); NPLs published (step 38) for brokerage contracts and base contract annexes; extension / price annexes update the parent. Requires WRITE permission.
+         * @description **Screens:** VPA001501
+         *
+         *     Step 32 / annex 19: SGNCP with a scan -> PROGS; first installment (LUMP / STAG advance); NPLs published (step 38) for brokerage contracts and base contract annexes; extension / price annexes update the parent. Requires WRITE permission.
          */
         post: operations["conclude_2"];
         delete?: never;
@@ -2978,7 +4011,9 @@ export interface paths {
         put?: never;
         /**
          * Request draft approval
-         * @description Step 16 / annex 3: PROC_DSPSL_MDT_CTRT (contract) or PROC_DSPSL_MDT_ANX (annex); approval -> DRFAPR. Requires WRITE permission.
+         * @description **Screens:** VPA001501
+         *
+         *     Step 16 / annex 3: PROC_DSPSL_MDT_CTRT (contract) or PROC_DSPSL_MDT_ANX (annex); approval -> DRFAPR. Requires WRITE permission.
          */
         post: operations["requestDraftApproval_2"];
         delete?: never;
@@ -2998,7 +4033,9 @@ export interface paths {
         put?: never;
         /**
          * Receive an additional consultation
-         * @description 추가 15: RQST -> RCPT. Consultant or officer. Requires WRITE permission.
+         * @description **Screens:** VPA001501
+         *
+         *     추가 15: RQST -> RCPT. Consultant or officer. Requires WRITE permission.
          */
         post: operations["receiveAdditionalConsultation"];
         delete?: never;
@@ -3018,7 +4055,9 @@ export interface paths {
         put?: never;
         /**
          * Complete an additional consultation
-         * @description 추가 21: result recorded and mailed to the member. Requires WRITE permission.
+         * @description **Screens:** VPA001501
+         *
+         *     추가 21: result recorded and mailed to the member. Requires WRITE permission.
          */
         post: operations["completeAdditionalConsultation"];
         delete?: never;
@@ -3036,13 +4075,17 @@ export interface paths {
         };
         /**
          * List code groups (paginated) / Danh sách nhóm mã (phân trang)
-         * @description Returns paginated code groups with optional search filters. / Trả về danh sách nhóm mã phân trang theo bộ lọc.
+         * @description **Screens:** VPA004801, VPA0048P01
+         *
+         *     Returns paginated code groups with optional search filters. / Trả về danh sách nhóm mã phân trang theo bộ lọc.
          */
         get: operations["getCodeGroups"];
         put?: never;
         /**
          * Create code group / Tạo mới nhóm mã
-         * @description Creates a new code group and synchronizes multilingual label. Requires WRITE permission. / Tạo mới nhóm mã và đồng bộ nhãn đa ngôn ngữ. Yêu cầu quyền GHI.
+         * @description **Screens:** VPA004801, VPA0048P01
+         *
+         *     Creates a new code group and synchronizes multilingual label. Requires WRITE permission. / Tạo mới nhóm mã và đồng bộ nhãn đa ngôn ngữ. Yêu cầu quyền GHI.
          */
         post: operations["createGroup"];
         delete?: never;
@@ -3062,7 +4105,9 @@ export interface paths {
         put?: never;
         /**
          * Batch save / delete codes / Lưu / xóa hàng loạt mã chi tiết
-         * @description Batch upserts and deletes detailed codes within a group. Requires WRITE permission. / Thêm, sửa, xóa hàng loạt mã chi tiết trong nhóm. Yêu cầu quyền GHI.
+         * @description **Screens:** VPA004801, VPA0048P01
+         *
+         *     Batch upserts and deletes detailed codes within a group. Requires WRITE permission. / Thêm, sửa, xóa hàng loạt mã chi tiết trong nhóm. Yêu cầu quyền GHI.
          */
         post: operations["saveCodesBatch"];
         delete?: never;
@@ -3082,9 +4127,227 @@ export interface paths {
         put?: never;
         /**
          * Copy code group / Sao chép nhóm mã (Domain Copy)
-         * @description Duplicates all codes from a source group to a new target group. Requires WRITE permission. / Sao chép toàn bộ mã từ nhóm nguồn sang nhóm đích. Yêu cầu quyền GHI.
+         * @description **Screens:** VPA004801, VPA0048P01
+         *
+         *     Duplicates all codes from a source group to a new target group. Requires WRITE permission. / Sao chép toàn bộ mã từ nhóm nguồn sang nhóm đích. Yêu cầu quyền GHI.
          */
         post: operations["copyGroup"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/bidders/{bdrNo}/reject": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Disqualify bidder / Loại người tham gia
+         * @description **Screens:** VPA002101, VPA0021P01
+         *
+         *     AP/AV -> DQ, reason required. Requires WRITE permission.
+         */
+        post: operations["reject"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/bidders/{bdrNo}/document-receipt/confirm": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Confirm document receipt / Xác nhận nhận hồ sơ
+         * @description **Screens:** VPA002101, VPA0021P01
+         *
+         *     NR -> RC while applied and the auction is AN. Requires WRITE permission.
+         */
+        post: operations["confirmReceipt"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/bidders/{bdrNo}/document-receipt/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Cancel document receipt / Huỷ nhận hồ sơ
+         * @description **Screens:** VPA002101, VPA0021P01
+         *
+         *     RC -> NR while applied. Requires WRITE permission.
+         */
+        post: operations["cancelReceipt"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/bidders/{bdrNo}/deposit/refund": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Refund deposit / Hoàn tiền cọc
+         * @description **Screens:** VPA002101, VPA0021P01
+         *
+         *     PA -> RF. Requires WRITE permission.
+         */
+        post: operations["refund"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/bidders/{bdrNo}/deposit/forfeit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Forfeit deposit / Tịch thu tiền cọc
+         * @description **Screens:** VPA002101, VPA0021P01
+         *
+         *     PA -> FF, reason required. Requires WRITE permission.
+         */
+        post: operations["forfeit"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/bidders/{bdrNo}/deposit/confirm": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Confirm deposit / Xác nhận tiền cọc
+         * @description **Screens:** VPA002101, VPA0021P01
+         *
+         *     UN -> PA; grnteAmt defaults to minimum bid price x deposit rate. Requires WRITE permission.
+         */
+        post: operations["confirmDeposit"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/bidders/{bdrNo}/approve": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Qualify bidder / Cấp tư cách
+         * @description **Screens:** VPA002101, VPA0021P01
+         *
+         *     AP -> AV; documents received and deposit paid (409 BDR004 otherwise). Requires WRITE permission.
+         */
+        post: operations["approve"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/auctions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List auction notices / Danh sách thông báo đấu giá
+         * @description **Screens:** VPA002001, VPA0020P01
+         *
+         *     Latest cycle of each auction. Filters: auction start period, status, approval status, method, number or name. approvalActions: REQUEST (DR/RJ), APPROVE / REJECT (open step assigned to me). Requires READ permission (A07010000).
+         */
+        get: operations["getAuctions"];
+        put?: never;
+        /**
+         * Register auction notice / Đăng ký thông báo đấu giá
+         * @description **Screens:** VPA002001, VPA0020P01
+         *
+         *     Number AUC-YYYY-NNNNN, status RD, approval DR. 400 AUC004 unknown NPL, AUC005 collateral not linked to the NPL; 409 AUC006 the NPL already has an open auction. Requires WRITE permission.
+         */
+        post: operations["createAuction"];
+        /**
+         * Delete auction notices / Xoá thông báo đấu giá
+         * @description **Screens:** VPA002001, VPA0020P01
+         *
+         *     All or nothing; only RD with approval DR/RJ and no bidder (409 AUC003). Requires WRITE permission.
+         */
+        delete: operations["deleteAuctions"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/auctions/{auctnNo}/approval": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get publication approval / Phê duyệt công bố
+         * @description **Screens:** VPA002001, VPA0020P01
+         *
+         *     Steps of the publication approval session; null data before the first request. Requires READ permission.
+         */
+        get: operations["getApproval"];
+        put?: never;
+        /**
+         * Request publication approval / Yêu cầu phê duyệt công bố
+         * @description **Screens:** VPA002001, VPA0020P01
+         *
+         *     RD with approval DR/RJ -> RQ (PROC_AUCTN_PBANC, the approver decides with /approvals/{id}/approve|reject; approval publishes the notice: AN). 409 AUC007 in another state. Requires WRITE permission.
+         */
+        post: operations["requestApproval_4"];
         delete?: never;
         options?: never;
         head?: never;
@@ -3102,9 +4365,11 @@ export interface paths {
         put?: never;
         /**
          * Reject current step
-         * @description Approver rejects the session with a mandatory reason. Closes the session and updates target domain state (A-04, ADF1234_P11). Requires WRITE permission.
+         * @description **Screens:** VPA0003P01, VPA0003P02, VPA0003P03, VPA0003P04
+         *
+         *     Approver rejects the session with a mandatory reason. Closes the session and updates target domain state (A-04, ADF1234_P11). Requires WRITE permission.
          */
-        post: operations["reject"];
+        post: operations["reject_1"];
         delete?: never;
         options?: never;
         head?: never;
@@ -3122,9 +4387,11 @@ export interface paths {
         put?: never;
         /**
          * Approve current step
-         * @description Approver approves the current step. Completes the session if final and executes target domain side-effects (A-03, ADF1234_P10). Requires WRITE permission.
+         * @description **Screens:** VPA0003P01, VPA0003P02, VPA0003P03, VPA0003P04
+         *
+         *     Approver approves the current step. Completes the session if final and executes target domain side-effects (A-03, ADF1234_P10). Requires WRITE permission.
          */
-        post: operations["approve"];
+        post: operations["approve_1"];
         delete?: never;
         options?: never;
         head?: never;
@@ -3142,7 +4409,9 @@ export interface paths {
         put?: never;
         /**
          * Upload labels Excel / Tải lên file Excel nhãn
-         * @description Parses Excel file and batch saves labels / Phân tích file Excel và lưu hàng loạt nhãn
+         * @description **Screens:** VPA005301, VPA0053P01
+         *
+         *     Parses Excel file and batch saves labels / Phân tích file Excel và lưu hàng loạt nhãn
          */
         post: operations["uploadExcel"];
         delete?: never;
@@ -3162,7 +4431,9 @@ export interface paths {
         put?: never;
         /**
          * Batch save labels / translations / Lưu hàng loạt nhãn / bản dịch
-         * @description Upserts labels and translations (requires write permission) / Thêm/sửa hàng loạt nhãn và bản dịch
+         * @description **Screens:** VPA005301, VPA0053P01
+         *
+         *     Upserts labels and translations (requires write permission) / Thêm/sửa hàng loạt nhãn và bản dịch
          */
         post: operations["saveBatch"];
         delete?: never;
@@ -3242,9 +4513,11 @@ export interface paths {
         put?: never;
         /**
          * Create menu / Đăng ký menu mới
-         * @description Registers a new menu and its associated multilingual labels. Requires ADMIN role and write permission. / Đăng ký một menu mới và nhãn đa ngôn ngữ liên quan. Yêu cầu vai trò ADMIN và quyền ghi.
+         * @description **Screens:** VPA004401, VPA0044P01
+         *
+         *     Registers a new menu and its associated multilingual labels. Requires ADMIN role and write permission. / Đăng ký một menu mới và nhãn đa ngôn ngữ liên quan. Yêu cầu vai trò ADMIN và quyền ghi.
          */
-        post: operations["createMenu"];
+        post: operations["createMenu_1"];
         delete?: never;
         options?: never;
         head?: never;
@@ -3261,8 +4534,10 @@ export interface paths {
         get?: never;
         put?: never;
         /**
-         * Token Refresh / Làm mới Token
-         * @description Issues new Access/Refresh tokens via HttpOnly cookie (refresh_token). (Token Rotation applied) / Cấp Access/Refresh Token mới qua cookie HttpOnly (áp dụng Token Rotation).
+         * Token Refresh
+         * @description **Screens:** VPA000701, VPA000101
+         *
+         *     Issues new Access/Refresh tokens via HttpOnly cookie (refresh_token). (Token Rotation applied)
          */
         post: operations["refresh"];
         delete?: never;
@@ -3281,8 +4556,10 @@ export interface paths {
         get?: never;
         put?: never;
         /**
-         * Logout / Đăng xuất
-         * @description Invalidates access token and clears refresh token cookie. / Vô hiệu hóa access token và xóa cookie refresh token.
+         * Logout
+         * @description **Screens:** VPA000701, VPA000101
+         *
+         *     Invalidates access token and clears refresh token cookie.
          */
         post: operations["logout"];
         delete?: never;
@@ -3301,8 +4578,10 @@ export interface paths {
         get?: never;
         put?: never;
         /**
-         * User Login / Đăng nhập
-         * @description Authenticates user and issues JWT token. Refresh Token is issued as HttpOnly cookie (refresh_token). / Xác thực người dùng và cấp phát JWT token. Refresh Token được cấp qua HttpOnly cookie.
+         * User Login
+         * @description **Screens:** VPA000701, VPA000101
+         *
+         *     Authenticates user and issues JWT token. Refresh Token is issued as HttpOnly cookie (refresh_token).
          */
         post: operations["login"];
         delete?: never;
@@ -3320,7 +4599,10 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Force refresh all schedules / Làm mới toàn bộ lịch chạy batch */
+        /**
+         * Force refresh all schedules / Làm mới toàn bộ lịch chạy batch
+         * @description **Screens:** VPA005401, VPA0054P01
+         */
         post: operations["refreshSchedules"];
         delete?: never;
         options?: never;
@@ -3335,10 +4617,16 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Get batch job configs / Danh sách cấu hình batch job */
+        /**
+         * Get batch job configs / Danh sách cấu hình batch job
+         * @description **Screens:** VPA005401, VPA0054P01
+         */
         get: operations["getJobs"];
         put?: never;
-        /** Create batch job config / Đăng ký cấu hình batch job mới */
+        /**
+         * Create batch job config / Đăng ký cấu hình batch job mới
+         * @description **Screens:** VPA005401, VPA0054P01
+         */
         post: operations["createJob"];
         delete?: never;
         options?: never;
@@ -3355,7 +4643,10 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Execute batch job manually / Chạy thủ công batch job */
+        /**
+         * Execute batch job manually / Chạy thủ công batch job
+         * @description **Screens:** VPA005401, VPA0054P01
+         */
         post: operations["executeJob"];
         delete?: never;
         options?: never;
@@ -3378,9 +4669,33 @@ export interface paths {
         head?: never;
         /**
          * Switch fee items in use / Bật tắt sử dụng mục phí
-         * @description useYn is required. / Bắt buộc useYn.
+         * @description **Screens:** VPA004101, VPA0041P01
+         *
+         *     useYn is required. / Bắt buộc useYn.
          */
         patch: operations["updateUse"];
+        trace?: never;
+    };
+    "/api/v1/npls/{bndCd}/home-posting": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Change NPL home posting / Đổi cờ đăng trang chủ của NPL
+         * @description **Screens:** VPA001601, VPA001701, VPA0016P01, VPA0017P01
+         *
+         *     Sets Main Posting (MSCRN_PSTG_YN) and/or Recommended (RCMDTN_YN); a flag left out is kept. The user web home lists an NPL only when it is also displayed (EXPSR_YN, changed by PATCH /npls/{bndCd}/disclosure): see onHome. Requires WRITE permission on NPL management (A03010100).
+         */
+        patch: operations["updateNpl"];
         trace?: never;
     };
     "/api/v1/npls/{bndCd}/disclosure": {
@@ -3398,9 +4713,33 @@ export interface paths {
         head?: never;
         /**
          * Change the NPL disclosure
-         * @description Shows / hides an NPL and its collaterals on the platform and optionally sets the NPL status (SA, UC, SD), with a reason. The contract flow publishes at conclusion and marks sold at the sale completion. Requires WRITE permission.
+         * @description **Screens:** VPA001601
+         *
+         *     Shows / hides an NPL and its collaterals on the platform and optionally sets the NPL status (SA, UC, SD), with a reason. The contract flow publishes at conclusion and marks sold at the sale completion. Requires WRITE permission.
          */
         patch: operations["updateDisclosure"];
+        trace?: never;
+    };
+    "/api/v1/notification-messages/{notiMsgId}/use": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Switch notification template use / Bật tắt mẫu thông báo
+         * @description **Screens:** VPA005501, VPA0055P01
+         *
+         *     N unlocks editing; Y applies it (409 NTF003 on a duplicate in use). Requires WRITE permission.
+         */
+        patch: operations["updateUse_1"];
         trace?: never;
     };
     "/api/v1/contents/service-guides/reorder": {
@@ -3418,7 +4757,9 @@ export interface paths {
         head?: never;
         /**
          * Reorder sections of a page / Sắp xếp section trong trang
-         * @description category = page; pstNos must list every section of the page. / pstNos gồm toàn bộ section của trang.
+         * @description **Screens:** VPA005701, VPA0057P01
+         *
+         *     category = page; pstNos must list every section of the page. / pstNos gồm toàn bộ section của trang.
          */
         patch: operations["reorderSections"];
         trace?: never;
@@ -3438,7 +4779,9 @@ export interface paths {
         head?: never;
         /**
          * Bulk publish / hide sections / Hiện hoặc ẩn section
-         * @description Hidden sections fall back to the built-in text on the platform. / Section bị ẩn sẽ dùng nội dung mặc định.
+         * @description **Screens:** VPA005701, VPA0057P01
+         *
+         *     Hidden sections fall back to the built-in text on the platform. / Section bị ẩn sẽ dùng nội dung mặc định.
          */
         patch: operations["publishSections"];
         trace?: never;
@@ -3458,7 +4801,9 @@ export interface paths {
         head?: never;
         /**
          * Update NPL announcement status / Cập nhật trạng thái thông báo NPL
-         * @description Type, published flag and top display (editable while published). / Loại, trạng thái đăng, hiển thị đầu trang.
+         * @description **Screens:** VPA002701, VPA002801, VPA002901, VPA0027P01, VPA0028P01, VPA0029P01
+         *
+         *     Type, published flag and top display (editable while published). / Loại, trạng thái đăng, hiển thị đầu trang.
          */
         patch: operations["updateAnnouncementStatus"];
         trace?: never;
@@ -3478,7 +4823,9 @@ export interface paths {
         head?: never;
         /**
          * Bulk post / stop posting NPL announcements / Đăng hoặc dừng đăng hàng loạt
-         * @description Returns the number of updated announcements. / Trả về số bài được cập nhật.
+         * @description **Screens:** VPA002701, VPA002801, VPA002901, VPA0027P01, VPA0028P01, VPA0029P01
+         *
+         *     Returns the number of updated announcements. / Trả về số bài được cập nhật.
          */
         patch: operations["publishAnnouncements"];
         trace?: never;
@@ -3498,7 +4845,9 @@ export interface paths {
         head?: never;
         /**
          * Update notice status / Cập nhật trạng thái thông báo
-         * @description Notice type, published flag and pin settings (editable while published). / Loại, trạng thái đăng, ghim (sửa được khi đang đăng).
+         * @description **Screens:** VPA002301, VPA0023P01
+         *
+         *     Notice type, published flag and pin settings (editable while published). / Loại, trạng thái đăng, ghim (sửa được khi đang đăng).
          */
         patch: operations["updateNoticeStatus"];
         trace?: never;
@@ -3518,7 +4867,9 @@ export interface paths {
         head?: never;
         /**
          * Bulk post / stop posting notices / Đăng hoặc dừng đăng hàng loạt
-         * @description Returns the number of updated notices. / Trả về số bài được cập nhật.
+         * @description **Screens:** VPA002301, VPA0023P01
+         *
+         *     Returns the number of updated notices. / Trả về số bài được cập nhật.
          */
         patch: operations["publishNotices"];
         trace?: never;
@@ -3538,7 +4889,9 @@ export interface paths {
         head?: never;
         /**
          * Update news status / Cập nhật trạng thái tin
-         * @description Category, published flag and featured (pinned) settings. / Danh mục, trạng thái đăng, bài nổi bật.
+         * @description **Screens:** VPA002401, VPA002501, VPA002601, VPA0024P01, VPA0025P01, VPA0026P01
+         *
+         *     Category, published flag and featured (pinned) settings. / Danh mục, trạng thái đăng, bài nổi bật.
          */
         patch: operations["updateStatus_1"];
         trace?: never;
@@ -3558,7 +4911,9 @@ export interface paths {
         head?: never;
         /**
          * Bulk publish / unpublish / Đăng hoặc dừng đăng hàng loạt
-         * @description Returns the number of updated posts. / Trả về số bài được cập nhật.
+         * @description **Screens:** VPA002401, VPA002501, VPA002601, VPA0024P01, VPA0025P01, VPA0026P01
+         *
+         *     Returns the number of updated posts. / Trả về số bài được cập nhật.
          */
         patch: operations["publish"];
         trace?: never;
@@ -3578,7 +4933,9 @@ export interface paths {
         head?: never;
         /**
          * Bulk publish / unpublish / Đăng hoặc dừng đăng hàng loạt
-         * @description Returns the number of updated posts. / Trả về số bài được cập nhật.
+         * @description **Screens:** VPA003301, VPA0033P01
+         *
+         *     Returns the number of updated posts. / Trả về số bài được cập nhật.
          */
         patch: operations["publish_1"];
         trace?: never;
@@ -3598,7 +4955,9 @@ export interface paths {
         head?: never;
         /**
          * Change inquiry category
-         * @description Re-classifies the inquiry, e.g. to consulting (CNS) before answering with the consulting application link (consulting flow step 1). Returns 400 (CNT018) for an unknown category.
+         * @description **Screens:** VPA003001, VPA0030P01
+         *
+         *     Re-classifies the inquiry, e.g. to consulting (CNS) before answering with the consulting application link (consulting flow step 1). Returns 400 (CNT018) for an unknown category.
          */
         patch: operations["changeCategory"];
         trace?: never;
@@ -3618,7 +4977,9 @@ export interface paths {
         head?: never;
         /**
          * Update FAQ status / Cập nhật trạng thái FAQ
-         * @description Category and published flag (pinning is not supported for FAQ). / Danh mục và trạng thái đăng (FAQ không hỗ trợ ghim).
+         * @description **Screens:** VPA003101, VPA0031P01
+         *
+         *     Category and published flag (pinning is not supported for FAQ). / Danh mục và trạng thái đăng (FAQ không hỗ trợ ghim).
          */
         patch: operations["updateFaqStatus"];
         trace?: never;
@@ -3638,7 +4999,9 @@ export interface paths {
         head?: never;
         /**
          * Reorder FAQs in a category / Sắp xếp lại FAQ trong danh mục
-         * @description pstNos must list every FAQ of the category in the desired order. / pstNos phải gồm toàn bộ FAQ của danh mục theo thứ tự mong muốn.
+         * @description **Screens:** VPA003101, VPA0031P01
+         *
+         *     pstNos must list every FAQ of the category in the desired order. / pstNos phải gồm toàn bộ FAQ của danh mục theo thứ tự mong muốn.
          */
         patch: operations["reorderFaqs"];
         trace?: never;
@@ -3658,7 +5021,9 @@ export interface paths {
         head?: never;
         /**
          * Bulk post / stop posting FAQs / Đăng hoặc dừng đăng hàng loạt
-         * @description Returns the number of updated FAQs. / Trả về số FAQ được cập nhật.
+         * @description **Screens:** VPA003101, VPA0031P01
+         *
+         *     Returns the number of updated FAQs. / Trả về số FAQ được cập nhật.
          */
         patch: operations["publishFaqs"];
         trace?: never;
@@ -3678,7 +5043,9 @@ export interface paths {
         head?: never;
         /**
          * Bulk publish / unpublish / Đăng hoặc dừng đăng hàng loạt
-         * @description Returns the number of updated posts. / Trả về số bài được cập nhật.
+         * @description **Screens:** VPA003401, VPA0034P01
+         *
+         *     Returns the number of updated posts. / Trả về số bài được cập nhật.
          */
         patch: operations["publish_2"];
         trace?: never;
@@ -3698,9 +5065,11 @@ export interface paths {
         head?: never;
         /**
          * Switch banners in use / Bật tắt sử dụng banner
-         * @description useYn is required. / Bắt buộc useYn.
+         * @description **Screens:** VPA003201, VPA0032P01
+         *
+         *     useYn is required. / Bắt buộc useYn.
          */
-        patch: operations["updateUse_1"];
+        patch: operations["updateUse_2"];
         trace?: never;
     };
     "/api/v1/contents/about/reorder": {
@@ -3743,6 +5112,28 @@ export interface paths {
         patch: operations["publish_3"];
         trace?: never;
     };
+    "/api/v1/collateral-assets/{cltrAstCd}/home-posting": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Change collateral home posting / Đổi cờ đăng trang chủ của tài sản bảo đảm
+         * @description **Screens:** VPA001601, VPA001701, VPA0016P01, VPA0017P01
+         *
+         *     Sets Main Posting (MSCRN_PSTG_YN) and/or Recommended (RCMDTN_YN); a flag left out is kept. The user web home lists a collateral asset only when it is also displayed (EXPSR_YN): see onHome. Requires WRITE permission on collateral management (A03010200).
+         */
+        patch: operations["updateCollateral"];
+        trace?: never;
+    };
     "/api/v1/trade-files/{fileUnqId}": {
         parameters: {
             query?: never;
@@ -3752,7 +5143,9 @@ export interface paths {
         };
         /**
          * Get trade document group
-         * @description Active files of a group. Requires READ permission on the contract or application menu of the kind.
+         * @description **Screens:** VPA0010P01, VPA0011P01, VPA0012P01, VPA0013P01, VPA0014P01
+         *
+         *     Active files of a group. Requires READ permission on the contract or application menu of the kind.
          */
         get: operations["getGroup"];
         put?: never;
@@ -3772,9 +5165,55 @@ export interface paths {
         };
         /**
          * Get processing history
-         * @description Status changes of the application, oldest first. Requires READ permission.
+         * @description **Screens:** VPA001101, VPA0011P01
+         *
+         *     Status changes of the application, oldest first. Requires READ permission.
          */
         get: operations["getHistories"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/service-applications/sale/{srvcAplyId}/member": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get applicant member (VPA001001/VPA001101/VPA001201 popup)
+         * @description **Screens:** VPA001101, VPA0011P01
+         *
+         *     Member information popup opened from the application list; phone, e-mail and ID numbers are masked, files omitted. Requires READ permission on the application menu.
+         */
+        get: operations["getApplicationMember"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/service-applications/sale/excel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Export applications to Excel
+         * @description **Screens:** VPA001101, VPA0011P01
+         *
+         *     Excel download (VPA001001) of the list with the same filters, at most 10,000 rows. Requires READ permission.
+         */
+        get: operations["exportExcel"];
         put?: never;
         post?: never;
         delete?: never;
@@ -3792,9 +5231,55 @@ export interface paths {
         };
         /**
          * Get processing history
-         * @description Status changes of the application, oldest first. Requires READ permission.
+         * @description **Screens:** VPA001001, VPA0010P01, VPA0004P01, VPA0004P04
+         *
+         *     Status changes of the application, oldest first. Requires READ permission.
          */
         get: operations["getHistories_1"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/service-applications/purchase/{srvcAplyId}/member": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get applicant member (VPA001001/VPA001101/VPA001201 popup)
+         * @description **Screens:** VPA001001, VPA0010P01, VPA0004P01, VPA0004P04
+         *
+         *     Member information popup opened from the application list; phone, e-mail and ID numbers are masked, files omitted. Requires READ permission on the application menu.
+         */
+        get: operations["getApplicationMember_1"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/service-applications/purchase/excel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Export applications to Excel
+         * @description **Screens:** VPA001001, VPA0010P01, VPA0004P01, VPA0004P04
+         *
+         *     Excel download (VPA001001) of the list with the same filters, at most 10,000 rows. Requires READ permission.
+         */
+        get: operations["exportExcel_1"];
         put?: never;
         post?: never;
         delete?: never;
@@ -3812,9 +5297,55 @@ export interface paths {
         };
         /**
          * Get processing history
-         * @description Status changes of the application, oldest first. Requires READ permission.
+         * @description **Screens:** VPA001201, VPA0012P01
+         *
+         *     Status changes of the application, oldest first. Requires READ permission.
          */
         get: operations["getHistories_2"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/service-applications/consulting/{srvcAplyId}/member": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get applicant member (VPA001001/VPA001101/VPA001201 popup)
+         * @description **Screens:** VPA001201, VPA0012P01
+         *
+         *     Member information popup opened from the application list; phone, e-mail and ID numbers are masked, files omitted. Requires READ permission on the application menu.
+         */
+        get: operations["getApplicationMember_2"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/service-applications/consulting/excel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Export applications to Excel
+         * @description **Screens:** VPA001201, VPA0012P01
+         *
+         *     Excel download (VPA001001) of the list with the same filters, at most 10,000 rows. Requires READ permission.
+         */
+        get: operations["exportExcel_2"];
         put?: never;
         post?: never;
         delete?: never;
@@ -3832,9 +5363,33 @@ export interface paths {
         };
         /**
          * Search contracts
-         * @description Contracts and annexes with the remaining days (D-xx), fee stage and latest approval. Requires READ permission.
+         * @description **Screens:** VPA001401, VPA0014P01, VPA0014P02
+         *
+         *     Contracts and annexes with the remaining days (D-xx), fee stage and latest approval. Requires READ permission.
          */
         get: operations["getContracts"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/sale-brokerage-contracts/{ctrtCd}/member": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get contract member (VPA001301/VPA001401 popup)
+         * @description **Screens:** VPA001401, VPA0014P01, VPA0014P02
+         *
+         *     Member information popup opened from the contract list; phone, e-mail and ID numbers are masked, files omitted. Requires READ permission on the contract menu.
+         */
+        get: operations["getContractMember"];
         put?: never;
         post?: never;
         delete?: never;
@@ -3852,7 +5407,9 @@ export interface paths {
         };
         /**
          * Get fee installments
-         * @description Installments, receipts and refunds. Requires READ permission.
+         * @description **Screens:** VPA001401, VPA0014P01, VPA0014P02
+         *
+         *     Installments, receipts and refunds. Requires READ permission.
          */
         get: operations["getFees_1"];
         put?: never;
@@ -3872,9 +5429,33 @@ export interface paths {
         };
         /**
          * Get approval history
-         * @description Approval sessions of the contract and of its terminations. Requires READ permission.
+         * @description **Screens:** VPA001401, VPA0014P01, VPA0014P02
+         *
+         *     Approval sessions of the contract and of its terminations. Requires READ permission.
          */
         get: operations["getApprovalHistories"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/sale-brokerage-contracts/excel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Export contracts to Excel
+         * @description **Screens:** VPA001401, VPA0014P01, VPA0014P02
+         *
+         *     Excel download (VPA001301) of contracts and annexes with the same filters, at most 10,000 rows. Requires READ permission.
+         */
+        get: operations["exportExcel_3"];
         put?: never;
         post?: never;
         delete?: never;
@@ -3892,14 +5473,18 @@ export interface paths {
         };
         /**
          * Get single menu permission for role / Chi tiết phân quyền menu của vai trò
-         * @description Returns permission level for a specific menu and role. / Trả về mức phân quyền của một menu cụ thể cho vai trò.
+         * @description **Screens:** VPA004701
+         *
+         *     Returns permission level for a specific menu and role. / Trả về mức phân quyền của một menu cụ thể cho vai trò.
          */
         get: operations["getRoleMenuPermission"];
         put?: never;
         post?: never;
         /**
          * Revoke single menu permission from role / Thu hồi phân quyền menu đơn lẻ của vai trò
-         * @description Removes permission mapping for a specific menu and role. Requires WRITE permission. / Xóa ánh xạ phân quyền của một menu cụ thể khỏi vai trò. Yêu cầu quyền GHI.
+         * @description **Screens:** VPA004701
+         *
+         *     Removes permission mapping for a specific menu and role. Requires WRITE permission. / Xóa ánh xạ phân quyền của một menu cụ thể khỏi vai trò. Yêu cầu quyền GHI.
          */
         delete: operations["revokeRoleMenuPermission"];
         options?: never;
@@ -3916,7 +5501,9 @@ export interface paths {
         };
         /**
          * Get users assigned to a role / Danh sách người dùng theo vai trò
-         * @description Returns paginated users assigned to a specific role group and/or role ID. / Trả về danh sách người dùng phân trang được gán theo mã nhóm vai trò và/hoặc mã vai trò.
+         * @description **Screens:** VPA004701
+         *
+         *     Returns paginated users assigned to a specific role group and/or role ID. / Trả về danh sách người dùng phân trang được gán theo mã nhóm vai trò và/hoặc mã vai trò.
          */
         get: operations["getUsersByRole"];
         put?: never;
@@ -3936,7 +5523,9 @@ export interface paths {
         };
         /**
          * Get all users assigned to a role / Danh sách toàn bộ người dùng theo vai trò
-         * @description Returns all users assigned to a specific role group and/or role ID without pagination. / Trả về danh sách tất cả người dùng không phân trang theo mã nhóm vai trò và/hoặc mã vai trò.
+         * @description **Screens:** VPA004701
+         *
+         *     Returns all users assigned to a specific role group and/or role ID without pagination. / Trả về danh sách tất cả người dùng không phân trang theo mã nhóm vai trò và/hoặc mã vai trò.
          */
         get: operations["getAllUsersByRole"];
         put?: never;
@@ -3956,7 +5545,9 @@ export interface paths {
         };
         /**
          * List all roles / Danh sách tất cả vai trò
-         * @description Returns all roles without pagination for dropdowns. / Trả về toàn bộ vai trò không phân trang cho dropdown.
+         * @description **Screens:** VPA004701
+         *
+         *     Returns all roles without pagination for dropdowns. / Trả về toàn bộ vai trò không phân trang cho dropdown.
          */
         get: operations["getAllRoles"];
         put?: never;
@@ -3976,7 +5567,9 @@ export interface paths {
         };
         /**
          * List all role groups / Danh sách tất cả nhóm vai trò
-         * @description Returns all role groups without pagination for dropdowns. / Trả về toàn bộ nhóm vai trò không phân trang cho dropdown.
+         * @description **Screens:** VPA004601, VPA0046P01
+         *
+         *     Returns all role groups without pagination for dropdowns. / Trả về toàn bộ nhóm vai trò không phân trang cho dropdown.
          */
         get: operations["getAllRoleGroups"];
         put?: never;
@@ -3996,9 +5589,33 @@ export interface paths {
         };
         /**
          * Search contracts
-         * @description Contracts and annexes with the remaining days (D-xx), fee stage and latest approval. Requires READ permission.
+         * @description **Screens:** VPA001301, VPA0013P01, VPA0013P02
+         *
+         *     Contracts and annexes with the remaining days (D-xx), fee stage and latest approval. Requires READ permission.
          */
         get: operations["getContracts_1"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/purchase-brokerage-contracts/{ctrtCd}/member": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get contract member (VPA001301/VPA001401 popup)
+         * @description **Screens:** VPA001301, VPA0013P01, VPA0013P02
+         *
+         *     Member information popup opened from the contract list; phone, e-mail and ID numbers are masked, files omitted. Requires READ permission on the contract menu.
+         */
+        get: operations["getContractMember_1"];
         put?: never;
         post?: never;
         delete?: never;
@@ -4016,7 +5633,9 @@ export interface paths {
         };
         /**
          * Get fee installments
-         * @description Installments, receipts and refunds. Requires READ permission.
+         * @description **Screens:** VPA001301, VPA0013P01, VPA0013P02
+         *
+         *     Installments, receipts and refunds. Requires READ permission.
          */
         get: operations["getFees_2"];
         put?: never;
@@ -4036,9 +5655,231 @@ export interface paths {
         };
         /**
          * Get approval history
-         * @description Approval sessions of the contract and of its terminations. Requires READ permission.
+         * @description **Screens:** VPA001301, VPA0013P01, VPA0013P02
+         *
+         *     Approval sessions of the contract and of its terminations. Requires READ permission.
          */
         get: operations["getApprovalHistories_1"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/purchase-brokerage-contracts/excel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Export contracts to Excel
+         * @description **Screens:** VPA001301, VPA0013P01, VPA0013P02
+         *
+         *     Excel download (VPA001301) of contracts and annexes with the same filters, at most 10,000 rows. Requires READ permission.
+         */
+        get: operations["exportExcel_4"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/platform/fees/excel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Excel download / Tải Excel
+         * @description **Screens:** VPA004101, VPA0041P01
+         *
+         *     Exports the list with the same search conditions and order (max 10,000 rows). / Xuất danh sách theo điều kiện tìm kiếm.
+         */
+        get: operations["exportFees"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/npls": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Search NPLs
+         * @description **Screens:** VPA001601, VPA0006P01, VPA0019P01
+         *
+         *     NPL list with filters and paging; lotYn=N gives the single-NPL selection popup. Requires READ on the NPL menus (A03010100, A03010400) or on a trade application/contract menu.
+         */
+        get: operations["getNpls"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/npls/{bndCd}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get NPL detail
+         * @description **Screens:** VPA001601, VPA0006P01, VPA0019P01
+         *
+         *     NPL popup (LOT or single) with evaluation, files, collaterals, creditors and debtors. Debtor personal data is in clear (and the read is audited) only with READ on A03010300, otherwise masked. Same read permission as the list.
+         */
+        get: operations["getNpl"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/npl-lots/excel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Export NPL LOTs to Excel
+         * @description **Screens:** VPA001901
+         *
+         *     Exports the list filters as Excel, at most 10,000 rows. Requires READ on A03010400.
+         */
+        get: operations["exportNplLots"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/notification-histories": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List sent notifications / Danh sách thông báo đã gửi
+         * @description **Screens:** VPA005601
+         *
+         *     fromDt and toDt are required, at most 92 days apart (400 NTF005). Keyword on TITLE (default), CONTENT or RECIPIENT. Sort: notiSndngDt (default, newest first), notiMediaSe, notiTtl, sndngScsYn. Requires READ permission on Notification Management (A06060100).
+         */
+        get: operations["getHistories_3"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/notification-histories/{logId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get sent notification / Chi tiết thông báo đã gửi
+         * @description **Screens:** VPA005601
+         *
+         *     With the content and the failure reason. Requires READ permission.
+         */
+        get: operations["getHistory"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/notification-histories/excel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Excel download / Tải Excel
+         * @description **Screens:** VPA005601
+         *
+         *     Same conditions and order as the list, max 10,000 rows, content not exported. Requires READ permission.
+         */
+        get: operations["export"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/members/{mbrNo}/application-history": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get sign-up application history / Lịch sử nộp hồ sơ đăng ký
+         * @description **Screens:** VPA000801, VPA0002P01, VPA0008P01
+         *
+         *     Review rounds of the sign-up application, oldest first: each approval session with its outcome (IN_PROGRESS, APPROVED, SUPPLEMENT_REQUESTED, REJECTED), the closing employee and the supplement note or rejection reason. Also returns the current round (aplyRndNo, 2+ = re-submitted) and the open supplement note (U) or rejection reason (R). The user web clears both from the member record when the applicant re-applies; this API keeps them visible. A supplement requested before receipt opens no session: it shows only while the status is U. Requires READ permission on sign-up (A01010000) or member management (A01020000).
+         */
+        get: operations["getApplicationHistory"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/members/excel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Excel download of the member list / Tải Excel danh sách hội viên
+         * @description **Screens:** VPA000801, VPA0002P01, VPA0008P01
+         *
+         *     VPA03010001 Excel Download: same search conditions and masking as the list (max 10,000 rows); deleted members only when mbrGrdCds contains DELETED. Requires READ on menu A01010000. / Cùng điều kiện tìm kiếm và che dữ liệu như danh sách.
+         */
+        get: operations["excel"];
         put?: never;
         post?: never;
         delete?: never;
@@ -4056,7 +5897,9 @@ export interface paths {
         };
         /**
          * Get sign-up work counters
-         * @description Step 5: counters for the admin header badge - new applications waiting for receipt, supplement requests, applications assigned to me and awaiting my decision. Requires READ permission.
+         * @description **Screens:** VPA000801, VPA0002P01, VPA0008P01
+         *
+         *     Step 5: counters for the admin header badge - new applications waiting for receipt, supplement requests, applications assigned to me and awaiting my decision. Requires READ permission.
          */
         get: operations["getApprovalSummary"];
         put?: never;
@@ -4076,9 +5919,209 @@ export interface paths {
         };
         /**
          * Get districts by province / Danh sách Quận/Huyện theo Tỉnh
-         * @description Returns all districts belonging to a province. / Trả về danh sách Quận/Huyện trực thuộc một Tỉnh/Thành phố.
+         * @description **Screens:** VPA004901, VPA0049P01
+         *
+         *     Returns all districts belonging to a province. / Trả về danh sách Quận/Huyện trực thuộc một Tỉnh/Thành phố.
          */
         get: operations["getDistrictsByProvince"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/locations/provinces/excel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Excel download of provinces / Tải Excel Tỉnh/Thành phố
+         * @description **Screens:** VPA004901, VPA0049P01
+         *
+         *     Exports the list with the same search conditions (max 10,000 rows). / Xuất danh sách theo điều kiện tìm kiếm.
+         */
+        get: operations["exportProvinces"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/live-auctions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Live auction list / Danh sách đấu giá trực tiếp
+         * @description **Screens:** VPA002201, VPA0022P01
+         *
+         *     Same board as the bidder list (default statuses AN, IP, PS, AW, FL, CL, WP, ST, DF). Requires READ permission (A07030000).
+         */
+        get: operations["getAuctions_1"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/live-auctions/{auctnNo}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Live auction summary / Tóm tắt
+         * @description **Screens:** VPA002201, VPA0022P01
+         *
+         *     Cards, winner (masked) and availableActions. Requires READ permission.
+         */
+        get: operations["getSummary"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/live-auctions/{auctnNo}/winning-bid-certificate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Winning bid certificate data / Dữ liệu phiếu xác nhận trúng đấu giá
+         * @description **Screens:** VPA002201, VPA0022P01
+         *
+         *     Awarded auctions only (409 AUC011); carries the winner's full name. Requires READ permission.
+         */
+        get: operations["getCertificate"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/live-auctions/{auctnNo}/snapshot": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Polling snapshot / Ảnh chụp để polling
+         * @description **Screens:** VPA002201, VPA0022P01
+         *
+         *     Summary plus up to 100 valid bids after lastBidNo (oldest first). Poll every 2 s. Requires READ permission.
+         */
+        get: operations["getSnapshot"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/live-auctions/{auctnNo}/bids": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Bids / Lượt đặt giá
+         * @description **Screens:** VPA002201, VPA0022P01
+         *
+         *     Valid bids, newest first; seq = order in time. Requires READ permission.
+         */
+        get: operations["getBids"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/live-auctions/{auctnNo}/auction-record": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Auction record data / Dữ liệu biên bản đấu giá
+         * @description **Screens:** VPA002201, VPA0022P01
+         *
+         *     Overview, result summary and every valid bid (bidders masked). Requires READ permission.
+         */
+        get: operations["getRecord"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/languages": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List languages / Danh sách ngôn ngữ
+         * @description **Screens:** VPA005301, VPA0053P01
+         *
+         *     All languages, including not in use. / Gồm cả ngôn ngữ không sử dụng.
+         */
+        get: operations["getLanguages"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/labels/detail": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get label / Chi tiết nhãn
+         * @description **Screens:** VPA005301, VPA0053P01
+         *
+         *     Label with translations for every active language. / Nhãn kèm bản dịch các ngôn ngữ đang dùng.
+         */
+        get: operations["getDetail"];
         put?: never;
         post?: never;
         delete?: never;
@@ -4096,9 +6139,171 @@ export interface paths {
         };
         /**
          * Get branches by institution / Danh sách Chi nhánh theo Tổ chức tài chính
-         * @description Returns all branches belonging to an institution. / Trả về danh sách chi nhánh trực thuộc một tổ chức tài chính.
+         * @description **Screens:** VPA005001, VPA0050P01
+         *
+         *     Returns all branches belonging to an institution. / Trả về danh sách chi nhánh trực thuộc một tổ chức tài chính.
          */
         get: operations["getBranchesByInstitution"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/institutions/excel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Excel download of institutions / Tải Excel Tổ chức tài chính
+         * @description **Screens:** VPA005001, VPA0050P01
+         *
+         *     Exports the list with the same search conditions (max 10,000 rows). / Xuất danh sách theo điều kiện tìm kiếm.
+         */
+        get: operations["exportInstitutions"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/employees/lookup": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Employee lookup popup / Popup chọn nhân viên
+         * @description **Screens:** VPA004501, VPA0045P01
+         *
+         *     Lists active employees (no contact data) for picking role assignees; can exclude those already assigned. / Liệt kê nhân viên đang làm việc (không có thông tin liên lạc) để chọn người phụ trách; có thể loại người đã được gán.
+         */
+        get: operations["lookupEmployees"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/debtors": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Search debtors
+         * @description **Screens:** VPA001801, VPA0018P01
+         *
+         *     Debtor list with filters, sort (dbtrCd, dbtrNm, cptl; default newest first) and paging. Personal data in clear, audited. Requires READ on A03010300.
+         */
+        get: operations["getDebtors"];
+        put?: never;
+        post?: never;
+        /**
+         * Soft delete debtors
+         * @description **Screens:** VPA001801, VPA0018P01
+         *
+         *     Sets the status to deleted (D). Returns 409 (DBT001) while a debtor is linked to an NPL. Requires WRITE on A03010300.
+         */
+        delete: operations["deleteDebtors"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/debtors/{dbtrCd}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get debtor detail
+         * @description **Screens:** VPA001801, VPA0018P01
+         *
+         *     Debtor popup. Personal data in clear and audited with READ on A03010300, masked when the caller only has an NPL read menu.
+         */
+        get: operations["getDebtor"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/debtors/excel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Export debtors to Excel
+         * @description **Screens:** VPA001801, VPA0018P01
+         *
+         *     Exports the list filters as Excel with personal data in clear, at most 10,000 rows, audited. Requires READ on A03010300.
+         */
+        get: operations["exportDebtors"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/dashboard/summary": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get dashboard counters / Số liệu dashboard
+         * @description **Screens:** VPA000101
+         *
+         *     Provisional: the VPA000101 widgets are still to be confirmed. Returns the approvals waiting for the signed-in employee, the sign-up work counters (with sign-up menu permission) and the user web home posting counters (with NPL or collateral menu permission); a block without permission is null. Any authenticated employee.
+         */
+        get: operations["getSummary_1"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/contents/service-guides/exchange-rates": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List exchange rates / Danh sách tỷ giá
+         * @description **Screens:** VPA005701, VPA0057P01
+         *
+         *     All EXCHRT_INFO rows synced from Vietcombank, displayed first then by code; displayedOnly=true keeps EXPSR_YN = Y. / Hiển thị trước, rồi theo mã.
+         */
+        get: operations["getExchangeRates"];
         put?: never;
         post?: never;
         delete?: never;
@@ -4116,7 +6321,9 @@ export interface paths {
         };
         /**
          * Dropdown options / Danh sách lựa chọn
-         * @description Document types, groups, fields and issuing authorities. / Loại văn bản, nhóm, lĩnh vực, cơ quan ban hành.
+         * @description **Screens:** VPA003301, VPA0033P01
+         *
+         *     Document types, groups, fields and issuing authorities. / Loại văn bản, nhóm, lĩnh vực, cơ quan ban hành.
          */
         get: operations["options"];
         put?: never;
@@ -4136,9 +6343,11 @@ export interface paths {
         };
         /**
          * Excel download / Tải Excel
-         * @description Exports the list with the same search conditions (max 10,000 rows). / Xuất danh sách theo điều kiện tìm kiếm.
+         * @description **Screens:** VPA003301, VPA0033P01
+         *
+         *     Exports the list with the same search conditions (max 10,000 rows). / Xuất danh sách theo điều kiện tìm kiếm.
          */
-        get: operations["excel"];
+        get: operations["excel_1"];
         put?: never;
         post?: never;
         delete?: never;
@@ -4156,7 +6365,9 @@ export interface paths {
         };
         /**
          * List inquiries / Danh sách câu hỏi
-         * @description Default filter: unanswered. Inquirer names are masked. / Mặc định lọc câu hỏi chưa trả lời; tên người hỏi được che.
+         * @description **Screens:** VPA003001, VPA0030P01
+         *
+         *     Default filter: unanswered. Inquirer names are masked. / Mặc định lọc câu hỏi chưa trả lời; tên người hỏi được che.
          */
         get: operations["getInquiries"];
         put?: never;
@@ -4176,7 +6387,9 @@ export interface paths {
         };
         /**
          * Get inquiry detail / Chi tiết câu hỏi
-         * @description Inquirer name, e-mail and phone are masked. Audited as a personal data read. / Tên, email, SĐT được che; có ghi audit.
+         * @description **Screens:** VPA003001, VPA0030P01
+         *
+         *     Inquirer name, e-mail and phone are masked. Audited as a personal data read. / Tên, email, SĐT được che; có ghi audit.
          */
         get: operations["getInquiry"];
         put?: never;
@@ -4196,9 +6409,11 @@ export interface paths {
         };
         /**
          * Excel download / Tải Excel
-         * @description Exports the inquiry list with the same search conditions (names masked, max 10,000 rows). / Xuất danh sách câu hỏi (tên đã che).
+         * @description **Screens:** VPA003001, VPA0030P01
+         *
+         *     Exports the inquiry list with the same search conditions (names masked, max 10,000 rows). / Xuất danh sách câu hỏi (tên đã che).
          */
-        get: operations["excel_1"];
+        get: operations["excel_2"];
         put?: never;
         post?: never;
         delete?: never;
@@ -4236,9 +6451,11 @@ export interface paths {
         };
         /**
          * Excel download / Tải Excel
-         * @description Exports the FAQ list with the same search conditions (max 10,000 rows). / Xuất danh sách FAQ theo điều kiện tìm kiếm.
+         * @description **Screens:** VPA003101, VPA0031P01
+         *
+         *     Exports the FAQ list with the same search conditions (max 10,000 rows). / Xuất danh sách FAQ theo điều kiện tìm kiếm.
          */
-        get: operations["excel_2"];
+        get: operations["excel_3"];
         put?: never;
         post?: never;
         delete?: never;
@@ -4256,9 +6473,11 @@ export interface paths {
         };
         /**
          * Excel download / Tải Excel
-         * @description Exports the list with the same search conditions (max 10,000 rows). / Xuất danh sách theo điều kiện tìm kiếm.
+         * @description **Screens:** VPA003401, VPA0034P01
+         *
+         *     Exports the list with the same search conditions (max 10,000 rows). / Xuất danh sách theo điều kiện tìm kiếm.
          */
-        get: operations["excel_3"];
+        get: operations["excel_4"];
         put?: never;
         post?: never;
         delete?: never;
@@ -4276,9 +6495,11 @@ export interface paths {
         };
         /**
          * Excel download / Tải Excel
-         * @description Exports the list with the same search conditions (max 10,000 rows). / Xuất danh sách theo điều kiện tìm kiếm.
+         * @description **Screens:** VPA003201, VPA0032P01
+         *
+         *     Exports the list with the same search conditions (max 10,000 rows). / Xuất danh sách theo điều kiện tìm kiếm.
          */
-        get: operations["excel_4"];
+        get: operations["excel_5"];
         put?: never;
         post?: never;
         delete?: never;
@@ -4296,9 +6517,33 @@ export interface paths {
         };
         /**
          * Search contracts
-         * @description Contracts and annexes with the remaining days (D-xx), fee stage and latest approval. Requires READ permission.
+         * @description **Screens:** VPA001501
+         *
+         *     Contracts and annexes with the remaining days (D-xx), fee stage and latest approval. Requires READ permission.
          */
         get: operations["getContracts_2"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/consulting-contracts/{ctrtCd}/member": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get contract member (VPA001301/VPA001401 popup)
+         * @description **Screens:** VPA001501
+         *
+         *     Member information popup opened from the contract list; phone, e-mail and ID numbers are masked, files omitted. Requires READ permission on the contract menu.
+         */
+        get: operations["getContractMember_2"];
         put?: never;
         post?: never;
         delete?: never;
@@ -4316,7 +6561,9 @@ export interface paths {
         };
         /**
          * Get fee installments
-         * @description Installments, receipts and refunds. Requires READ permission.
+         * @description **Screens:** VPA001501
+         *
+         *     Installments, receipts and refunds. Requires READ permission.
          */
         get: operations["getFees_3"];
         put?: never;
@@ -4336,9 +6583,33 @@ export interface paths {
         };
         /**
          * Get approval history
-         * @description Approval sessions of the contract and of its terminations. Requires READ permission.
+         * @description **Screens:** VPA001501
+         *
+         *     Approval sessions of the contract and of its terminations. Requires READ permission.
          */
         get: operations["getApprovalHistories_2"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/consulting-contracts/excel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Export contracts to Excel
+         * @description **Screens:** VPA001501
+         *
+         *     Excel download (VPA001301) of contracts and annexes with the same filters, at most 10,000 rows. Requires READ permission.
+         */
+        get: operations["exportExcel_5"];
         put?: never;
         post?: never;
         delete?: never;
@@ -4356,9 +6627,33 @@ export interface paths {
         };
         /**
          * List codes by group / Danh sách mã chi tiết theo nhóm
-         * @description Returns detailed codes within a group for admin grid display. / Trả về danh sách mã chi tiết thuộc một nhóm cho bảng quản trị.
+         * @description **Screens:** VPA004801, VPA0048P01
+         *
+         *     Returns detailed codes within a group for admin grid display. / Trả về danh sách mã chi tiết thuộc một nhóm cho bảng quản trị.
          */
         get: operations["getCodesByGroup"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/common-codes/groups/excel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Excel download of code groups / Tải Excel nhóm mã
+         * @description **Screens:** VPA004801, VPA0048P01
+         *
+         *     Exports the list with the same search conditions (max 10,000 rows). / Xuất danh sách theo điều kiện tìm kiếm.
+         */
+        get: operations["exportCodeGroups"];
         put?: never;
         post?: never;
         delete?: never;
@@ -4376,9 +6671,193 @@ export interface paths {
         };
         /**
          * List all code groups / Danh sách tất cả nhóm mã
-         * @description Returns all code groups (unpaginated) with optional filters. / Trả về toàn bộ danh sách nhóm mã không phân trang.
+         * @description **Screens:** VPA004801, VPA0048P01
+         *
+         *     Returns all code groups (unpaginated) with optional filters. / Trả về toàn bộ danh sách nhóm mã không phân trang.
          */
         get: operations["getAllCodeGroups"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/collateral-assets": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Search collateral assets
+         * @description **Screens:** VPA001701, VPA0017P01
+         *
+         *     Collateral asset list with filters, sort (cltrAstCd, cltrAstNm, loanTtmEvlAmt, rcntCltrWrthAmt; default newest first) and paging. Requires READ on A03010200.
+         */
+        get: operations["getCollateralAssets"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/collateral-assets/{cltrAstCd}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get collateral asset detail
+         * @description **Screens:** VPA001701, VPA0017P01
+         *
+         *     Collateral asset popup with characteristics, linked NPLs and files. Requires READ on A03010200 or on an NPL read menu (NPL, lot, trade application/contract).
+         */
+        get: operations["getCollateralAsset"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/collateral-assets/excel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Export collateral assets to Excel
+         * @description **Screens:** VPA001701, VPA0017P01
+         *
+         *     Exports the list filters as Excel, one row per characteristic, at most 10,000 rows. Requires READ on A03010200.
+         */
+        get: operations["exportCollateralAssets"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/bidders/{bdrNo}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get bidder / Chi tiết người tham gia
+         * @description **Screens:** VPA002101, VPA0021P01
+         *
+         *     Requires READ permission.
+         */
+        get: operations["getBidder"];
+        put?: never;
+        post?: never;
+        /**
+         * Delete bidder / Xoá đơn tham gia
+         * @description **Screens:** VPA002101, VPA0021P01
+         *
+         *     AP or DQ, deposit not held, no bid (409 BDR005). Requires WRITE permission.
+         */
+        delete: operations["delete_5"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/bidders/auctions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Auctions for bidder management / Danh sách phiên để quản lý người tham gia
+         * @description **Screens:** VPA002101, VPA0021P01
+         *
+         *     Latest cycle; default statuses AN, IP, PS, AW, FL, CL, WP, ST, DF. Sort: auctnEndDt (default), auctnNo, auctnNm, auctnSttsCd. Requires READ permission (A07020000).
+         */
+        get: operations["getAuctions_2"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/bidders/auctions/{auctnNo}/bidders": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Bidders of an auction / Người tham gia của phiên
+         * @description **Screens:** VPA002101, VPA0021P01
+         *
+         *     Name, phone and e-mail masked; availableActions per row. Requires READ permission.
+         */
+        get: operations["getBidders"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/auctions/lookups/collaterals": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Collaterals of an NPL / Tài sản bảo đảm của NPL
+         * @description **Screens:** VPA002001, VPA0020P01
+         *
+         *     Target item lookup of the register popup. Requires READ permission.
+         */
+        get: operations["getCollaterals"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/auctions/excel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Excel download / Tải Excel
+         * @description **Screens:** VPA002001, VPA0020P01
+         *
+         *     Same conditions and order as the list, max 10,000 rows. Requires READ permission.
+         */
+        get: operations["export_1"];
         put?: never;
         post?: never;
         delete?: never;
@@ -4396,7 +6875,7 @@ export interface paths {
         };
         /**
          * Preview verification document inline
-         * @description Streams attached document for inline browser preview
+         * @description Streams attached document for inline browser preview. Requires READ on the owning menu (403 ACCESS_DENIED otherwise); audited as READ
          */
         get: operations["preview"];
         put?: never;
@@ -4416,7 +6895,7 @@ export interface paths {
         };
         /**
          * Download verification document
-         * @description Downloads attached verification file as attachment
+         * @description Downloads attached verification file as attachment. Requires READ on the owning menu (403 ACCESS_DENIED otherwise)
          */
         get: operations["download"];
         put?: never;
@@ -4436,9 +6915,11 @@ export interface paths {
         };
         /**
          * Get approval session detail
-         * @description Retrieves approval session state and complete steps timeline history (A-16, ADF1234_P12). Requires READ permission.
+         * @description **Screens:** VPA0003P01, VPA0003P02, VPA0003P03, VPA0003P04
+         *
+         *     Retrieves approval session state and complete steps timeline history (A-16, ADF1234_P12). Requires READ permission.
          */
-        get: operations["getDetail"];
+        get: operations["getDetail_1"];
         put?: never;
         post?: never;
         delete?: never;
@@ -4456,7 +6937,9 @@ export interface paths {
         };
         /**
          * Get my approval inbox
-         * @description In-progress approval sessions whose current step is assigned to the signed-in employee, newest first, with a navigation hint (processKind, targetScreen, menuCd, tradeKind, srvcAplyId, srvcCtrtCd, ctrtEndId, mbrNo). Any authenticated employee; only their own items are returned.
+         * @description **Screens:** VPA0003P01, VPA0003P02, VPA0003P03, VPA0003P04
+         *
+         *     In-progress approval sessions whose current step is assigned to the signed-in employee, newest first, with a navigation hint (processKind, targetScreen, menuCd, tradeKind, srvcAplyId, srvcCtrtCd, ctrtEndId, mbrNo). Any authenticated employee; only their own items are returned.
          */
         get: operations["getInbox"];
         put?: never;
@@ -4476,7 +6959,9 @@ export interface paths {
         };
         /**
          * Get my approval inbox counts
-         * @description Number of sessions waiting for the signed-in employee per process kind (member, sale, purchase, consulting, other). Any authenticated employee.
+         * @description **Screens:** VPA0003P01, VPA0003P02, VPA0003P03, VPA0003P04
+         *
+         *     Number of sessions waiting for the signed-in employee per process kind (member, sale, purchase, consulting, other). Any authenticated employee.
          */
         get: operations["getInboxSummary"];
         put?: never;
@@ -4496,7 +6981,9 @@ export interface paths {
         };
         /**
          * Search step candidate employees
-         * @description Finds eligible active employees holding the required role for an approval step (A-02, ADF1234_P08..P09). Requires READ permission.
+         * @description **Screens:** VPA0003P01, VPA0003P02, VPA0003P03, VPA0003P04
+         *
+         *     Finds eligible active employees holding the required role for an approval step (A-02, ADF1234_P08..P09). Requires READ permission.
          */
         get: operations["getCandidates"];
         put?: never;
@@ -4516,14 +7003,18 @@ export interface paths {
         };
         /**
          * Query labels by screen / Truy vấn nhãn theo màn hình
-         * @description Returns labels/translations by screen ID for admin UI / Trả về danh sách nhãn/bản dịch theo ID màn hình
+         * @description **Screens:** VPA005301, VPA0053P01
+         *
+         *     Returns labels/translations by screen ID for admin UI / Trả về danh sách nhãn/bản dịch theo ID màn hình
          */
         get: operations["getLabelsByScrn"];
         put?: never;
         post?: never;
         /**
          * Delete label / Xóa nhãn
-         * @description Deletes label and all associated translations / Xóa nhãn và toàn bộ bản dịch liên quan
+         * @description **Screens:** VPA005301, VPA0053P01
+         *
+         *     Deletes label and all associated translations / Xóa nhãn và toàn bộ bản dịch liên quan
          */
         delete: operations["deleteLabel"];
         options?: never;
@@ -4540,7 +7031,9 @@ export interface paths {
         };
         /**
          * Query label-translation rows / Truy vấn danh sách dòng nhãn-bản dịch
-         * @description Returns label-translation rows with optional filters / Trả về danh sách nhãn-bản dịch kèm các bộ lọc tùy chọn
+         * @description **Screens:** VPA005301, VPA0053P01
+         *
+         *     Returns label-translation rows with optional filters / Trả về danh sách nhãn-bản dịch kèm các bộ lọc tùy chọn
          */
         get: operations["getLabelRows"];
         put?: never;
@@ -4560,9 +7053,11 @@ export interface paths {
         };
         /**
          * Query active languages / Truy vấn danh sách ngôn ngữ
-         * @description Returns active languages in sorted order / Trả về danh sách ngôn ngữ hoạt động theo thứ tự
+         * @description **Screens:** VPA005301, VPA0053P01
+         *
+         *     Returns active languages in sorted order / Trả về danh sách ngôn ngữ hoạt động theo thứ tự
          */
-        get: operations["getLanguages"];
+        get: operations["getLanguages_1"];
         put?: never;
         post?: never;
         delete?: never;
@@ -4580,7 +7075,9 @@ export interface paths {
         };
         /**
          * Download labels upload template / Tải template Excel mẫu
-         * @description Downloads template with required columns / Tải file mẫu với các cột bắt buộc
+         * @description **Screens:** VPA005301, VPA0053P01
+         *
+         *     Downloads template with required columns / Tải file mẫu với các cột bắt buộc
          */
         get: operations["downloadTemplate"];
         put?: never;
@@ -4600,7 +7097,9 @@ export interface paths {
         };
         /**
          * Download labels Excel / Tải file Excel danh sách nhãn
-         * @description Downloads all label-translation rows as Excel / Tải toàn bộ danh sách nhãn-bản dịch dưới dạng file Excel
+         * @description **Screens:** VPA005301, VPA0053P01
+         *
+         *     Downloads all label-translation rows as Excel / Tải toàn bộ danh sách nhãn-bản dịch dưới dạng file Excel
          */
         get: operations["downloadExcel"];
         put?: never;
@@ -4620,7 +7119,9 @@ export interface paths {
         };
         /**
          * Bulk query all labels / Truy vấn toàn bộ nhãn hàng loạt
-         * @description Returns {LBL_CD: text} map based on X-Lang header / Trả về map {LBL_CD: text} theo ngôn ngữ trong header X-Lang
+         * @description **Screens:** VPA005301, VPA0053P01
+         *
+         *     Returns {LBL_CD: text} map based on X-Lang header / Trả về map {LBL_CD: text} theo ngôn ngữ trong header X-Lang
          */
         get: operations["getBulkLabels"];
         put?: never;
@@ -4651,6 +7152,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/files/download/**": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * File download / Tải về tập tin
+         * @description Downloads a stored file. / Tải về tập tin đã được lưu trữ.
+         */
+        get: operations["downloadFile_1"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/common/menus/{menuCd}/programs": {
         parameters: {
             query?: never;
@@ -4660,7 +7181,9 @@ export interface paths {
         };
         /**
          * Query programs by menu / Truy vấn chương trình theo menu
-         * @description Retrieves list of programs/screens mapped to a specific menu code. / Trả về danh sách chương trình/màn hình được liên kết với mã menu chỉ định.
+         * @description **Screens:** VPA004401, VPA0044P01
+         *
+         *     Retrieves list of programs/screens mapped to a specific menu code. / Trả về danh sách chương trình/màn hình được liên kết với mã menu chỉ định.
          */
         get: operations["getProgramsByMenuCd"];
         put?: never;
@@ -4680,7 +7203,9 @@ export interface paths {
         };
         /**
          * Query my permissions list / Truy vấn danh sách quyền cá nhân
-         * @description Retrieves detailed menu authorization permissions (AL: All, WT: Write, RD: Read-only) based on user's role. / Trả về danh sách quyền hạn chi tiết theo vai trò người dùng (AL: Toàn quyền, WT: Ghi, RD: Chỉ đọc).
+         * @description **Screens:** VPA004401, VPA0044P01
+         *
+         *     Retrieves detailed menu authorization permissions (AL: All, WT: Write, RD: Read-only) based on user's role. / Trả về danh sách quyền hạn chi tiết theo vai trò người dùng (AL: Toàn quyền, WT: Ghi, RD: Chỉ đọc).
          */
         get: operations["getMyPermissions"];
         put?: never;
@@ -4700,7 +7225,9 @@ export interface paths {
         };
         /**
          * Query my menu tree / Truy vấn cây menu cá nhân
-         * @description Retrieves hierarchical menu tree according to the authenticated user's role and requested language code. / Trả về cây menu phân cấp theo vai trò của người dùng đã đăng nhập và mã ngôn ngữ yêu cầu.
+         * @description **Screens:** VPA004401, VPA0044P01
+         *
+         *     Retrieves hierarchical menu tree according to the authenticated user's role and requested language code. / Trả về cây menu phân cấp theo vai trò của người dùng đã đăng nhập và mã ngôn ngữ yêu cầu.
          */
         get: operations["getMyMenus"];
         put?: never;
@@ -4720,7 +7247,9 @@ export interface paths {
         };
         /**
          * Query all menus list / Truy vấn danh sách toàn bộ menu
-         * @description Retrieves full menu list for administrative management with optional search filters. Requires ADMIN role. / Trả về toàn bộ danh sách menu phục vụ quản trị với các bộ lọc tìm kiếm tùy chọn. Yêu cầu vai trò ADMIN.
+         * @description **Screens:** VPA004401, VPA0044P01
+         *
+         *     Retrieves full menu list for administrative management with optional search filters. Requires ADMIN role. / Trả về toàn bộ danh sách menu phục vụ quản trị với các bộ lọc tìm kiếm tùy chọn. Yêu cầu vai trò ADMIN.
          */
         get: operations["getAllMenus"];
         put?: never;
@@ -4740,7 +7269,9 @@ export interface paths {
         };
         /**
          * Get active provinces / Lấy danh sách Tỉnh/Thành phố đang hoạt động
-         * @description Returns active provinces for dropdown selections (cached). / Trả về danh sách Tỉnh/Thành phố đang hoạt động cho các dropdown chọn lựa (có lưu cache).
+         * @description **Screens:** VPA004901, VPA0049P01
+         *
+         *     Returns active provinces for dropdown selections (cached). / Trả về danh sách Tỉnh/Thành phố đang hoạt động cho các dropdown chọn lựa (có lưu cache).
          */
         get: operations["getActiveProvinces"];
         put?: never;
@@ -4760,7 +7291,9 @@ export interface paths {
         };
         /**
          * Get active districts by province / Lấy danh sách Quận/Huyện theo Tỉnh
-         * @description Returns active districts of a province for cascaded dropdowns. / Trả về danh sách Quận/Huyện của Tỉnh cho dropdown liên kết.
+         * @description **Screens:** VPA004901, VPA0049P01
+         *
+         *     Returns active districts of a province for cascaded dropdowns. / Trả về danh sách Quận/Huyện của Tỉnh cho dropdown liên kết.
          */
         get: operations["getActiveDistrictsByProvince"];
         put?: never;
@@ -4780,7 +7313,9 @@ export interface paths {
         };
         /**
          * Get active financial institutions / Lấy danh sách Tổ chức tài chính đang hoạt động
-         * @description Returns active financial institutions for dropdown selections (cached). / Trả về danh sách tổ chức tài chính đang hoạt động cho dropdown (có lưu cache).
+         * @description **Screens:** VPA005001, VPA0050P01
+         *
+         *     Returns active financial institutions for dropdown selections (cached). / Trả về danh sách tổ chức tài chính đang hoạt động cho dropdown (có lưu cache).
          */
         get: operations["getActiveInstitutions"];
         put?: never;
@@ -4800,7 +7335,9 @@ export interface paths {
         };
         /**
          * Get active branches by institution / Lấy danh sách Chi nhánh theo Tổ chức tài chính
-         * @description Returns active branches of an institution for cascaded dropdowns. / Trả về danh sách chi nhánh hoạt động theo ngân hàng.
+         * @description **Screens:** VPA005001, VPA0050P01
+         *
+         *     Returns active branches of an institution for cascaded dropdowns. / Trả về danh sách chi nhánh hoạt động theo ngân hàng.
          */
         get: operations["getActiveBranchesByInstitution"];
         put?: never;
@@ -4820,7 +7357,9 @@ export interface paths {
         };
         /**
          * Get multiple groups at once / Lấy danh sách mã cho nhiều nhóm cùng lúc
-         * @description Returns map of group codes to their respective code lists. / Trả về bản đồ mã nhóm và danh sách mã tương ứng.
+         * @description **Screens:** VPA004801, VPA0048P01
+         *
+         *     Returns map of group codes to their respective code lists. / Trả về bản đồ mã nhóm và danh sách mã tương ứng.
          */
         get: operations["getCodesByGroups"];
         put?: never;
@@ -4840,7 +7379,9 @@ export interface paths {
         };
         /**
          * Get code list by group / Lấy danh sách mã theo nhóm
-         * @description Returns active common codes for a specific group (cached). / Trả về danh sách mã đang hoạt động theo nhóm (có lưu cache).
+         * @description **Screens:** VPA004801, VPA0048P01
+         *
+         *     Returns active common codes for a specific group (cached). / Trả về danh sách mã đang hoạt động theo nhóm (có lưu cache).
          */
         get: operations["getCodesByGroup_1"];
         put?: never;
@@ -4860,7 +7401,9 @@ export interface paths {
         };
         /**
          * Get single code / Lấy chi tiết một mã
-         * @description Returns single common code detail. / Trả về chi tiết một mã dùng chung.
+         * @description **Screens:** VPA004801, VPA0048P01
+         *
+         *     Returns single common code detail. / Trả về chi tiết một mã dùng chung.
          */
         get: operations["getCode"];
         put?: never;
@@ -4879,8 +7422,10 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Get RSA Public Key for login / Lấy khóa công khai RSA dùng cho đăng nhập
-         * @description Returns RSA-OAEP(SHA-256) public key used for password encryption. / Trả về khóa công khai RSA-OAEP(SHA-256) dùng để mã hóa mật khẩu.
+         * Get RSA Public Key for login
+         * @description **Screens:** VPA000701, VPA000101
+         *
+         *     Returns RSA-OAEP(SHA-256) public key used for password encryption.
          */
         get: operations["getPublicKey"];
         put?: never;
@@ -4899,8 +7444,10 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Get authenticated user profile and roles / Lấy thông tin tài khoản hiện tại
-         * @description Returns current authenticated employee profile, assigned roles, and menu trees. / Trả về thông tin hồ sơ nhân viên đang đăng nhập kèm danh sách vai trò và cây menu.
+         * Get authenticated user profile and roles
+         * @description **Screens:** VPA000701, VPA000101
+         *
+         *     Returns current authenticated employee profile, assigned roles, and menu trees.
          */
         get: operations["getMe"];
         put?: never;
@@ -4918,7 +7465,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Get @BatchJob registry list / Tra cứu danh sách @BatchJob đã đăng ký trong mã nguồn */
+        /**
+         * Get @BatchJob registry list / Tra cứu danh sách @BatchJob đã đăng ký trong mã nguồn
+         * @description **Screens:** VPA005401, VPA0054P01
+         */
         get: operations["getRegistry"];
         put?: never;
         post?: never;
@@ -4935,7 +7485,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Get execution history by job / Lịch sử thực thi theo từng công việc */
+        /**
+         * Get execution history by job / Lịch sử thực thi theo từng công việc
+         * @description **Screens:** VPA005401, VPA0054P01
+         */
         get: operations["getJobHistory"];
         put?: never;
         post?: never;
@@ -4952,7 +7505,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Get all execution history / Tra cứu toàn bộ lịch sử thực thi (lọc theo tên/trạng thái) */
+        /**
+         * Get all execution history / Tra cứu toàn bộ lịch sử thực thi (lọc theo tên/trạng thái)
+         * @description **Screens:** VPA005401, VPA0054P01
+         */
         get: operations["getAllHistory"];
         put?: never;
         post?: never;
@@ -5072,7 +7628,27 @@ export interface paths {
          * Delete attachment / Xóa tệp đính kèm
          * @description Soft-deletes one file of a group. / Xóa mềm một tệp trong nhóm.
          */
-        delete: operations["delete_5"];
+        delete: operations["delete_6"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/files/delete/**": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * File deletion / Xóa tập tin
+         * @description Deletes a stored file. / Xóa tập tin đã lưu trữ.
+         */
+        delete: operations["deleteFile"];
         options?: never;
         head?: never;
         patch?: never;
@@ -5092,7 +7668,7 @@ export interface paths {
          * File deletion / Xóa tập tin
          * @description Deletes a stored file. / Xóa tập tin đã lưu trữ.
          */
-        delete: operations["deleteFile"];
+        delete: operations["deleteFile_1"];
         options?: never;
         head?: never;
         patch?: never;
@@ -5373,6 +7949,8 @@ export interface components {
              * @example 7c1d2e3f-4a5b-6c7d-8e9f-0a1b2c3d4e5f
              */
             esntlDcmntScnFile?: string;
+            /** @description Code of a running purchase contract for the same subject (purchase applications not yet approved; null otherwise) */
+            activePurchaseCtrtCd?: string;
             /** @description NPLs of the application */
             npls?: components["schemas"]["TradeNplDto"][];
             /** @description Scanned documents */
@@ -5381,6 +7959,11 @@ export interface components {
             steps?: components["schemas"]["ApprovalStepDetailDto"][];
             /** @description Processing history */
             histories?: components["schemas"]["TradeApplicationHistoryDto"][];
+            /**
+             * @description Asset category: VAMC = VAMC asset, BRKR = brokerage
+             * @example VAMC
+             */
+            astCtgrCd?: string;
         };
         /** @description Processing history row */
         TradeApplicationHistoryDto: {
@@ -5548,6 +8131,11 @@ export interface components {
              * @example 2027-10-31
              */
             ctrtEndDt?: string;
+            /**
+             * @description Sale brokerage only: Y = open-ended contract without an end date
+             * @example N
+             */
+            openEndedYn?: string;
             /**
              * @description Currency
              * @example VND
@@ -5983,7 +8571,7 @@ export interface components {
              */
             srvcCtrtCd?: string;
             /**
-             * @description Contract type (CTRT_DSPSL_MDT, CTRT_DSPSL_MDT_ANX, CTRT_DSPSL_BASE_ANX)
+             * @description Contract type (CTRT_DSPSL_MDT, CTRT_DMDT_ANX, CTRT_DBAS_ANX)
              * @example CTRT_DSPSL_MDT
              */
             ctrtSeCd?: string;
@@ -6098,6 +8686,16 @@ export interface components {
              * @example Le Van C
              */
             tkcgEmpNm?: string;
+            /**
+             * @description Lot (Y) or single NPL (N)
+             * @example N
+             */
+            bndLotYn?: string;
+            /**
+             * @description Asset category: VAMC = VAMC asset, BRKR = brokerage
+             * @example VAMC
+             */
+            astCtgrCd?: string;
         };
         UpdateRoleRequest: {
             /**
@@ -6244,6 +8842,96 @@ export interface components {
             mdfcnBy?: string;
             /** @description List of roles belonging to this group / Danh sách vai trò thuộc nhóm này */
             roles?: components["schemas"]["RoleResponse"][];
+        };
+        SaveRoleAssigneesRequest: {
+            /**
+             * @description Employee numbers to add / Mã nhân viên cần thêm
+             * @example [
+             *       "user01"
+             *     ]
+             */
+            addEmpNos?: string[];
+            /**
+             * @description Employee numbers to remove / Mã nhân viên cần gỡ
+             * @example [
+             *       "user02"
+             *     ]
+             */
+            removeEmpNos?: string[];
+        };
+        ApiResponseListRoleUserResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["RoleUserResponse"][];
+        };
+        /** @description Response DTO for users assigned to a role / Phản hồi danh sách người dùng được gán theo vai trò */
+        RoleUserResponse: {
+            /**
+             * @description User number (EMP_NO or MBR_NO) / Mã người dùng (mã nhân viên hoặc thành viên)
+             * @example admin
+             */
+            userNo?: string;
+            /**
+             * @description User full name / Họ và tên người dùng
+             * @example Admin / Quản trị viên
+             */
+            userNm?: string;
+            /**
+             * @description Masked email address / Địa chỉ email đã che mặt nạ
+             * @example ad***@vamc.com.vn
+             */
+            email?: string;
+            /**
+             * @description Office landline phone number / Số điện thoại bàn
+             * @example 02431234567
+             */
+            telno?: string;
+            /**
+             * @description Masked mobile phone number / Số điện thoại di động đã che mặt nạ
+             * @example 091-****-5678
+             */
+            mobilePhone?: string;
+            /**
+             * @description Employee status code (H: Active, L: Leave, R: Retired, S: Suspended) / Mã trạng thái nhân viên
+             * @example H
+             */
+            empSttsCd?: string;
+            /**
+             * @description Job position name / Chức danh vị trí công việc
+             * @example Senior Specialist / Chuyên viên chính
+             */
+            jbpsNm?: string;
+            /**
+             * @description Role Group ID / Mã nhóm vai trò
+             * @example RG00001
+             */
+            roleGroupId?: string;
+            /**
+             * @description Role Group Name / Tên nhóm vai trò
+             * @example NPL Transaction Department
+             */
+            roleGroupNm?: string;
+            /**
+             * @description Role ID / Mã vai trò
+             * @example RCPT
+             */
+            roleId?: string;
+            /**
+             * @description Role Name / Tên vai trò
+             * @example Receptionist
+             */
+            roleNm?: string;
+            /**
+             * Format: date-time
+             * @description Assignment timestamp / Thời điểm gán vai trò
+             */
+            assignedAt?: string;
+            /**
+             * @description Assigned by user ID / Người thực hiện gán vai trò
+             * @example ADMIN
+             */
+            assignedBy?: string;
         };
         FeeRequest: {
             /**
@@ -6407,6 +9095,11 @@ export interface components {
              */
             crtBy?: string;
             /**
+             * @description Registrant name / Tên người đăng ký
+             * @example Nguyen Van A
+             */
+            crtByNm?: string;
+            /**
              * Format: date-time
              * @description Modified at / Ngày sửa
              */
@@ -6416,6 +9109,321 @@ export interface components {
              * @example admin
              */
             mdfcnBy?: string;
+        };
+        NplLotSaveRequest: {
+            /**
+             * @description LOT ID shown to users (unique, case-insensitive)
+             * @example LOT-2026-0002
+             */
+            bndLotNo: string;
+            /**
+             * @description LOT name
+             * @example Southern real estate LOT
+             */
+            bndLotNm: string;
+        };
+        ApiResponseNplLotDetailResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["NplLotDetailResponse"];
+        };
+        NplLotDetailResponse: {
+            /** @description LOT UUID */
+            bndLotId?: string;
+            /** @description LOT ID shown to users (may be null on legacy rows) */
+            bndLotNo?: string;
+            /** @description LOT name */
+            bndLotNm?: string;
+            /**
+             * Format: int32
+             * @description Number of NPLs in the LOT
+             */
+            nplCnt?: number;
+            /**
+             * Format: date-time
+             * @description Created at
+             */
+            crtDt?: string;
+            /** @description Created by (name) */
+            crtByNm?: string;
+            /**
+             * Format: date-time
+             * @description Modified at
+             */
+            mdfcnDt?: string;
+            /** @description Modified by (name) */
+            mdfcnByNm?: string;
+            /** @description LOT description */
+            bndLotExpln?: string;
+        };
+        NplLotNplsRequest: {
+            /**
+             * @description Complete list of NPL codes in the LOT; empty list empties the LOT
+             * @example [
+             *       "KN20260003"
+             *     ]
+             */
+            bndCds: string[];
+        };
+        ApiResponseListNplLotNplResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["NplLotNplResponse"][];
+        };
+        NplLotNplResponse: {
+            /** @description NPL code */
+            bndCd?: string;
+            /** @description NPL name */
+            bndNm?: string;
+            /** @description NPL English name */
+            bndEngNm?: string;
+            /** @description Asset type */
+            nplAstSeCd?: string;
+            /** @description NPL status code */
+            bndSttsCd?: string;
+            /** @description Exposed on the platform (Y/N) */
+            expsrYn?: string;
+            /** @description Currency */
+            crncCd?: string;
+            /** @description Valuation amount */
+            bndEvlAmt?: number;
+        };
+        /** @description Notification template / Mẫu thông báo */
+        NotificationMessageRequest: {
+            /**
+             * @description Use (default N) / Sử dụng
+             * @default N
+             * @example N
+             */
+            useYn: string;
+            /**
+             * @description Menu code of the business (MENU_MNG) / Mã menu nghiệp vụ
+             * @example A01010000
+             */
+            menuCd: string;
+            /**
+             * @description Medium: PUSH (app), MAIL, ZALO / Kênh
+             * @example MAIL
+             */
+            notiMediaSe: string;
+            /**
+             * @description Processing type: RCPT, PRCS, 1ST_ATRZ, 2ND_ATRZ, CMPTN / Loại xử lý
+             * @example RCPT
+             */
+            prcsSttsCd: string;
+            /**
+             * @description Recipient: MBR member, EMP staff / Người nhận
+             * @example EMP
+             */
+            notiRcvrSeCd: string;
+            /**
+             * @description Receiving staff group (ROLE_GROUP_ID), required for EMP / Nhóm nhân viên nhận
+             * @example RGRP001
+             */
+            roleGroupId?: string;
+            /**
+             * @description Receiving role (ROLE_ID), optional / Vai trò nhận
+             * @example ROLE001
+             */
+            roleId?: string;
+            /**
+             * @description Language: VN, EN, KR / Ngôn ngữ
+             * @example VN
+             */
+            langCd: string;
+            /**
+             * @description Title / Tiêu đề
+             * @example [VNPL] Application Receipt Notification
+             */
+            notiTtl: string;
+            /**
+             * @description Content (HTML allowed; scripts and event handlers are rejected) / Nội dung
+             * @example <p>Your application was received.</p>
+             */
+            notiCn: string;
+        };
+        ApiResponseNotificationMessageResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["NotificationMessageResponse"];
+        };
+        /** @description Notification template / Mẫu thông báo */
+        NotificationMessageResponse: {
+            /**
+             * @description Template ID
+             * @example 3fa85f64-5717-4562-b3fc-2c963f66afa6
+             */
+            notiMsgId?: string;
+            /**
+             * @description In use
+             * @example Y
+             */
+            useYn?: string;
+            /**
+             * @description Menu code
+             * @example A01010000
+             */
+            menuCd?: string;
+            /**
+             * @description Menu name
+             * @example Sign-up Management
+             */
+            menuNm?: string;
+            /**
+             * @description Medium (PUSH, MAIL, ZALO)
+             * @example MAIL
+             */
+            notiMediaSe?: string;
+            /**
+             * @description Processing type
+             * @example RCPT
+             */
+            prcsSttsCd?: string;
+            /**
+             * @description Recipient (MBR, EMP)
+             * @example EMP
+             */
+            notiRcvrSeCd?: string;
+            /**
+             * @description Receiving staff group, null for members
+             * @example RGRP001
+             */
+            roleGroupId?: string;
+            /**
+             * @description Receiving role, null when not set
+             * @example ROLE001
+             */
+            roleId?: string;
+            /**
+             * @description Language (VN, EN, KR)
+             * @example VN
+             */
+            langCd?: string;
+            /**
+             * @description Title
+             * @example [VNPL] Application Receipt Notification
+             */
+            notiTtl?: string;
+            /**
+             * @description Content, detail only
+             * @example <p>Your application was received.</p>
+             */
+            notiCn?: string;
+            /**
+             * @description Editable: only while not in use / Sửa được khi không sử dụng
+             * @example false
+             */
+            editable?: boolean;
+            /**
+             * Format: date-time
+             * @description Registered at
+             */
+            crtDt?: string;
+            /**
+             * @description Registered by (employee name, or ID)
+             * @example Vo Ngoc Lan
+             */
+            crtByNm?: string;
+            /**
+             * Format: date-time
+             * @description Modified at
+             */
+            mdfcnDt?: string;
+            /**
+             * @description Modified by (employee name, or ID)
+             * @example Vo Ngoc Lan
+             */
+            mdfcnByNm?: string;
+        };
+        SaveMenuSettingRequest: {
+            /**
+             * @description Menu type (W web, A admin) / Loại menu
+             * @example A
+             */
+            menuSeCd: string;
+            /**
+             * @description Menu code, type letter + 8 digits / Mã menu
+             * @example A08010000
+             */
+            menuCd: string;
+            /**
+             * @description Parent menu code (root points to itself) / Mã menu cha
+             * @example A08000000
+             */
+            upMenuCd: string;
+            /**
+             * @description Vietnamese menu name / Tên menu tiếng Việt
+             * @example Cài đặt menu
+             */
+            menuNmVn: string;
+            /**
+             * @description English menu name / Tên menu tiếng Anh
+             * @example Menu Settings
+             */
+            menuNmEn: string;
+            /**
+             * Format: int32
+             * @description Display order among siblings / Thứ tự hiển thị
+             * @example 1
+             */
+            menuSeq: number;
+            /**
+             * @description Menu URL / Đường dẫn menu
+             * @example /system/menus
+             */
+            menuUrlAddr?: string;
+            /**
+             * @description Label code (default lbl.menu.{menuCd}) / Mã nhãn
+             * @example lbl.menu.A08010000
+             */
+            lblCd?: string;
+            /**
+             * @description Menu description / Mô tả menu
+             * @example Menu configuration
+             */
+            menuExpln?: string;
+            /**
+             * @description In use (Y/N, default N) / Đang sử dụng
+             * @example N
+             */
+            useYn?: string;
+        };
+        MenuItem: {
+            /**
+             * @description Menu code / Mã menu
+             * @example A01010000
+             */
+            menuCd: string;
+            /** @description Read permission / Quyền đọc */
+            read?: boolean;
+            /** @description Write permission (implies read) / Quyền ghi */
+            write?: boolean;
+        };
+        RoleItem: {
+            /**
+             * @description Role group ID / Mã nhóm vai trò
+             * @example RG08801
+             */
+            roleGroupId: string;
+            /**
+             * @description Role ID / Mã vai trò
+             * @example BGMP2
+             */
+            roleId: string;
+            /** @description Granted menus; absent or read=write=false means no permission / Menu được cấp */
+            menus: components["schemas"]["MenuItem"][];
+        };
+        SaveMenuPermissionMatrixRequest: {
+            /**
+             * @description Menu type (A admin, W web) / Loại menu
+             * @example A
+             */
+            menuSeCd: string;
+            /** @description Roles to replace; each role's permissions on this menu type are replaced / Các vai trò cần thay quyền */
+            roles: components["schemas"]["RoleItem"][];
         };
         /** @description Address details */
         AddressRequest: {
@@ -6660,7 +9668,7 @@ export interface components {
              */
             ognzNm?: string;
             /**
-             * @description Business registration number (BRNO)
+             * @description Business registration number
              * @example 0106180376
              */
             orgnzBrno?: string;
@@ -6926,7 +9934,7 @@ export interface components {
              */
             fileSeq?: number;
             /**
-             * @description Document type code (ID_CARD_FRONT, ID_CARD_BACK, PASSPORT, BUSINESS_LICENSE, POWER_OF_ATTORNEY)
+             * @description Document type code (ID_CARD_FRONT, ID_CARD_BACK, PASSPORT, BUSINESS_LICENSE, LEGAL_REP_ID, AGENT_ID, POWER_OF_ATTORNEY, OTHER)
              * @example ID_CARD_FRONT
              */
             docType?: string;
@@ -7026,8 +10034,8 @@ export interface components {
              */
             mbrshpPayYn?: string;
             /**
-             * @description Membership Grade Code (TMP: Temporary, GEN: General, FUL: Full)
-             * @example GEN
+             * @description Membership Grade Code (T: Temporary, G: General, F: Full)
+             * @example G
              */
             mbrGrdCd?: string;
             /**
@@ -7115,7 +10123,7 @@ export interface components {
              */
             rawMstNo?: string;
             /**
-             * @description Business Registration Number (BRNO)
+             * @description Business Registration Number
              * @example 0106180376
              */
             orgnzBrno?: string;
@@ -7148,6 +10156,30 @@ export interface components {
             headOfficeAddress?: components["schemas"]["MemberAddressDto"];
             /** @description Corporate attached verification files */
             files?: components["schemas"]["MemberAttachmentDto"][];
+        };
+        MemberDeletionDto: {
+            /**
+             * Format: date-time
+             * @description Deleted date / Ngày xoá
+             */
+            delDt?: string;
+            /**
+             * Format: date
+             * @description Retention end date = deleted date + 1 year; restorable until then / Ngày hết hạn lưu giữ
+             */
+            rtnEndDt?: string;
+            /** @description Deletion reason / Lý do xoá */
+            delRsn?: string;
+            /** @description Requester employee number / Người yêu cầu */
+            requesterEmpNo?: string;
+            /** @description Requester name, partially masked / Tên người yêu cầu (che một phần) */
+            requesterNm?: string;
+            /** @description Approver employee number / Người duyệt */
+            approverEmpNo?: string;
+            /** @description Approver name, partially masked / Tên người duyệt (che một phần) */
+            approverNm?: string;
+            /** @description True while the member can still be restored / Còn khôi phục được */
+            restorable?: boolean;
         };
         /** @description Member detail response for popups VPA0002P01 and VPA0008P01 */
         MemberDetailResponse: {
@@ -7254,6 +10286,8 @@ export interface components {
              * @example VIEW
              */
             availableAction?: string;
+            /** @description Deletion information, deleted members only (VPA030100P02 item 11) / Thông tin xoá */
+            deletion?: components["schemas"]["MemberDeletionDto"];
             /**
              * Format: date-time
              * @description Last modification date
@@ -7377,6 +10411,49 @@ export interface components {
             /** @description Representative attached verification files */
             files?: components["schemas"]["MemberAttachmentDto"][];
         };
+        ApiResponseMembershipStatusResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["MembershipStatusResponse"];
+        };
+        MembershipStatusResponse: {
+            /**
+             * @description Member number
+             * @example TV00000001
+             */
+            mbrNo?: string;
+            /**
+             * @description Member status (P: Pending, U: Supplement requested, S: Active, C: Cancelled)
+             * @example S
+             */
+            mbrSttsCd?: string;
+            /**
+             * @description Membership grade (T: Temporary, G: General, F: Full)
+             * @example F
+             */
+            mbrGrdCd?: string;
+            /**
+             * @description Documents complete (Y/N)
+             * @example Y
+             */
+            dcmntCmpltYn?: string;
+            /**
+             * @description Membership period start (DD/MM/YYYY)
+             * @example 29/10/2026
+             */
+            mbrshpBgngDt?: string;
+            /**
+             * @description Membership period end (DD/MM/YYYY)
+             * @example 29/10/2027
+             */
+            mbrshpEndDt?: string;
+            /**
+             * @description Membership payment due date (DD/MM/YYYY)
+             * @example 13/11/2026
+             */
+            mbrshpPayDueDt?: string;
+        };
         ReceiveMemberApprovalRequest: {
             /**
              * @description Employee number of the assignee (processing step)
@@ -7429,12 +10506,6 @@ export interface components {
              * @example Thành phố Hà Nội
              */
             mctpvNm: string;
-            /**
-             * Format: int32
-             * @description GSO Administrative Province Code / Mã hành chính Tổng cục Thống kê (GSO)
-             * @example 1
-             */
-            admdstCd: number;
             /**
              * Format: int32
              * @description Sort Order / Thứ tự sắp xếp
@@ -7580,6 +10651,11 @@ export interface components {
              */
             crtBy?: string;
             /**
+             * @description Creator name (employee) / Tên người tạo (nhân viên)
+             * @example Nguyen Van A
+             */
+            crtByNm?: string;
+            /**
              * Format: date-time
              * @description Modification timestamp / Thời điểm cập nhật
              */
@@ -7589,6 +10665,109 @@ export interface components {
              * @example ADMIN
              */
             mdfcnBy?: string;
+        };
+        LabelSaveRequest: {
+            /**
+             * @description Screen ID / Mã màn hình
+             * @example BG_TEST
+             */
+            scrnId: string;
+            /**
+             * @description Label category / Phân loại nhãn
+             * @example TEXT
+             */
+            lblSeCd: string;
+            /**
+             * @description Label code / Mã nhãn
+             * @example btn_save
+             */
+            lblCd: string;
+            /**
+             * @description In use (Y/N); create defaults to Y / Sử dụng
+             * @example Y
+             */
+            useYn?: string;
+            /** @description Description / Mô tả */
+            lblExpln?: string;
+            /** @description Translations per language / Bản dịch theo ngôn ngữ */
+            translations?: components["schemas"]["LabelTranslationRequest"][];
+        };
+        LabelTranslationRequest: {
+            /**
+             * @description Language code / Mã ngôn ngữ
+             * @example VN
+             */
+            langCd: string;
+            /**
+             * @description Translated text; blank removes the translation on update / Nội dung dịch
+             * @example Nhãn
+             */
+            trslLtr?: string;
+        };
+        ApiResponseLabelDetailResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["LabelDetailResponse"];
+        };
+        LabelDetailResponse: {
+            /**
+             * @description In use (Y/N) / Sử dụng
+             * @example Y
+             */
+            useYn?: string;
+            /**
+             * @description Screen ID / Mã màn hình
+             * @example BG_TEST
+             */
+            scrnId?: string;
+            /**
+             * @description Label category / Phân loại
+             * @example TEXT
+             */
+            lblSeCd?: string;
+            /**
+             * @description Label code / Mã nhãn
+             * @example btn_save
+             */
+            lblCd?: string;
+            /** @description Description / Mô tả */
+            lblExpln?: string;
+            /**
+             * Format: date-time
+             * @description Created time / Ngày tạo
+             */
+            crtDt?: string;
+            /** @description Created by (user ID) / Người tạo */
+            crtBy?: string;
+            /**
+             * Format: date-time
+             * @description Modified time / Ngày sửa
+             */
+            mdfcnDt?: string;
+            /** @description Modified by (user ID) / Người sửa */
+            mdfcnBy?: string;
+            /** @description Translations by language / Bản dịch */
+            translations?: components["schemas"]["LabelTranslationResponse"][];
+        };
+        LabelTranslationResponse: {
+            /**
+             * @description Language code / Mã ngôn ngữ
+             * @example VN
+             */
+            langCd?: string;
+            /**
+             * @description Language name / Tên ngôn ngữ
+             * @example Vietnamese
+             */
+            langNm?: string;
+            /** @description Translated text, null if missing / Nội dung dịch */
+            trslLtr?: string;
+            /**
+             * Format: date-time
+             * @description Last modified time / Ngày sửa
+             */
+            mdfcnDt?: string;
         };
         UpdateInstitutionRequest: {
             /**
@@ -7921,6 +11100,88 @@ export interface components {
              */
             newPassword: string;
         };
+        /** @description Text per language / Nội dung theo ngôn ngữ */
+        LocalizedText: {
+            /**
+             * @description Vietnamese / Tiếng Việt
+             * @example 9:00 – 18:00
+             */
+            vi: string;
+            /**
+             * @description English (optional) / Tiếng Anh (không bắt buộc)
+             * @example 9:00 AM – 6:00 PM
+             */
+            en?: string;
+        };
+        SupportContactRequest: {
+            /**
+             * @description Hotline / Đường dây nóng
+             * @example (+84-024) 3935 2880
+             */
+            phone: string;
+            /**
+             * Format: email
+             * @description Support e-mail / E-mail hỗ trợ
+             * @example nhacvb.shds@gmail.com
+             */
+            email: string;
+            /** @description Phone operating hours / Giờ nghe máy */
+            phoneHours: components["schemas"]["LocalizedText"];
+            /** @description Portal operating hours headline / Giờ hoạt động của cổng */
+            portalHours: components["schemas"]["LocalizedText"];
+            /** @description Note under the portal hours (optional) / Ghi chú dưới giờ hoạt động (không bắt buộc) */
+            portalHoursNote?: components["schemas"]["LocalizedText"];
+        };
+        ApiResponseSupportContactResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["SupportContactResponse"];
+        };
+        /** @description Support contact channels / Kênh liên hệ hỗ trợ */
+        SupportContactResponse: {
+            /**
+             * @description False until the channels are saved once; the user platform then shows its defaults / False khi chưa lưu lần nào (nền tảng hiển thị giá trị mặc định)
+             * @example true
+             */
+            registered?: boolean;
+            /**
+             * @description Post number of the SPCT item / Mã bài SPCT
+             * @example 1b022674-202a-4cf3-99c5-603be66cd1f3
+             */
+            pstNo?: string;
+            /**
+             * @description Hotline / Đường dây nóng
+             * @example (+84-024) 3935 2880
+             */
+            phone?: string;
+            /**
+             * @description Support e-mail / E-mail hỗ trợ
+             * @example nhacvb.shds@gmail.com
+             */
+            email?: string;
+            /** @description Phone operating hours / Giờ nghe máy */
+            phoneHours?: components["schemas"]["LocalizedText"];
+            /** @description Portal operating hours headline / Giờ hoạt động của cổng */
+            portalHours?: components["schemas"]["LocalizedText"];
+            /** @description Note under the portal hours / Ghi chú dưới giờ hoạt động */
+            portalHoursNote?: components["schemas"]["LocalizedText"];
+            /**
+             * Format: date-time
+             * @description Last modified at / Sửa lần cuối lúc
+             */
+            mdfcnDt?: string;
+            /**
+             * @description Last modified by (employee number) / Người sửa cuối
+             * @example admin
+             */
+            mdfcnBy?: string;
+            /**
+             * @description Last modified by (name) / Tên người sửa cuối
+             * @example Quản trị viên
+             */
+            mdfcnByNm?: string;
+        };
         UpdateServiceGuideSectionRequest: {
             /**
              * @description Vietnamese title / Tiêu đề tiếng Việt
@@ -8132,12 +11393,12 @@ export interface components {
              */
             imageFileId?: string;
             /**
-             * @description INQRY_EML_ADDR (about: company name / e-mail) / Giá trị phụ
-             * @example sangiaodichno@sbvamc.vn
+             * @description INQRY_ENCPT_EML_ADDR (about: company name / e-mail) / Giá trị phụ
+             * @example nhacvb.shds@gmail.com
              */
             email?: string;
             /**
-             * @description INQRY_TELNO (about: signatory title / phone) / Giá trị phụ
+             * @description INQRY_ENCPT_TELNO (about: signatory title / phone) / Giá trị phụ
              * @example (+84-024) 3935-2884
              */
             phone?: string;
@@ -8375,6 +11636,11 @@ export interface components {
              * @example Cảm ơn quý khách. Bộ phận tư vấn sẽ liên hệ trong 2 ngày làm việc.
              */
             answer: string;
+            /**
+             * @description Inquiry category code of the 1:1 board (e.g. CNS: consulting)
+             * @example CNS
+             */
+            category?: string;
         };
         ApiResponseInquiryDetailResponse: {
             /** Format: int32 */
@@ -8637,7 +11903,7 @@ export interface components {
         };
         AboutSectionRequest: {
             /**
-             * @description Section: CEOM, HIST, HSTI, MSSN, FUNC, ORGS, DIRC, BEXB, BDIR, BSPV, PRTN (create only) / Section (chỉ khi tạo)
+             * @description Section: CEOM, HIST, HSTI, MSSN, FUNC, ORGS, DIRC, BEXB, BDIR, BSPV, PRTN, SPCT (create only) / Section (chỉ khi tạo)
              * @example HIST
              */
             section?: string;
@@ -8664,7 +11930,7 @@ export interface components {
             /** @description English content / Nội dung tiếng Anh */
             contentEn?: string;
             /**
-             * @description PST_SMRY_CN (overview, address) / Tóm tắt
+             * @description PST_SMRY_CN (overview, address). ORGS overview: plain text or {"vi": "...", "en": "..."} / Tóm tắt; ORGS nhận văn bản hoặc JSON vi/en
              * @example 300
              */
             summary?: string;
@@ -8674,17 +11940,17 @@ export interface components {
              */
             name?: string;
             /**
-             * @description INQRY_EML_ADDR (DIRC e-mail; ignored for CEOM) / E-mail (DIRC; bỏ qua với CEOM)
-             * @example sangiaodichno@sbvamc.vn
+             * @description INQRY_ENCPT_EML_ADDR (DIRC / SPCT e-mail; ignored for CEOM) / E-mail (DIRC, SPCT; bỏ qua với CEOM)
+             * @example nhacvb.shds@gmail.com
              */
             email?: string;
             /**
-             * @description INQRY_TELNO (DIRC phone; ignored for CEOM) / Điện thoại (DIRC; bỏ qua với CEOM)
+             * @description INQRY_ENCPT_TELNO (DIRC phone / SPCT hotline; ignored for CEOM) / Điện thoại (DIRC, hotline SPCT; bỏ qua với CEOM)
              * @example (+84-024) 3935-2884
              */
             phone?: string;
             /**
-             * @description INQRY_ANS_CN JSON: ORGS = department array or {"vi": [...], "en": [...]}; DIRC = {workingHours, lunchTime, closedDays, fax} with string or {"vi", "en"} values; PRTN = {"url": "https://..."} / JSON phụ theo section
+             * @description INQRY_ANS_CN JSON: ORGS = department array or {"vi": [...], "en": [...]}; MSSN = {"keyFunctionsTitle", "organizationTitle"} with string or {"vi", "en"} values; SPCT = {"phoneHours", "portalHours", "portalHoursNote"} with string or {"vi", "en"} values; DIRC = {workingHours, lunchTime, closedDays, fax} with string or {"vi", "en"} values; PRTN = {"url": "https://..."} / JSON phụ theo section
              * @example {
              *       "vi": [
              *         "Phòng Kế hoạch",
@@ -8698,7 +11964,7 @@ export interface components {
              */
             extraJson?: string;
             /**
-             * @description Image file group (ATCH_FILE; CEO photo, history illustration, portrait, partner logo) / Mã nhóm ảnh
+             * @description Image file group (ATCH_FILE; CEO photo, history / mission illustration, portrait, partner logo) / Mã nhóm ảnh
              * @example 7c1d2e3f-4a5b-6c7d-8e9f-0a1b2c3d4e5f
              */
             imageFileId?: string;
@@ -8827,6 +12093,268 @@ export interface components {
              * @example ADMIN
              */
             mdfcnBy?: string;
+        };
+        /** @description Auction notice / Thông báo đấu giá */
+        AuctionRequest: {
+            /**
+             * @description Auction name / Tên đấu giá
+             * @example Auction of the Thu Duc land lot
+             */
+            auctnNm: string;
+            /**
+             * @description Auction method: EN English, SL sealed bid, DT Dutch, RE re-auction
+             * @example EN
+             */
+            auctnType: string;
+            /**
+             * @description Bidding type: GNB general (default), PXB proxy
+             * @default GNB
+             * @example GNB
+             */
+            auctnBidType: string;
+            /**
+             * @description Assignee name / Người phụ trách
+             * @example Vo Ngoc Lan
+             */
+            picNm?: string;
+            /**
+             * @description Visibility (default Y) / Hiển thị
+             * @default Y
+             * @example Y
+             */
+            expsrYn: string;
+            /**
+             * @description Main posting (default N) / Đăng trang chủ
+             * @default N
+             * @example N
+             */
+            mainPstgYn: string;
+            /**
+             * @description Linked NPL code / Mã NPL
+             * @example KN00000001
+             */
+            bndCd: string;
+            /**
+             * @description Linked collateral code, must belong to the NPL / Mã tài sản bảo đảm
+             * @example TSBD000001
+             */
+            cltrAstCd?: string;
+            /**
+             * @description Appraised value / Giá thẩm định
+             * @example 5000000000
+             */
+            apprc?: number;
+            /**
+             * @description Minimum bid price, also the starting price / Giá khởi điểm
+             * @example 4500000000
+             */
+            lowstBidPrc: number;
+            /**
+             * @description Bid unit / Bước giá
+             * @example 10000000
+             */
+            lowstBidUntprc?: number;
+            /**
+             * @description Deposit rate (%) / Tỷ lệ đặt cọc
+             * @example 10
+             */
+            granteAmtRt?: number;
+            /**
+             * @description Currency (default VND) / Tiền tệ
+             * @default VND
+             * @example VND
+             */
+            crncCd: string;
+            /**
+             * Format: date
+             * @description Notice start date (YYYY-MM-DD) / Ngày bắt đầu thông báo
+             * @example 2026-11-20
+             */
+            pbancBgngDate?: string;
+            /**
+             * Format: date
+             * @description Notice end date (YYYY-MM-DD) / Ngày kết thúc thông báo
+             * @example 2026-12-10
+             */
+            pbancEndDate?: string;
+            /**
+             * Format: date-time
+             * @description Auction start (YYYY-MM-DDTHH:mm:ss) / Bắt đầu đấu giá
+             * @example 2026-12-11T09:00:00
+             */
+            auctnBgngDt: string;
+            /**
+             * Format: date-time
+             * @description Auction end (YYYY-MM-DDTHH:mm:ss) / Kết thúc đấu giá
+             * @example 2026-12-11T11:00:00
+             */
+            auctnEndDt: string;
+            /**
+             * @description Representative image URL (http/https) / URL ảnh đại diện
+             * @example https://cdn.example.com/a.jpg
+             */
+            infoRlsUrlAddr?: string;
+            /**
+             * @description Public description / Mô tả công khai
+             * @example <p>Land lot 120 m2</p>
+             */
+            infoRlsCn?: string;
+        };
+        ApiResponseAuctionResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["AuctionResponse"];
+        };
+        /** @description Auction notice / Thông báo đấu giá */
+        AuctionResponse: {
+            /**
+             * @description Auction number
+             * @example AUC-2026-00001
+             */
+            auctnNo?: string;
+            /**
+             * Format: int32
+             * @description Cycle (1 = first posting, +1 per repost)
+             * @example 1
+             */
+            auctnCycl?: number;
+            /** @description Previous cycle's auction number, when reposted */
+            prntAuctnNo?: string;
+            /** @description Auction name */
+            auctnNm?: string;
+            /**
+             * @description Method (EN, SL, DT, RE)
+             * @example EN
+             */
+            auctnType?: string;
+            /**
+             * @description Bidding type (GNB, PXB)
+             * @example GNB
+             */
+            auctnBidType?: string;
+            /**
+             * @description Auction status (AUCTN_STTS_CD)
+             * @example RD
+             */
+            auctnSttsCd?: string;
+            /**
+             * @description Approval status (DR, RQ, AP, RJ)
+             * @example DR
+             */
+            pbancSttsCd?: string;
+            /** @description Assignee */
+            picNm?: string;
+            /**
+             * @description Visibility
+             * @example Y
+             */
+            expsrYn?: string;
+            /**
+             * @description Main posting
+             * @example N
+             */
+            mainPstgYn?: string;
+            /**
+             * @description Linked NPL code
+             * @example KN00000001
+             */
+            bndCd?: string;
+            /** @description Linked NPL name */
+            bndNm?: string;
+            /**
+             * @description Linked collateral code
+             * @example TSBD000001
+             */
+            cltrAstCd?: string;
+            /** @description Linked collateral name */
+            cltrAstNm?: string;
+            /** @description Appraised value */
+            apprc?: number;
+            /** @description Starting price */
+            bgngPrc?: number;
+            /** @description Minimum bid price */
+            lowstBidPrc?: number;
+            /** @description Bid unit */
+            lowstBidUntprc?: number;
+            /** @description Deposit rate (%) */
+            granteAmtRt?: number;
+            /**
+             * @description Currency
+             * @example VND
+             */
+            crncCd?: string;
+            /**
+             * Format: date
+             * @description Notice start date
+             */
+            pbancBgngDate?: string;
+            /**
+             * Format: date
+             * @description Notice end date
+             */
+            pbancEndDate?: string;
+            /**
+             * Format: date-time
+             * @description Scheduled auction start
+             */
+            auctnBgngDt?: string;
+            /**
+             * Format: date-time
+             * @description Scheduled auction end
+             */
+            auctnEndDt?: string;
+            /**
+             * Format: date-time
+             * @description Actual start (Start Auction)
+             */
+            actlBgngDt?: string;
+            /**
+             * Format: date-time
+             * @description Actual end (Close & Confirm Winner)
+             */
+            actlEndDt?: string;
+            /** @description Representative image URL */
+            infoRlsUrlAddr?: string;
+            /** @description Public description, detail only */
+            infoRlsCn?: string;
+            /** @description Suspension reason of the previous cycle */
+            itrpRsn?: string;
+            /** @description Approval session ID */
+            atrzHstryId?: string;
+            /** @description Approver of the open approval step */
+            approverEmpNo?: string;
+            /**
+             * Format: int32
+             * @description Number of bidders
+             * @example 3
+             */
+            bidderCount?: number;
+            /** @description Editable: status RD/AN and approval DR/RJ */
+            editable?: boolean;
+            /** @description Deletable: status RD, approval DR/RJ, no bidder */
+            deletable?: boolean;
+            /**
+             * @description Approval actions for the signed-in employee: REQUEST, APPROVE, REJECT
+             * @example [
+             *       "REQUEST"
+             *     ]
+             */
+            approvalActions?: string[];
+            /**
+             * Format: date-time
+             * @description Registered at
+             */
+            crtDt?: string;
+            /** @description Registered by */
+            crtByNm?: string;
+            /**
+             * Format: date-time
+             * @description Modified at
+             */
+            mdfcnDt?: string;
+            /** @description Modified by */
+            mdfcnByNm?: string;
         };
         /** @description Menu Registration & Modification Request / Yêu cầu Đăng ký & Cập nhật Menu */
         MenuSaveRequest: {
@@ -9293,93 +12821,6 @@ export interface components {
              */
             dlvrCn?: string;
         };
-        ApiResponseMembershipStatusResponse: {
-            /** Format: int32 */
-            status?: number;
-            message?: string;
-            data?: components["schemas"]["MembershipStatusResponse"];
-        };
-        MembershipStatusResponse: {
-            /**
-             * @description Member number
-             * @example TV00000001
-             */
-            mbrNo?: string;
-            /**
-             * @description Member status (P: Pending, U: Supplement requested, S: Active, C: Cancelled)
-             * @example S
-             */
-            mbrSttsCd?: string;
-            /**
-             * @description Membership grade (TMP: Temporary, GEN: General, FUL: Full)
-             * @example FUL
-             */
-            mbrGrdCd?: string;
-            /**
-             * @description Documents complete (Y/N)
-             * @example Y
-             */
-            dcmntCmpltYn?: string;
-            /**
-             * @description Membership period start (DD/MM/YYYY)
-             * @example 29/10/2026
-             */
-            mbrshpBgngDt?: string;
-            /**
-             * @description Membership period end (DD/MM/YYYY)
-             * @example 29/10/2027
-             */
-            mbrshpEndDt?: string;
-            /**
-             * @description Membership payment due date (DD/MM/YYYY)
-             * @example 13/11/2026
-             */
-            mbrshpPayDueDt?: string;
-        };
-        CheckMemberDocumentsRequest: {
-            /**
-             * @description Documents complete ('Y': complete, 'N': incomplete -> supplement request)
-             * @example Y
-             */
-            documentsComplete: string;
-            /**
-             * @description Scanned posted documents (file group ID from the file upload API, optional)
-             * @example 7c1d2e3f-4a5b-6c7d-8e9f-0a1b2c3d4e5f
-             */
-            scanFileId?: string;
-            /**
-             * @description What the applicant must supplement (required when documentsComplete = 'N'; shown to the applicant)
-             * @example Please upload a clear copy of the power of attorney.
-             */
-            supplementNote?: string;
-        };
-        RequestMemberApprovalRequest: {
-            /**
-             * @description Approver employee number (1st Approval step)
-             * @example EMP0000001
-             */
-            approverEmpNo: string;
-            /**
-             * @description SGDN member code issued by the SGDN internal system
-             * @example SGDN-000123
-             */
-            sgdnMbrCd: string;
-            /**
-             * @description Membership fee exemption ('Y': Exempt, 'N': Charged; default 'N')
-             * @example N
-             */
-            mbrshpFeeExmpYn?: string;
-            /**
-             * @description Membership fee payment status ('Y': Paid, 'N': Unpaid; ignored when exempt)
-             * @example Y
-             */
-            mbrshpPayYn: string;
-            /**
-             * @description Confirmation checkbox
-             * @example true
-             */
-            confirmed: boolean;
-        };
         /** @description Login account credentials */
         AccountRequest: {
             loginType?: string;
@@ -9544,7 +12985,7 @@ export interface components {
              */
             mbrSttsNm?: string;
             /**
-             * @description Account login ID (DB column LGN_ID)
+             * @description Account login ID (DB column ENCPT_LGN_ID)
              * @example member.user01@example.com
              */
             lgnId?: string;
@@ -9580,6 +13021,147 @@ export interface components {
             availableAction?: string;
             /** @description Attached verification documents */
             files?: components["schemas"]["MemberAttachmentDto"][];
+        };
+        ApiResponseTemporaryPasswordResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["TemporaryPasswordResponse"];
+        };
+        TemporaryPasswordResponse: {
+            /**
+             * @description Member number
+             * @example TV00000001
+             */
+            mbrNo?: string;
+            /**
+             * @description Address the password was sent to, partially masked / Nơi nhận (che một phần)
+             * @example an***@example.com
+             */
+            sentTo?: string;
+            /** @description Local / dev only (member.signup.expose-password-setup-link=true): the temporary password; always null in production */
+            devTemporaryPassword?: string;
+        };
+        RequestSupplementRequest: {
+            /**
+             * @description What the applicant must supplement, shown to the applicant and mailed / Nội dung cần bổ sung, gửi cho người đăng ký
+             * @example Please upload a clear copy of the back side of your ID card.
+             */
+            supplementNote: string;
+        };
+        MemberRestorationRequest: {
+            /**
+             * @description Approver employee number (VPA020500P01) / Mã nhân viên người duyệt
+             * @example EMP0000001
+             */
+            approverEmpNo: string;
+        };
+        ApiResponseMemberDeletionRequestResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["MemberDeletionRequestResponse"];
+        };
+        MemberDeletionRequestResponse: {
+            /**
+             * @description Member number
+             * @example TV00000001
+             */
+            mbrNo?: string;
+            /**
+             * @description Request type: DELETE or RESTORE
+             * @example DELETE
+             */
+            requestType?: string;
+            /** @description Approval session ID (approve / reject with /api/v1/approvals/{atrzHstryId}) */
+            atrzHstryId?: string;
+            /**
+             * @description Assigned approver employee number
+             * @example EMP0000001
+             */
+            approverEmpNo?: string;
+        };
+        ApiResponsePasswordSetupLinkResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["PasswordSetupLinkResponse"];
+        };
+        /** @description Password setup link re-issued and mailed to the member */
+        PasswordSetupLinkResponse: {
+            /**
+             * @description Member number
+             * @example TV00000001
+             */
+            mbrNo?: string;
+            /**
+             * @description Login ID the member sets the password for
+             * @example paper.member@example.com
+             */
+            lgnId?: string;
+            /**
+             * Format: date-time
+             * @description When the link expires (previous links are no longer valid)
+             */
+            expiresAt?: string;
+            /** @description Local / dev only (member.signup.expose-password-setup-link=true), never in production: the one-time token of the mailed link, for testing the password setup without the mailbox */
+            devToken?: string;
+        };
+        CheckMemberDocumentsRequest: {
+            /**
+             * @description Documents complete ('Y': complete, 'N': incomplete -> supplement request)
+             * @example Y
+             */
+            documentsComplete: string;
+            /**
+             * @description Scanned posted documents (file group ID from the file upload API, optional)
+             * @example 7c1d2e3f-4a5b-6c7d-8e9f-0a1b2c3d4e5f
+             */
+            scanFileId?: string;
+            /**
+             * @description What the applicant must supplement (required when documentsComplete = 'N'; shown to the applicant)
+             * @example Please upload a clear copy of the power of attorney.
+             */
+            supplementNote?: string;
+        };
+        MemberDeletionRequest: {
+            /**
+             * @description Deletion reason / Lý do xoá
+             * @example Member's request (Zalo inquiry)
+             */
+            reason: string;
+            /**
+             * @description Approver employee number (VPA020500P01) / Mã nhân viên người duyệt
+             * @example EMP0000001
+             */
+            approverEmpNo: string;
+        };
+        RequestMemberApprovalRequest: {
+            /**
+             * @description Approver employee number (1st Approval step)
+             * @example EMP0000001
+             */
+            approverEmpNo: string;
+            /**
+             * @description SGDN member code issued by the SGDN internal system
+             * @example SGDN-000123
+             */
+            sgdnMbrCd: string;
+            /**
+             * @description Membership fee exemption ('Y': Exempt, 'N': Charged; default 'N')
+             * @example N
+             */
+            mbrshpFeeExmpYn?: string;
+            /**
+             * @description Membership fee payment status ('Y': Paid, 'N': Unpaid; ignored when exempt)
+             * @example Y
+             */
+            mbrshpPayYn: string;
+            /**
+             * @description Confirmation checkbox
+             * @example true
+             */
+            confirmed: boolean;
         };
         /** @description Batch member generation request */
         BatchCreateMembersRequest: {
@@ -9676,6 +13258,41 @@ export interface components {
              */
             useYn: string;
         };
+        BatchSaveDistrictsRequest: {
+            /** @description Rows to insert or update (max 500) / Các dòng thêm hoặc sửa (tối đa 500) */
+            toSave?: components["schemas"]["SaveDistrictItemRequest"][];
+            /** @description District codes to delete (max 500) / Mã cần xóa (tối đa 500) */
+            deleteDistCds?: string[];
+        };
+        SaveDistrictItemRequest: {
+            /**
+             * @description District/Ward Code / Mã Quận/Huyện/Phường/Xã
+             * @example 00070
+             */
+            distCd: string;
+            /**
+             * @description District/Ward Name / Tên Quận/Huyện/Phường/Xã
+             * @example Phường Hoàn Kiếm
+             */
+            distNm: string;
+            /**
+             * Format: int32
+             * @description Sort Order (default 0) / Thứ tự sắp xếp (mặc định 0)
+             * @example 1
+             */
+            sortSeq?: number;
+            /**
+             * @description Use status (Y/N) / Trạng thái sử dụng (Y/N)
+             * @example Y
+             */
+            useYn: string;
+        };
+        ApiResponseListDistrictResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["DistrictResponse"][];
+        };
         CreateDistrictRequest: {
             /**
              * @description District/Ward Code (5 digits) / Mã Quận/Huyện/Phường/Xã (5 chữ số)
@@ -9704,6 +13321,148 @@ export interface components {
              */
             useYn: string;
         };
+        /** @description Suspend and repost / Tạm dừng và đăng lại */
+        AuctionRepostRequest: {
+            /**
+             * @description Suspension reason / Lý do tạm dừng
+             * @example System failure during bidding
+             */
+            itrpRsn: string;
+            /**
+             * Format: date-time
+             * @description Start of the new cycle; default = the current schedule / Bắt đầu vòng mới
+             * @example 2026-12-18T09:00:00
+             */
+            auctnBgngDt?: string;
+            /**
+             * Format: date-time
+             * @description End of the new cycle / Kết thúc vòng mới
+             * @example 2026-12-18T11:00:00
+             */
+            auctnEndDt?: string;
+        };
+        ApiResponseLiveAuctionSummaryResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["LiveAuctionSummaryResponse"];
+        };
+        /** @description Bid / Lượt đặt giá */
+        BidResponse: {
+            /**
+             * Format: int64
+             * @description Sequence in time order (1 = first bid)
+             * @example 1
+             */
+            seq?: number;
+            /**
+             * Format: int64
+             * @description Bid number
+             * @example 1024
+             */
+            bidNo?: number;
+            /**
+             * Format: date-time
+             * @description Bid time (ms)
+             */
+            bidDt?: string;
+            /** @description Bidder number */
+            bdrNo?: string;
+            /** @description Bidder name (masked) */
+            bidderNm?: string;
+            /** @description Bid price */
+            bidAmt?: number;
+            /** @description Bid type */
+            bidType?: string;
+            /**
+             * @description Cancelled (Y after a repost)
+             * @example N
+             */
+            cnclYn?: string;
+        };
+        /** @description Live auction summary / Tóm tắt đấu giá trực tiếp */
+        LiveAuctionSummaryResponse: {
+            /** @description Auction number */
+            auctnNo?: string;
+            /**
+             * Format: int32
+             * @description Cycle
+             */
+            auctnCycl?: number;
+            /** @description Auction name */
+            auctnNm?: string;
+            /** @description Auction status */
+            auctnSttsCd?: string;
+            /** @description Current highest valid bid */
+            currentHighestBid?: number;
+            /**
+             * Format: int64
+             * @description Valid bids
+             */
+            totalBids?: number;
+            /** @description Minimum bid price */
+            lowstBidPrc?: number;
+            /**
+             * Format: int64
+             * @description Bidders who placed a valid bid
+             */
+            participatingCount?: number;
+            /**
+             * Format: int64
+             * @description Qualified bidders (AV)
+             */
+            registeredCount?: number;
+            /**
+             * Format: date-time
+             * @description Scheduled start
+             */
+            auctnBgngDt?: string;
+            /**
+             * Format: date-time
+             * @description Scheduled end
+             */
+            auctnEndDt?: string;
+            /**
+             * Format: date-time
+             * @description Actual start
+             */
+            actlBgngDt?: string;
+            /**
+             * Format: date-time
+             * @description Actual end
+             */
+            actlEndDt?: string;
+            /** @description Awarded price, when awarded */
+            scsbdAmt?: number;
+            /** @description Winning bidder number, when awarded */
+            winnerBdrNo?: string;
+            /** @description Winning bidder name (masked), when awarded */
+            winnerNm?: string;
+            /** @description Actions allowed now: START, CLOSE, SUSPEND_REPOST, CERTIFICATE, RECORD */
+            availableActions?: string[];
+            /**
+             * Format: date-time
+             * @description Server time, for the countdown
+             */
+            serverTime?: string;
+            /** @description Snapshot only: valid bids after lastBidNo, oldest first */
+            newBids?: components["schemas"]["BidResponse"][];
+        };
+        ApiResponseLabelCacheReloadResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["LabelCacheReloadResponse"];
+        };
+        LabelCacheReloadResponse: {
+            /** @description Caches cleared / Cache đã xoá */
+            caches?: string[];
+            /**
+             * Format: date-time
+             * @description Reload time / Thời điểm reload
+             */
+            reloadedAt?: string;
+        };
         CreateInstitutionRequest: {
             /**
              * Format: int32
@@ -9726,6 +13485,51 @@ export interface components {
              * @example Y
              */
             useYn: string;
+        };
+        BatchSaveBranchesRequest: {
+            /** @description Rows to insert or update (max 500) / Các dòng thêm hoặc sửa (tối đa 500) */
+            toSave?: components["schemas"]["SaveBranchItemRequest"][];
+            /** @description Branch codes to delete (max 500) / Mã chi nhánh cần xóa (tối đa 500) */
+            deleteFnstBrnchCds?: number[];
+        };
+        SaveBranchItemRequest: {
+            /**
+             * Format: int32
+             * @description Branch Code (up to 8 digits) / Mã chi nhánh (tối đa 8 chữ số)
+             * @example 203001
+             */
+            fnstBrnchCd: number;
+            /**
+             * @description Branch Name / Tên chi nhánh
+             * @example Hội sở chính - Vietcombank
+             */
+            fnstBrnchNm: string;
+            /** @description Sales Branch / Office Name / Tên phòng giao dịch */
+            fnstSlsbrNm?: string;
+            /** @description Branch Address / Địa chỉ chi nhánh */
+            fnstBrnchAddr?: string;
+            /**
+             * @description Classification Code (COM_CD group FNST_BRNCH_CLSF_CD) / Mã phân loại chi nhánh
+             * @example FBC01
+             */
+            fnstBrnchClsfCd: string;
+            /**
+             * Format: int32
+             * @description GSO Administrative Province Code / Mã tỉnh/thành phố theo GSO
+             * @example 1
+             */
+            admdstCd: number;
+            /**
+             * @description Use status (Y/N) / Trạng thái sử dụng (Y/N)
+             * @example Y
+             */
+            useYn: string;
+        };
+        ApiResponseListBranchResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["BranchResponse"][];
         };
         CreateBranchRequest: {
             /**
@@ -9818,7 +13622,7 @@ export interface components {
         };
         CreateServiceGuideSectionRequest: {
             /**
-             * @description Guide page: TRD trading, BUY purchase, SELL sale, CNSL consulting, FEE fee schedule / Trang hướng dẫn
+             * @description Guide page: TRD trading, BUY purchase, SELL sale, CNSL consulting, FEE fee schedule, AUC auction guide / Trang hướng dẫn
              * @example BUY
              */
             page: string;
@@ -10175,6 +13979,119 @@ export interface components {
              */
             targetGroupNm: string;
         };
+        /** @description Bidder action / Thao tác với người đấu giá */
+        BidderActionRequest: {
+            /**
+             * @description Reason: required to forfeit a deposit or disqualify / Lý do
+             * @example Documents are forged
+             */
+            reason?: string;
+            /**
+             * @description Deposit confirm: amount received; default = minimum bid price x deposit rate / Số tiền cọc
+             * @example 450000000
+             */
+            grnteAmt?: number;
+        };
+        ApiResponseBidderResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["BidderResponse"];
+        };
+        /** @description Bidder / Người tham gia đấu giá */
+        BidderResponse: {
+            /**
+             * @description Bidder number
+             * @example BID-2026-00001
+             */
+            bdrNo?: string;
+            /**
+             * @description Auction number
+             * @example AUC-2026-00001
+             */
+            auctnNo?: string;
+            /**
+             * @description Member number
+             * @example TV00000001
+             */
+            mbrNo?: string;
+            /**
+             * @description Applicant name (masked)
+             * @example N*** V** A
+             */
+            aplcntNm?: string;
+            /** @description Phone (masked) */
+            aplcntTelno?: string;
+            /** @description E-mail (masked) */
+            aplcntEmlAddr?: string;
+            /**
+             * Format: date-time
+             * @description Application date
+             */
+            dcmntAplyDt?: string;
+            /**
+             * @description Document receipt (NR, RC)
+             * @example RC
+             */
+            dcmntRcptSttsCd?: string;
+            /**
+             * Format: date-time
+             * @description Document receipt confirmed at
+             */
+            dcmntRcptDt?: string;
+            /**
+             * @description Deposit status (UN, PA, RF, FF)
+             * @example PA
+             */
+            gramtPrcsSeCd?: string;
+            /** @description Deposit amount */
+            grnteAmt?: number;
+            /**
+             * Format: date-time
+             * @description Deposit confirmed at
+             */
+            grntePayDt?: string;
+            /**
+             * Format: date-time
+             * @description Deposit forfeited / refunded at
+             */
+            grntePrcsDt?: string;
+            /** @description Forfeit / refund reason */
+            grntePrcsRsn?: string;
+            /**
+             * @description Qualification (AP applied, AV approved, DQ disqualified)
+             * @example AV
+             */
+            qlfcSttsCd?: string;
+            /**
+             * Format: date-time
+             * @description Approved at
+             */
+            aprvDt?: string;
+            /** @description Disqualification reason */
+            dqRsn?: string;
+            /**
+             * Format: date-time
+             * @description Disqualified at
+             */
+            dqDt?: string;
+            /**
+             * Format: int32
+             * @description Number of valid bids
+             * @example 0
+             */
+            bidCount?: number;
+            /** @description Actions allowed now: RECEIPT_CONFIRM, RECEIPT_CANCEL, DEPOSIT_CONFIRM, DEPOSIT_FORFEIT, DEPOSIT_REFUND, APPROVE, DISQUALIFY, DELETE */
+            availableActions?: string[];
+        };
+        /** @description Auction notice approval request / Yêu cầu phê duyệt công bố */
+        AuctionApprovalRequest: {
+            /**
+             * @description Approver employee number (GET /approvals/candidates?atrzProcCd=PROC_AUCTN_PBANC&stpNo=2)
+             * @example EMP0000003
+             */
+            approverEmpNo: string;
+        };
         RejectApprovalRequest: {
             /**
              * @description Rejection reason
@@ -10421,7 +14338,7 @@ export interface components {
             loginId: string;
             /**
              * @description Password / Mật khẩu
-             * @example admin1234!
+             * @example 1q2w3e4r1!
              */
             password: string;
         };
@@ -10452,6 +14369,53 @@ export interface components {
             /** Format: int32 */
             data?: number;
         };
+        /** @description Home posting flags / Cờ đăng trang chủ (bỏ trống = giữ nguyên) */
+        HomePostingRequest: {
+            /**
+             * @description Main posting: listed on the user web home (MSCRN_PSTG_YN) / Đăng trang chủ
+             * @example Y
+             */
+            mscrnPstgYn?: string;
+            /**
+             * @description Recommended (RCMDTN_YN) / Đề xuất
+             * @example N
+             */
+            rcmdtnYn?: string;
+        };
+        ApiResponseHomePostingResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["HomePostingResponse"];
+        };
+        /** @description Home posting state / Trạng thái đăng trang chủ */
+        HomePostingResponse: {
+            /**
+             * @description NPL code (BND_CD) or collateral asset code (CLTR_AST_CD)
+             * @example KN00000001
+             */
+            code?: string;
+            /**
+             * @description Displayed on the platform (EXPSR_YN)
+             * @example Y
+             */
+            expsrYn?: string;
+            /**
+             * @description Main posting (MSCRN_PSTG_YN)
+             * @example Y
+             */
+            mscrnPstgYn?: string;
+            /**
+             * @description Recommended (RCMDTN_YN)
+             * @example N
+             */
+            rcmdtnYn?: string;
+            /**
+             * @description Shown on the user web home now: displayed and main posting / Đang hiện trên trang chủ
+             * @example true
+             */
+            onHome?: boolean;
+        };
         NplDisclosureRequest: {
             /**
              * @description Shown on the platform
@@ -10468,6 +14432,14 @@ export interface components {
              * @example Published again after the holder's request.
              */
             reason: string;
+        };
+        /** @description Use switch / Bật tắt sử dụng */
+        NotificationUseRequest: {
+            /**
+             * @description Y = use, N = stop (unlocks editing)
+             * @example Y
+             */
+            useYn: string;
         };
         ReorderFaqRequest: {
             /**
@@ -10569,8 +14541,8 @@ export interface components {
              * @example DESC
              */
             sortDirection: string;
-            safeSortDirection?: string;
             safeSortBy?: string;
+            safeSortDirection?: string;
             /** Format: int32 */
             offset?: number;
         };
@@ -10650,6 +14622,23 @@ export interface components {
              * @example EMP0000002
              */
             tkcgEmpNo?: string;
+            /**
+             * @description Asset category: VAMC = at least one target NPL is a VAMC asset (BND_INFO.NPL_AST_SE_CD = 'V'; a mixed lot counts as VAMC), BRKR = brokerage
+             * @example VAMC
+             */
+            astCtgrCd?: string;
+            /**
+             * @description Lot (Y) or single NPL (N)
+             * @example Y
+             */
+            bndLotYn?: string;
+            /**
+             * @description Consulting request type codes (consulting applications only)
+             * @example [
+             *       "CNSTN_SRVC_01"
+             *     ]
+             */
+            cnsltDmndSeCds?: string[];
         };
         ApiResponsePageResponseTradeApplicationListItemResponse: {
             /** Format: int32 */
@@ -10836,6 +14825,11 @@ export interface components {
              * @example REQUEST_APPROVAL
              */
             availableAction?: string;
+            /**
+             * @description Asset category: VAMC = VAMC asset, BRKR = brokerage
+             * @example VAMC
+             */
+            astCtgrCd?: string;
         };
         ApiResponseListTradeApplicationHistoryDto: {
             /** Format: int32 */
@@ -10845,7 +14839,7 @@ export interface components {
         };
         TradeContractSearchRequest: {
             /**
-             * @description Contract types (CTRT_DSPSL_MDT, CTRT_DSPSL_MDT_ANX, CTRT_DSPSL_BASE_ANX)
+             * @description Contract types (CTRT_DSPSL_MDT, CTRT_DMDT_ANX, CTRT_DBAS_ANX)
              * @example [
              *       "CTRT_DSPSL_MDT"
              *     ]
@@ -10874,11 +14868,38 @@ export interface components {
              */
             tkcgEmpNo?: string;
             /**
+             * Format: date
+             * @description Contract concluded on or after this date
+             * @example 2026-01-01
+             */
+            ctrtFromDt?: string;
+            /**
+             * Format: date
+             * @description Contract ending on or before this date
+             * @example 2026-12-31
+             */
+            ctrtToDt?: string;
+            /**
+             * @description Lot (Y) or single NPL (N)
+             * @example N
+             */
+            bndLotYn?: string;
+            /**
+             * @description NPL code or lot ID
+             * @example BND0000001
+             */
+            bndCd?: string;
+            /**
              * Format: int32
              * @description Only contracts ending within this many days (D-xx)
              * @example 30
              */
             endingWithinDays?: number;
+            /**
+             * @description Asset category: VAMC = at least one target NPL is a VAMC asset (BND_INFO.NPL_AST_SE_CD = 'V'; a mixed lot counts as VAMC), BRKR = brokerage
+             * @example VAMC
+             */
+            astCtgrCd?: string;
         };
         ApiResponsePageResponseTradeContractListItemResponse: {
             /** Format: int32 */
@@ -11126,80 +15147,6 @@ export interface components {
              */
             totalPages?: number;
         };
-        /** @description Response DTO for users assigned to a role / Phản hồi danh sách người dùng được gán theo vai trò */
-        RoleUserResponse: {
-            /**
-             * @description User number (EMP_NO or MBR_NO) / Mã người dùng (mã nhân viên hoặc thành viên)
-             * @example admin
-             */
-            userNo?: string;
-            /**
-             * @description User full name / Họ và tên người dùng
-             * @example Admin / Quản trị viên
-             */
-            userNm?: string;
-            /**
-             * @description Masked email address / Địa chỉ email đã che mặt nạ
-             * @example ad***@vamc.com.vn
-             */
-            email?: string;
-            /**
-             * @description Office landline phone number / Số điện thoại bàn
-             * @example 02431234567
-             */
-            telno?: string;
-            /**
-             * @description Masked mobile phone number / Số điện thoại di động đã che mặt nạ
-             * @example 091-****-5678
-             */
-            mobilePhone?: string;
-            /**
-             * @description Employee status code (H: Active, L: Leave, R: Retired, S: Suspended) / Mã trạng thái nhân viên
-             * @example H
-             */
-            empSttsCd?: string;
-            /**
-             * @description Job position name / Chức danh vị trí công việc
-             * @example Senior Specialist / Chuyên viên chính
-             */
-            jbpsNm?: string;
-            /**
-             * @description Role Group ID / Mã nhóm vai trò
-             * @example RG00001
-             */
-            roleGroupId?: string;
-            /**
-             * @description Role Group Name / Tên nhóm vai trò
-             * @example NPL Transaction Department
-             */
-            roleGroupNm?: string;
-            /**
-             * @description Role ID / Mã vai trò
-             * @example RCPT
-             */
-            roleId?: string;
-            /**
-             * @description Role Name / Tên vai trò
-             * @example Receptionist
-             */
-            roleNm?: string;
-            /**
-             * Format: date-time
-             * @description Assignment timestamp / Thời điểm gán vai trò
-             */
-            assignedAt?: string;
-            /**
-             * @description Assigned by user ID / Người thực hiện gán vai trò
-             * @example ADMIN
-             */
-            assignedBy?: string;
-        };
-        ApiResponseListRoleUserResponse: {
-            /** Format: int32 */
-            status?: number;
-            message?: string;
-            data?: components["schemas"]["RoleUserResponse"][];
-        };
         ApiResponseListRoleResponse: {
             /** Format: int32 */
             status?: number;
@@ -11303,83 +15250,766 @@ export interface components {
              */
             totalPages?: number;
         };
-        MemberSearchRequest: {
+        NplSearchRequest: {
             /**
-             * @description Raw member status codes (MBR_STTS_CD: P, U, S, R, C, L, D). For the classification filter of the list screen use mbrClsCds
+             * @description NPL statuses (BND_STTS_CD)
              * @example [
-             *       "P",
-             *       "S"
+             *       "SA"
              *     ]
              */
-            mbrSttsCds?: string[];
+            bndSttsCds?: string[];
             /**
-             * @description Member classification (VPA000801): PENDING_APPROVAL, SUPPLEMENT_REQUESTED, PENDING_PAYMENT, VERIFIED, REJECTED, CANCELLED
+             * @description Exposed on the platform (Y/N)
+             * @example Y
+             */
+            expsrYn?: string;
+            /**
+             * @description Posted on the user web home (Y/N) / Đăng trang chủ
+             * @example Y
+             */
+            mscrnPstgYn?: string;
+            /**
+             * @description Recommended (Y/N) / Đề xuất
+             * @example N
+             */
+            rcmdtnYn?: string;
+            /**
+             * @description Asset types: V = VAMC, P = brokerage, D = DATC
              * @example [
-             *       "PENDING_PAYMENT",
-             *       "VERIFIED"
+             *       "V"
              *     ]
              */
-            mbrClsCds?: string[];
+            nplAstSeCds?: string[];
             /**
-             * @description Member type codes (P: General, F: Foreigner, O: Organization)
-             * @example [
-             *       "P",
-             *       "O"
-             *     ]
+             * @description In a lot (Y) or single NPL (N)
+             * @example N
              */
-            mbrTypeCds?: string[];
+            lotYn?: string;
             /**
-             * @description Approval stages (NOT_RECEIVED, REQUESTED, IN_PROGRESS, APPROVED, REJECTED, SUPPLEMENT_REQUESTED)
-             * @example [
-             *       "NOT_RECEIVED",
-             *       "REQUESTED"
-             *     ]
+             * @description NPL code keyword
+             * @example KN2026
              */
-            atrzStages?: string[];
+            bndCd?: string;
             /**
-             * @description Account status codes (ACTIVE, LOCKED)
-             * @example [
-             *       "ACTIVE"
-             *     ]
+             * @description NPL name (Vietnamese or English) keyword
+             * @example Loan
              */
-            acntSttsCds?: string[];
+            bndNm?: string;
             /**
-             * @description Member name or assignee name keyword
-             * @example Nguyen
+             * @description Debtor code keyword
+             * @example KH00000003
              */
-            mbrNm?: string;
+            dbtrCd?: string;
             /**
-             * @description Organization or company name keyword
-             * @example ABC Bank
+             * Format: date
+             * @description Loan period ends on or after this date
+             * @example 2025-01-01
              */
-            orgnzNm?: string;
+            loanFromDt?: string;
             /**
-             * @description Phone number keyword
-             * @example 0900000019
+             * Format: date
+             * @description Loan period starts on or before this date
+             * @example 2025-12-31
              */
-            telno?: string;
+            loanToDt?: string;
+        };
+        ApiResponsePageResponseNplListItemResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["PageResponseNplListItemResponse"];
+        };
+        /** @description NPL list row */
+        NplListItemResponse: {
             /**
-             * @description Member number keyword
+             * @description NPL code
+             * @example KN20260001
+             */
+            bndCd?: string;
+            /**
+             * @description NPL name
+             * @example Loan A
+             */
+            bndNm?: string;
+            /** @description NPL English name */
+            bndEngNm?: string;
+            /**
+             * @description Exposed on the platform (Y/N)
+             * @example Y
+             */
+            expsrYn?: string;
+            /**
+             * @description Posted on the main screen (Y/N)
+             * @example N
+             */
+            mscrnPstgYn?: string;
+            /**
+             * @description Recommended (Y/N)
+             * @example N
+             */
+            rcmdtnYn?: string;
+            /**
+             * @description NPL status
+             * @example SA
+             */
+            bndSttsCd?: string;
+            /**
+             * @description Asset type (V/P/D)
+             * @example D
+             */
+            nplAstSeCd?: string;
+            /**
+             * @description In a lot (Y) or single (N)
+             * @example Y
+             */
+            lotYn?: string;
+            /** @description Lot ID */
+            bndLotId?: string;
+            /**
+             * @description Lot number
+             * @example LOT-2026-0001
+             */
+            bndLotNo?: string;
+            /**
+             * @description Representative debtor code
+             * @example KH00000001
+             */
+            rprsDbtrCd?: string;
+            /**
+             * Format: int32
+             * @description Debtor count
+             * @example 1
+             */
+            dbtrCnt?: number;
+            /**
+             * Format: int32
+             * @description Collateral count
+             * @example 2
+             */
+            cltrAstCnt?: number;
+            /**
+             * @description Loan execution date (DDMMYYYY)
+             * @example 01012023
+             */
+            loanExcnDmy?: string;
+            /**
+             * @description Loan maturity date (DDMMYYYY)
+             * @example 01012026
+             */
+            loanMtryDmy?: string;
+            /**
+             * Format: int32
+             * @description Loan term in months
+             * @example 36
+             */
+            loanMcnt?: number;
+            /** @description Loan repayment amount */
+            loanRpmtAmt?: number;
+            /** @description NPL valuation amount */
+            bndEvlAmt?: number;
+            /** @description On-balance principal */
+            prnBlncOn?: number;
+            /** @description Off-balance principal */
+            prnBlncOff?: number;
+            /** @description Total interest */
+            tint?: number;
+            /** @description Published (Y/N) */
+            pblntYn?: string;
+            /** @description Publication end date (DDMMYYYY) */
+            pblntEndDmy?: string;
+            /**
+             * @description Evaluation completed (Y/N)
+             * @example N
+             */
+            evlCmplYn?: string;
+            /**
+             * Format: date-time
+             * @description Created at
+             */
+            crtDt?: string;
+            /** @description Created by (name) */
+            crtByNm?: string;
+            /**
+             * Format: date-time
+             * @description Modified at
+             */
+            mdfcnDt?: string;
+            /** @description Modified by (name) */
+            mdfcnByNm?: string;
+        };
+        /** @description Paginated Response / Phản hồi phân trang */
+        PageResponseNplListItemResponse: {
+            /** @description Data list / Danh sách dữ liệu */
+            content?: components["schemas"]["NplListItemResponse"][];
+            /**
+             * Format: int32
+             * @description Current page number (1-based) / Số trang hiện tại
+             */
+            page?: number;
+            /**
+             * Format: int32
+             * @description Page size / Số lượng bản ghi mỗi trang
+             */
+            size?: number;
+            /**
+             * Format: int64
+             * @description Total number of records / Tổng số bản ghi
+             */
+            totalElements?: number;
+            /**
+             * Format: int32
+             * @description Total number of pages / Tổng số trang
+             */
+            totalPages?: number;
+        };
+        ApiResponseNplDetailResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["NplDetailResponse"];
+        };
+        /** @description Collateral */
+        Collateral: {
+            cltrAstCd?: string;
+            cltrAstNm?: string;
+            cltrAstTypeCd?: string;
+            cltrAstClsfCd?: string;
+            cltrAstDtlClsfCd?: string;
+            crncCd?: string;
+            loanTtmEvlAmt?: number;
+            rcntCltrWrthAmt?: number;
+            notarYn?: string;
+            cltrRghtStngRegYn?: string;
+        };
+        /** @description Creditor */
+        Creditor: {
+            crdtrCd?: string;
+            /** @description Financial institution name */
+            fnstNm?: string;
+            crdtrBrnchCd?: string;
+            fnstBrnchNm?: string;
+        };
+        /** @description Debtor */
+        Debtor: {
+            dbtrCd?: string;
+            /** @description Debtor type (P = individual) */
+            dbtrTypeCd?: string;
+            /** @description Name, masked for individuals without debtor permission */
+            dbtrNm?: string;
+            dbtrEngNm?: string;
+            entShpCd?: string;
+            entSalsSttsYn?: string;
+            /** @description Business registration number, null when masked */
+            brno?: string;
+            crncCd?: string;
+            cptl?: number;
+            mctpvCd?: string;
+            distCd?: string;
+            /** @description Detail address, null when masked */
+            daddr?: string;
+            dbtrCrdntAttGrdNo?: string;
+            /** @description CIC code, partly masked without debtor permission */
+            cicCd?: string;
+            uiiSeCd?: string;
+            /** @description Null when masked */
+            cccdNo?: string;
+            /** @description Null when masked */
+            cmndNo?: string;
+            /** @description Null when masked */
+            ppNo?: string;
+            uiiIssuDmy?: string;
+            uiiIssuInstNm?: string;
+            dbtrSttsCd?: string;
+        };
+        /** @description Evaluation */
+        Evaluation: {
+            unrtrvlAmtRt?: number;
+            apamtRt?: number;
+            lglStpScrCd?: string;
+            rcntApprc?: number;
+            sttyCltrRcgRt?: number;
+            bndClsfGrdCd?: string;
+            dbtRpmtRiskScr?: number;
+            rtrvlEaseRiskIdx?: number;
+            /** @description Last evaluation date (DDMMYYYY) */
+            lastEvlDmy?: string;
+            evlFileUnqId?: string;
+            prnBlncOn?: number;
+            prnBlncOff?: number;
+        };
+        /** @description Lot */
+        Lot: {
+            bndLotId?: string;
+            bndLotNo?: string;
+            bndLotNm?: string;
+            /** @description NPL codes of the lot */
+            bndCds?: string[];
+        };
+        /** @description NPL detail */
+        NplDetailResponse: {
+            /** @description NPL code */
+            bndCd?: string;
+            /** @description Lot ID, null for a single NPL */
+            bndLotId?: string;
+            /** @description Asset type (V/P/D) */
+            nplAstSeCd?: string;
+            /** @description NPL maturity type */
+            bndMtrySeCd?: string;
+            /** @description NPL name */
+            bndNm?: string;
+            /** @description NPL English name */
+            bndEngNm?: string;
+            /** @description Loan contract number */
+            loanCtrtNo?: string;
+            /** @description Loan contract type */
+            loanCtrtTypeCd?: string;
+            /** @description Loan execution date (DDMMYYYY) */
+            loanExcnDmy?: string;
+            /** @description Loan maturity date (DDMMYYYY) */
+            loanMtryDmy?: string;
+            /**
+             * Format: int32
+             * @description Loan term in months
+             */
+            loanMcnt?: number;
+            /** @description Currency */
+            crncCd?: string;
+            /** @description Loan repayment amount */
+            loanRpmtAmt?: number;
+            /** @description Loan principal amount */
+            loanPrnAmt?: number;
+            /** @description Arrears start date (DDMMYYYY) */
+            argBgngDmy?: string;
+            /** @description NPL valuation amount */
+            bndEvlAmt?: number;
+            /** @description On-balance principal */
+            prnBlncOn?: number;
+            /** @description Off-balance principal */
+            prnBlncOff?: number;
+            /** @description Total interest */
+            tint?: number;
+            /** @description Penalty */
+            pnlt?: number;
+            /** @description Outstanding fee */
+            otspyFee?: number;
+            /** @description Accumulated bad-debt provision */
+            acmltBddbtApamt?: number;
+            /** @description Unused bad-debt provision */
+            unsdBddbtApamt?: number;
+            /** @description Document file group ID */
+            fileUnqId?: string;
+            /** @description Legal document file group ID */
+            lglDcmntFileUnqId?: string;
+            /** @description Published (Y/N) */
+            pblntYn?: string;
+            /** @description Publication end date (DDMMYYYY) */
+            pblntEndDmy?: string;
+            /** @description Exposed (Y/N) */
+            expsrYn?: string;
+            /** @description Posted on main screen (Y/N) */
+            mscrnPstgYn?: string;
+            /** @description Recommended (Y/N) */
+            rcmdtnYn?: string;
+            /** @description NPL status */
+            bndSttsCd?: string;
+            /**
+             * Format: date-time
+             * @description Created at
+             */
+            crtDt?: string;
+            /**
+             * Format: date-time
+             * @description Modified at
+             */
+            mdfcnDt?: string;
+            /** @description Evaluation completed (Y/N) */
+            evlCmplYn?: string;
+            /** @description Latest evaluation, null when none */
+            evaluation?: components["schemas"]["Evaluation"];
+            /** @description Lot, null for a single NPL */
+            lot?: components["schemas"]["Lot"];
+            /** @description Attached files */
+            files?: components["schemas"]["TradeFileDto"][];
+            /** @description Collaterals */
+            collaterals?: components["schemas"]["Collateral"][];
+            /** @description Creditors */
+            creditors?: components["schemas"]["Creditor"][];
+            /** @description Y when debtor personal data is masked for the caller */
+            debtorPiiMaskedYn?: string;
+            /** @description Debtors */
+            debtors?: components["schemas"]["Debtor"][];
+        };
+        NplLotSearchRequest: {
+            /**
+             * @description LOT ID (partial match)
+             * @example 2026
+             */
+            bndLotNo?: string;
+            /**
+             * @description LOT name (partial match)
+             * @example Hanoi
+             */
+            bndLotNm?: string;
+        };
+        ApiResponsePageResponseNplLotListItemResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["PageResponseNplLotListItemResponse"];
+        };
+        NplLotListItemResponse: {
+            /** @description LOT UUID */
+            bndLotId?: string;
+            /** @description LOT ID shown to users (may be null on legacy rows) */
+            bndLotNo?: string;
+            /** @description LOT name */
+            bndLotNm?: string;
+            /**
+             * Format: int32
+             * @description Number of NPLs in the LOT
+             */
+            nplCnt?: number;
+            /**
+             * Format: date-time
+             * @description Created at
+             */
+            crtDt?: string;
+            /** @description Created by (name) */
+            crtByNm?: string;
+            /**
+             * Format: date-time
+             * @description Modified at
+             */
+            mdfcnDt?: string;
+            /** @description Modified by (name) */
+            mdfcnByNm?: string;
+        };
+        /** @description Paginated Response / Phản hồi phân trang */
+        PageResponseNplLotListItemResponse: {
+            /** @description Data list / Danh sách dữ liệu */
+            content?: components["schemas"]["NplLotListItemResponse"][];
+            /**
+             * Format: int32
+             * @description Current page number (1-based) / Số trang hiện tại
+             */
+            page?: number;
+            /**
+             * Format: int32
+             * @description Page size / Số lượng bản ghi mỗi trang
+             */
+            size?: number;
+            /**
+             * Format: int64
+             * @description Total number of records / Tổng số bản ghi
+             */
+            totalElements?: number;
+            /**
+             * Format: int32
+             * @description Total number of pages / Tổng số trang
+             */
+            totalPages?: number;
+        };
+        ApiResponsePageResponseNotificationMessageResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["PageResponseNotificationMessageResponse"];
+        };
+        /** @description Paginated Response / Phản hồi phân trang */
+        PageResponseNotificationMessageResponse: {
+            /** @description Data list / Danh sách dữ liệu */
+            content?: components["schemas"]["NotificationMessageResponse"][];
+            /**
+             * Format: int32
+             * @description Current page number (1-based) / Số trang hiện tại
+             */
+            page?: number;
+            /**
+             * Format: int32
+             * @description Page size / Số lượng bản ghi mỗi trang
+             */
+            size?: number;
+            /**
+             * Format: int64
+             * @description Total number of records / Tổng số bản ghi
+             */
+            totalElements?: number;
+            /**
+             * Format: int32
+             * @description Total number of pages / Tổng số trang
+             */
+            totalPages?: number;
+        };
+        ApiResponsePageResponseNotificationHistoryResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["PageResponseNotificationHistoryResponse"];
+        };
+        /** @description Sent notification / Thông báo đã gửi */
+        NotificationHistoryResponse: {
+            /**
+             * Format: int64
+             * @description Row number (newest first = highest)
+             * @example 12
+             */
+            no?: number;
+            /**
+             * @description Log ID
+             * @example 3fa85f64-5717-4562-b3fc-2c963f66afa6
+             */
+            logId?: string;
+            /**
+             * @description Channel (PUSH, MAIL, ZALO)
+             * @example MAIL
+             */
+            notiMediaSe?: string;
+            /**
+             * @description Title
+             * @example [VNPL] Application Receipt Notification
+             */
+            notiTtl?: string;
+            /**
+             * @description Recipient type (MBR, EMP)
+             * @example MBR
+             */
+            notiRcvrSeCd?: string;
+            /**
+             * @description Recipient member or employee number
              * @example TV00000001
              */
-            mbrNo?: string;
+            notiRcvrId?: string;
             /**
-             * @description Email address keyword
-             * @example demo@example.com
+             * Format: date-time
+             * @description Sent at
              */
-            emlAddr?: string;
+            notiSndngDt?: string;
             /**
-             * Format: date
-             * @description Registration period start date (YYYY-MM-DD)
-             * @example 2026-01-01
+             * @description Delivered (Y) or failed (N)
+             * @example Y
              */
-            regFromDt?: string;
+            sndngScsYn?: string;
+            /** @description Content, detail only */
+            notiCn?: string;
+            /** @description Failure reason, detail only */
+            failRsn?: string;
+        };
+        /** @description Paginated Response / Phản hồi phân trang */
+        PageResponseNotificationHistoryResponse: {
+            /** @description Data list / Danh sách dữ liệu */
+            content?: components["schemas"]["NotificationHistoryResponse"][];
             /**
-             * Format: date
-             * @description Registration period end date (YYYY-MM-DD)
-             * @example 2026-12-31
+             * Format: int32
+             * @description Current page number (1-based) / Số trang hiện tại
              */
-            regToDt?: string;
+            page?: number;
+            /**
+             * Format: int32
+             * @description Page size / Số lượng bản ghi mỗi trang
+             */
+            size?: number;
+            /**
+             * Format: int64
+             * @description Total number of records / Tổng số bản ghi
+             */
+            totalElements?: number;
+            /**
+             * Format: int32
+             * @description Total number of pages / Tổng số trang
+             */
+            totalPages?: number;
+        };
+        ApiResponseNotificationHistoryResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["NotificationHistoryResponse"];
+        };
+        MenuSettingSearchRequest: {
+            /**
+             * @description Menu type (W web, A admin) / Loại menu
+             * @example A
+             */
+            menuSeCd: string;
+            /**
+             * @description Menu code keyword / Từ khóa mã menu
+             * @example A06
+             */
+            menuCd?: string;
+            /**
+             * @description Vietnamese name keyword / Từ khóa tên tiếng Việt
+             * @example Menu
+             */
+            menuNmVn?: string;
+            /**
+             * @description English name keyword / Từ khóa tên tiếng Anh
+             * @example Menu Settings
+             */
+            menuNmEn?: string;
+            /**
+             * @description In use filter (Y/N, empty = all) / Lọc trạng thái sử dụng
+             * @example N
+             */
+            useYn?: string;
+        };
+        ApiResponseListMenuSettingResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["MenuSettingResponse"][];
+        };
+        MenuSettingResponse: {
+            /**
+             * @description Menu code / Mã menu
+             * @example A06010100
+             */
+            menuCd?: string;
+            /**
+             * @description Parent menu code / Mã menu cha
+             * @example A06010000
+             */
+            upMenuCd?: string;
+            /**
+             * @description Menu type (W/A) / Loại menu
+             * @example A
+             */
+            menuSeCd?: string;
+            /**
+             * Format: int32
+             * @description Display order / Thứ tự
+             * @example 1
+             */
+            menuSeq?: number;
+            /**
+             * Format: int32
+             * @description Depth (0 = root) / Cấp
+             * @example 3
+             */
+            menuDpth?: number;
+            /**
+             * @description In use (Y/N) / Đang sử dụng
+             * @example Y
+             */
+            useYn?: string;
+            /** @description Vietnamese name / Tên tiếng Việt */
+            menuNmVn?: string;
+            /** @description English name / Tên tiếng Anh */
+            menuNmEn?: string;
+            /** @description Menu URL / Đường dẫn */
+            menuUrlAddr?: string;
+            /**
+             * @description Label code / Mã nhãn
+             * @example lbl.menu.A06010100
+             */
+            lblCd?: string;
+            /** @description Description / Mô tả */
+            menuExpln?: string;
+            /**
+             * @description Tree sort path / Đường dẫn sắp xếp
+             * @example 001-006-001
+             */
+            sortPath?: string;
+            /**
+             * Format: int32
+             * @description Number of child menus (detail only) / Số menu con
+             */
+            childCount?: number;
+            /**
+             * Format: date-time
+             * @description Created at / Ngày tạo
+             */
+            crtDt?: string;
+            /** @description Created by / Người tạo */
+            crtBy?: string;
+            /**
+             * Format: date-time
+             * @description Modified at / Ngày sửa
+             */
+            mdfcnDt?: string;
+            /** @description Modified by / Người sửa */
+            mdfcnBy?: string;
+        };
+        ApiResponseMenuSettingResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["MenuSettingResponse"];
+        };
+        ApiResponseMenuPermissionMatrixResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["MenuPermissionMatrixResponse"];
+        };
+        Column: {
+            /**
+             * @description Role group ID / Mã nhóm vai trò
+             * @example RG09999
+             */
+            roleGroupId?: string;
+            /** @description Role group name / Tên nhóm vai trò */
+            roleGroupNm?: string;
+            /**
+             * @description Role ID / Mã vai trò
+             * @example ADMIN
+             */
+            roleId?: string;
+            /** @description Role name / Tên vai trò */
+            roleNm?: string;
+            /** @description Fixed full-access column, not editable / Cột toàn quyền cố định, không sửa */
+            superAdmin?: boolean;
+        };
+        MenuPermissionMatrixResponse: {
+            /**
+             * @description Menu type (A) / Loại menu
+             * @example A
+             */
+            menuSeCd?: string;
+            /** @description Role columns; the first is the fixed Super Admin / Cột vai trò, cột đầu là Super Admin cố định */
+            columns?: components["schemas"]["Column"][];
+            /** @description Menu rows in tree order / Dòng menu theo thứ tự cây */
+            rows?: components["schemas"]["Row"][];
+        };
+        Permission: {
+            /** @description Role group ID / Mã nhóm vai trò */
+            roleGroupId?: string;
+            /** @description Role ID / Mã vai trò */
+            roleId?: string;
+            /** @description Can read / Được đọc */
+            read?: boolean;
+            /** @description Can write / Được ghi */
+            write?: boolean;
+        };
+        Row: {
+            /**
+             * @description Menu code / Mã menu
+             * @example A01010000
+             */
+            menuCd?: string;
+            /** @description Parent menu code / Mã menu cha */
+            upMenuCd?: string;
+            /**
+             * Format: int32
+             * @description Depth (1 = top level) / Cấp
+             * @example 2
+             */
+            menuDpth?: number;
+            /**
+             * @description Tree sort path / Đường dẫn sắp xếp
+             * @example 001-001
+             */
+            sortPath?: string;
+            /**
+             * @description In use (Y/N) / Đang sử dụng
+             * @example Y
+             */
+            useYn?: string;
+            /** @description Vietnamese name / Tên tiếng Việt */
+            menuNmVn?: string;
+            /** @description English name / Tên tiếng Anh */
+            menuNmEn?: string;
+            /** @description Permission of each role column / Quyền của từng vai trò */
+            permissions?: components["schemas"]["Permission"][];
         };
         ApiResponsePageResponseMemberResponse: {
             /** Format: int32 */
@@ -11435,8 +16065,8 @@ export interface components {
              */
             atrzStage?: string;
             /**
-             * @description Membership grade (TMP: Temporary, GEN: General, FUL: Full)
-             * @example GEN
+             * @description Membership grade (T: Temporary, G: General, F: Full)
+             * @example G
              */
             mbrGrdCd?: string;
             /**
@@ -11510,10 +16140,58 @@ export interface components {
              */
             acntSttsCd?: string;
             /**
+             * @description SGDN member code / Mã hội viên SGDN
+             * @example SGDN-00012
+             */
+            sgdnMbrNo?: string;
+            /**
+             * @description Membership: type of the currently valid period (PAID, EXEMPT) or NONE / Loại kỳ hội viên còn hiệu lực hoặc NONE
+             * @example PAID
+             */
+            mbrshpPayCd?: string;
+            /**
+             * @description Status label (PENDING_APPROVAL, SUPPLEMENT_REQUESTED, REJECTED, ACTIVE, LOCKED, DELETED, CANCELLED) / Nhãn trạng thái
+             * @example ACTIVE
+             */
+            sttsCd?: string;
+            /**
+             * @description Sign-up channel (ON online, OFF offline) / Kênh đăng ký
+             * @example ON
+             */
+            mbrJoinChnlCd?: string;
+            /**
+             * Format: date
+             * @description Membership expiry date: end of the most recent period / Ngày hết hạn hội viên
+             * @example 2026-12-31
+             */
+            mbrshpExprDt?: string;
+            /**
+             * Format: date
+             * @description Payment deadline: application (or re-application) date + 15 days, Temporary Members pending approval only / Hạn nộp: ngày đăng ký (hoặc đăng ký lại) + 15 ngày, chỉ hội viên tạm chờ duyệt
+             * @example 2026-10-29
+             */
+            payDdlnDt?: string;
+            /**
+             * Format: date-time
+             * @description Deleted date, only with Show Deleted Members / Ngày xoá (khi hiện hội viên đã xoá)
+             */
+            delDt?: string;
+            /**
+             * Format: date
+             * @description Retention end date = deleted date + 1 year / Ngày hết hạn lưu giữ
+             */
+            rtnEndDt?: string;
+            /**
              * @description Available user action for popup (RECEIVE, REQUEST, DECIDE, VIEW)
              * @example RECEIVE
              */
             availableAction?: string;
+            /**
+             * Format: int32
+             * @description Application round: 1 + earlier sign-up rounds sent back or rejected (2+ = re-submitted) / Lần nộp hồ sơ
+             * @example 1
+             */
+            aplyRndNo?: number;
         };
         /** @description Paginated Response / Phản hồi phân trang */
         PageResponseMemberResponse: {
@@ -11672,6 +16350,123 @@ export interface components {
             /** @description Verification attachments for review */
             files?: components["schemas"]["MemberAttachmentDto"][];
         };
+        ApiResponseMemberApplicationHistoryResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["MemberApplicationHistoryResponse"];
+        };
+        /** @description Sign-up application history / Lịch sử các lần nộp hồ sơ đăng ký */
+        MemberApplicationHistoryResponse: {
+            /**
+             * @description Member number
+             * @example TV00000001
+             */
+            mbrNo?: string;
+            /**
+             * @description Current member status (P, U, S, R, C, L, D)
+             * @example P
+             */
+            mbrSttsCd?: string;
+            /**
+             * Format: int32
+             * @description Current application round: 1 + earlier rounds that were sent back or rejected / Lần nộp hiện tại
+             * @example 2
+             */
+            aplyRndNo?: number;
+            /**
+             * @description True when an earlier round was sent back or rejected / Hồ sơ nộp lại
+             * @example true
+             */
+            reapplied?: boolean;
+            /**
+             * @description Open supplement note while the status is U (also set when it was requested before receipt) / Yêu cầu bổ sung hiện tại
+             * @example Please upload the back side of the ID card
+             */
+            splmntRqstCn?: string;
+            /**
+             * Format: date-time
+             * @description Date of the open supplement request / Ngày yêu cầu bổ sung
+             * @example 2026-11-03T16:40:00
+             */
+            splmntRqstDt?: string;
+            /**
+             * @description Rejection reason while the status is R / Lý do từ chối hiện tại
+             * @example Duplicate application
+             */
+            rjctRsnCn?: string;
+            /**
+             * Format: date-time
+             * @description Rejection date while the status is R / Ngày từ chối
+             * @example 2026-11-03T16:40:00
+             */
+            rjctDt?: string;
+            /** @description Review rounds, oldest first / Các vòng xét duyệt, cũ nhất trước */
+            rounds?: components["schemas"]["MemberApplicationRoundDto"][];
+        };
+        /** @description One review round of a sign-up application / Một vòng xét duyệt hồ sơ đăng ký */
+        MemberApplicationRoundDto: {
+            /**
+             * Format: int32
+             * @description Round number, 1 = first application / Lần nộp (1 = lần đầu)
+             * @example 2
+             */
+            rndNo?: number;
+            /**
+             * @description Approval session ID
+             * @example 3fa85f64-5717-4562-b3fc-2c963f66afa6
+             */
+            atrzHstryId?: string;
+            /**
+             * @description Outcome: IN_PROGRESS, APPROVED, SUPPLEMENT_REQUESTED (sent back for documents), REJECTED / Kết quả vòng
+             * @example SUPPLEMENT_REQUESTED
+             * @enum {string}
+             */
+            outcome?: "IN_PROGRESS" | "APPROVED" | "SUPPLEMENT_REQUESTED" | "REJECTED";
+            /**
+             * Format: date-time
+             * @description Receipt date (round start) / Ngày tiếp nhận
+             * @example 2026-11-02T09:15:00
+             */
+            rcptDt?: string;
+            /**
+             * Format: date-time
+             * @description Closing date, null while in progress / Ngày kết thúc vòng
+             * @example 2026-11-03T16:40:00
+             */
+            closeDt?: string;
+            /**
+             * @description Assignee employee number / Mã nhân viên phụ trách
+             * @example EMP0000002
+             */
+            assigneeEmpNo?: string;
+            /**
+             * @description Assignee name / Tên nhân viên phụ trách
+             * @example Vo Ngoc Lan
+             */
+            assigneeNm?: string;
+            /**
+             * Format: int32
+             * @description Step that closed the round (2 processing, 3 approval) / Bước kết thúc vòng
+             * @example 2
+             */
+            closeStpNo?: number;
+            /**
+             * @description Employee who closed the round / Mã nhân viên kết thúc vòng
+             * @example EMP0000002
+             */
+            dcsnEmpNo?: string;
+            /**
+             * @description Name of the employee who closed the round / Tên nhân viên kết thúc vòng
+             * @example Vo Ngoc Lan
+             */
+            dcsnEmpNm?: string;
+            /**
+             * @description Supplement note or rejection reason of the round / Nội dung yêu cầu bổ sung hoặc lý do từ chối
+             * @example The ID card copy is unreadable
+             */
+            rsnCn?: string;
+        };
         ApiResponseMemberApprovalSummaryResponse: {
             /** Format: int32 */
             status?: number;
@@ -11704,6 +16499,28 @@ export interface components {
              * @example 1
              */
             awaitingMyDecision?: number;
+        };
+        ProvinceSearchRequest: {
+            /**
+             * @description Use status filter (Y/N, empty = all) / Bộ lọc trạng thái
+             * @example Y
+             */
+            useYn?: string;
+            /**
+             * @description Keyword on province code or name / Từ khóa theo mã hoặc tên
+             * @example Hà Nội
+             */
+            keyword?: string;
+            /**
+             * @description Province code (partial match) / Mã tỉnh (khớp một phần)
+             * @example HN
+             */
+            mctpvCd?: string;
+            /**
+             * @description Province name (partial match) / Tên tỉnh (khớp một phần)
+             * @example Hà
+             */
+            mctpvNm?: string;
         };
         ApiResponsePageResponseProvinceResponse: {
             /** Format: int32 */
@@ -11793,12 +16610,6 @@ export interface components {
              */
             mdfcnBy?: string;
         };
-        ApiResponseListDistrictResponse: {
-            /** Format: int32 */
-            status?: number;
-            message?: string;
-            data?: components["schemas"]["DistrictResponse"][];
-        };
         ApiResponsePageResponseDistrictResponse: {
             /** Format: int32 */
             status?: number;
@@ -11829,6 +16640,166 @@ export interface components {
              * @description Total number of pages / Tổng số trang
              */
             totalPages?: number;
+        };
+        ApiResponsePageResponseAuctionResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["PageResponseAuctionResponse"];
+        };
+        /** @description Paginated Response / Phản hồi phân trang */
+        PageResponseAuctionResponse: {
+            /** @description Data list / Danh sách dữ liệu */
+            content?: components["schemas"]["AuctionResponse"][];
+            /**
+             * Format: int32
+             * @description Current page number (1-based) / Số trang hiện tại
+             */
+            page?: number;
+            /**
+             * Format: int32
+             * @description Page size / Số lượng bản ghi mỗi trang
+             */
+            size?: number;
+            /**
+             * Format: int64
+             * @description Total number of records / Tổng số bản ghi
+             */
+            totalElements?: number;
+            /**
+             * Format: int32
+             * @description Total number of pages / Tổng số trang
+             */
+            totalPages?: number;
+        };
+        ApiResponseAuctionResultResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["AuctionResultResponse"];
+        };
+        /** @description Auction result (certificate / record) / Kết quả đấu giá */
+        AuctionResultResponse: {
+            /** @description Auction notice: overview, target item, prices and schedule */
+            auction?: components["schemas"]["AuctionResponse"];
+            /** @description Result: AW awarded, FL failed */
+            auctnSttsCd?: string;
+            /**
+             * Format: int64
+             * @description Bidders who placed a valid bid
+             */
+            participantCount?: number;
+            /**
+             * Format: int64
+             * @description Valid bids
+             */
+            totalBidCount?: number;
+            /** @description Winning bidder number */
+            winnerBdrNo?: string;
+            /** @description Winning member number */
+            winnerMbrNo?: string;
+            /** @description Winner name (certificate: full; record: masked) */
+            winnerNm?: string;
+            /** @description Awarded price */
+            scsbdAmt?: number;
+            /** @description Deposit applied to the price */
+            grnteAmt?: number;
+            /** @description Balance to pay */
+            balPayAmt?: number;
+            /**
+             * Format: date-time
+             * @description Winning bid time
+             */
+            lastBidDt?: string;
+            /**
+             * Format: date-time
+             * @description Award time
+             */
+            scsbdDt?: string;
+            /** @description Record only: valid bids, oldest first */
+            bids?: components["schemas"]["BidResponse"][];
+        };
+        ApiResponsePageResponseBidResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["PageResponseBidResponse"];
+        };
+        /** @description Paginated Response / Phản hồi phân trang */
+        PageResponseBidResponse: {
+            /** @description Data list / Danh sách dữ liệu */
+            content?: components["schemas"]["BidResponse"][];
+            /**
+             * Format: int32
+             * @description Current page number (1-based) / Số trang hiện tại
+             */
+            page?: number;
+            /**
+             * Format: int32
+             * @description Page size / Số lượng bản ghi mỗi trang
+             */
+            size?: number;
+            /**
+             * Format: int64
+             * @description Total number of records / Tổng số bản ghi
+             */
+            totalElements?: number;
+            /**
+             * Format: int32
+             * @description Total number of pages / Tổng số trang
+             */
+            totalPages?: number;
+        };
+        ApiResponseListLanguageResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["LanguageResponse"][];
+        };
+        LanguageResponse: {
+            /**
+             * @description Language code / Mã ngôn ngữ
+             * @example VN
+             */
+            langCd?: string;
+            /**
+             * @description Language name / Tên ngôn ngữ
+             * @example Vietnamese
+             */
+            langNm?: string;
+            /**
+             * @description In use (Y/N) / Sử dụng
+             * @example Y
+             */
+            useYn?: string;
+            /**
+             * Format: int32
+             * @description Sort order / Thứ tự
+             * @example 1
+             */
+            sortSeq?: number;
+        };
+        InstitutionSearchRequest: {
+            /**
+             * @description Use status filter (Y/N, empty = all) / Bộ lọc trạng thái
+             * @example Y
+             */
+            useYn?: string;
+            /**
+             * @description Keyword on code, name or abbreviation / Từ khóa theo mã, tên hoặc tên viết tắt
+             * @example Vietcombank
+             */
+            keyword?: string;
+            /**
+             * @description Institution code (partial match, text) / Mã tổ chức (khớp một phần)
+             * @example 10
+             */
+            fnstCd?: string;
+            /**
+             * @description Institution name (partial match) / Tên tổ chức (khớp một phần)
+             * @example Vietcom
+             */
+            fnstNm?: string;
         };
         ApiResponsePageResponseInstitutionResponse: {
             /** Format: int32 */
@@ -11917,12 +16888,6 @@ export interface components {
              * @example admin
              */
             mdfcnBy?: string;
-        };
-        ApiResponseListBranchResponse: {
-            /** Format: int32 */
-            status?: number;
-            message?: string;
-            data?: components["schemas"]["BranchResponse"][];
         };
         ApiResponsePageResponseBranchResponse: {
             /** Format: int32 */
@@ -12036,6 +17001,412 @@ export interface components {
              */
             totalPages?: number;
         };
+        EmployeeLookupRequest: {
+            /**
+             * @description Employee number keyword / Từ khóa mã nhân viên
+             * @example user
+             */
+            empNo?: string;
+            /**
+             * @description Employee name keyword (matched after decryption) / Từ khóa tên nhân viên (so khớp sau giải mã)
+             * @example nguyen
+             */
+            empNm?: string;
+            /**
+             * @description Exclude employees already assigned to this role group / Loại nhân viên đã gán nhóm vai trò này
+             * @example RG00001
+             */
+            excludeRoleGroupId?: string;
+            /**
+             * @description Exclude employees already assigned to this role / Loại nhân viên đã gán vai trò này
+             * @example ADMIN
+             */
+            excludeRoleId?: string;
+        };
+        ApiResponsePageResponseEmployeeLookupResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["PageResponseEmployeeLookupResponse"];
+        };
+        EmployeeLookupResponse: {
+            /**
+             * @description Employee number / Mã nhân viên
+             * @example user01
+             */
+            empNo?: string;
+            /**
+             * @description Employee name / Tên nhân viên
+             * @example Nguyen Van A
+             */
+            empNm?: string;
+            /**
+             * @description Position name / Chức vụ
+             * @example Specialist
+             */
+            jbpsNm?: string;
+            /**
+             * @description Employee status code / Mã trạng thái
+             * @example H
+             */
+            empSttsCd?: string;
+        };
+        /** @description Paginated Response / Phản hồi phân trang */
+        PageResponseEmployeeLookupResponse: {
+            /** @description Data list / Danh sách dữ liệu */
+            content?: components["schemas"]["EmployeeLookupResponse"][];
+            /**
+             * Format: int32
+             * @description Current page number (1-based) / Số trang hiện tại
+             */
+            page?: number;
+            /**
+             * Format: int32
+             * @description Page size / Số lượng bản ghi mỗi trang
+             */
+            size?: number;
+            /**
+             * Format: int64
+             * @description Total number of records / Tổng số bản ghi
+             */
+            totalElements?: number;
+            /**
+             * Format: int32
+             * @description Total number of pages / Tổng số trang
+             */
+            totalPages?: number;
+        };
+        DebtorSearchRequest: {
+            /**
+             * Format: date
+             * @description Registration date from (inclusive)
+             * @example 2026-01-01
+             */
+            crtFromDt?: string;
+            /**
+             * Format: date
+             * @description Registration date to (inclusive)
+             * @example 2026-12-31
+             */
+            crtToDt?: string;
+            /**
+             * @description Debtor type: P personal, O organization
+             * @example P
+             */
+            dbtrTypeCd?: string;
+            /**
+             * @description Business status Y/N (ignored for personal debtors)
+             * @example Y
+             */
+            entSalsSttsYn?: string;
+            /**
+             * @description Status: S normal (default), D deleted
+             * @example S
+             */
+            dbtrSttsCd?: string;
+            /**
+             * @description Debtor code keyword
+             * @example KH0000
+             */
+            dbtrCd?: string;
+            /**
+             * @description Debtor name (Vietnamese or English) keyword
+             * @example Nguyen
+             */
+            dbtrNm?: string;
+            /**
+             * @description CIC code keyword
+             * @example CICS0000
+             */
+            cicCd?: string;
+        };
+        ApiResponsePageResponseDebtorListItemResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["PageResponseDebtorListItemResponse"];
+        };
+        /** @description Debtor list row */
+        DebtorListItemResponse: {
+            /**
+             * @description Debtor code
+             * @example KH00000003
+             */
+            dbtrCd?: string;
+            /**
+             * @description Debtor type: P personal, O organization
+             * @example P
+             */
+            dbtrTypeCd?: string;
+            /** @description Name */
+            dbtrNm?: string;
+            /** @description English name */
+            dbtrEngNm?: string;
+            /** @description Cooperation attitude grade */
+            dbtrCrdntAttGrdNo?: string;
+            /** @description CIC code */
+            cicCd?: string;
+            /** @description Enterprise type code */
+            entShpCd?: string;
+            /** @description Business status Y/N */
+            entSalsSttsYn?: string;
+            /** @description Currency code */
+            crncCd?: string;
+            /** @description Capital */
+            cptl?: number;
+            /** @description Business registration number */
+            brno?: string;
+            /** @description ID type code (CCCD, CMND, PSPT, TXNO) */
+            uiiSeCd?: string;
+            /** @description Identification number */
+            uiiNo?: string;
+            /** @description ID issue date (yyyyMMdd) */
+            uiiIssuDmy?: string;
+            /** @description ID issuing authority */
+            uiiIssuInstNm?: string;
+            /** @description Province code */
+            mctpvCd?: string;
+            /** @description District code */
+            distCd?: string;
+            /** @description Detailed address */
+            daddr?: string;
+            /** @description Financial institution code */
+            fnstCd?: string;
+            /**
+             * Format: int64
+             * @description Financial institution branch code
+             */
+            fnstBrnchCd?: number;
+            /**
+             * @description Status: S normal, D deleted
+             * @example S
+             */
+            dbtrSttsCd?: string;
+            /**
+             * Format: int32
+             * @description Number of linked NPLs
+             */
+            linkedNplCnt?: number;
+            /**
+             * Format: date-time
+             * @description Registration date
+             */
+            crtDt?: string;
+            /** @description Registered by (name) */
+            crtByNm?: string;
+            /**
+             * Format: date-time
+             * @description Modification date
+             */
+            mdfcnDt?: string;
+            /** @description Modified by (name) */
+            mdfcnByNm?: string;
+        };
+        /** @description Paginated Response / Phản hồi phân trang */
+        PageResponseDebtorListItemResponse: {
+            /** @description Data list / Danh sách dữ liệu */
+            content?: components["schemas"]["DebtorListItemResponse"][];
+            /**
+             * Format: int32
+             * @description Current page number (1-based) / Số trang hiện tại
+             */
+            page?: number;
+            /**
+             * Format: int32
+             * @description Page size / Số lượng bản ghi mỗi trang
+             */
+            size?: number;
+            /**
+             * Format: int64
+             * @description Total number of records / Tổng số bản ghi
+             */
+            totalElements?: number;
+            /**
+             * Format: int32
+             * @description Total number of pages / Tổng số trang
+             */
+            totalPages?: number;
+        };
+        ApiResponseDebtorDetailResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["DebtorDetailResponse"];
+        };
+        /** @description Debtor detail */
+        DebtorDetailResponse: {
+            /**
+             * @description Debtor code
+             * @example KH00000003
+             */
+            dbtrCd?: string;
+            /**
+             * @description Debtor type: P personal, O organization
+             * @example P
+             */
+            dbtrTypeCd?: string;
+            /** @description Name */
+            dbtrNm?: string;
+            /** @description English name */
+            dbtrEngNm?: string;
+            /** @description Cooperation attitude grade */
+            dbtrCrdntAttGrdNo?: string;
+            /** @description CIC code */
+            cicCd?: string;
+            /** @description Enterprise type code */
+            entShpCd?: string;
+            /** @description Business status Y/N */
+            entSalsSttsYn?: string;
+            /** @description Currency code */
+            crncCd?: string;
+            /** @description Capital */
+            cptl?: number;
+            /** @description Business registration number */
+            brno?: string;
+            /** @description ID type code (CCCD, CMND, PSPT, TXNO) */
+            uiiSeCd?: string;
+            /** @description Identification number */
+            uiiNo?: string;
+            /** @description ID issue date (yyyyMMdd) */
+            uiiIssuDmy?: string;
+            /** @description ID issuing authority */
+            uiiIssuInstNm?: string;
+            /** @description Province code */
+            mctpvCd?: string;
+            /** @description District code */
+            distCd?: string;
+            /** @description Detailed address */
+            daddr?: string;
+            /** @description Financial institution code */
+            fnstCd?: string;
+            /**
+             * Format: int64
+             * @description Financial institution branch code
+             */
+            fnstBrnchCd?: number;
+            /**
+             * @description Status: S normal, D deleted
+             * @example S
+             */
+            dbtrSttsCd?: string;
+            /**
+             * Format: int32
+             * @description Number of linked NPLs
+             */
+            linkedNplCnt?: number;
+            /**
+             * Format: date-time
+             * @description Registration date
+             */
+            crtDt?: string;
+            /** @description Registered by (name) */
+            crtByNm?: string;
+            /**
+             * Format: date-time
+             * @description Modification date
+             */
+            mdfcnDt?: string;
+            /** @description Modified by (name) */
+            mdfcnByNm?: string;
+            /** @description Province name */
+            mctpvNm?: string;
+            /** @description District name */
+            distNm?: string;
+            /** @description Financial institution name */
+            fnstNm?: string;
+            /** @description Financial institution branch name */
+            fnstBrnchNm?: string;
+            /** @description Attached file group id */
+            atchFileUnqId?: string;
+            /** @description Attached files */
+            files?: components["schemas"]["TradeFileDto"][];
+            /** @description Linked NPLs */
+            linkedNpls?: components["schemas"]["LinkedNpl"][];
+            /**
+             * @description Y when personal data is masked, N when in clear
+             * @example Y
+             */
+            piiMaskedYn?: string;
+        };
+        /** @description Linked NPL */
+        LinkedNpl: {
+            /**
+             * @description NPL code
+             * @example KN20260003
+             */
+            bndCd?: string;
+            /** @description NPL name */
+            bndNm?: string;
+            /** @description NPL status */
+            bndSttsCd?: string;
+        };
+        ApiResponseDashboardSummaryResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["DashboardSummaryResponse"];
+        };
+        /** @description Admin dashboard counters (provisional, VPA000101 widgets are TBD) / Số liệu dashboard (tạm) */
+        DashboardSummaryResponse: {
+            /**
+             * Format: int64
+             * @description Approval sessions waiting for the signed-in employee / Phê duyệt đang chờ tôi
+             * @example 3
+             */
+            myApprovals?: number;
+            /** @description Sign-up work; null without sign-up menu permission / Công việc duyệt đăng ký */
+            members?: components["schemas"]["Members"];
+            /** @description User web home posting; null without NPL or collateral menu permission / Đăng trang chủ */
+            homePosting?: components["schemas"]["HomePosting"];
+        };
+        /** @description Home posting counters: posted = MSCRN_PSTG_YN Y, live = also displayed (EXPSR_YN Y) */
+        HomePosting: {
+            /**
+             * Format: int64
+             * @description NPLs flagged for the home
+             * @example 8
+             */
+            nplPosted?: number;
+            /**
+             * Format: int64
+             * @description NPLs shown on the home now
+             * @example 6
+             */
+            nplLive?: number;
+            /**
+             * Format: int64
+             * @description Collateral assets flagged for the home
+             * @example 12
+             */
+            collateralPosted?: number;
+            /**
+             * Format: int64
+             * @description Collateral assets shown on the home now
+             * @example 10
+             */
+            collateralLive?: number;
+        };
+        /** @description Sign-up work counters */
+        Members: {
+            /**
+             * Format: int64
+             * @description New or re-submitted applications waiting for receipt
+             * @example 4
+             */
+            notReceived?: number;
+            /**
+             * Format: int64
+             * @description Sent back for supplement, waiting for the applicant
+             * @example 1
+             */
+            supplementRequested?: number;
+            /**
+             * Format: int64
+             * @description Received applications assigned to me
+             * @example 2
+             */
+            assignedToMe?: number;
+        };
         PostSearchRequest: {
             /**
              * @description Published filter (Y/N, empty = all) / Lọc trạng thái đăng (Y/N, trống = tất cả)
@@ -12124,6 +17495,12 @@ export interface components {
             totalPages?: number;
         };
         PostResponse: {
+            /**
+             * Format: int64
+             * @description Numeric post ID (PST_SN) shown as ID / Mã số bài viết hiển thị là ID
+             * @example 12
+             */
+            postSn?: number;
             /**
              * @description Post number / Mã bài viết
              * @example 3f2b1c9e-8a7d-4e6f-9b0a-1c2d3e4f5a6b
@@ -12263,6 +17640,61 @@ export interface components {
              * @example Kim Shin-han
              */
             mdfcnByNm?: string;
+        };
+        ApiResponseListExchangeRateResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["ExchangeRateResponse"][];
+        };
+        ExchangeRateResponse: {
+            /**
+             * @description Currency code / Mã tiền tệ
+             * @example USD
+             */
+            currencyCode?: string;
+            /**
+             * @description Currency name / Tên tiền tệ
+             * @example US DOLLAR
+             */
+            currencyName?: string;
+            /**
+             * @description Cash buying rate, omitted when not quoted / Tỷ giá mua tiền mặt
+             * @example 25950
+             */
+            cashBuy?: number;
+            /**
+             * @description Transfer buying rate, omitted when not quoted / Tỷ giá mua chuyển khoản
+             * @example 25980
+             */
+            transferBuy?: number;
+            /**
+             * @description Selling rate, omitted when not quoted / Tỷ giá bán
+             * @example 26340
+             */
+            sell?: number;
+            /**
+             * @description Shown on the user web (Y/N) / Hiển thị trên web người dùng
+             * @example Y
+             */
+            displayed?: string;
+            /**
+             * @description In use (Y/N) / Đang sử dụng
+             * @example Y
+             */
+            inUse?: string;
+            /**
+             * Format: date-time
+             * @description Reference date/time of the source / Thời điểm tham chiếu của nguồn
+             * @example 2026-11-16T09:30:00
+             */
+            referenceDateTime?: string;
+            /**
+             * Format: date-time
+             * @description Last modified at / Thời điểm cập nhật cuối
+             * @example 2026-11-16T09:31:05
+             */
+            lastModifiedAt?: string;
         };
         ApiResponseMapStringListCodeOptionResponse: {
             /** Format: int32 */
@@ -12461,6 +17893,28 @@ export interface components {
              */
             totalPages?: number;
         };
+        CodeGroupSearchRequest: {
+            /**
+             * @description Use status filter (Y/N, empty = all) / Bộ lọc trạng thái
+             * @example Y
+             */
+            useYn?: string;
+            /**
+             * @description Keyword on group code or group name / Từ khóa theo mã hoặc tên nhóm
+             * @example USER
+             */
+            keyword?: string;
+            /**
+             * @description Group code (partial match) / Mã nhóm (khớp một phần)
+             * @example MBR
+             */
+            groupCd?: string;
+            /**
+             * @description Group name (partial match) / Tên nhóm (khớp một phần)
+             * @example Member
+             */
+            groupNm?: string;
+        };
         ApiResponsePageResponseCodeGroupResponse: {
             /** Format: int32 */
             status?: number;
@@ -12497,6 +17951,412 @@ export interface components {
             status?: number;
             message?: string;
             data?: components["schemas"]["CodeGroupResponse"][];
+        };
+        CollateralAssetSearchRequest: {
+            /**
+             * @description Exposed on the platform (Y/N)
+             * @example Y
+             */
+            expsrYn?: string;
+            /**
+             * @description Posted on the user web home (Y/N) / Đăng trang chủ
+             * @example Y
+             */
+            mscrnPstgYn?: string;
+            /**
+             * @description Recommended (Y/N) / Đề xuất
+             * @example N
+             */
+            rcmdtnYn?: string;
+            /**
+             * @description Notarized (Y/N)
+             * @example N
+             */
+            notarYn?: string;
+            /**
+             * @description Collateral right setting registered (Y/N)
+             * @example N
+             */
+            cltrRghtStngRegYn?: string;
+            /**
+             * @description Collateral asset type code
+             * @example PTVT
+             */
+            cltrAstTypeCd?: string;
+            /**
+             * @description Collateral asset classification code
+             * @example BDS01
+             */
+            cltrAstClsfCd?: string;
+            /**
+             * @description Collateral asset detailed classification code
+             * @example BDS0101
+             */
+            cltrAstDtlClsfCd?: string;
+            /**
+             * @description Collateral asset code keyword
+             * @example TSBD0000
+             */
+            cltrAstCd?: string;
+            /**
+             * @description Collateral asset name (Vietnamese or English) keyword
+             * @example Apartment
+             */
+            cltrAstNm?: string;
+        };
+        ApiResponsePageResponseCollateralAssetListItemResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["PageResponseCollateralAssetListItemResponse"];
+        };
+        /** @description Collateral asset list row */
+        CollateralAssetListItemResponse: {
+            /**
+             * @description Collateral asset code
+             * @example TSBD000001
+             */
+            cltrAstCd?: string;
+            /** @description Name */
+            cltrAstNm?: string;
+            /** @description English name */
+            cltrAstEngNm?: string;
+            /**
+             * @description Exposed on the platform (Y/N)
+             * @example Y
+             */
+            expsrYn?: string;
+            /**
+             * @description Posted on the main screen (Y/N)
+             * @example N
+             */
+            mscrnPstgYn?: string;
+            /**
+             * @description Recommended (Y/N)
+             * @example N
+             */
+            rcmdtnYn?: string;
+            /**
+             * @description Representative NPL code (smallest linked code)
+             * @example KN00000001
+             */
+            rprsBndCd?: string;
+            /**
+             * @description Asset type of the representative NPL (V/P/D)
+             * @example V
+             */
+            nplAstSeCd?: string;
+            /**
+             * Format: int32
+             * @description Number of linked NPLs
+             */
+            bndCnt?: number;
+            /**
+             * @description Type code
+             * @example BDS
+             */
+            cltrAstTypeCd?: string;
+            /** @description Type name (code when not in COM_CD) */
+            cltrAstTypeNm?: string;
+            /** @description Classification code */
+            cltrAstClsfCd?: string;
+            /** @description Detailed classification code */
+            cltrAstDtlClsfCd?: string;
+            /**
+             * Format: int32
+             * @description Number of characteristics
+             */
+            chrcCnt?: number;
+            /**
+             * @description Province code of the first characteristic
+             * @example HCM
+             */
+            mctpvCd?: string;
+            /** @description District code of the first characteristic */
+            distCd?: string;
+            /** @description Detailed address of the first characteristic */
+            daddr?: string;
+            /** @description Land area of the first characteristic */
+            ladr?: string;
+            /** @description Manufacturer of the first characteristic */
+            mkrNm?: string;
+            /** @description Vehicle type of the first characteristic */
+            vhclKndNm?: string;
+            /** @description Manufacturing country of the first characteristic */
+            mnftrNtnNm?: string;
+            /**
+             * @description Notarized (Y/N)
+             * @example N
+             */
+            notarYn?: string;
+            /**
+             * @description Collateral right setting registered (Y/N)
+             * @example N
+             */
+            cltrRghtStngRegYn?: string;
+            /**
+             * @description Currency code
+             * @example VND
+             */
+            crncCd?: string;
+            /** @description Appraisal value at loan time */
+            loanTtmEvlAmt?: number;
+            /** @description Recent collateral value */
+            rcntCltrWrthAmt?: number;
+            /** @description Basic information */
+            cltrAstBscCn?: string;
+            /** @description Status code */
+            cltrAstSttsCd?: string;
+            /**
+             * Format: date-time
+             * @description Registration date
+             */
+            crtDt?: string;
+            /** @description Registered by */
+            crtByNm?: string;
+            /**
+             * Format: date-time
+             * @description Modification date
+             */
+            mdfcnDt?: string;
+            /** @description Modified by */
+            mdfcnByNm?: string;
+        };
+        /** @description Paginated Response / Phản hồi phân trang */
+        PageResponseCollateralAssetListItemResponse: {
+            /** @description Data list / Danh sách dữ liệu */
+            content?: components["schemas"]["CollateralAssetListItemResponse"][];
+            /**
+             * Format: int32
+             * @description Current page number (1-based) / Số trang hiện tại
+             */
+            page?: number;
+            /**
+             * Format: int32
+             * @description Page size / Số lượng bản ghi mỗi trang
+             */
+            size?: number;
+            /**
+             * Format: int64
+             * @description Total number of records / Tổng số bản ghi
+             */
+            totalElements?: number;
+            /**
+             * Format: int32
+             * @description Total number of pages / Tổng số trang
+             */
+            totalPages?: number;
+        };
+        ApiResponseCollateralAssetDetailResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["CollateralAssetDetailResponse"];
+        };
+        /** @description Collateral asset characteristic */
+        Characteristic: {
+            /**
+             * Format: int32
+             * @description Cltr ast chrc seq (CLTR_AST_CHRC_SEQ)
+             */
+            cltrAstChrcSeq?: number;
+            /** @description Land use prps cd (LAND_USE_PRPS_CD) */
+            landUsePrpsCd?: string;
+            /** @description Land ast clsf cd (LAND_AST_CLSF_CD) */
+            landAstClsfCd?: string;
+            /** @description Mctpv cd (MCTPV_CD) */
+            mctpvCd?: string;
+            /** @description Dist cd (DIST_CD) */
+            distCd?: string;
+            /** @description Detailed address */
+            daddr?: string;
+            /** @description Latitude */
+            lat?: string;
+            /** @description Longitude (LOT) */
+            lng?: string;
+            /** @description Ladr (LADR) */
+            ladr?: string;
+            /** @description Use bgng dmy (USE_BGNG_DMY) */
+            useBgngDmy?: string;
+            /** @description Use end dmy (USE_END_DMY) */
+            useEndDmy?: string;
+            /** @description Trns mns clsf cd (TRNS_MNS_CLSF_CD) */
+            trnsMnsClsfCd?: string;
+            /** @description Trns mns dtl clsf cd (TRNS_MNS_DTL_CLSF_CD) */
+            trnsMnsDtlClsfCd?: string;
+            /** @description Load wght (LOAD_WGHT) */
+            loadWght?: string;
+            /** @description Mnftr yr (MNFTR_YR) */
+            mnftrYr?: string;
+            /** @description Mnftr ntn nm (MNFTR_NTN_NM) */
+            mnftrNtnNm?: string;
+            /** @description Mkr nm (MKR_NM) */
+            mkrNm?: string;
+            /** @description Vhcl knd nm (VHCL_KND_NM) */
+            vhclKndNm?: string;
+            /** @description Vhcl seat cnt (VHCL_SEAT_CNT) */
+            vhclSeatCnt?: string;
+            /** @description Vhcl colr nm (VHCL_COLR_NM) */
+            vhclColrNm?: string;
+            /** @description Mchn eqpm clsf cd (MCHN_EQPM_CLSF_CD) */
+            mchnEqpmClsfCd?: string;
+            /** @description Lt no (LT_NO) */
+            ltNo?: string;
+            /** @description Prdct stts expln (PRDCT_STTS_EXPLN) */
+            prdctSttsExpln?: string;
+            /** @description Mscrt clsf cd (MSCRT_CLSF_CD) */
+            mscrtClsfCd?: string;
+            /** @description Bnd clm rght clsf cd (BND_CLM_RGHT_CLSF_CD) */
+            bndClmRghtClsfCd?: string;
+        };
+        /** @description Collateral asset detail */
+        CollateralAssetDetailResponse: {
+            /** @description Cltr ast cd (CLTR_AST_CD) */
+            cltrAstCd?: string;
+            /** @description Cltr ast nm (CLTR_AST_NM) */
+            cltrAstNm?: string;
+            /** @description Cltr ast eng nm (CLTR_AST_ENG_NM) */
+            cltrAstEngNm?: string;
+            /** @description Cltr ast type cd (CLTR_AST_TYPE_CD) */
+            cltrAstTypeCd?: string;
+            /** @description Cltr ast clsf cd (CLTR_AST_CLSF_CD) */
+            cltrAstClsfCd?: string;
+            /** @description Cltr ast dtl clsf cd (CLTR_AST_DTL_CLSF_CD) */
+            cltrAstDtlClsfCd?: string;
+            /** @description Cltr ast lclsf cd (CLTR_AST_LCLSF_CD) */
+            cltrAstLclsfCd?: string;
+            /** @description Cltr ctrt no (CLTR_CTRT_NO) */
+            cltrCtrtNo?: string;
+            /** @description Ctrt dmy (CTRT_DMY) */
+            ctrtDmy?: string;
+            /** @description Cltr ast bsc cn (CLTR_AST_BSC_CN) */
+            cltrAstBscCn?: string;
+            /** @description Cltr ast bsc eng cn (CLTR_AST_BSC_ENG_CN) */
+            cltrAstBscEngCn?: string;
+            /** @description Cltr ast dtl cn (CLTR_AST_DTL_CN) */
+            cltrAstDtlCn?: string;
+            /** @description Cltr ast dtl eng cn (CLTR_AST_DTL_ENG_CN) */
+            cltrAstDtlEngCn?: string;
+            /** @description Cltr ast lgl stts cd (CLTR_AST_LGL_STTS_CD) */
+            cltrAstLglSttsCd?: string;
+            /** @description Cltr ast lgl stts etc cn (CLTR_AST_LGL_STTS_ETC_CN) */
+            cltrAstLglSttsEtcCn?: string;
+            /** @description Notar yn (NOTAR_YN) */
+            notarYn?: string;
+            /** @description Cltr rght stng reg yn (CLTR_RGHT_STNG_REG_YN) */
+            cltrRghtStngRegYn?: string;
+            /** @description Pstg stts cd (PSTG_STTS_CD) */
+            pstgSttsCd?: string;
+            /** @description Acinsp yn (ACINSP_YN) */
+            acinspYn?: string;
+            /** @description Acinsp dmy (ACINSP_DMY) */
+            acinspDmy?: string;
+            /** @description Expsr yn (EXPSR_YN) */
+            expsrYn?: string;
+            /** @description Mscrn pstg yn (MSCRN_PSTG_YN) */
+            mscrnPstgYn?: string;
+            /** @description Rcmdtn yn (RCMDTN_YN) */
+            rcmdtnYn?: string;
+            /** @description Evl file unq id (EVL_FILE_UNQ_ID) */
+            evlFileUnqId?: string;
+            /** @description Rprs img file unq id (RPRS_IMG_FILE_UNQ_ID) */
+            rprsImgFileUnqId?: string;
+            /** @description Cltr ast img mlt file (CLTR_AST_IMG_MLT_FILE) */
+            cltrAstImgMltFile?: string;
+            /** @description Lgl dcmnt file unq id (LGL_DCMNT_FILE_UNQ_ID) */
+            lglDcmntFileUnqId?: string;
+            /** @description Crnc cd (CRNC_CD) */
+            crncCd?: string;
+            /** @description Loan ttm evl amt (LOAN_TTM_EVL_AMT) */
+            loanTtmEvlAmt?: number;
+            /** @description Rcnt cltr wrth amt (RCNT_CLTR_WRTH_AMT) */
+            rcntCltrWrthAmt?: number;
+            /** @description Expc dspsl amt (EXPC_DSPSL_AMT) */
+            expcDspslAmt?: number;
+            /** @description Cltr scp amt (CLTR_SCP_AMT) */
+            cltrScpAmt?: number;
+            /** @description Cltr ast stts cd (CLTR_AST_STTS_CD) */
+            cltrAstSttsCd?: string;
+            /**
+             * Format: int32
+             * @description Inq cnt (INQ_CNT)
+             */
+            inqCnt?: number;
+            /**
+             * Format: date-time
+             * @description Crt dt (CRT_DT)
+             */
+            crtDt?: string;
+            /**
+             * Format: date-time
+             * @description Mdfcn dt (MDFCN_DT)
+             */
+            mdfcnDt?: string;
+            /** @description Type name (code when not in COM_CD) */
+            cltrAstTypeNm?: string;
+            /** @description Registered by */
+            crtByNm?: string;
+            /** @description Modified by */
+            mdfcnByNm?: string;
+            /** @description Characteristics, ordered by sequence */
+            characteristics?: components["schemas"]["Characteristic"][];
+            /** @description NPLs this collateral asset is linked to */
+            linkedNpls?: components["schemas"]["LinkedNpl"][];
+            /** @description Appraisal files */
+            evlFiles?: components["schemas"]["TradeFileDto"][];
+            /** @description Legal document files */
+            legalFiles?: components["schemas"]["TradeFileDto"][];
+            /** @description Image files: representative image first, then the multi-image group */
+            imageFiles?: components["schemas"]["TradeFileDto"][];
+        };
+        ApiResponsePageResponseBidderResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["PageResponseBidderResponse"];
+        };
+        /** @description Paginated Response / Phản hồi phân trang */
+        PageResponseBidderResponse: {
+            /** @description Data list / Danh sách dữ liệu */
+            content?: components["schemas"]["BidderResponse"][];
+            /**
+             * Format: int32
+             * @description Current page number (1-based) / Số trang hiện tại
+             */
+            page?: number;
+            /**
+             * Format: int32
+             * @description Page size / Số lượng bản ghi mỗi trang
+             */
+            size?: number;
+            /**
+             * Format: int64
+             * @description Total number of records / Tổng số bản ghi
+             */
+            totalElements?: number;
+            /**
+             * Format: int32
+             * @description Total number of pages / Tổng số trang
+             */
+            totalPages?: number;
+        };
+        ApiResponseListAuctionCollateralResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["AuctionCollateralResponse"][];
+        };
+        /** @description Collateral of the NPL / Tài sản bảo đảm của NPL */
+        AuctionCollateralResponse: {
+            /**
+             * @description Collateral asset code
+             * @example TSBD000001
+             */
+            cltrAstCd?: string;
+            /** @description Collateral name */
+            cltrAstNm?: string;
+            /** @description Collateral English name */
+            cltrAstEngNm?: string;
         };
         ApprovalInboxSearchRequest: {
             /**
@@ -13136,6 +18996,25 @@ export interface components {
              */
             updatedAt?: string;
         };
+        /** @description Notification template IDs / Danh sách mã mẫu thông báo */
+        NotificationMessageIdsRequest: {
+            /**
+             * @description Template IDs (NOTI_MSG_ID)
+             * @example [
+             *       "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+             *     ]
+             */
+            notiMsgIds: string[];
+        };
+        DebtorDeleteRequest: {
+            /**
+             * @description Debtor codes selected in the grid
+             * @example [
+             *       "KH00000003"
+             *     ]
+             */
+            dbtrCds: string[];
+        };
         DeletePostsRequest: {
             /**
              * @description Post numbers selected in the grid / Danh sách mã bài viết được chọn
@@ -13144,6 +19023,16 @@ export interface components {
              *     ]
              */
             pstNos: string[];
+        };
+        /** @description Auction numbers / Danh sách số đấu giá */
+        AuctionNosRequest: {
+            /**
+             * @description Auction numbers
+             * @example [
+             *       "AUC-2026-00001"
+             *     ]
+             */
+            auctnNos: string[];
         };
     };
     responses: never;
@@ -13807,6 +19696,44 @@ export interface operations {
             };
         };
     };
+    saveAssignees: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Role Group ID / Mã nhóm vai trò
+                 * @example RG00001
+                 */
+                roleGroupId: string;
+                /**
+                 * @description Role ID / Mã vai trò
+                 * @example ADMIN
+                 */
+                roleId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SaveRoleAssigneesRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseListRoleUserResponse"];
+                };
+            };
+        };
+    };
     getContract_1: {
         parameters: {
             query?: never;
@@ -13925,6 +19852,347 @@ export interface operations {
             };
         };
     };
+    getNplLot: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description LOT UUID (BND_LOT_ID) */
+                bndLotId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseNplLotDetailResponse"];
+                };
+            };
+        };
+    };
+    updateNplLot: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description LOT UUID (BND_LOT_ID) */
+                bndLotId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["NplLotSaveRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseNplLotDetailResponse"];
+                };
+            };
+        };
+    };
+    deleteNplLot: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description LOT UUID (BND_LOT_ID) */
+                bndLotId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseVoid"];
+                };
+            };
+        };
+    };
+    getLotNpls: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description LOT UUID (BND_LOT_ID) */
+                bndLotId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseListNplLotNplResponse"];
+                };
+            };
+        };
+    };
+    replaceLotNpls: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description LOT UUID (BND_LOT_ID) */
+                bndLotId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["NplLotNplsRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseListNplLotNplResponse"];
+                };
+            };
+        };
+    };
+    getMessage: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Template ID */
+                notiMsgId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseNotificationMessageResponse"];
+                };
+            };
+        };
+    };
+    updateMessage: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Template ID */
+                notiMsgId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["NotificationMessageRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseNotificationMessageResponse"];
+                };
+            };
+        };
+    };
+    getMenu: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Menu code / Mã menu
+                 * @example A06010100
+                 */
+                menuCd: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseMenuSettingResponse"];
+                };
+            };
+        };
+    };
+    updateMenu: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Menu code / Mã menu
+                 * @example A08010000
+                 */
+                menuCd: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SaveMenuSettingRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseVoid"];
+                };
+            };
+        };
+    };
+    deleteMenu: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Menu code / Mã menu
+                 * @example A08010000
+                 */
+                menuCd: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseVoid"];
+                };
+            };
+        };
+    };
+    getMatrix: {
+        parameters: {
+            query?: {
+                /**
+                 * @description Menu type (A) / Loại menu
+                 * @example A
+                 */
+                menuSeCd?: string;
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseMenuPermissionMatrixResponse"];
+                };
+            };
+        };
+    };
+    saveMatrix: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SaveMenuPermissionMatrixRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseVoid"];
+                };
+            };
+        };
+    };
     getMember: {
         parameters: {
             query?: {
@@ -13986,6 +20254,35 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["ApiResponseMemberDetailResponse"];
+                };
+            };
+        };
+    };
+    unlock: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Member number
+                 * @example TV00000001
+                 */
+                mbrNo: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseMembershipStatusResponse"];
                 };
             };
         };
@@ -14201,6 +20498,60 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["ApiResponseVoid"];
+                };
+            };
+        };
+    };
+    update_3: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LabelSaveRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseLabelDetailResponse"];
+                };
+            };
+        };
+    };
+    create: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LabelSaveRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseLabelDetailResponse"];
                 };
             };
         };
@@ -14573,6 +20924,56 @@ export interface operations {
             };
         };
     };
+    get: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseSupportContactResponse"];
+                };
+            };
+        };
+    };
+    save: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SupportContactRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseSupportContactResponse"];
+                };
+            };
+        };
+    };
     getSection: {
         parameters: {
             query?: never;
@@ -14767,7 +21168,7 @@ export interface operations {
             };
         };
     };
-    update_3: {
+    update_4: {
         parameters: {
             query?: never;
             header?: {
@@ -14823,7 +21224,7 @@ export interface operations {
             };
         };
     };
-    update_4: {
+    update_5: {
         parameters: {
             query?: never;
             header?: {
@@ -14965,7 +21366,7 @@ export interface operations {
             };
         };
     };
-    update_5: {
+    update_6: {
         parameters: {
             query?: never;
             header?: {
@@ -15021,7 +21422,7 @@ export interface operations {
             };
         };
     };
-    update_6: {
+    update_7: {
         parameters: {
             query?: never;
             header?: {
@@ -15077,7 +21478,7 @@ export interface operations {
             };
         };
     };
-    update_7: {
+    update_8: {
         parameters: {
             query?: never;
             header?: {
@@ -15364,7 +21765,92 @@ export interface operations {
             };
         };
     };
-    updateMenu: {
+    getAuction: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Auction number
+                 * @example AUC-2026-00001
+                 */
+                auctnNo: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseAuctionResponse"];
+                };
+            };
+        };
+    };
+    updateAuction: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Auction number */
+                auctnNo: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AuctionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseAuctionResponse"];
+                };
+            };
+        };
+    };
+    deleteAuction: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Auction number */
+                auctnNo: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseInteger"];
+                };
+            };
+        };
+    };
+    updateMenu_1: {
         parameters: {
             query?: never;
             header?: {
@@ -15397,7 +21883,7 @@ export interface operations {
             };
         };
     };
-    deleteMenu: {
+    deleteMenu_1: {
         parameters: {
             query?: never;
             header?: {
@@ -15578,7 +22064,7 @@ export interface operations {
             };
         };
     };
-    create: {
+    create_1: {
         parameters: {
             query?: never;
             header?: {
@@ -15796,7 +22282,7 @@ export interface operations {
             };
         };
     };
-    create_1: {
+    create_2: {
         parameters: {
             query?: never;
             header?: {
@@ -16014,7 +22500,7 @@ export interface operations {
             };
         };
     };
-    create_2: {
+    create_3: {
         parameters: {
             query?: never;
             header?: {
@@ -17521,6 +24007,475 @@ export interface operations {
             };
         };
     };
+    getNplLots: {
+        parameters: {
+            query: {
+                pageRequest: components["schemas"]["PageRequest"];
+                searchRequest: components["schemas"]["NplLotSearchRequest"];
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponsePageResponseNplLotListItemResponse"];
+                };
+            };
+        };
+    };
+    createNplLot: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["NplLotSaveRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseNplLotDetailResponse"];
+                };
+            };
+        };
+    };
+    getMessages: {
+        parameters: {
+            query?: {
+                /**
+                 * @description Page number (1-based) / Số trang (bắt đầu từ 1)
+                 * @example 1
+                 */
+                page?: number;
+                /**
+                 * @description Page size / Số lượng bản ghi mỗi trang
+                 * @example 10
+                 */
+                size?: number;
+                /**
+                 * @description Sort column / Cột cần sắp xếp
+                 * @example created_at
+                 */
+                sortBy?: string;
+                /**
+                 * @description Sort direction (ASC/DESC) / Hướng sắp xếp (ASC/DESC)
+                 * @example DESC
+                 */
+                sortDirection?: string;
+                /**
+                 * @description Registration date from (YYYY-MM-DD) / Ngày đăng ký từ
+                 * @example 2026-11-01
+                 */
+                crtFromDt?: string;
+                /**
+                 * @description Registration date to, inclusive (YYYY-MM-DD) / Ngày đăng ký đến
+                 * @example 2026-11-30
+                 */
+                crtToDt?: string;
+                /** @description Status: Y used, N unused; empty = all / Trạng thái */
+                useYns?: string[];
+                /**
+                 * @description Processing type (PRCS_STTS_CD) / Loại xử lý
+                 * @example RCPT
+                 */
+                prcsSttsCd?: string;
+                /**
+                 * @description Title, partial match / Tiêu đề (khớp một phần)
+                 * @example Receipt
+                 */
+                notiTtl?: string;
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponsePageResponseNotificationMessageResponse"];
+                };
+            };
+        };
+    };
+    createMessage: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["NotificationMessageRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseNotificationMessageResponse"];
+                };
+            };
+        };
+    };
+    deleteMessages: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["NotificationMessageIdsRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseInteger"];
+                };
+            };
+        };
+    };
+    getMenus: {
+        parameters: {
+            query: {
+                search: components["schemas"]["MenuSettingSearchRequest"];
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseListMenuSettingResponse"];
+                };
+            };
+        };
+    };
+    createMenu: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SaveMenuSettingRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseVoid"];
+                };
+            };
+        };
+    };
+    getMembers: {
+        parameters: {
+            query?: {
+                /**
+                 * @description Page number (1-based) / Số trang (bắt đầu từ 1)
+                 * @example 1
+                 */
+                page?: number;
+                /**
+                 * @description Page size / Số lượng bản ghi mỗi trang
+                 * @example 10
+                 */
+                size?: number;
+                /**
+                 * @description Sort column / Cột cần sắp xếp
+                 * @example created_at
+                 */
+                sortBy?: string;
+                /**
+                 * @description Sort direction (ASC/DESC) / Hướng sắp xếp (ASC/DESC)
+                 * @example DESC
+                 */
+                sortDirection?: string;
+                /**
+                 * @description Approval period from (YYYY-MM-DD): date the member became a General Member; members without an approval date are excluded / Kỳ duyệt từ: ngày chuyển thành hội viên thường; hội viên chưa có ngày duyệt bị loại
+                 * @example 2026-01-01
+                 */
+                aprvFromDt?: string;
+                /**
+                 * @description Approval period to, inclusive (YYYY-MM-DD) / Kỳ duyệt đến (bao gồm)
+                 * @example 2026-12-31
+                 */
+                aprvToDt?: string;
+                /** @description Field searched by searchText (default MBR_NO) / Trường tìm kiếm (mặc định mã hội viên): MBR_NO member code, SGDN_MBR_NO SGDN member code, LGN_ID login ID, MBR_NM member name, TELNO phone, EML_ADDR email, ORGNZ_NM company name, MST_NO enterprise code */
+                searchField?: "MBR_NO" | "SGDN_MBR_NO" | "LGN_ID" | "MBR_NM" | "TELNO" | "EML_ADDR" | "ORGNZ_NM" | "MST_NO";
+                /**
+                 * @description Search text, partial match on searchField / Từ khoá, khớp một phần theo searchField
+                 * @example TV0000
+                 */
+                searchText?: string;
+                /** @description Member grade / Hạng hội viên: T Temporary / Tạm thời, G General / Thường, F Full / Chính thức, DELETED deleted members / hội viên đã xoá (Show Deleted Members). Without DELETED, deleted members are excluded */
+                mbrGrdCds?: ("T" | "G" | "F" | "DELETED")[];
+                /** @description Member type / Loại hội viên (MBR_TYPE_CD): P Individual / Cá nhân, F Foreigner / Người nước ngoài, O Organization / Tổ chức */
+                mbrTypeCds?: ("P" | "F" | "O")[];
+                /** @description Status / Trạng thái: PENDING_APPROVAL chờ duyệt, SUPPLEMENT_REQUESTED yêu cầu bổ sung, REJECTED từ chối, ACTIVE hoạt động, LOCKED bị khoá (status L or 5 wrong passwords / sai mật khẩu 5 lần) */
+                sttsCds?: ("PENDING_APPROVAL" | "SUPPLEMENT_REQUESTED" | "REJECTED" | "ACTIVE" | "LOCKED")[];
+                /** @description Membership / Phí hội viên: PAID paid / đã nộp, EXEMPT exempt / miễn phí (both with a currently valid membership period / có kỳ hội viên còn hiệu lực), NONE no currently valid membership period / không có kỳ hội viên còn hiệu lực */
+                mbrshpPayCds?: ("PAID" | "EXEMPT" | "NONE")[];
+                /** @description Legacy account status (ACTIVE, LOCKED) - use sttsCds / Trạng thái tài khoản cũ - dùng sttsCds */
+                acntSttsCds?: ("ACTIVE" | "LOCKED")[];
+                /** @description Legacy member classification / Phân loại hội viên cũ */
+                mbrClsCds?: ("PENDING_APPROVAL" | "SUPPLEMENT_REQUESTED" | "PENDING_PAYMENT" | "VERIFIED" | "REJECTED" | "CANCELLED")[];
+                /** @description Legacy approval stage / Giai đoạn phê duyệt cũ */
+                atrzStages?: ("NOT_RECEIVED" | "REQUESTED" | "IN_PROGRESS" | "APPROVED" | "REJECTED" | "SUPPLEMENT_REQUESTED")[];
+                /** @description Re-application: Y = an earlier round was sent back or rejected, N = first applications only / Hồ sơ nộp lại */
+                reappliedYn?: "Y" | "N";
+                /** @description Raw member status / Trạng thái hội viên gốc (MBR_STTS_CD) */
+                mbrSttsCds?: ("P" | "U" | "S" | "R" | "C" | "L" | "D")[];
+                /** @description Legacy: member or assignee name keyword - use searchField=MBR_NM / Từ khoá tên (cũ) */
+                mbrNm?: string;
+                /** @description Legacy: organization name keyword - use searchField=ORGNZ_NM / Từ khoá tên tổ chức (cũ) */
+                orgnzNm?: string;
+                /** @description Legacy: phone keyword - use searchField=TELNO / Từ khoá số điện thoại (cũ) */
+                telno?: string;
+                /** @description Legacy: member code keyword - use searchField=MBR_NO / Từ khoá mã hội viên (cũ) */
+                mbrNo?: string;
+                /** @description Legacy: email keyword - use searchField=EML_ADDR / Từ khoá email (cũ) */
+                emlAddr?: string;
+                /** @description Legacy: registration date from (YYYY-MM-DD) / Ngày đăng ký từ (cũ) */
+                regFromDt?: string;
+                /** @description Legacy: registration date to, inclusive (YYYY-MM-DD) / Ngày đăng ký đến (cũ) */
+                regToDt?: string;
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponsePageResponseMemberResponse"];
+                };
+            };
+        };
+    };
+    createMember: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateMemberRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseCreatedMemberDto"];
+                };
+            };
+        };
+    };
+    resendTemporaryPassword: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Member number
+                 * @example TV00000001
+                 */
+                mbrNo: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseTemporaryPasswordResponse"];
+                };
+            };
+        };
+    };
+    requestSupplement: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Member number
+                 * @example TV00000001
+                 */
+                mbrNo: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RequestSupplementRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseMembershipStatusResponse"];
+                };
+            };
+        };
+    };
+    requestRestoration: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Member number
+                 * @example TV00000001
+                 */
+                mbrNo: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MemberRestorationRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseMemberDeletionRequestResponse"];
+                };
+            };
+        };
+    };
+    resendPasswordSetupLink: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Member number
+                 * @example TV00000001
+                 */
+                mbrNo: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponsePasswordSetupLinkResponse"];
+                };
+            };
+        };
+    };
     confirmMembershipFee: {
         parameters: {
             query?: never;
@@ -17579,6 +24534,77 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["ApiResponseMembershipStatusResponse"];
+                };
+            };
+        };
+    };
+    uploadDocumentScans: {
+        parameters: {
+            query?: {
+                /** @description Existing scan group to append to */
+                fileUnqId?: string;
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Member number
+                 * @example TV00000001
+                 */
+                mbrNo: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "multipart/form-data": {
+                    files: string[];
+                };
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseContentFileGroupResponse"];
+                };
+            };
+        };
+    };
+    requestDeletion: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Member number
+                 * @example TV00000001
+                 */
+                mbrNo: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MemberDeletionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseMemberDeletionRequestResponse"];
                 };
             };
         };
@@ -17678,86 +24704,6 @@ export interface operations {
             };
         };
     };
-    createMember: {
-        parameters: {
-            query?: never;
-            header?: {
-                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
-                "Accept-Language"?: "vi" | "en";
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateMemberRequest"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ApiResponseCreatedMemberDto"];
-                };
-            };
-        };
-    };
-    getMembers: {
-        parameters: {
-            query: {
-                pageRequest: components["schemas"]["PageRequest"];
-                searchRequest: components["schemas"]["MemberSearchRequest"];
-            };
-            header?: {
-                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
-                "Accept-Language"?: "vi" | "en";
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ApiResponsePageResponseMemberResponse"];
-                };
-            };
-        };
-    };
-    createMember_1: {
-        parameters: {
-            query?: never;
-            header?: {
-                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
-                "Accept-Language"?: "vi" | "en";
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateMemberRequest"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ApiResponseCreatedMemberDto"];
-                };
-            };
-        };
-    };
     batchGenerate: {
         parameters: {
             query?: never;
@@ -17789,16 +24735,7 @@ export interface operations {
         parameters: {
             query: {
                 pageRequest: components["schemas"]["PageRequest"];
-                /**
-                 * @description Use status filter (Y/N, empty = all) / Bộ lọc trạng thái
-                 * @example Y
-                 */
-                useYn?: string;
-                /**
-                 * @description Search keyword (code or name) / Từ khóa tìm kiếm
-                 * @example Hà Nội
-                 */
-                keyword?: string;
+                cond: components["schemas"]["ProvinceSearchRequest"];
             };
             header?: {
                 /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
@@ -17843,6 +24780,39 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["ApiResponseProvinceResponse"];
+                };
+            };
+        };
+    };
+    saveDistrictsBatch: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Province code / Mã Tỉnh/Thành phố
+                 * @example HNI
+                 */
+                mctpvCd: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BatchSaveDistrictsRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseListDistrictResponse"];
                 };
             };
         };
@@ -17914,20 +24884,113 @@ export interface operations {
             };
         };
     };
+    suspendRepost: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                auctnNo: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AuctionRepostRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseLiveAuctionSummaryResponse"];
+                };
+            };
+        };
+    };
+    start: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                auctnNo: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseLiveAuctionSummaryResponse"];
+                };
+            };
+        };
+    };
+    close: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                auctnNo: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseLiveAuctionSummaryResponse"];
+                };
+            };
+        };
+    };
+    reloadCache: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseLabelCacheReloadResponse"];
+                };
+            };
+        };
+    };
     getInstitutions: {
         parameters: {
             query: {
                 pageRequest: components["schemas"]["PageRequest"];
-                /**
-                 * @description Use status filter (Y/N, empty = all) / Bộ lọc trạng thái
-                 * @example Y
-                 */
-                useYn?: string;
-                /**
-                 * @description Search keyword (code or name) / Từ khóa tìm kiếm
-                 * @example Vietcombank
-                 */
-                keyword?: string;
+                cond: components["schemas"]["InstitutionSearchRequest"];
             };
             header?: {
                 /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
@@ -17972,6 +25035,39 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["ApiResponseInstitutionResponse"];
+                };
+            };
+        };
+    };
+    saveBranchesBatch: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Financial Institution Code / Mã tổ chức tài chính
+                 * @example 203
+                 */
+                fnstCd: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BatchSaveBranchesRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseListBranchResponse"];
                 };
             };
         };
@@ -18391,7 +25487,7 @@ export interface operations {
             };
         };
     };
-    create_3: {
+    create_4: {
         parameters: {
             query?: never;
             header?: {
@@ -18471,7 +25567,7 @@ export interface operations {
             };
         };
     };
-    create_4: {
+    create_5: {
         parameters: {
             query?: never;
             header?: {
@@ -18668,7 +25764,7 @@ export interface operations {
             };
         };
     };
-    create_5: {
+    create_6: {
         parameters: {
             query?: never;
             header?: {
@@ -18748,7 +25844,7 @@ export interface operations {
             };
         };
     };
-    create_6: {
+    create_7: {
         parameters: {
             query?: never;
             header?: {
@@ -18857,7 +25953,7 @@ export interface operations {
             };
         };
     };
-    create_7: {
+    create_8: {
         parameters: {
             query?: never;
             header?: {
@@ -19421,16 +26517,7 @@ export interface operations {
         parameters: {
             query: {
                 pageRequest: components["schemas"]["PageRequest"];
-                /**
-                 * @description Use status filter (Y/N, empty = all) / Bộ lọc trạng thái
-                 * @example Y
-                 */
-                useYn?: string;
-                /**
-                 * @description Search keyword (groupCd or groupNm) / Từ khóa tìm kiếm
-                 * @example USER
-                 */
-                keyword?: string;
+                cond: components["schemas"]["CodeGroupSearchRequest"];
             };
             header?: {
                 /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
@@ -19547,6 +26634,381 @@ export interface operations {
                 "Accept-Language"?: "vi" | "en";
             };
             path: {
+                bdrNo: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BidderActionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseBidderResponse"];
+                };
+            };
+        };
+    };
+    confirmReceipt: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                bdrNo: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseBidderResponse"];
+                };
+            };
+        };
+    };
+    cancelReceipt: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                bdrNo: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseBidderResponse"];
+                };
+            };
+        };
+    };
+    refund: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                bdrNo: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["BidderActionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseBidderResponse"];
+                };
+            };
+        };
+    };
+    forfeit: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                bdrNo: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BidderActionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseBidderResponse"];
+                };
+            };
+        };
+    };
+    confirmDeposit: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                bdrNo: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["BidderActionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseBidderResponse"];
+                };
+            };
+        };
+    };
+    approve: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                bdrNo: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseBidderResponse"];
+                };
+            };
+        };
+    };
+    getAuctions: {
+        parameters: {
+            query?: {
+                /**
+                 * @description Page number (1-based) / Số trang (bắt đầu từ 1)
+                 * @example 1
+                 */
+                page?: number;
+                /**
+                 * @description Page size / Số lượng bản ghi mỗi trang
+                 * @example 10
+                 */
+                size?: number;
+                /**
+                 * @description Sort column / Cột cần sắp xếp
+                 * @example created_at
+                 */
+                sortBy?: string;
+                /**
+                 * @description Sort direction (ASC/DESC) / Hướng sắp xếp (ASC/DESC)
+                 * @example DESC
+                 */
+                sortDirection?: string;
+                /**
+                 * @description Auction start from (YYYY-MM-DD) / Bắt đầu từ ngày
+                 * @example 2026-11-01
+                 */
+                auctnFromDate?: string;
+                /**
+                 * @description Auction start to, inclusive (YYYY-MM-DD) / Bắt đầu đến ngày
+                 * @example 2026-12-31
+                 */
+                auctnToDate?: string;
+                /**
+                 * @description Auction status (AUCTN_STTS_CD)
+                 * @example AN
+                 */
+                auctnSttsCd?: string;
+                /**
+                 * @description Approval status (AUCTN_PBANC_STTS_CD): DR, RQ, AP, RJ
+                 * @example RQ
+                 */
+                pbancSttsCd?: string;
+                /**
+                 * @description Auction method (AUCTN_TYPE): EN, SL, DT, RE
+                 * @example EN
+                 */
+                auctnType?: string;
+                /**
+                 * @description Auction number or name, partial match / Số hoặc tên đấu giá
+                 * @example AUC-2026
+                 */
+                keyword?: string;
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponsePageResponseAuctionResponse"];
+                };
+            };
+        };
+    };
+    createAuction: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AuctionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseAuctionResponse"];
+                };
+            };
+        };
+    };
+    deleteAuctions: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AuctionNosRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseInteger"];
+                };
+            };
+        };
+    };
+    getApproval: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Auction number */
+                auctnNo: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseApprovalDetailResponse"];
+                };
+            };
+        };
+    };
+    requestApproval_4: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Auction number */
+                auctnNo: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AuctionApprovalRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseAuctionResponse"];
+                };
+            };
+        };
+    };
+    reject_1: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
                 /**
                  * @description Approval session ID
                  * @example a1b2c3d4-e5f6-7890-abcd-ef1234567890
@@ -19572,7 +27034,7 @@ export interface operations {
             };
         };
     };
-    approve: {
+    approve_1: {
         parameters: {
             query?: never;
             header?: {
@@ -19664,7 +27126,10 @@ export interface operations {
     };
     uploadFile: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Storage folder: common (default), inquiry, trade */
+                folder?: string;
+            };
             header?: {
                 /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
                 "Accept-Language"?: "vi" | "en";
@@ -19711,6 +27176,8 @@ export interface operations {
             query: {
                 title: string;
                 description: string;
+                /** @description Storage folder: common (default), inquiry, trade */
+                folder?: string;
             };
             header?: {
                 /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
@@ -19741,7 +27208,10 @@ export interface operations {
     };
     uploadMultipleFiles: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Storage folder: common (default), inquiry, trade */
+                folder?: string;
+            };
             header?: {
                 /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
                 "Accept-Language"?: "vi" | "en";
@@ -19768,7 +27238,7 @@ export interface operations {
             };
         };
     };
-    createMenu: {
+    createMenu_1: {
         parameters: {
             query?: never;
             header?: {
@@ -19997,6 +27467,39 @@ export interface operations {
             };
         };
     };
+    updateNpl: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description NPL code
+                 * @example KN00000001
+                 */
+                bndCd: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["HomePostingRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseHomePostingResponse"];
+                };
+            };
+        };
+    };
     updateDisclosure: {
         parameters: {
             query?: never;
@@ -20026,6 +27529,36 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["ApiResponseVoid"];
+                };
+            };
+        };
+    };
+    updateUse_1: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Template ID */
+                notiMsgId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["NotificationUseRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseNotificationMessageResponse"];
                 };
             };
         };
@@ -20423,7 +27956,7 @@ export interface operations {
             };
         };
     };
-    updateUse_1: {
+    updateUse_2: {
         parameters: {
             query?: never;
             header?: {
@@ -20504,6 +28037,39 @@ export interface operations {
             };
         };
     };
+    updateCollateral: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Collateral asset code
+                 * @example TSBD000001
+                 */
+                cltrAstCd: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["HomePostingRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseHomePostingResponse"];
+                };
+            };
+        };
+    };
     getGroup: {
         parameters: {
             query: {
@@ -20570,6 +28136,59 @@ export interface operations {
             };
         };
     };
+    getApplicationMember: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Application ID
+                 * @example SRVC-APLY-2026-1A2B3C4D
+                 */
+                srvcAplyId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseMemberDetailResponse"];
+                };
+            };
+        };
+    };
+    exportExcel: {
+        parameters: {
+            query: {
+                searchRequest: components["schemas"]["TradeApplicationSearchRequest"];
+                sortBy?: string;
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     getHistories_1: {
         parameters: {
             query?: never;
@@ -20596,6 +28215,59 @@ export interface operations {
                 content: {
                     "*/*": components["schemas"]["ApiResponseListTradeApplicationHistoryDto"];
                 };
+            };
+        };
+    };
+    getApplicationMember_1: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Application ID
+                 * @example SRVC-APLY-2026-1A2B3C4D
+                 */
+                srvcAplyId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseMemberDetailResponse"];
+                };
+            };
+        };
+    };
+    exportExcel_1: {
+        parameters: {
+            query: {
+                searchRequest: components["schemas"]["TradeApplicationSearchRequest"];
+                sortBy?: string;
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };
@@ -20628,6 +28300,59 @@ export interface operations {
             };
         };
     };
+    getApplicationMember_2: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Application ID
+                 * @example SRVC-APLY-2026-1A2B3C4D
+                 */
+                srvcAplyId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseMemberDetailResponse"];
+                };
+            };
+        };
+    };
+    exportExcel_2: {
+        parameters: {
+            query: {
+                searchRequest: components["schemas"]["TradeApplicationSearchRequest"];
+                sortBy?: string;
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     getContracts: {
         parameters: {
             query: {
@@ -20650,6 +28375,32 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["ApiResponsePageResponseTradeContractListItemResponse"];
+                };
+            };
+        };
+    };
+    getContractMember: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Contract code */
+                ctrtCd: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseMemberDetailResponse"];
                 };
             };
         };
@@ -20703,6 +28454,30 @@ export interface operations {
                 content: {
                     "*/*": components["schemas"]["ApiResponseListTradeApprovalSessionDto"];
                 };
+            };
+        };
+    };
+    exportExcel_3: {
+        parameters: {
+            query: {
+                searchRequest: components["schemas"]["TradeContractSearchRequest"];
+                sortBy?: string;
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };
@@ -20958,6 +28733,32 @@ export interface operations {
             };
         };
     };
+    getContractMember_1: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Contract code */
+                ctrtCd: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseMemberDetailResponse"];
+                };
+            };
+        };
+    };
     getFees_2: {
         parameters: {
             query?: never;
@@ -21010,6 +28811,387 @@ export interface operations {
             };
         };
     };
+    exportExcel_4: {
+        parameters: {
+            query: {
+                searchRequest: components["schemas"]["TradeContractSearchRequest"];
+                sortBy?: string;
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    exportFees: {
+        parameters: {
+            query: {
+                cond: components["schemas"]["FeeSearchRequest"];
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    getNpls: {
+        parameters: {
+            query: {
+                pageRequest: components["schemas"]["PageRequest"];
+                searchRequest: components["schemas"]["NplSearchRequest"];
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponsePageResponseNplListItemResponse"];
+                };
+            };
+        };
+    };
+    getNpl: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description NPL code
+                 * @example KN20260001
+                 */
+                bndCd: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseNplDetailResponse"];
+                };
+            };
+        };
+    };
+    exportNplLots: {
+        parameters: {
+            query: {
+                searchRequest: components["schemas"]["NplLotSearchRequest"];
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    getHistories_3: {
+        parameters: {
+            query: {
+                /**
+                 * @description Page number (1-based) / Số trang (bắt đầu từ 1)
+                 * @example 1
+                 */
+                page?: number;
+                /**
+                 * @description Page size / Số lượng bản ghi mỗi trang
+                 * @example 10
+                 */
+                size?: number;
+                /**
+                 * @description Sort column / Cột cần sắp xếp
+                 * @example created_at
+                 */
+                sortBy?: string;
+                /**
+                 * @description Sort direction (ASC/DESC) / Hướng sắp xếp (ASC/DESC)
+                 * @example DESC
+                 */
+                sortDirection?: string;
+                /**
+                 * @description Sent date from (YYYY-MM-DD), required / Gửi từ ngày
+                 * @example 2026-11-01
+                 */
+                fromDt: string;
+                /**
+                 * @description Sent date to, inclusive (YYYY-MM-DD), required; at most 92 days after fromDt / Gửi đến ngày
+                 * @example 2026-11-30
+                 */
+                toDt: string;
+                /**
+                 * @description Keyword target: TITLE (default), CONTENT, RECIPIENT (member / employee number) / Tìm theo
+                 * @example TITLE
+                 */
+                searchType?: "TITLE" | "CONTENT" | "RECIPIENT";
+                /**
+                 * @description Keyword, partial match / Từ khoá
+                 * @example Receipt
+                 */
+                keyword?: string;
+                /**
+                 * @description Channel / Kênh
+                 * @example MAIL
+                 */
+                notiMediaSe?: string;
+                /**
+                 * @description Delivery result: Y sent, N failed / Kết quả gửi
+                 * @example N
+                 */
+                sndngScsYn?: string;
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponsePageResponseNotificationHistoryResponse"];
+                };
+            };
+        };
+    };
+    getHistory: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Log ID */
+                logId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseNotificationHistoryResponse"];
+                };
+            };
+        };
+    };
+    export: {
+        parameters: {
+            query: {
+                /**
+                 * @description Sent date from (YYYY-MM-DD), required / Gửi từ ngày
+                 * @example 2026-11-01
+                 */
+                fromDt: string;
+                /**
+                 * @description Sent date to, inclusive (YYYY-MM-DD), required; at most 92 days after fromDt / Gửi đến ngày
+                 * @example 2026-11-30
+                 */
+                toDt: string;
+                /**
+                 * @description Keyword target: TITLE (default), CONTENT, RECIPIENT (member / employee number) / Tìm theo
+                 * @example TITLE
+                 */
+                searchType?: "TITLE" | "CONTENT" | "RECIPIENT";
+                /**
+                 * @description Keyword, partial match / Từ khoá
+                 * @example Receipt
+                 */
+                keyword?: string;
+                /**
+                 * @description Channel / Kênh
+                 * @example MAIL
+                 */
+                notiMediaSe?: string;
+                /**
+                 * @description Delivery result: Y sent, N failed / Kết quả gửi
+                 * @example N
+                 */
+                sndngScsYn?: string;
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    getApplicationHistory: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Member number
+                 * @example TV00000001
+                 */
+                mbrNo: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseMemberApplicationHistoryResponse"];
+                };
+            };
+        };
+    };
+    excel: {
+        parameters: {
+            query?: {
+                /**
+                 * @description Approval period from (YYYY-MM-DD): date the member became a General Member; members without an approval date are excluded / Kỳ duyệt từ: ngày chuyển thành hội viên thường; hội viên chưa có ngày duyệt bị loại
+                 * @example 2026-01-01
+                 */
+                aprvFromDt?: string;
+                /**
+                 * @description Approval period to, inclusive (YYYY-MM-DD) / Kỳ duyệt đến (bao gồm)
+                 * @example 2026-12-31
+                 */
+                aprvToDt?: string;
+                /** @description Field searched by searchText (default MBR_NO) / Trường tìm kiếm (mặc định mã hội viên): MBR_NO member code, SGDN_MBR_NO SGDN member code, LGN_ID login ID, MBR_NM member name, TELNO phone, EML_ADDR email, ORGNZ_NM company name, MST_NO enterprise code */
+                searchField?: "MBR_NO" | "SGDN_MBR_NO" | "LGN_ID" | "MBR_NM" | "TELNO" | "EML_ADDR" | "ORGNZ_NM" | "MST_NO";
+                /**
+                 * @description Search text, partial match on searchField / Từ khoá, khớp một phần theo searchField
+                 * @example TV0000
+                 */
+                searchText?: string;
+                /** @description Member grade / Hạng hội viên: T Temporary / Tạm thời, G General / Thường, F Full / Chính thức, DELETED deleted members / hội viên đã xoá (Show Deleted Members). Without DELETED, deleted members are excluded */
+                mbrGrdCds?: ("T" | "G" | "F" | "DELETED")[];
+                /** @description Member type / Loại hội viên (MBR_TYPE_CD): P Individual / Cá nhân, F Foreigner / Người nước ngoài, O Organization / Tổ chức */
+                mbrTypeCds?: ("P" | "F" | "O")[];
+                /** @description Status / Trạng thái: PENDING_APPROVAL chờ duyệt, SUPPLEMENT_REQUESTED yêu cầu bổ sung, REJECTED từ chối, ACTIVE hoạt động, LOCKED bị khoá (status L or 5 wrong passwords / sai mật khẩu 5 lần) */
+                sttsCds?: ("PENDING_APPROVAL" | "SUPPLEMENT_REQUESTED" | "REJECTED" | "ACTIVE" | "LOCKED")[];
+                /** @description Membership / Phí hội viên: PAID paid / đã nộp, EXEMPT exempt / miễn phí (both with a currently valid membership period / có kỳ hội viên còn hiệu lực), NONE no currently valid membership period / không có kỳ hội viên còn hiệu lực */
+                mbrshpPayCds?: ("PAID" | "EXEMPT" | "NONE")[];
+                /** @description Legacy account status (ACTIVE, LOCKED) - use sttsCds / Trạng thái tài khoản cũ - dùng sttsCds */
+                acntSttsCds?: ("ACTIVE" | "LOCKED")[];
+                /** @description Legacy member classification / Phân loại hội viên cũ */
+                mbrClsCds?: ("PENDING_APPROVAL" | "SUPPLEMENT_REQUESTED" | "PENDING_PAYMENT" | "VERIFIED" | "REJECTED" | "CANCELLED")[];
+                /** @description Legacy approval stage / Giai đoạn phê duyệt cũ */
+                atrzStages?: ("NOT_RECEIVED" | "REQUESTED" | "IN_PROGRESS" | "APPROVED" | "REJECTED" | "SUPPLEMENT_REQUESTED")[];
+                /** @description Re-application: Y = an earlier round was sent back or rejected, N = first applications only / Hồ sơ nộp lại */
+                reappliedYn?: "Y" | "N";
+                /** @description Raw member status / Trạng thái hội viên gốc (MBR_STTS_CD) */
+                mbrSttsCds?: ("P" | "U" | "S" | "R" | "C" | "L" | "D")[];
+                /** @description Legacy: member or assignee name keyword - use searchField=MBR_NM / Từ khoá tên (cũ) */
+                mbrNm?: string;
+                /** @description Legacy: organization name keyword - use searchField=ORGNZ_NM / Từ khoá tên tổ chức (cũ) */
+                orgnzNm?: string;
+                /** @description Legacy: phone keyword - use searchField=TELNO / Từ khoá số điện thoại (cũ) */
+                telno?: string;
+                /** @description Legacy: member code keyword - use searchField=MBR_NO / Từ khoá mã hội viên (cũ) */
+                mbrNo?: string;
+                /** @description Legacy: email keyword - use searchField=EML_ADDR / Từ khoá email (cũ) */
+                emlAddr?: string;
+                /** @description Legacy: registration date from (YYYY-MM-DD) / Ngày đăng ký từ (cũ) */
+                regFromDt?: string;
+                /** @description Legacy: registration date to, inclusive (YYYY-MM-DD) / Ngày đăng ký đến (cũ) */
+                regToDt?: string;
+                /** @description Sort column, same keys as the list / Cột sắp xếp */
+                sortBy?: string;
+                /** @description ASC or DESC */
+                sortDirection?: string;
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     getApprovalSummary: {
         parameters: {
             query?: never;
@@ -21041,6 +29223,16 @@ export interface operations {
                  * @example Y
                  */
                 useYn?: string;
+                /**
+                 * @description District code (partial match) / Mã Quận/Huyện (khớp một phần)
+                 * @example 000
+                 */
+                distCd?: string;
+                /**
+                 * @description District name (partial match) / Tên Quận/Huyện (khớp một phần)
+                 * @example Hoàn Kiếm
+                 */
+                distNm?: string;
             };
             header?: {
                 /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
@@ -21064,6 +29256,291 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["ApiResponseListDistrictResponse"];
+                };
+            };
+        };
+    };
+    exportProvinces: {
+        parameters: {
+            query: {
+                cond: components["schemas"]["ProvinceSearchRequest"];
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    getAuctions_1: {
+        parameters: {
+            query?: {
+                /**
+                 * @description Page number (1-based) / Số trang (bắt đầu từ 1)
+                 * @example 1
+                 */
+                page?: number;
+                /**
+                 * @description Page size / Số lượng bản ghi mỗi trang
+                 * @example 10
+                 */
+                size?: number;
+                /**
+                 * @description Sort column / Cột cần sắp xếp
+                 * @example created_at
+                 */
+                sortBy?: string;
+                /**
+                 * @description Sort direction (ASC/DESC) / Hướng sắp xếp (ASC/DESC)
+                 * @example DESC
+                 */
+                sortDirection?: string;
+                /** @description Auction statuses */
+                auctnSttsCds?: string[];
+                /** @description Auction number or name */
+                keyword?: string;
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponsePageResponseAuctionResponse"];
+                };
+            };
+        };
+    };
+    getSummary: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                auctnNo: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseLiveAuctionSummaryResponse"];
+                };
+            };
+        };
+    };
+    getCertificate: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                auctnNo: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseAuctionResultResponse"];
+                };
+            };
+        };
+    };
+    getSnapshot: {
+        parameters: {
+            query?: {
+                /**
+                 * @description Last bid number already shown
+                 * @example 0
+                 */
+                lastBidNo?: number;
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                auctnNo: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseLiveAuctionSummaryResponse"];
+                };
+            };
+        };
+    };
+    getBids: {
+        parameters: {
+            query?: {
+                /**
+                 * @description Page number (1-based) / Số trang (bắt đầu từ 1)
+                 * @example 1
+                 */
+                page?: number;
+                /**
+                 * @description Page size / Số lượng bản ghi mỗi trang
+                 * @example 10
+                 */
+                size?: number;
+                /**
+                 * @description Sort column / Cột cần sắp xếp
+                 * @example created_at
+                 */
+                sortBy?: string;
+                /**
+                 * @description Sort direction (ASC/DESC) / Hướng sắp xếp (ASC/DESC)
+                 * @example DESC
+                 */
+                sortDirection?: string;
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                auctnNo: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponsePageResponseBidResponse"];
+                };
+            };
+        };
+    };
+    getRecord: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                auctnNo: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseAuctionResultResponse"];
+                };
+            };
+        };
+    };
+    getLanguages: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseListLanguageResponse"];
+                };
+            };
+        };
+    };
+    getDetail: {
+        parameters: {
+            query: {
+                /**
+                 * @description Screen ID / Mã màn hình
+                 * @example BG_TEST
+                 */
+                scrnId: string;
+                /**
+                 * @description Label category / Phân loại
+                 * @example TEXT
+                 */
+                lblSeCd: string;
+                /**
+                 * @description Label code / Mã nhãn
+                 * @example btn_save
+                 */
+                lblCd: string;
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseLabelDetailResponse"];
                 };
             };
         };
@@ -21103,6 +29580,209 @@ export interface operations {
             };
         };
     };
+    exportInstitutions: {
+        parameters: {
+            query: {
+                cond: components["schemas"]["InstitutionSearchRequest"];
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    lookupEmployees: {
+        parameters: {
+            query: {
+                pageRequest: components["schemas"]["PageRequest"];
+                criteria: components["schemas"]["EmployeeLookupRequest"];
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponsePageResponseEmployeeLookupResponse"];
+                };
+            };
+        };
+    };
+    getDebtors: {
+        parameters: {
+            query: {
+                pageRequest: components["schemas"]["PageRequest"];
+                searchRequest: components["schemas"]["DebtorSearchRequest"];
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponsePageResponseDebtorListItemResponse"];
+                };
+            };
+        };
+    };
+    deleteDebtors: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DebtorDeleteRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseInteger"];
+                };
+            };
+        };
+    };
+    getDebtor: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Debtor code
+                 * @example KH00000003
+                 */
+                dbtrCd: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseDebtorDetailResponse"];
+                };
+            };
+        };
+    };
+    exportDebtors: {
+        parameters: {
+            query: {
+                searchRequest: components["schemas"]["DebtorSearchRequest"];
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    getSummary_1: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseDashboardSummaryResponse"];
+                };
+            };
+        };
+    };
+    getExchangeRates: {
+        parameters: {
+            query?: {
+                /** @description Only rates shown on the user web / Chỉ tỷ giá đang hiển thị */
+                displayedOnly?: boolean;
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseListExchangeRateResponse"];
+                };
+            };
+        };
+    };
     options: {
         parameters: {
             query?: never;
@@ -21126,7 +29806,7 @@ export interface operations {
             };
         };
     };
-    excel: {
+    excel_1: {
         parameters: {
             query: {
                 cond: components["schemas"]["PostSearchRequest"];
@@ -21202,7 +29882,7 @@ export interface operations {
             };
         };
     };
-    excel_1: {
+    excel_2: {
         parameters: {
             query: {
                 cond: components["schemas"]["InquirySearchRequest"];
@@ -21257,30 +29937,6 @@ export interface operations {
             };
         };
     };
-    excel_2: {
-        parameters: {
-            query: {
-                cond: components["schemas"]["PostSearchRequest"];
-                sortBy?: string;
-            };
-            header?: {
-                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
-                "Accept-Language"?: "vi" | "en";
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
     excel_3: {
         parameters: {
             query: {
@@ -21306,6 +29962,30 @@ export interface operations {
         };
     };
     excel_4: {
+        parameters: {
+            query: {
+                cond: components["schemas"]["PostSearchRequest"];
+                sortBy?: string;
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    excel_5: {
         parameters: {
             query: {
                 cond: components["schemas"]["BannerSearchRequest"];
@@ -21350,6 +30030,32 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["ApiResponsePageResponseTradeContractListItemResponse"];
+                };
+            };
+        };
+    };
+    getContractMember_2: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Contract code */
+                ctrtCd: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseMemberDetailResponse"];
                 };
             };
         };
@@ -21406,6 +30112,30 @@ export interface operations {
             };
         };
     };
+    exportExcel_5: {
+        parameters: {
+            query: {
+                searchRequest: components["schemas"]["TradeContractSearchRequest"];
+                sortBy?: string;
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     getCodesByGroup: {
         parameters: {
             query?: {
@@ -21441,6 +30171,29 @@ export interface operations {
             };
         };
     };
+    exportCodeGroups: {
+        parameters: {
+            query: {
+                cond: components["schemas"]["CodeGroupSearchRequest"];
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     getAllCodeGroups: {
         parameters: {
             query?: {
@@ -21472,6 +30225,313 @@ export interface operations {
                 content: {
                     "*/*": components["schemas"]["ApiResponseListCodeGroupResponse"];
                 };
+            };
+        };
+    };
+    getCollateralAssets: {
+        parameters: {
+            query: {
+                pageRequest: components["schemas"]["PageRequest"];
+                searchRequest: components["schemas"]["CollateralAssetSearchRequest"];
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponsePageResponseCollateralAssetListItemResponse"];
+                };
+            };
+        };
+    };
+    getCollateralAsset: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /**
+                 * @description Collateral asset code
+                 * @example TSBD000005
+                 */
+                cltrAstCd: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseCollateralAssetDetailResponse"];
+                };
+            };
+        };
+    };
+    exportCollateralAssets: {
+        parameters: {
+            query: {
+                searchRequest: components["schemas"]["CollateralAssetSearchRequest"];
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    getBidder: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Bidder number */
+                bdrNo: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseBidderResponse"];
+                };
+            };
+        };
+    };
+    delete_5: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                bdrNo: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseVoid"];
+                };
+            };
+        };
+    };
+    getAuctions_2: {
+        parameters: {
+            query?: {
+                /**
+                 * @description Page number (1-based) / Số trang (bắt đầu từ 1)
+                 * @example 1
+                 */
+                page?: number;
+                /**
+                 * @description Page size / Số lượng bản ghi mỗi trang
+                 * @example 10
+                 */
+                size?: number;
+                /**
+                 * @description Sort column / Cột cần sắp xếp
+                 * @example created_at
+                 */
+                sortBy?: string;
+                /**
+                 * @description Sort direction (ASC/DESC) / Hướng sắp xếp (ASC/DESC)
+                 * @example DESC
+                 */
+                sortDirection?: string;
+                /** @description Auction statuses */
+                auctnSttsCds?: string[];
+                /** @description Auction number or name */
+                keyword?: string;
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponsePageResponseAuctionResponse"];
+                };
+            };
+        };
+    };
+    getBidders: {
+        parameters: {
+            query?: {
+                /**
+                 * @description Page number (1-based) / Số trang (bắt đầu từ 1)
+                 * @example 1
+                 */
+                page?: number;
+                /**
+                 * @description Page size / Số lượng bản ghi mỗi trang
+                 * @example 10
+                 */
+                size?: number;
+                /**
+                 * @description Sort column / Cột cần sắp xếp
+                 * @example created_at
+                 */
+                sortBy?: string;
+                /**
+                 * @description Sort direction (ASC/DESC) / Hướng sắp xếp (ASC/DESC)
+                 * @example DESC
+                 */
+                sortDirection?: string;
+                /** @description Qualification (AP, AV, DQ) */
+                qlfcSttsCd?: string;
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Auction number */
+                auctnNo: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponsePageResponseBidderResponse"];
+                };
+            };
+        };
+    };
+    getCollaterals: {
+        parameters: {
+            query: {
+                /**
+                 * @description NPL code
+                 * @example KN00000001
+                 */
+                bndCd: string;
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseListAuctionCollateralResponse"];
+                };
+            };
+        };
+    };
+    export_1: {
+        parameters: {
+            query?: {
+                /**
+                 * @description Auction start from (YYYY-MM-DD) / Bắt đầu từ ngày
+                 * @example 2026-11-01
+                 */
+                auctnFromDate?: string;
+                /**
+                 * @description Auction start to, inclusive (YYYY-MM-DD) / Bắt đầu đến ngày
+                 * @example 2026-12-31
+                 */
+                auctnToDate?: string;
+                /**
+                 * @description Auction status (AUCTN_STTS_CD)
+                 * @example AN
+                 */
+                auctnSttsCd?: string;
+                /**
+                 * @description Approval status (AUCTN_PBANC_STTS_CD): DR, RQ, AP, RJ
+                 * @example RQ
+                 */
+                pbancSttsCd?: string;
+                /**
+                 * @description Auction method (AUCTN_TYPE): EN, SL, DT, RE
+                 * @example EN
+                 */
+                auctnType?: string;
+                /**
+                 * @description Auction number or name, partial match / Số hoặc tên đấu giá
+                 * @example AUC-2026
+                 */
+                keyword?: string;
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };
@@ -21543,7 +30603,7 @@ export interface operations {
             };
         };
     };
-    getDetail: {
+    getDetail_1: {
         parameters: {
             query?: never;
             header?: {
@@ -21635,10 +30695,15 @@ export interface operations {
                  */
                 stpNo: number;
                 /**
-                 * @description Search keyword (empNo or empNm)
+                 * @description Employee number, partial match / Mã nhân viên (khớp một phần)
                  * @example admin
                  */
                 keyword?: string;
+                /**
+                 * @description Employee name, partial match, case-insensitive (VPA020500P01) / Tên nhân viên (khớp một phần)
+                 * @example Nguyen
+                 */
+                empNm?: string;
             };
             header?: {
                 /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
@@ -21740,7 +30805,7 @@ export interface operations {
             };
         };
     };
-    getLanguages: {
+    getLanguages_1: {
         parameters: {
             query?: never;
             header?: {
@@ -21839,6 +30904,36 @@ export interface operations {
             path: {
                 fileName: string;
             };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Download successful / Tải về thành công */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": string;
+                };
+            };
+            /** @description File not found / Không tìm thấy tập tin */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    downloadFile_1: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
             cookie?: never;
         };
         requestBody?: never;
@@ -22496,7 +31591,7 @@ export interface operations {
             };
         };
     };
-    delete_5: {
+    delete_6: {
         parameters: {
             query: {
                 /**
@@ -22531,6 +31626,38 @@ export interface operations {
         };
     };
     deleteFile: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Deletion successful / Xóa thành công */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": {
+                        [key: string]: string;
+                    };
+                };
+            };
+            /** @description File not found / Không tìm thấy tập tin */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    deleteFile_1: {
         parameters: {
             query?: never;
             header?: {

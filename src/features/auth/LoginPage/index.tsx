@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useForm, Controller } from 'react-hook-form';
 import { Form, Input, Button, Alert, Checkbox, Typography, Dropdown } from 'antd';
 import type { MenuProps } from 'antd';
 import {
@@ -77,6 +78,8 @@ const LOGIN_I18N: Record<
   },
 };
 
+type LoginFormValues = LoginRequest & { rememberUsername: boolean };
+
 export default function LoginPage() {
   const navigate = useNavigate();
   const setAuth = useAuthStore((s) => s.setAuth);
@@ -89,6 +92,9 @@ export default function LoginPage() {
 
   const t = LOGIN_I18N[locale] ?? LOGIN_I18N.en;
   const savedUsername = localStorage.getItem(SAVED_USERNAME_KEY);
+  const { control, handleSubmit } = useForm<LoginFormValues>({
+    defaultValues: { loginId: savedUsername ?? '', password: '', rememberUsername: !!savedUsername },
+  });
 
   const languageMenuItems: MenuProps['items'] = [
     {
@@ -123,7 +129,7 @@ export default function LoginPage() {
     },
   ];
 
-  const onFinish = async (values: LoginRequest & { rememberUsername: boolean }) => {
+  const onFinish = async (values: LoginFormValues) => {
     const { rememberUsername, ...loginReq } = values;
 
     // Save or clear remembered username
@@ -223,33 +229,42 @@ export default function LoginPage() {
         <Form
           key={locale}
           name="login"
-          onFinish={onFinish}
+          onFinish={handleSubmit(onFinish)}
           autoComplete="off"
           size="large"
           layout="vertical"
-          initialValues={{
-            loginId: savedUsername ?? '',
-            rememberUsername: !!savedUsername,
-          }}
         >
-          <Form.Item
+          <Controller
             name="loginId"
-            rules={[{ required: true, message: t.usernameRequired }]}
-          >
-            <Input prefix={<UserOutlined />} placeholder={t.username} />
-          </Form.Item>
+            control={control}
+            rules={{ required: t.usernameRequired }}
+            render={({ field, fieldState }) => (
+              <Form.Item validateStatus={fieldState.error ? 'error' : ''} help={fieldState.error?.message}>
+                <Input {...field} prefix={<UserOutlined />} placeholder={t.username} />
+              </Form.Item>
+            )}
+          />
 
-          <Form.Item
+          <Controller
             name="password"
-            rules={[{ required: true, message: t.passwordRequired }]}
-          >
-            <Input.Password prefix={<LockOutlined />} placeholder={t.password} />
-          </Form.Item>
+            control={control}
+            rules={{ required: t.passwordRequired }}
+            render={({ field, fieldState }) => (
+              <Form.Item validateStatus={fieldState.error ? 'error' : ''} help={fieldState.error?.message}>
+                <Input.Password {...field} prefix={<LockOutlined />} placeholder={t.password} />
+              </Form.Item>
+            )}
+          />
 
-          <Form.Item name="rememberUsername" valuePropName="checked" style={{ marginBottom: 12 }}>
-            <Checkbox>{t.rememberUsername}</Checkbox>
-          </Form.Item>
-
+          <Controller
+            name="rememberUsername"
+            control={control}
+            render={({ field: { value, onChange } }) => (
+              <Form.Item style={{ marginBottom: 12 }}>
+                <Checkbox checked={value} onChange={(e) => onChange(e.target.checked)}>{t.rememberUsername}</Checkbox>
+              </Form.Item>
+            )}
+          />
           {errorMsg && (
             <Form.Item>
               <Alert type="error" title={errorMsg} showIcon />
