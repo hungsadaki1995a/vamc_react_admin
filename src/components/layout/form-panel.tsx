@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Button } from 'antd';
 import { UpOutlined, DownOutlined } from '@ant-design/icons';
-import './form-panel.css';
+import './form-panel.scss';
 
 interface FormPanelProps {
   /** Panel title (left side of header) */

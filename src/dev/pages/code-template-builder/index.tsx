@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { Alert, Card, Input, Segmented, Typography } from 'antd';
-import CodeSnippet from '@/components/common/code-snippet';
+import CodeSnippet from '@/components/common/utilities/code-snippet';
 import DevPageHeader from '@/dev/dev-page-header';
 
 const { Text } = Typography;

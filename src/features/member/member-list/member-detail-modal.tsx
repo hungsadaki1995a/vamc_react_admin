@@ -5,7 +5,7 @@ import dayjs from 'dayjs';
 
 import { getMember } from '@/api/generated/sdk.gen';
 import type { MemberItem, MemberClassification } from './member.types';
-import styles from './member-detail-modal.module.css';
+import styles from './member-detail-modal.module.scss';
 
 interface MemberDetailModalProps {
   visible: boolean;

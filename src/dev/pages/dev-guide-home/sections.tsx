@@ -1,5 +1,5 @@
 import type { LocaleKey } from '@/stores/locale-store';
-import styles from './index.module.css';
+import styles from './index.module.scss';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 가이드의 섹션 메타와 머리말 — 데이터만 둔다.

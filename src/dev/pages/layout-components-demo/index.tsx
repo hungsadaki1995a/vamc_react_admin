@@ -1,4 +1,4 @@
-﻿import { useState } from 'react';
+import { useState } from 'react';
 import { Tabs, Button, Input, Select, Tag, Descriptions, Space, Divider, Form } from 'antd';
 import {
   PlusOutlined, EditOutlined, DeleteOutlined,
@@ -8,16 +8,16 @@ import GridToolbar from '@/components/layout/grid-toolbar';
 import FormPanel from '@/components/layout/form-panel';
 import SplitPanel from '@/components/layout/split-panel';
 import DetailPanel from '@/components/layout/detail-panel';
-import CodeSnippet from '@/components/common/code-snippet';
-import ActionButton from '@/components/common/action-button';
-import ActionButtonGroup from '@/components/common/action-button-group';
-import AppModal from '@/components/common/app-modal';
-import ModalInfoFields from '@/components/common/modal-info-fields';
-import styles from './index.module.css';
+import CodeSnippet from '@/components/common/utilities/code-snippet';
+import ActionButton from '@/components/common/actions/action-button';
+import ActionButtonGroup from '@/components/common/actions/action-button-group';
+import AppModal from '@/components/common/modals/app-modal';
+import ModalInfoFields from '@/components/common/modals/modal-info-fields';
+import styles from './index.module.scss';
 import DevPageHeader from '@/dev/dev-page-header';
 
-const actionButtonCode = `import ActionButton from '@/components/common/action-button';
-import ActionButtonGroup from '@/components/common/action-button-group';
+const actionButtonCode = `import ActionButton from '@/components/common/actions/action-button';
+import ActionButtonGroup from '@/components/common/actions/action-button-group';
 import { useMenuPermission } from '@/hooks/use-menu-permission';
 
 const { canWrite } = useMenuPermission();
@@ -29,8 +29,8 @@ const { canWrite } = useMenuPermission();
   <ActionButton action="saveChanges">Save</ActionButton>
 </ActionButtonGroup>`;
 
-const appModalCode = `import AppModal from '@/components/common/app-modal';
-import ModalInfoFields from '@/components/common/modal-info-fields';
+const appModalCode = `import AppModal from '@/components/common/modals/app-modal';
+import ModalInfoFields from '@/components/common/modals/modal-info-fields';
 
 <AppModal
   open={open}
@@ -51,7 +51,7 @@ import ModalInfoFields from '@/components/common/modal-info-fields';
   />
 </AppModal>`;
 
-/* ─── Code snippets ─── */
+/* --- Code snippets --- */
 const formPanelCode = `import FormPanel from '@/components/layout/form-panel';
 
 const [isEditMode, setIsEditMode] = useState(false);
@@ -130,7 +130,7 @@ const [visible, setVisible] = useState(false);
   ]}
 />`;
 
-/* ─── Demo data ─── */
+/* --- Demo data --- */
 const demoItems = [
   { id: 1, name: 'Requirements analysis', status: 'completed', assignee: 'Steve Kim' },
   { id: 2, name: 'Database design', status: 'in_progress', assignee: 'Michelle Lee' },
@@ -179,7 +179,7 @@ export default function LayoutComponentsDemo() {
       <Tabs
         defaultActiveKey="filter"
         items={[
-          /* ── FilterPanel ── */
+          /* -- FilterPanel -- */
           {
             key: 'filter',
             label: 'FilterPanel',
@@ -246,7 +246,7 @@ export default function LayoutComponentsDemo() {
             ),
           },
 
-          /* ── FormPanel ── */
+          /* -- FormPanel -- */
           {
             key: 'form',
             label: 'FormPanel',
@@ -260,7 +260,7 @@ export default function LayoutComponentsDemo() {
                     <tbody>
                       <tr><td><code>title</code></td><td>ReactNode</td><td>Title on the left of the header</td></tr>
                       <tr><td><code>actions</code></td><td>ReactNode</td><td>Button group on the right of the header (left of the collapse button)</td></tr>
-                      <tr><td><code>editMode</code></td><td>boolean</td><td>Edit mode — the bottom border turns blue</td></tr>
+                      <tr><td><code>editMode</code></td><td>boolean</td><td>Edit mode � the bottom border turns blue</td></tr>
                       <tr><td><code>collapsed</code></td><td>boolean</td><td>Collapsed state (controlled)</td></tr>
                       <tr><td><code>onCollapsedChange</code></td><td>(v: boolean) =&gt; void</td><td>Collapse toggle callback</td></tr>
                       <tr><td><code>children</code></td><td>ReactNode</td><td>Form content</td></tr>
@@ -319,8 +319,8 @@ export default function LayoutComponentsDemo() {
                   </FormPanel>
                   <div style={{ marginTop: 8, fontSize: 12, color: 'var(--text-secondary)' }}>
                     {isFormEditMode
-                      ? 'Edit mode — the bottom border is blue'
-                      : 'New mode — the border keeps its default color'}
+                      ? 'Edit mode � the bottom border is blue'
+                      : 'New mode � the border keeps its default color'}
                   </div>
                 </div>
                 <CodeSnippet code={formPanelCode} />
@@ -328,7 +328,7 @@ export default function LayoutComponentsDemo() {
             ),
           },
 
-          /* ── SplitPanel ── */
+          /* -- SplitPanel -- */
           {
             key: 'split',
             label: 'SplitPanel',
@@ -382,7 +382,7 @@ export default function LayoutComponentsDemo() {
             ),
           },
 
-          /* ── DetailPanel ── */
+          /* -- DetailPanel -- */
           {
             key: 'detail',
             label: 'DetailPanel',
@@ -451,7 +451,7 @@ export default function LayoutComponentsDemo() {
                         badge: 2,
                         children: (
                           <div style={{ padding: '8px 0', fontSize: 13, color: 'var(--text-secondary)' }}>
-                            <p>2025-03-01 status changed: Planned → In progress</p>
+                            <p>2025-03-01 status changed: Planned ? In progress</p>
                             <p>2025-02-28 assignee set: {selectedItem.assignee}</p>
                           </div>
                         ),
@@ -464,7 +464,7 @@ export default function LayoutComponentsDemo() {
             ),
           },
 
-          /* ── ActionButton ── */
+          /* -- ActionButton -- */
           {
             key: 'actionButton',
             label: 'ActionButton',
@@ -473,7 +473,7 @@ export default function LayoutComponentsDemo() {
                 <div className={styles.demoDesc}>
                   <h3>ActionButton / ActionButtonGroup</h3>
                   <p>
-                    Standard action buttons (search, save, delete, Excel, …) plus preset-ordered groups.
+                    Standard action buttons (search, save, delete, Excel, �) plus preset-ordered groups.
                     When <code>canWrite</code> is false, write buttons are disabled automatically.
                   </p>
                 </div>
@@ -505,7 +505,7 @@ export default function LayoutComponentsDemo() {
             ),
           },
 
-          /* ── AppModal ── */
+          /* -- AppModal -- */
           {
             key: 'appModal',
             label: 'AppModal',

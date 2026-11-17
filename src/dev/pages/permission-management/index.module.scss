@@ -1,0 +1,95 @@
+.perm {
+  /* Filter bar */
+  &FilterBar {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 10px 12px;
+    background: var(--content-header-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    margin-bottom: 8px;
+  }
+
+  &FilterItem {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  &FilterLabel {
+    font-size: 13px;
+    color: var(--text-secondary);
+    white-space: nowrap;
+  }
+
+  /* Matrix wrapper */
+  &MatrixWrapper {
+    overflow: auto;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    background: var(--content-header-bg);
+  }
+
+  /* Matrix table */
+  &Matrix {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+
+    th,
+    td {
+      border: 1px solid var(--border-color);
+      padding: 6px 10px;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    /* Header styles */
+    thead th {
+      background: #f0f5ff;
+      color: var(--text-primary);
+      font-weight: 600;
+      position: sticky;
+      top: 0;
+      z-index: 2;
+    }
+
+    /* Row hover */
+    tbody tr:hover td {
+      background: var(--primary-light);
+    }
+
+    /* Checkbox centering */
+    :global(.ant-checkbox-wrapper) {
+      display: flex;
+      justify-content: center;
+    }
+  }
+
+  /* Column widths */
+  &ColId {
+    width: 140px;
+    text-align: left;
+  }
+
+  &ColName {
+    width: 160px;
+    text-align: left;
+    min-width: 160px;
+  }
+
+  &ColRole {
+    min-width: 100px;
+  }
+
+  &ColCheck {
+    width: 48px;
+    padding: 4px;
+  }
+
+  /* Parent row highlight */
+  &RowParent td {
+    background: rgba(22, 119, 255, 0.05);
+  }
+}

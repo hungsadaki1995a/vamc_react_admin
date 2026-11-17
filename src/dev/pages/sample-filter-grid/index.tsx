@@ -1,11 +1,11 @@
-﻿import { useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { Input, Select, Button, Tag } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import GridToolbar from '@/components/layout/grid-toolbar';
 import FilterPanel from '@/components/layout/filter-panel';
 import GridTable from '@/components/grid/grid-table';
 import type { ColDef } from 'ag-grid-community';
-import styles from './index.module.css';
+import styles from './index.module.scss';
 
 interface Issue {
   id: string;

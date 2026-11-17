@@ -1,0 +1,49 @@
+/* Toggle Button — VNPL Admin Design System (Figma 4024:17231) */
+
+.ds-toggle.ant-switch {
+  min-width: 32px;
+  width: 32px;
+  height: 16px;
+  line-height: 16px;
+  border-radius: 8px;
+  background: var(--color-navy-500);
+
+  &:hover:not(.ant-switch-disabled) {
+    background: var(--color-navy-500);
+  }
+
+  .ant-switch-handle {
+    width: 10.67px;
+    height: 10.67px;
+    top: 2.67px;
+    inset-inline-start: 2.67px;
+
+    &::before {
+      border-radius: 9999px;
+      background-color: var(--color-bg-primary);
+      box-shadow: 0 2.67px 10.67px 0 rgba(12, 17, 29, 0.06);
+    }
+  }
+
+  &.ant-switch-checked {
+    background: var(--color-selection-select);
+
+    &:hover:not(.ant-switch-disabled) {
+      background: var(--color-selection-select);
+    }
+
+    .ant-switch-handle {
+      inset-inline-start: calc(100% - 10.67px - 2.67px);
+    }
+  }
+
+  &.ant-switch-disabled {
+    opacity: 1;
+    background: var(--color-selection-border-disabled);
+
+    &.ant-switch-checked {
+      opacity: 1;
+      background: var(--color-selection-select-disabled);
+    }
+  }
+}

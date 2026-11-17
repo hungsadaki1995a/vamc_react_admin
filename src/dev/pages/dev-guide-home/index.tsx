@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useLocaleStore } from '@/stores/locale-store';
 import type { LocaleKey } from '@/stores/locale-store';
 import { SECTIONS, PAGE_TEXT } from './sections';
-import styles from './index.module.css';
+import styles from './index.module.scss';
 import { CONTENT_KO } from './content.ko';
 import { CONTENT_EN } from './content.en';
 import { CONTENT_VN } from './content.vn';

@@ -1,11 +1,11 @@
-﻿import { useMemo, useState, useCallback } from 'react';
+import { useMemo, useState, useCallback } from 'react';
 import { Tabs, Card, Tag } from 'antd';
 import { AgGridReact } from 'ag-grid-react';
 import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
 import type { ColDef, ColGroupDef, CellClassParams, CellStyle } from 'ag-grid-community';
-import CodeSnippet from '@/components/common/code-snippet';
+import CodeSnippet from '@/components/common/utilities/code-snippet';
 import { lightTheme } from '@/components/grid/grid-table';
-import '@/components/grid/grid-table.css';
+import '@/components/grid/grid-table.scss';
 import DevPageHeader from '@/dev/dev-page-header';
 
 // Register AG Grid modules
@@ -114,7 +114,7 @@ const themingCode = `// Theming
   <AgGridReact {...props} />
 </div>`;
 
-const formatterCode = `// valueFormatter: formats the display only — the underlying data is untouched
+const formatterCode = `// valueFormatter: formats the display only � the underlying data is untouched
 
 const columnDefs: ColDef[] = [
   {
@@ -523,7 +523,7 @@ const [quickFilter, setQuickFilter] = useState('');
 />`;
 
 
-// ── Header grouping snippets ──
+// -- Header grouping snippets --
 
 const headerGroupCode = `// Header grouping: a children array makes a column group
 const [columnDefs] = useState<(ColDef | ColGroupDef)[]>([
@@ -585,7 +585,7 @@ const columnDefs2 = [
   },
 ];`;
 
-// ── Cell / row spanning snippets ──
+// -- Cell / row spanning snippets --
 
 const colSpanCode = `// colSpan: let a cell span several columns under a condition
 const columnDefs: ColDef[] = [
@@ -640,7 +640,7 @@ const columnDefs: ColDef[] = [
   enableCellSpan={true}
 />`;
 
-// ── Footer / pinned row snippets ──
+// -- Footer / pinned row snippets --
 
 const pinnedRowCode = `// pinnedTopRowData: rows pinned to the top, below the header
 // pinnedBottomRowData: rows pinned to the bottom (a footer)
@@ -726,7 +726,7 @@ const columnDefs: ColDef[] = [
   {
     field: 'category',
     headerName: 'Category',
-    // Repeat categories render as an empty string — the row-grouping effect
+    // Repeat categories render as an empty string � the row-grouping effect
     valueFormatter: (params) => {
       if (params.data?.isSubtotal) return params.value;
       const idx = params.node?.rowIndex ?? 0;
@@ -773,7 +773,7 @@ const totalRow = useMemo(() => [{
   pinnedBottomRowData={totalRow}
 />`;
 
-// ── Column pinning snippets ──
+// -- Column pinning snippets --
 
 const columnPinningCode = `// Column pinning
 const columnDefs: ColDef[] = [
@@ -834,7 +834,7 @@ const colDef: ColDef = {
 // The context menu can pin columns too
 // Right-click a column header -> "Pin Column" -> Left / Right / No Pin`;
 
-// ── Clipboard snippets ──
+// -- Clipboard snippets --
 
 const clipboardBasicCode = `// Turn on enableClipboard on the GridTable component
 <GridTable
@@ -906,7 +906,7 @@ useEffect(() => {
   return () => document.removeEventListener('keydown', handleKeyDown, true);
 }, [enableClipboard, columnDefs, editable]);`;
 
-// ── Demo data ──
+// -- Demo data --
 
 interface GroupDemoRow {
   name: string;
@@ -1008,7 +1008,7 @@ export default function GuideAgGrid() {
     },
   ]);
 
-  // ── Header grouping demo ──
+  // -- Header grouping demo --
   const [headerGroupColDefs] = useState<(ColDef<GroupDemoRow> | ColGroupDef)[]>([
     { field: 'name', headerName: 'Name', width: 120, pinned: 'left' },
     {
@@ -1034,7 +1034,7 @@ export default function GuideAgGrid() {
     },
   ]);
 
-  // ── Cell spanning demo (colSpan) ──
+  // -- Cell spanning demo (colSpan) --
   const [spanColDefs] = useState<ColDef<SpanDemoRow>[]>([
     { field: 'category', headerName: 'Category', width: 120,
       colSpan: (params) => {
@@ -1075,7 +1075,7 @@ export default function GuideAgGrid() {
     },
   ]);
 
-  // ── Row spanning demo (spanRows) ──
+  // -- Row spanning demo (spanRows) --
   const [rowSpanColDefs] = useState<ColDef<RowSpanDemoRow>[]>([
     { field: 'department', headerName: 'Division', width: 130, spanRows: true, sort: 'asc' as const,
       cellStyle: { fontWeight: 'bold' },
@@ -1085,7 +1085,7 @@ export default function GuideAgGrid() {
     { field: 'role', headerName: 'Grade', width: 100 },
   ]);
 
-  // ── Footer (pinned row) demo ──
+  // -- Footer (pinned row) demo --
   const pinnedBottomData = useMemo<Partial<SampleEmployee>[]>(() => [
     {
       id: 0,
@@ -1109,7 +1109,7 @@ export default function GuideAgGrid() {
     },
   };
 
-  // ── Hand-rolled grouping demo ──
+  // -- Hand-rolled grouping demo --
   const groupedRowData = useMemo<SpanDemoRow[]>(() => spanDemoData, []);
   const groupTotalRow = useMemo<Partial<SpanDemoRow>[]>(() => [{
     category: 'Grand total',
@@ -1186,7 +1186,7 @@ export default function GuideAgGrid() {
     resizable: true,
   };
 
-  // ── Column pinning demo ──
+  // -- Column pinning demo --
   const pinnedColDefs = useMemo<ColDef[]>(() => [
     { field: 'id', headerName: 'ID', width: 70, pinned: 'left', lockPinned: true },
     { field: 'name', headerName: 'Name', width: 100, pinned: 'left', lockPinned: true },
@@ -1353,7 +1353,7 @@ export default function GuideAgGrid() {
             Group headers can be nested several levels deep, and the Community edition supports it.
           </p>
 
-          <Card title="Live demo — header grouping" style={{ marginBottom: 24 }}>
+          <Card title="Live demo � header grouping" style={{ marginBottom: 24 }}>
             <div className="ds-data-grid" style={{ height: 280 }}>
               <AgGridReact
                 rowData={groupDemoData}
@@ -1397,7 +1397,7 @@ export default function GuideAgGrid() {
             Useful for subtotal rows and section headings.
           </p>
 
-          <Card title="Live demo — colSpan (the Category column)" style={{ marginBottom: 24 }}>
+          <Card title="Live demo � colSpan (the Category column)" style={{ marginBottom: 24 }}>
             <div className="ds-data-grid" style={{ height: 280 }}>
               <AgGridReact
                 rowData={spanDemoData}
@@ -1416,7 +1416,7 @@ export default function GuideAgGrid() {
             It uses <code>CellSpanModule</code> from AG Grid v35+ Community (included in <code>AllCommunityModule</code>).
           </p>
 
-          <Card title="Live demo — spanRows (division and team merged automatically)" style={{ marginBottom: 24 }}>
+          <Card title="Live demo � spanRows (division and team merged automatically)" style={{ marginBottom: 24 }}>
             <div className="ds-data-grid" style={{ height: 320 }}>
               <AgGridReact
                 rowData={rowSpanDemoData}
@@ -1433,7 +1433,7 @@ export default function GuideAgGrid() {
           <div style={{ marginTop: 16, padding: 12, background: 'var(--content-header-bg)', borderRadius: 4 }}>
             <strong>Key points</strong>
             <ul style={{ margin: '8px 0 0', paddingLeft: 20, color: 'var(--text-secondary)' }}>
-              <li><code>colSpan</code>: a function — <code>(params) =&gt; number</code> (1 means no spanning)</li>
+              <li><code>colSpan</code>: a function � <code>(params) =&gt; number</code> (1 means no spanning)</li>
               <li><code>spanRows: true</code>: merges consecutive identical values (the data must be sorted)</li>
               <li>Row spanning only works when <code>enableCellSpan: true</code> is set on <code>AgGridReact</code></li>
               <li>Style spanned cells separately through the <code>cellStyle</code> callback</li>
@@ -1454,7 +1454,7 @@ export default function GuideAgGrid() {
             <Tag color="green">Community</Tag>
           </p>
 
-          <Card title="Live demo — footer (a total row at the bottom)" style={{ marginBottom: 24 }}>
+          <Card title="Live demo � footer (a total row at the bottom)" style={{ marginBottom: 24 }}>
             <div className="ds-data-grid" style={{ height: 300 }}>
               <AgGridReact
                 rowData={sampleData}
@@ -1476,11 +1476,11 @@ export default function GuideAgGrid() {
 
           <h3 style={{ marginTop: 24 }}>Recreating grouping by hand</h3>
           <p style={{ color: 'var(--text-secondary)', marginBottom: 16 }}>
-            Sort the data by group, insert subtotal rows, then combine <code>valueFormatter</code> (hide repeated values), <code>colSpan</code> (merge the subtotal columns), <code>cellStyle</code> (a group separator line) and <code>pinnedBottomRowData</code> (the grand total footer) —
+            Sort the data by group, insert subtotal rows, then combine <code>valueFormatter</code> (hide repeated values), <code>colSpan</code> (merge the subtotal columns), <code>cellStyle</code> (a group separator line) and <code>pinnedBottomRowData</code> (the grand total footer) �
             and the Community edition gets an effect close to real row grouping.
           </p>
 
-          <Card title="Live demo — hand-rolled grouping (hidden repeats + colSpan + grand total footer)" style={{ marginBottom: 24 }}>
+          <Card title="Live demo � hand-rolled grouping (hidden repeats + colSpan + grand total footer)" style={{ marginBottom: 24 }}>
             <div className="ds-data-grid" style={{ height: 380 }}>
               <AgGridReact
                 rowData={groupedRowData}
@@ -1519,7 +1519,7 @@ export default function GuideAgGrid() {
             <Tag color="green" style={{ marginLeft: 8 }}>Community</Tag>
           </p>
 
-          <Card title="Live demo — columns pinned left and right" style={{ marginBottom: 24 }}>
+          <Card title="Live demo � columns pinned left and right" style={{ marginBottom: 24 }}>
             <div className="ds-data-grid" style={{ height: 300 }}>
               <AgGridReact
                 rowData={sampleData}
@@ -1543,7 +1543,7 @@ export default function GuideAgGrid() {
             <strong>Key points</strong>
             <ul style={{ margin: '8px 0 0', paddingLeft: 20, color: 'var(--text-secondary)' }}>
               <li><code>pinned: 'left'</code>: pinned to the left while scrolling</li>
-              <li><code>pinned: 'right'</code>: pinned to the right — handy for action buttons</li>
+              <li><code>pinned: 'right'</code>: pinned to the right � handy for action buttons</li>
               <li><code>lockPinned: true</code>: the user cannot unpin it by dragging</li>
               <li><code>lockPosition: 'left'</code>: the column cannot be moved at all</li>
               <li>Change it at runtime: <code>api.setColumnsPinned(['col'], 'left')</code></li>
@@ -1608,7 +1608,7 @@ export default function GuideAgGrid() {
             <strong>Key points</strong>
             <ul style={{ margin: '8px 0 0', paddingLeft: 20, color: 'var(--text-secondary)' }}>
               <li><code>enableClipboard</code>: a GridTable prop, enabled per grid</li>
-              <li><strong>Ctrl+C</strong>: copies the selected rows — header and data — as tab (<code>\t</code>) separated text</li>
+              <li><strong>Ctrl+C</strong>: copies the selected rows � header and data � as tab (<code>\t</code>) separated text</li>
               <li><strong>Ctrl+V</strong>: parses the clipboard and writes it into cells from the focused cell onward (edit mode only)</li>
               <li>While a cell is being edited, the browser's own copy and paste behavior is left alone</li>
               <li>Registering in the capture phase (<code>true</code>) bypasses AG Grid's event blocking</li>

@@ -1,9 +1,9 @@
 import type { ReactNode } from 'react';
 import { Badge } from 'antd';
 import { DownOutlined, UpOutlined } from '@ant-design/icons';
-import ActionButton from '@/components/common/action-button';
-import ActionButtonGroup from '@/components/common/action-button-group';
-import './page-header-actions.css';
+import ActionButton from '@/components/common/actions/action-button';
+import ActionButtonGroup from '@/components/common/actions/action-button-group';
+import './page-header-actions.scss';
 
 interface PageHeaderActionsProps {
   className?: string;

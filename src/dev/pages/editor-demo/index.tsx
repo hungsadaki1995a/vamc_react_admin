@@ -1,7 +1,7 @@
 import { lazy, Suspense, useRef, useState } from 'react';
 import { Tabs, Card, Space, Select, Spin } from 'antd';
 import type { SpreadSheetRef } from '@/components/editors/spread-sheet';
-import CodeSnippet from '@/components/common/code-snippet';
+import CodeSnippet from '@/components/common/utilities/code-snippet';
 import DevPageHeader from '@/dev/dev-page-header';
 
 // Lazy-load heavy editors — each loads its vendor chunk only when the tab is first opened

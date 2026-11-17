@@ -1,6 +1,6 @@
 import { Alert, Card, Col, Form, Input, Radio, Row, Select, Typography } from 'antd';
-import ActionButton from '@/components/common/action-button';
-import ActionButtonGroup from '@/components/common/action-button-group';
+import ActionButton from '@/components/common/actions/action-button';
+import ActionButtonGroup from '@/components/common/actions/action-button-group';
 import { useNotify } from '@/hooks/use-notify';
 import DevPageHeader from '@/dev/dev-page-header';
 

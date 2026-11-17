@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Alert, Button, Card, Divider, Space, Table, Tag, Typography } from 'antd';
 import type { TableColumnsType } from 'antd';
 import { FileExcelOutlined } from '@ant-design/icons';
-import CodeSnippet from '@/components/common/code-snippet';
+import CodeSnippet from '@/components/common/utilities/code-snippet';
 import { ExcelButton } from '@/components/excel';
 import { ExcelErrorModal } from '@/components/excel';
 import { useExcel } from '@/hooks/use-excel';

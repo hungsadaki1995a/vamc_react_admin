@@ -1,6 +1,6 @@
 import { Tabs, Card, Button, Space } from 'antd';
 import { create } from 'zustand';
-import CodeSnippet from '@/components/common/code-snippet';
+import CodeSnippet from '@/components/common/utilities/code-snippet';
 import DevPageHeader from '@/dev/dev-page-header';
 
 // Live demo store

@@ -1,0 +1,208 @@
+@mixin login-input-text {
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+}
+
+@mixin login-input-base {
+  height: 32px;
+  border-radius: 4px;
+  border-color: #d1d1e0;
+  background: #ffffff;
+  color: #3a404a;
+  @include login-input-text;
+}
+
+.container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 24px 16px;
+  background: #f6f6f9;
+  font-family: var(--font-sans);
+}
+
+.langSelector {
+  position: absolute;
+  top: 20px;
+  right: 24px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #ffffff;
+  padding: 4px 10px;
+  border-radius: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  border: 1px solid #eaeaf1;
+  z-index: 10;
+}
+
+.card {
+  width: 100%;
+  max-width: 400px;
+  background: #ffffff;
+  border: 1px solid #eaeaf1;
+  border-radius: 24px;
+  padding: 48px 40px;
+  box-shadow: 0px 6px 10px -4px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 32px;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+}
+
+.logo {
+  width: 133px;
+  height: 38px;
+  border-radius: 8px;
+  object-fit: contain;
+  display: block;
+}
+
+.title {
+  margin: 0;
+  color: #3a404a;
+  font-size: 20px;
+  line-height: 28px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  text-align: center;
+}
+
+.form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+
+  :global(.ant-form-item) {
+    margin-bottom: 0;
+  }
+
+  :global(.ant-form-item-explain-error) {
+    font-size: 12px;
+    line-height: 16px;
+    margin-top: 4px;
+  }
+}
+
+.fields {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+
+.label {
+  color: #545c6d;
+  font-size: 13px;
+  line-height: 18px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+
+.input {
+  @include login-input-base;
+  padding: 0 12px;
+
+  &::placeholder,
+  :global(input::placeholder) {
+    color: #a8b2c8;
+    @include login-input-text;
+  }
+}
+
+.passwordInput {
+  @include login-input-base;
+  padding: 0 8px 0 12px;
+
+  :global(input) {
+    @include login-input-text;
+    color: #3a404a;
+
+    &::placeholder {
+      color: #a8b2c8;
+    }
+  }
+
+  :global(.ant-input-password-icon) {
+    font-size: 16px;
+    color: #6f7b95;
+  }
+}
+
+.submitBtn {
+  height: 42px;
+  padding: 0 10px;
+  border-radius: 4px;
+  background: #005be2;
+  border: none;
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: #ffffff;
+  box-shadow: none;
+
+  &:hover,
+  &:focus-visible {
+    background: #004ec4 !important;
+  }
+
+  &:disabled,
+  &:disabled:hover {
+    background: #a8b2c8 !important;
+    color: #ffffff !important;
+    cursor: not-allowed;
+  }
+}
+
+.links {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.linkBtn {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  color: #6f7b95;
+  font-size: 13px;
+  line-height: 18px;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  font-family: inherit;
+
+  &:hover {
+    color: #3a404a;
+  }
+}
+
+.divider {
+  width: 1px;
+  height: 10px;
+  background: #d1d1e0;
+  flex-shrink: 0;
+}

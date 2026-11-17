@@ -3,7 +3,7 @@ import { AutoComplete, Input, Button, Modal, Table, Tag, Space, Spin, Tooltip } 
 import { SearchOutlined, CloseCircleFilled } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
 import type { TableRowSelection } from 'antd/es/table/interface';
-import './search-select-field.css';
+import './search-select-field.scss';
 import { useComponentLabel } from '@/hooks/use-component-label';
 
 // ── Types ─────────────────────────────────────────────────────────────────────

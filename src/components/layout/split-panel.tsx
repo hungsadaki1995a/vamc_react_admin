@@ -1,5 +1,5 @@
 import { useRef, useState, useCallback, useEffect } from 'react';
-import './split-panel.css';
+import './split-panel.scss';
 
 interface SplitPanelProps {
   direction: 'horizontal' | 'vertical';

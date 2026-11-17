@@ -14,7 +14,7 @@ import dayjs from 'dayjs';
 import type { InquiryItem } from './inquiry.types';
 import { useInquiries } from './use-inquiries';
 import InquiryDetailModal from './inquiry-detail-modal';
-import styles from './inquiry-management.module.css';
+import styles from './inquiry-management.module.scss';
 
 const { RangePicker } = DatePicker;
 
