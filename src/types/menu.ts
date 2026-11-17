@@ -10,3 +10,17 @@ export interface MenuItem {
   permissions?: string[];
   permType?: string;     // RD(읽기) | WT(쓰기) | AL(전체) | '' | undefined
 }
+
+export interface MenuTreeItem {
+  menuCd?: string;
+  upMenuCd?: string;
+  lblCd?: string;
+  menuSeq?: number;
+  menuDpth?: number;
+  menuNmDisplay?: string;
+  sortPath?: string;
+  menuLblVal?: string;
+  menuUrlAddr?: string;
+  menuAuthrt?: string;
+  children?: MenuTreeItem[];
+}

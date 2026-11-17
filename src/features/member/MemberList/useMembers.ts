@@ -6,13 +6,16 @@ import { getMembers } from '@/api/generated/sdk.gen';
 import type {
   MemberResponse,
   PageResponseMemberResponse,
-  PageRequest,
-  MemberSearchRequest,
+  GetMembersData,
 } from '@/api/generated/types.gen';
 import type {
   MemberItem,
   MemberClassification,
+  MemberGrade,
   MemberType,
+  MemberStatus,
+  MembershipType,
+  MemberSearchField,
   ApprovalStatus,
   AccountStatus,
 } from './member.types';
@@ -24,19 +27,16 @@ export interface UseMembersParams {
   pageSize?: number;
   sortBy?: string;
   sortDirection?: 'ASC' | 'DESC';
-  classificationAll?: boolean;
-  selectedClassifications?: MemberClassification[];
+  memberGradeAll?: boolean;
+  selectedMemberGrades?: MemberGrade[];
   memberTypeAll?: boolean;
   selectedMemberTypes?: MemberType[];
-  accountStatusAll?: boolean;
-  selectedAccountStatuses?: AccountStatus[];
-  approvalStatusAll?: boolean;
-  selectedApprovalStatuses?: ApprovalStatus[];
-  memberName?: string;
-  companyName?: string;
-  memberCode?: string;
-  phoneNumber?: string;
-  email?: string;
+  statusAll?: boolean;
+  selectedStatuses?: MemberStatus[];
+  membershipAll?: boolean;
+  selectedMemberships?: MembershipType[];
+  searchField?: MemberSearchField;
+  searchText?: string;
   dateRange?: [dayjs.Dayjs | null, dayjs.Dayjs | null] | null;
 }
 
@@ -91,16 +91,17 @@ export const springQuerySerializer = (queryParams: unknown): string => {
 
 function formatDate(val?: string): string {
   if (!val) return '-';
-  if (/^\d{2}\/\d{2}\/\d{4}$/.test(val)) return val;
+  if (/^\d{2}-\d{2}-\d{4}$/.test(val)) return val;
+  if (/^\d{2}\/\d{2}\/\d{4}$/.test(val)) return val.replace(/\//g, '-');
   const d = dayjs(val);
-  return d.isValid() ? d.format('DD/MM/YYYY') : val;
+  return d.isValid() ? d.format('DD-MM-YYYY') : val;
 }
 
 /**
  * Maps MemberResponse from OpenAPI to frontend MemberItem interface
  */
 export function mapMemberResponseToItem(res: MemberResponse, index: number): MemberItem {
-  // Classification
+  // Classification (kept for modal compatibility)
   const clsUpper = (res.mbrClsCd || '').toUpperCase();
   let memberClassification: MemberClassification = 'Verified';
   if (clsUpper.includes('APPROVAL') || clsUpper === 'PENDING_APPROVAL') {
@@ -111,6 +112,19 @@ export function mapMemberResponseToItem(res: MemberResponse, index: number): Mem
     memberClassification = 'Rejected';
   } else if (clsUpper.includes('VERIF') || clsUpper === 'VERIFIED') {
     memberClassification = 'Verified';
+  }
+
+  // Member Grade
+  const grdUpper = (res.mbrGrdCd || '').toUpperCase();
+  let memberGrade: MemberGrade = 'Temporary';
+  if (res.delDt || grdUpper === 'DELETED') {
+    memberGrade = 'Deleted';
+  } else if (grdUpper === 'F' || grdUpper === 'FULL') {
+    memberGrade = 'Full';
+  } else if (grdUpper === 'G' || grdUpper === 'GENERAL') {
+    memberGrade = 'General';
+  } else {
+    memberGrade = 'Temporary';
   }
 
   // Member Type
@@ -124,7 +138,7 @@ export function mapMemberResponseToItem(res: MemberResponse, index: number): Mem
     memberType = 'General';
   }
 
-  // Approval Status
+  // Approval Status (kept for modal compatibility)
   const stageUpper = (res.atrzStage || '').toUpperCase();
   let approvalStatus: ApprovalStatus = 'Not Received';
   if (stageUpper.includes('REQUEST') || stageUpper === 'REQUESTED' || stageUpper === 'SUPPLEMENT_REQUESTED') {
@@ -143,11 +157,58 @@ export function mapMemberResponseToItem(res: MemberResponse, index: number): Mem
   const acntUpper = (res.acntSttsCd || '').toUpperCase();
   const accountStatus: AccountStatus = acntUpper.includes('LOCK') ? 'Locked' : 'Active';
 
+  // Status label
+  const sttsUpper = (res.sttsCd || '').toUpperCase();
+  let status: MemberStatus = 'Active';
+  if (sttsUpper === 'PENDING_APPROVAL') {
+    status = 'Pending Approval';
+  } else if (sttsUpper === 'SUPPLEMENT_REQUESTED') {
+    status = 'Supplement Requested';
+  } else if (sttsUpper === 'REJECTED') {
+    status = 'Rejected';
+  } else if (sttsUpper === 'LOCKED') {
+    status = 'Locked';
+  } else if (sttsUpper === 'DELETED') {
+    status = 'Deleted';
+  } else if (sttsUpper === 'CANCELLED') {
+    status = 'Cancelled';
+  } else if (sttsUpper === 'ACTIVE') {
+    status = 'Active';
+  } else if (accountStatus === 'Locked') {
+    status = 'Locked';
+  } else if (memberClassification === 'Pending (Approval)') {
+    status = 'Pending Approval';
+  } else if (memberClassification === 'Rejected') {
+    status = 'Rejected';
+  }
+
+  // Sign-up Channel
+  const chnlUpper = (res.mbrJoinChnlCd || '').toUpperCase();
+  const signUpChannel = chnlUpper === 'ON' || chnlUpper === 'ONLINE'
+    ? 'Online'
+    : chnlUpper === 'OFF' || chnlUpper === 'OFFLINE'
+      ? 'Offline'
+      : '-';
+
+  // Membership
+  const payUpper = (res.mbrshpPayCd || '').toUpperCase();
+  const membership = payUpper === 'PAID'
+    ? 'Paid'
+    : payUpper === 'EXEMPT'
+      ? 'Exempt'
+      : payUpper === 'NONE'
+        ? 'None'
+        : '-';
+
   return {
     id: res.mbrNo || res.lgnId || (res.no ? String(res.no) : `mem-${index + 1}`),
     no: res.no ?? index + 1,
     memberClassification,
+    memberGrade,
+    status,
     memberCode: res.mbrNo || '-',
+    sgdnMemberCode: res.sgdnMbrNo || '-',
+    loginId: res.lgnId || '-',
     applicationId: res.lgnId || res.atrzHstryId || '-',
     memberType,
     memberName: res.mbrNm || '-',
@@ -157,7 +218,11 @@ export function mapMemberResponseToItem(res: MemberResponse, index: number): Mem
     receivedDate: formatDate(res.rcptDt),
     attachments: res.atchFileCnt ?? 0,
     companyName: res.orgnzNm || '-',
+    signUpChannel,
+    membership,
+    membershipExpiryDate: formatDate(res.mbrshpExprDt),
     approvalDate: formatDate(res.aprvDt),
+    paymentDeadline: formatDate(res.payDdlnDt),
     phone: res.telno || '-',
     email: res.emlAddr || '-',
     accountStatus,
@@ -165,87 +230,77 @@ export function mapMemberResponseToItem(res: MemberResponse, index: number): Mem
 }
 
 /**
- * Builds Spring PageRequest & MemberSearchRequest query parameters from UI filter state
+ * Builds GetMembersData query parameters from UI filter state
  */
-export function buildMemberQueryParams(params: UseMembersParams): {
-  pageRequest: PageRequest;
-  searchRequest: MemberSearchRequest;
-} {
-  const pageRequest: PageRequest = {
+export function buildMemberQueryParams(params: UseMembersParams): NonNullable<GetMembersData['query']> {
+  const query: NonNullable<GetMembersData['query']> = {
     page: params.page ?? 1,
     size: params.pageSize ?? 20,
     sortBy: params.sortBy,
     sortDirection: params.sortDirection,
   };
 
-  const searchRequest: MemberSearchRequest = {};
-
-  // Classification filter
-  if (!params.classificationAll && params.selectedClassifications && params.selectedClassifications.length > 0) {
-    const classMap: Record<MemberClassification, string> = {
-      'Pending (Approval)': 'PENDING_APPROVAL',
-      'Pending (Payment)': 'PENDING_PAYMENT',
-      'Verified': 'VERIFIED',
-      'Rejected': 'REJECTED',
+  // Member Grade filter
+  if (params.selectedMemberGrades && params.selectedMemberGrades.length > 0) {
+    const gradeMap: Record<MemberGrade, 'T' | 'G' | 'F' | 'DELETED'> = {
+      Temporary: 'T',
+      General: 'G',
+      Full: 'F',
+      Deleted: 'DELETED',
     };
-    searchRequest.mbrClsCds = params.selectedClassifications.map((c) => classMap[c] || c);
+    query.mbrGrdCds = params.selectedMemberGrades.map((g) => gradeMap[g]);
   }
 
   // Member Type filter
   if (!params.memberTypeAll && params.selectedMemberTypes && params.selectedMemberTypes.length > 0) {
-    const typeMap: Record<MemberType, string> = {
+    const typeMap: Record<MemberType, 'P' | 'F' | 'O'> = {
       General: 'P',
       Foreigner: 'F',
       Organization: 'O',
     };
-    searchRequest.mbrTypeCds = params.selectedMemberTypes.map((t) => typeMap[t] || t);
+    query.mbrTypeCds = params.selectedMemberTypes.map((t) => typeMap[t]);
   }
 
-  // Account Status filter
-  if (!params.accountStatusAll && params.selectedAccountStatuses && params.selectedAccountStatuses.length > 0) {
-    const acntMap: Record<AccountStatus, string> = {
-      Active: 'ACTIVE',
-      Locked: 'LOCKED',
-    };
-    searchRequest.acntSttsCds = params.selectedAccountStatuses.map((s) => acntMap[s] || s);
-  }
-
-  // Approval Status filter
-  if (!params.approvalStatusAll && params.selectedApprovalStatuses && params.selectedApprovalStatuses.length > 0) {
-    const approvalMap: Record<ApprovalStatus, string> = {
-      'Not Received': 'NOT_RECEIVED',
-      'Requested': 'REQUESTED',
-      'In Progress': 'IN_PROGRESS',
-      'Approved': 'APPROVED',
+  // Status filter
+  if (!params.statusAll && params.selectedStatuses && params.selectedStatuses.length > 0) {
+    const statusMap: Record<string, 'PENDING_APPROVAL' | 'SUPPLEMENT_REQUESTED' | 'REJECTED' | 'ACTIVE' | 'LOCKED'> = {
+      'Pending Approval': 'PENDING_APPROVAL',
+      'Supplement Requested': 'SUPPLEMENT_REQUESTED',
       'Rejected': 'REJECTED',
+      'Active': 'ACTIVE',
+      'Locked': 'LOCKED',
     };
-    searchRequest.atrzStages = params.selectedApprovalStatuses.map((s) => approvalMap[s] || s);
+    const mapped = params.selectedStatuses
+      .map((s) => statusMap[s])
+      .filter((s): s is NonNullable<typeof s> => Boolean(s));
+    if (mapped.length > 0) {
+      query.sttsCds = mapped;
+    }
   }
 
-  // Text filters
-  if (params.memberName?.trim()) {
-    searchRequest.mbrNm = params.memberName.trim();
-  }
-  if (params.companyName?.trim()) {
-    searchRequest.orgnzNm = params.companyName.trim();
-  }
-  if (params.memberCode?.trim()) {
-    searchRequest.mbrNo = params.memberCode.trim();
-  }
-  if (params.phoneNumber?.trim()) {
-    searchRequest.telno = params.phoneNumber.trim();
-  }
-  if (params.email?.trim()) {
-    searchRequest.emlAddr = params.email.trim();
+  // Membership filter
+  if (!params.membershipAll && params.selectedMemberships && params.selectedMemberships.length > 0) {
+    const payMap: Record<MembershipType, 'PAID' | 'EXEMPT' | 'NONE'> = {
+      Paid: 'PAID',
+      Exempt: 'EXEMPT',
+      None: 'NONE',
+    };
+    query.mbrshpPayCds = params.selectedMemberships.map((m) => payMap[m]);
   }
 
-  // Date Range filter (YYYY-MM-DD)
+  // Search field + text
+  if (params.searchText?.trim()) {
+    query.searchField = params.searchField || 'MBR_NO';
+    query.searchText = params.searchText.trim();
+  }
+
+  // Approval Period (YYYY-MM-DD)
   if (params.dateRange?.[0] && params.dateRange?.[1]) {
-    searchRequest.regFromDt = params.dateRange[0].format('YYYY-MM-DD');
-    searchRequest.regToDt = params.dateRange[1].format('YYYY-MM-DD');
+    query.aprvFromDt = params.dateRange[0].format('YYYY-MM-DD');
+    query.aprvToDt = params.dateRange[1].format('YYYY-MM-DD');
   }
 
-  return { pageRequest, searchRequest };
+  return query;
 }
 
 // ── Custom Hook: useMembers ──────────────────────────────────────────────────
@@ -263,16 +318,13 @@ export function useMembers(
   pageSize: number;
   totalPages: number;
 } {
-  const { pageRequest, searchRequest } = buildMemberQueryParams(params);
+  const queryParams = buildMemberQueryParams(params);
 
   const queryResult = useQuery<UseMembersResult, Error>({
-    queryKey: ['members', 'list', pageRequest, searchRequest],
+    queryKey: ['members', 'list', queryParams],
     queryFn: async () => {
       const response = await getMembers({
-        query: {
-          pageRequest,
-          searchRequest,
-        },
+        query: queryParams,
         querySerializer: springQuerySerializer,
         throwOnError: true,
       });
@@ -287,8 +339,8 @@ export function useMembers(
 
       const items: MemberItem[] = rawContent.map((m, idx) => mapMemberResponseToItem(m, idx));
       const total = pageData?.totalElements ?? items.length;
-      const currentPage = pageData?.page ?? pageRequest.page ?? 1;
-      const currentSize = pageData?.size ?? pageRequest.size ?? 20;
+      const currentPage = pageData?.page ?? queryParams.page ?? 1;
+      const currentSize = pageData?.size ?? queryParams.size ?? 20;
       const totalPages = pageData?.totalPages ?? Math.ceil(total / (currentSize || 1));
 
       return {

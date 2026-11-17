@@ -2,9 +2,9 @@
   /* Layout */
   --header-height: 50px;
   --rail-width: 64px;
-  --flyout-width: 220px;
+  --flyout-width: 256px;
   --content-header-height: 32px;
-  --tab-bar-height: 36px;
+  --tab-bar-height: 34px;
   --primary-color: #1677ff;
   --primary-light: rgba(22, 119, 255, 0.08);
   --primary-glow: rgba(22, 119, 255, 0.4);

@@ -23,6 +23,11 @@ import { useComponentLabel } from '@/hooks/useComponentLabel';
 import { useLocaleStore } from '@/stores/localeStore';
 import { useShallow } from 'zustand/react/shallow';
 import { findTopLevelMenuKey } from '@/utils/menuUtils';
+import {
+  getMenuIconByCode,
+  getTopLevelMenuItems,
+  mapMenuTreesToMenuItems,
+} from '@/utils/menu-tree-utils';
 
 // dev(개발 도구)는 rail-bottom에 고정 배치
 // production 빌드에서는 menuConfig에 'dev' 항목이 없으므로 bottomRailMenu는 undefined —
@@ -61,6 +66,10 @@ const GNB_ICON_BY_NAME: Record<string, string> = {
 };
 
 function getIconComponent(item: MenuItem): React.ReactNode {
+  const codeIcon = getMenuIconByCode(item.key);
+  if (codeIcon) {
+    return <img src={codeIcon} alt="" aria-hidden="true" className="w-6 h-6 shrink-0" />;
+  }
   const gnbSrc = GNB_ICON_BY_KEY[item.key] ?? (item.icon ? GNB_ICON_BY_NAME[item.icon] : undefined);
   if (gnbSrc) {
     return <img src={gnbSrc} alt="" aria-hidden="true" className="w-6 h-6 shrink-0" />;
@@ -82,12 +91,13 @@ function getIconComponent(item: MenuItem): React.ReactNode {
 }
 
 export default function IconRail() {
-  const { activeRailKey, flyoutVisible, toggleFlyout, closeFlyout, serverMenus } = useMenuStore(
+  const { activeRailKey, flyoutVisible, toggleFlyout, closeFlyout, menuTrees, serverMenus } = useMenuStore(
     useShallow((s) => ({
       activeRailKey: s.activeRailKey,
       flyoutVisible: s.flyoutVisible,
       toggleFlyout: s.toggleFlyout,
       closeFlyout: s.closeFlyout,
+      menuTrees: s.menuTrees,
       serverMenus: s.serverMenus,
     }))
   );
@@ -107,15 +117,25 @@ export default function IconRail() {
     [allMenus],
   );
 
-  // Static items (member, etc.) + server business menus
+  // Top-level rail items from login menuTrees when available; otherwise fallback to static + server menus
   const mainRailItems = useMemo(() => {
+    if (menuTrees.length > 0) {
+      const topLevelTrees = getTopLevelMenuItems(menuTrees);
+      return mapMenuTreesToMenuItems(topLevelTrees).map((item, idx) => ({
+        ...item,
+        label:
+          topLevelTrees[idx]?.menuNmDisplay?.trim() ||
+          topLevelTrees[idx]?.menuLblVal?.trim() ||
+          item.label,
+      }));
+    }
     const staticItems = allMenus.filter(
       (m) => !serverMenus.some((sm) => sm.key === m.key)
         && m.key !== BOTTOM_RAIL_KEY
         && !EXCLUDED_RAIL_KEYS.has(m.key)
     );
     return [...staticItems, ...serverMenus];
-  }, [allMenus, serverMenus]);
+  }, [allMenus, menuTrees, serverMenus]);
   const confirmLogout = useLogout();
   // 레일은 어느 화면 안에서 그려지느냐와 무관하므로 화면 라벨이 아니라 공용 컴포넌트 라벨을 쓴다
   const { tvb } = useComponentLabel();

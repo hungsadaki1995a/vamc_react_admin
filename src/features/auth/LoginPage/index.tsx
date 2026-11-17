@@ -111,7 +111,7 @@ export default function LoginPage() {
   const { message } = App.useApp();
   const setAuth = useAuthStore((s) => s.setAuth);
   const { openTab, resetTabs } = useTabStore();
-  const { setServerMenus } = useMenuStore();
+  const { setMenuTrees, setServerMenus } = useMenuStore();
   const homeMenuKey = useSettingsStore((s) => s.homeMenuKey);
   const { locale, setLocale } = useLocaleStore();
   const [loading, setLoading] = useState(false);
@@ -199,7 +199,11 @@ export default function LoginPage() {
         const memberMenu = findMenuByKey(menuConfig, 'members') || findMenuByKey(menuConfig, 'member.list');
         if (memberMenu) openTab(memberMenu);
 
-        fetchAuthMenuList().then(setServerMenus).catch(() => { /* silent */ });
+        if (loginRes.data.menuTrees?.length) {
+          setMenuTrees(loginRes.data.menuTrees);
+        } else {
+          fetchAuthMenuList().then(setServerMenus).catch(() => { /* silent */ });
+        }
 
         setFailedAttempts(0);
         navigate('/members', { replace: true });

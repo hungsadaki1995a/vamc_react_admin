@@ -1,14 +1,13 @@
 import { useState, useCallback, useRef, useEffect, useMemo, memo, startTransition } from 'react';
-import {
-  CloseOutlined,
-  PushpinFilled,
-  LeftOutlined,
-  RightOutlined,
-  MenuOutlined,
-  HomeOutlined,
-} from '@ant-design/icons';
+import { PushpinFilled, HomeOutlined } from '@ant-design/icons';
 import { Dropdown } from 'antd';
 import type { MenuProps } from 'antd';
+import {
+  close,
+  hamburger,
+  historytabLeftFilled,
+  historytabRightFilled,
+} from '@/assets/images';
 import { useTabStore } from '@/stores/tabStore';
 import { useSettingsStore } from '@/stores/settingsStore';
 import { useAllMenus } from '@/hooks/useAllMenus';
@@ -65,16 +64,18 @@ const TabItem = memo(function TabItem({
     >
       {isHome && <HomeOutlined className="tab-home-icon" />}
       {!isHome && tab.pinned && <PushpinFilled className="tab-pin-icon" />}
-      <span className="tab-label">{label}</span>
+      <span className="tab-label typo-b2-medium" title={label}>{label}</span>
       {tab.closable && (
         <span
           className="tab-close"
+          role="button"
+          aria-label={`Close ${label}`}
           onClick={(e) => {
             e.stopPropagation();
             onClose(tab.key);
           }}
         >
-          <CloseOutlined />
+          <img src={close} alt="" aria-hidden="true" className="w-3 h-3" />
         </span>
       )}
     </div>
@@ -319,11 +320,13 @@ export default function TabBar() {
       return 0;
     }), [tabs]);
 
+  const hasClosableTabs = tabs.some((t) => t.closable);
+
   if (tabs.length === 0) {
     return (
       <div className="tab-bar">
-        <div className="tab-scroll-container">
-          <span style={{ color: 'var(--text-secondary)', fontSize: 12, padding: '0 8px' }}>
+        <div className="tab-scroll-container" style={{ alignItems: 'center' }}>
+          <span className="typo-b2-medium" style={{ color: 'var(--color-text-secondary)', padding: '0 8px' }}>
             좌측 메뉴를 클릭하여 탭을 열어주세요
           </span>
         </div>
@@ -334,14 +337,6 @@ export default function TabBar() {
   return (
     <>
       <div className="tab-bar">
-        {/* Left scroll */}
-        <div
-          className={`tab-scroll-btn ${!canScrollLeft ? 'disabled' : ''}`}
-          {...scrollLeftProps}
-        >
-          <LeftOutlined style={{ fontSize: 10 }} />
-        </div>
-
         {/* Tabs scroll container */}
         <div
           ref={scrollRef}
@@ -368,24 +363,48 @@ export default function TabBar() {
           ))}
         </div>
 
-        {/* Right scroll */}
-        <div
-          className={`tab-scroll-btn ${!canScrollRight ? 'disabled' : ''}`}
-          {...scrollRightProps}
-        >
-          <RightOutlined style={{ fontSize: 10 }} />
-        </div>
+        {/* Right action buttons */}
+        <div className="tab-actions">
+          <Dropdown
+            menu={{ items: manageMenuItems, style: { maxHeight: '60vh', overflowY: 'auto', overflowX: 'hidden' } }}
+            trigger={['click']}
+            placement="bottomRight"
+          >
+            <button type="button" className="tab-action-btn" aria-label="Tab list">
+              <img src={hamburger} alt="" aria-hidden="true" className="w-3 h-3" />
+            </button>
+          </Dropdown>
 
-        {/* Tab manage dropdown */}
-        <Dropdown
-          menu={{ items: manageMenuItems, style: { maxHeight: '60vh', overflowY: 'auto', overflowX: 'hidden' } }}
-          trigger={['click']}
-          placement="bottomRight"
-        >
-          <div className="tab-manage-btn">
-            <MenuOutlined style={{ fontSize: 12 }} />
-          </div>
-        </Dropdown>
+          <button
+            type="button"
+            className={`tab-action-btn ${!canScrollLeft ? 'disabled' : ''}`}
+            disabled={!canScrollLeft}
+            aria-label="Scroll tabs left"
+            {...scrollLeftProps}
+          >
+            <img src={historytabLeftFilled} alt="" aria-hidden="true" className="w-3 h-3" />
+          </button>
+
+          <button
+            type="button"
+            className={`tab-action-btn ${!canScrollRight ? 'disabled' : ''}`}
+            disabled={!canScrollRight}
+            aria-label="Scroll tabs right"
+            {...scrollRightProps}
+          >
+            <img src={historytabRightFilled} alt="" aria-hidden="true" className="w-3 h-3" />
+          </button>
+
+          <button
+            type="button"
+            className={`tab-action-btn ${!hasClosableTabs ? 'disabled' : ''}`}
+            disabled={!hasClosableTabs}
+            aria-label="Close all tabs"
+            onClick={closeAllTabs}
+          >
+            <img src={close} alt="" aria-hidden="true" className="w-3 h-3" />
+          </button>
+        </div>
       </div>
 
       <TabContextMenu

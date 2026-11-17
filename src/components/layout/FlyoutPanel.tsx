@@ -1,6 +1,17 @@
 import { useEffect, useRef, useCallback, useState, useMemo } from 'react';
 import { RightOutlined, FolderOutlined, FileTextOutlined } from '@ant-design/icons';
 import { Tooltip } from 'antd';
+import {
+  chevronDown,
+  chevronUp,
+  folderClose,
+  folderOpen,
+  treeFile,
+} from '@/assets/images';
+import {
+  findMenuTreeByCode,
+  mapMenuTreesToMenuItems,
+} from '@/utils/menu-tree-utils';
 
 /** 펼치기: 동일 레벨 3줄(접힌 메뉴) + 우하단 + 배지 */
 function ExpandAllIcon() {
@@ -35,7 +46,7 @@ import { findMenuByKey } from '@/utils/menuUtils';
 import { useTabStore } from '@/stores/tabStore';
 
 import { useShallow } from 'zustand/react/shallow';
-import type { MenuItem } from '@/types/menu';
+import type { MenuItem, MenuTreeItem } from '@/types/menu';
 
 function getAllExpandableKeys(items: MenuItem[]): string[] {
   const keys: string[] = [];
@@ -97,11 +108,12 @@ function getParentKeys(
 }
 
 export default function FlyoutPanel() {
-  const { activeRailKey, flyoutVisible, closeFlyout } = useMenuStore(
+  const { activeRailKey, flyoutVisible, closeFlyout, menuTrees } = useMenuStore(
     useShallow((s) => ({
       activeRailKey: s.activeRailKey,
       flyoutVisible: s.flyoutVisible,
       closeFlyout: s.closeFlyout,
+      menuTrees: s.menuTrees,
     }))
   );
   const { openTab, tabs, activeTabKey } = useTabStore(
@@ -117,6 +129,12 @@ export default function FlyoutPanel() {
   // 현재 활성 탭의 menuKey
   const activeMenuKey = tabs.find((t) => t.key === activeTabKey)?.menuKey ?? null;
 
+  // Find selected top-level menu from login menuTrees when available
+  const activeMenuTree = useMemo(
+    () => (activeRailKey && menuTrees.length > 0 ? findMenuTreeByCode(menuTrees, activeRailKey) : null),
+    [menuTrees, activeRailKey],
+  );
+
   // server menus 우선, 없으면 static menuConfig fallback
   const allMenus = useAllMenus();
   const activeCategory = useMemo(() => {
@@ -124,7 +142,10 @@ export default function FlyoutPanel() {
       ?? (activeRailKey ? findMenuByKey(allMenus, activeRailKey) : null);
   }, [allMenus, activeRailKey]);
   // `?? []` 를 렌더마다 새로 만들면 하위 useMemo 의존성이 매번 바뀌므로 메모이즈한다.
-  const flyoutItems = useMemo(() => activeCategory?.children ?? [], [activeCategory]);
+  const flyoutItems = useMemo(
+    () => (activeMenuTree ? mapMenuTreesToMenuItems(activeMenuTree.children ?? []) : activeCategory?.children ?? []),
+    [activeMenuTree, activeCategory],
+  );
 
   // Auto-expand parent keys when active menu changes (tab switch or menu click).
   // Rail change → replace with parent keys of new active menu (fresh start).
@@ -227,27 +248,113 @@ export default function FlyoutPanel() {
       });
   };
 
+  const renderMenuTreeItems = (items: MenuTreeItem[], depth: number) => {
+    return items.map((item, index) => {
+      const code = item.menuCd ?? `${depth}-${index}`;
+      const hasChildren = Boolean(item.children && item.children.length > 0);
+      const isExpanded = expandedKeys.includes(code);
+      const isActive = !hasChildren && activeMenuKey === code;
+      const label = item.menuNmDisplay?.trim() || item.menuLblVal?.trim() || '';
+
+      if (hasChildren) {
+        return (
+          <div key={code}>
+            <div
+              className={`lnb-folder-item ${isExpanded ? 'expanded' : ''}`}
+              style={{ paddingLeft: 4 + depth * 20 }}
+              onClick={() => toggleExpand(code)}
+            >
+              <div className="lnb-folder-left">
+                <img
+                  src={isExpanded ? folderOpen : folderClose}
+                  alt=""
+                  aria-hidden="true"
+                  className="lnb-item-icon"
+                />
+                <span className="lnb-folder-label">{label}</span>
+              </div>
+              <img
+                src={isExpanded ? chevronUp : chevronDown}
+                alt=""
+                aria-hidden="true"
+                className="lnb-folder-arrow"
+              />
+            </div>
+            {isExpanded && (
+              <div className="lnb-children">
+                {renderMenuTreeItems(item.children!, depth + 1)}
+              </div>
+            )}
+          </div>
+        );
+      }
+
+      return (
+        <div
+          key={code}
+          className={`lnb-file-item ${isActive ? 'active' : ''}`}
+          style={{ paddingLeft: depth > 0 ? 24 + (depth - 1) * 16 : 4 }}
+          onClick={() => {
+            if (!item.menuUrlAddr) return;
+            const [mapped] = mapMenuTreesToMenuItems([item]);
+            if (mapped) handleLeafClick(mapped);
+          }}
+        >
+          <img src={treeFile} alt="" aria-hidden="true" className="lnb-item-icon" />
+          <span className="lnb-file-label">{label}</span>
+        </div>
+      );
+    });
+  };
+
   return (
     <div
       ref={panelRef}
-      className={`flyout-panel ${flyoutVisible ? 'visible' : ''}`}
+      className={`flyout-panel ${flyoutVisible ? 'visible' : ''} ${activeMenuTree ? 'lnb-panel' : ''}`}
     >
-      {/* Logo header — always visible when panel is open */}
-      <div className="flyout-logo-header">
-        <span className="flyout-logo-text">VAMC NPL ADMIN</span>
-        {allExpandableKeys.length > 0 && (
-          <Tooltip title={isAllExpanded ? '전체 접기' : '전체 펼치기'} placement="bottom">
-            <button className="flyout-expand-all-btn" onClick={toggleExpandAll}>
-              {isAllExpanded ? <CollapseAllIcon /> : <ExpandAllIcon />}
-            </button>
-          </Tooltip>
-        )}
-      </div>
+      {activeMenuTree ? (
+        <>
+          <div className="lnb-title-header">
+            <span className="lnb-title-text">
+              {activeMenuTree.menuNmDisplay?.trim() || activeMenuTree.menuLblVal?.trim()}
+            </span>
+            {allExpandableKeys.length > 0 && (
+              <Tooltip title={isAllExpanded ? '전체 접기' : '전체 펼치기'} placement="bottom">
+                <button type="button" className="lnb-title-toggle" onClick={toggleExpandAll}>
+                  <img
+                    src={isAllExpanded ? chevronUp : chevronDown}
+                    alt=""
+                    aria-hidden="true"
+                    className="lnb-title-arrow"
+                  />
+                </button>
+              </Tooltip>
+            )}
+          </div>
+          <div className="lnb-menu-list">
+            {renderMenuTreeItems(activeMenuTree.children ?? [], 0)}
+          </div>
+        </>
+      ) : (
+        <>
+          {/* Logo header — always visible when panel is open */}
+          <div className="flyout-logo-header">
+            <span className="flyout-logo-text">VAMC NPL ADMIN</span>
+            {allExpandableKeys.length > 0 && (
+              <Tooltip title={isAllExpanded ? '전체 접기' : '전체 펼치기'} placement="bottom">
+                <button className="flyout-expand-all-btn" onClick={toggleExpandAll}>
+                  {isAllExpanded ? <CollapseAllIcon /> : <ExpandAllIcon />}
+                </button>
+              </Tooltip>
+            )}
+          </div>
 
-      {activeCategory && (
-        <div className="flyout-body">
-          {renderItems(flyoutItems, 0)}
-        </div>
+          {activeCategory && (
+            <div className="flyout-body">
+              {renderItems(flyoutItems, 0)}
+            </div>
+          )}
+        </>
       )}
 
     </div>

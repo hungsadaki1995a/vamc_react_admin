@@ -4,7 +4,32 @@ export type MemberClassification =
   | 'Verified'
   | 'Rejected';
 
+export type MemberGrade = 'Temporary' | 'General' | 'Full' | 'Deleted';
+
 export type MemberType = 'General' | 'Foreigner' | 'Organization';
+
+export type MemberStatus =
+  | 'Pending Approval'
+  | 'Supplement Requested'
+  | 'Rejected'
+  | 'Active'
+  | 'Locked'
+  | 'Deleted'
+  | 'Cancelled';
+
+export type MembershipType = 'Paid' | 'Exempt' | 'None';
+
+export type SignUpChannel = 'Online' | 'Offline';
+
+export type MemberSearchField =
+  | 'MBR_NO'
+  | 'SGDN_MBR_NO'
+  | 'LGN_ID'
+  | 'MBR_NM'
+  | 'TELNO'
+  | 'EML_ADDR'
+  | 'ORGNZ_NM'
+  | 'MST_NO';
 
 export type ApprovalStatus =
   | 'Not Received'
@@ -19,7 +44,11 @@ export interface MemberItem {
   id: string;
   no: number;
   memberClassification: MemberClassification;
+  memberGrade?: MemberGrade;
+  status?: MemberStatus;
   memberCode: string;
+  sgdnMemberCode?: string;
+  loginId?: string;
   applicationId: string;
   memberType: MemberType;
   memberName: string;
@@ -29,7 +58,11 @@ export interface MemberItem {
   receivedDate: string;
   attachments: number;
   companyName: string;
+  signUpChannel?: SignUpChannel | '-';
+  membership?: MembershipType | '-';
+  membershipExpiryDate?: string;
   approvalDate: string;
+  paymentDeadline?: string;
   phone: string;
   email: string;
   accountStatus: AccountStatus;
