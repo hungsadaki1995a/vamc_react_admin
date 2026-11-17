@@ -1,9 +1,15 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useForm, Controller } from 'react-hook-form';
-import { Form, Input, Button, Alert, Dropdown, App } from 'antd';
+import { useForm, useWatch, Controller } from 'react-hook-form';
+import { Form, Input, Button, Dropdown, App } from 'antd';
 import type { MenuProps } from 'antd';
-import { GlobalOutlined, DownOutlined, CheckOutlined } from '@ant-design/icons';
+import {
+  GlobalOutlined,
+  DownOutlined,
+  CheckOutlined,
+  EyeOutlined,
+  EyeInvisibleOutlined,
+} from '@ant-design/icons';
 import { login } from '@/api/generated/sdk.gen';
 import { fetchPublicKey } from '@/api/common/authApi';
 import { encryptPassword } from '@/lib/crypto';
@@ -23,15 +29,26 @@ import { getLocaleShortLabel } from '@/utils/localeStorage';
 import styles from './index.module.css';
 import vamcLogoLogin from '@/assets/vamc_logo_login-28c7ab.png';
 
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const PHONE_REGEX = /^\+?\d{8,15}$/;
+
+function isValidEmailOrPhone(value: string): boolean {
+  const trimmed = value.trim();
+  if (!trimmed) return false;
+  return EMAIL_REGEX.test(trimmed) || PHONE_REGEX.test(trimmed.replace(/[\s-]/g, ''));
+}
+
 const LOGIN_I18N: Record<
   LocaleKey,
   {
     loginIdLabel: string;
     loginIdPlaceholder: string;
     loginIdRequired: string;
+    loginIdInvalid: string;
     passwordLabel: string;
     passwordPlaceholder: string;
     passwordRequired: string;
+    invalidCredentials: string;
     submit: string;
     findLoginId: string;
     findPassword: string;
@@ -43,9 +60,12 @@ const LOGIN_I18N: Record<
     loginIdLabel: 'Login ID',
     loginIdPlaceholder: 'Enter email or phone number',
     loginIdRequired: 'Please enter your login ID.',
+    loginIdInvalid: 'Please enter a valid email or phone number.',
     passwordLabel: 'Password',
     passwordPlaceholder: 'Enter password',
     passwordRequired: 'Please enter your password.',
+    invalidCredentials:
+      'Incorrect Login ID or password. The account will be locked after 5 failed password attempts.',
     submit: 'Log In',
     findLoginId: 'Find Login ID',
     findPassword: 'Find Password',
@@ -56,9 +76,12 @@ const LOGIN_I18N: Record<
     loginIdLabel: '아이디',
     loginIdPlaceholder: '이메일 또는 휴대폰 번호를 입력해 주세요',
     loginIdRequired: '아이디를 입력해 주세요.',
+    loginIdInvalid: '올바른 이메일 또는 휴대폰 번호를 입력해 주세요.',
     passwordLabel: '비밀번호',
     passwordPlaceholder: '비밀번호를 입력해 주세요',
     passwordRequired: '비밀번호를 입력해 주세요.',
+    invalidCredentials:
+      '아이디 또는 비밀번호가 일치하지 않습니다. 비밀번호 5회 오류 시 계정이 잠금 처리됩니다.',
     submit: '로그인',
     findLoginId: '아이디 찾기',
     findPassword: '비밀번호 찾기',
@@ -69,9 +92,12 @@ const LOGIN_I18N: Record<
     loginIdLabel: 'Tên đăng nhập',
     loginIdPlaceholder: 'Nhập email hoặc số điện thoại',
     loginIdRequired: 'Vui lòng nhập tên đăng nhập.',
+    loginIdInvalid: 'Vui lòng nhập email hoặc số điện thoại hợp lệ.',
     passwordLabel: 'Mật khẩu',
     passwordPlaceholder: 'Nhập mật khẩu',
     passwordRequired: 'Vui lòng nhập mật khẩu.',
+    invalidCredentials:
+      'Tên đăng nhập hoặc mật khẩu không chính xác. Tài khoản sẽ bị khóa sau 5 lần nhập sai mật khẩu.',
     submit: 'Đăng nhập',
     findLoginId: 'Tìm tên đăng nhập',
     findPassword: 'Tìm mật khẩu',
@@ -90,11 +116,15 @@ export default function LoginPage() {
   const { locale, setLocale } = useLocaleStore();
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [failedAttempts, setFailedAttempts] = useState(0);
 
   const t = LOGIN_I18N[locale] ?? LOGIN_I18N.en;
   const { control, handleSubmit } = useForm<LoginRequest>({
+    mode: 'onTouched',
     defaultValues: { loginId: '', password: '' },
   });
+  const [loginIdValue, passwordValue] = useWatch({ control, name: ['loginId', 'password'] });
+  const isSubmitDisabled = !loginIdValue?.trim() || !passwordValue;
 
   const languageMenuItems: MenuProps['items'] = [
     {
@@ -171,13 +201,20 @@ export default function LoginPage() {
 
         fetchAuthMenuList().then(setServerMenus).catch(() => { /* silent */ });
 
+        setFailedAttempts(0);
         navigate('/members', { replace: true });
       } else {
         setErrorMsg(t.defaultError);
       }
     } catch (err) {
       const apiErr = ApiError.from(err);
-      setErrorMsg(apiErr.userMessage);
+      if (apiErr.statusCode === 400 || apiErr.statusCode === 401) {
+        const nextAttempts = failedAttempts + 1;
+        setFailedAttempts(nextAttempts);
+        setErrorMsg(nextAttempts <= 4 ? t.invalidCredentials : apiErr.userMessage);
+      } else {
+        setErrorMsg(apiErr.userMessage);
+      }
     } finally {
       setLoading(false);
     }
@@ -227,7 +264,10 @@ export default function LoginPage() {
               <Controller
                 name="loginId"
                 control={control}
-                rules={{ required: t.loginIdRequired }}
+                rules={{
+                  required: t.loginIdRequired,
+                  validate: (value) => isValidEmailOrPhone(value) || t.loginIdInvalid,
+                }}
                 render={({ field, fieldState }) => (
                   <Form.Item validateStatus={fieldState.error ? 'error' : ''} help={fieldState.error?.message}>
                     <Input
@@ -235,6 +275,10 @@ export default function LoginPage() {
                       id="login_loginId"
                       placeholder={t.loginIdPlaceholder}
                       className={styles.input}
+                      onChange={(e) => {
+                        if (errorMsg) setErrorMsg(null);
+                        field.onChange(e);
+                      }}
                     />
                   </Form.Item>
                 )}
@@ -250,12 +294,20 @@ export default function LoginPage() {
                 control={control}
                 rules={{ required: t.passwordRequired }}
                 render={({ field, fieldState }) => (
-                  <Form.Item validateStatus={fieldState.error ? 'error' : ''} help={fieldState.error?.message}>
+                  <Form.Item
+                    validateStatus={fieldState.error || errorMsg ? 'error' : ''}
+                    help={fieldState.error?.message || errorMsg}
+                  >
                     <Input.Password
                       {...field}
                       id="login_password"
                       placeholder={t.passwordPlaceholder}
                       className={styles.passwordInput}
+                      iconRender={(visible) => (visible ? <EyeInvisibleOutlined /> : <EyeOutlined />)}
+                      onChange={(e) => {
+                        if (errorMsg) setErrorMsg(null);
+                        field.onChange(e);
+                      }}
                     />
                   </Form.Item>
                 )}
@@ -263,18 +315,13 @@ export default function LoginPage() {
             </div>
           </div>
 
-          {errorMsg && (
-            <Form.Item>
-              <Alert type="error" title={errorMsg} showIcon />
-            </Form.Item>
-          )}
-
           <Form.Item>
             <Button
               type="primary"
               htmlType="submit"
               block
               loading={loading}
+              disabled={isSubmitDisabled}
               className={styles.submitBtn}
             >
               {t.submit}

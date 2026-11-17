@@ -168,6 +168,19 @@
   background: #004ec4 !important;
 }
 
+.submitBtn:disabled,
+.submitBtn:disabled:hover {
+  background: #a8b2c8 !important;
+  color: #ffffff !important;
+  cursor: not-allowed;
+}
+
+.form :global(.ant-form-item-explain-error) {
+  font-size: 12px;
+  line-height: 16px;
+  margin-top: 4px;
+}
+
 .links {
   display: flex;
   align-items: center;
