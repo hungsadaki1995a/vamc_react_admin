@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
-import { useForm, Controller } from 'react-hook-form';
+import { useForm, useWatch, Controller } from 'react-hook-form';
 import { Form, Input, Button, Select, Dropdown, App } from 'antd';
 import type { MenuProps } from 'antd';
 import { GlobalOutlined, DownOutlined, CheckOutlined } from '@ant-design/icons';
+import { findId } from '@/api/generated/sdk.gen';
+import { ApiError } from '@/lib/api/error';
 import { useLocaleStore, type LocaleKey } from '@/stores/localeStore';
 import { getLocaleShortLabel } from '@/utils/localeStorage';
 import vamcLogoLogin from '@/assets/vamc_logo_login-28c7ab.png';
@@ -54,6 +56,7 @@ const FIND_ID_I18N: Record<
     verify: string;
     confirm: string;
     emailSentMsg: string;
+    noAccountMatch: string;
     codeSentMsg: string;
     codeVerifiedMsg: string;
     confirmSuccessMsg: string;
@@ -81,6 +84,7 @@ const FIND_ID_I18N: Record<
     verify: 'Verify',
     confirm: 'Confirm',
     emailSentMsg: 'Verification email has been sent.',
+    noAccountMatch: 'No account matches the information you entered.',
     codeSentMsg: 'Verification code has been sent via Zalo.',
     codeVerifiedMsg: 'Verification code verified.',
     confirmSuccessMsg: 'Your login ID information has been sent.',
@@ -107,6 +111,7 @@ const FIND_ID_I18N: Record<
     verify: '확인',
     confirm: '확인',
     emailSentMsg: '인증 메일이 발송되었습니다.',
+    noAccountMatch: '입력하신 정보와 일치하는 계정이 없습니다.',
     codeSentMsg: 'Zalo로 인증번호가 발송되었습니다.',
     codeVerifiedMsg: '인증번호가 확인되었습니다.',
     confirmSuccessMsg: '아이디 안내가 발송되었습니다.',
@@ -133,6 +138,7 @@ const FIND_ID_I18N: Record<
     verify: 'Xác thực',
     confirm: 'Xác nhận',
     emailSentMsg: 'Email xác thực đã được gửi.',
+    noAccountMatch: 'Không tìm thấy tài khoản khớp với thông tin bạn đã nhập.',
     codeSentMsg: 'Mã xác thực đã được gửi qua Zalo.',
     codeVerifiedMsg: 'Đã xác thực mã thành công.',
     confirmSuccessMsg: 'Thông tin tên đăng nhập đã được gửi.',
@@ -152,6 +158,10 @@ export default function FindIdPage() {
   const t = FIND_ID_I18N[locale] ?? FIND_ID_I18N.en;
 
   const [activeTab, setActiveTab] = useState<VerificationTab>('email');
+  const [emailLoading, setEmailLoading] = useState(false);
+  const [emailErrorMsg, setEmailErrorMsg] = useState<string | null>(null);
+  const [zaloSendLoading, setZaloSendLoading] = useState(false);
+  const [zaloErrorMsg, setZaloErrorMsg] = useState<string | null>(null);
   const [codeSent, setCodeSent] = useState(false);
   const [codeVerified, setCodeVerified] = useState(false);
   const [secondsLeft, setSecondsLeft] = useState(CODE_TTL_SECONDS);
@@ -165,6 +175,12 @@ export default function FindIdPage() {
     mode: 'onTouched',
     defaultValues: { name: '', countryCode: '+84', phoneNumber: '', code: '' },
   });
+
+  const [emailName, emailAddr] = useWatch({ control: emailForm.control, name: ['name', 'email'] });
+  const isEmailSubmitDisabled = !emailName?.trim() || !emailAddr?.trim();
+
+  const [zaloName, zaloPhone] = useWatch({ control: zaloForm.control, name: ['name', 'phoneNumber'] });
+  const isZaloSendDisabled = !zaloName?.trim() || !zaloPhone?.trim();
 
   useEffect(() => {
     if (!codeSent || secondsLeft <= 0) return;
@@ -207,17 +223,54 @@ export default function FindIdPage() {
     },
   ];
 
-  const handleSendEmail = () => {
-    message.success(t.emailSentMsg);
+  const handleSendEmail = async (values: EmailFormValues) => {
+    setEmailLoading(true);
+    setEmailErrorMsg(null);
+    try {
+      await findId({
+        body: {
+          channel: 'EMAIL',
+          fullName: values.name.trim(),
+          email: values.email.trim(),
+          urlCallback: `${window.location.origin}${window.location.pathname}`,
+        },
+        throwOnError: true,
+      });
+      message.success(t.emailSentMsg);
+    } catch (err) {
+      const apiErr = ApiError.from(err);
+      setEmailErrorMsg(apiErr.statusCode === 404 ? t.noAccountMatch : apiErr.userMessage);
+    } finally {
+      setEmailLoading(false);
+    }
   };
 
   const handleSendZaloCode = async () => {
     const valid = await zaloForm.trigger(['name', 'phoneNumber']);
     if (!valid) return;
-    setCodeSent(true);
-    setCodeVerified(false);
-    setSecondsLeft(CODE_TTL_SECONDS);
-    message.success(t.codeSentMsg);
+    const { name, countryCode, phoneNumber } = zaloForm.getValues();
+    setZaloSendLoading(true);
+    setZaloErrorMsg(null);
+    try {
+      await findId({
+        body: {
+          channel: 'ZALO',
+          fullName: name.trim(),
+          phone: `${countryCode}${phoneNumber.replace(/\s+/g, '')}`,
+          urlCallback: `${window.location.origin}${window.location.pathname}`,
+        },
+        throwOnError: true,
+      });
+      setCodeSent(true);
+      setCodeVerified(false);
+      setSecondsLeft(CODE_TTL_SECONDS);
+      message.success(t.codeSentMsg);
+    } catch (err) {
+      const apiErr = ApiError.from(err);
+      setZaloErrorMsg(apiErr.statusCode === 404 ? t.noAccountMatch : apiErr.userMessage);
+    } finally {
+      setZaloSendLoading(false);
+    }
   };
 
   const handleVerifyCode = async () => {
@@ -308,6 +361,10 @@ export default function FindIdPage() {
                         id="findId_email_name"
                         placeholder={t.namePlaceholder}
                         className={styles.input}
+                        onChange={(e) => {
+                          if (emailErrorMsg) setEmailErrorMsg(null);
+                          field.onChange(e);
+                        }}
                       />
                     </Form.Item>
                   )}
@@ -326,12 +383,20 @@ export default function FindIdPage() {
                     validate: (v) => EMAIL_REGEX.test(v.trim()) || t.emailInvalid,
                   }}
                   render={({ field, fieldState }) => (
-                    <Form.Item validateStatus={fieldState.error ? 'error' : ''} help={fieldState.error?.message}>
+                    <Form.Item
+                      validateStatus={fieldState.error || emailErrorMsg ? 'error' : ''}
+                      help={fieldState.error?.message || emailErrorMsg}
+                    >
                       <Input
                         {...field}
                         id="findId_email"
+                        type="email"
                         placeholder={t.emailPlaceholder}
                         className={styles.input}
+                        onChange={(e) => {
+                          if (emailErrorMsg) setEmailErrorMsg(null);
+                          field.onChange(e);
+                        }}
                       />
                     </Form.Item>
                   )}
@@ -339,7 +404,14 @@ export default function FindIdPage() {
               </div>
             </div>
 
-            <Button type="primary" htmlType="submit" block className={styles.primaryBtn}>
+            <Button
+              type="primary"
+              htmlType="submit"
+              block
+              loading={emailLoading}
+              disabled={isEmailSubmitDisabled}
+              className={styles.primaryBtn}
+            >
               {t.sendEmail}
             </Button>
           </Form>
@@ -367,6 +439,10 @@ export default function FindIdPage() {
                         id="findId_zalo_name"
                         placeholder={t.namePlaceholder}
                         className={styles.input}
+                        onChange={(e) => {
+                          if (zaloErrorMsg) setZaloErrorMsg(null);
+                          field.onChange(e);
+                        }}
                       />
                     </Form.Item>
                   )}
@@ -397,12 +473,19 @@ export default function FindIdPage() {
                         control={zaloForm.control}
                         rules={{ required: t.phoneRequired }}
                         render={({ field, fieldState }) => (
-                          <Form.Item validateStatus={fieldState.error ? 'error' : ''} help={fieldState.error?.message}>
+                          <Form.Item
+                            validateStatus={fieldState.error || zaloErrorMsg ? 'error' : ''}
+                            help={fieldState.error?.message || zaloErrorMsg}
+                          >
                             <Input
                               {...field}
                               id="findId_phone"
                               placeholder={t.phonePlaceholder}
                               className={styles.input}
+                              onChange={(e) => {
+                                if (zaloErrorMsg) setZaloErrorMsg(null);
+                                field.onChange(e);
+                              }}
                             />
                           </Form.Item>
                         )}
@@ -416,6 +499,7 @@ export default function FindIdPage() {
                     <Button
                       type="default"
                       block
+                      loading={zaloSendLoading}
                       disabled={secondsLeft > 0}
                       onClick={handleSendZaloCode}
                       className={secondsLeft > 0 ? styles.sentDisabledBtn : styles.primaryBtn}
@@ -460,6 +544,8 @@ export default function FindIdPage() {
               <Button
                 type="primary"
                 block
+                loading={zaloSendLoading}
+                disabled={isZaloSendDisabled}
                 onClick={handleSendZaloCode}
                 className={styles.primaryBtn}
               >

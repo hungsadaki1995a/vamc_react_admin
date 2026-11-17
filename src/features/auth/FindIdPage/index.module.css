@@ -300,6 +300,13 @@
   color: #ffffff !important;
 }
 
+.primaryBtn:disabled,
+.primaryBtn:disabled:hover {
+  background: #a8b2c8 !important;
+  color: #ffffff !important;
+  cursor: not-allowed;
+}
+
 .sentDisabledBtn {
   height: 42px;
   padding: 0 10px;

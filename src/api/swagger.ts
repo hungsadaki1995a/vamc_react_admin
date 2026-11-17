@@ -4546,6 +4546,54 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/auth/password-reset": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Reset password (employee) / Đặt lại mật khẩu (nhân viên)
+         * @description **Screens:** VPA000701, VPA000101
+         *
+         *     Sets the new password (8-72 characters with letters, digits and special characters) with the one-time token of the reset mail, resets the login failure count and lockout, and signs the employee out of every session. Invalid, used or expired link: 400 RCV003. Same as the current password: 400 RCV011.
+         *
+         *     Đặt mật khẩu mới bằng token trong email; mở khoá đăng nhập và đăng xuất mọi phiên.
+         */
+        post: operations["resetPassword"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/password-reset/request": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Request password reset link (employee) / Yêu cầu liên kết đặt lại mật khẩu
+         * @description **Screens:** VPA000701, VPA000101
+         *
+         *     When the employee number and the e-mail match an active employee, mails a one-time reset link (30 minutes); a new request revokes the previous link. No match: 404 RCV010. Mail not sent: 503 RCV009. ZALO: 400 RCV001. urlCallback outside cors.allowed-origins: 400 RCV012. On local/dev the token (devToken) is returned.
+         *
+         *     Mã nhân viên và email khớp thì gửi liên kết đặt lại mật khẩu (30 phút).
+         */
+        post: operations["requestPasswordReset"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/auth/logout": {
         parameters: {
             query?: never;
@@ -4584,6 +4632,62 @@ export interface paths {
          *     Authenticates user and issues JWT token. Refresh Token is issued as HttpOnly cookie (refresh_token).
          */
         post: operations["login"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/find-id": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Find ID (employee) / Tìm mã đăng nhập (nhân viên)
+         * @description **Screens:** VPA000701, VPA000101
+         *
+         *     Step 1. Full name is required and must match the employee (ignoring case and accents). Only active employees (EMP_STTS_CD = H).
+         *
+         *     - EMAIL: mails a one-time link (30 minutes) to the registered e-mail; the admin page of the link calls POST /api/auth/find-id/confirm with the token. No e-mail: 400 RCV002.
+         *     - ZALO: issues a 6-digit code (5 minutes, 5 attempts) for the registered mobile and returns requestId. No phone: 400 RCV004. Zalo delivery is not implemented yet.
+         *
+         *     No match: 404 RCV008. Mail not sent: 503 RCV009. urlCallback outside cors.allowed-origins: 400 RCV012. On local/dev (auth.recovery.expose-dev-secrets=true) devToken / devCode (123456) are returned.
+         *
+         *     Bước 1: nhập họ tên và email (EMAIL) hoặc số di động (ZALO) của nhân viên đang làm việc.
+         */
+        post: operations["findId"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/find-id/confirm": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Confirm find ID (employee) / Xác nhận tìm mã đăng nhập
+         * @description **Screens:** VPA000701, VPA000101
+         *
+         *     Step 2; returns the masked employee number.
+         *
+         *     - EMAIL (default): {"channel":"EMAIL","token":"..."}. Unknown, used or expired token: 400 RCV005.
+         *     - ZALO: {"channel":"ZALO","requestId":"...","code":"123456"}. Wrong code: 400 RCV006 with the attempts left; expired or no attempt left: 400 RCV007.
+         *
+         *     Bước 2: trả mã nhân viên đã che.
+         */
+        post: operations["confirmFindId"];
         delete?: never;
         options?: never;
         head?: never;
@@ -14329,6 +14433,80 @@ export interface components {
             menuLblVal?: string;
             menuAuthrt?: string;
         };
+        /** @description Employee password reset / Đặt lại mật khẩu nhân viên */
+        EmpPasswordResetRequest: {
+            /**
+             * @description Token from the reset mail link / Token trong liên kết đặt lại mật khẩu
+             * @example Qm9vdHN0cmFwLXRva2VuLWV4YW1wbGUtMzItYnl0ZXM
+             */
+            token: string;
+            /**
+             * Format: password
+             * @description New password: 8-72 characters with letters, digits and special characters / Mật khẩu mới: 8-72 ký tự gồm chữ, số và ký tự đặc biệt
+             */
+            newPassword: string;
+        };
+        /** @description Employee password reset link request / Yêu cầu liên kết đặt lại mật khẩu nhân viên */
+        EmpPasswordResetLinkRequest: {
+            /**
+             * @description Verification channel (EMAIL; ZALO is not supported yet) / Kênh xác minh (EMAIL; chưa hỗ trợ ZALO)
+             * @example EMAIL
+             * @enum {string}
+             */
+            channel: "EMAIL" | "ZALO";
+            /**
+             * @description Employee number (login ID, EMP_INFO.EMP_NO) / Mã nhân viên (ID đăng nhập)
+             * @example EMP0000001
+             */
+            loginId: string;
+            /**
+             * Format: email
+             * @description Registered e-mail (required for EMAIL) / Email đã đăng ký (bắt buộc với EMAIL)
+             * @example employee@vamc.com.vn
+             */
+            email?: string;
+            /**
+             * @description Page of the admin web that opens the reset link (optional; must be an allowed CORS origin) / Trang admin mở liên kết đặt lại (tùy chọn; phải thuộc origin CORS được phép)
+             * @example http://localhost:7300/auth/reset-password
+             */
+            urlCallback?: string;
+        };
+        ApiResponseEmpAccountRecoveryResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["EmpAccountRecoveryResponse"];
+        };
+        /** @description Account recovery request accepted / Đã nhận yêu cầu khôi phục tài khoản */
+        EmpAccountRecoveryResponse: {
+            /**
+             * @description Channel the information is sent through / Kênh gửi thông tin
+             * @example EMAIL
+             */
+            channel?: string;
+            /**
+             * @description Masked destination / Địa chỉ nhận đã che
+             * @example emp***@vamc.com.vn
+             */
+            destination?: string;
+            /**
+             * @description ZALO find ID: requestId for POST /api/auth/find-id/confirm / ZALO: requestId dùng ở bước xác nhận
+             * @example 5c2b7d1e-8f4a-4b6c-9d0e-1a2b3c4d5e6f
+             */
+            requestId?: string;
+            /**
+             * Format: date-time
+             * @description When the link / code expires / Thời điểm liên kết / mã hết hạn
+             */
+            expiresAt?: string;
+            /** @description Local/dev only (auth.recovery.expose-dev-secrets=true), never in production: the mail link token / Chỉ local/dev: token của liên kết trong email */
+            devToken?: string;
+            /**
+             * @description Local/dev only (auth.recovery.expose-dev-secrets=true), never in production: the 6-digit code / Chỉ local/dev: mã 6 số
+             * @example 123456
+             */
+            devCode?: string;
+        };
         /** @description Login Request / Yêu cầu đăng nhập */
         LoginRequest: {
             /**
@@ -14341,6 +14519,80 @@ export interface components {
              * @example 1q2w3e4r1!
              */
             password: string;
+        };
+        /** @description Employee find ID request / Yêu cầu tìm mã đăng nhập của nhân viên */
+        EmpFindIdRequest: {
+            /**
+             * @description Verification channel: EMAIL (link by e-mail) or ZALO (6-digit code to the mobile) / Kênh xác minh: EMAIL (liên kết qua email) hoặc ZALO (mã 6 số tới số di động)
+             * @example EMAIL
+             * @enum {string}
+             */
+            channel: "EMAIL" | "ZALO";
+            /**
+             * @description Registered full name (compared ignoring case, accents and spaces) / Họ tên đã đăng ký (so khớp không phân biệt hoa thường, dấu, khoảng trắng)
+             * @example Nguyen Van Minh
+             */
+            fullName: string;
+            /**
+             * Format: email
+             * @description Registered e-mail (required for EMAIL) / Email đã đăng ký (bắt buộc với EMAIL)
+             * @example employee@vamc.com.vn
+             */
+            email?: string;
+            /**
+             * @description Registered mobile (required for ZALO; 0901234567, 84901234567 and +84901234567 are the same) / Số di động đã đăng ký (bắt buộc với ZALO)
+             * @example 0901234567
+             */
+            phone?: string;
+            /**
+             * @description Page of the admin web that opens the mail link (optional; must be an allowed CORS origin) / Trang admin mở liên kết trong email (tùy chọn; phải thuộc origin CORS được phép)
+             * @example http://localhost:7300/auth/find-id/confirm
+             */
+            urlCallback?: string;
+        };
+        /** @description Employee find ID confirmation / Xác nhận tìm mã đăng nhập của nhân viên */
+        EmpFindIdConfirmRequest: {
+            /**
+             * @description Channel used in step 1; EMAIL when omitted / Kênh đã dùng ở bước 1; mặc định EMAIL
+             * @default EMAIL
+             * @example EMAIL
+             * @enum {string}
+             */
+            channel: "EMAIL" | "ZALO";
+            /**
+             * @description EMAIL: one-time token from the mail link (?token=) / EMAIL: token dùng một lần trong liên kết
+             * @example q8C2v3Hn0f-9xYv1o2T7sKcQm6Ww4Jr5aBdEfGhIjKl
+             */
+            token?: string;
+            /**
+             * @description ZALO: requestId returned by POST /api/auth/find-id / ZALO: requestId trả về ở bước 1
+             * @example 5c2b7d1e-8f4a-4b6c-9d0e-1a2b3c4d5e6f
+             */
+            requestId?: string;
+            /**
+             * @description ZALO: 6-digit code / ZALO: mã 6 số
+             * @example 482913
+             */
+            code?: string;
+        };
+        ApiResponseEmpFindIdResultResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["EmpFindIdResultResponse"];
+        };
+        /** @description Employee find ID result / Kết quả tìm mã đăng nhập của nhân viên */
+        EmpFindIdResultResponse: {
+            /**
+             * @description Channel used: EMAIL or ZALO / Kênh đã dùng
+             * @example EMAIL
+             */
+            channel?: string;
+            /**
+             * @description Masked employee number (login ID) / Mã nhân viên (ID đăng nhập) đã che
+             * @example EM******01
+             */
+            loginId?: string;
         };
         ApiResponseObject: {
             /** Format: int32 */
@@ -27290,6 +27542,60 @@ export interface operations {
             };
         };
     };
+    resetPassword: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["EmpPasswordResetRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseVoid"];
+                };
+            };
+        };
+    };
+    requestPasswordReset: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["EmpPasswordResetLinkRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseEmpAccountRecoveryResponse"];
+                };
+            };
+        };
+    };
     logout: {
         parameters: {
             query?: never;
@@ -27336,6 +27642,60 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["LoginResponse"];
+                };
+            };
+        };
+    };
+    findId: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["EmpFindIdRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseEmpAccountRecoveryResponse"];
+                };
+            };
+        };
+    };
+    confirmFindId: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["EmpFindIdConfirmRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseEmpFindIdResultResponse"];
                 };
             };
         };
