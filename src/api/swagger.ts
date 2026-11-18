@@ -15257,6 +15257,11 @@ export interface components {
              */
             email?: string;
             /**
+             * @description Registered phone (required for PHONE) / Số điện thoại đã đăng ký (bắt buộc với PHONE)
+             * @example 0901234567
+             */
+            phone: string;
+            /**
              * @description Page of the admin web that opens the reset link (optional; must be an allowed CORS origin) / Trang admin mở liên kết đặt lại (tùy chọn; phải thuộc origin CORS được phép)
              * @example http://localhost:7300/auth/reset-password
              */

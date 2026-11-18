@@ -37,6 +37,7 @@ export default function EmailVerificationForm() {
       await requestReset({
         channel: 'EMAIL',
         email: trimmedEmail,
+        phone: '',
         urlCallback: `${window.location.origin}${window.location.pathname}`,
       });
       message.success(t('auth.findPassword.emailSentMsg'));

@@ -6455,6 +6455,10 @@ export type EmpPasswordResetLinkRequest = {
      */
     email?: string;
     /**
+     * Registered phone (required for PHONE) / Số điện thoại đã đăng ký (bắt buộc với PHONE)
+     */
+    phone: string;
+    /**
      * Page of the admin web that opens the reset link (optional; must be an allowed CORS origin) / Trang admin mở liên kết đặt lại (tùy chọn; phải thuộc origin CORS được phép)
      */
     urlCallback?: string;
