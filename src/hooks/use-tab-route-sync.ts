@@ -1,20 +1,36 @@
 import { useEffect, useRef, useCallback } from 'react';
-import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useTabStore } from '@/stores/tab-store';
 import { useMenuStore } from '@/stores/menu-store';
 import { useSettingsStore } from '@/stores/settings-store';
 import { useAllMenus } from '@/hooks/use-all-menus';
 import { menuConfig } from '@/config/menu-config';
+import { ROUTE_MENU_CODES, getRouteByMenuCode } from '@/app/route-constants';
 import { findMenuByKey, findTopLevelMenuKey, findMenuByComponentPath } from '@/utils/menu-utils';
+import type { MenuItem } from '@/types/menu';
+
+function resolveMenuForPath(allMenus: MenuItem[], pathname: string): MenuItem | null {
+  const codes = ROUTE_MENU_CODES[pathname];
+  if (!codes) return null;
+
+  for (const code of codes) {
+    let menuItem =
+      findMenuByKey(allMenus, code) ?? findMenuByComponentPath(allMenus, code);
+    if (menuItem && !menuItem.componentPath && menuItem.children?.[0]?.componentPath) {
+      menuItem = menuItem.children[0];
+    }
+    if (menuItem?.componentPath) return menuItem;
+  }
+  return null;
+}
 
 /**
- * Bidirectional sync between tab system and browser history.
- * - Tab activation → URL push (/members or /app/:tabKey)
- * - Browser back/forward → tab activation
+ * Bidirectional sync between tab system and hardcoded browser routes.
+ * - Tab activation → mapped URL push (unmapped menu codes do not navigate)
+ * - Browser back/forward / direct URL → tab activation
  * - Rail active icon sync
  */
 export function useTabRouteSync() {
-  const { tabKey } = useParams<{ tabKey: string }>();
   const location = useLocation();
   const navigate = useNavigate();
   const { activeTabKey, tabs, openTab, setActiveTab } = useTabStore();
@@ -22,21 +38,8 @@ export function useTabRouteSync() {
   const allMenus = useAllMenus();
 
   const isNavigatingRef = useRef(false);
-  /** Tab key requested by URL but not yet opened (waiting for menus to load) */
-  const pendingTabKeyRef = useRef<string | null>(null);
-
-  const isMembersPath = location.pathname === '/members';
-  const isInquiryPath = location.pathname === '/content-management/inquiry-management';
-  const isFaqPath = location.pathname === '/content-management/faq';
-  const effectiveTabKey = isInquiryPath
-    ? 'inquiry-management'
-    : isFaqPath
-      ? 'faq-management'
-      : isMembersPath
-        ? 'members'
-        : tabKey === 'member.list'
-          ? 'members'
-          : tabKey;
+  /** Route path requested by URL whose menu hasn't loaded yet */
+  const pendingPathRef = useRef<string | null>(null);
 
   // Sync Rail active icon from a tab key.
   const syncRailFromKey = useCallback(
@@ -80,7 +83,8 @@ export function useTabRouteSync() {
 
   // URL → Tab: when URL changes (back/forward, direct address input)
   useEffect(() => {
-    if (!effectiveTabKey) return;
+    const codes = ROUTE_MENU_CODES[location.pathname];
+    if (!codes) return;
     if (isNavigatingRef.current) {
       isNavigatingRef.current = false;
       return;
@@ -88,81 +92,51 @@ export function useTabRouteSync() {
 
     const existingTab = tabs.find(
       (t) =>
-        t.key === effectiveTabKey ||
-        (effectiveTabKey === 'members' && (t.key === 'member.list' || t.componentKey === 'MemberList')) ||
-        (effectiveTabKey === 'inquiry-management' && (t.key === 'inquiry-management' || t.componentKey === 'InquiryManagement')) ||
-        (effectiveTabKey === 'faq-management' && (t.key === 'faq-management' || t.key === 'faq' || t.componentKey === 'FaqManagement')),
+        codes.includes(t.key) ||
+        codes.includes(t.menuKey) ||
+        codes.includes(t.componentKey),
     );
 
     if (existingTab) {
-      pendingTabKeyRef.current = null;
+      pendingPathRef.current = null;
       if (activeTabKey !== existingTab.key) setActiveTab(existingTab.key);
-    } else {
-      let menuItem =
-        findMenuByKey(allMenus, effectiveTabKey) ||
-        (effectiveTabKey === 'members' ? findMenuByKey(allMenus, 'member.list') : null) ||
-        (effectiveTabKey === 'inquiry-management' ? findMenuByKey(allMenus, 'inquiry-management') : null) ||
-        (effectiveTabKey === 'faq-management' ? findMenuByKey(allMenus, 'faq-management') : null) ||
-        findMenuByComponentPath(allMenus, effectiveTabKey) ||
-        (effectiveTabKey === 'members' ? findMenuByComponentPath(allMenus, 'MemberList') : null) ||
-        (effectiveTabKey === 'inquiry-management' ? findMenuByComponentPath(allMenus, 'InquiryManagement') : null) ||
-        (effectiveTabKey === 'faq-management' ? findMenuByComponentPath(allMenus, 'FaqManagement') : null);
-
-      if (menuItem && !menuItem.componentPath && menuItem.children?.[0]?.componentPath) {
-        menuItem = menuItem.children[0];
-      }
-      if (menuItem && menuItem.componentPath) {
-        pendingTabKeyRef.current = null;
-        openTab(menuItem);
-      } else {
-        // Menus may not have arrived yet — the retry effect below takes over.
-        pendingTabKeyRef.current = effectiveTabKey;
-      }
+      syncRailFromKey(existingTab.key);
+      return;
     }
 
-    syncRailFromKey(effectiveTabKey);
+    const menuItem = resolveMenuForPath(allMenus, location.pathname);
+    if (menuItem) {
+      pendingPathRef.current = null;
+      openTab(menuItem);
+      syncRailFromKey(menuItem.key);
+    } else {
+      // Menus may not have arrived yet — the retry effect below takes over.
+      pendingPathRef.current = location.pathname;
+      syncRailFromKey(codes[0]);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [effectiveTabKey, isMembersPath, isInquiryPath, isFaqPath]);
+  }, [location.pathname]);
 
   // Retry pending URL tab after server menus arrive
   useEffect(() => {
-    const pending = pendingTabKeyRef.current;
-    if (!pending) return;
+    const pendingPath = pendingPathRef.current;
+    if (!pendingPath) return;
     if (useMenuStore.getState().serverMenus.length === 0) return;
 
-    let menuItem =
-      findMenuByKey(allMenus, pending) ||
-      (pending === 'members' ? findMenuByKey(allMenus, 'member.list') : null) ||
-      (pending === 'inquiry-management' ? findMenuByKey(allMenus, 'inquiry-management') : null) ||
-      (pending === 'faq-management' ? findMenuByKey(allMenus, 'faq-management') : null) ||
-      findMenuByComponentPath(allMenus, pending) ||
-      (pending === 'members' ? findMenuByComponentPath(allMenus, 'MemberList') : null) ||
-      (pending === 'inquiry-management' ? findMenuByComponentPath(allMenus, 'InquiryManagement') : null) ||
-      (pending === 'faq-management' ? findMenuByComponentPath(allMenus, 'FaqManagement') : null);
-
-    if (menuItem && !menuItem.componentPath && menuItem.children?.[0]?.componentPath) {
-      menuItem = menuItem.children[0];
-    }
-    if (menuItem && menuItem.componentPath) {
+    const menuItem = resolveMenuForPath(allMenus, pendingPath);
+    if (menuItem) {
       openTab(menuItem);
-      syncRailFromKey(pending);
+      syncRailFromKey(menuItem.key);
     } else {
-      // Still missing after menus arrived → invalid URL. Revert to active tab's address.
+      // Still missing after menus arrived → invalid URL. Revert to active tab's mapped address if any.
       const active = useTabStore.getState().activeTabKey;
-      if (active) {
+      const fallbackPath = getRouteByMenuCode(active);
+      if (fallbackPath && location.pathname !== fallbackPath) {
         isNavigatingRef.current = true;
-        if (active === 'members' || active === 'member.list') {
-          navigate('/members', { replace: true });
-        } else if (active === 'inquiry-management' || active === 'InquiryManagement') {
-          navigate('/content-management/inquiry-management', { replace: true });
-        } else if (active === 'faq-management' || active === 'faq' || active === 'FaqManagement') {
-          navigate('/content-management/faq', { replace: true });
-        } else {
-          navigate(`/app/${active}`, { replace: true });
-        }
+        navigate(fallbackPath, { replace: true });
       }
     }
-    pendingTabKeyRef.current = null;
+    pendingPathRef.current = null;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [allMenus]);
 
@@ -170,41 +144,17 @@ export function useTabRouteSync() {
   useEffect(() => {
     if (!activeTabKey) return;
     // Do not touch URL while a tab requested by URL is still being opened.
-    if (pendingTabKeyRef.current) return;
-
-    if (activeTabKey === 'members' || activeTabKey === 'member.list') {
-      if (location.pathname !== '/members') {
-        isNavigatingRef.current = true;
-        navigate('/members', { replace: false });
-      }
-      syncRailFromKey('members');
-      return;
-    }
-
-    if (activeTabKey === 'inquiry-management' || activeTabKey === 'InquiryManagement') {
-      if (location.pathname !== '/content-management/inquiry-management') {
-        isNavigatingRef.current = true;
-        navigate('/content-management/inquiry-management', { replace: false });
-      }
-      syncRailFromKey('inquiry-management');
-      return;
-    }
-
-    if (activeTabKey === 'faq-management' || activeTabKey === 'faq' || activeTabKey === 'FaqManagement') {
-      if (location.pathname !== '/content-management/faq') {
-        isNavigatingRef.current = true;
-        navigate('/content-management/faq', { replace: false });
-      }
-      syncRailFromKey('faq-management');
-      return;
-    }
-
-    if (activeTabKey === tabKey && location.pathname === `/app/${activeTabKey}`) return;
-
-    isNavigatingRef.current = true;
-    navigate(`/app/${activeTabKey}`, { replace: false });
+    if (pendingPathRef.current) return;
 
     syncRailFromKey(activeTabKey);
+
+    const targetPath = getRouteByMenuCode(activeTabKey);
+    if (!targetPath) return;
+
+    if (location.pathname !== targetPath) {
+      isNavigatingRef.current = true;
+      navigate(targetPath, { replace: false });
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTabKey]);
 
@@ -228,28 +178,4 @@ export function useTabRouteSync() {
     if (homeMenu && homeMenu.componentPath) openTab(homeMenu);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [allMenus]);
-
-  // Correct URL on initial entry (once)
-  useEffect(() => {
-    if (
-      location.pathname === '/members' ||
-      location.pathname === '/content-management/inquiry-management' ||
-      location.pathname === '/content-management/faq'
-    ) {
-      return;
-    }
-    if (tabKey) return;
-    const homeKey = useSettingsStore.getState().homeMenuKey;
-    const currentActive = useTabStore.getState().activeTabKey;
-    if (currentActive === 'members' || currentActive === 'member.list') {
-      navigate('/members', { replace: true });
-    } else if (currentActive === 'inquiry-management' || currentActive === 'InquiryManagement') {
-      navigate('/content-management/inquiry-management', { replace: true });
-    } else if (currentActive === 'faq-management' || currentActive === 'faq' || currentActive === 'FaqManagement') {
-      navigate('/content-management/faq', { replace: true });
-    } else {
-      navigate(`/app/${currentActive ?? homeKey}`, { replace: true });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 }

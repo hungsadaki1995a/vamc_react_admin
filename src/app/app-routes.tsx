@@ -23,7 +23,7 @@ export default function AppRoutes() {
             }
           />
         ))}
-        <Route path="*" element={<Navigate to="/app" replace />} />
+        <Route path="*" element={<Navigate to="/members" replace />} />
       </Routes>
     </BrowserRouter>
   );
