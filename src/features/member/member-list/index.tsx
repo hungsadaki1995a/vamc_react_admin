@@ -28,7 +28,6 @@ import type {
   ApprovalStatus,
   AccountStatus,
 } from './member.types';
-import { initialMemberData } from './member.mock';
 import { useMembers } from './use-members';
 import MemberDetailModal from './member-detail-modal';
 import ApprovalStatusModal from './approval-status-modal';
@@ -276,88 +275,14 @@ export default function MemberList() {
   };
 
   // ── Combined Members Memo ─────────────────────────────────────────────────
-  const allMembers = useMemo(() => {
-    const base = memberResult ? memberItems : initialMemberData;
-    return [...addedMembers, ...base].map((item) => {
+  const filteredData = useMemo(() => {
+    return [...addedMembers, ...memberItems].map((item) => {
       const override = memberOverrides[item.id];
       return override ? { ...item, ...override } : item;
     });
-  }, [memberResult, memberItems, addedMembers, memberOverrides]);
+  }, [memberItems, addedMembers, memberOverrides]);
 
-  // ── Filtered Data Memo (fallback for mock data when API is unavailable) ────
-  const filteredData = useMemo(() => {
-    if (memberResult) {
-      return allMembers;
-    }
-
-    return allMembers.filter((item) => {
-      // 1. Member Grade
-      if (
-        !appliedFilters.memberGradeAll &&
-        appliedFilters.selectedMemberGrades.length > 0 &&
-        !appliedFilters.selectedMemberGrades.includes(deriveMemberGrade(item))
-      ) {
-        return false;
-      }
-
-      // 2. Member Type
-      if (
-        !appliedFilters.memberTypeAll &&
-        appliedFilters.selectedMemberTypes.length > 0 &&
-        !appliedFilters.selectedMemberTypes.includes(item.memberType)
-      ) {
-        return false;
-      }
-
-      // 3. Status
-      if (
-        !appliedFilters.statusAll &&
-        appliedFilters.selectedStatuses.length > 0 &&
-        !appliedFilters.selectedStatuses.includes(deriveMemberStatus(item))
-      ) {
-        return false;
-      }
-
-      // 4. Membership
-      if (!appliedFilters.membershipAll && appliedFilters.selectedMemberships.length > 0) {
-        const membership = item.membership && item.membership !== '-' ? item.membership : 'None';
-        if (!appliedFilters.selectedMemberships.includes(membership)) return false;
-      }
-
-      // 5. Search field + text
-      if (appliedFilters.searchText) {
-        const q = appliedFilters.searchText.toLowerCase();
-        const fieldValueMap: Record<MemberSearchField, string> = {
-          MBR_NO: item.memberCode,
-          SGDN_MBR_NO: item.sgdnMemberCode || '-',
-          LGN_ID: item.loginId || item.applicationId,
-          MBR_NM: item.memberName,
-          TELNO: item.phone,
-          EML_ADDR: item.email,
-          ORGNZ_NM: item.companyName,
-          MST_NO: item.companyName,
-        };
-        const targetVal = (fieldValueMap[appliedFilters.searchField] || '').toLowerCase();
-        if (!targetVal.includes(q)) return false;
-      }
-
-      // 6. Approval Period
-      if (appliedFilters.dateRange && appliedFilters.dateRange[0] && appliedFilters.dateRange[1]) {
-        const formatted = formatDisplayDate(item.approvalDate);
-        if (formatted === '-') return false;
-        const [d, m, y] = formatted.split('-');
-        const itemDate = dayjs(`${y}-${m}-${d}`);
-        if (
-          itemDate.isBefore(appliedFilters.dateRange[0], 'day') ||
-          itemDate.isAfter(appliedFilters.dateRange[1], 'day')
-        ) {
-          return false;
-        }
-      }
-
-      return true;
-    });
-  }, [allMembers, memberResult, appliedFilters]);
+  const allMembers = filteredData;
 
   // ── Actions ────────────────────────────────────────────────────────────────
   const handleOpenDetail = (member: MemberItem) => {

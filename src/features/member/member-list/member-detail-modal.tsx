@@ -16,7 +16,7 @@ interface MemberDetailModalProps {
   onEdit?: (member: MemberItem) => void;
 }
 
-function formatDateSlash(val?: string, fallback = '01/03/2026'): string {
+function formatDateSlash(val?: string, fallback = '-'): string {
   if (!val || val === '-') return fallback;
   if (/^\d{2}\/\d{2}\/\d{4}$/.test(val)) return val;
   if (/^\d{2}-\d{2}-\d{4}$/.test(val)) return val.replace(/-/g, '/');
@@ -24,7 +24,7 @@ function formatDateSlash(val?: string, fallback = '01/03/2026'): string {
   return d.isValid() ? d.format('DD/MM/YYYY') : val;
 }
 
-function formatDateHyphen(val?: string, fallback = '01-02-2021'): string {
+function formatDateHyphen(val?: string, fallback = '-'): string {
   if (!val || val === '-') return fallback;
   if (/^\d{2}-\d{2}-\d{4}$/.test(val)) return val;
   if (/^\d{2}\/\d{2}\/\d{4}$/.test(val)) return val.replace(/\//g, '-');
@@ -62,8 +62,8 @@ export default function MemberDetailModal({
   if (!member) return null;
 
   // Basic info fields
-  const memberCode = apiDetail?.basic?.mbrNo || member.memberCode || 'M1788698085437';
-  const memberType = apiDetail?.basic?.mbrTypeNm || member.memberType || 'General';
+  const memberCode = apiDetail?.basic?.mbrNo || member.memberCode || '-';
+  const memberType = apiDetail?.basic?.mbrTypeNm || member.memberType || '-';
   const currentClassification =
     classificationOverride ||
     (apiDetail?.basic?.mbrSttsNm as MemberClassification) ||
@@ -72,11 +72,10 @@ export default function MemberDetailModal({
 
   const applicationId =
     apiDetail?.basic?.lgnId ||
-    (member.applicationId && !member.applicationId.includes('...') ? member.applicationId : '84031123456');
+    (member.applicationId && !member.applicationId.includes('...') ? member.applicationId : '-');
 
   const approvalDate = formatDateSlash(
     apiDetail?.basic?.aprvDt || (member.approvalDate !== '-' ? member.approvalDate : undefined),
-    '01/03/2026',
   );
 
   const accountStatus = apiDetail?.basic?.acntSttsCd || member.accountStatus || 'Active';
@@ -85,49 +84,49 @@ export default function MemberDetailModal({
       ? 'Paid'
       : apiDetail?.basic?.mbrshpPayYn === 'N'
       ? 'Unpaid'
-      : 'Unpaid';
+      : '-';
 
-  const membershipExpiryDate = formatDateSlash(apiDetail?.basic?.mbrshpEndDt, '01/03/2027');
+  const membershipExpiryDate = formatDateSlash(apiDetail?.basic?.mbrshpEndDt);
 
   // Account info fields
   const accountId =
     apiDetail?.account?.lgnId ||
-    (member.applicationId && !member.applicationId.includes('...') ? member.applicationId : '840901234567');
+    (member.applicationId && !member.applicationId.includes('...') ? member.applicationId : '-');
 
   const phoneNumber =
     apiDetail?.account?.telno ||
     apiDetail?.account?.rawTelno ||
-    (member.phone && !member.phone.includes('...') ? member.phone : '+84 0900000019');
+    (member.phone && !member.phone.includes('...') ? member.phone : '-');
 
   const emailAddress =
     apiDetail?.account?.emlAddr ||
     apiDetail?.account?.rawEmlAddr ||
-    (member.email && !member.email.includes('...') ? member.email : 'demo_user_019@example.com');
+    (member.email && !member.email.includes('...') ? member.email : '-');
 
   // ID info fields
-  const idType = apiDetail?.identity?.uiiSeNm || apiDetail?.identity?.uiiSeCd || 'CCCD';
-  const fullName = apiDetail?.identity?.fullNm || member.memberName || 'Nguyễn Văn Minh';
-  const dateOfBirth = formatDateHyphen(apiDetail?.identity?.brdt, '12-08-1990');
-  const gender = apiDetail?.identity?.gndrCd === 'F' ? 'Female' : 'Male';
-  const nationality = apiDetail?.identity?.ntnCd || 'Vietnamese';
-  const cccdNumber = apiDetail?.identity?.uiiNo || apiDetail?.identity?.rawUiiNo || '012345678901';
-  const issuingAuthority = apiDetail?.identity?.uiiIssuInstNm || 'Cục Cảnh sát QLHC';
-  const dateOfIssue = formatDateHyphen(apiDetail?.identity?.uiiIssuDt, '01-02-2021');
-  const expiryDate = formatDateHyphen(apiDetail?.identity?.uiiExpryDt, '01-02-2036');
+  const idType = apiDetail?.identity?.uiiSeNm || apiDetail?.identity?.uiiSeCd || '-';
+  const fullName = apiDetail?.identity?.fullNm || member.memberName || '-';
+  const dateOfBirth = formatDateHyphen(apiDetail?.identity?.brdt);
+  const gender = apiDetail?.identity?.gndrCd === 'F' ? 'Female' : apiDetail?.identity?.gndrCd === 'M' ? 'Male' : '-';
+  const nationality = apiDetail?.identity?.ntnCd || '-';
+  const cccdNumber = apiDetail?.identity?.uiiNo || apiDetail?.identity?.rawUiiNo || '-';
+  const issuingAuthority = apiDetail?.identity?.uiiIssuInstNm || '-';
+  const dateOfIssue = formatDateHyphen(apiDetail?.identity?.uiiIssuDt);
+  const expiryDate = formatDateHyphen(apiDetail?.identity?.uiiExpryDt);
 
   const attachments: string[] =
     apiDetail?.identity?.files && apiDetail.identity.files.length > 0
       ? apiDetail.identity.files.map((f) => f.fileNm || 'ID_Document.jpg')
-      : ['ID_Front.jpg', 'ID_Back.jpg'];
+      : [];
 
   // Address fields
-  const permProvince = apiDetail?.permanentAddress?.mctpvNm || 'Hà Nội';
-  const permDistrict = apiDetail?.permanentAddress?.distNm || 'Cầu Giấy';
-  const permDetailAddress = apiDetail?.permanentAddress?.daddr || 'Số 10, Ngõ 25, Phường Dịch Vọng';
+  const permProvince = apiDetail?.permanentAddress?.mctpvNm || '-';
+  const permDistrict = apiDetail?.permanentAddress?.distNm || '-';
+  const permDetailAddress = apiDetail?.permanentAddress?.daddr || '-';
 
-  const currProvince = apiDetail?.currentAddress?.mctpvNm || 'Hà Nội';
-  const currDistrict = apiDetail?.currentAddress?.distNm || 'Cầu Giấy';
-  const currDetailAddress = apiDetail?.currentAddress?.daddr || 'Phường Bến Nghé';
+  const currProvince = apiDetail?.currentAddress?.mctpvNm || '-';
+  const currDistrict = apiDetail?.currentAddress?.distNm || '-';
+  const currDetailAddress = apiDetail?.currentAddress?.daddr || '-';
 
   const handleApprovalRequest = () => {
     onApprovalChange?.(member.id, 'Requested');
@@ -314,19 +313,23 @@ export default function MemberDetailModal({
                   <td className={styles.labelCell}>Attachments</td>
                   <td className={styles.valueCell} colSpan={5}>
                     <div className={styles.attachmentsList}>
-                      {attachments.map((file, idx) => (
-                        <a
-                          key={idx}
-                          href={`#${file}`}
-                          className={styles.attachmentItem}
-                          onClick={(e) => {
-                            e.preventDefault();
-                            message.info(`Viewing attachment: ${file}`);
-                          }}
-                        >
-                          {file}
-                        </a>
-                      ))}
+                      {attachments.length > 0 ? (
+                        attachments.map((file, idx) => (
+                          <a
+                            key={idx}
+                            href={`#${file}`}
+                            className={styles.attachmentItem}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              message.info(`Viewing attachment: ${file}`);
+                            }}
+                          >
+                            {file}
+                          </a>
+                        ))
+                      ) : (
+                        <span>-</span>
+                      )}
                     </div>
                   </td>
                 </tr>
