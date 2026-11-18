@@ -15,29 +15,19 @@
 }
 
 .container {
-  position: relative;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-direction: column;
   min-height: 100vh;
-  padding: 24px 16px;
   background: #f6f6f9;
   font-family: var(--font-sans);
 }
 
-.langSelector {
-  position: absolute;
-  top: 20px;
-  right: 24px;
+.content {
+  flex: 1;
   display: flex;
   align-items: center;
-  gap: 6px;
-  background: #ffffff;
-  padding: 4px 10px;
-  border-radius: 20px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-  border: 1px solid #eaeaf1;
-  z-index: 10;
+  justify-content: center;
+  padding: 24px 16px;
 }
 
 .card {

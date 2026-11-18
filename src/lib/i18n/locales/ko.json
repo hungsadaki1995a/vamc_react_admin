@@ -46,7 +46,8 @@
       "codeSentMsg": "Zalo로 인증번호가 발송되었습니다.",
       "codeVerifiedMsg": "인증번호가 확인되었습니다.",
       "confirmSuccessMsg": "아이디 안내가 발송되었습니다.",
-      "verifyFirstMsg": "먼저 인증번호 확인을 진행해 주세요."
+      "verifyFirstMsg": "먼저 인증번호 확인을 진행해 주세요.",
+      "backToLogin": "로그인으로 돌아가기"
     }
   }
 }

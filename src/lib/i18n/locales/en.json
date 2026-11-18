@@ -46,7 +46,8 @@
       "codeSentMsg": "Verification code has been sent via Zalo.",
       "codeVerifiedMsg": "Verification code verified.",
       "confirmSuccessMsg": "Your login ID information has been sent.",
-      "verifyFirstMsg": "Please verify your code first."
+      "verifyFirstMsg": "Please verify your code first.",
+      "backToLogin": "Back to Login"
     }
   }
 }

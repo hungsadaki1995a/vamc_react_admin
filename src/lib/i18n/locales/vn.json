@@ -46,7 +46,8 @@
       "codeSentMsg": "Mã xác thực đã được gửi qua Zalo.",
       "codeVerifiedMsg": "Đã xác thực mã thành công.",
       "confirmSuccessMsg": "Thông tin tên đăng nhập đã được gửi.",
-      "verifyFirstMsg": "Vui lòng xác thực mã trước."
+      "verifyFirstMsg": "Vui lòng xác thực mã trước.",
+      "backToLogin": "Quay lại đăng nhập"
     }
   }
 }

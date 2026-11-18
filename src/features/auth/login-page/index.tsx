@@ -2,15 +2,9 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useForm, useWatch, Controller } from 'react-hook-form';
-import { Form, Input, Button, Dropdown, App } from 'antd';
-import type { MenuProps } from 'antd';
-import {
-  GlobalOutlined,
-  DownOutlined,
-  CheckOutlined,
-  EyeOutlined,
-  EyeInvisibleOutlined,
-} from '@ant-design/icons';
+import { Form, Input, Button, App } from 'antd';
+import { EyeOutlined, EyeInvisibleOutlined } from '@ant-design/icons';
+import AuthHeader from '@/components/auth/auth-header';
 import { login } from '@/api/generated/sdk.gen';
 import { fetchPublicKey } from '@/api/common/auth-api';
 import { encryptPassword } from '@/lib/crypto';
@@ -25,8 +19,7 @@ import { findMenuByKey } from '@/utils/menu-utils';
 import { fetchAuthMenuList } from '@/api/common/my-menu-api';
 import { ApiError } from '@/lib/api/error';
 import type { LoginRequest } from '@/lib/api/types';
-import { useLocaleStore, type LocaleKey } from '@/stores/locale-store';
-import { getLocaleShortLabel } from '@/utils/locale-storage';
+import { useLocaleStore } from '@/stores/locale-store';
 import styles from './index.module.scss';
 import vamcLogoLogin from '@/assets/vamc-logo-login.png';
 
@@ -47,7 +40,7 @@ export default function LoginPage() {
   const { openTab, resetTabs } = useTabStore();
   const { setMenuTrees, setServerMenus } = useMenuStore();
   const homeMenuKey = useSettingsStore((s) => s.homeMenuKey);
-  const { locale, setLocale } = useLocaleStore();
+  const locale = useLocaleStore((s) => s.locale);
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [failedAttempts, setFailedAttempts] = useState(0);
@@ -58,39 +51,6 @@ export default function LoginPage() {
   });
   const [loginIdValue, passwordValue] = useWatch({ control, name: ['loginId', 'password'] });
   const isSubmitDisabled = !loginIdValue?.trim() || !passwordValue;
-
-  const languageMenuItems: MenuProps['items'] = [
-    {
-      key: 'en',
-      label: (
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, minWidth: 105 }}>
-          <span>English</span>
-          <span style={{ fontSize: 11, color: 'var(--text-tertiary, #999)' }}>Eng</span>
-        </div>
-      ),
-      icon: locale === 'en' ? <CheckOutlined style={{ color: '#1677ff' }} /> : <span style={{ width: 14 }} />,
-    },
-    {
-      key: 'ko',
-      label: (
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, minWidth: 105 }}>
-          <span>한국어</span>
-          <span style={{ fontSize: 11, color: 'var(--text-tertiary, #999)' }}>Kor</span>
-        </div>
-      ),
-      icon: locale === 'ko' ? <CheckOutlined style={{ color: '#1677ff' }} /> : <span style={{ width: 14 }} />,
-    },
-    {
-      key: 'vn',
-      label: (
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, minWidth: 105 }}>
-          <span>Tiếng Việt</span>
-          <span style={{ fontSize: 11, color: 'var(--text-tertiary, #999)' }}>Vie</span>
-        </div>
-      ),
-      icon: locale === 'vn' ? <CheckOutlined style={{ color: '#1677ff' }} /> : <span style={{ width: 14 }} />,
-    },
-  ];
 
   const onFinish = async (values: LoginRequest) => {
     setLoading(true);
@@ -159,27 +119,10 @@ export default function LoginPage() {
 
   return (
     <div className={styles.container}>
-      <div className={styles.langSelector}>
-        <Dropdown
-          menu={{
-            items: languageMenuItems,
-            selectedKeys: [locale],
-            onClick: ({ key }) => setLocale(key as LocaleKey),
-          }}
-          trigger={['click']}
-          placement="bottomRight"
-        >
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 5, cursor: 'pointer', userSelect: 'none' }}>
-            <GlobalOutlined style={{ fontSize: 13, color: 'var(--text-secondary, #666)' }} />
-            <span style={{ fontSize: 12, fontWeight: 500, color: 'var(--text-primary)' }}>
-              {getLocaleShortLabel(locale)}
-            </span>
-            <DownOutlined style={{ fontSize: 9, opacity: 0.65, color: 'var(--text-tertiary, #999)' }} />
-          </div>
-        </Dropdown>
-      </div>
+      <AuthHeader />
 
-      <div className={styles.card}>
+      <main className={styles.content}>
+        <div className={styles.card}>
         <div className={styles.header}>
           <img src={vamcLogoLogin} alt="VAMC" className={styles.logo} />
           <h1 className={styles.title}>VAMC NPL Admin System</h1>
@@ -283,7 +226,8 @@ export default function LoginPage() {
             {t('auth.login.findPassword')}
           </button>
         </div>
-      </div>
+        </div>
+      </main>
     </div>
   );
 }

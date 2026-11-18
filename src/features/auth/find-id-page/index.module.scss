@@ -26,29 +26,19 @@
 }
 
 .container {
-  position: relative;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-direction: column;
   min-height: 100vh;
-  padding: 24px 16px;
   background: #f6f6f9;
   font-family: var(--font-sans);
 }
 
-.langSelector {
-  position: absolute;
-  top: 20px;
-  right: 24px;
+.content {
+  flex: 1;
   display: flex;
   align-items: center;
-  gap: 6px;
-  background: #ffffff;
-  padding: 4px 10px;
-  border-radius: 20px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-  border: 1px solid #eaeaf1;
-  z-index: 10;
+  justify-content: center;
+  padding: 24px 16px;
 }
 
 .card {
@@ -91,45 +81,41 @@
   text-align: center;
 }
 
-.tabs {
+.confirmResult {
   display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
   width: 100%;
-  border-bottom: 1px solid #eaeaf1;
 }
 
-.tabBtn {
-  flex: 1;
+.readonlyInput {
+  @include auth-input-base;
+  padding: 0 12px;
+  background: #f6f6f9 !important;
+  color: #545c6d !important;
+  border-color: #d1d1e0 !important;
+  cursor: default;
+}
+
+.buttonGroup {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 6px 8px;
-  margin: 0 0 -1px 0;
-  background: transparent;
-  border: none;
-  border-bottom: 1px solid #d1d1e0;
-  font-family: inherit;
-  font-size: 13px;
-  line-height: 18px;
-  font-weight: 400;
-  letter-spacing: -0.02em;
-  color: #a8b2c8;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: color 0.15s ease, border-color 0.15s ease;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
 
-  &:hover {
-    color: #545c6d;
-  }
+.secondaryBtn {
+  @include auth-action-btn;
+  background: #ffffff;
+  border: 1px solid #505077;
+  color: #505077;
 
-  &Active {
-    color: #005be2;
-    font-weight: 600;
-    border-bottom: 2px solid #005be2;
-    border-radius: 4px 4px 0 0;
-
-    &:hover {
-      color: #005be2;
-    }
+  &:hover,
+  &:focus-visible {
+    background: #f6f6f9 !important;
+    border-color: #3a404a !important;
+    color: #3a404a !important;
   }
 }
 
@@ -317,5 +303,30 @@
     border-color: #d3d9e3 !important;
     color: #a8b2c8 !important;
     cursor: not-allowed;
+  }
+}
+
+.links {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.linkBtn {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  color: #6f7b95;
+  font-size: 13px;
+  line-height: 18px;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  font-family: inherit;
+
+  &:hover {
+    color: #3a404a;
   }
 }
