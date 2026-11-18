@@ -1,15 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Modal, Spin, Radio, Select } from 'antd';
-import { useQueryClient } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { useNotify } from '@/hooks/use-notify';
-import {
-  createFaq,
-  updateFaq,
-  updateFaqStatus,
-} from '@/api/contents/faq-api';
 import type { FaqItem } from './faq.types';
-import { useFaqDetail } from './use-faq-detail';
+import { useFaqDetail, useSaveFaq } from './use-faq-detail';
 import { useFaqCategories } from './use-faq-categories';
 import { ApiError } from '@/lib/api/error';
 import styles from './faq-detail-modal.module.scss';
@@ -41,7 +35,6 @@ export default function FaqDetailModal({
   onClose,
   onRefresh,
 }: FaqDetailModalProps) {
-  const queryClient = useQueryClient();
   const { toast, dialog } = useNotify();
   const isCreate = mode === 'create';
   const pstNo = !isCreate ? (faq?.pstNo || faq?.id) : undefined;
@@ -57,20 +50,23 @@ export default function FaqDetailModal({
   const [answer, setAnswer] = useState('');
   const [questionEn, setQuestionEn] = useState('');
   const [answerEn, setAnswerEn] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const saveFaq = useSaveFaq();
+  const isSubmitting = saveFaq.isPending;
 
-  useEffect(() => {
-    if (!visible) return;
-    setIsSubmitting(false);
-
-    if (isCreate) {
+  // (Re)fill the form whenever the popup opens or its source data changes —
+  // adjusted during render, not in an effect.
+  const formSource = [visible, isCreate, detailData, faq, categoryOptions];
+  const [syncedSource, setSyncedSource] = useState<unknown[]>([]);
+  if (formSource.some((value, index) => value !== syncedSource[index])) {
+    setSyncedSource(formSource);
+    if (visible && isCreate) {
       setCategory(categoryOptions[0]?.value ?? '');
       setPublished('N');
       setQuestion('');
       setAnswer('');
       setQuestionEn('');
       setAnswerEn('');
-    } else {
+    } else if (visible) {
       setCategory(detailData?.category || faq?.category || '');
       setPublished(((detailData?.published || faq?.published || 'N') === 'Y' ? 'Y' : 'N'));
       setQuestion(detailData?.title || faq?.title || '');
@@ -78,7 +74,7 @@ export default function FaqDetailModal({
       setQuestionEn(detailData?.titleEn || faq?.titleEn || '');
       setAnswerEn(detailData?.contentEn || faq?.contentEn || '');
     }
-  }, [visible, isCreate, detailData, faq, categoryOptions]);
+  }
 
   // The API rejects text changes while the FAQ is posted — stop posting first.
   const contentLocked = !isCreate && detailData?.contentEditable === false;
@@ -97,48 +93,23 @@ export default function FaqDetailModal({
       return;
     }
 
-    setIsSubmitting(true);
     try {
-      if (isCreate) {
-        await createFaq({
-          body: {
-            category,
-            question: question.trim(),
-            answer: answer.trim(),
-            questionEn: questionEn.trim() || undefined,
-            answerEn: answerEn.trim() || undefined,
-            published,
-          },
-          throwOnError: true,
-        });
-      } else if (pstNo) {
+      if (isCreate || pstNo) {
         // Content can only be edited while the FAQ is not posted (contentEditable),
         // so the text is saved first and the category / posting status afterwards.
-        if (!contentLocked) {
-          await updateFaq({
-            path: { pstNo: String(pstNo) },
-            body: {
-              question: question.trim(),
-              answer: answer.trim(),
-              questionEn: questionEn.trim() || undefined,
-              answerEn: answerEn.trim() || undefined,
-            },
-            throwOnError: true,
-          });
-        }
-        await updateFaqStatus({
-          path: { pstNo: String(pstNo) },
-          body: {
-            category,
-            published,
-          },
-          throwOnError: true,
+        await saveFaq.mutateAsync({
+          pstNo: isCreate ? null : String(pstNo),
+          category,
+          published,
+          content: contentLocked
+            ? undefined
+            : {
+                question: question.trim(),
+                answer: answer.trim(),
+                questionEn: questionEn.trim() || undefined,
+                answerEn: answerEn.trim() || undefined,
+              },
         });
-      }
-
-      queryClient.invalidateQueries({ queryKey: ['contents', 'faqs'] });
-      if (pstNo) {
-        queryClient.invalidateQueries({ queryKey: ['faq-detail', pstNo] });
       }
 
       dialog.info({
@@ -154,15 +125,13 @@ export default function FaqDetailModal({
       });
     } catch (err) {
       toast.error(ApiError.from(err).message);
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
   return (
     <Modal
       title={
-        <div style={{ fontSize: 16, fontWeight: 700, color: '#111827' }}>
+        <div className={styles.modalTitle}>
           {isCreate ? 'Register FAQ' : 'FAQ Detail'}
         </div>
       }
@@ -199,21 +168,21 @@ export default function FaqDetailModal({
           <table className={styles.tableWrapper}>
             <tbody>
               <tr>
-                <th className={styles.headerCell} style={{ width: '15%' }}>
+                <th className={`${styles.headerCell} ${styles.labelCol}`}>
                   Category
                 </th>
-                <td className={styles.dataCell} style={{ width: '35%' }}>
+                <td className={`${styles.dataCell} ${styles.valueCol}`}>
                   <Select
                     value={category}
                     onChange={(val) => setCategory(val)}
-                    style={{ width: 180 }}
+                    className={styles.categorySelect}
                     options={categoryOptions}
                   />
                 </td>
-                <th className={styles.headerCell} style={{ width: '15%' }}>
+                <th className={`${styles.headerCell} ${styles.labelCol}`}>
                   Posting Status
                 </th>
-                <td className={styles.dataCell} style={{ width: '35%' }}>
+                <td className={`${styles.dataCell} ${styles.valueCol}`}>
                   <Radio.Group
                     value={published}
                     onChange={(e) => setPublished(e.target.value)}
@@ -239,7 +208,7 @@ export default function FaqDetailModal({
 
               {contentLocked && (
                 <tr>
-                  <td className={styles.dataCell} colSpan={4} style={{ color: '#b45309' }}>
+                  <td className={`${styles.dataCell} ${styles.lockedNotice}`} colSpan={4}>
                     A posted FAQ cannot be edited. Set it to Not Posted and save, then reopen to edit the text.
                   </td>
                 </tr>

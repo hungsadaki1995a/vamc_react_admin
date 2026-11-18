@@ -1,27 +1,22 @@
 import { useState, type CSSProperties } from 'react';
 import { Input, Modal, Radio, Table } from 'antd';
 import type { TableColumnsType } from 'antd';
-import { useQueryClient, keepPreviousData } from '@tanstack/react-query';
-import { useApiQuery } from '@/hooks/use-api-query';
 import { useNotify } from '@/hooks/use-notify';
 import { useMenuPermission } from '@/hooks/use-menu-permission';
-import {
-  createDistrict,
-  createProvince,
-  deleteDistrict,
-  deleteProvince,
-  downloadProvincesExcel,
-  getDistrictsByProvince,
-  getProvinces,
-  updateDistrict,
-  updateProvince,
-  type DistrictItem,
-  type ProvinceItem,
-} from '@/api/system/system-operations-api';
-import type { PageResponse } from '@/api/common/api-utils';
+import type { DistrictItem, ProvinceItem } from '@/api/system/system-operations-api';
 import { FormField, SysPageHeader, SysPagination, UseYnChecks } from '@/features/system/_shared/system-ui';
 import { errorMessage, toUseYnFilter } from '@/features/system/_shared/system-utils';
-import styles from '@/features/system/_shared/system-page.module.css';
+import styles from '@/features/system/_shared/system-page.module.scss';
+import {
+  useDeleteDistrict,
+  useDeleteProvince,
+  useDistricts,
+  useDownloadProvincesExcel,
+  useProvinces,
+  useSaveDistrict,
+  useSaveProvince,
+} from './use-regions';
+import type { ProvinceSearch } from './use-regions';
 
 const PAGE_SIZE = 15;
 
@@ -29,31 +24,26 @@ const PAGE_SIZE = 15;
 export default function RegionCodeManagement() {
   const { toast, dialog } = useNotify();
   const { canWrite } = useMenuPermission();
-  const queryClient = useQueryClient();
 
   const [used, setUsed] = useState(true);
   const [unused, setUnused] = useState(true);
   const [keyword, setKeyword] = useState('');
-  const [applied, setApplied] = useState<{ useYn?: 'Y' | 'N'; keyword?: string }>({});
+  const [applied, setApplied] = useState<ProvinceSearch>({});
   const [page, setPage] = useState(1);
   const [selectedProvince, setSelectedProvince] = useState<string | null>(null);
   const [provinceModal, setProvinceModal] = useState<ProvinceItem | null | undefined>(undefined);
   const [districtModal, setDistrictModal] = useState<DistrictItem | null | undefined>(undefined);
 
-  const { data: provData, isFetching: provLoading } = useApiQuery<PageResponse<ProvinceItem>>(
-    ['sys', 'provinces', applied, page],
-    () => getProvinces(applied, page, PAGE_SIZE),
-    { placeholderData: keepPreviousData },
-  );
+  const { data: provData, isFetching: provLoading } = useProvinces(applied, page, PAGE_SIZE);
   const provinces = provData?.content ?? [];
   const total = provData?.totalElements ?? 0;
 
-  const { data: distData, isFetching: distLoading } = useApiQuery<DistrictItem[]>(
-    ['sys', 'districts', selectedProvince],
-    () => getDistrictsByProvince(selectedProvince as string),
-    { enabled: !!selectedProvince },
-  );
+  const { data: distData, isFetching: distLoading } = useDistricts(selectedProvince);
   const districts = distData ?? [];
+
+  const deleteProvince = useDeleteProvince();
+  const deleteDistrict = useDeleteDistrict();
+  const downloadExcel = useDownloadProvincesExcel();
 
   const handleSearch = () => {
     setApplied({ useYn: toUseYnFilter(used, unused), keyword: keyword.trim() || undefined });
@@ -74,10 +64,9 @@ export default function RegionCodeManagement() {
       content: `Delete province ${mctpvCd}?`,
       onOk: async () => {
         try {
-          await deleteProvince(mctpvCd);
+          await deleteProvince.mutateAsync(mctpvCd);
           toast.success('Deleted.');
           if (selectedProvince === mctpvCd) setSelectedProvince(null);
-          void queryClient.invalidateQueries({ queryKey: ['sys', 'provinces'] });
         } catch (e) {
           toast.error(errorMessage(e));
         }
@@ -91,9 +80,8 @@ export default function RegionCodeManagement() {
       content: `Delete district ${distCd}?`,
       onOk: async () => {
         try {
-          await deleteDistrict(distCd);
+          await deleteDistrict.mutateAsync(distCd);
           toast.success('Deleted.');
-          void queryClient.invalidateQueries({ queryKey: ['sys', 'districts', selectedProvince] });
         } catch (e) {
           toast.error(errorMessage(e));
         }
@@ -119,7 +107,7 @@ export default function RegionCodeManagement() {
       width: 70,
       align: 'center',
       render: (_v, row) => (
-        <button type="button" className={styles.btnDanger} style={{ height: 24, padding: '0 8px', fontSize: 11 }} disabled={!canWrite} onClick={(e) => { e.stopPropagation(); handleDeleteProvince(row.mctpvCd); }}>
+        <button type="button" className={`${styles.btnDanger} ${styles.btnTiny}`} disabled={!canWrite} onClick={(e) => { e.stopPropagation(); handleDeleteProvince(row.mctpvCd); }}>
           Del
         </button>
       ),
@@ -144,7 +132,7 @@ export default function RegionCodeManagement() {
       width: 70,
       align: 'center',
       render: (_v, row) => (
-        <button type="button" className={styles.btnDanger} style={{ height: 24, padding: '0 8px', fontSize: 11 }} disabled={!canWrite} onClick={() => handleDeleteDistrict(row.distCd)}>
+        <button type="button" className={`${styles.btnDanger} ${styles.btnTiny}`} disabled={!canWrite} onClick={() => handleDeleteDistrict(row.distCd)}>
           Del
         </button>
       ),
@@ -171,12 +159,12 @@ export default function RegionCodeManagement() {
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, flex: 1, minHeight: 0 }}>
+      <div className={styles.twoPane}>
         <div className={styles.card}>
           <div className={styles.summaryRow}>
             <span className={styles.cardTitle}>Provinces ({total})</span>
             <div className={styles.actions}>
-              <button type="button" className={`${styles.btn} ${styles.btnSmall}`} onClick={() => void downloadProvincesExcel(applied)}>Excel</button>
+              <button type="button" className={`${styles.btn} ${styles.btnSmall}`} onClick={() => downloadExcel.mutate(applied)}>Excel</button>
               <button type="button" className={`${styles.btnDark} ${styles.btnSmall}`} disabled={!canWrite} onClick={() => setProvinceModal(null)}>Add Province</button>
             </div>
           </div>
@@ -214,30 +202,33 @@ export default function RegionCodeManagement() {
       </div>
 
       {provinceModal !== undefined && (
-        <ProvinceModal item={provinceModal} canWrite={canWrite} onClose={() => setProvinceModal(undefined)} onSaved={() => void queryClient.invalidateQueries({ queryKey: ['sys', 'provinces'] })} />
+        <ProvinceModal item={provinceModal} canWrite={canWrite} onClose={() => setProvinceModal(undefined)} />
       )}
       {districtModal !== undefined && selectedProvince && (
-        <DistrictModal mctpvCd={selectedProvince} item={districtModal} canWrite={canWrite} onClose={() => setDistrictModal(undefined)} onSaved={() => void queryClient.invalidateQueries({ queryKey: ['sys', 'districts', selectedProvince] })} />
+        <DistrictModal mctpvCd={selectedProvince} item={districtModal} canWrite={canWrite} onClose={() => setDistrictModal(undefined)} />
       )}
     </div>
   );
 }
 
-function ProvinceModal({ item, canWrite, onClose, onSaved }: { item: ProvinceItem | null; canWrite: boolean; onClose: () => void; onSaved: () => void }) {
+function ProvinceModal({ item, canWrite, onClose }: { item: ProvinceItem | null; canWrite: boolean; onClose: () => void }) {
   const isCreate = item === null;
   const { toast } = useNotify();
   const [mctpvCd, setMctpvCd] = useState(item?.mctpvCd ?? '');
   const [mctpvNm, setMctpvNm] = useState(item?.mctpvNm ?? '');
   const [sortSeq, setSortSeq] = useState(String(item?.sortSeq ?? 1));
   const [useYn, setUseYn] = useState<'Y' | 'N'>(item?.useYn ?? 'Y');
+  const saveProvince = useSaveProvince();
 
   const handleSave = async () => {
     if (!mctpvCd.trim() || !mctpvNm.trim()) { toast.warning('Enter province code and name.'); return; }
     try {
-      if (isCreate) await createProvince({ mctpvCd: mctpvCd.trim(), mctpvNm: mctpvNm.trim(), sortSeq: Number(sortSeq) || 1, useYn });
-      else await updateProvince(item.mctpvCd, { mctpvNm: mctpvNm.trim(), sortSeq: Number(sortSeq) || 1, useYn });
+      await saveProvince.mutateAsync(
+        isCreate
+          ? { mctpvCd: null, request: { mctpvCd: mctpvCd.trim(), mctpvNm: mctpvNm.trim(), sortSeq: Number(sortSeq) || 1, useYn } }
+          : { mctpvCd: item.mctpvCd, request: { mctpvNm: mctpvNm.trim(), sortSeq: Number(sortSeq) || 1, useYn } },
+      );
       toast.success('Saved.');
-      onSaved();
       onClose();
     } catch (e) {
       toast.error(errorMessage(e));
@@ -261,21 +252,24 @@ function ProvinceModal({ item, canWrite, onClose, onSaved }: { item: ProvinceIte
   );
 }
 
-function DistrictModal({ mctpvCd, item, canWrite, onClose, onSaved }: { mctpvCd: string; item: DistrictItem | null; canWrite: boolean; onClose: () => void; onSaved: () => void }) {
+function DistrictModal({ mctpvCd, item, canWrite, onClose }: { mctpvCd: string; item: DistrictItem | null; canWrite: boolean; onClose: () => void }) {
   const isCreate = item === null;
   const { toast } = useNotify();
   const [distCd, setDistCd] = useState(item?.distCd ?? '');
   const [distNm, setDistNm] = useState(item?.distNm ?? '');
   const [sortSeq, setSortSeq] = useState(String(item?.sortSeq ?? 1));
   const [useYn, setUseYn] = useState<'Y' | 'N'>(item?.useYn ?? 'Y');
+  const saveDistrict = useSaveDistrict();
 
   const handleSave = async () => {
     if (!distCd.trim() || !distNm.trim()) { toast.warning('Enter district code and name.'); return; }
     try {
-      if (isCreate) await createDistrict({ distCd: distCd.trim(), mctpvCd, distNm: distNm.trim(), sortSeq: Number(sortSeq) || 1, useYn });
-      else await updateDistrict(item.distCd, { mctpvCd, distNm: distNm.trim(), sortSeq: Number(sortSeq) || 1, useYn });
+      await saveDistrict.mutateAsync(
+        isCreate
+          ? { distCd: null, request: { distCd: distCd.trim(), mctpvCd, distNm: distNm.trim(), sortSeq: Number(sortSeq) || 1, useYn } }
+          : { distCd: item.distCd, request: { mctpvCd, distNm: distNm.trim(), sortSeq: Number(sortSeq) || 1, useYn } },
+      );
       toast.success('Saved.');
-      onSaved();
       onClose();
     } catch (e) {
       toast.error(errorMessage(e));

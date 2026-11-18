@@ -1,25 +1,22 @@
 import { useState, type CSSProperties } from 'react';
 import { Input, Modal, Radio, Table } from 'antd';
 import type { TableColumnsType } from 'antd';
-import { useQueryClient, keepPreviousData } from '@tanstack/react-query';
-import { useApiQuery } from '@/hooks/use-api-query';
 import { useNotify } from '@/hooks/use-notify';
 import { useMenuPermission } from '@/hooks/use-menu-permission';
-import {
-  batchSaveCodes,
-  createCodeGroup,
-  deleteCodeGroup,
-  downloadCodeGroupsExcel,
-  getCodeGroups,
-  getCodesByGroup,
-  updateCodeGroup,
-  type CodeGroupItem,
-  type CommonCodeItem,
-} from '@/api/system/system-operations-api';
-import type { PageResponse } from '@/api/common/api-utils';
+import type { CodeGroupItem, CommonCodeItem } from '@/api/system/system-operations-api';
 import { FormField, SysPageHeader, SysPagination, UseYnChecks } from '@/features/system/_shared/system-ui';
 import { errorMessage, toUseYnFilter } from '@/features/system/_shared/system-utils';
-import styles from '@/features/system/_shared/system-page.module.css';
+import styles from '@/features/system/_shared/system-page.module.scss';
+import {
+  useBatchSaveCodes,
+  useCodeGroups,
+  useCodes,
+  useCreateCodeGroup,
+  useDeleteCodeGroup,
+  useDownloadCodeGroupsExcel,
+  useUpdateCodeGroup,
+} from './use-common-codes';
+import type { CodeGroupSearch } from './use-common-codes';
 
 const PAGE_SIZE = 15;
 
@@ -27,31 +24,26 @@ const PAGE_SIZE = 15;
 export default function CommonCodeManagement() {
   const { toast, dialog } = useNotify();
   const { canWrite } = useMenuPermission();
-  const queryClient = useQueryClient();
 
   const [used, setUsed] = useState(true);
   const [unused, setUnused] = useState(true);
   const [keyword, setKeyword] = useState('');
-  const [applied, setApplied] = useState<{ useYn?: 'Y' | 'N'; keyword?: string }>({});
+  const [applied, setApplied] = useState<CodeGroupSearch>({});
   const [page, setPage] = useState(1);
   const [selectedGroup, setSelectedGroup] = useState<string | null>(null);
   const [groupModal, setGroupModal] = useState<CodeGroupItem | null | undefined>(undefined);
   const [codeModal, setCodeModal] = useState<CommonCodeItem | null | undefined>(undefined);
 
-  const { data: groupsData, isFetching: groupsLoading } = useApiQuery<PageResponse<CodeGroupItem>>(
-    ['sys', 'code-groups', applied, page],
-    () => getCodeGroups(applied, page, PAGE_SIZE),
-    { placeholderData: keepPreviousData },
-  );
+  const { data: groupsData, isFetching: groupsLoading } = useCodeGroups(applied, page, PAGE_SIZE);
   const groups = groupsData?.content ?? [];
   const total = groupsData?.totalElements ?? 0;
 
-  const { data: codesData, isFetching: codesLoading } = useApiQuery<CommonCodeItem[]>(
-    ['sys', 'codes', selectedGroup],
-    () => getCodesByGroup(selectedGroup as string),
-    { enabled: !!selectedGroup },
-  );
+  const { data: codesData, isFetching: codesLoading } = useCodes(selectedGroup);
   const codes = codesData ?? [];
+
+  const deleteGroup = useDeleteCodeGroup();
+  const saveCodes = useBatchSaveCodes();
+  const downloadExcel = useDownloadCodeGroupsExcel();
 
   const handleSearch = () => {
     setApplied({ useYn: toUseYnFilter(used, unused), keyword: keyword.trim() || undefined });
@@ -72,10 +64,9 @@ export default function CommonCodeManagement() {
       content: `Delete code group ${groupCd}?`,
       onOk: async () => {
         try {
-          await deleteCodeGroup(groupCd);
+          await deleteGroup.mutateAsync(groupCd);
           toast.success('Deleted.');
           if (selectedGroup === groupCd) setSelectedGroup(null);
-          void queryClient.invalidateQueries({ queryKey: ['sys', 'code-groups'] });
         } catch (e) {
           toast.error(errorMessage(e));
         }
@@ -90,9 +81,8 @@ export default function CommonCodeManagement() {
       content: `Delete code ${cd}?`,
       onOk: async () => {
         try {
-          await batchSaveCodes(selectedGroup, [], [cd]);
+          await saveCodes.mutateAsync({ groupCd: selectedGroup, toSave: [], deleteCds: [cd] });
           toast.success('Deleted.');
-          void queryClient.invalidateQueries({ queryKey: ['sys', 'codes', selectedGroup] });
         } catch (e) {
           toast.error(errorMessage(e));
         }
@@ -124,7 +114,7 @@ export default function CommonCodeManagement() {
       width: 80,
       align: 'center',
       render: (_v, row) => (
-        <button type="button" className={styles.btnDanger} style={{ height: 24, padding: '0 8px', fontSize: 11 }} disabled={!canWrite} onClick={(e) => { e.stopPropagation(); handleDeleteGroup(row.groupCd); }}>
+        <button type="button" className={`${styles.btnDanger} ${styles.btnTiny}`} disabled={!canWrite} onClick={(e) => { e.stopPropagation(); handleDeleteGroup(row.groupCd); }}>
           Del
         </button>
       ),
@@ -156,7 +146,7 @@ export default function CommonCodeManagement() {
       width: 80,
       align: 'center',
       render: (_v, row) => (
-        <button type="button" className={styles.btnDanger} style={{ height: 24, padding: '0 8px', fontSize: 11 }} disabled={!canWrite} onClick={() => handleDeleteCode(row.cd)}>
+        <button type="button" className={`${styles.btnDanger} ${styles.btnTiny}`} disabled={!canWrite} onClick={() => handleDeleteCode(row.cd)}>
           Del
         </button>
       ),
@@ -183,12 +173,12 @@ export default function CommonCodeManagement() {
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, flex: 1, minHeight: 0 }}>
+      <div className={styles.twoPane}>
         <div className={styles.card}>
           <div className={styles.summaryRow}>
             <span className={styles.cardTitle}>Code Groups ({total})</span>
             <div className={styles.actions}>
-              <button type="button" className={`${styles.btn} ${styles.btnSmall}`} onClick={() => void downloadCodeGroupsExcel(applied)}>Excel</button>
+              <button type="button" className={`${styles.btn} ${styles.btnSmall}`} onClick={() => downloadExcel.mutate(applied)}>Excel</button>
               <button type="button" className={`${styles.btnDark} ${styles.btnSmall}`} disabled={!canWrite} onClick={() => setGroupModal(null)}>Add Group</button>
             </div>
           </div>
@@ -226,12 +216,7 @@ export default function CommonCodeManagement() {
       </div>
 
       {groupModal !== undefined && (
-        <GroupModal
-          item={groupModal}
-          canWrite={canWrite}
-          onClose={() => setGroupModal(undefined)}
-          onSaved={() => void queryClient.invalidateQueries({ queryKey: ['sys', 'code-groups'] })}
-        />
+        <GroupModal item={groupModal} canWrite={canWrite} onClose={() => setGroupModal(undefined)} />
       )}
       {codeModal !== undefined && selectedGroup && (
         <CodeModal
@@ -239,28 +224,34 @@ export default function CommonCodeManagement() {
           item={codeModal}
           canWrite={canWrite}
           onClose={() => setCodeModal(undefined)}
-          onSaved={() => void queryClient.invalidateQueries({ queryKey: ['sys', 'codes', selectedGroup] })}
         />
       )}
     </div>
   );
 }
 
-function GroupModal({ item, canWrite, onClose, onSaved }: { item: CodeGroupItem | null; canWrite: boolean; onClose: () => void; onSaved: () => void }) {
+function GroupModal({ item, canWrite, onClose }: { item: CodeGroupItem | null; canWrite: boolean; onClose: () => void }) {
   const isCreate = item === null;
   const { toast } = useNotify();
   const [groupCd, setGroupCd] = useState(item?.groupCd ?? '');
   const [groupNm, setGroupNm] = useState(item?.groupNm ?? '');
   const [groupExpln, setGroupExpln] = useState(item?.groupExpln ?? '');
   const [useYn, setUseYn] = useState<'Y' | 'N'>(item?.useYn ?? 'Y');
+  const createGroup = useCreateCodeGroup();
+  const updateGroup = useUpdateCodeGroup();
 
   const handleSave = async () => {
     if (!groupCd.trim() || !groupNm.trim()) { toast.warning('Enter group code and name.'); return; }
     try {
-      if (isCreate) await createCodeGroup({ groupCd: groupCd.trim(), groupNm: groupNm.trim(), groupExpln: groupExpln.trim() || undefined });
-      else await updateCodeGroup(item.groupCd, { groupNm: groupNm.trim(), groupExpln: groupExpln.trim() || undefined, useYn });
+      if (isCreate) {
+        await createGroup.mutateAsync({ groupCd: groupCd.trim(), groupNm: groupNm.trim(), groupExpln: groupExpln.trim() || undefined });
+      } else {
+        await updateGroup.mutateAsync({
+          groupCd: item.groupCd,
+          request: { groupNm: groupNm.trim(), groupExpln: groupExpln.trim() || undefined, useYn },
+        });
+      }
       toast.success('Saved.');
-      onSaved();
       onClose();
     } catch (e) {
       toast.error(errorMessage(e));
@@ -288,7 +279,7 @@ function GroupModal({ item, canWrite, onClose, onSaved }: { item: CodeGroupItem 
   );
 }
 
-function CodeModal({ groupCd, item, canWrite, onClose, onSaved }: { groupCd: string; item: CommonCodeItem | null; canWrite: boolean; onClose: () => void; onSaved: () => void }) {
+function CodeModal({ groupCd, item, canWrite, onClose }: { groupCd: string; item: CommonCodeItem | null; canWrite: boolean; onClose: () => void }) {
   const isCreate = item === null;
   const { toast } = useNotify();
   const [cd, setCd] = useState(item?.cd ?? '');
@@ -296,13 +287,17 @@ function CodeModal({ groupCd, item, canWrite, onClose, onSaved }: { groupCd: str
   const [cdExpln, setCdExpln] = useState(item?.cdExpln ?? '');
   const [sortSeq, setSortSeq] = useState(String(item?.sortSeq ?? 1));
   const [useYn, setUseYn] = useState<'Y' | 'N'>(item?.useYn ?? 'Y');
+  const saveCodes = useBatchSaveCodes();
 
   const handleSave = async () => {
     if (!cd.trim() || !cdNm.trim()) { toast.warning('Enter code and name.'); return; }
     try {
-      await batchSaveCodes(groupCd, [{ cd: cd.trim(), cdNm: cdNm.trim(), cdExpln: cdExpln.trim() || undefined, sortSeq: Number(sortSeq) || 1, useYn }], []);
+      await saveCodes.mutateAsync({
+        groupCd,
+        toSave: [{ cd: cd.trim(), cdNm: cdNm.trim(), cdExpln: cdExpln.trim() || undefined, sortSeq: Number(sortSeq) || 1, useYn }],
+        deleteCds: [],
+      });
       toast.success('Saved.');
-      onSaved();
       onClose();
     } catch (e) {
       toast.error(errorMessage(e));

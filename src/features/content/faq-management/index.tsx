@@ -7,14 +7,11 @@ import {
   DownOutlined,
 } from '@ant-design/icons';
 import dayjs from 'dayjs';
-import { deleteFaqs } from '@/api/contents/faq-api';
 import { ApiError } from '@/lib/api/error';
 import { useNotify } from '@/hooks/use-notify';
 import { DateTimeCell, SysPagination } from '@/features/system/_shared/system-ui';
 import type { FaqItem } from './faq.types';
-import {
-  useFaqs,
-} from './use-faqs';
+import { useDeleteFaqs, useFaqs } from './use-faqs';
 import FaqDetailModal from './faq-detail-modal';
 import { useFaqCategories } from './use-faq-categories';
 import styles from './faq-management.module.scss';
@@ -68,6 +65,8 @@ export default function FaqManagement() {
     toDate: appliedFilters.toDate,
     published: appliedFilters.published,
   });
+
+  const deleteFaqs = useDeleteFaqs();
 
   // ── Modal State ────────────────────────────────────────────────────────────
   const [modalVisible, setModalVisible] = useState(false);
@@ -151,13 +150,9 @@ export default function FaqManagement() {
       cancelText: 'Cancel',
       onOk: async () => {
         try {
-          await deleteFaqs({
-            body: { pstNos: selectedRowKeys.map(String) },
-            throwOnError: true,
-          });
+          await deleteFaqs.mutateAsync(selectedRowKeys.map(String));
           toast.success('Selected FAQs have been deleted.');
           setSelectedRowKeys([]);
-          refetch();
         } catch (err) {
           toast.error(ApiError.from(err).message);
         }
@@ -276,7 +271,7 @@ export default function FaqManagement() {
             Reset
           </button>
           <button className={styles.btnView} onClick={handleView}>
-            <SearchOutlined style={{ fontSize: 13 }} />
+            <SearchOutlined className={styles.searchIcon} />
             View
           </button>
           <button
@@ -312,7 +307,7 @@ export default function FaqManagement() {
             <Select
               value={category}
               onChange={(val) => setCategory(val)}
-              style={{ width: 220 }}
+              className={styles.categorySelect}
               options={categoryOptions}
             />
           </div>
@@ -326,7 +321,7 @@ export default function FaqManagement() {
               onChange={(dates) =>
                 setDateRange(dates as [dayjs.Dayjs | null, dayjs.Dayjs | null] | null)
               }
-              style={{ width: 250 }}
+              className={styles.periodPicker}
             />
           </div>
         </div>

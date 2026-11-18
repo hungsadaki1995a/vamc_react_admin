@@ -1,14 +1,11 @@
 import { useState } from 'react';
 import { Input, Modal, Table } from 'antd';
 import type { TableColumnsType } from 'antd';
-import { keepPreviousData } from '@tanstack/react-query';
-import { useApiQuery } from '@/hooks/use-api-query';
 import { useScreenLabel } from '@/hooks/use-screen-label';
-import { lookupEmployees } from '@/api/system/employee-api';
 import type { EmployeeLookup, EmployeeLookupSearch } from '@/api/system/employee-api';
-import type { PageResponse } from '@/api/common/api-utils';
 import { SysPagination } from '../_shared/system-ui';
-import styles from '../_shared/system-page.module.css';
+import styles from '../_shared/system-page.module.scss';
+import { useEmployeeLookup } from './use-role-groups';
 
 // User Group Management - Add Employee / "Select Person in Charge" popup (VPA0046P01).
 // Lists active employees not yet assigned to the role; several can be picked at once.
@@ -41,11 +38,7 @@ export default function SelectEmployeeModal({
   // Selection survives paging, so the picked rows are kept, not just their keys.
   const [picked, setPicked] = useState<EmployeeLookup[]>([]);
 
-  const { data, isFetching } = useApiQuery<PageResponse<EmployeeLookup>>(
-    ['sys', 'employees', 'lookup', applied, page],
-    () => lookupEmployees(applied, page, PAGE_SIZE),
-    { placeholderData: keepPreviousData },
-  );
+  const { data, isFetching } = useEmployeeLookup(applied, page, PAGE_SIZE);
   const employees = data?.content ?? [];
   const total = data?.totalElements ?? 0;
 
@@ -100,7 +93,7 @@ export default function SelectEmployeeModal({
         </div>
       }
     >
-      <div className={styles.titleRow} style={{ marginBottom: 8 }}>
+      <div className={`${styles.titleRow} ${styles.mb8}`}>
         <span className={styles.modalSectionTitle}>{tvh('searchEmployee', 'Search Employee')}</span>
         <div className={styles.actions}>
           <button type="button" className={`${styles.btn} ${styles.btnSmall}`} onClick={handleReset}>
@@ -112,11 +105,11 @@ export default function SelectEmployeeModal({
         </div>
       </div>
 
-      <div className={styles.filterCard} style={{ marginBottom: 10 }}>
+      <div className={`${styles.filterCard} ${styles.mb10}`}>
         <div className={styles.filterGroup}>
           <span className={styles.filterLabel}>{tvt('empNo', 'Employee Number')}</span>
           <Input
-            style={{ width: 150 }}
+            className={styles.w150}
             placeholder={tvt('empNo', 'Employee Number')}
             value={filter.empNo}
             maxLength={10}
@@ -128,7 +121,7 @@ export default function SelectEmployeeModal({
         <div className={styles.filterGroup}>
           <span className={styles.filterLabel}>{tvt('empNm', 'Employee Name')}</span>
           <Input
-            style={{ width: 150 }}
+            className={styles.w150}
             placeholder={tvt('empNm', 'Employee Name')}
             value={filter.empNm}
             maxLength={100}
@@ -139,10 +132,10 @@ export default function SelectEmployeeModal({
         </div>
       </div>
 
-      <div className={styles.totalCount} style={{ marginBottom: 6 }}>
+      <div className={`${styles.totalCount} ${styles.mb6}`}>
         Total ({total.toLocaleString('en-US')})
       </div>
-      <div className={styles.tableWrapper} style={{ marginBottom: 10 }}>
+      <div className={`${styles.tableWrapper} ${styles.mb10}`}>
         <Table<EmployeeLookup>
           rowKey="empNo"
           columns={columns}

@@ -1,23 +1,13 @@
 import { useState, type CSSProperties } from 'react';
 import { Input, InputNumber, Modal, Radio, Select, Table } from 'antd';
 import type { TableColumnsType } from 'antd';
-import { useQueryClient, keepPreviousData } from '@tanstack/react-query';
-import { useApiQuery } from '@/hooks/use-api-query';
 import { useNotify } from '@/hooks/use-notify';
 import { useMenuPermission } from '@/hooks/use-menu-permission';
-import {
-  createProgram,
-  deletePrograms,
-  downloadProgramsExcel,
-  getPrograms,
-  updateProgram,
-  type ProgramItem,
-  type ProgramSearch,
-} from '@/api/system/program-screen-api';
-import type { PageResponse } from '@/api/common/api-utils';
+import type { ProgramItem, ProgramSearch } from '@/api/system/program-screen-api';
 import { DateTimeCell, FormField, SysPageHeader, SysPagination, UseYnChecks } from '@/features/system/_shared/system-ui';
 import { errorMessage, rowNumber, toUseYnFilter } from '@/features/system/_shared/system-utils';
-import styles from '@/features/system/_shared/system-page.module.css';
+import styles from '@/features/system/_shared/system-page.module.scss';
+import { useDeletePrograms, useDownloadProgramsExcel, usePrograms, useSaveProgram } from './use-programs';
 
 const PAGE_SIZE = 15;
 
@@ -25,7 +15,6 @@ const PAGE_SIZE = 15;
 export default function ProgramManagement() {
   const { toast, dialog } = useNotify();
   const { canWrite } = useMenuPermission();
-  const queryClient = useQueryClient();
 
   const [used, setUsed] = useState(true);
   const [unused, setUnused] = useState(true);
@@ -38,18 +27,14 @@ export default function ProgramManagement() {
   const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
   const [modalItem, setModalItem] = useState<ProgramItem | null | undefined>(undefined);
 
-  const { data, isFetching } = useApiQuery<PageResponse<ProgramItem>>(
-    ['sys', 'programs', applied, page],
-    () => getPrograms(applied, page, PAGE_SIZE),
-    { placeholderData: keepPreviousData },
-  );
+  const { data, isFetching } = usePrograms(applied, page, PAGE_SIZE);
+  const deletePrograms = useDeletePrograms();
+  const downloadExcel = useDownloadProgramsExcel();
   const rows = data?.content ?? [];
   const total = data?.totalElements ?? 0;
 
-  const refresh = () => {
-    setSelectedKeys([]);
-    void queryClient.invalidateQueries({ queryKey: ['sys', 'programs'] });
-  };
+  // The list itself is refetched by the write hooks.
+  const clearSelection = () => setSelectedKeys([]);
 
   const handleSearch = () => {
     setApplied({
@@ -78,9 +63,9 @@ export default function ProgramManagement() {
       content: `Delete ${selectedKeys.length} selected program(s)?`,
       onOk: async () => {
         try {
-          await deletePrograms(selectedKeys);
+          await deletePrograms.mutateAsync(selectedKeys);
           toast.success('Deleted.');
-          refresh();
+          clearSelection();
         } catch (e) {
           toast.error(errorMessage(e));
         }
@@ -131,7 +116,7 @@ export default function ProgramManagement() {
           </div>
           <div className={styles.filterGroup}>
             <span className={styles.filterLabel}>Category</span>
-            <Select style={{ width: 130 }} value={prgrmSeCd} onChange={setPrgrmSeCd} options={[{ value: '', label: 'All' }, { value: 'PAGE', label: 'PAGE' }, { value: 'POPUP', label: 'POPUP' }]} />
+            <Select className={styles.w130} value={prgrmSeCd} onChange={setPrgrmSeCd} options={[{ value: '', label: 'All' }, { value: 'PAGE', label: 'PAGE' }, { value: 'POPUP', label: 'POPUP' }]} />
           </div>
           <div className={styles.filterGroup}>
             <span className={styles.filterLabel}>Program Code</span>
@@ -146,7 +131,7 @@ export default function ProgramManagement() {
 
       <div className={styles.summaryRow}>
         <span className={styles.totalCount}>Total ({total})</span>
-        <button type="button" className={`${styles.btn} ${styles.btnSmall}`} onClick={() => void downloadProgramsExcel(applied)}>Excel Download</button>
+        <button type="button" className={`${styles.btn} ${styles.btnSmall}`} onClick={() => downloadExcel.mutate(applied)}>Excel Download</button>
       </div>
 
       <div className={styles.tableWrapper}>
@@ -170,7 +155,7 @@ export default function ProgramManagement() {
       </div>
 
       {modalItem !== undefined && (
-        <ProgramModal item={modalItem} canWrite={canWrite} onClose={() => setModalItem(undefined)} onSaved={refresh} />
+        <ProgramModal item={modalItem} canWrite={canWrite} onClose={() => setModalItem(undefined)} onSaved={clearSelection} />
       )}
     </div>
   );
@@ -186,6 +171,7 @@ function ProgramModal({ item, canWrite, onClose, onSaved }: { item: ProgramItem 
   const [prgrmExpln, setPrgrmExpln] = useState(item?.prgrmExpln ?? '');
   const [prgrmSeq, setPrgrmSeq] = useState<number>(item?.prgrmSeq ?? 1);
   const [useYn, setUseYn] = useState<'Y' | 'N'>(item?.useYn ?? 'Y');
+  const saveProgram = useSaveProgram();
 
   const handleSave = async () => {
     if (!prgrmCd.trim() || !menuCd.trim() || !prgrmNm.trim()) {
@@ -202,8 +188,7 @@ function ProgramModal({ item, canWrite, onClose, onSaved }: { item: ProgramItem 
         prgrmSeq,
         useYn,
       };
-      if (isCreate) await createProgram(req);
-      else await updateProgram(item.prgrmCd, req);
+      await saveProgram.mutateAsync({ prgrmCd: isCreate ? null : item.prgrmCd, request: req });
       toast.success('Saved.');
       onSaved();
       onClose();
@@ -223,7 +208,7 @@ function ProgramModal({ item, canWrite, onClose, onSaved }: { item: ProgramItem 
         <FormField label="Program Code" required><Input value={prgrmCd} disabled={!isCreate} maxLength={12} onChange={(e) => setPrgrmCd(e.target.value)} /></FormField>
         <FormField label="Menu Code" required><Input value={menuCd} maxLength={9} placeholder="e.g. A06040100" onChange={(e) => setMenuCd(e.target.value)} /></FormField>
         <FormField label="Category" required>
-          <Select style={{ width: '100%' }} value={prgrmSeCd} disabled={!isCreate} onChange={setPrgrmSeCd} options={[{ value: 'PAGE', label: 'PAGE' }, { value: 'POPUP', label: 'POPUP' }]} />
+          <Select className={styles.wFull} value={prgrmSeCd} disabled={!isCreate} onChange={setPrgrmSeCd} options={[{ value: 'PAGE', label: 'PAGE' }, { value: 'POPUP', label: 'POPUP' }]} />
         </FormField>
         <FormField label="Order" required><InputNumber min={0} max={99} value={prgrmSeq} onChange={(v) => setPrgrmSeq(v ?? 1)} /></FormField>
         <FormField label="Use" required span="full">

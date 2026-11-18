@@ -1,23 +1,13 @@
 import { useState, type CSSProperties } from 'react';
 import { Input, Modal, Table } from 'antd';
 import type { TableColumnsType } from 'antd';
-import { useQueryClient, keepPreviousData } from '@tanstack/react-query';
-import { useApiQuery } from '@/hooks/use-api-query';
 import { useNotify } from '@/hooks/use-notify';
 import { useMenuPermission } from '@/hooks/use-menu-permission';
-import {
-  createNplLot,
-  deleteNplLot,
-  downloadNplLotsExcel,
-  getNplLots,
-  updateNplLot,
-  type NplLotItem,
-  type NplLotSearch,
-} from '@/api/npl/npl-api';
-import type { PageResponse } from '@/api/common/api-utils';
+import type { NplLotItem, NplLotSearch } from '@/api/npl/npl-api';
 import { DateTimeCell, FormField, SysPageHeader, SysPagination } from '@/features/system/_shared/system-ui';
 import { errorMessage, rowNumber } from '@/features/system/_shared/system-utils';
-import styles from '@/features/system/_shared/system-page.module.css';
+import styles from '@/features/system/_shared/system-page.module.scss';
+import { useDeleteNplLot, useDownloadNplLotsExcel, useNplLots, useSaveNplLot } from './use-npl-lots';
 
 const PAGE_SIZE = 15;
 
@@ -25,7 +15,6 @@ const PAGE_SIZE = 15;
 export default function NplLotManagement() {
   const { toast, dialog } = useNotify();
   const { canWrite } = useMenuPermission();
-  const queryClient = useQueryClient();
 
   const [bndLotNo, setBndLotNo] = useState('');
   const [bndLotNm, setBndLotNm] = useState('');
@@ -34,15 +23,11 @@ export default function NplLotManagement() {
   const [filterCollapsed, setFilterCollapsed] = useState(false);
   const [modalItem, setModalItem] = useState<NplLotItem | null | undefined>(undefined);
 
-  const { data, isFetching } = useApiQuery<PageResponse<NplLotItem>>(
-    ['npl', 'lots', applied, page],
-    () => getNplLots(applied, page, PAGE_SIZE),
-    { placeholderData: keepPreviousData },
-  );
+  const { data, isFetching } = useNplLots(applied, page, PAGE_SIZE);
+  const deleteNplLot = useDeleteNplLot();
+  const downloadExcel = useDownloadNplLotsExcel();
   const rows = data?.content ?? [];
   const total = data?.totalElements ?? 0;
-
-  const refresh = () => void queryClient.invalidateQueries({ queryKey: ['npl', 'lots'] });
 
   const handleSearch = () => {
     setApplied({
@@ -65,9 +50,8 @@ export default function NplLotManagement() {
       content: 'Delete this NPL LOT?',
       onOk: async () => {
         try {
-          await deleteNplLot(bndLotId);
+          await deleteNplLot.mutateAsync(bndLotId);
           toast.success('Deleted.');
-          refresh();
         } catch (e) {
           toast.error(errorMessage(e));
         }
@@ -93,7 +77,7 @@ export default function NplLotManagement() {
       width: 90,
       align: 'center',
       render: (_v, row) => (
-        <button type="button" className={styles.btnDanger} style={{ height: 24, padding: '0 8px', fontSize: 11 }} disabled={!canWrite} onClick={() => handleDelete(row.bndLotId)}>
+        <button type="button" className={`${styles.btnDanger} ${styles.btnTiny}`} disabled={!canWrite} onClick={() => handleDelete(row.bndLotId)}>
           Delete
         </button>
       ),
@@ -124,7 +108,7 @@ export default function NplLotManagement() {
       )}
       <div className={styles.summaryRow}>
         <span className={styles.totalCount}>Total ({total})</span>
-        <button type="button" className={`${styles.btn} ${styles.btnSmall}`} onClick={() => void downloadNplLotsExcel(applied as Record<string, unknown>)}>Excel Download</button>
+        <button type="button" className={`${styles.btn} ${styles.btnSmall}`} onClick={() => downloadExcel.mutate(applied)}>Excel Download</button>
       </div>
       <div className={styles.tableWrapper}>
         <Table<NplLotItem> rowKey="bndLotId" columns={columns} dataSource={rows} loading={isFetching} pagination={false} size="small" scroll={{ x: 'max-content' }} />
@@ -135,15 +119,16 @@ export default function NplLotManagement() {
       </div>
 
       {modalItem !== undefined && (
-        <LotModal item={modalItem} canWrite={canWrite} onClose={() => setModalItem(undefined)} onSaved={refresh} />
+        <LotModal item={modalItem} canWrite={canWrite} onClose={() => setModalItem(undefined)} />
       )}
     </div>
   );
 }
 
-function LotModal({ item, canWrite, onClose, onSaved }: { item: NplLotItem | null; canWrite: boolean; onClose: () => void; onSaved: () => void }) {
+function LotModal({ item, canWrite, onClose }: { item: NplLotItem | null; canWrite: boolean; onClose: () => void }) {
   const isCreate = item === null;
   const { toast } = useNotify();
+  const saveNplLot = useSaveNplLot();
   const [bndLotNo, setBndLotNo] = useState(item?.bndLotNo ?? '');
   const [bndLotNm, setBndLotNm] = useState(item?.bndLotNm ?? '');
   const [bndLotExpln, setBndLotExpln] = useState(item?.bndLotExpln ?? '');
@@ -151,10 +136,14 @@ function LotModal({ item, canWrite, onClose, onSaved }: { item: NplLotItem | nul
   const handleSave = async () => {
     if (!bndLotNm.trim()) { toast.warning('Enter LOT name.'); return; }
     try {
-      if (isCreate) await createNplLot({ bndLotNo: bndLotNo.trim() || undefined, bndLotNm: bndLotNm.trim(), bndLotExpln: bndLotExpln.trim() || undefined });
-      else await updateNplLot(item.bndLotId, { bndLotNm: bndLotNm.trim(), bndLotExpln: bndLotExpln.trim() || undefined });
+      // The list is refetched by the hook.
+      await saveNplLot.mutateAsync({
+        bndLotId: isCreate ? null : item.bndLotId,
+        bndLotNo: isCreate ? bndLotNo.trim() || undefined : undefined,
+        bndLotNm: bndLotNm.trim(),
+        bndLotExpln: bndLotExpln.trim() || undefined,
+      });
       toast.success('Saved.');
-      onSaved();
       onClose();
     } catch (e) {
       toast.error(errorMessage(e));

@@ -1,19 +1,14 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import type { CSSProperties } from 'react';
 import { Input, InputNumber, Modal, Radio, Spin } from 'antd';
-import { useApiQuery } from '@/hooks/use-api-query';
 import { useNotify } from '@/hooks/use-notify';
-import {
-  changeBannerUse,
-  createBanner,
-  getBanner,
-  updateBanner,
-  uploadBannerImage,
-} from '@/api/contents/banner-api';
 import type { Banner, BannerRequest } from '@/api/contents/banner-api';
 import { FormField } from '@/features/system/_shared/system-ui';
 import { errorMessage } from '@/features/system/_shared/system-utils';
-import styles from '@/features/system/_shared/system-page.module.css';
+import styles from '@/features/system/_shared/system-page.module.scss';
 import { ImageField } from '../_shared/post-files';
+import { useBanner, useSaveBanner, useUploadBannerImage } from './use-banners';
+import type { SaveBannerVariables } from './use-banners';
 
 // Banner Management - Detail / Register / Edit popup (VPA0032P01).
 // Policy: a banner in use cannot be edited — save it as Unused, then reopen to edit.
@@ -42,17 +37,16 @@ export default function BannerModal({ bannerId, canWrite, onClose, onSaved }: Ba
   const isCreate = bannerId === null;
   const { toast } = useNotify();
 
-  const { data: detail, isFetching } = useApiQuery<Banner>(
-    ['contents', 'banners', 'detail', bannerId],
-    () => getBanner(bannerId as string),
-    { enabled: !isCreate, gcTime: 0 },
-  );
+  const { data: detail, isFetching } = useBanner(bannerId);
+  const saveBanner = useSaveBanner();
+  const uploadImage = useUploadBannerImage();
 
   const [form, setForm] = useState<FormState>(NEW_FORM);
-  const [saving, setSaving] = useState(false);
 
-  useEffect(() => {
-    if (!detail) return;
+  // Fill the form when the detail arrives — adjusted during render, not in an effect.
+  const [loadedDetail, setLoadedDetail] = useState<Banner | undefined>(undefined);
+  if (detail && detail !== loadedDetail) {
+    setLoadedDetail(detail);
     setForm({
       useYn: detail.useYn,
       order: detail.order,
@@ -61,7 +55,7 @@ export default function BannerModal({ bannerId, canWrite, onClose, onSaved }: Ba
       linkUrl: detail.linkUrl ?? '',
       imageFileId: detail.imageFileId,
     });
-  }, [detail]);
+  }
 
   const patch = (values: Partial<FormState>) => setForm((prev) => ({ ...prev, ...values }));
   const inUse = !isCreate && detail?.useYn === 'Y';
@@ -79,36 +73,33 @@ export default function BannerModal({ bannerId, canWrite, onClose, onSaved }: Ba
   };
 
   const handleConfirm = async () => {
-    setSaving(true);
-    try {
-      if (inUse) {
-        // Only the usage flag can change while the banner is in use.
-        if (form.useYn === 'N') await changeBannerUse([bannerId as string], 'N');
-      } else {
-        const invalid = validate();
-        if (invalid) {
-          toast.warning(invalid);
-          return;
-        }
-        const request: BannerRequest = {
-          title: form.title.trim(),
-          positionId: form.positionId.trim(),
-          order: form.order as number,
-          linkUrl: form.linkUrl.trim() || undefined,
-          imageFileId: form.imageFileId as string,
-        };
-        const saved = isCreate ? await createBanner(request) : await updateBanner(bannerId as string, request);
-        // New / edited banners are stored as Unused; switch on afterwards if asked.
-        const savedId = saved.data?.bannerId ?? bannerId;
-        if (form.useYn === 'Y' && savedId) await changeBannerUse([savedId], 'Y');
+    let variables: SaveBannerVariables;
+    if (inUse) {
+      // Only the usage flag can change while the banner is in use.
+      variables = { bannerId, useYn: form.useYn === 'N' ? 'N' : undefined };
+    } else {
+      const invalid = validate();
+      if (invalid) {
+        toast.warning(invalid);
+        return;
       }
+      const request: BannerRequest = {
+        title: form.title.trim(),
+        positionId: form.positionId.trim(),
+        order: form.order as number,
+        linkUrl: form.linkUrl.trim() || undefined,
+        imageFileId: form.imageFileId as string,
+      };
+      // New / edited banners are stored as Unused; switch on afterwards if asked.
+      variables = { bannerId, request, useYn: form.useYn === 'Y' ? 'Y' : undefined };
+    }
+    try {
+      await saveBanner.mutateAsync(variables);
       toast.success('Saved.');
       onSaved();
       onClose();
     } catch (e) {
       toast.error(errorMessage(e));
-    } finally {
-      setSaving(false);
     }
   };
 
@@ -133,7 +124,7 @@ export default function BannerModal({ bannerId, canWrite, onClose, onSaved }: Ba
           <button
             type="button"
             className={styles.btnDark}
-            disabled={!canWrite || saving || isFetching}
+            disabled={!canWrite || saveBanner.isPending || isFetching}
             onClick={handleConfirm}
           >
             Confirm
@@ -142,7 +133,7 @@ export default function BannerModal({ bannerId, canWrite, onClose, onSaved }: Ba
       }
     >
       <Spin spinning={isFetching}>
-        <div className={styles.formGrid} style={{ ['--form-cols' as string]: 3 }}>
+        <div className={styles.formGrid} style={{ '--form-cols': 3 } as CSSProperties}>
           <FormField label="In Use">
             <Radio.Group
               value={form.useYn}
@@ -193,7 +184,7 @@ export default function BannerModal({ bannerId, canWrite, onClose, onSaved }: Ba
           </FormField>
           <FormField label="Banner Image" required span="full">
             <ImageField
-              upload={uploadBannerImage}
+              upload={uploadImage.mutateAsync}
               fileUnqId={form.imageFileId}
               disabled={fieldsDisabled}
               onChange={(imageFileId) => patch({ imageFileId })}

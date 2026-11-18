@@ -1,22 +1,13 @@
 import { useState, type CSSProperties } from 'react';
 import { Input, Modal, Radio, Table, Tabs } from 'antd';
 import type { TableColumnsType } from 'antd';
-import { useQueryClient, keepPreviousData } from '@tanstack/react-query';
-import { useApiQuery } from '@/hooks/use-api-query';
 import { useNotify } from '@/hooks/use-notify';
 import { useMenuPermission } from '@/hooks/use-menu-permission';
-import {
-  executeBatchJob,
-  getBatchHistory,
-  getBatchJobs,
-  updateBatchSchedule,
-  type BatchHistoryItem,
-  type BatchJobItem,
-} from '@/api/system/system-operations-api';
-import type { PageResponse } from '@/api/common/api-utils';
+import type { BatchHistoryItem, BatchJobItem } from '@/api/system/system-operations-api';
 import { DateTimeCell, FormField, SysPageHeader, SysPagination } from '@/features/system/_shared/system-ui';
 import { errorMessage } from '@/features/system/_shared/system-utils';
-import styles from '@/features/system/_shared/system-page.module.css';
+import styles from '@/features/system/_shared/system-page.module.scss';
+import { useBatchHistory, useBatchJobs, useExecuteBatchJob, useUpdateBatchSchedule } from './use-batch-jobs';
 
 const PAGE_SIZE = 15;
 
@@ -24,24 +15,19 @@ const PAGE_SIZE = 15;
 export default function BatchManagement() {
   const { toast, dialog } = useNotify();
   const { canWrite } = useMenuPermission();
-  const queryClient = useQueryClient();
 
   const [tab, setTab] = useState<'jobs' | 'history'>('jobs');
   const [keyword, setKeyword] = useState('');
   const [histPage, setHistPage] = useState(1);
   const [schedModal, setSchedModal] = useState<BatchJobItem | null>(null);
 
-  const { data: jobsData, isFetching: jobsLoading, refetch: refetchJobs } = useApiQuery<PageResponse<BatchJobItem>>(
-    ['sys', 'batch', 'jobs'],
-    () => getBatchJobs(1, 100),
-    { placeholderData: keepPreviousData },
+  const { data: jobsData, isFetching: jobsLoading, refetch: refetchJobs } = useBatchJobs();
+  const { data: histData, isFetching: histLoading, refetch: refetchHist } = useBatchHistory(
+    histPage,
+    PAGE_SIZE,
+    tab === 'history',
   );
-
-  const { data: histData, isFetching: histLoading, refetch: refetchHist } = useApiQuery<PageResponse<BatchHistoryItem>>(
-    ['sys', 'batch', 'history', histPage],
-    () => getBatchHistory(histPage, PAGE_SIZE),
-    { enabled: tab === 'history', placeholderData: keepPreviousData },
-  );
+  const executeJob = useExecuteBatchJob();
 
   const jobs = (jobsData?.content ?? []).filter((j) =>
     !keyword.trim() || j.btchJobNm.toLowerCase().includes(keyword.trim().toLowerCase()),
@@ -55,9 +41,8 @@ export default function BatchManagement() {
       content: `Execute batch job "${jobName}" now?`,
       onOk: async () => {
         try {
-          await executeBatchJob(jobName);
+          await executeJob.mutateAsync(jobName);
           toast.success(`Executed ${jobName}.`);
-          void queryClient.invalidateQueries({ queryKey: ['sys', 'batch'] });
         } catch (e) {
           toast.error(errorMessage(e));
         }
@@ -84,7 +69,7 @@ export default function BatchManagement() {
       width: 160,
       align: 'center',
       render: (_v, row) => (
-        <div className={styles.actions} style={{ justifyContent: 'center' }}>
+        <div className={`${styles.actions} ${styles.centered}`}>
           <button type="button" className={`${styles.btn} ${styles.btnSmall}`} disabled={!canWrite} onClick={() => setSchedModal(row)}>Schedule</button>
           <button type="button" className={`${styles.btnDark} ${styles.btnSmall}`} disabled={!canWrite} onClick={() => handleExecute(row.btchJobNm)}>Run</button>
         </div>
@@ -121,7 +106,7 @@ export default function BatchManagement() {
             label: 'Batch Jobs',
             children: (
               <>
-                <div className={styles.filterCard} style={{ marginBottom: 12 }}>
+                <div className={`${styles.filterCard} ${styles.mb12}`}>
                   <div className={styles.filterGroup}>
                     <span className={styles.filterLabel}>Job Name</span>
                     <Input className={styles.filterInput} value={keyword} onChange={(e) => setKeyword(e.target.value)} allowClear />
@@ -141,7 +126,7 @@ export default function BatchManagement() {
                 <div className={styles.tableWrapper}>
                   <Table<BatchHistoryItem> rowKey="btchHstryId" columns={histColumns} dataSource={histories} loading={histLoading} pagination={false} size="small" scroll={{ x: 'max-content' }} />
                 </div>
-                <div style={{ marginTop: 12 }}>
+                <div className={styles.mt12}>
                   <SysPagination page={histPage} pageSize={PAGE_SIZE} total={histTotal} onChange={setHistPage} />
                 </div>
               </>
@@ -155,23 +140,22 @@ export default function BatchManagement() {
           job={schedModal}
           canWrite={canWrite}
           onClose={() => setSchedModal(null)}
-          onSaved={() => void queryClient.invalidateQueries({ queryKey: ['sys', 'batch', 'jobs'] })}
         />
       )}
     </div>
   );
 }
 
-function ScheduleModal({ job, canWrite, onClose, onSaved }: { job: BatchJobItem; canWrite: boolean; onClose: () => void; onSaved: () => void }) {
+function ScheduleModal({ job, canWrite, onClose }: { job: BatchJobItem; canWrite: boolean; onClose: () => void }) {
   const { toast } = useNotify();
   const [cron, setCron] = useState(job.cronExpression ?? '');
   const [enabled, setEnabled] = useState<'Y' | 'N'>(job.scheduleVtlzYn ?? 'N');
+  const updateSchedule = useUpdateBatchSchedule();
 
   const handleSave = async () => {
     try {
-      await updateBatchSchedule(job.btchJobNm, cron.trim(), enabled);
+      await updateSchedule.mutateAsync({ jobName: job.btchJobNm, cronExpression: cron.trim(), scheduleVtlzYn: enabled });
       toast.success('Schedule updated.');
-      onSaved();
       onClose();
     } catch (e) {
       toast.error(errorMessage(e));

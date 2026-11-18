@@ -2,18 +2,15 @@ import { useState } from 'react';
 import { DatePicker, Input, Select, Table } from 'antd';
 import type { TableColumnsType } from 'antd';
 import type { Dayjs } from 'dayjs';
-import { useQueryClient, keepPreviousData } from '@tanstack/react-query';
-import { useApiQuery } from '@/hooks/use-api-query';
 import { useNotify } from '@/hooks/use-notify';
 import { useScreenLabel } from '@/hooks/use-screen-label';
 import { useMenuPermission } from '@/hooks/use-menu-permission';
-import { deleteFees, downloadFeeExcel, getFees } from '@/api/system/fee-api';
 import type { Fee, FeeCategory, FeeSearch } from '@/api/system/fee-api';
-import type { PageResponse } from '@/api/common/api-utils';
 import { DateTimeCell, SysPageHeader, SysPagination, UseFlag, UseYnChecks } from '../_shared/system-ui';
 import { errorMessage, formatAmount, rowNumber, toUseYnFilter } from '../_shared/system-utils';
-import styles from '../_shared/system-page.module.css';
+import styles from '../_shared/system-page.module.scss';
 import FeeModal from './fee-modal';
+import { useDeleteFees, useDownloadFeeExcel, useFees } from './use-fees';
 
 // Fee Management - List (VPA004101), menu A06010300.
 
@@ -32,11 +29,10 @@ interface FilterState {
 
 const EMPTY_FILTER: FilterState = { period: null, used: true, unused: true, category: '', keyword: '' };
 
-export default function SYS020103SC() {
+export default function FeeManagement() {
   const { toast, dialog } = useNotify();
   const { tvt, tvb, tvh, tsg, tsm } = useScreenLabel();
   const { canWrite } = useMenuPermission();
-  const queryClient = useQueryClient();
 
   const [filter, setFilter] = useState<FilterState>(EMPTY_FILTER);
   const [applied, setApplied] = useState<FeeSearch>({});
@@ -45,7 +41,6 @@ export default function SYS020103SC() {
   const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
   /** undefined = closed, null = register, string = view/edit that fee. */
   const [modalFeeId, setModalFeeId] = useState<string | null | undefined>(undefined);
-  const [downloading, setDownloading] = useState(false);
 
   const categoryOptions = [
     { value: 'ANFE', label: tvt('catAnnual', 'Annual Fee') },
@@ -55,18 +50,11 @@ export default function SYS020103SC() {
   const categoryName = (fee: Fee) =>
     categoryOptions.find((o) => o.value === fee.category)?.label ?? fee.categoryNm ?? fee.category;
 
-  const { data, isFetching } = useApiQuery<PageResponse<Fee>>(
-    ['sys', 'fees', applied, page],
-    () => getFees(applied, page, PAGE_SIZE),
-    { placeholderData: keepPreviousData },
-  );
+  const { data, isFetching } = useFees(applied, page, PAGE_SIZE);
+  const deleteFees = useDeleteFees();
+  const downloadExcel = useDownloadFeeExcel();
   const fees = data?.content ?? [];
   const total = data?.totalElements ?? 0;
-
-  const refresh = () => {
-    setSelectedKeys([]);
-    void queryClient.invalidateQueries({ queryKey: ['sys', 'fees'] });
-  };
 
   const handleSearch = () => {
     setApplied({
@@ -87,16 +75,8 @@ export default function SYS020103SC() {
     setSelectedKeys([]);
   };
 
-  const handleExcel = async () => {
-    setDownloading(true);
-    try {
-      await downloadFeeExcel(applied);
-    } catch (error) {
-      toast.error(errorMessage(error));
-    } finally {
-      setDownloading(false);
-    }
-  };
+  const handleExcel = () =>
+    downloadExcel.mutate(applied, { onError: (error) => toast.error(errorMessage(error)) });
 
   const handleDelete = () => {
     if (selectedKeys.length === 0) {
@@ -108,9 +88,9 @@ export default function SYS020103SC() {
       content: tsm('confirmDelete', 'Delete the selected fee item(s)? Items in use cannot be deleted.'),
       onOk: async () => {
         try {
-          const response = await deleteFees(selectedKeys);
+          const response = await deleteFees.mutateAsync(selectedKeys);
           toast.success(response.message || tsm('deleted', 'Deleted.'));
-          refresh();
+          setSelectedKeys([]);
         } catch (error) {
           toast.error(errorMessage(error));
         }
@@ -220,7 +200,7 @@ export default function SYS020103SC() {
               placeholder={['dd/mm/yyyy', 'dd/mm/yyyy']}
               value={filter.period}
               onChange={(dates) => setFilter((f) => ({ ...f, period: dates as DateRange }))}
-              style={{ width: 250 }}
+              className={styles.w250}
             />
           </div>
           <div className={styles.filterGroup}>
@@ -237,7 +217,7 @@ export default function SYS020103SC() {
           <div className={styles.filterGroup}>
             <span className={styles.filterLabel}>{tvt('category', 'Category')}</span>
             <Select
-              style={{ width: 180 }}
+              className={styles.w180}
               value={filter.category}
               onChange={(category) => setFilter((f) => ({ ...f, category }))}
               options={[{ value: '', label: tvt('all', 'ALL') }, ...categoryOptions]}
@@ -262,7 +242,7 @@ export default function SYS020103SC() {
         <button
           type="button"
           className={`${styles.btn} ${styles.btnSmall}`}
-          disabled={downloading}
+          disabled={downloadExcel.isPending}
           onClick={handleExcel}
         >
           {tvb('excel', 'Excel Download')}
@@ -297,7 +277,7 @@ export default function SYS020103SC() {
       </div>
 
       {modalFeeId !== undefined && (
-        <FeeModal feeId={modalFeeId} canWrite={canWrite} onClose={() => setModalFeeId(undefined)} onSaved={refresh} />
+        <FeeModal feeId={modalFeeId} canWrite={canWrite} onClose={() => setModalFeeId(undefined)} onSaved={() => setSelectedKeys([])} />
       )}
     </div>
   );

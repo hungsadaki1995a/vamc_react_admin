@@ -1,12 +1,10 @@
 import { useState } from 'react';
 import { Modal, Spin } from 'antd';
-import { useQueryClient } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { useNotify } from '@/hooks/use-notify';
-import { answerInquiry } from '@/api/contents/inquiry-api';
 import { ApiError } from '@/lib/api/error';
 import type { InquiryItem } from './inquiry.types';
-import { useInquiryDetail } from './use-inquiry-detail';
+import { useAnswerInquiry, useInquiryDetail } from './use-inquiry-detail';
 import styles from './inquiry-detail-modal.module.scss';
 
 interface InquiryDetailModalProps {
@@ -34,7 +32,6 @@ export default function InquiryDetailModal({
   onClose,
   onRefresh,
 }: InquiryDetailModalProps) {
-  const queryClient = useQueryClient();
   const { toast, dialog } = useNotify();
 
   // Use pstNo from list item (falling back to id)
@@ -48,7 +45,8 @@ export default function InquiryDetailModal({
   // Reply draft per inquiry (null means fall back to server answer)
   const [draftState, setDraftState] = useState<{ key?: string; text: string }>({ text: '' });
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const answerInquiry = useAnswerInquiry();
+  const isSubmitting = answerInquiry.isPending;
 
   const replyText = draftState.key === pstNo
     ? draftState.text
@@ -119,28 +117,17 @@ export default function InquiryDetailModal({
       return;
     }
 
-    setIsSubmitting(true);
     setErrorMsg(null);
 
     try {
-      // PUT /api/v1/contents/inquiries/{pstNo}/answer — a rejected call must not look like success.
-      await answerInquiry({
-        path: { pstNo: String(pstNo) },
-        body: { answer: trimmed },
-        throwOnError: true,
-      });
+      // The hook refreshes the list and this detail on success.
+      await answerInquiry.mutateAsync({ pstNo: String(pstNo), answer: trimmed });
     } catch (err) {
       const reason = ApiError.from(err).message;
       setErrorMsg(reason);
       toast.error(reason);
-      setIsSubmitting(false);
       return;
     }
-
-    // Refresh the list and this detail.
-    queryClient.invalidateQueries({ queryKey: ['contents', 'inquiries'] });
-    queryClient.invalidateQueries({ queryKey: ['inquiry-detail', pstNo] });
-    setIsSubmitting(false);
 
     // 2. Show success alert; when alert is closed, close modal & refresh list
     dialog.info({
@@ -158,7 +145,7 @@ export default function InquiryDetailModal({
   return (
     <Modal
       title={
-        <div style={{ fontSize: 16, fontWeight: 700, color: '#111827' }}>
+        <div className={styles.modalTitle}>
           {isUnanswered ? 'Reply to 1:1 inquiry' : 'View response information for 1:1 inquiries'}
         </div>
       }
@@ -204,10 +191,10 @@ export default function InquiryDetailModal({
             <tbody>
               {/* Row 1: Inquiry Type | Registered Customers | Registration Date */}
               <tr>
-                <th className={styles.headerCell} style={{ width: '13%' }}>
+                <th className={`${styles.headerCell} ${styles.col13}`}>
                   Inquiry Type
                 </th>
-                <td className={styles.dataCell} style={{ width: '27%' }}>
+                <td className={`${styles.dataCell} ${styles.col27}`}>
                   <div className={styles.radioGroup}>
                     <div className={styles.radioOption}>
                       <span
@@ -235,20 +222,20 @@ export default function InquiryDetailModal({
                     </div>
                   </div>
                 </td>
-                <th className={styles.headerCell} style={{ width: '14%' }}>
+                <th className={`${styles.headerCell} ${styles.col14}`}>
                   Registered
                   <br />
                   Customers
                 </th>
-                <td className={styles.dataCell} style={{ width: '20%' }}>
+                <td className={`${styles.dataCell} ${styles.col20}`}>
                   {customerDisplay}
                 </td>
-                <th className={styles.headerCell} style={{ width: '13%' }}>
+                <th className={`${styles.headerCell} ${styles.col13}`}>
                   Registration
                   <br />
                   Date
                 </th>
-                <td className={styles.dataCell} style={{ width: '13%' }}>
+                <td className={`${styles.dataCell} ${styles.col13}`}>
                   {registrationDateDisplay}
                 </td>
               </tr>

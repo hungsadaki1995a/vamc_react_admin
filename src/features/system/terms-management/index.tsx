@@ -1,26 +1,24 @@
-import { useEffect, useState, type CSSProperties } from 'react';
+import { useState, type CSSProperties } from 'react';
 import { Input, Modal, Radio, Select, Spin, Table } from 'antd';
 import type { TableColumnsType } from 'antd';
-import { useQueryClient, keepPreviousData } from '@tanstack/react-query';
-import { useApiQuery } from '@/hooks/use-api-query';
 import { useNotify } from '@/hooks/use-notify';
 import { useMenuPermission } from '@/hooks/use-menu-permission';
-import {
-  createTermsPolicy,
-  deleteTermsPolicies,
-  getTermsPolicies,
-  getTermsPolicy,
-  publishTermsPolicies,
-  updateTermsPolicy,
-  type TermsPolicyDetail,
-  type TermsPolicyItem,
-  type TermsPolicyRequest,
-  type TermsPolicySearch,
+import type {
+  TermsPolicyDetail,
+  TermsPolicyItem,
+  TermsPolicyRequest,
+  TermsPolicySearch,
 } from '@/api/system/system-operations-api';
-import type { PageResponse } from '@/api/common/api-utils';
 import { DateTimeCell, FormField, SysPageHeader, SysPagination } from '@/features/system/_shared/system-ui';
 import { errorMessage, rowNumber } from '@/features/system/_shared/system-utils';
-import styles from '@/features/system/_shared/system-page.module.css';
+import styles from '@/features/system/_shared/system-page.module.scss';
+import {
+  useDeleteTermsPolicies,
+  usePublishTermsPolicies,
+  useSaveTermsPolicy,
+  useTermsPolicies,
+  useTermsPolicy,
+} from './use-terms-policies';
 
 const PAGE_SIZE = 15;
 
@@ -28,7 +26,6 @@ const PAGE_SIZE = 15;
 export default function TermsManagement() {
   const { toast, dialog } = useNotify();
   const { canWrite } = useMenuPermission();
-  const queryClient = useQueryClient();
 
   const [type, setType] = useState('');
   const [published, setPublished] = useState<'Y' | 'N' | ''>('');
@@ -39,18 +36,14 @@ export default function TermsManagement() {
   const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
   const [modalId, setModalId] = useState<string | null | undefined>(undefined);
 
-  const { data, isFetching } = useApiQuery<PageResponse<TermsPolicyItem>>(
-    ['sys', 'terms', applied, page],
-    () => getTermsPolicies(applied, page, PAGE_SIZE),
-    { placeholderData: keepPreviousData },
-  );
+  const { data, isFetching } = useTermsPolicies(applied, page, PAGE_SIZE);
+  const publishTerms = usePublishTermsPolicies();
+  const deleteTerms = useDeleteTermsPolicies();
   const rows = data?.content ?? [];
   const total = data?.totalElements ?? 0;
 
-  const refresh = () => {
-    setSelectedKeys([]);
-    void queryClient.invalidateQueries({ queryKey: ['sys', 'terms'] });
-  };
+  // The list itself is refetched by the write hooks.
+  const clearSelection = () => setSelectedKeys([]);
 
   const handleSearch = () => {
     setApplied({
@@ -75,9 +68,9 @@ export default function TermsManagement() {
       return;
     }
     try {
-      await publishTermsPolicies(selectedKeys, pub);
+      await publishTerms.mutateAsync({ termsIds: selectedKeys, published: pub });
       toast.success('Updated.');
-      refresh();
+      clearSelection();
     } catch (e) {
       toast.error(errorMessage(e));
     }
@@ -93,9 +86,9 @@ export default function TermsManagement() {
       content: `Delete ${selectedKeys.length} selected item(s)?`,
       onOk: async () => {
         try {
-          await deleteTermsPolicies(selectedKeys);
+          await deleteTerms.mutateAsync(selectedKeys);
           toast.success('Deleted.');
-          refresh();
+          clearSelection();
         } catch (e) {
           toast.error(errorMessage(e));
         }
@@ -144,7 +137,7 @@ export default function TermsManagement() {
           <div className={styles.filterGroup}>
             <span className={styles.filterLabel}>Type</span>
             <Select
-              style={{ width: 180 }}
+              className={styles.w180}
               value={type}
               onChange={setType}
               options={[
@@ -157,7 +150,7 @@ export default function TermsManagement() {
           <div className={styles.filterGroup}>
             <span className={styles.filterLabel}>Published</span>
             <Select
-              style={{ width: 140 }}
+              className={styles.w140}
               value={published}
               onChange={(v) => setPublished(v as 'Y' | 'N' | '')}
               options={[
@@ -208,7 +201,7 @@ export default function TermsManagement() {
       </div>
 
       {modalId !== undefined && (
-        <TermsModal termsId={modalId} canWrite={canWrite} onClose={() => setModalId(undefined)} onSaved={refresh} />
+        <TermsModal termsId={modalId} canWrite={canWrite} onClose={() => setModalId(undefined)} onSaved={clearSelection} />
       )}
     </div>
   );
@@ -227,11 +220,8 @@ function TermsModal({
 }) {
   const isCreate = termsId === null;
   const { toast } = useNotify();
-  const { data: detail, isFetching } = useApiQuery<TermsPolicyDetail>(
-    ['sys', 'terms', 'detail', termsId],
-    () => getTermsPolicy(termsId as string),
-    { enabled: !isCreate, gcTime: 0 },
-  );
+  const { data: detail, isFetching } = useTermsPolicy(termsId);
+  const saveTerms = useSaveTermsPolicy();
 
   const [form, setForm] = useState<TermsPolicyRequest>({
     type: 'TERMS_OF_USE',
@@ -243,10 +233,11 @@ function TermsModal({
     contentEn: '',
     published: 'N',
   });
-  const [saving, setSaving] = useState(false);
 
-  useEffect(() => {
-    if (!detail) return;
+  // Fill the form when the detail arrives — adjusted during render, not in an effect.
+  const [loadedDetail, setLoadedDetail] = useState<TermsPolicyDetail | undefined>(undefined);
+  if (detail && detail !== loadedDetail) {
+    setLoadedDetail(detail);
     setForm({
       type: detail.type,
       version: detail.version,
@@ -257,24 +248,20 @@ function TermsModal({
       contentEn: detail.contentEn ?? '',
       published: detail.published,
     });
-  }, [detail]);
+  }
 
   const handleSave = async () => {
     if (!form.version.trim() || !form.title.trim()) {
       toast.warning('Enter version and title.');
       return;
     }
-    setSaving(true);
     try {
-      if (isCreate) await createTermsPolicy(form);
-      else await updateTermsPolicy(termsId as string, form);
+      await saveTerms.mutateAsync({ termsId, request: form });
       toast.success('Saved.');
       onSaved();
       onClose();
     } catch (e) {
       toast.error(errorMessage(e));
-    } finally {
-      setSaving(false);
     }
   };
 
@@ -288,7 +275,7 @@ function TermsModal({
       footer={
         <div className={styles.modalFooter}>
           <button type="button" className={styles.btn} onClick={onClose}>Cancel</button>
-          <button type="button" className={styles.btnDark} disabled={!canWrite || saving} onClick={handleSave}>Confirm</button>
+          <button type="button" className={styles.btnDark} disabled={!canWrite || saveTerms.isPending} onClick={handleSave}>Confirm</button>
         </div>
       }
     >
@@ -296,7 +283,7 @@ function TermsModal({
         <div className={styles.formGrid} style={{ '--form-cols': 2 } as CSSProperties}>
           <FormField label="Type" required>
             <Select
-              style={{ width: '100%' }}
+              className={styles.wFull}
               value={form.type}
               disabled={!isCreate || !canWrite}
               onChange={(type) => setForm((p) => ({ ...p, type }))}

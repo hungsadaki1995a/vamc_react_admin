@@ -1,8 +1,9 @@
 import { useState } from 'react';
+import type { CSSProperties } from 'react';
 import { Input, Radio, Table } from 'antd';
 import type { TableColumnsType } from 'antd';
 import { FormField, UseFlag } from '../_shared/system-ui';
-import styles from '../_shared/system-page.module.css';
+import styles from '../_shared/system-page.module.scss';
 
 // One column of User Group Management (VPA004601): a list of { id, name, use }
 // rows with its own New/Edit form. Used for both "User Group" and "Group Role".
@@ -35,6 +36,8 @@ interface CodeNameCardProps {
   /** Parent not selected yet → list and form are disabled. */
   disabled?: boolean;
   canWrite: boolean;
+  /** The parent's save is in flight → Save is disabled. */
+  saving?: boolean;
   idMaxLength: number;
   selectedId: string | null;
   onSelect: (item: CodeNameItem | null) => void;
@@ -51,6 +54,7 @@ export default function CodeNameCard({
   loading,
   disabled = false,
   canWrite,
+  saving = false,
   idMaxLength,
   selectedId,
   onSelect,
@@ -58,7 +62,6 @@ export default function CodeNameCard({
   onDelete,
 }: CodeNameCardProps) {
   const [form, setForm] = useState<CodeNameItem>(EMPTY);
-  const [saving, setSaving] = useState(false);
 
   const selected = items.find((item) => item.id === selectedId) ?? null;
   const isEdit = selected !== null;
@@ -77,13 +80,8 @@ export default function CodeNameCard({
   };
 
   const handleSave = async () => {
-    setSaving(true);
-    try {
-      const ok = await onSave({ ...form, id: form.id.trim(), name: form.name.trim() }, isEdit);
-      if (ok && !isEdit) setForm(EMPTY);
-    } finally {
-      setSaving(false);
-    }
+    const ok = await onSave({ ...form, id: form.id.trim(), name: form.name.trim() }, isEdit);
+    if (ok && !isEdit) setForm(EMPTY);
   };
 
   const columns: TableColumnsType<CodeNameItem> = [
@@ -135,7 +133,7 @@ export default function CodeNameCard({
             {labels.reset}
           </button>
         </div>
-        <div className={styles.formGrid} style={{ ['--form-cols' as string]: 1 }}>
+        <div className={styles.formGrid} style={{ '--form-cols': 1 } as CSSProperties}>
           <FormField label={labels.id} required>
             <Input
               placeholder={labels.idPlaceholder}
@@ -166,7 +164,7 @@ export default function CodeNameCard({
             />
           </FormField>
         </div>
-        <div className={styles.bottomActions} style={{ marginTop: 10 }}>
+        <div className={`${styles.bottomActions} ${styles.mt10}`}>
           <button
             type="button"
             className={`${styles.btn} ${styles.btnSmall}`}

@@ -1,17 +1,16 @@
 import { useMemo, useState } from 'react';
+import type { CSSProperties } from 'react';
 import { Alert, Checkbox, Spin } from 'antd';
-import { useQueryClient } from '@tanstack/react-query';
-import { useApiQuery } from '@/hooks/use-api-query';
 import { useNotify } from '@/hooks/use-notify';
 import { useScreenLabel } from '@/hooks/use-screen-label';
 import { useMenuPermission } from '@/hooks/use-menu-permission';
 import { useMenuStore } from '@/stores/menu-store';
-import { getMenuPermissionMatrix, saveMenuPermissionMatrix } from '@/api/system/menu-permission-api';
-import type { MatrixColumn, MenuPermissionMatrix, SaveMatrixRequest } from '@/api/system/menu-permission-api';
+import type { MatrixColumn, SaveMatrixRequest } from '@/api/system/menu-permission-api';
 import type { MenuSeCd } from '@/api/system/menu-setting-api';
 import { SysPageHeader } from './system-ui';
 import { errorMessage } from './system-utils';
-import styles from './system-page.module.css';
+import styles from './system-page.module.scss';
+import { useMenuPermissionMatrix, useSaveMenuPermissionMatrix } from './use-menu-permissions';
 
 // Menu Permission matrix — menus (rows) × user-group roles (columns), Read / Write.
 //   menuSeCd = W → Platform (Web) Menu Permission Management (VPA004301)
@@ -32,20 +31,14 @@ export default function MenuPermissionMatrixScreen({ menuSeCd }: Props) {
   const { toast, dialog } = useNotify();
   const { tvt, tvb, tvh, tsg, tsm } = useScreenLabel();
   const { canWrite } = useMenuPermission();
-  const queryClient = useQueryClient();
-
   const title = isWeb
     ? tvh('pageWeb', 'Platform Menu Permission Management')
     : tvh('pageAdmin', 'Admin Menu Permission Management');
 
-  const { data, isFetching, error } = useApiQuery<MenuPermissionMatrix>(
-    ['sys', 'menu-permissions', menuSeCd],
-    () => getMenuPermissionMatrix(menuSeCd),
-    { retry: false },
-  );
+  const { data, isFetching, error } = useMenuPermissionMatrix(menuSeCd);
+  const saveMatrix = useSaveMenuPermissionMatrix();
 
   const [edits, setEdits] = useState<Edits>({});
-  const [saving, setSaving] = useState(false);
 
   const columns = useMemo(() => data?.columns ?? [], [data]);
   const rows = useMemo(() => data?.rows ?? [], [data]);
@@ -103,17 +96,13 @@ export default function MenuPermissionMatrixScreen({ menuSeCd }: Props) {
     dialog.confirm({
       content: tsm('confirmSave', 'Do you want to save the menu permissions?'),
       onOk: async () => {
-        setSaving(true);
         try {
-          const response = await saveMenuPermissionMatrix(request);
+          const response = await saveMatrix.mutateAsync(request);
           toast.success(response.message || tsm('saved', 'Saved.'));
           setEdits({});
-          await queryClient.invalidateQueries({ queryKey: ['sys', 'menu-permissions'] });
           void useMenuStore.getState().invalidateMenuCache();
         } catch (e) {
           toast.error(errorMessage(e));
-        } finally {
-          setSaving(false);
         }
       },
     });
@@ -154,7 +143,7 @@ export default function MenuPermissionMatrixScreen({ menuSeCd }: Props) {
       </div>
 
       <Spin spinning={isFetching}>
-        <div className={styles.matrixWrapper} style={{ maxHeight: 'calc(100vh - 320px)' }}>
+        <div className={`${styles.matrixWrapper} ${styles.matrixScroll}`}>
           <table className={styles.matrix}>
             <thead>
               <tr>
@@ -172,12 +161,10 @@ export default function MenuPermissionMatrixScreen({ menuSeCd }: Props) {
               </tr>
               <tr>
                 {columns.map((column) => (
-                  <th key={roleKey(column)} colSpan={2} style={{ padding: 0 }}>
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
-                      <span style={{ padding: '6px 10px', borderRight: '1px solid #e2e8f0' }}>
-                        {tsg('read', 'Read')}
-                      </span>
-                      <span style={{ padding: '6px 10px' }}>{tsg('write', 'Write')}</span>
+                  <th key={roleKey(column)} colSpan={2} className={styles.cellFlush}>
+                    <div className={styles.matrixSplit}>
+                      <span>{tsg('read', 'Read')}</span>
+                      <span>{tsg('write', 'Write')}</span>
                     </div>
                   </th>
                 ))}
@@ -188,7 +175,10 @@ export default function MenuPermissionMatrixScreen({ menuSeCd }: Props) {
                 <tr key={row.menuCd}>
                   <td className={styles.stickyCode}>{row.menuCd}</td>
                   <td className={styles.stickyName}>
-                    <span style={{ paddingLeft: Math.max(0, row.menuDpth - 1) * 16 }}>
+                    <span
+                      className={styles.treeIndent}
+                      style={{ '--depth': Math.max(0, row.menuDpth - 1) } as CSSProperties}
+                    >
                       {row.menuNmVn ?? row.menuNmEn ?? '-'}
                     </span>
                     {row.useYn === 'N' && <span className={styles.textMuted}> (N)</span>}
@@ -218,7 +208,7 @@ export default function MenuPermissionMatrixScreen({ menuSeCd }: Props) {
               ))}
               {!isFetching && rows.length === 0 && (
                 <tr>
-                  <td colSpan={2 + columns.length * 2} style={{ padding: 40 }}>
+                  <td colSpan={2 + columns.length * 2} className={styles.cellEmpty}>
                     {tvt('noData', 'No data.')}
                   </td>
                 </tr>
@@ -232,7 +222,7 @@ export default function MenuPermissionMatrixScreen({ menuSeCd }: Props) {
         <button
           type="button"
           className={styles.btnDark}
-          disabled={!canWrite || saving || rows.length === 0}
+          disabled={!canWrite || saveMatrix.isPending || rows.length === 0}
           onClick={handleSave}
         >
           {tvb('save', 'Save')}

@@ -2,23 +2,18 @@ import { useState } from 'react';
 import { DatePicker, Descriptions, Input, Modal, Radio, Select, Table } from 'antd';
 import type { TableColumnsType } from 'antd';
 import type { Dayjs } from 'dayjs';
-import { useQueryClient, keepPreviousData } from '@tanstack/react-query';
-import { useApiQuery } from '@/hooks/use-api-query';
 import { useNotify } from '@/hooks/use-notify';
 import { useMenuPermission } from '@/hooks/use-menu-permission';
-import {
-  downloadTradeApplicationsExcel,
-  getTradeApplication,
-  getTradeApplications,
-  receiptTradeApplication,
-  type TradeAppKind,
-  type TradeApplicationItem,
-  type TradeApplicationSearch,
-} from '@/api/trade/trade-api';
-import type { PageResponse } from '@/api/common/api-utils';
+import type { TradeAppKind, TradeApplicationItem, TradeApplicationSearch } from '@/api/trade/trade-api';
 import { SysPageHeader, SysPagination } from '@/features/system/_shared/system-ui';
 import { errorMessage, rowNumber } from '@/features/system/_shared/system-utils';
-import styles from '@/features/system/_shared/system-page.module.css';
+import styles from '@/features/system/_shared/system-page.module.scss';
+import {
+  useDownloadTradeApplicationsExcel,
+  useReceiptTradeApplication,
+  useTradeApplication,
+  useTradeApplications,
+} from './use-trade-applications';
 
 const PAGE_SIZE = 15;
 type DateRange = [Dayjs | null, Dayjs | null] | null;
@@ -26,7 +21,6 @@ type DateRange = [Dayjs | null, Dayjs | null] | null;
 export default function TradeApplicationBoard({ kind, title }: { kind: TradeAppKind; title: string }) {
   const { toast } = useNotify();
   const { canWrite } = useMenuPermission();
-  const queryClient = useQueryClient();
 
   const [period, setPeriod] = useState<DateRange>(null);
   const [sttsCd, setSttsCd] = useState('');
@@ -39,16 +33,10 @@ export default function TradeApplicationBoard({ kind, title }: { kind: TradeAppK
   const [filterCollapsed, setFilterCollapsed] = useState(false);
   const [detailId, setDetailId] = useState<string | null>(null);
 
-  const { data, isFetching } = useApiQuery<PageResponse<TradeApplicationItem>>(
-    ['trade', 'app', kind, applied, page],
-    () => getTradeApplications(kind, applied, page, PAGE_SIZE),
-    { placeholderData: keepPreviousData },
-  );
-  const { data: detail } = useApiQuery<TradeApplicationItem>(
-    ['trade', 'app-detail', kind, detailId],
-    () => getTradeApplication(kind, detailId as string),
-    { enabled: !!detailId },
-  );
+  const { data, isFetching } = useTradeApplications(kind, applied, page, PAGE_SIZE);
+  const { data: detail } = useTradeApplication(kind, detailId);
+  const receiptApplication = useReceiptTradeApplication();
+  const downloadExcel = useDownloadTradeApplicationsExcel();
 
   const rows = data?.content ?? [];
   const total = data?.totalElements ?? 0;
@@ -79,9 +67,8 @@ export default function TradeApplicationBoard({ kind, title }: { kind: TradeAppK
 
   const handleReceipt = async (id: string) => {
     try {
-      await receiptTradeApplication(kind, id);
+      await receiptApplication.mutateAsync({ kind, id });
       toast.success('Received.');
-      void queryClient.invalidateQueries({ queryKey: ['trade', 'app', kind] });
       setDetailId(null);
     } catch (e) {
       toast.error(errorMessage(e));
@@ -117,12 +104,12 @@ export default function TradeApplicationBoard({ kind, title }: { kind: TradeAppK
         <div className={styles.filterCard}>
           <div className={styles.filterGroup}>
             <span className={styles.filterLabel}>Application Period</span>
-            <DatePicker.RangePicker format="DD/MM/YYYY" value={period} onChange={(d) => setPeriod(d as DateRange)} style={{ width: 240 }} />
+            <DatePicker.RangePicker format="DD/MM/YYYY" value={period} onChange={(d) => setPeriod(d as DateRange)} className={styles.w240} />
           </div>
           <div className={styles.filterGroup}>
             <span className={styles.filterLabel}>Status</span>
             <Select
-              style={{ width: 150 }}
+              className={styles.w150}
               value={sttsCd}
               onChange={setSttsCd}
               options={[
@@ -160,7 +147,7 @@ export default function TradeApplicationBoard({ kind, title }: { kind: TradeAppK
       )}
       <div className={styles.summaryRow}>
         <span className={styles.totalCount}>Total ({total})</span>
-        <button type="button" className={`${styles.btn} ${styles.btnSmall}`} onClick={() => void downloadTradeApplicationsExcel(kind, applied as Record<string, unknown>)}>Excel Download</button>
+        <button type="button" className={`${styles.btn} ${styles.btnSmall}`} onClick={() => downloadExcel.mutate({ kind, search: applied })}>Excel Download</button>
       </div>
       <div className={styles.tableWrapper}>
         <Table<TradeApplicationItem> rowKey="srvcAplyId" columns={columns} dataSource={rows} loading={isFetching} pagination={false} size="small" scroll={{ x: 'max-content' }} />

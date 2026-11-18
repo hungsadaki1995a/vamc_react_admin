@@ -1,25 +1,13 @@
 import { useState, type CSSProperties } from 'react';
 import { Input, InputNumber, Modal, Radio, Select, Table } from 'antd';
 import type { TableColumnsType } from 'antd';
-import { useQueryClient, keepPreviousData } from '@tanstack/react-query';
-import { useApiQuery } from '@/hooks/use-api-query';
 import { useNotify } from '@/hooks/use-notify';
 import { useMenuPermission } from '@/hooks/use-menu-permission';
-import {
-  createScreen,
-  deleteScreens,
-  downloadScreensExcel,
-  getProgramOptions,
-  getScreens,
-  updateScreen,
-  type ProgramItem,
-  type ScreenItem,
-  type ScreenSearch,
-} from '@/api/system/program-screen-api';
-import type { PageResponse } from '@/api/common/api-utils';
+import type { ScreenItem, ScreenSearch } from '@/api/system/program-screen-api';
 import { DateTimeCell, FormField, SysPageHeader, SysPagination, UseYnChecks } from '@/features/system/_shared/system-ui';
 import { errorMessage, rowNumber, toUseYnFilter } from '@/features/system/_shared/system-utils';
-import styles from '@/features/system/_shared/system-page.module.css';
+import styles from '@/features/system/_shared/system-page.module.scss';
+import { useDeleteScreens, useDownloadScreensExcel, useProgramOptions, useSaveScreen, useScreens } from './use-screens';
 
 const PAGE_SIZE = 15;
 
@@ -27,7 +15,6 @@ const PAGE_SIZE = 15;
 export default function ScreenManagement() {
   const { toast, dialog } = useNotify();
   const { canWrite } = useMenuPermission();
-  const queryClient = useQueryClient();
 
   const [used, setUsed] = useState(true);
   const [unused, setUnused] = useState(true);
@@ -40,18 +27,14 @@ export default function ScreenManagement() {
   const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
   const [modalItem, setModalItem] = useState<ScreenItem | null | undefined>(undefined);
 
-  const { data, isFetching } = useApiQuery<PageResponse<ScreenItem>>(
-    ['sys', 'screens', applied, page],
-    () => getScreens(applied, page, PAGE_SIZE),
-    { placeholderData: keepPreviousData },
-  );
+  const { data, isFetching } = useScreens(applied, page, PAGE_SIZE);
+  const deleteScreens = useDeleteScreens();
+  const downloadExcel = useDownloadScreensExcel();
   const rows = data?.content ?? [];
   const total = data?.totalElements ?? 0;
 
-  const refresh = () => {
-    setSelectedKeys([]);
-    void queryClient.invalidateQueries({ queryKey: ['sys', 'screens'] });
-  };
+  // The list itself is refetched by the write hooks.
+  const clearSelection = () => setSelectedKeys([]);
 
   const handleSearch = () => {
     setApplied({
@@ -80,9 +63,9 @@ export default function ScreenManagement() {
       content: `Delete ${selectedKeys.length} selected screen(s)?`,
       onOk: async () => {
         try {
-          await deleteScreens(selectedKeys);
+          await deleteScreens.mutateAsync(selectedKeys);
           toast.success('Deleted.');
-          refresh();
+          clearSelection();
         } catch (e) {
           toast.error(errorMessage(e));
         }
@@ -147,7 +130,7 @@ export default function ScreenManagement() {
 
       <div className={styles.summaryRow}>
         <span className={styles.totalCount}>Total ({total})</span>
-        <button type="button" className={`${styles.btn} ${styles.btnSmall}`} onClick={() => void downloadScreensExcel(applied)}>Excel Download</button>
+        <button type="button" className={`${styles.btn} ${styles.btnSmall}`} onClick={() => downloadExcel.mutate(applied)}>Excel Download</button>
       </div>
 
       <div className={styles.tableWrapper}>
@@ -171,7 +154,7 @@ export default function ScreenManagement() {
       </div>
 
       {modalItem !== undefined && (
-        <ScreenModal item={modalItem} canWrite={canWrite} onClose={() => setModalItem(undefined)} onSaved={refresh} />
+        <ScreenModal item={modalItem} canWrite={canWrite} onClose={() => setModalItem(undefined)} onSaved={clearSelection} />
       )}
     </div>
   );
@@ -186,10 +169,8 @@ function ScreenModal({ item, canWrite, onClose, onSaved }: { item: ScreenItem | 
   const [scrnSeq, setScrnSeq] = useState<number>(item?.scrnSeq ?? 1);
   const [useYn, setUseYn] = useState<'Y' | 'N'>(item?.useYn ?? 'Y');
 
-  const { data: programOptions } = useApiQuery<ProgramItem[]>(
-    ['sys', 'program-options'],
-    () => getProgramOptions('Y'),
-  );
+  const { data: programOptions } = useProgramOptions();
+  const saveScreen = useSaveScreen();
 
   const handleSave = async () => {
     if (!scrnId.trim() || !prgrmCd.trim()) {
@@ -204,8 +185,7 @@ function ScreenModal({ item, canWrite, onClose, onSaved }: { item: ScreenItem | 
         scrnSeq,
         useYn,
       };
-      if (isCreate) await createScreen(req);
-      else await updateScreen(item.scrnId, req);
+      await saveScreen.mutateAsync({ scrnId: isCreate ? null : item.scrnId, request: req });
       toast.success('Saved.');
       onSaved();
       onClose();
@@ -226,7 +206,7 @@ function ScreenModal({ item, canWrite, onClose, onSaved }: { item: ScreenItem | 
         <FormField label="Program Code" required>
           <Select
             showSearch
-            style={{ width: '100%' }}
+            className={styles.wFull}
             value={prgrmCd || undefined}
             placeholder="Select program"
             onChange={setPrgrmCd}

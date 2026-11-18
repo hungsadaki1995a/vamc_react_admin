@@ -1,31 +1,27 @@
 import { useMemo, useState } from 'react';
 import { Table } from 'antd';
 import type { TableColumnsType } from 'antd';
-import { useQueryClient } from '@tanstack/react-query';
-import { useApiQuery } from '@/hooks/use-api-query';
 import { useNotify } from '@/hooks/use-notify';
 import { useScreenLabel } from '@/hooks/use-screen-label';
 import { useMenuPermission } from '@/hooks/use-menu-permission';
-import {
-  createRole,
-  createRoleGroup,
-  deleteRole,
-  deleteRoleGroup,
-  getRoleAssignees,
-  getRoleGroups,
-  getRoles,
-  saveRoleAssignees,
-  updateRole,
-  updateRoleGroup,
-} from '@/api/system/role-group-api';
-import type { Role, RoleGroup, RoleUser } from '@/api/system/role-group-api';
+import type { Role } from '@/api/system/role-group-api';
 import type { EmployeeLookup } from '@/api/system/employee-api';
 import { SysPageHeader } from '../_shared/system-ui';
 import { errorMessage } from '../_shared/system-utils';
-import styles from '../_shared/system-page.module.css';
+import styles from '../_shared/system-page.module.scss';
 import CodeNameCard from './code-name-card';
 import type { CodeNameItem } from './code-name-card';
 import SelectEmployeeModal from './select-employee-modal';
+import {
+  useDeleteRole,
+  useDeleteRoleGroup,
+  useRoleAssignees,
+  useRoleGroups,
+  useRoles,
+  useSaveRole,
+  useSaveRoleAssignees,
+  useSaveRoleGroup,
+} from './use-role-groups';
 
 // User Group Management (VPA004601) — User Group → Group Role → Role Assignee.
 // Menu A06020300. Nothing in the role / assignee columns works until its parent is selected.
@@ -39,30 +35,23 @@ interface AssigneeRow {
 
 const GROUP_ID_PATTERN = /^RG\d{5}$/;
 
-export default function SYS030103SC() {
+export default function UserGroupManagement() {
   const { toast, dialog } = useNotify();
   const { tvt, tvb, tvh, tsg, tsm } = useScreenLabel();
   const { canWrite } = useMenuPermission();
-  const queryClient = useQueryClient();
 
   const [groupId, setGroupId] = useState<string | null>(null);
   const [roleId, setRoleId] = useState<string | null>(null);
 
   // ── Data ──────────────────────────────────────────────────────────────────
-  const { data: groups = [], isFetching: groupsLoading } = useApiQuery<RoleGroup[]>(
-    ['sys', 'role-groups'],
-    getRoleGroups,
-  );
-  const { data: roles = [], isFetching: rolesLoading } = useApiQuery<Role[]>(
-    ['sys', 'roles', groupId],
-    () => getRoles(groupId as string),
-    { enabled: groupId !== null },
-  );
-  const { data: assignees = [], isFetching: assigneesLoading } = useApiQuery<RoleUser[]>(
-    ['sys', 'role-assignees', groupId, roleId],
-    () => getRoleAssignees(groupId as string, roleId as string),
-    { enabled: groupId !== null && roleId !== null },
-  );
+  const { data: groups = [], isFetching: groupsLoading } = useRoleGroups();
+  const { data: roles = [], isFetching: rolesLoading } = useRoles(groupId);
+  const { data: assignees = [], isFetching: assigneesLoading } = useRoleAssignees(groupId, roleId);
+  const saveRoleGroup = useSaveRoleGroup();
+  const deleteRoleGroup = useDeleteRoleGroup();
+  const saveRoleItem = useSaveRole();
+  const deleteRole = useDeleteRole();
+  const saveRoleAssignees = useSaveRoleAssignees();
 
   // Newest first, as in the wireframe (No counts down).
   const groupItems = useMemo<CodeNameItem[]>(
@@ -82,7 +71,6 @@ export default function SYS030103SC() {
   const [removed, setRemoved] = useState<string[]>([]);
   const [checked, setChecked] = useState<string[]>([]);
   const [lookupOpen, setLookupOpen] = useState(false);
-  const [savingAssignees, setSavingAssignees] = useState(false);
 
   const resetAssigneeEdits = () => {
     setAdded([]);
@@ -138,14 +126,11 @@ export default function SYS030103SC() {
     }
     const request = { roleGroupId: item.id, roleGroupNm: item.name, useYn: item.useYn };
     const ok = await runWrite(
-      () => (isEdit ? updateRoleGroup(request) : createRoleGroup(request)),
+      () => saveRoleGroup.mutateAsync({ isEdit, request }),
       tsm('saved', 'Saved.'),
     );
-    if (ok) {
-      await queryClient.invalidateQueries({ queryKey: ['sys', 'role-groups'] });
-      // A newly registered group becomes the selection so its roles can be added.
-      if (!isEdit) selectGroup(item);
-    }
+    // A newly registered group becomes the selection so its roles can be added.
+    if (ok && !isEdit) selectGroup(item);
     return ok;
   };
 
@@ -154,9 +139,8 @@ export default function SYS030103SC() {
       okCancel: true,
       content: tsm('confirmDeleteGroup', 'Delete this user group? A group that still has roles cannot be deleted.'),
       onOk: async () => {
-        if (await runWrite(() => deleteRoleGroup(item.id), tsm('deleted', 'Deleted.'))) {
+        if (await runWrite(() => deleteRoleGroup.mutateAsync(item.id), tsm('deleted', 'Deleted.'))) {
           selectGroup(null);
-          void queryClient.invalidateQueries({ queryKey: ['sys', 'role-groups'] });
         }
       },
     });
@@ -171,13 +155,10 @@ export default function SYS030103SC() {
     }
     const request: Role = { roleId: item.id, roleNm: item.name, roleGroupId: groupId, useYn: item.useYn };
     const ok = await runWrite(
-      () => (isEdit ? updateRole(request) : createRole(request)),
+      () => saveRoleItem.mutateAsync({ isEdit, request }),
       tsm('saved', 'Saved.'),
     );
-    if (ok) {
-      await queryClient.invalidateQueries({ queryKey: ['sys', 'roles'] });
-      if (!isEdit) selectRole(item);
-    }
+    if (ok && !isEdit) selectRole(item);
     return ok;
   };
 
@@ -189,9 +170,8 @@ export default function SYS030103SC() {
         'Delete this role? A role that still has assignees or menu permissions cannot be deleted.',
       ),
       onOk: async () => {
-        if (await runWrite(() => deleteRole(item.id), tsm('deleted', 'Deleted.'))) {
+        if (await runWrite(() => deleteRole.mutateAsync(item.id), tsm('deleted', 'Deleted.'))) {
           selectRole(null);
-          void queryClient.invalidateQueries({ queryKey: ['sys', 'roles'] });
         }
       },
     });
@@ -217,21 +197,17 @@ export default function SYS030103SC() {
 
   const handleSaveAssignees = async () => {
     if (groupId === null || roleId === null) return;
-    setSavingAssignees(true);
     try {
-      const response = await saveRoleAssignees(
-        groupId,
+      const response = await saveRoleAssignees.mutateAsync({
+        roleGroupId: groupId,
         roleId,
-        added.map((e) => e.empNo),
-        removed,
-      );
+        addEmpNos: added.map((e) => e.empNo),
+        removeEmpNos: removed,
+      });
       toast.success(response.message || tsm('saved', 'Saved.'));
       resetAssigneeEdits();
-      await queryClient.invalidateQueries({ queryKey: ['sys', 'role-assignees'] });
     } catch (error) {
       toast.error(errorMessage(error));
-    } finally {
-      setSavingAssignees(false);
     }
   };
 
@@ -284,6 +260,7 @@ export default function SYS030103SC() {
           items={groupItems}
           loading={groupsLoading}
           canWrite={canWrite}
+          saving={saveRoleGroup.isPending}
           idMaxLength={7}
           selectedId={groupId}
           onSelect={selectGroup}
@@ -306,6 +283,7 @@ export default function SYS030103SC() {
           loading={rolesLoading}
           disabled={groupId === null}
           canWrite={canWrite}
+          saving={saveRoleItem.isPending}
           idMaxLength={7}
           selectedId={roleId}
           onSelect={selectRole}
@@ -359,7 +337,7 @@ export default function SYS030103SC() {
               <button
                 type="button"
                 className={`${styles.btnDark} ${styles.btnSmall}`}
-                disabled={assigneeLocked || !assigneeDirty || savingAssignees}
+                disabled={assigneeLocked || !assigneeDirty || saveRoleAssignees.isPending}
                 onClick={handleSaveAssignees}
               >
                 {common.save}

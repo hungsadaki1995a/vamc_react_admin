@@ -1,7 +1,9 @@
 import { useQuery, keepPreviousData } from '@tanstack/react-query';
 import type { UseQueryResult } from '@tanstack/react-query';
 
+import { useApiTask } from '@/hooks/use-api-action';
 import {
+  deleteFaqs,
   getFaqs,
   type PostResponse,
   type PageResponsePostResponse,
@@ -13,6 +15,12 @@ import type { FaqItem } from './faq.types';
 // ── Constants ────────────────────────────────────────────────────────────────
 
 export const DEFAULT_FAQ_CATEGORY = 'FAQS';
+
+export const FAQ_KEYS = {
+  all: ['contents', 'faqs'] as const,
+  details: ['faq-detail'] as const,
+  detail: (pstNo?: string) => ['faq-detail', pstNo] as const,
+};
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -146,7 +154,7 @@ export function useFaqs(
   const { pageRequest, cond } = buildFaqQueryParams(params);
 
   const queryResult = useQuery<UseFaqsResult, Error>({
-    queryKey: ['contents', 'faqs', pageRequest, cond],
+    queryKey: [...FAQ_KEYS.all, pageRequest, cond],
     queryFn: async (): Promise<UseFaqsResult> => {
       // Errors surface to the caller — no mock fallback, so an API failure is visible.
       const response = await getFaqs({
@@ -187,3 +195,12 @@ export function useFaqs(
   };
 }
 
+
+// ── Custom Hook: useDeleteFaqs ───────────────────────────────────────────────
+
+/** Deletes the given FAQs (pstNos) and refreshes the list. */
+export function useDeleteFaqs() {
+  return useApiTask((pstNos: string[]) => deleteFaqs({ body: { pstNos }, throwOnError: true }), {
+    invalidate: [FAQ_KEYS.all],
+  });
+}

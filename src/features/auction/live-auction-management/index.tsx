@@ -1,21 +1,14 @@
 import { useState } from 'react';
 import { Descriptions, Input, Modal, Table } from 'antd';
 import type { TableColumnsType } from 'antd';
-import { useQueryClient, keepPreviousData } from '@tanstack/react-query';
-import { useApiQuery } from '@/hooks/use-api-query';
 import { useNotify } from '@/hooks/use-notify';
 import { useMenuPermission } from '@/hooks/use-menu-permission';
-import {
-  closeLiveAuction,
-  getLiveAuction,
-  getLiveAuctions,
-  startLiveAuction,
-  type LiveAuctionItem,
-} from '@/api/auction/auction-api';
-import type { PageResponse } from '@/api/common/api-utils';
+import type { LiveAuctionItem } from '@/api/auction/auction-api';
 import { DateTimeCell, SysPageHeader, SysPagination } from '@/features/system/_shared/system-ui';
 import { errorMessage, rowNumber } from '@/features/system/_shared/system-utils';
-import styles from '@/features/system/_shared/system-page.module.css';
+import styles from '@/features/system/_shared/system-page.module.scss';
+import { useCloseLiveAuction, useLiveAuction, useLiveAuctions, useStartLiveAuction } from './use-live-auctions';
+import type { LiveAuctionSearch } from './use-live-auctions';
 
 const PAGE_SIZE = 15;
 
@@ -23,23 +16,16 @@ const PAGE_SIZE = 15;
 export default function LiveAuctionManagement() {
   const { toast, dialog } = useNotify();
   const { canWrite } = useMenuPermission();
-  const queryClient = useQueryClient();
 
   const [keyword, setKeyword] = useState('');
-  const [applied, setApplied] = useState<{ keyword?: string }>({});
+  const [applied, setApplied] = useState<LiveAuctionSearch>({});
   const [page, setPage] = useState(1);
   const [detailId, setDetailId] = useState<string | null>(null);
 
-  const { data, isFetching } = useApiQuery<PageResponse<LiveAuctionItem>>(
-    ['auction', 'live', applied, page],
-    () => getLiveAuctions(applied, page, PAGE_SIZE),
-    { placeholderData: keepPreviousData },
-  );
-  const { data: detail } = useApiQuery<LiveAuctionItem>(
-    ['auction', 'live-detail', detailId],
-    () => getLiveAuction(detailId as string),
-    { enabled: !!detailId },
-  );
+  const { data, isFetching } = useLiveAuctions(applied, page, PAGE_SIZE);
+  const { data: detail } = useLiveAuction(detailId);
+  const startLiveAuction = useStartLiveAuction();
+  const closeLiveAuction = useCloseLiveAuction();
 
   const rows = data?.content ?? [];
   const total = data?.totalElements ?? 0;
@@ -50,10 +36,9 @@ export default function LiveAuctionManagement() {
       content: `${action === 'start' ? 'Start' : 'Close'} live auction ${auctnNo}?`,
       onOk: async () => {
         try {
-          if (action === 'start') await startLiveAuction(auctnNo);
-          else await closeLiveAuction(auctnNo);
+          if (action === 'start') await startLiveAuction.mutateAsync(auctnNo);
+          else await closeLiveAuction.mutateAsync(auctnNo);
           toast.success('Updated.');
-          void queryClient.invalidateQueries({ queryKey: ['auction', 'live'] });
           setDetailId(null);
         } catch (e) {
           toast.error(errorMessage(e));

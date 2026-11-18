@@ -2,22 +2,15 @@ import { useState } from 'react';
 import { DatePicker, Input, Table } from 'antd';
 import type { TableColumnsType } from 'antd';
 import type { Dayjs } from 'dayjs';
-import { useQueryClient, keepPreviousData } from '@tanstack/react-query';
-import { useApiQuery } from '@/hooks/use-api-query';
 import { useNotify } from '@/hooks/use-notify';
 import { useMenuPermission } from '@/hooks/use-menu-permission';
-import {
-  changeSloganUse,
-  deleteSlogans,
-  getSlogans,
-} from '@/api/contents/site-display-api';
 import type { SiteDisplaySearch } from '@/api/contents/site-display-api';
 import type { Post } from '@/api/contents/post-api';
-import type { PageResponse } from '@/api/common/api-utils';
 import { DateTimeCell, SysPageHeader, SysPagination, UseYnChecks } from '@/features/system/_shared/system-ui';
 import { errorMessage, rowNumber, toUseYnFilter } from '@/features/system/_shared/system-utils';
-import styles from '@/features/system/_shared/system-page.module.css';
+import styles from '@/features/system/_shared/system-page.module.scss';
 import SloganModal from './slogan-modal';
+import { useChangeSloganUse, useDeleteSlogans, useSlogans } from './use-slogans';
 
 // Slogan Management - List (menu A04110300).
 
@@ -39,7 +32,6 @@ const EMPTY_FILTER: FilterState = { used: true, unused: true, tag: '', keyword: 
 export default function SloganManagement() {
   const { toast, dialog } = useNotify();
   const { canWrite } = useMenuPermission();
-  const queryClient = useQueryClient();
 
   const [filter, setFilter] = useState<FilterState>(EMPTY_FILTER);
   const [applied, setApplied] = useState<SiteDisplaySearch>({});
@@ -49,18 +41,11 @@ export default function SloganManagement() {
   /** undefined = closed, null = register, string = view/edit that slogan. */
   const [modalSloganId, setModalSloganId] = useState<string | null | undefined>(undefined);
 
-  const { data, isFetching, error } = useApiQuery<PageResponse<Post>>(
-    ['contents', 'slogans', applied, page],
-    () => getSlogans(applied, page, PAGE_SIZE),
-    { placeholderData: keepPreviousData },
-  );
+  const { data, isFetching, error } = useSlogans(applied, page, PAGE_SIZE);
+  const changeSloganUse = useChangeSloganUse();
+  const deleteSlogans = useDeleteSlogans();
   const rows = data?.content ?? [];
   const total = data?.totalElements ?? 0;
-
-  const refresh = () => {
-    setSelectedKeys([]);
-    void queryClient.invalidateQueries({ queryKey: ['contents', 'slogans'] });
-  };
 
   const handleSearch = () => {
     setApplied({
@@ -87,9 +72,9 @@ export default function SloganManagement() {
       return;
     }
     try {
-      const response = await changeSloganUse(selectedKeys, useYn);
+      const response = await changeSloganUse.mutateAsync({ ids: selectedKeys, useYn });
       toast.success(response.message || 'Updated.');
-      refresh();
+      setSelectedKeys([]);
     } catch (e) {
       toast.error(errorMessage(e));
     }
@@ -105,9 +90,9 @@ export default function SloganManagement() {
       content: `Delete the ${selectedKeys.length} selected slogan(s)?`,
       onOk: async () => {
         try {
-          const response = await deleteSlogans(selectedKeys);
+          const response = await deleteSlogans.mutateAsync(selectedKeys);
           toast.success(response.message || 'Deleted.');
-          refresh();
+          setSelectedKeys([]);
         } catch (e) {
           toast.error(errorMessage(e));
         }
@@ -213,7 +198,7 @@ export default function SloganManagement() {
               placeholder={['dd/mm/yyyy', 'dd/mm/yyyy']}
               value={filter.period}
               onChange={(dates) => setFilter((f) => ({ ...f, period: dates as DateRange }))}
-              style={{ width: 250 }}
+              className={styles.w250}
             />
           </div>
         </div>
@@ -263,7 +248,7 @@ export default function SloganManagement() {
           sloganId={modalSloganId}
           canWrite={canWrite}
           onClose={() => setModalSloganId(undefined)}
-          onSaved={refresh}
+          onSaved={() => setSelectedKeys([])}
         />
       )}
     </div>

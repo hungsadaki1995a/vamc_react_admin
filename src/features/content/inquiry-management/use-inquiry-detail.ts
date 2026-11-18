@@ -1,5 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
-import { getInquiry, type InquiryDetailResponse } from '@/api/contents/inquiry-api';
+import { useApiTask } from '@/hooks/use-api-action';
+import { answerInquiry, getInquiry, type InquiryDetailResponse } from '@/api/contents/inquiry-api';
+import { INQUIRY_KEYS } from './use-inquiries';
 
 export interface UseInquiryDetailOptions {
   enabled?: boolean;
@@ -7,7 +9,7 @@ export interface UseInquiryDetailOptions {
 
 export function useInquiryDetail(pstNo?: string, options?: UseInquiryDetailOptions) {
   return useQuery<InquiryDetailResponse | null>({
-    queryKey: ['inquiry-detail', pstNo],
+    queryKey: INQUIRY_KEYS.detail(pstNo),
     queryFn: async () => {
       if (!pstNo) return null;
       const res = await getInquiry({ path: { pstNo }, throwOnError: true });
@@ -18,3 +20,16 @@ export function useInquiryDetail(pstNo?: string, options?: UseInquiryDetailOptio
   });
 }
 
+export interface AnswerInquiryVariables {
+  pstNo: string;
+  answer: string;
+}
+
+/** PUT /api/v1/contents/inquiries/{pstNo}/answer — a rejected call must not look like success. */
+export function useAnswerInquiry() {
+  return useApiTask(
+    ({ pstNo, answer }: AnswerInquiryVariables) =>
+      answerInquiry({ path: { pstNo }, body: { answer }, throwOnError: true }),
+    { invalidate: [INQUIRY_KEYS.all, INQUIRY_KEYS.details] },
+  );
+}

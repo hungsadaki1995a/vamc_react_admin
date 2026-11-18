@@ -2,17 +2,12 @@ import { useState } from 'react';
 import { DatePicker, Input, Select, Table } from 'antd';
 import type { TableColumnsType } from 'antd';
 import type { Dayjs } from 'dayjs';
-import { keepPreviousData } from '@tanstack/react-query';
-import { useApiQuery } from '@/hooks/use-api-query';
-import {
-  downloadNotificationHistoriesExcel,
-  getNotificationHistories,
-  type NotificationHistoryItem,
-} from '@/api/system/system-operations-api';
-import type { PageResponse } from '@/api/common/api-utils';
+import type { NotificationHistoryItem } from '@/api/system/system-operations-api';
 import { DateTimeCell, SysPageHeader, SysPagination } from '@/features/system/_shared/system-ui';
 import { rowNumber } from '@/features/system/_shared/system-utils';
-import styles from '@/features/system/_shared/system-page.module.css';
+import styles from '@/features/system/_shared/system-page.module.scss';
+import { useDownloadNotificationHistoriesExcel, useNotificationHistories } from './use-notification-histories';
+import type { NotificationHistorySearch } from './use-notification-histories';
 
 const PAGE_SIZE = 15;
 type DateRange = [Dayjs | null, Dayjs | null] | null;
@@ -23,15 +18,12 @@ export default function NotificationHistoryManagement() {
   const [notiMediaSe, setNotiMediaSe] = useState('');
   const [sndngScsYn, setSndngScsYn] = useState('');
   const [keyword, setKeyword] = useState('');
-  const [applied, setApplied] = useState<{ fromDt?: string; toDt?: string; notiMediaSe?: string; sndngScsYn?: string; keyword?: string }>({});
+  const [applied, setApplied] = useState<NotificationHistorySearch>({});
   const [page, setPage] = useState(1);
   const [filterCollapsed, setFilterCollapsed] = useState(false);
 
-  const { data, isFetching } = useApiQuery<PageResponse<NotificationHistoryItem>>(
-    ['sys', 'noti-histories', applied, page],
-    () => getNotificationHistories(applied, page, PAGE_SIZE),
-    { placeholderData: keepPreviousData },
-  );
+  const { data, isFetching } = useNotificationHistories(applied, page, PAGE_SIZE);
+  const downloadExcel = useDownloadNotificationHistoriesExcel();
   const rows = data?.content ?? [];
   const total = data?.totalElements ?? 0;
 
@@ -86,15 +78,15 @@ export default function NotificationHistoryManagement() {
         <div className={styles.filterCard}>
           <div className={styles.filterGroup}>
             <span className={styles.filterLabel}>Period</span>
-            <DatePicker.RangePicker format="DD/MM/YYYY" value={period} onChange={(d) => setPeriod(d as DateRange)} style={{ width: 240 }} />
+            <DatePicker.RangePicker format="DD/MM/YYYY" value={period} onChange={(d) => setPeriod(d as DateRange)} className={styles.w240} />
           </div>
           <div className={styles.filterGroup}>
             <span className={styles.filterLabel}>Media</span>
-            <Select style={{ width: 130 }} value={notiMediaSe} onChange={setNotiMediaSe} options={[{ value: '', label: 'All' }, { value: 'EMAIL', label: 'EMAIL' }, { value: 'SMS', label: 'SMS' }, { value: 'PUSH', label: 'PUSH' }]} />
+            <Select className={styles.w130} value={notiMediaSe} onChange={setNotiMediaSe} options={[{ value: '', label: 'All' }, { value: 'EMAIL', label: 'EMAIL' }, { value: 'SMS', label: 'SMS' }, { value: 'PUSH', label: 'PUSH' }]} />
           </div>
           <div className={styles.filterGroup}>
             <span className={styles.filterLabel}>Result</span>
-            <Select style={{ width: 130 }} value={sndngScsYn} onChange={setSndngScsYn} options={[{ value: '', label: 'All' }, { value: 'Y', label: 'Success' }, { value: 'N', label: 'Failed' }]} />
+            <Select className={styles.w130} value={sndngScsYn} onChange={setSndngScsYn} options={[{ value: '', label: 'All' }, { value: 'Y', label: 'Success' }, { value: 'N', label: 'Failed' }]} />
           </div>
           <div className={styles.filterGroup}>
             <span className={styles.filterLabel}>Keyword</span>
@@ -105,7 +97,7 @@ export default function NotificationHistoryManagement() {
 
       <div className={styles.summaryRow}>
         <span className={styles.totalCount}>Total ({total})</span>
-        <button type="button" className={`${styles.btn} ${styles.btnSmall}`} onClick={() => void downloadNotificationHistoriesExcel(applied)}>
+        <button type="button" className={`${styles.btn} ${styles.btnSmall}`} onClick={() => downloadExcel.mutate(applied)}>
           Excel Download
         </button>
       </div>

@@ -1,22 +1,16 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import type { CSSProperties } from 'react';
 import { Input, Modal, Select, Spin } from 'antd';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
-import { useQueryClient } from '@tanstack/react-query';
-import { useApiQuery } from '@/hooks/use-api-query';
 import { useNotify } from '@/hooks/use-notify';
 import { useScreenLabel } from '@/hooks/use-screen-label';
-import {
-  createEmployee,
-  getEmployee,
-  resetEmployeePassword,
-  updateEmployee,
-} from '@/api/system/employee-api';
 import type { EmployeeDetail, EmpStatus, UpdateEmployeeRequest } from '@/api/system/employee-api';
 import { FormField } from '../_shared/system-ui';
 import { errorMessage } from '../_shared/system-utils';
-import styles from '../_shared/system-page.module.css';
+import styles from '../_shared/system-page.module.scss';
 import { EMP_STATUS_CODES, EMP_STATUS_FALLBACK } from './user-constants';
+import { useEmployee, useResetEmployeePassword, useSaveEmployee } from './use-employees';
 
 dayjs.extend(customParseFormat);
 
@@ -53,6 +47,19 @@ const NEW_FORM: FormState = {
   password: '',
 };
 
+function toForm(detail: EmployeeDetail): FormState {
+  return {
+    empSttsCd: detail.empSttsCd,
+    empNo: detail.empNo,
+    empNm: detail.empNm ?? '',
+    empEmlAddr: detail.empEmlAddr ?? '',
+    empTelno: detail.empTelno ?? '',
+    empMoblTelno: detail.empMoblTelno ?? '',
+    jbpsNm: detail.jbpsNm ?? '',
+    password: '',
+  };
+}
+
 const EMP_NO_PATTERN = /^[a-zA-Z0-9_-]{3,10}$/;
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -60,31 +67,20 @@ export default function UserModal({ empNo, canWrite, onClose, onSaved }: UserMod
   const isCreate = empNo === null;
   const { toast, dialog } = useNotify();
   const { tvt, tvb, tvh, tsm } = useScreenLabel();
-  const queryClient = useQueryClient();
 
   // The list row is masked; the edit form must start from the unmasked detail.
-  const { data: detail, isFetching } = useApiQuery<EmployeeDetail>(
-    ['sys', 'employees', 'detail', empNo],
-    () => getEmployee(empNo as string),
-    { enabled: !isCreate, gcTime: 0 },
-  );
+  const { data: detail, isFetching } = useEmployee(empNo);
+  const saveEmployee = useSaveEmployee();
+  const resetPassword = useResetEmployeePassword();
 
   const [form, setForm] = useState<FormState>(NEW_FORM);
-  const [saving, setSaving] = useState(false);
 
-  useEffect(() => {
-    if (!detail) return;
-    setForm({
-      empSttsCd: detail.empSttsCd,
-      empNo: detail.empNo,
-      empNm: detail.empNm ?? '',
-      empEmlAddr: detail.empEmlAddr ?? '',
-      empTelno: detail.empTelno ?? '',
-      empMoblTelno: detail.empMoblTelno ?? '',
-      jbpsNm: detail.jbpsNm ?? '',
-      password: '',
-    });
-  }, [detail]);
+  // Fill the form when the detail arrives — adjusted during render, not in an effect.
+  const [loadedDetail, setLoadedDetail] = useState<EmployeeDetail | undefined>(undefined);
+  if (detail && detail !== loadedDetail) {
+    setLoadedDetail(detail);
+    setForm(toForm(detail));
+  }
 
   const patch = (values: Partial<FormState>) => setForm((prev) => ({ ...prev, ...values }));
   const disabled = !canWrite;
@@ -123,18 +119,17 @@ export default function UserModal({ empNo, canWrite, onClose, onSaved }: UserMod
       empSttsCd: form.empSttsCd,
       jbpsNm: form.jbpsNm.trim() || undefined,
     };
-    setSaving(true);
     try {
-      const response = isCreate
-        ? await createEmployee({ ...profile, empNo: form.empNo.trim(), password: form.password })
-        : await updateEmployee(empNo as string, profile);
+      const response = await saveEmployee.mutateAsync(
+        empNo === null
+          ? { empNo, request: { ...profile, empNo: form.empNo.trim(), password: form.password } }
+          : { empNo, request: profile },
+      );
       toast.success(response.message || tsm('saved', 'Saved.'));
       onSaved();
       onClose();
     } catch (error) {
       toast.error(errorMessage(error));
-    } finally {
-      setSaving(false);
     }
   };
 
@@ -151,10 +146,12 @@ export default function UserModal({ empNo, canWrite, onClose, onSaved }: UserMod
       ),
       onOk: async () => {
         try {
-          const response = await resetEmployeePassword(empNo as string, form.password);
+          const response = await resetPassword.mutateAsync({
+            empNo: empNo as string,
+            newPassword: form.password,
+          });
           toast.success(response.message || tsm('passwordReset', 'The password has been reset.'));
           patch({ password: '' });
-          await queryClient.invalidateQueries({ queryKey: ['sys', 'employees'] });
         } catch (error) {
           toast.error(errorMessage(error));
         }
@@ -178,7 +175,7 @@ export default function UserModal({ empNo, canWrite, onClose, onSaved }: UserMod
           <button
             type="button"
             className={styles.btnDark}
-            disabled={disabled || saving || isFetching}
+            disabled={disabled || saveEmployee.isPending || isFetching}
             onClick={handleConfirm}
           >
             {tvb('confirm', 'Confirm')}
@@ -188,10 +185,10 @@ export default function UserModal({ empNo, canWrite, onClose, onSaved }: UserMod
     >
       <Spin spinning={isFetching}>
         <div className={styles.modalSectionTitle}>{tvh('employeeInfo', 'Employee Information')}</div>
-        <div className={styles.formGrid} style={{ ['--form-cols' as string]: 3 }}>
+        <div className={styles.formGrid} style={{ '--form-cols': 3 } as CSSProperties}>
           <FormField label={tvt('status', 'Employment Status')} required>
             <Select
-              style={{ width: '100%' }}
+              className={styles.wFull}
               value={form.empSttsCd}
               disabled={disabled}
               onChange={(empSttsCd) => patch({ empSttsCd })}
@@ -254,7 +251,7 @@ export default function UserModal({ empNo, canWrite, onClose, onSaved }: UserMod
           <FormField label={tvt('passwordMgmt', 'Password Management')} required={isCreate} span="full">
             <span className={styles.filterLabel}>{tvt('initialPw', 'Initial PW')}</span>
             <Input.Password
-              style={{ width: 180, flexShrink: 0 }}
+              className={`${styles.w180} ${styles.noShrink}`}
               value={form.password}
               maxLength={50}
               autoComplete="new-password"
@@ -264,7 +261,7 @@ export default function UserModal({ empNo, canWrite, onClose, onSaved }: UserMod
             {!isCreate && (
               <>
                 <span className={styles.filterLabel}>{tvt('pwFailed', 'PW Failed')}</span>
-                <Input style={{ width: 56, flexShrink: 0 }} value={detail?.pswdFailNmtm ?? 0} disabled />
+                <Input className={`${styles.w56} ${styles.noShrink}`} value={detail?.pswdFailNmtm ?? 0} disabled />
                 <button
                   type="button"
                   className={`${styles.btn} ${styles.btnSmall}`}
@@ -274,7 +271,7 @@ export default function UserModal({ empNo, canWrite, onClose, onSaved }: UserMod
                   {tvb('resetPw', 'Reset')}
                 </button>
                 <span className={styles.filterLabel}>{tvt('pwChanged', 'PW Changed')}</span>
-                <Input style={{ width: 110, flexShrink: 0 }} value={passwordChanged} disabled />
+                <Input className={`${styles.w110} ${styles.noShrink}`} value={passwordChanged} disabled />
               </>
             )}
           </FormField>

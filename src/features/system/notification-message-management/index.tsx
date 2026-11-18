@@ -2,22 +2,19 @@ import { useState, type CSSProperties } from 'react';
 import { DatePicker, Input, Modal, Radio, Select, Table } from 'antd';
 import type { TableColumnsType } from 'antd';
 import type { Dayjs } from 'dayjs';
-import { useQueryClient, keepPreviousData } from '@tanstack/react-query';
-import { useApiQuery } from '@/hooks/use-api-query';
 import { useNotify } from '@/hooks/use-notify';
 import { useMenuPermission } from '@/hooks/use-menu-permission';
-import {
-  createNotificationMessage,
-  deleteNotificationMessages,
-  getNotificationMessages,
-  toggleNotificationMessageUse,
-  updateNotificationMessage,
-  type NotificationMessageItem,
-} from '@/api/system/system-operations-api';
-import type { PageResponse } from '@/api/common/api-utils';
+import type { NotificationMessageItem } from '@/api/system/system-operations-api';
 import { DateTimeCell, FormField, SysPageHeader, SysPagination } from '@/features/system/_shared/system-ui';
 import { errorMessage, rowNumber } from '@/features/system/_shared/system-utils';
-import styles from '@/features/system/_shared/system-page.module.css';
+import styles from '@/features/system/_shared/system-page.module.scss';
+import {
+  useDeleteNotificationMessages,
+  useNotificationMessages,
+  useSaveNotificationMessage,
+  useToggleNotificationMessageUse,
+} from './use-notification-messages';
+import type { NotificationMessageSearch } from './use-notification-messages';
 
 const PAGE_SIZE = 15;
 type DateRange = [Dayjs | null, Dayjs | null] | null;
@@ -26,29 +23,24 @@ type DateRange = [Dayjs | null, Dayjs | null] | null;
 export default function NotificationMessageManagement() {
   const { toast, dialog } = useNotify();
   const { canWrite } = useMenuPermission();
-  const queryClient = useQueryClient();
 
   const [period, setPeriod] = useState<DateRange>(null);
   const [prcsSttsCd, setPrcsSttsCd] = useState('');
   const [notiTtl, setNotiTtl] = useState('');
-  const [applied, setApplied] = useState<{ crtFromDt?: string; crtToDt?: string; prcsSttsCd?: string; notiTtl?: string }>({});
+  const [applied, setApplied] = useState<NotificationMessageSearch>({});
   const [page, setPage] = useState(1);
   const [filterCollapsed, setFilterCollapsed] = useState(false);
   const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
   const [modalItem, setModalItem] = useState<NotificationMessageItem | null | undefined>(undefined);
 
-  const { data, isFetching } = useApiQuery<PageResponse<NotificationMessageItem>>(
-    ['sys', 'noti-messages', applied, page],
-    () => getNotificationMessages(applied, page, PAGE_SIZE),
-    { placeholderData: keepPreviousData },
-  );
+  const { data, isFetching } = useNotificationMessages(applied, page, PAGE_SIZE);
+  const deleteMessages = useDeleteNotificationMessages();
+  const toggleUse = useToggleNotificationMessageUse();
   const rows = data?.content ?? [];
   const total = data?.totalElements ?? 0;
 
-  const refresh = () => {
-    setSelectedKeys([]);
-    void queryClient.invalidateQueries({ queryKey: ['sys', 'noti-messages'] });
-  };
+  // The list itself is refetched by the write hooks.
+  const clearSelection = () => setSelectedKeys([]);
 
   const handleSearch = () => {
     setApplied({
@@ -75,9 +67,9 @@ export default function NotificationMessageManagement() {
       content: `Delete ${selectedKeys.length} selected message(s)?`,
       onOk: async () => {
         try {
-          await deleteNotificationMessages(selectedKeys);
+          await deleteMessages.mutateAsync(selectedKeys);
           toast.success('Deleted.');
-          refresh();
+          clearSelection();
         } catch (e) {
           toast.error(errorMessage(e));
         }
@@ -95,7 +87,10 @@ export default function NotificationMessageManagement() {
       render: (v: string, row) => (
         <a
           className={v === 'Y' ? styles.useY : styles.useN}
-          onClick={() => canWrite && void toggleNotificationMessageUse(row.notiMsgId, v === 'Y' ? 'N' : 'Y').then(refresh)}
+          onClick={() =>
+            canWrite &&
+            toggleUse.mutate({ notiMsgId: row.notiMsgId, useYn: v === 'Y' ? 'N' : 'Y' }, { onSuccess: clearSelection })
+          }
         >
           {v === 'Y' ? 'Used' : 'Unused'}
         </a>
@@ -129,12 +124,12 @@ export default function NotificationMessageManagement() {
         <div className={styles.filterCard}>
           <div className={styles.filterGroup}>
             <span className={styles.filterLabel}>Registration Period</span>
-            <DatePicker.RangePicker format="DD/MM/YYYY" value={period} onChange={(d) => setPeriod(d as DateRange)} style={{ width: 240 }} />
+            <DatePicker.RangePicker format="DD/MM/YYYY" value={period} onChange={(d) => setPeriod(d as DateRange)} className={styles.w240} />
           </div>
           <div className={styles.filterGroup}>
             <span className={styles.filterLabel}>Processing Type</span>
             <Select
-              style={{ width: 150 }}
+              className={styles.w150}
               value={prcsSttsCd}
               onChange={setPrcsSttsCd}
               options={[
@@ -176,7 +171,7 @@ export default function NotificationMessageManagement() {
       </div>
 
       {modalItem !== undefined && (
-        <NotiMessageModal item={modalItem} canWrite={canWrite} onClose={() => setModalItem(undefined)} onSaved={refresh} />
+        <NotiMessageModal item={modalItem} canWrite={canWrite} onClose={() => setModalItem(undefined)} onSaved={clearSelection} />
       )}
     </div>
   );
@@ -190,13 +185,13 @@ function NotiMessageModal({ item, canWrite, onClose, onSaved }: { item: Notifica
   const [notiTtl, setNotiTtl] = useState(item?.notiTtl ?? '');
   const [notiCn, setNotiCn] = useState(item?.notiCn ?? '');
   const [useYn, setUseYn] = useState<'Y' | 'N'>(item?.useYn ?? 'Y');
+  const saveMessage = useSaveNotificationMessage();
 
   const handleSave = async () => {
     if (!notiTtl.trim() || !notiCn.trim()) { toast.warning('Enter title and content.'); return; }
     try {
       const req = { notiMediaSe, langCd, notiTtl: notiTtl.trim(), notiCn: notiCn.trim(), useYn };
-      if (isCreate) await createNotificationMessage(req);
-      else await updateNotificationMessage(item.notiMsgId, req);
+      await saveMessage.mutateAsync({ notiMsgId: isCreate ? null : item.notiMsgId, request: req });
       toast.success('Saved.');
       onSaved();
       onClose();
@@ -214,10 +209,10 @@ function NotiMessageModal({ item, canWrite, onClose, onSaved }: { item: Notifica
     }>
       <div className={styles.formGrid} style={{ '--form-cols': 2 } as CSSProperties}>
         <FormField label="Media" required>
-          <Select style={{ width: '100%' }} value={notiMediaSe} onChange={setNotiMediaSe} options={[{ value: 'EMAIL', label: 'EMAIL' }, { value: 'SMS', label: 'SMS' }, { value: 'PUSH', label: 'PUSH' }]} />
+          <Select className={styles.wFull} value={notiMediaSe} onChange={setNotiMediaSe} options={[{ value: 'EMAIL', label: 'EMAIL' }, { value: 'SMS', label: 'SMS' }, { value: 'PUSH', label: 'PUSH' }]} />
         </FormField>
         <FormField label="Language" required>
-          <Select style={{ width: '100%' }} value={langCd} onChange={setLangCd} options={[{ value: 'VN', label: 'VN' }, { value: 'EN', label: 'EN' }]} />
+          <Select className={styles.wFull} value={langCd} onChange={setLangCd} options={[{ value: 'VN', label: 'VN' }, { value: 'EN', label: 'EN' }]} />
         </FormField>
         <FormField label="Use" span="full">
           <Radio.Group value={useYn} onChange={(e) => setUseYn(e.target.value)}><Radio value="Y">Y</Radio><Radio value="N">N</Radio></Radio.Group>

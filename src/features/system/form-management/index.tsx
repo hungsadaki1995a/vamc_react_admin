@@ -2,18 +2,15 @@ import { useState } from 'react';
 import { Alert, DatePicker, Input, Select, Table } from 'antd';
 import type { TableColumnsType } from 'antd';
 import type { Dayjs } from 'dayjs';
-import { useQueryClient, keepPreviousData } from '@tanstack/react-query';
-import { useApiQuery } from '@/hooks/use-api-query';
 import { useNotify } from '@/hooks/use-notify';
 import { useScreenLabel } from '@/hooks/use-screen-label';
 import { useMenuPermission } from '@/hooks/use-menu-permission';
-import { deleteForms, getForms } from '@/api/system/form-api';
 import type { FormItem, FormLang, FormSearch } from '@/api/system/form-api';
-import type { PageResponse } from '@/api/common/api-utils';
 import { DateTimeCell, SysPageHeader, SysPagination, UseFlag, UseYnChecks } from '../_shared/system-ui';
 import { errorMessage, rowNumber, toUseYnFilter } from '../_shared/system-utils';
-import styles from '../_shared/system-page.module.css';
+import styles from '../_shared/system-page.module.scss';
 import FormModal from './form-modal';
+import { useDeleteForms, useForms } from './use-forms';
 
 // Form Management - List (VPA004001), menu A06010200.
 // ⚠️ The admin backend has no Form Management API yet — see `@/api/sys/form-api`.
@@ -34,11 +31,10 @@ interface FilterState {
 const EMPTY_FILTER: FilterState = { period: null, used: true, unused: true, langCd: '', formNm: '' };
 const rowKeyOf = (form: Pick<FormItem, 'formNo' | 'langCd'>) => `${form.formNo}|${form.langCd}`;
 
-export default function SYS020102SC() {
+export default function FormManagement() {
   const { toast, dialog } = useNotify();
   const { tvt, tvb, tvh, tsg, tsm } = useScreenLabel();
   const { canWrite } = useMenuPermission();
-  const queryClient = useQueryClient();
 
   const [filter, setFilter] = useState<FilterState>(EMPTY_FILTER);
   const [applied, setApplied] = useState<FormSearch>({});
@@ -48,18 +44,10 @@ export default function SYS020102SC() {
   /** undefined = closed, null = register, FormItem = edit. */
   const [modalForm, setModalForm] = useState<FormItem | null | undefined>(undefined);
 
-  const { data, isFetching, error } = useApiQuery<PageResponse<FormItem>>(
-    ['sys', 'forms', applied, page],
-    () => getForms(applied, page, PAGE_SIZE),
-    { placeholderData: keepPreviousData, retry: false },
-  );
+  const { data, isFetching, error } = useForms(applied, page, PAGE_SIZE);
+  const deleteForms = useDeleteForms();
   const forms = data?.content ?? [];
   const total = data?.totalElements ?? 0;
-
-  const refresh = () => {
-    setSelectedKeys([]);
-    void queryClient.invalidateQueries({ queryKey: ['sys', 'forms'] });
-  };
 
   const handleSearch = () => {
     setApplied({
@@ -94,9 +82,9 @@ export default function SYS020102SC() {
             const [formNo, langCd] = key.split('|');
             return { formNo, langCd: langCd as FormLang };
           });
-          const response = await deleteForms(items);
+          const response = await deleteForms.mutateAsync(items);
           toast.success(response.message || tsm('deleted', 'Deleted.'));
-          refresh();
+          setSelectedKeys([]);
         } catch (e) {
           toast.error(errorMessage(e));
         }
@@ -201,7 +189,7 @@ export default function SYS020102SC() {
               placeholder={['dd/mm/yyyy', 'dd/mm/yyyy']}
               value={filter.period}
               onChange={(dates) => setFilter((f) => ({ ...f, period: dates as DateRange }))}
-              style={{ width: 250 }}
+              className={styles.w250}
             />
           </div>
           <div className={styles.filterGroup}>
@@ -218,7 +206,7 @@ export default function SYS020102SC() {
           <div className={styles.filterGroup}>
             <span className={styles.filterLabel}>{tvt('language', 'Select Language')}</span>
             <Select
-              style={{ width: 160 }}
+              className={styles.w160}
               value={filter.langCd}
               onChange={(langCd) => setFilter((f) => ({ ...f, langCd }))}
               options={[
@@ -274,7 +262,7 @@ export default function SYS020102SC() {
       </div>
 
       {modalForm !== undefined && (
-        <FormModal form={modalForm} canWrite={canWrite} onClose={() => setModalForm(undefined)} onSaved={refresh} />
+        <FormModal form={modalForm} canWrite={canWrite} onClose={() => setModalForm(undefined)} onSaved={() => setSelectedKeys([])} />
       )}
     </div>
   );

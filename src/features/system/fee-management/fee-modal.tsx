@@ -1,13 +1,14 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import type { CSSProperties } from 'react';
 import { Input, InputNumber, Modal, Radio, Select, Spin } from 'antd';
-import { useApiQuery } from '@/hooks/use-api-query';
 import { useNotify } from '@/hooks/use-notify';
 import { useScreenLabel } from '@/hooks/use-screen-label';
-import { changeFeeUse, createFee, getFee, updateFee } from '@/api/system/fee-api';
 import type { Fee, FeeCategory, FeeCurrency, FeeMethod, FeeRequest } from '@/api/system/fee-api';
 import { FormField } from '../_shared/system-ui';
 import { errorMessage } from '../_shared/system-utils';
-import styles from '../_shared/system-page.module.css';
+import styles from '../_shared/system-page.module.scss';
+import { useFee, useSaveFee } from './use-fees';
+import type { SaveFeeVariables } from './use-fees';
 
 // Fee Management - Detail / Register / Edit popup (VPA0041P01).
 // Policy: an item in use (Y) cannot be modified — save it as N, then reopen to edit.
@@ -75,18 +76,17 @@ export default function FeeModal({ feeId, canWrite, onClose, onSaved }: FeeModal
   const { toast } = useNotify();
   const { tvt, tvb, tvh, tsm } = useScreenLabel();
 
-  const { data: detail, isFetching } = useApiQuery<Fee>(
-    ['sys', 'fees', 'detail', feeId],
-    () => getFee(feeId as string),
-    { enabled: !isCreate, gcTime: 0 },
-  );
+  const { data: detail, isFetching } = useFee(feeId);
+  const saveFee = useSaveFee();
 
   const [form, setForm] = useState<FormState>(NEW_FORM);
-  const [saving, setSaving] = useState(false);
 
-  useEffect(() => {
-    if (detail) setForm(toForm(detail));
-  }, [detail]);
+  // Fill the form when the detail arrives — adjusted during render, not in an effect.
+  const [loadedDetail, setLoadedDetail] = useState<Fee | undefined>(undefined);
+  if (detail && detail !== loadedDetail) {
+    setLoadedDetail(detail);
+    setForm(toForm(detail));
+  }
 
   const inUse = !isCreate && detail?.useYn === 'Y';
   const fieldsDisabled = !canWrite || inUse;
@@ -106,40 +106,36 @@ export default function FeeModal({ feeId, canWrite, onClose, onSaved }: FeeModal
   };
 
   const handleConfirm = async () => {
-    setSaving(true);
-    try {
-      if (inUse) {
-        // Only the usage flag can change while the item is in use.
-        if (form.useYn === 'N') await changeFeeUse([feeId as string], 'N');
-      } else {
-        const invalid = validate();
-        if (invalid) {
-          toast.warning(invalid);
-          return;
-        }
-        const request: FeeRequest = {
-          category: form.category,
-          order: form.order as number,
-          name: form.name.trim(),
-          description: form.description.trim() || undefined,
-          method: form.method,
-          currency: form.currency,
-          fee: isRate ? undefined : (form.fee ?? undefined),
-          rate: isRate ? (form.rate ?? undefined) : undefined,
-          minAmount: isRate ? (form.minAmount ?? undefined) : undefined,
-        };
-        const saved = isCreate ? await createFee(request) : await updateFee(feeId as string, request);
-        // The server always stores new / edited items as N; switch on afterwards if asked.
-        const savedId = saved.data?.feeId ?? feeId;
-        if (form.useYn === 'Y' && savedId) await changeFeeUse([savedId], 'Y');
+    let variables: SaveFeeVariables;
+    if (inUse) {
+      // Only the usage flag can change while the item is in use.
+      variables = { feeId, useYn: form.useYn === 'N' ? 'N' : undefined };
+    } else {
+      const invalid = validate();
+      if (invalid) {
+        toast.warning(invalid);
+        return;
       }
+      const request: FeeRequest = {
+        category: form.category,
+        order: form.order as number,
+        name: form.name.trim(),
+        description: form.description.trim() || undefined,
+        method: form.method,
+        currency: form.currency,
+        fee: isRate ? undefined : (form.fee ?? undefined),
+        rate: isRate ? (form.rate ?? undefined) : undefined,
+        minAmount: isRate ? (form.minAmount ?? undefined) : undefined,
+      };
+      variables = { feeId, request, useYn: form.useYn === 'Y' ? 'Y' : undefined };
+    }
+    try {
+      await saveFee.mutateAsync(variables);
       toast.success(tsm('saved', 'Saved.'));
       onSaved();
       onClose();
     } catch (error) {
       toast.error(errorMessage(error));
-    } finally {
-      setSaving(false);
     }
   };
 
@@ -159,7 +155,7 @@ export default function FeeModal({ feeId, canWrite, onClose, onSaved }: FeeModal
           <button
             type="button"
             className={styles.btnDark}
-            disabled={!canWrite || saving || isFetching}
+            disabled={!canWrite || saveFee.isPending || isFetching}
             onClick={handleConfirm}
           >
             {tvb('confirm', 'Confirm')}
@@ -169,11 +165,11 @@ export default function FeeModal({ feeId, canWrite, onClose, onSaved }: FeeModal
     >
       <Spin spinning={isFetching}>
         {inUse && (
-          <div className={styles.formNotice} style={{ margin: '0 0 8px' }}>
+          <div className={`${styles.formNotice} ${styles.mb8}`}>
             {tvt('inUseNotice', 'An item in use cannot be modified. Save it as N, then reopen to edit.')}
           </div>
         )}
-        <div className={styles.formGrid} style={{ ['--form-cols' as string]: 2 }}>
+        <div className={styles.formGrid} style={{ '--form-cols': 2 } as CSSProperties}>
           <FormField label={tvt('feeId', 'Fee Code')}>
             <Input value={detail?.feeId ?? ''} placeholder={tvt('phFeeId', 'Generated on save')} disabled />
           </FormField>
@@ -231,7 +227,7 @@ export default function FeeModal({ feeId, canWrite, onClose, onSaved }: FeeModal
               ]}
             />
             <InputNumber
-              style={{ width: 90, flexShrink: 0 }}
+              className={`${styles.w90} ${styles.noShrink}`}
               value={form.rate}
               min={0}
               max={100}
@@ -243,7 +239,7 @@ export default function FeeModal({ feeId, canWrite, onClose, onSaved }: FeeModal
 
           <FormField label={tvt('fee', 'Fee Amount')} required={!isRate}>
             <Select
-              style={{ width: 84, flexShrink: 0 }}
+              className={`${styles.w84} ${styles.noShrink}`}
               value={form.currency}
               options={CURRENCY_OPTIONS}
               disabled={fieldsDisabled}
@@ -260,7 +256,7 @@ export default function FeeModal({ feeId, canWrite, onClose, onSaved }: FeeModal
           </FormField>
           <FormField label={tvt('minAmount', 'Minimum Applicable Amount')}>
             {/* The minimum amount is stored in the fee currency. */}
-            <Select style={{ width: 84, flexShrink: 0 }} value={form.currency} options={CURRENCY_OPTIONS} disabled />
+            <Select className={`${styles.w84} ${styles.noShrink}`} value={form.currency} options={CURRENCY_OPTIONS} disabled />
             <InputNumber
               value={form.minAmount}
               min={0}

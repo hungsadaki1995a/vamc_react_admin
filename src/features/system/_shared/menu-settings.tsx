@@ -1,18 +1,11 @@
 import { useMemo, useState } from 'react';
+import type { CSSProperties } from 'react';
 import { Input, InputNumber, Radio, Table, Tooltip } from 'antd';
 import type { TableColumnsType } from 'antd';
-import { useQueryClient } from '@tanstack/react-query';
-import { useApiQuery } from '@/hooks/use-api-query';
 import { useNotify } from '@/hooks/use-notify';
 import { useScreenLabel } from '@/hooks/use-screen-label';
 import { useMenuPermission } from '@/hooks/use-menu-permission';
 import { useMenuStore } from '@/stores/menu-store';
-import {
-  createMenuSetting,
-  deleteMenuSetting,
-  getMenuSettings,
-  updateMenuSetting,
-} from '@/api/system/menu-setting-api';
 import type {
   MenuSeCd,
   MenuSetting,
@@ -22,7 +15,8 @@ import type {
 } from '@/api/system/menu-setting-api';
 import { FormField, SysPageHeader, UseFlag } from './system-ui';
 import { errorMessage } from './system-utils';
-import styles from './system-page.module.css';
+import styles from './system-page.module.scss';
+import { useDeleteMenuSetting, useMenuSettings, useSaveMenuSetting } from './use-menu-settings';
 
 // Menu Settings — list + inline New/Edit form.
 //   menuSeCd = W → Platform Menu Management (VPA003901 / VPA0039P01)
@@ -77,8 +71,6 @@ export default function MenuSettings({ menuSeCd }: MenuSettingsProps) {
   const { toast, dialog } = useNotify();
   const { tvt, tvb, tvh, tsg, tsm } = useScreenLabel();
   const { canWrite } = useMenuPermission();
-  const queryClient = useQueryClient();
-
   const title = isWeb
     ? tvh('pageWeb', 'Platform Menu Management')
     : tvh('pageAdmin', 'Admin Menu Management');
@@ -90,15 +82,13 @@ export default function MenuSettings({ menuSeCd }: MenuSettingsProps) {
   const [filterCollapsed, setFilterCollapsed] = useState(false);
 
   // The menu tree is small and fixed by the IA, so it loads on entry.
-  const { data: menus = [], isFetching } = useApiQuery<MenuSetting[]>(
-    ['sys', 'menu-settings', applied],
-    () => getMenuSettings(applied),
-  );
+  const { data: menus = [], isFetching } = useMenuSettings(applied);
+  const saveMenu = useSaveMenuSetting();
+  const deleteMenu = useDeleteMenuSetting();
 
   // ── Form ──────────────────────────────────────────────────────────────────
   const [selected, setSelected] = useState<MenuSetting | null>(null);
   const [form, setForm] = useState<FormState>(EMPTY_FORM);
-  const [saving, setSaving] = useState(false);
 
   const isEdit = selected !== null;
   // Policy: a menu in use can only be viewed — switch it to N and save first.
@@ -131,10 +121,8 @@ export default function MenuSettings({ menuSeCd }: MenuSettingsProps) {
     setForm(EMPTY_FORM);
   };
 
-  /** Refreshes the grid and the rail / flyout menu tree that reads the same table. */
-  const refreshAfterWrite = () => {
-    void queryClient.invalidateQueries({ queryKey: ['sys', 'menu-settings'] });
-    void queryClient.invalidateQueries({ queryKey: ['sys', 'menu-permissions'] });
+  /** Refreshes the rail / flyout menu tree that reads the same table (the hooks refresh the grid). */
+  const refreshMenuTree = () => {
     void useMenuStore.getState().invalidateMenuCache();
   };
 
@@ -180,16 +168,13 @@ export default function MenuSettings({ menuSeCd }: MenuSettingsProps) {
         ? tsm('confirmUpdate', 'Do you want to save the changes?')
         : tsm('confirmCreate', 'Do you want to register this menu?'),
       onOk: async () => {
-        setSaving(true);
         try {
-          const response = await (isEdit ? updateMenuSetting(request) : createMenuSetting(request));
+          const response = await saveMenu.mutateAsync({ isEdit, request });
           toast.success(response.message || tsm('saved', 'Saved.'));
           handleFormReset();
-          refreshAfterWrite();
+          refreshMenuTree();
         } catch (error) {
           toast.error(errorMessage(error));
-        } finally {
-          setSaving(false);
         }
       },
     });
@@ -205,10 +190,10 @@ export default function MenuSettings({ menuSeCd }: MenuSettingsProps) {
       ),
       onOk: async () => {
         try {
-          const response = await deleteMenuSetting(selected.menuCd);
+          const response = await deleteMenu.mutateAsync(selected.menuCd);
           toast.success(response.message || tsm('deleted', 'Deleted.'));
           handleFormReset();
-          refreshAfterWrite();
+          refreshMenuTree();
         } catch (error) {
           toast.error(errorMessage(error));
         }
@@ -218,7 +203,7 @@ export default function MenuSettings({ menuSeCd }: MenuSettingsProps) {
 
   // ── Grid ──────────────────────────────────────────────────────────────────
   const columns = useMemo<TableColumnsType<MenuSetting>>(() => {
-    const indent = (row: MenuSetting) => ({ paddingLeft: Math.max(0, row.menuDpth - 1) * 16 });
+    const depth = (row: MenuSetting) => ({ '--depth': Math.max(0, row.menuDpth - 1) }) as CSSProperties;
     return [
       {
         title: tsg('useYn', 'Use'),
@@ -232,13 +217,21 @@ export default function MenuSettings({ menuSeCd }: MenuSettingsProps) {
         title: tsg('menuNmVn', 'Menu Name (VN)'),
         dataIndex: 'menuNmVn',
         width: 240,
-        render: (value: string | undefined, row) => <span style={indent(row)}>{value ?? '-'}</span>,
+        render: (value: string | undefined, row) => (
+          <span className={styles.treeIndent} style={depth(row)}>
+            {value ?? '-'}
+          </span>
+        ),
       },
       {
         title: tsg('menuNmEn', 'Menu Name (EN)'),
         dataIndex: 'menuNmEn',
         width: 240,
-        render: (value: string | undefined, row) => <span style={indent(row)}>{value ?? '-'}</span>,
+        render: (value: string | undefined, row) => (
+          <span className={styles.treeIndent} style={depth(row)}>
+            {value ?? '-'}
+          </span>
+        ),
       },
       { title: tsg('upMenuCd', 'Parent Menu Code'), dataIndex: 'upMenuCd', width: 120, align: 'center' },
       { title: tsg('menuSeq', 'Menu Order'), dataIndex: 'menuSeq', width: 70, align: 'center' },
@@ -363,7 +356,7 @@ export default function MenuSettings({ menuSeCd }: MenuSettingsProps) {
             <button
               type="button"
               className={`${styles.btnDark} ${styles.btnSmall}`}
-              disabled={!canWrite || saving}
+              disabled={!canWrite || saveMenu.isPending}
               onClick={handleSave}
             >
               {tvb('save', 'Save')}

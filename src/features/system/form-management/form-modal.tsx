@@ -1,12 +1,13 @@
 import { useRef, useState } from 'react';
+import type { CSSProperties } from 'react';
 import { Input, Modal, Radio, Select } from 'antd';
 import { useNotify } from '@/hooks/use-notify';
 import { useScreenLabel } from '@/hooks/use-screen-label';
-import { createForm, downloadFormFile, updateForm, uploadFormFile } from '@/api/system/form-api';
 import type { FormCategory, FormItem, FormLang } from '@/api/system/form-api';
 import { FormField } from '../_shared/system-ui';
 import { errorMessage } from '../_shared/system-utils';
-import styles from '../_shared/system-page.module.css';
+import styles from '../_shared/system-page.module.scss';
+import { useDownloadFormFile, useSaveForm } from './use-forms';
 
 // Form Management - Register/Edit popup (VPA0040P01).
 // The wireframe reserves this popup for a "Document Management Program" whose
@@ -37,6 +38,8 @@ export default function FormModal({ form: editing, canWrite, onClose, onSaved }:
   const { toast } = useNotify();
   const { tvt, tvb, tvh, tsm } = useScreenLabel();
   const fileInput = useRef<HTMLInputElement>(null);
+  const saveForm = useSaveForm();
+  const downloadFile = useDownloadFormFile();
 
   const [form, setForm] = useState<FormState>({
     formNo: editing?.formNo ?? '',
@@ -46,7 +49,6 @@ export default function FormModal({ form: editing, canWrite, onClose, onSaved }:
     useYn: editing?.useYn ?? 'N',
   });
   const [file, setFile] = useState<File | null>(null);
-  const [saving, setSaving] = useState(false);
 
   const patch = (values: Partial<FormState>) => setForm((prev) => ({ ...prev, ...values }));
   const disabled = !canWrite;
@@ -60,29 +62,21 @@ export default function FormModal({ form: editing, canWrite, onClose, onSaved }:
       toast.warning(tsm('fileRequired', 'Attach the form file.'));
       return;
     }
-    setSaving(true);
     try {
-      // Upload first; the form row then references the returned file group.
-      const fileUnqId = file ? await uploadFormFile(file) : undefined;
-      const request = { ...form, formNo: form.formNo.trim(), formNm: form.formNm.trim(), fileUnqId };
-      const response = isCreate ? await createForm(request) : await updateForm(request);
+      // The hook uploads the file first; the form row then references the returned file group.
+      const request = { ...form, formNo: form.formNo.trim(), formNm: form.formNm.trim() };
+      const response = await saveForm.mutateAsync({ isCreate, request, file });
       toast.success(response.message || tsm('saved', 'Saved.'));
       onSaved();
       onClose();
     } catch (error) {
       toast.error(errorMessage(error));
-    } finally {
-      setSaving(false);
     }
   };
 
-  const handleDownload = async () => {
+  const handleDownload = () => {
     if (!editing) return;
-    try {
-      await downloadFormFile(editing);
-    } catch (error) {
-      toast.error(errorMessage(error));
-    }
+    downloadFile.mutate(editing, { onError: (error) => toast.error(errorMessage(error)) });
   };
 
   return (
@@ -98,13 +92,13 @@ export default function FormModal({ form: editing, canWrite, onClose, onSaved }:
           <button type="button" className={styles.btn} onClick={onClose}>
             {tvb('cancel', 'Cancel')}
           </button>
-          <button type="button" className={styles.btnDark} disabled={disabled || saving} onClick={handleConfirm}>
+          <button type="button" className={styles.btnDark} disabled={disabled || saveForm.isPending} onClick={handleConfirm}>
             {tvb('confirm', 'Confirm')}
           </button>
         </div>
       }
     >
-      <div className={styles.formGrid} style={{ ['--form-cols' as string]: 2 }}>
+      <div className={styles.formGrid} style={{ '--form-cols': 2 } as CSSProperties}>
         <FormField label={tvt('formNo', 'Form Number')} required>
           <Input
             value={form.formNo}
@@ -115,7 +109,7 @@ export default function FormModal({ form: editing, canWrite, onClose, onSaved }:
         </FormField>
         <FormField label={tvt('langCd', 'Language')} required>
           <Select
-            style={{ width: '100%' }}
+            className={styles.wFull}
             value={form.langCd}
             disabled={disabled || !isCreate}
             onChange={(langCd) => patch({ langCd })}
@@ -128,7 +122,7 @@ export default function FormModal({ form: editing, canWrite, onClose, onSaved }:
 
         <FormField label={tvt('formSeCd', 'Category')} required>
           <Select
-            style={{ width: '100%' }}
+            className={styles.wFull}
             value={form.formSeCd}
             disabled={disabled}
             onChange={(formSeCd) => patch({ formSeCd })}

@@ -1,12 +1,12 @@
 import { useMemo, useState } from 'react';
 import { Checkbox, Input, Table } from 'antd';
 import type { TableColumnsType } from 'antd';
-import { useApiQuery } from '@/hooks/use-api-query';
 import { useNotify } from '@/hooks/use-notify';
-import { getExchangeRates, syncExchangeRates, type ExchangeRateItem } from '@/api/system/system-operations-api';
+import type { ExchangeRateItem } from '@/api/system/system-operations-api';
 import { DateTimeCell, SysPageHeader } from '@/features/system/_shared/system-ui';
 import { errorMessage } from '@/features/system/_shared/system-utils';
-import styles from '@/features/system/_shared/system-page.module.css';
+import styles from '@/features/system/_shared/system-page.module.scss';
+import { useExchangeRates, useSyncExchangeRates } from './use-exchange-rates';
 
 /** Exchange Rate Management (menu A06010500). */
 export default function ExchangeRateManagement() {
@@ -15,12 +15,10 @@ export default function ExchangeRateManagement() {
   const [keyword, setKeyword] = useState('');
   const [appliedKeyword, setAppliedKeyword] = useState('');
   const [filterCollapsed, setFilterCollapsed] = useState(false);
-  const [syncing, setSyncing] = useState(false);
 
-  const { data, isFetching, refetch } = useApiQuery<ExchangeRateItem[]>(
-    ['sys', 'exchange-rates', displayedOnly],
-    () => getExchangeRates(displayedOnly),
-  );
+  const { data, isFetching, refetch } = useExchangeRates(displayedOnly);
+  const syncRates = useSyncExchangeRates();
+  const syncing = syncRates.isPending;
 
   const rows = useMemo(() => {
     const list = data ?? [];
@@ -45,16 +43,12 @@ export default function ExchangeRateManagement() {
   };
 
   const handleSync = async () => {
-    setSyncing(true);
     try {
-      const res = await syncExchangeRates();
+      const res = await syncRates.mutateAsync();
       const count = res.data?.success ?? 0;
       toast.success(`Synced ${count} exchange rates from Vietcombank.`);
-      await refetch();
     } catch (e) {
       toast.error(errorMessage(e));
-    } finally {
-      setSyncing(false);
     }
   };
 

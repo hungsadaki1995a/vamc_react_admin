@@ -1,30 +1,26 @@
 import { useState } from 'react';
 import { Input, Table, Tooltip } from 'antd';
 import type { TableColumnsType } from 'antd';
-import { useQueryClient, keepPreviousData } from '@tanstack/react-query';
-import { useApiQuery } from '@/hooks/use-api-query';
 import { useNotify } from '@/hooks/use-notify';
 import { useScreenLabel } from '@/hooks/use-screen-label';
 import { useMenuPermission } from '@/hooks/use-menu-permission';
-import { deleteEmployee, getEmployees } from '@/api/system/employee-api';
 import type { Employee, EmployeeSearch, EmpStatus } from '@/api/system/employee-api';
-import type { PageResponse } from '@/api/common/api-utils';
 import { DateTimeCell, SysPageHeader, SysPagination } from '../_shared/system-ui';
 import { errorMessage } from '../_shared/system-utils';
-import styles from '../_shared/system-page.module.css';
+import styles from '../_shared/system-page.module.scss';
 import UserModal from './user-modal';
 import { EMP_STATUS_FALLBACK, LOCK_FAIL_COUNT } from './user-constants';
+import { useDeleteEmployees, useEmployees } from './use-employees';
 
 // User Management - List (VPA004501), menu A06020200.
 
 const PAGE_SIZE = 15;
 const EMPTY_FILTER = { empNo: '', empNm: '' };
 
-export default function SYS030102SC() {
+export default function UserManagement() {
   const { toast, dialog } = useNotify();
   const { tvt, tvb, tvh, tsg, tsm } = useScreenLabel();
   const { canWrite } = useMenuPermission();
-  const queryClient = useQueryClient();
 
   const [filter, setFilter] = useState(EMPTY_FILTER);
   const [applied, setApplied] = useState<EmployeeSearch>({});
@@ -34,20 +30,12 @@ export default function SYS030102SC() {
   /** undefined = closed, null = register, string = view/edit that employee. */
   const [modalEmpNo, setModalEmpNo] = useState<string | null | undefined>(undefined);
 
-  const { data, isFetching } = useApiQuery<PageResponse<Employee>>(
-    ['sys', 'employees', applied, page],
-    () => getEmployees(applied, page, PAGE_SIZE),
-    { placeholderData: keepPreviousData },
-  );
+  const { data, isFetching } = useEmployees(applied, page, PAGE_SIZE);
+  const deleteEmployees = useDeleteEmployees();
   const employees = data?.content ?? [];
   const total = data?.totalElements ?? 0;
 
   const statusName = (code: EmpStatus) => tvt(`status${code}`, EMP_STATUS_FALLBACK[code] ?? code);
-
-  const refresh = () => {
-    setSelectedKeys([]);
-    void queryClient.invalidateQueries({ queryKey: ['sys', 'employees'] });
-  };
 
   const handleSearch = () => {
     setApplied({
@@ -74,18 +62,15 @@ export default function SYS030102SC() {
       okCancel: true,
       content: tsm('confirmDelete', 'Delete the selected user(s)? This cannot be undone.'),
       onOk: async () => {
-        // The API deletes one employee per call; report the ones that were rejected.
-        const failed: string[] = [];
-        for (const empNo of selectedKeys) {
-          try {
-            await deleteEmployee(empNo);
-          } catch (error) {
-            failed.push(`${empNo}: ${errorMessage(error)}`);
-          }
+        try {
+          // The API deletes one employee per call; report the ones that were rejected.
+          const failed = await deleteEmployees.mutateAsync(selectedKeys);
+          if (failed.length === 0) toast.success(tsm('deleted', 'Deleted.'));
+          else toast.error(failed.map(({ empNo, error }) => `${empNo}: ${errorMessage(error)}`).join('\n'));
+        } catch (error) {
+          toast.error(errorMessage(error));
         }
-        if (failed.length === 0) toast.success(tsm('deleted', 'Deleted.'));
-        else toast.error(failed.join('\n'));
-        refresh();
+        setSelectedKeys([]);
       },
     });
   };
@@ -249,7 +234,7 @@ export default function SYS030102SC() {
           empNo={modalEmpNo}
           canWrite={canWrite}
           onClose={() => setModalEmpNo(undefined)}
-          onSaved={refresh}
+          onSaved={() => setSelectedKeys([])}
         />
       )}
     </div>

@@ -1,19 +1,11 @@
 import { useState } from 'react';
 import { Descriptions, Input, Modal, Radio, Table } from 'antd';
 import type { TableColumnsType } from 'antd';
-import { keepPreviousData } from '@tanstack/react-query';
-import { useApiQuery } from '@/hooks/use-api-query';
-import {
-  downloadCollateralAssetsExcel,
-  getCollateralAsset,
-  getCollateralAssets,
-  type CollateralAssetItem,
-  type CollateralSearch,
-} from '@/api/npl/npl-api';
-import type { PageResponse } from '@/api/common/api-utils';
+import type { CollateralAssetItem, CollateralSearch } from '@/api/npl/npl-api';
 import { SysPageHeader, SysPagination } from '@/features/system/_shared/system-ui';
 import { rowNumber } from '@/features/system/_shared/system-utils';
-import styles from '@/features/system/_shared/system-page.module.css';
+import styles from '@/features/system/_shared/system-page.module.scss';
+import { useCollateralAsset, useCollateralAssets, useDownloadCollateralAssetsExcel } from './use-collateral-assets';
 
 const PAGE_SIZE = 15;
 
@@ -28,16 +20,9 @@ export default function CollateralAssetManagement() {
   const [filterCollapsed, setFilterCollapsed] = useState(false);
   const [detailId, setDetailId] = useState<string | null>(null);
 
-  const { data, isFetching } = useApiQuery<PageResponse<CollateralAssetItem>>(
-    ['npl', 'collaterals', applied, page],
-    () => getCollateralAssets(applied, page, PAGE_SIZE),
-    { placeholderData: keepPreviousData },
-  );
-  const { data: detail } = useApiQuery<Record<string, unknown>>(
-    ['npl', 'collateral-detail', detailId],
-    () => getCollateralAsset(detailId as string),
-    { enabled: !!detailId },
-  );
+  const { data, isFetching } = useCollateralAssets(applied, page, PAGE_SIZE);
+  const { data: detail } = useCollateralAsset(detailId);
+  const downloadExcel = useDownloadCollateralAssetsExcel();
 
   const rows = data?.content ?? [];
   const total = data?.totalElements ?? 0;
@@ -122,7 +107,7 @@ export default function CollateralAssetManagement() {
       )}
       <div className={styles.summaryRow}>
         <span className={styles.totalCount}>Total ({total})</span>
-        <button type="button" className={`${styles.btn} ${styles.btnSmall}`} onClick={() => void downloadCollateralAssetsExcel(applied as Record<string, unknown>)}>Excel Download</button>
+        <button type="button" className={`${styles.btn} ${styles.btnSmall}`} onClick={() => downloadExcel.mutate(applied)}>Excel Download</button>
       </div>
       <div className={styles.tableWrapper}>
         <Table<CollateralAssetItem> rowKey="cltrAstCd" columns={columns} dataSource={rows} loading={isFetching} pagination={false} size="small" scroll={{ x: 'max-content' }} />

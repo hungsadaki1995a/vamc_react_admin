@@ -10,19 +10,12 @@ import FilterPanel from '@/components/layout/filter-panel';
 import FormPanel from '@/components/layout/form-panel';
 import SplitPanel from '@/components/layout/split-panel';
 import { useScreenLabel } from '@/hooks/use-screen-label';
-import { useQueryClient } from '@tanstack/react-query';
-import { useApiQuery } from '@/hooks/use-api-query';
-import { useApiMutation } from '@/hooks/use-api-mutation';
 import { useNotify } from '@/hooks/use-notify';
 import { useMenuPermission } from '@/hooks/use-menu-permission';
-import { useLabelStore } from '@/stores/label-store';
 import { formatLabel } from '@/lib/i18n/format-label';
-import { getLanguages } from '@/api/common/label-bulk-api';
-import type { LangItem } from '@/api/common/label-bulk-api';
-import {
-  getLabelRows, saveLabelBatch, deleteLabel, groupLabelRows,
-} from '@/api/system/label-management-api';
-import type { LblRow, LblMaster, LblKey } from '@/api/system/label-management-api';
+import type { LblRow, LblMaster } from '@/api/system/label-management-api';
+import { useDeleteLabel, useLabelLanguages, useLabelMasters, useSaveLabels } from './use-labels';
+import styles from './label-management.module.scss';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Multilingual label management (A06040300)
@@ -81,11 +74,10 @@ function buildLblCd(scrnId: string, section: string, lblSeCd: string, detail: st
   return `${scrnId}.${section}.${lblSeCd}_${detail}`;
 }
 
-export default function SYS050301SC() {
+export default function LabelManagement() {
   const { toast, notify, dialog } = useNotify();
   const { tvt, tvb, tvh, tsg, tsm, tmc, tmi, tme } = useScreenLabel();
   const { canWrite } = useMenuPermission();
-  const queryClient = useQueryClient();
 
   // ── Search filters
   const [filterScrnId, setFilterScrnId]   = useState('');
@@ -108,34 +100,12 @@ export default function SYS050301SC() {
 
   // ── Queries ──────────────────────────────────────────────────────────────────
 
-  const { data: languages = [] } = useApiQuery<LangItem[]>(
-    ['lbl', 'languages'],
-    () => getLanguages(),
-  );
+  const { data: languages = [] } = useLabelLanguages();
+  const { masters, isLoading } = useLabelMasters(applied);
 
-  const { data: rows = [], isLoading } = useApiQuery<LblRow[]>(
-    ['lbl', 'rows', applied],
-    () => getLabelRows(applied ?? {}),
-    { enabled: applied !== null },
-  );
-
-  const masters = useMemo(() => (applied === null ? [] : groupLabelRows(rows)), [rows, applied]);
-
-  /**
-   * Refresh cache after save/delete — clear both layers.
-   *
-   * ① react-query : `queryKey` includes search conditions (`applied`), so use **prefix invalidation**.
-   *    `refetch()` only updates the current condition's cache, leaving stale results when filters change.
-   * ② labelStore : app-wide label map. Server cache is evicted on save, but
-   *    the client cache (IndexedDB, 5-min TTL) is force-cleared here.
-   */
-  const invalidateAfterWrite = useCallback(() => {
-    queryClient.invalidateQueries({ queryKey: ['lbl', 'rows'] });
-    void useLabelStore.getState().invalidateLabelCache();
-  }, [queryClient]);
-
-  const saveMutation   = useApiMutation<void, LblRow[]>(saveLabelBatch);
-  const deleteMutation = useApiMutation<void, LblKey>(deleteLabel);
+  // Both write hooks refresh the row lists and the app-wide label cache on success.
+  const saveMutation   = useSaveLabels();
+  const deleteMutation = useDeleteLabel();
 
   /** Selected label + language list → right grid rows (always filled for all languages) */
   const buildTrnRows = useCallback(
@@ -221,7 +191,6 @@ export default function SYS050301SC() {
             onSuccess: () => {
               notify.success(isEditMode ? tmi('I100003') : tmi('I100002'));
               if (!isEditMode) clearSelection();
-              invalidateAfterWrite();
             },
           });
         },
@@ -229,7 +198,7 @@ export default function SYS050301SC() {
     }).catch(() => {
       notify.error(tme('E100001'));
     });
-  }, [form, isEditMode, dialog, saveMutation, notify, tmc, tmi, tme, clearSelection, invalidateAfterWrite]);
+  }, [form, isEditMode, dialog, saveMutation, notify, tmc, tmi, tme, clearSelection]);
 
   /** Delete label — translations are also deleted together */
   const handleDelete = useCallback(() => {
@@ -244,13 +213,12 @@ export default function SYS050301SC() {
             onSuccess: () => {
               notify.success(tmi('I100004'));
               clearSelection();
-              invalidateAfterWrite();
             },
           },
         );
       },
     });
-  }, [selected, dialog, deleteMutation, notify, tsm, tmi, clearSelection, invalidateAfterWrite]);
+  }, [selected, dialog, deleteMutation, notify, tsm, tmi, clearSelection]);
 
   /** Save translations — send only modified language rows */
   const handleTrnSave = useCallback(() => {
@@ -274,12 +242,11 @@ export default function SYS050301SC() {
           onSuccess: () => {
             notify.success(tmi('I100003'));
             setTrnRows((prev) => prev.map((r) => ({ ...r, _dirty: false })));
-            invalidateAfterWrite();
           },
         });
       },
     });
-  }, [selected, trnRows, dialog, toast, saveMutation, notify, tsm, tmi, invalidateAfterWrite]);
+  }, [selected, trnRows, dialog, toast, saveMutation, notify, tsm, tmi]);
 
   const handleCellValueChanged = useCallback((e: CellValueChangedEvent<TrnRow>) => {
     setTrnRows((prev) =>
@@ -351,7 +318,7 @@ export default function SYS050301SC() {
             options={lblSeOptions}
             placeholder={tvt('all', '전체')}
             allowClear
-            style={{ width: '100%' }}
+            className={styles.fullWidth}
           />
         </div>
       </FilterPanel>
@@ -420,9 +387,10 @@ export default function SYS050301SC() {
       >
         <Form
           form={form}
+          className={styles.form}
           layout="horizontal"
-          labelCol={{ style: { width: 72, textAlign: 'right' } }}
-          wrapperCol={{ style: { flex: 1, minWidth: 0 } }}
+          labelCol={{ className: styles.labelCol }}
+          wrapperCol={{ className: styles.wrapperCol }}
           initialValues={{ section: 'VIEW', lblSeCd: 'TEXT' }}
           onValuesChange={handleValuesChange}
         >
@@ -435,7 +403,7 @@ export default function SYS050301SC() {
                     label={tvt('scrnId', '화면ID')}
                     name="scrnId"
                     rules={[{ required: true, message: '' }, { max: 20, message: '' }]}
-                    style={{ margin: '0 0 6px' }}
+                    className={styles.formItem}
                   >
                     <TipInput readOnly={isEditMode} maxLength={20} placeholder="SYS050301SC" />
                   </Form.Item>
@@ -445,9 +413,9 @@ export default function SYS050301SC() {
                     label={tvt('section', '섹션')}
                     name="section"
                     rules={[{ required: !isEditMode, message: '' }]}
-                    style={{ margin: '0 0 6px' }}
+                    className={styles.formItem}
                   >
-                    <Select options={sectionOptions} disabled={isEditMode} style={{ width: '100%' }} />
+                    <Select options={sectionOptions} disabled={isEditMode} className={styles.fullWidth} />
                   </Form.Item>
                 </Col>
                 <Col span={8}>
@@ -455,9 +423,9 @@ export default function SYS050301SC() {
                     label={tvt('lblSeCd', '라벨구분')}
                     name="lblSeCd"
                     rules={[{ required: true, message: '' }]}
-                    style={{ margin: '0 0 6px' }}
+                    className={styles.formItem}
                   >
-                    <Select options={lblSeOptions} disabled={isEditMode} style={{ width: '100%' }} />
+                    <Select options={lblSeOptions} disabled={isEditMode} className={styles.fullWidth} />
                   </Form.Item>
                 </Col>
               </Row>
@@ -467,7 +435,7 @@ export default function SYS050301SC() {
                     label={tvt('detail', '세부코드')}
                     name="detail"
                     rules={[{ required: !isEditMode, message: '' }]}
-                    style={{ margin: 0 }}
+                    className={styles.formItemLast}
                   >
                     <TipInput readOnly={isEditMode} maxLength={60} placeholder="usrId" />
                   </Form.Item>
@@ -477,7 +445,7 @@ export default function SYS050301SC() {
                     label={tvt('lblCd', '라벨코드')}
                     name="lblCd"
                     rules={[{ required: true, message: '' }, { max: 100, message: '' }]}
-                    style={{ margin: 0 }}
+                    className={styles.formItemLast}
                   >
                     <TipInput readOnly maxLength={100} />
                   </Form.Item>
@@ -490,11 +458,11 @@ export default function SYS050301SC() {
               <Form.Item
                 label={tvt('lblExpln', '라벨설명')}
                 name="lblExpln"
-                style={{ margin: 0, height: '100%' }}
+                className={styles.formItemFill}
               >
                 <Input.TextArea
                   maxLength={500}
-                  style={{ resize: 'none', height: '100%', minHeight: 60 }}
+                  className={styles.descriptionInput}
                 />
               </Form.Item>
             </Col>
