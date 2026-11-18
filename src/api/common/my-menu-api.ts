@@ -1,7 +1,8 @@
 import { apiClient } from '@/lib/api/client';
 import type { ApiResponse } from '@/lib/api/types';
-import type { MenuItem } from '@/types/menu';
+import type { MenuItem, MenuTreeItem } from '@/types/menu';
 import { useLocaleStore } from '@/stores/locale-store';
+import { resolveMenuComponent } from '@/config/menu-component-fallback';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 내 권한 메뉴(MENU_MNG) 조회 API — 전역 도메인.
@@ -71,7 +72,7 @@ function buildServerMenuTree(items: MnuResponse[]): MenuItem[] {
     map.set(item.menuCd, {
       key: item.menuCd,
       label: item.menuLblVal?.trim() || item.menuNmDisplay.trim(),
-      componentPath: item.menuUrlAddr ?? undefined,
+      componentPath: resolveMenuComponent(item.menuCd, item.menuUrlAddr),
       labelKey: item.lblCd ?? undefined,
       permType: item.menuAuthrt ?? undefined,
     });
@@ -105,7 +106,7 @@ function flattenMenuTree(items: MnuResponse[]): MnuResponse[] {
   return items.flatMap((i) => [i, ...flattenMenuTree(i.children ?? [])]);
 }
 
-export async function fetchAuthMenuList(): Promise<MenuItem[]> {
+export async function fetchAuthMenuResult(): Promise<{ trees: MenuTreeItem[]; items: MenuItem[] }> {
   // Pass langCd as query param — backend uses this (not X-Lang header) to resolve MENU_LBL_VAL.
   // DB LANG_CD는 KR/EN/VN — 서버 resolveLangCd가 ko→KR 보정.
   const locale = useLocaleStore.getState().locale;
@@ -113,7 +114,15 @@ export async function fetchAuthMenuList(): Promise<MenuItem[]> {
     params: { langCd: locale },
   });
 
-  if (data.status !== 200 || !data.data) return [];
+  if (data.status !== 200 || !data.data) return { trees: [], items: [] };
 
-  return buildServerMenuTree(flattenMenuTree(data.data));
+  return {
+    trees: data.data,
+    items: buildServerMenuTree(flattenMenuTree(data.data)),
+  };
+}
+
+export async function fetchAuthMenuList(): Promise<MenuItem[]> {
+  const { items } = await fetchAuthMenuResult();
+  return items;
 }

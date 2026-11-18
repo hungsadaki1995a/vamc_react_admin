@@ -3,7 +3,7 @@ import type { StateStorage } from 'zustand/middleware';
 export type LocaleKey = 'en' | 'ko' | 'vn';
 
 export const DEFAULT_LOCALE: LocaleKey = 'en';
-export const SUPPORTED_LOCALES: readonly LocaleKey[] = ['en', 'ko', 'vn'] as const;
+export const SUPPORTED_LOCALES: readonly LocaleKey[] = ['en', 'vn'] as const;
 
 export const LOCALE_STORAGE_KEY = 'vamc-locale';
 export const LOCALE_COOKIE_KEY = 'vamc-locale';
@@ -16,7 +16,6 @@ export interface LocaleOption {
 
 export const LOCALE_OPTIONS: LocaleOption[] = [
   { value: 'en', label: 'English', shortLabel: 'Eng' },
-  { value: 'ko', label: '한국어', shortLabel: 'Kor' },
   { value: 'vn', label: 'Tiếng Việt', shortLabel: 'Vie' },
 ];
 
@@ -36,7 +35,6 @@ export function getLocaleShortLabel(locale: LocaleKey): string {
 export function normalizeLocale(locale: unknown): LocaleKey {
   if (typeof locale !== 'string') return DEFAULT_LOCALE;
   const lower = locale.trim().toLowerCase();
-  if (lower === 'ko' || lower.startsWith('ko-') || lower === 'kr') return 'ko';
   if (lower === 'vn' || lower === 'vi' || lower.startsWith('vi-')) return 'vn';
   if (lower === 'en' || lower.startsWith('en-')) return 'en';
   return DEFAULT_LOCALE;

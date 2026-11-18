@@ -7,6 +7,7 @@ import {
   gnbUser,
 } from '@/assets/images';
 import type { MenuItem, MenuTreeItem } from '@/types/menu';
+import { resolveMenuComponent } from '@/config/menu-component-fallback';
 
 export const MENU_ICON_BY_CODE: Record<string, string> = {
   A01000000: gnbUser,
@@ -49,9 +50,9 @@ export function findMenuTreeByCode(
 export function mapMenuTreesToMenuItems(menuTrees: MenuTreeItem[]): MenuItem[] {
   return menuTrees.map((item) => ({
     key: item.menuCd ?? '',
-    label: item.menuNmDisplay?.trim() || item.menuLblVal?.trim() || '',
-    componentPath: item.menuUrlAddr ?? undefined,
-    sceId: item.menuUrlAddr ?? undefined,
+    label: item.menuLblVal?.trim() || item.menuNmDisplay?.trim() || '',
+    componentPath: resolveMenuComponent(item.menuCd, item.menuUrlAddr),
+    sceId: resolveMenuComponent(item.menuCd, item.menuUrlAddr),
     labelKey: item.lblCd ?? undefined,
     permType: item.menuAuthrt ?? undefined,
     children: item.children?.length ? mapMenuTreesToMenuItems(item.children) : undefined,

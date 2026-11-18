@@ -168,7 +168,7 @@ export default function InquiryManagement() {
     if (typeConsulting && !typeGeneral) {
       category = 'CST';
     } else if (typeGeneral && !typeConsulting) {
-      category = 'ETC';
+      category = 'GEN';
     }
 
     const fromDate = dateRange?.[0] ? dateRange[0].format('DD/MM/YYYY') : '';
@@ -216,25 +216,6 @@ export default function InquiryManagement() {
   const handleOpenDetail = (item: InquiryItem) => {
     setSelectedInquiry(item);
     setModalVisible(true);
-  };
-
-  const handleResponseSubmit = (inquiryId: string, responseText: string, responderName: string) => {
-    if (selectedInquiry && selectedInquiry.id === inquiryId) {
-      setSelectedInquiry((prev) =>
-        prev
-          ? {
-            ...prev,
-            answerStatus: 'ANSWERED',
-            status: 'Completed',
-            responder: responderName,
-            ansEmpNm: responderName,
-            responseDate: dayjs().format('DD/MM/YYYY HH:mm:ss'),
-            answeredAt: dayjs().format('DD/MM/YYYY HH:mm:ss'),
-            responseContent: responseText,
-          }
-          : null
-      );
-    }
   };
 
   // ── Table Columns ──────────────────────────────────────────────────────────
@@ -512,7 +493,6 @@ export default function InquiryManagement() {
         inquiry={selectedInquiry}
         onClose={() => setModalVisible(false)}
         onRefresh={refetch}
-        onResponseSubmit={handleResponseSubmit}
       />
     </div>
   );

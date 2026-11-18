@@ -3,7 +3,7 @@ import { Modal, Spin, message } from 'antd';
 import { useQueryClient } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { answerInquiry } from '@/api/contents/inquiry-api';
-import { updateMockInquiryAnswer } from './inquiry.mock';
+import { ApiError } from '@/lib/api/error';
 import type { InquiryItem } from './inquiry.types';
 import { useInquiryDetail } from './use-inquiry-detail';
 import styles from './inquiry-detail-modal.module.scss';
@@ -13,11 +13,10 @@ interface InquiryDetailModalProps {
   inquiry: InquiryItem | null;
   onClose: () => void;
   onRefresh?: () => void;
-  onResponseSubmit?: (inquiryId: string, responseText: string, responderName: string) => void;
 }
 
 function formatDateTime(val?: string | null): string {
-  if (!val || val === '-') return '09/03/2026 10:23:24';
+  if (!val || val === '-') return '-';
   if (/^\d{2}\/\d{2}\/\d{4}\s+\d{2}:\d{2}:\d{2}$/.test(val)) {
     return val;
   }
@@ -28,26 +27,11 @@ function formatDateTime(val?: string | null): string {
   return val;
 }
 
-const DEFAULT_INQUIRY_CONTENT = `The submitted inquiry content will be displayed.
-Inquiries can only be made via text.
-
-How many characters should we allow at most? I think we need to decide. (1,000 characters??)
-We should check the standards for Vietnam.`;
-
-const DEFAULT_REPLY_CONTENT = `The response written for the inquiry will be displayed.
-
-The response written for the inquiry will be displayed.
-The response written for the inquiry will be displayed.
-The response written for the inquiry will be displayed.
-The response written for the inquiry will be displayed.
-The response written for the inquiry will be displayed.`;
-
 export default function InquiryDetailModal({
   visible,
   inquiry,
   onClose,
   onRefresh,
-  onResponseSubmit,
 }: InquiryDetailModalProps) {
   const queryClient = useQueryClient();
 
@@ -98,7 +82,7 @@ export default function InquiryDetailModal({
     detailData?.mbrNo ||
     detailData?.inquirerNm ||
     inquiry?.registeredCustomer ||
-    'ID or Email Address';
+    '-';
 
   // Resolve registration date
   const registrationDateDisplay = formatDateTime(
@@ -109,19 +93,19 @@ export default function InquiryDetailModal({
   const titleDisplay =
     detailData?.title ||
     inquiry?.title ||
-    'The registered inquiry title will be displayed.';
+    '-';
 
   // Resolve inquiry content
   const contentDisplay =
     detailData?.content ||
     inquiry?.content ||
-    DEFAULT_INQUIRY_CONTENT;
+    '';
 
   // Resolve reply text display (for answered state)
   const replyDisplay =
     detailData?.answer ||
     inquiry?.responseContent ||
-    DEFAULT_REPLY_CONTENT;
+    '';
 
   // ── Send Handler ──────────────────────────────────────────────────────────
   const handleSend = async () => {
@@ -141,24 +125,23 @@ export default function InquiryDetailModal({
     setErrorMsg(null);
 
     try {
-      // 1. Call API answerInquiry (/api/v1/contents/inquiries/{pstNo}/answer)
+      // PUT /api/v1/contents/inquiries/{pstNo}/answer — a rejected call must not look like success.
       await answerInquiry({
         path: { pstNo: String(pstNo) },
         body: { answer: trimmed },
+        throwOnError: true,
       });
     } catch (err) {
-      console.warn(`answerInquiry for ${pstNo} failed, applying local mock fallback:`, err);
-      // Fallback for development/offline
-      updateMockInquiryAnswer(String(pstNo), trimmed);
+      const reason = ApiError.from(err).message;
+      setErrorMsg(reason);
+      message.error(reason);
+      setIsSubmitting(false);
+      return;
     }
 
-    // Update parent/local store if provided
-    onResponseSubmit?.(String(pstNo), trimmed, 'Hong Gil Dong');
-
-    // Invalidate react-query cache so list and detail are fresh
-    queryClient.invalidateQueries({ queryKey: ['inquiries'] });
+    // Refresh the list and this detail.
+    queryClient.invalidateQueries({ queryKey: ['contents', 'inquiries'] });
     queryClient.invalidateQueries({ queryKey: ['inquiry-detail', pstNo] });
-
     setIsSubmitting(false);
 
     // 2. Show success alert; when alert is closed, close modal & refresh list

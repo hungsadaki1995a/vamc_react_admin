@@ -36,6 +36,8 @@ const autoRegistry: Record<string, ComponentType> = Object.fromEntries(
       [name, component],
       [toPascalCase(name), component],
       [name.toUpperCase(), component],
+      // Screen ID as stored in MENU_MNG.MENU_URL_ADDR: 'sys030101-sc' → 'SYS030101SC'
+      [name.replace(/-/g, '').toUpperCase(), component],
     ];
   }),
 );

@@ -254,7 +254,7 @@ export default function FlyoutPanel() {
       const hasChildren = Boolean(item.children && item.children.length > 0);
       const isExpanded = expandedKeys.includes(code);
       const isActive = !hasChildren && activeMenuKey === code;
-      const label = item.menuNmDisplay?.trim() || item.menuLblVal?.trim() || '';
+      const label = item.menuLblVal?.trim() || item.menuNmDisplay?.trim() || '';
 
       if (hasChildren) {
         return (
@@ -295,9 +295,8 @@ export default function FlyoutPanel() {
           className={`lnb-file-item ${isActive ? 'active' : ''}`}
           style={{ paddingLeft: depth > 0 ? 24 + (depth - 1) * 16 : 4 }}
           onClick={() => {
-            if (!item.menuUrlAddr) return;
             const [mapped] = mapMenuTreesToMenuItems([item]);
-            if (mapped) handleLeafClick(mapped);
+            if (mapped?.componentPath) handleLeafClick(mapped);
           }}
         >
           <img src={treeFile} alt="" aria-hidden="true" className="lnb-item-icon" />
@@ -316,7 +315,7 @@ export default function FlyoutPanel() {
         <>
           <div className="lnb-title-header">
             <span className="lnb-title-text">
-              {activeMenuTree.menuNmDisplay?.trim() || activeMenuTree.menuLblVal?.trim()}
+              {activeMenuTree.menuLblVal?.trim() || activeMenuTree.menuNmDisplay?.trim()}
             </span>
             {allExpandableKeys.length > 0 && (
               <Tooltip title={isAllExpanded ? '전체 접기' : '전체 펼치기'} placement="bottom">

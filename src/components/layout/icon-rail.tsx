@@ -124,8 +124,8 @@ export default function IconRail() {
       return mapMenuTreesToMenuItems(topLevelTrees).map((item, idx) => ({
         ...item,
         label:
-          topLevelTrees[idx]?.menuNmDisplay?.trim() ||
           topLevelTrees[idx]?.menuLblVal?.trim() ||
+          topLevelTrees[idx]?.menuNmDisplay?.trim() ||
           item.label,
       }));
     }

@@ -51,16 +51,6 @@ export default function Header() {
       ),
       icon: locale === 'vn' ? <CheckOutlined style={{ color: '#1677ff' }} /> : <span className="inline-block w-[14px]" />,
     },
-    {
-      key: 'ko',
-      label: (
-        <div className="flex items-center justify-between gap-4 min-w-[105px]">
-          <span>한국어</span>
-          <span className="typo-b2-regular text-text-tertiary">Kor</span>
-        </div>
-      ),
-      icon: locale === 'ko' ? <CheckOutlined style={{ color: '#1677ff' }} /> : <span className="inline-block w-[14px]" />,
-    },
   ];
 
   const profileItems: MenuProps['items'] = [

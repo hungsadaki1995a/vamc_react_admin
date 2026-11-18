@@ -1,6 +1,5 @@
 import { useQuery, keepPreviousData } from '@tanstack/react-query';
 import type { UseQueryResult } from '@tanstack/react-query';
-import dayjs from 'dayjs';
 
 import {
   getFaqs,
@@ -10,13 +9,10 @@ import {
   type PostSearchRequest,
 } from '@/api/contents/faq-api';
 import type { FaqItem } from './faq.types';
-import { initialFaqData } from './faq.mock';
 
 // ── Constants ────────────────────────────────────────────────────────────────
 
 export const DEFAULT_FAQ_CATEGORY = 'FAQS';
-export const DEFAULT_FAQ_FROM_DATE = '01/10/2026';
-export const getDefaultFaqToDate = () => dayjs().format('DD/MM/YYYY');
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -25,9 +21,9 @@ export interface UseFaqsParams {
   pageSize?: number;
   sortBy?: string;
   sortDirection?: 'ASC' | 'DESC';
-  category?: string;  // Default: 'FAQS'
-  fromDate?: string;  // Default: '01/10/2026'
-  toDate?: string;    // Default: current day ('DD/MM/YYYY')
+  category?: string;  // FAQ_CTGRY_CD code; empty or 'ALL' = every category
+  fromDate?: string;  // 'DD/MM/YYYY'; empty = no lower bound
+  toDate?: string;    // 'DD/MM/YYYY'; empty = no upper bound
   published?: string; // '' for All, 'Y' for Posted, 'N' for Not Posted
   keyword?: string;   // optional search keyword
 }
@@ -120,14 +116,14 @@ export function buildFaqQueryParams(params: UseFaqsParams): {
     ...(params.sortDirection ? { sortDirection: params.sortDirection } : {}),
   };
 
-  // Required API params:
-  // 1. category is FAQS
-  // 2. fromDate is 01/10/2026
-  // 3. toDate is current day
+  // Search conditions:
+  // 1. category: one FAQ_CTGRY_CD code, or none for all categories
+  // 2. fromDate / toDate: registration period, only when the user picks one
   const cond: PostSearchRequest = {
-    category: params.category || DEFAULT_FAQ_CATEGORY,
-    fromDate: params.fromDate || DEFAULT_FAQ_FROM_DATE,
-    toDate: params.toDate || getDefaultFaqToDate(),
+    // category is an exact match on FAQ_CTGRY_CD — leave it out to list every category.
+    ...(params.category && params.category !== 'ALL' ? { category: params.category } : {}),
+    ...(params.fromDate ? { fromDate: params.fromDate } : {}),
+    ...(params.toDate ? { toDate: params.toDate } : {}),
     ...(params.published && params.published !== 'ALL' ? { published: params.published } : {}),
     ...(params.keyword?.trim() ? { keyword: params.keyword.trim() } : {}),
   };
@@ -152,85 +148,30 @@ export function useFaqs(
   const queryResult = useQuery<UseFaqsResult, Error>({
     queryKey: ['contents', 'faqs', pageRequest, cond],
     queryFn: async (): Promise<UseFaqsResult> => {
-      try {
-        const response = await getFaqs({
-          query: {
-            pageRequest,
-            cond,
-          },
-          querySerializer: springQuerySerializer,
-          throwOnError: true,
-        });
+      // Errors surface to the caller — no mock fallback, so an API failure is visible.
+      const response = await getFaqs({
+        query: { pageRequest, cond },
+        querySerializer: springQuerySerializer,
+        throwOnError: true,
+      });
 
-        if (response.data?.status && response.data.status >= 400) {
-          throw new Error(response.data.message || 'Failed to fetch FAQs');
-        }
+      const pageData: PageResponsePostResponse | undefined = response.data?.data;
+      const rawContent: PostResponse[] = pageData?.content ?? [];
+      const currentPage = pageData?.page ?? pageRequest.page ?? 1;
+      const currentSize = pageData?.size ?? pageRequest.size ?? 15;
+      const total = pageData?.totalElements ?? rawContent.length;
+      const items: FaqItem[] = rawContent.map((item, idx) =>
+        mapFaqResponseToItem(item, idx, currentPage, currentSize, total),
+      );
 
-        const pageData: PageResponsePostResponse | undefined = response.data?.data;
-        const rawContent: PostResponse[] =
-          pageData?.content ?? (Array.isArray(pageData) ? pageData : []);
-
-        const currentPage = pageData?.page ?? pageRequest.page ?? 1;
-        const currentSize = pageData?.size ?? pageRequest.size ?? 15;
-        const total = pageData?.totalElements ?? rawContent.length;
-        const totalPages = pageData?.totalPages ?? Math.ceil(total / (currentSize || 1));
-        const items: FaqItem[] = rawContent.map((item, idx) =>
-          mapFaqResponseToItem(item, idx, currentPage, currentSize, total),
-        );
-
-        return {
-          items,
-          total,
-          page: currentPage,
-          pageSize: currentSize,
-          totalPages,
-          raw: pageData,
-        };
-      } catch (err) {
-        console.warn('getFaqs API call failed or offline, falling back to mock data:', err);
-        const currentPage = pageRequest.page ?? 1;
-        const currentSize = pageRequest.size ?? 15;
-
-        let filtered = [...initialFaqData];
-
-        if (cond.published && cond.published !== 'ALL') {
-          filtered = filtered.filter((item) => item.published === cond.published);
-        }
-
-        if (cond.category && cond.category !== 'ALL' && cond.category !== DEFAULT_FAQ_CATEGORY) {
-          const catUpper = cond.category.toUpperCase();
-          filtered = filtered.filter(
-            (item) =>
-              (item.category && item.category.toUpperCase() === catUpper) ||
-              (item.categoryNm && item.categoryNm.toUpperCase() === catUpper),
-          );
-        }
-
-        if (cond.keyword) {
-          const kw = cond.keyword.toLowerCase();
-          filtered = filtered.filter(
-            (item) =>
-              item.title.toLowerCase().includes(kw) ||
-              (item.pstNo && item.pstNo.toLowerCase().includes(kw)) ||
-              (item.content && item.content.toLowerCase().includes(kw)),
-          );
-        }
-
-        const total = filtered.length;
-        const start = (currentPage - 1) * currentSize;
-        const pagedMock: FaqItem[] = filtered.slice(start, start + currentSize).map((item, idx) => ({
-          ...item,
-          no: item.no ?? (total - start - idx),
-        }));
-
-        return {
-          items: pagedMock,
-          total,
-          page: currentPage,
-          pageSize: currentSize,
-          totalPages: Math.ceil(total / currentSize),
-        };
-      }
+      return {
+        items,
+        total,
+        page: currentPage,
+        pageSize: currentSize,
+        totalPages: pageData?.totalPages ?? Math.ceil(total / (currentSize || 1)),
+        raw: pageData,
+      };
     },
     placeholderData: keepPreviousData,
     enabled: options?.enabled ?? true,

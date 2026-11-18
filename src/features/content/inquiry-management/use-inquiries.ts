@@ -10,7 +10,6 @@ import {
   type InquirySearchRequest,
 } from '@/api/contents/inquiry-api';
 import type { InquiryItem } from './inquiry.types';
-import { initialInquiryData } from './inquiry.mock';
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -70,8 +69,17 @@ export const springQuerySerializer = (queryParams: unknown): string => {
 
 // ── Helper Mappers ───────────────────────────────────────────────────────────
 
-export function mapInquiryResponseToItem(res: InquiryResponse, index: number, page = 1, pageSize = 15): InquiryItem {
-  const rowNo = (page - 1) * pageSize + index + 1;
+export function mapInquiryResponseToItem(
+  res: InquiryResponse,
+  index: number,
+  page = 1,
+  pageSize = 15,
+  total = 0,
+): InquiryItem {
+  // Newest first: the row number counts down from the total, as in the wireframe.
+  const offset = (page - 1) * pageSize + index;
+  const rowNo = total > 0 ? total - offset : offset + 1;
+  const typeName = res.categoryNm || res.category || '-';
   return {
     no: rowNo,
     id: res.pstNo ? String(res.pstNo) : `inq-${rowNo}`,
@@ -79,18 +87,18 @@ export function mapInquiryResponseToItem(res: InquiryResponse, index: number, pa
     answerStatus: res.answerStatus || 'UNANSWERED',
     status: res.answerStatus === 'ANSWERED' ? 'Completed' : 'Unanswered',
     category: res.category,
-    categoryNm: res.categoryNm || (res.category === 'CST' ? 'Consulting' : 'General'),
-    inquiryType: (res.categoryNm || res.category === 'CST' ? 'Consulting' : 'General'),
-    title: res.title || "The user's inquiry will be displayed.",
-    content: res.title || '',
-    registeredCustomer: res.inquirerNm || res.mbrNo || 'Member ID',
+    categoryNm: typeName,
+    inquiryType: typeName,
+    title: res.title || '-',
+    content: '',
+    registeredCustomer: res.inquirerNm || res.mbrNo || '-',
     mbrNo: res.mbrNo,
     inquirerNm: res.inquirerNm,
-    registrationDate: res.crtDt || dayjs().format('DD/MM/YYYY HH:mm:ss'),
+    registrationDate: res.crtDt || '-',
     crtDt: res.crtDt,
     responseDate: res.answeredAt || null,
     answeredAt: res.answeredAt || null,
-    responder: res.ansEmpNm || (res.ansEmpNo ? `Emp #${res.ansEmpNo}` : null),
+    responder: res.ansEmpNm || res.ansEmpNo || null,
     ansEmpNm: res.ansEmpNm || null,
     ansEmpNo: res.ansEmpNo,
   };
@@ -110,8 +118,10 @@ export function buildInquiryQueryParams(params: UseInquiriesParams): {
   };
 
   const cond: InquirySearchRequest = {
-    answerStatus: params.answerStatus ? params.answerStatus : undefined,
-    category: params.category ? params.category : undefined,
+    // The server defaults a missing answerStatus to UNANSWERED, so "all" must be explicit.
+    answerStatus: params.answerStatus || 'ALL',
+    // category is an exact match on INQRY_SE_CD — "ALL" means no filter.
+    category: params.category && params.category !== 'ALL' ? params.category : undefined,
     fromDate: params.fromDate || dayjs().subtract(30, 'day').format('DD/MM/YYYY'),
     toDate: params.toDate || dayjs().format('DD/MM/YYYY'),
     keyword: params.keyword?.trim() ? params.keyword.trim() : undefined,
@@ -137,82 +147,30 @@ export function useInquiries(
   const queryResult = useQuery<UseInquiriesResult, Error>({
     queryKey: ['contents', 'inquiries', pageRequest, cond],
     queryFn: async (): Promise<UseInquiriesResult> => {
-      try {
-        const response = await getInquiries({
-          query: {
-            pageRequest,
-            cond,
-          },
-          querySerializer: springQuerySerializer,
-          throwOnError: true,
-        });
+      // Errors surface to the caller — no mock fallback, so an API failure is visible.
+      const response = await getInquiries({
+        query: { pageRequest, cond },
+        querySerializer: springQuerySerializer,
+        throwOnError: true,
+      });
 
-        if (response.data?.status && response.data.status >= 400) {
-          throw new Error(response.data.message || 'Failed to fetch inquiries');
-        }
+      const pageData: PageResponseInquiryResponse | undefined = response.data?.data;
+      const rawContent: InquiryResponse[] = pageData?.content ?? [];
+      const currentPage = pageData?.page ?? pageRequest.page ?? 1;
+      const currentSize = pageData?.size ?? pageRequest.size ?? 15;
+      const total = pageData?.totalElements ?? rawContent.length;
+      const items: InquiryItem[] = rawContent.map((item, idx) =>
+        mapInquiryResponseToItem(item, idx, currentPage, currentSize, total),
+      );
 
-        const pageData: PageResponseInquiryResponse | undefined = response.data?.data;
-        const rawContent: InquiryResponse[] = pageData?.content
-          ?? (Array.isArray(pageData) ? pageData : []);
-
-        const currentPage = pageData?.page ?? pageRequest.page ?? 1;
-        const currentSize = pageData?.size ?? pageRequest.size ?? 15;
-        const items: InquiryItem[] = rawContent.map((item, idx) =>
-          mapInquiryResponseToItem(item, idx, currentPage, currentSize)
-        );
-        const total = pageData?.totalElements ?? items.length;
-        const totalPages = pageData?.totalPages ?? Math.ceil(total / (currentSize || 1));
-
-        return {
-          items,
-          total,
-          page: currentPage,
-          pageSize: currentSize,
-          totalPages,
-          raw: pageData,
-        };
-      } catch (err) {
-        // Fallback for development if API is unreachable
-        console.warn('getInquiries API call failed or offline, falling back to mock data:', err);
-        const currentPage = pageRequest.page ?? 1;
-        const currentSize = pageRequest.size ?? 15;
-
-        let filtered = [...initialInquiryData];
-        if (cond.answerStatus && cond.answerStatus !== 'ALL') {
-          const targetStatus = cond.answerStatus === 'ANSWERED' ? 'Completed' : 'Unanswered';
-          filtered = filtered.filter(
-            (item) => item.status === targetStatus || item.answerStatus === cond.answerStatus
-          );
-        }
-
-        if (cond.category && cond.category !== 'ALL') {
-          const targetType = cond.category === 'CST' ? 'Consulting' : 'General';
-          filtered = filtered.filter(
-            (item) => item.inquiryType === targetType || item.category === cond.category
-          );
-        }
-
-        const total = filtered.length;
-        const start = (currentPage - 1) * currentSize;
-        const pagedMock: InquiryItem[] = filtered.slice(start, start + currentSize).map((item, idx) => ({
-          ...item,
-          no: start + idx + 1,
-          answerStatus: item.status === 'Completed' ? 'ANSWERED' : 'UNANSWERED',
-          categoryNm: item.inquiryType,
-          category: item.inquiryType === 'Consulting' ? 'CST' : 'ETC',
-          crtDt: item.registrationDate,
-          answeredAt: item.responseDate,
-          ansEmpNm: item.responder,
-        }));
-
-        return {
-          items: pagedMock,
-          total,
-          page: currentPage,
-          pageSize: currentSize,
-          totalPages: Math.ceil(total / currentSize),
-        };
-      }
+      return {
+        items,
+        total,
+        page: currentPage,
+        pageSize: currentSize,
+        totalPages: pageData?.totalPages ?? Math.ceil(total / (currentSize || 1)),
+        raw: pageData,
+      };
     },
     placeholderData: keepPreviousData,
     enabled: options?.enabled ?? true,

@@ -203,11 +203,11 @@ Seq (2) = 01, Type (2) = SC
         head={['Rule', 'Why']}
         rows={[
           [<>Folders are two levels: <code>features/{'{domain}'}/{'{screenId}'}/</code></>,
-           'The glob is fixed at two levels; anything deeper is not discovered'],
+            'The glob is fixed at two levels; anything deeper is not discovered'],
           [<>Popups go in a child folder <code>{'{screenId}'}/{'{screenId}'}1P/</code></>,
-           'Three levels, so excluded automatically — intentional, they must not open from a menu'],
+            'Three levels, so excluded automatically — intentional, they must not open from a menu'],
           [<>Demos and samples go in <code>src/dev/pages/</code></>,
-           'They are dropped entirely from the production build'],
+            'They are dropped entirely from the production build'],
         ]}
       />
 
@@ -308,11 +308,11 @@ Seq (2) = 01, Type (2) = SC
         head={['Item', 'Why']}
         rows={[
           [<>Prefix <code>invalidateQueries</code> after saving</>,
-           <><code>refetch()</code> only refreshes the current condition&apos;s cache; searching with a different condition returns stale rows</>],
+          <><code>refetch()</code> only refreshes the current condition&apos;s cache; searching with a different condition returns stale rows</>],
           [<>Do not attach <code>onError</code></>,
-           <>The <code>apiClient</code> interceptor already shows the error toast. Attaching one shows it twice</>],
+          <>The <code>apiClient</code> interceptor already shows the error toast. Attaching one shows it twice</>],
           [<>Use <code>ActionButtonGroup</code> for buttons</>,
-           'Button order, icons and permission wiring stay consistent through the preset'],
+            'Button order, icons and permission wiring stay consistent through the preset'],
         ]}
       />
 
@@ -385,9 +385,9 @@ Seq (2) = 01, Type (2) = SC
         head={['Section', 'What', 'Examples']}
         rows={[
           [<code>VIEW</code>, <>Text written directly in JSX. <b>Visible as soon as the screen opens</b></>,
-           <>Field labels (<code>tvt</code>), buttons (<code>tvb</code>), panel titles (<code>tvh</code>)</>],
+          <>Field labels (<code>tvt</code>), buttons (<code>tvb</code>), panel titles (<code>tvh</code>)</>],
           [<code>SCRIPT</code>, <>Text produced by code. <b>Appears after the user does something</b>, or comes from an array/config</>,
-           <>Grid headers (<code>tsg</code>), confirm and info messages (<code>tsm</code>)</>],
+          <>Grid headers (<code>tsg</code>), confirm and info messages (<code>tsm</code>)</>],
         ]}
       />
 
