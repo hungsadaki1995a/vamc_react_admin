@@ -11,7 +11,7 @@ import type { FaqItem } from './faq.types';
 import { useFaqDetail } from './use-faq-detail';
 import { useFaqCategories } from './use-faq-categories';
 import { ApiError } from '@/lib/api/error';
-import styles from './faq-detail-modal.module.css';
+import styles from './faq-detail-modal.module.scss';
 
 interface FaqDetailModalProps {
   visible: boolean;

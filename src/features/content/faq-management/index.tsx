@@ -19,7 +19,7 @@ import {
 } from './use-faqs';
 import FaqDetailModal from './faq-detail-modal';
 import { useFaqCategories } from './use-faq-categories';
-import styles from './faq-management.module.css';
+import styles from './faq-management.module.scss';
 
 const { RangePicker } = DatePicker;
 
