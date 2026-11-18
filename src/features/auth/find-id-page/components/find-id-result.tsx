@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { App, Button, Input } from 'antd';
+import { Button, Input } from 'antd';
 import { PUBLIC_ROUTES } from '@/app/route-constants';
 import styles from '../index.module.scss';
 
@@ -11,7 +11,6 @@ export interface FindIdResultProps {
 /** Displays the confirmed masked login ID with navigation actions. */
 export default function FindIdResult({ loginId }: FindIdResultProps) {
   const { t } = useTranslation();
-  const { message } = App.useApp();
   const navigate = useNavigate();
 
   return (
@@ -36,7 +35,7 @@ export default function FindIdResult({ loginId }: FindIdResultProps) {
           type="default"
           block
           className={styles.secondaryBtn}
-          onClick={() => message.info(t('auth.login.findNotReady'))}
+          onClick={() => navigate(PUBLIC_ROUTES.FIND_PASSWORD)}
         >
           {t('auth.login.findPassword')}
         </Button>

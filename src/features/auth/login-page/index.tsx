@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useForm, useWatch, Controller } from 'react-hook-form';
-import { Form, Input, Button, App } from 'antd';
+import { Form, Input, Button } from 'antd';
 import { EyeOutlined, EyeInvisibleOutlined } from '@ant-design/icons';
 import AuthHeader from '@/components/auth/auth-header';
 import { login } from '@/api/generated/sdk.gen';
@@ -35,7 +35,6 @@ function isValidEmailOrPhone(value: string): boolean {
 export default function LoginPage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { message } = App.useApp();
   const setAuth = useAuthStore((s) => s.setAuth);
   const { openTab, resetTabs } = useTabStore();
   const { setMenuTrees, setServerMenus } = useMenuStore();
@@ -221,7 +220,7 @@ export default function LoginPage() {
           <button
             type="button"
             className={styles.linkBtn}
-            onClick={() => message.info(t('auth.login.findNotReady'))}
+            onClick={() => navigate('/find-password')}
           >
             {t('auth.login.findPassword')}
           </button>

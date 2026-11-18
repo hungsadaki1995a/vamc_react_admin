@@ -1,6 +1,7 @@
 export const PUBLIC_ROUTES = {
   LOGIN: '/login',
   FIND_ID: '/find-id',
+  FIND_PASSWORD: '/find-password',
 } as const;
 
 /**
