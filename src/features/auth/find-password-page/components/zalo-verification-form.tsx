@@ -80,7 +80,6 @@ export default function ZaloVerificationForm({ onConfirmSuccess }: ZaloVerificat
       const result = await requestReset({
         channel: 'ZALO',
         // shortcut: backend ZALO password-reset endpoint & phone field not yet in OpenAPI; update when supported
-        loginId: fullPhone,
         urlCallback: `${window.location.origin}${window.location.pathname}`,
       });
       setResetToken(result?.devToken ?? result?.requestId ?? null);

@@ -36,8 +36,6 @@ export default function EmailVerificationForm() {
     try {
       await requestReset({
         channel: 'EMAIL',
-        // shortcut: EmpPasswordResetLinkRequest requires loginId, but UI collects email only; update if backend separates them
-        loginId: trimmedEmail,
         email: trimmedEmail,
         urlCallback: `${window.location.origin}${window.location.pathname}`,
       });
