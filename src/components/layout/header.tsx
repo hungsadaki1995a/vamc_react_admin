@@ -7,7 +7,7 @@ import {
 } from '@ant-design/icons';
 import { Dropdown } from 'antd';
 import type { MenuProps } from 'antd';
-import vamcLogo from '@/assets/vamc_logo_login-28c7ab.png';
+import vamcLogo from '@/assets/vamc-logo-login.png';
 import {
   flagUkRound,
   flagVnRound,

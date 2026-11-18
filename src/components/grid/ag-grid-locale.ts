@@ -1,5 +1,4 @@
 import type { LocaleKey } from '@/stores/locale-store';
-import { AG_GRID_LOCALE_KO } from './ag-grid-locale-ko';
 import { AG_GRID_LOCALE_VI } from './ag-grid-locale-vi';
 
 /**
@@ -13,7 +12,6 @@ import { AG_GRID_LOCALE_VI } from './ag-grid-locale-vi';
  * switching without DB round-trips is preferable. Screen text uses DB labels via `useScreenLabel`.</p>
  */
 export function getAgGridLocale(locale: LocaleKey): Record<string, string> | undefined {
-  if (locale === 'ko') return AG_GRID_LOCALE_KO;
   if (locale === 'vn') return AG_GRID_LOCALE_VI;
   return undefined; // en — AG Grid built-in English
 }

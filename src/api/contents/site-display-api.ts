@@ -1,6 +1,6 @@
 import { apiClient } from '@/lib/api/client';
-import { apiDelete, apiGet, apiPatch, apiPost, apiPut } from '@/api/common/api-util';
-import type { PageResponse } from '@/api/common/api-util';
+import { apiDelete, apiGet, apiPatch, apiPost, apiPut } from '@/api/common/api-utils';
+import type { PageResponse } from '@/api/common/api-utils';
 import type { ContentFileGroup, Post, PostDetail } from './post-api';
 
 // Site Display Management APIs — LogoController (`/api/v1/contents/logos`, menu A04110200)

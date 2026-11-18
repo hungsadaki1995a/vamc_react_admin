@@ -1,6 +1,6 @@
 import { apiClient } from '@/lib/api/client';
-import { apiDelete, apiDownload, apiGet, apiPatch, apiPost, apiPut } from '@/api/common/api-util';
-import type { PageResponse } from '@/api/common/api-util';
+import { apiDelete, apiDownload, apiGet, apiPatch, apiPost, apiPut } from '@/api/common/api-utils';
+import type { PageResponse } from '@/api/common/api-utils';
 
 // Content board API — the admin backend serves every board (BBS_MNG) with the same
 // shapes under `/api/v1/contents/{board}`:

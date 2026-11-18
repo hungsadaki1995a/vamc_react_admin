@@ -1,5 +1,5 @@
-import { apiDelete, apiDownload, apiGet, apiPost } from '@/api/common/api-util';
-import type { PageResponse } from '@/api/common/api-util';
+import { apiDelete, apiDownload, apiGet, apiPost } from '@/api/common/api-utils';
+import type { PageResponse } from '@/api/common/api-utils';
 
 // ── Auction Notice Management (A07010000) ────────────────────────────────────
 export interface AuctionItem {

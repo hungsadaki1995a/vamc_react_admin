@@ -12,15 +12,15 @@ import { useMenuPermission } from '@/hooks/use-menu-permission';
 import { useCommonCodes } from '@/hooks/use-common-codes';
 import { deletePosts, downloadPostExcel, getLegalOptions, getPosts, publishPosts } from '@/api/contents/post-api';
 import type { LegalOptions, Post, PostSearch, YesNo } from '@/api/contents/post-api';
-import type { PageResponse } from '@/api/common/api-util';
+import type { PageResponse } from '@/api/common/api-utils';
 import {
   DateTimeCell,
   SysPageHeader,
   SysPagination,
   UseYnChecks,
-} from '@/features/sys/_shared/sys-ui';
-import { errorMessage, toUseYnFilter } from '@/features/sys/_shared/sys-utils';
-import styles from '@/features/sys/_shared/sys-page.module.css';
+} from '@/features/system/_shared/system-ui';
+import { errorMessage, toUseYnFilter } from '@/features/system/_shared/system-utils';
+import styles from '@/features/system/_shared/system-page.module.css';
 import type { BoardConfig, CategoryOption } from './board-config';
 import PostModal from './post-modal';
 

@@ -1,5 +1,5 @@
-import { apiDelete, apiDownload, apiGet, apiPost, apiPut } from '@/api/common/api-util';
-import type { PageResponse } from '@/api/common/api-util';
+import { apiDelete, apiDownload, apiGet, apiPost, apiPut } from '@/api/common/api-utils';
+import type { PageResponse } from '@/api/common/api-utils';
 
 // ── NPL Management (A03010100) ───────────────────────────────────────────────
 export interface NplItem {

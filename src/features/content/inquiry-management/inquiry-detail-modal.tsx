@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react';
-import { Modal, Spin, message } from 'antd';
+import { useState } from 'react';
+import { Modal, Spin } from 'antd';
 import { useQueryClient } from '@tanstack/react-query';
 import dayjs from 'dayjs';
+import { useNotify } from '@/hooks/use-notify';
 import { answerInquiry } from '@/api/contents/inquiry-api';
 import { ApiError } from '@/lib/api/error';
 import type { InquiryItem } from './inquiry.types';
@@ -34,6 +35,7 @@ export default function InquiryDetailModal({
   onRefresh,
 }: InquiryDetailModalProps) {
   const queryClient = useQueryClient();
+  const { toast, dialog } = useNotify();
 
   // Use pstNo from list item (falling back to id)
   const pstNo = inquiry?.pstNo || inquiry?.id;
@@ -43,10 +45,15 @@ export default function InquiryDetailModal({
     enabled: visible && Boolean(pstNo),
   });
 
-  // Reply input state
-  const [replyText, setReplyText] = useState('');
+  // Reply draft per inquiry (null means fall back to server answer)
+  const [draftState, setDraftState] = useState<{ key?: string; text: string }>({ text: '' });
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const replyText = draftState.key === pstNo
+    ? draftState.text
+    : (detailData?.answer || inquiry?.responseContent || '');
+  const setReplyText = (text: string) => setDraftState({ key: pstNo, text });
 
   // Determine whether inquiry is UNANSWERED
   const rawStatus = (
@@ -56,15 +63,6 @@ export default function InquiryDetailModal({
     'UNANSWERED'
   ).toUpperCase();
   const isUnanswered = rawStatus === 'UNANSWERED';
-
-  // Reset or initialize input state when modal opens or inquiry changes
-  useEffect(() => {
-    if (visible) {
-      setReplyText(detailData?.answer || inquiry?.responseContent || '');
-      setErrorMsg(null);
-      setIsSubmitting(false);
-    }
-  }, [visible, detailData, inquiry]);
 
   if (!inquiry && !detailData) return null;
 
@@ -112,12 +110,12 @@ export default function InquiryDetailModal({
     const trimmed = replyText.trim();
     if (!trimmed) {
       setErrorMsg('Please write a response to the inquiry.');
-      message.warning('Please write a response to the inquiry.');
+      toast.warning('Please write a response to the inquiry.');
       return;
     }
 
     if (!pstNo) {
-      message.error('Invalid inquiry ID.');
+      toast.error('Invalid inquiry ID.');
       return;
     }
 
@@ -134,7 +132,7 @@ export default function InquiryDetailModal({
     } catch (err) {
       const reason = ApiError.from(err).message;
       setErrorMsg(reason);
-      message.error(reason);
+      toast.error(reason);
       setIsSubmitting(false);
       return;
     }
@@ -145,14 +143,12 @@ export default function InquiryDetailModal({
     setIsSubmitting(false);
 
     // 2. Show success alert; when alert is closed, close modal & refresh list
-    Modal.success({
+    dialog.info({
       title: 'Success',
       content: 'The response has been sent successfully.',
       okText: 'OK',
-      okButtonProps: {
-        style: { backgroundColor: '#111827', borderColor: '#111827' },
-      },
       onOk: () => {
+        setDraftState({ text: '' });
         onClose();
         onRefresh?.();
       },

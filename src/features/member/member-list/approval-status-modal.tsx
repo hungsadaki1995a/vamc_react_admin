@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
-import { Modal, Radio, Input, Select, Space, Typography, Tag, message } from 'antd';
+import { useState } from 'react';
+import { Modal, Radio, Input, Select, Space, Typography, Tag } from 'antd';
+import { useNotify } from '@/hooks/use-notify';
 import type { MemberItem, ApprovalStatus } from './member.types';
 
 const { Text } = Typography;
@@ -28,23 +29,33 @@ export default function ApprovalStatusModal({
   onClose,
   onUpdateStatus,
 }: ApprovalStatusModalProps) {
-  const [selectedStatus, setSelectedStatus] = useState<ApprovalStatus>('In Progress');
-  const [selectedAssignee, setSelectedAssignee] = useState<string>('Võ Ngọc Lan');
-  const [note, setNote] = useState<string>('');
-
-  useEffect(() => {
-    if (member) {
-      setSelectedStatus(member.approvalStatus);
-      setSelectedAssignee(member.assignee !== '-' ? member.assignee : 'Võ Ngọc Lan');
-      setNote('');
-    }
-  }, [member]);
+  const { toast } = useNotify();
+  const [draft, setDraft] = useState<{
+    memberId?: string;
+    status: ApprovalStatus;
+    assignee: string;
+    note: string;
+  }>({ status: 'In Progress', assignee: 'Võ Ngọc Lan', note: '' });
 
   if (!member) return null;
 
+  const isSameMember = draft.memberId === member.id;
+  const selectedStatus = isSameMember ? draft.status : member.approvalStatus;
+  const selectedAssignee = isSameMember
+    ? draft.assignee
+    : (member.assignee !== '-' ? member.assignee : 'Võ Ngọc Lan');
+  const note = isSameMember ? draft.note : '';
+
+  const setSelectedStatus = (status: ApprovalStatus) =>
+    setDraft({ memberId: member.id, status, assignee: selectedAssignee, note });
+  const setSelectedAssignee = (assignee: string) =>
+    setDraft({ memberId: member.id, status: selectedStatus, assignee, note });
+  const setNote = (nextNote: string) =>
+    setDraft({ memberId: member.id, status: selectedStatus, assignee: selectedAssignee, note: nextNote });
+
   const handleConfirm = () => {
     onUpdateStatus(member.id, selectedStatus, selectedAssignee, note);
-    message.success(`Status of ${member.memberName} updated to "${selectedStatus}"`);
+    toast.success(`Status of ${member.memberName} updated to "${selectedStatus}"`);
     onClose();
   };
 

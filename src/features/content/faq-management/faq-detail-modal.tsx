@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
-import { Modal, Spin, Radio, Select, message } from 'antd';
+import { Modal, Spin, Radio, Select } from 'antd';
 import { useQueryClient } from '@tanstack/react-query';
 import dayjs from 'dayjs';
+import { useNotify } from '@/hooks/use-notify';
 import {
   createFaq,
   updateFaq,
@@ -41,6 +42,7 @@ export default function FaqDetailModal({
   onRefresh,
 }: FaqDetailModalProps) {
   const queryClient = useQueryClient();
+  const { toast, dialog } = useNotify();
   const isCreate = mode === 'create';
   const pstNo = !isCreate ? (faq?.pstNo || faq?.id) : undefined;
 
@@ -83,15 +85,15 @@ export default function FaqDetailModal({
 
   const handleSave = async () => {
     if (!category) {
-      message.warning('Please select a category.');
+      toast.warning('Please select a category.');
       return;
     }
     if (!question.trim()) {
-      message.warning('Please enter a FAQ question.');
+      toast.warning('Please enter a FAQ question.');
       return;
     }
     if (!answer.trim()) {
-      message.warning('Please enter a FAQ answer.');
+      toast.warning('Please enter a FAQ answer.');
       return;
     }
 
@@ -139,22 +141,19 @@ export default function FaqDetailModal({
         queryClient.invalidateQueries({ queryKey: ['faq-detail', pstNo] });
       }
 
-      Modal.success({
+      dialog.info({
         title: 'Success',
         content: isCreate
           ? 'FAQ has been registered successfully.'
           : 'FAQ has been updated successfully.',
         okText: 'OK',
-        okButtonProps: {
-          style: { backgroundColor: '#111827', borderColor: '#111827' },
-        },
         onOk: () => {
           onClose();
           onRefresh?.();
         },
       });
     } catch (err) {
-      message.error(ApiError.from(err).message);
+      toast.error(ApiError.from(err).message);
     } finally {
       setIsSubmitting(false);
     }

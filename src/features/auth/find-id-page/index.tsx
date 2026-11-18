@@ -8,7 +8,7 @@ import { findId } from '@/api/generated/sdk.gen';
 import { ApiError } from '@/lib/api/error';
 import { useLocaleStore, type LocaleKey } from '@/stores/locale-store';
 import { getLocaleShortLabel } from '@/utils/locale-storage';
-import vamcLogoLogin from '@/assets/vamc_logo_login-28c7ab.png';
+import vamcLogoLogin from '@/assets/vamc-logo-login.png';
 import styles from './index.module.scss';
 
 type VerificationTab = 'email' | 'zalo';

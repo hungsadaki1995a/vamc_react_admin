@@ -46,7 +46,7 @@ import DOMPurify from 'dompurify';
 import { useLocaleStore } from '@/stores/locale-store';
 import { useComponentLabel } from '@/hooks/use-component-label';
 import { getAgGridLocale } from './ag-grid-locale';
-import { ComcdSelectCellEditor, ComcdSelectCellRenderer } from './comcd-select-cell';
+import { ComcdSelectCellEditor, ComcdSelectCellRenderer } from './common-code-select-cell';
 import './grid-table.scss';
 
 export type GridCellAlign = 'left' | 'center' | 'right';

@@ -9,8 +9,8 @@ import {
   uploadContentFiles,
 } from '@/api/contents/post-api';
 import type { ContentFile, FileBoard } from '@/api/contents/post-api';
-import { errorMessage } from '@/features/sys/_shared/sys-utils';
-import styles from '@/features/sys/_shared/sys-page.module.css';
+import { errorMessage } from '@/features/system/_shared/system-utils';
+import styles from '@/features/system/_shared/system-page.module.css';
 
 // File inputs of the content popups. Files are uploaded as soon as they are picked;
 // the popup then only stores the returned file-group id on the post.

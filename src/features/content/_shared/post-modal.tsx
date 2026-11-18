@@ -14,9 +14,9 @@ import {
   uploadContentFiles,
 } from '@/api/contents/post-api';
 import type { ContentFile, LegalOptions, PostDetail, YesNo } from '@/api/contents/post-api';
-import { FormField } from '@/features/sys/_shared/sys-ui';
-import { errorMessage, splitDateTime } from '@/features/sys/_shared/sys-utils';
-import styles from '@/features/sys/_shared/sys-page.module.css';
+import { FormField } from '@/features/system/_shared/system-ui';
+import { errorMessage, splitDateTime } from '@/features/system/_shared/system-utils';
+import styles from '@/features/system/_shared/system-page.module.css';
 import type { BoardConfig, CategoryOption } from './board-config';
 import { AttachmentField, ImageField } from './post-files';
 

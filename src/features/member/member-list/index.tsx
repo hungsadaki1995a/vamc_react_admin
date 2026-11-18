@@ -6,8 +6,8 @@ import {
   Select,
   DatePicker,
   Button,
-  message,
 } from 'antd';
+import { useNotify } from '@/hooks/use-notify';
 import type { TableProps, TableColumnsType } from 'antd';
 import type { CheckboxChangeEvent } from 'antd/es/checkbox';
 import {
@@ -111,6 +111,7 @@ function formatPaymentDeadline(val?: string): { text: string; isDanger: boolean 
 }
 
 export default function MemberList() {
+  const { toast } = useNotify();
   // ── Pagination State ───────────────────────────────────────────────────────
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(20);
@@ -241,7 +242,7 @@ export default function MemberList() {
       membershipAll,
       selectedMemberships,
     });
-    message.info('Filter applied');
+    toast.info('Filter applied');
   };
 
   const handleReset = () => {
@@ -271,7 +272,7 @@ export default function MemberList() {
       membershipAll: true,
       selectedMemberships: [],
     });
-    message.info('Filters reset to default');
+    toast.info('Filters reset to default');
   };
 
   // ── Combined Members Memo ─────────────────────────────────────────────────
@@ -388,9 +389,9 @@ export default function MemberList() {
 
       const fileName = `VAMC_Member_Management_${dayjs().format('YYYYMMDD_HHmmss')}.xlsx`;
       XLSX.writeFile(workbook, fileName);
-      message.success(`Exported ${filteredData.length} records to ${fileName}`);
+      toast.success(`Exported ${filteredData.length} records to ${fileName}`);
     } catch {
-      message.error('Failed to export Excel file');
+      toast.error('Failed to export Excel file');
     }
   };
 

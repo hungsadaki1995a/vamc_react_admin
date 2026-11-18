@@ -5,10 +5,10 @@ import type { Dayjs } from 'dayjs';
 import { keepPreviousData } from '@tanstack/react-query';
 import { useApiQuery } from '@/hooks/use-api-query';
 import { getNpl, getNpls, type NplItem, type NplSearch } from '@/api/npl/npl-api';
-import type { PageResponse } from '@/api/common/api-util';
-import { SysPageHeader, SysPagination } from '@/features/sys/_shared/sys-ui';
-import { rowNumber } from '@/features/sys/_shared/sys-utils';
-import styles from '@/features/sys/_shared/sys-page.module.css';
+import type { PageResponse } from '@/api/common/api-utils';
+import { SysPageHeader, SysPagination } from '@/features/system/_shared/system-ui';
+import { rowNumber } from '@/features/system/_shared/system-utils';
+import styles from '@/features/system/_shared/system-page.module.css';
 
 const PAGE_SIZE = 15;
 type DateRange = [Dayjs | null, Dayjs | null] | null;

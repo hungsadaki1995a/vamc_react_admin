@@ -8,7 +8,7 @@ import 'dayjs/locale/vi';
 import 'dayjs/locale/en';
 import { useLocaleStore } from '@/stores/locale-store';
 import { useAuthStore } from '@/stores/auth-store';
-import { useComcdStore } from '@/stores/comcd-store';
+import { useComcdStore } from '@/stores/common-code-store';
 import { useMenuStore } from '@/stores/menu-store';
 import { useLabelStore } from '@/stores/label-store';
 import { toIsoLangTag } from '@/utils/locale-storage';

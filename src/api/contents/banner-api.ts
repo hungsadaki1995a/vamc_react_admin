@@ -1,6 +1,6 @@
 import { apiClient } from '@/lib/api/client';
-import { apiDelete, apiDownload, apiGet, apiPatch, apiPost, apiPut } from '@/api/common/api-util';
-import type { PageResponse } from '@/api/common/api-util';
+import { apiDelete, apiDownload, apiGet, apiPatch, apiPost, apiPut } from '@/api/common/api-utils';
+import type { PageResponse } from '@/api/common/api-utils';
 import type { ContentFileGroup } from './post-api';
 
 // Banner Management API — BannerController (`/api/v1/contents/banners`), menu A04060000.

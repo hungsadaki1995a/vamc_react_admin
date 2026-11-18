@@ -1,8 +1,6 @@
 /**
- * AG Grid Vietnamese locale
- *
- * Keys are kept 1:1 with `agGridLocaleKo.ts` — whenever a key is added on one side, add it here too.
- * (English uses AG Grid's built-in defaults, so there is no separate file. See `agGridLocale.ts`)
+ * AG Grid Vietnamese locale.
+ * English uses AG Grid's built-in defaults (see `ag-grid-locale.ts`).
  */
 export const AG_GRID_LOCALE_VI: Record<string, string> = {
   // Filter

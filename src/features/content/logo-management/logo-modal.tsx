@@ -10,9 +10,9 @@ import {
 } from '@/api/contents/site-display-api';
 import type { LogoRequest } from '@/api/contents/site-display-api';
 import type { PostDetail } from '@/api/contents/post-api';
-import { FormField } from '@/features/sys/_shared/sys-ui';
-import { errorMessage } from '@/features/sys/_shared/sys-utils';
-import styles from '@/features/sys/_shared/sys-page.module.css';
+import { FormField } from '@/features/system/_shared/system-ui';
+import { errorMessage } from '@/features/system/_shared/system-utils';
+import styles from '@/features/system/_shared/system-page.module.css';
 import { ImageField } from '../_shared/post-files';
 
 // Logo Management - Detail / Register / Edit popup (menu A04110200).

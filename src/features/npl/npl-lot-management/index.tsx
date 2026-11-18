@@ -14,10 +14,10 @@ import {
   type NplLotItem,
   type NplLotSearch,
 } from '@/api/npl/npl-api';
-import type { PageResponse } from '@/api/common/api-util';
-import { DateTimeCell, FormField, SysPageHeader, SysPagination } from '@/features/sys/_shared/sys-ui';
-import { errorMessage, rowNumber } from '@/features/sys/_shared/sys-utils';
-import styles from '@/features/sys/_shared/sys-page.module.css';
+import type { PageResponse } from '@/api/common/api-utils';
+import { DateTimeCell, FormField, SysPageHeader, SysPagination } from '@/features/system/_shared/system-ui';
+import { errorMessage, rowNumber } from '@/features/system/_shared/system-utils';
+import styles from '@/features/system/_shared/system-page.module.css';
 
 const PAGE_SIZE = 15;
 

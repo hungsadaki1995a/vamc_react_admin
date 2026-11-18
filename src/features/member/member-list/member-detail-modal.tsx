@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { Modal, Select, message } from 'antd';
+import { Modal, Select } from 'antd';
 import { useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
+import { useNotify } from '@/hooks/use-notify';
 
 import { getMember } from '@/api/generated/sdk.gen';
 import type { MemberItem, MemberClassification } from './member.types';
@@ -39,6 +40,7 @@ export default function MemberDetailModal({
   onApprovalChange,
   onEdit,
 }: MemberDetailModalProps) {
+  const { toast } = useNotify();
   const [classificationOverride, setClassificationOverride] = useState<MemberClassification | null>(null);
 
   // Fetch complete member profile details from API if memberCode is available
@@ -130,16 +132,16 @@ export default function MemberDetailModal({
 
   const handleApprovalRequest = () => {
     onApprovalChange?.(member.id, 'Requested');
-    message.success('Approval request submitted successfully');
+    toast.success('Approval request submitted successfully');
   };
 
   const handleClassificationChange = (value: MemberClassification) => {
     setClassificationOverride(value);
-    message.info(`Member classification changed to ${value}`);
+    toast.info(`Member classification changed to ${value}`);
   };
 
   const handleEditClick = () => {
-    message.info('Member information edit mode');
+    toast.info('Member information edit mode');
     onEdit?.(member);
   };
 
@@ -321,7 +323,7 @@ export default function MemberDetailModal({
                             className={styles.attachmentItem}
                             onClick={(e) => {
                               e.preventDefault();
-                              message.info(`Viewing attachment: ${file}`);
+                              toast.info(`Viewing attachment: ${file}`);
                             }}
                           >
                             {file}

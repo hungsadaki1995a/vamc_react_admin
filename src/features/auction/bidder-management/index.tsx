@@ -13,10 +13,10 @@ import {
   type AuctionItem,
   type BidderItem,
 } from '@/api/auction/auction-api';
-import type { PageResponse } from '@/api/common/api-util';
-import { SysPageHeader, SysPagination } from '@/features/sys/_shared/sys-ui';
-import { errorMessage } from '@/features/sys/_shared/sys-utils';
-import styles from '@/features/sys/_shared/sys-page.module.css';
+import type { PageResponse } from '@/api/common/api-utils';
+import { SysPageHeader, SysPagination } from '@/features/system/_shared/system-ui';
+import { errorMessage } from '@/features/system/_shared/system-utils';
+import styles from '@/features/system/_shared/system-page.module.css';
 
 const PAGE_SIZE = 15;
 

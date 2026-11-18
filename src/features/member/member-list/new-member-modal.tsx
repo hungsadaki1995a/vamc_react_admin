@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { Modal, Form, Input, Select, Radio, Upload, Button, Row, Col, message } from 'antd';
+import { Modal, Form, Input, Select, Radio, Upload, Button, Row, Col } from 'antd';
 import { UploadOutlined, UserAddOutlined } from '@ant-design/icons';
+import { useNotify } from '@/hooks/use-notify';
 import type { MemberItem, MemberClassification, MemberType } from './member.types';
 
 interface NewMemberModalProps {
@@ -10,6 +11,7 @@ interface NewMemberModalProps {
 }
 
 export default function NewMemberModal({ visible, onClose, onAddMember }: NewMemberModalProps) {
+  const { toast } = useNotify();
   const [form] = Form.useForm();
   const [memberType, setMemberType] = useState<MemberType>('General');
 
@@ -44,7 +46,7 @@ export default function NewMemberModal({ visible, onClose, onAddMember }: NewMem
         accountStatus: 'Active',
       });
 
-      message.success(`Member ${values.memberName} successfully registered!`);
+      toast.success(`Member ${values.memberName} successfully registered!`);
       form.resetFields();
       onClose();
     } catch {

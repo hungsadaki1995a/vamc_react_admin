@@ -10,9 +10,9 @@ import {
   uploadBannerImage,
 } from '@/api/contents/banner-api';
 import type { Banner, BannerRequest } from '@/api/contents/banner-api';
-import { FormField } from '@/features/sys/_shared/sys-ui';
-import { errorMessage } from '@/features/sys/_shared/sys-utils';
-import styles from '@/features/sys/_shared/sys-page.module.css';
+import { FormField } from '@/features/system/_shared/system-ui';
+import { errorMessage } from '@/features/system/_shared/system-utils';
+import styles from '@/features/system/_shared/system-page.module.css';
 import { ImageField } from '../_shared/post-files';
 
 // Banner Management - Detail / Register / Edit popup (VPA0032P01).

@@ -1,18 +1,16 @@
 import { useState } from 'react';
-import { DatePicker, Checkbox, Table, Select, Modal, message } from 'antd';
+import { DatePicker, Checkbox, Table, Select } from 'antd';
 import type { TableColumnsType } from 'antd';
 import {
   SearchOutlined,
   UpOutlined,
   DownOutlined,
-  LeftOutlined,
-  RightOutlined,
-  DoubleLeftOutlined,
-  DoubleRightOutlined,
 } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import { deleteFaqs } from '@/api/contents/faq-api';
 import { ApiError } from '@/lib/api/error';
+import { useNotify } from '@/hooks/use-notify';
+import { DateTimeCell, SysPagination } from '@/features/system/_shared/system-ui';
 import type { FaqItem } from './faq.types';
 import {
   useFaqs,
@@ -27,31 +25,8 @@ const { RangePicker } = DatePicker;
 const CATEGORY_ALL = 'ALL';
 
 
-function formatDateTime(val?: string | null): { date: string; time?: string } {
-  if (!val || val === '-') return { date: '-' };
-  if (/^\d{2}\/\d{2}\/\d{4}\s+\d{2}:\d{2}:\d{2}$/.test(val)) {
-    const [d, t] = val.split(' ');
-    return { date: d, time: t };
-  }
-  const d = dayjs(val);
-  if (d.isValid()) {
-    return { date: d.format('DD/MM/YYYY'), time: d.format('HH:mm:ss') };
-  }
-  return { date: val };
-}
-
-function DateTimeCell({ value }: { value?: string | null }) {
-  const dt = formatDateTime(value);
-  if (dt.date === '-') return <span>-</span>;
-  return (
-    <div className={styles.dateTimeCell}>
-      <span>{dt.date}</span>
-      {dt.time && <span className={styles.timeText}>{dt.time}</span>}
-    </div>
-  );
-}
-
 export default function FaqManagement() {
+  const { toast, dialog } = useNotify();
   // ── Filter UI State ────────────────────────────────────────────────────────
   const [category, setCategory] = useState<string>(CATEGORY_ALL);
   const faqCategories = useFaqCategories();
@@ -93,15 +68,6 @@ export default function FaqManagement() {
     toDate: appliedFilters.toDate,
     published: appliedFilters.published,
   });
-
-  // ── Pagination Calculation ─────────────────────────────────────────────────
-  const blockSize = 10;
-  const totalPages = Math.max(1, Math.ceil((total || 0) / pageSize));
-  const currentBlock = Math.floor((page - 1) / blockSize);
-  const startPage = currentBlock * blockSize + 1;
-  const endPage = Math.min(startPage + blockSize - 1, totalPages);
-  const pageNumbers: number[] = [];
-  for (let i = startPage; i <= endPage; i++) pageNumbers.push(i);
 
   // ── Modal State ────────────────────────────────────────────────────────────
   const [modalVisible, setModalVisible] = useState(false);
@@ -174,10 +140,10 @@ export default function FaqManagement() {
 
   const handleDelete = () => {
     if (selectedRowKeys.length === 0) {
-      message.warning('Please select at least one FAQ item to delete.');
+      toast.warning('Please select at least one FAQ item to delete.');
       return;
     }
-    Modal.confirm({
+    dialog.confirm({
       title: 'Delete FAQs',
       content: `Are you sure you want to delete ${selectedRowKeys.length} selected FAQ(s)?`,
       okText: 'Delete',
@@ -189,11 +155,11 @@ export default function FaqManagement() {
             body: { pstNos: selectedRowKeys.map(String) },
             throwOnError: true,
           });
-          message.success('Selected FAQs have been deleted.');
+          toast.success('Selected FAQs have been deleted.');
           setSelectedRowKeys([]);
           refetch();
         } catch (err) {
-          message.error(ApiError.from(err).message);
+          toast.error(ApiError.from(err).message);
         }
       },
     });
@@ -389,61 +355,8 @@ export default function FaqManagement() {
       </div>
 
       {/* ── Centered Pagination ─────────────────────────────────────────────── */}
-      {totalPages > 0 && (
-        <div className={styles.paginationContainer}>
-          {startPage > 1 && (
-            <>
-              <button
-                type="button"
-                className={styles.pageNavBtn}
-                onClick={() => setPage(1)}
-                title="First Page"
-              >
-                <DoubleLeftOutlined style={{ fontSize: 10, color: '#ffffff' }} />
-              </button>
-              <button
-                type="button"
-                className={styles.pageNavBtn}
-                onClick={() => setPage(Math.max(1, startPage - blockSize))}
-                title="Previous 10 Pages"
-              >
-                <LeftOutlined style={{ fontSize: 10, color: '#ffffff' }} />
-              </button>
-            </>
-          )}
-
-          {pageNumbers.map((p) => (
-            <button
-              key={p}
-              type="button"
-              className={p === page ? styles.pageNumberActive : styles.pageNumber}
-              onClick={() => setPage(p)}
-            >
-              {p}
-            </button>
-          ))}
-
-          {endPage < totalPages && (
-            <>
-              <button
-                type="button"
-                className={styles.pageNavBtn}
-                onClick={() => setPage(Math.min(totalPages, endPage + 1))}
-                title="Next 10 Pages"
-              >
-                <RightOutlined style={{ fontSize: 10, color: '#ffffff' }} />
-              </button>
-              <button
-                type="button"
-                className={styles.pageNavBtn}
-                onClick={() => setPage(totalPages)}
-                title="Last Page"
-              >
-                <DoubleRightOutlined style={{ fontSize: 10, color: '#ffffff' }} />
-              </button>
-            </>
-          )}
-        </div>
+      {total > 0 && (
+        <SysPagination page={page} pageSize={pageSize} total={total} onChange={setPage} />
       )}
 
       {/* ── Bottom actions: Delete | Add New ────────────────────────────────── */}

@@ -38,7 +38,7 @@ const autoRegistry: Record<string, ComponentType> = Object.fromEntries(
 //
 // Valid exception — when wiring the same file to two menus with different props:
 //   'SYS030102SC': lazy(() =>
-//     import('@/features/sys/sys030101-sc/index').then((m) => ({
+//     import('@/features/system/admin-menu-management/index').then((m) => ({
 //       default: () => <m.default filterStatus="active" />,
 //     }))
 //   ),
@@ -57,6 +57,15 @@ const overrides: Record<string, ComponentType> = {
   'faq-management': lazy(() => import('@/features/content/faq-management')),
   'FAQ Management': lazy(() => import('@/features/content/faq-management')),
   FaqManagement: lazy(() => import('@/features/content/faq-management')),
+  SYS020101SC: lazy(() => import('@/features/system/platform-menu-management')),
+  SYS020102SC: lazy(() => import('@/features/system/form-management')),
+  SYS020103SC: lazy(() => import('@/features/system/fee-management')),
+  SYS020104SC: lazy(() => import('@/features/system/web-menu-permission-management')),
+  SYS030101SC: lazy(() => import('@/features/system/admin-menu-management')),
+  SYS030102SC: lazy(() => import('@/features/system/user-management')),
+  SYS030103SC: lazy(() => import('@/features/system/user-group-management')),
+  SYS030104SC: lazy(() => import('@/features/system/admin-menu-permission-management')),
+  SYS050301SC: lazy(() => import('@/features/system/label-management')),
 };
 
 export const componentRegistry: Record<string, ComponentType> = {

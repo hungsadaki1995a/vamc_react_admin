@@ -1,5 +1,5 @@
-import { apiDownload, apiGet, apiPost } from '@/api/common/api-util';
-import type { PageResponse } from '@/api/common/api-util';
+import { apiDownload, apiGet, apiPost } from '@/api/common/api-utils';
+import type { PageResponse } from '@/api/common/api-utils';
 
 export type TradeAppKind = 'purchase' | 'sale' | 'consulting';
 export type TradeContractKind = 'purchase-brokerage-contracts' | 'sale-brokerage-contracts' | 'consulting-contracts';

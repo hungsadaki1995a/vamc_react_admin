@@ -28,7 +28,7 @@ import type { LoginRequest } from '@/lib/api/types';
 import { useLocaleStore, type LocaleKey } from '@/stores/locale-store';
 import { getLocaleShortLabel } from '@/utils/locale-storage';
 import styles from './index.module.scss';
-import vamcLogoLogin from '@/assets/vamc_logo_login-28c7ab.png';
+import vamcLogoLogin from '@/assets/vamc-logo-login.png';
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PHONE_REGEX = /^\+?\d{8,15}$/;
