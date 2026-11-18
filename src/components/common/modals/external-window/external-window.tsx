@@ -108,8 +108,8 @@ export function ExternalWindow({
     const div = popup.document.createElement('div');
     div.style.cssText = 'min-height:100%; position:relative;';
     popup.document.body.appendChild(div);
-    // window.open 으로 만든 외부 문서의 DOM 노드라 렌더 중에는 만들 수 없다.
-    // createPortal 대상이 되려면 state 로 올려야 하므로 effect 내 setState 가 불가피하다.
+    // DOM node from an external document created via window.open cannot be created during render.
+    // Must be lifted to state to be a createPortal target, so setState inside effect is unavoidable.
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setContainer(div);
 

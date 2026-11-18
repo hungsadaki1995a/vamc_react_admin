@@ -26,11 +26,11 @@ declare module 'axios' {
   }
 }
 
-// 탭 수명과 무관한 전역 API는 바인딩 제외
+// Exclude global APIs unrelated to tab lifecycle
 const TAB_BIND_DENYLIST = ['/api/auth/', '/api/mnu', '/api/common/menus', '/api/lbl', '/api/comcd'];
 
-// AUDIT_LOG.MENU_CD(CHAR(9), MENU_MNG.MENU_CD 참조) 적재용 — 서버 메뉴에서 온 키만 보낸다.
-// 정적 메뉴(dashboard, dev.*)의 키는 메뉴코드가 아니므로 이 패턴에서 걸러진다.
+// For populating AUDIT_LOG.MENU_CD (CHAR(9), references MENU_MNG.MENU_CD) — send only keys from server menus.
+// Static menu keys (dashboard, dev.*) are not menu codes, so this pattern filters them out.
 const MENU_CD_PATTERN = /^[A-Z][A-Z0-9]{8}$/;
 
 function shouldBindToTab(url?: string): boolean {
@@ -91,8 +91,8 @@ apiClient.interceptors.request.use((config) => {
   config.headers['X-Lang'] = locale;
   config.headers['Accept-Language'] = toIsoLangTag(locale);
 
-  // 현재 화면(활성 탭)의 메뉴코드. 부트스트랩 호출(로그인·라벨·메뉴)은 활성 탭이 없어 생략된다 —
-  // 메뉴 컨텍스트가 없는 행위이므로 서버에서 MENU_CD 는 NULL 이 된다.
+  // Menu code of the current screen (active tab). Omitted for bootstrap calls (login/labels/menus) since no tab is active —
+  // actions without menu context result in MENU_CD = NULL on the server.
   const activeTabKey = useTabStore.getState().activeTabKey;
   if (activeTabKey && MENU_CD_PATTERN.test(activeTabKey)) {
     config.headers['X-Menu-Cd'] = activeTabKey;
@@ -104,7 +104,7 @@ apiClient.interceptors.request.use((config) => {
 
   useLoadingStore.getState().increment();
 
-  // 탭 귀속: 활성 탭의 요청을 레지스트리에 등록해 탭 닫기 시 일괄 취소 가능하게 한다
+  // Tab binding: register active tab's requests in the registry so they can be batch-aborted on tab close
   const cfg = config as RetryableConfig;
   if (!cfg.__tabKey) {
     const tabKey = useTabStore.getState().activeTabKey;
@@ -136,7 +136,7 @@ apiClient.interceptors.response.use(
     useLoadingStore.getState().decrement();
     const config = error.config as RetryableConfig | undefined;
 
-    // 탭 닫기 등으로 취소된 요청은 조용히 통과 (토스트/변환 없음)
+    // Pass through requests canceled by tab close etc. silently (no toast/conversion)
     if (axios.isCancel(error) || error.code === 'ERR_CANCELED') {
       return Promise.reject(error);
     }
@@ -144,8 +144,8 @@ apiClient.interceptors.response.use(
     if (!error.response) {
       // Defer toast render to next microtask — keeps current error-handling chain lean
       if (!config?.skipErrorToast) {
-        // 라벨 우선 + 한국어 폴백 — React 밖이라 훅을 못 쓰므로 getState() 로 읽는다
-        // (`lib/api/error.ts` 의 httpMessage 와 같은 패턴).
+        // Label first + Korean fallback — outside React so hooks cannot be used; read via getState()
+        // (same pattern as httpMessage in `lib/api/error.ts`).
         queueMicrotask(() => apiNotify.error(
           useLabelStore.getState().t('MESSAGE.ERROR.TEXT_NETWORK', '네트워크 연결을 확인해 주세요.'),
         ));

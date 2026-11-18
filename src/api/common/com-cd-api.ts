@@ -2,10 +2,10 @@ import { apiClient } from '@/lib/api/client';
 import type { ApiResponse } from '@/lib/api/types';
 
 // ─────────────────────────────────────────────────────────────────────────────
-// 공통코드(COM_CD) 조회 API — 전역 도메인.
+// Common code (COM_CD) lookup API — global domain.
 //
-// 코드 도메인(CD_DMN)과 그 하위 코드 목록을 읽어 comcdStore 캐시에 적재한다.
-// ComcdSelect / ComcdSelectCell 이 이 캐시를 본다. 쓰기(공통코드 관리 화면)는 없다.
+// Loads code domains (CD_DMN) and their child code lists into the comcdStore cache.
+// ComcdSelect / ComcdSelectCell read from this cache. No write API (no common code management screen).
 // ─────────────────────────────────────────────────────────────────────────────
 
 // Matches com.vamc.vamcnplbackend.common.code.dto.CodeDomainResponse
@@ -37,9 +37,9 @@ export const getCodeList = async (projId: string, cdDmnId: string): Promise<Code
 
 // GET /api/comcd/all — all code details for frontend bulk-cache (no auth required)
 // X-Project-Id and X-Lang headers are injected automatically by the axios interceptor
-// TODO: /api/comcd/all 미구현 — 백엔드 개발 완료 후 활성화
+// TODO: /api/comcd/all not implemented — enable after backend development is complete
 export const getAllCodeList = async (): Promise<CodeDetail[]> => {
-  // 미구현 API 호출 방지 (500 에러 토스트 차단)
+  // Prevent calling unimplemented API (suppress 500 error toast)
   // const { data } = await apiClient.get<ApiResponse<CodeDetail[]>>('/api/comcd/all');
   // return data.data ?? [];
   return [];

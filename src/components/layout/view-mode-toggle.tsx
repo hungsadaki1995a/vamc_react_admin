@@ -6,9 +6,9 @@ export interface ViewModeToggleOption<T extends string> {
   value: T;
   label: string;
   disabled?: boolean;
-  /** 커스텀 아이콘. 미지정 시 인덱스 기반 기본 아이콘(grid/list) 사용 */
+  /** Custom icon. Defaults to index-based icon (grid/list) when omitted */
   icon?: ReactNode;
-  /** 마우스 오버 시 표시할 antd 툴팁. 지정 시 네이티브 title 대신 사용 */
+  /** Antd tooltip shown on hover. Replaces native title when specified */
   tooltip?: ReactNode;
 }
 
@@ -56,7 +56,7 @@ export default function ViewModeToggle<T extends string>({
               'ds-view-mode-toggle__button',
               selected ? 'ds-view-mode-toggle__button--active' : '',
             ].filter(Boolean).join(' ')}
-            // antd 툴팁 사용 시 네이티브 title 중복 표시 방지
+            // Prevent duplicate native title when using antd tooltip
             title={hasTooltip ? undefined : option.label}
             aria-label={option.label}
             aria-pressed={selected}

@@ -4,9 +4,9 @@ import { idbGet, idbSet } from '@/lib/cache/idb-cache';
 import { useLocaleStore } from '@/stores/locale-store';
 
 /**
- * 라벨 캐시 TTL: 5분. `comcdStore` 와 같은 정책이다.
- * TTL 안이면 캐시를 그대로 쓰고 네트워크를 타지 않으며, 지났으면 캐시를 먼저 보여준 뒤
- * 뒤에서 갱신한다(stale-while-revalidate).
+ * Label cache TTL: 5 minutes. Same policy as `comcdStore`.
+ * Within TTL, use cache directly without network calls; once expired, serve cached labels first
+ * and refresh in the background (stale-while-revalidate).
  */
 const CACHE_TTL_MS = 5 * 60 * 1000;
 
@@ -18,16 +18,16 @@ interface LabelStore {
   labels: Record<string, string>;
   labelsVersion: number;
   /**
-   * GET /api/lbl/bulk — 현재 로케일(X-Lang) 기준 전체 라벨 로드. 실패 시 기존 라벨 유지.
-   * @param force true면 캐시를 무시하고 서버에서 다시 받는다 (라벨 관리 화면에서 저장한 직후).
+   * GET /api/lbl/bulk — load all labels for current locale (X-Lang). Preserves existing labels on failure.
+   * @param force If true, bypass cache and re-fetch from server (right after saving in label management screen).
    */
   loadLabels: (force?: boolean) => Promise<void>;
   /**
-   * 라벨 캐시 무효화 — 라벨을 고친 직후 앱 전체 라벨 맵을 다시 받는다.
+   * Invalidate label cache — re-fetch the app-wide label map right after editing labels.
    *
-   * 하는 일은 `loadLabels(true)` 와 같지만 이름을 `menuStore.invalidateMenuCache()` 와 맞췄다.
-   * 화면 코드가 두 전역 캐시를 같은 어휘로 다뤄야 "이건 캐시 무효화구나"가 읽힌다 —
-   * `loadLabels(true)` 는 인자를 봐야 의도를 알 수 있다.
+   * Same behavior as `loadLabels(true)`, named to match `menuStore.invalidateMenuCache()`.
+   * Screen code should treat both global caches with the same vocabulary so the intent is clear —
+   * `loadLabels(true)` requires inspecting the argument to tell.
    */
   invalidateLabelCache: () => Promise<void>;
   /** Translate a label key. Falls back to defaultText, then the key itself. */
@@ -61,13 +61,13 @@ export const useLabelStore = create<LabelStore>()((set, get) => ({
       }
     };
 
-    // 캐시 적중 — 즉시 반영하고, 신선하면 요청 자체를 생략한다.
-    // 라벨은 전량 전송이라(화면 라벨이 붙으면 수천 건) 새로고침마다 다시 받으면 부담이 크다.
+    // Cache hit — apply immediately, and skip request if fresh.
+    // Labels are fetched in bulk (thousands of rows once screen labels are added), so re-fetching on every refresh is costly.
     const cached = force ? undefined : await idbGet<Record<string, string>>(key);
     if (cached) {
       apply(cached.data);
       if (Date.now() - cached.ts < CACHE_TTL_MS) return;
-      // 오래된 캐시 — 화면은 그대로 두고 뒤에서 갱신
+      // Stale cache — keep UI as-is and refresh in background
       fetchAndStore().catch(() => { /* 갱신 실패 시 기존 라벨 유지 */ });
       return;
     }

@@ -3,12 +3,12 @@ import type { GanttTask, DependencyType, CriticalPathResult, DependencyLine } fr
 const MS_PER_DAY = 1000 * 60 * 60 * 24;
 
 /**
- * CPM (Critical Path Method) 구현
+ * CPM (Critical Path Method) implementation
  *
- * 1. Forward Pass: ES, EF 계산 (가장 이른 시작/종료)
- * 2. Backward Pass: LS, LF 계산 (가장 늦은 시작/종료)
- * 3. Float = LS - ES (여유 시간)
- * 4. Float === 0 → 크리티컬 패스
+ * 1. Forward Pass: compute ES, EF (Earliest Start / Finish)
+ * 2. Backward Pass: compute LS, LF (Latest Start / Finish)
+ * 3. Float = LS - ES (slack time)
+ * 4. Float === 0 → Critical Path
  */
 export function calculateCriticalPath(tasks: GanttTask[]): CriticalPathResult {
   if (tasks.length === 0) {
@@ -19,7 +19,7 @@ export function calculateCriticalPath(tasks: GanttTask[]): CriticalPathResult {
   const duration = new Map<string, number>();
   const schedule = new Map<string, { ES: number; EF: number; LS: number; LF: number; totalFloat: number }>();
 
-  // 작업 기간 (일수) 계산
+  // Calculate task duration (days)
   for (const task of tasks) {
     const start = new Date(task.start).getTime();
     const end = new Date(task.end).getTime();
@@ -28,7 +28,7 @@ export function calculateCriticalPath(tasks: GanttTask[]): CriticalPathResult {
     schedule.set(task.id, { ES: 0, EF: 0, LS: 0, LF: 0, totalFloat: 0 });
   }
 
-  // 후속 작업 맵을 미리 만든다 — Backward Pass 에서 매번 tasks 를 훑으면 O(n²) 가 된다
+  // Prebuild successor map — scanning tasks every time during Backward Pass would be O(n²)
   const successorsMap = new Map<string, GanttTask[]>();
   for (const task of tasks) {
     if (!task.dependencies) continue;
@@ -38,7 +38,7 @@ export function calculateCriticalPath(tasks: GanttTask[]): CriticalPathResult {
     }
   }
 
-  // 위상 정렬
+  // Topological sort
   const sorted = topologicalSort(tasks);
 
   // Forward Pass
@@ -62,7 +62,7 @@ export function calculateCriticalPath(tasks: GanttTask[]): CriticalPathResult {
     sched.EF = es + dur;
   }
 
-  // 프로젝트 종료일
+  // Project end date
   let projectEnd = 0;
   for (const [, sched] of schedule) {
     projectEnd = Math.max(projectEnd, sched.EF);
@@ -89,7 +89,7 @@ export function calculateCriticalPath(tasks: GanttTask[]): CriticalPathResult {
     sched.totalFloat = sched.LS - sched.ES;
   }
 
-  // 크리티컬 패스 추출 (float ≈ 0)
+  // Extract critical path (float ≈ 0)
   const criticalTaskIds = new Set<string>();
   for (const [taskId, sched] of schedule) {
     if (Math.abs(sched.totalFloat) < 0.001) {
@@ -97,7 +97,7 @@ export function calculateCriticalPath(tasks: GanttTask[]): CriticalPathResult {
     }
   }
 
-  // 의존성 연결선
+  // Dependency links
   const criticalLines: DependencyLine[] = [];
   for (const task of tasks) {
     if (!task.dependencies) continue;
@@ -161,17 +161,17 @@ function topologicalSort(tasks: GanttTask[]): string[] {
   return sorted;
 }
 
-/** FS/SS/FF/SF 의존성에 따른 제약 시점 계산 */
+/** Calculate constraint date based on FS/SS/FF/SF dependency */
 function getConstraint(
   depSched: { ES: number; EF: number },
   depDur: number,
   type: DependencyType,
 ): number {
   switch (type) {
-    case 'FS': return depSched.EF;          // 선행 완료 후 시작
-    case 'SS': return depSched.ES;          // 선행 시작과 동시 시작
-    case 'FF': return depSched.EF - depDur; // 선행 완료와 동시 완료
-    case 'SF': return depSched.ES - depDur; // 선행 시작과 동시 완료
+    case 'FS': return depSched.EF;          // Start after predecessor finishes
+    case 'SS': return depSched.ES;          // Start together with predecessor start
+    case 'FF': return depSched.EF - depDur; // Finish together with predecessor finish
+    case 'SF': return depSched.ES - depDur; // Finish together with predecessor start
     default: return depSched.EF;
   }
 }

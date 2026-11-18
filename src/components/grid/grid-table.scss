@@ -53,7 +53,7 @@
   }
 
   /* ── cell editor: antd Select fills cell exactly ── */
-  /* ag-cell-inline-editing = 편집 중인 셀 (AG Grid 35) */
+  /* ag-cell-inline-editing = cell currently being edited (AG Grid 35) */
   .ag-cell-inline-editing {
     padding: 0 !important;
     overflow: hidden;
@@ -80,7 +80,7 @@
     }
   }
 
-  /* fallback: ag-cell-editor (이전 버전 호환) */
+  /* fallback: ag-cell-editor (legacy version compatibility) */
   .ag-cell-editor .ant-select .ant-select-selector {
     min-height: 0 !important;
     border-radius: 0 !important;

@@ -4,25 +4,25 @@ import { encryptPassword } from '@/lib/crypto';
 import { fetchPublicKey } from '@/api/common/auth-api';
 
 /**
- * 사용자 비밀번호 변경 API — 시스템 운영 관리 도메인.
+ * User password change API — system operations domain.
  *
- * 로그인 직후 초기 비밀번호 변경 모달(`features/auth/InitChangePwModal`)이 쓴다.
+ * Used by the initial password change modal right after login (`features/auth/InitChangePwModal`).
  *
- * ⚠️ 이 파일에는 **서버에 실제로 구현된 호출만** 둔다. 사용자 조회·등록·수정 API 는
- *    양 백엔드에 컨트롤러가 없으므로, 사용자 관리 화면을 만들 때 서버부터 구현하고
- *    `usrMngApi.ts` 를 새로 만든다.
+ * ⚠️ Keep **only calls actually implemented on the server** in this file. User lookup/register/update APIs
+ *    have no controllers in either backend, so when building a user management screen, implement the server first
+ *    and create a new `usrMngApi.ts`.
  */
 
-// 서버 응답은 { status, message, data } — success 로 판정하는 ApiResponse 로 변환한다
+// Server response is { status, message, data } — convert to ApiResponse checked by success
 interface RawResp<T> { status: number; message: string; data: T | null }
 
 /**
- * POST /api/usr/change-password — 비밀번호 변경 (RSA-OAEP 암호화 전송).
- * 공개키는 매번 새로 조회한다(캐싱 금지 — 서버가 키를 회전시킨다).
+ * POST /api/usr/change-password — change password (sent encrypted with RSA-OAEP).
+ * Always fetch the public key fresh (no caching — server rotates keys).
  */
 export async function changePwd(usrId: string, newPswd: string): Promise<ApiResponse<void>> {
-  // 공개키 조회는 로그인과 같은 엔드포인트다 — `@/api/common/authApi` 하나만 쓴다.
-  // 비밀번호 변경은 로그인과 달리 평문 폴백이 없다(항상 암호화 전송).
+  // Public key lookup uses the same endpoint as login — reuse `@/api/common/authApi`.
+  // Unlike login, password change has no plaintext fallback (always encrypted).
   const publicKey = await fetchPublicKey();
   if (!publicKey) {
     return { success: false, message: '공개키를 가져오지 못해 비밀번호를 변경할 수 없습니다.', data: null };

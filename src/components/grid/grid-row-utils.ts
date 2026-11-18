@@ -62,9 +62,9 @@ export function getDirtyRowClass(data: unknown): string | undefined {
  */
 export function getDirtyCellStyle<T>(params: CellClassParams<T>): CellStyle {
   const op = (params.data as Record<string, unknown>)?._op;
-  // AG Grid는 cellStyle 함수가 생략한 속성을 지우지 않는다. DEL에서 set한 textDecoration/color를
-  // 非DEL 전환(예: 되돌리기 DEL→ORG) 시 명시적으로 리셋하지 않으면 인라인 삭선/색이 잔존한다.
-  // → 모든 상태에서 textDecoration/color를 항상 반환(리셋 포함)한다.
+  // AG Grid does not clear properties omitted by the cellStyle function. If textDecoration/color set in DEL
+  // is not explicitly reset on non-DEL transitions (e.g., revert DEL→ORG), inline strikethrough/color remains.
+  // → Always return textDecoration/color in all states (including resets).
   if (op === 'NEW') return { background: 'rgba(82,196,26,.12)', textDecoration: 'none', color: '' };
   if (op === 'MOD') return { background: 'rgba(250,173,20,.12)', textDecoration: 'none', color: '' };
   if (op === 'DEL') return { background: 'rgba(255,77,79,.08)', textDecoration: 'line-through', color: 'var(--ant-color-text-disabled)' };

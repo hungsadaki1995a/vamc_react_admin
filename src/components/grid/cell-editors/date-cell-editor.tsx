@@ -17,7 +17,7 @@ interface DateCellEditorProps extends CustomCellEditorProps {
  * @example
  * {
  *   field: 'startDt',
- *   headerName: '시작일',
+ *   headerName: 'Start Date',
  *   editable: true,
  *   cellRenderer: DateCellRenderer,
  *   cellEditor: DateCellEditor,
@@ -62,7 +62,7 @@ interface DateCellRendererParams extends ICellRendererParams {
  * @example
  * {
  *   field: 'startDt',
- *   headerName: '시작일',
+ *   headerName: 'Start Date',
  *   editable: true,
  *   cellRenderer: DateCellRenderer,
  *   cellRendererParams: { format: 'YYYY.MM.DD' },

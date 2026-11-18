@@ -2,22 +2,22 @@ import { apiClient } from '@/lib/api/client';
 import type { ApiResponse } from '@/lib/api/types';
 
 // ─────────────────────────────────────────────────────────────────────────────
-// 다국어 라벨(LANG_LBL) 일괄 조회 API — 전역 도메인.
+// Multilingual label (LANG_LBL) bulk lookup API — global domain.
 //
-// 앱 부트스트랩 시 현재 로케일의 라벨 전체를 한 번에 받아 labelStore 캐시에 넣는다.
-// 사용 언어 목록(LANG_MNG)도 여러 화면이 공유하므로 여기 둔다.
+// Fetches all labels for the current locale at once on app bootstrap and stores them in labelStore cache.
+// Supported language list (LANG_MNG) is also placed here as it is shared across screens.
 //
-// ⚠️ 라벨을 **관리**하는 화면(SYS050301SC)의 CRUD 는 `src/api/sys/lblMngApi.ts` 다.
+// ⚠️ CRUD for the label management screen (SYS050301SC) is in `src/api/sys/lblMngApi.ts`.
 // ─────────────────────────────────────────────────────────────────────────────
 
-/** 사용 언어 목록 1건 (LANG_MNG) */
+/** Single supported language entry (LANG_MNG) */
 export interface LangItem {
   langCd:   string;
   langNm:   string;
   sortSeq?: number;
 }
 
-/** GET /api/lbl/languages — 사용 언어 목록 (LANG_MNG) */
+/** GET /api/lbl/languages — supported language list (LANG_MNG) */
 export async function getLanguages(): Promise<ApiResponse<LangItem[]>> {
   const { data } = await apiClient.get<ApiResponse<LangItem[]>>('/api/lbl/languages');
   return {

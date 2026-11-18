@@ -61,7 +61,7 @@ const leafPlaceholderStyle: React.CSSProperties = {
  *
  * const columnDefs = [{
  *   field: 'name',
- *   headerName: '이름',
+ *   headerName: 'Name',
  *   cellRenderer: TreeCellRenderer,
  *   cellRendererParams: { onToggle: toggleExpand },
  * }];

@@ -2,9 +2,9 @@ import type { MeResponse } from '@/lib/api/types';
 
 export interface JwtClaims {
   sub: string;
-  /** 로그인 ID — 회원 MBR_NO / 직원 EMP_NO. 구버전 토큰은 username 이었다 */
+  /** Login ID — member MBR_NO / employee EMP_NO. Legacy tokens used username */
   userNo?: string;
-  /** @deprecated 2026-09-10 이전에 발급된 토큰 호환용 */
+  /** @deprecated For compatibility with tokens issued before 2026-09-10 */
   username?: string;
   authorities?: string[];
   type?: 'ACCESS' | 'REFRESH';

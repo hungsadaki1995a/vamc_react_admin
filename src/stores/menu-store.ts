@@ -29,12 +29,12 @@ interface MenuStore {
   clearServerMenus: () => void;
   resetNavState: () => void;
   /**
-   * SWR: 캐시 있으면 즉시 표시 → 항상 백그라운드 재검증
-   * 캐시 없으면 서버 fetch 후 IDB 저장
+   * SWR: if cache exists, display immediately → always revalidate in background
+   * If no cache, fetch from server and save to IDB
    */
   loadMenuForProject: () => Promise<void>;
   /**
-   * 메뉴 저장/삭제 후 IDB 캐시를 삭제하고 즉시 재fetch
+   * Clear IDB cache and immediately re-fetch after menu save/delete
    */
   invalidateMenuCache: () => Promise<void>;
 }
@@ -112,7 +112,7 @@ export const useMenuStore = create<MenuStore>()(
           } else {
             set({ menuTrees: cached.data.trees, menuLocale: locale, serverMenus: cached.data.items });
           }
-          // 항상 백그라운드 재검증 (SWR)
+          // Always revalidate in background (SWR)
           fetchAuthMenuResult()
             .then((fresh) => {
               set({ menuTrees: fresh.trees, menuLocale: locale, serverMenus: fresh.items });
@@ -122,7 +122,7 @@ export const useMenuStore = create<MenuStore>()(
           return;
         }
 
-        // 캐시 없음: 로딩 표시 후 서버 fetch
+        // No cache: show loading and fetch from server
         set({ menuLoading: true });
         try {
           const fresh = await fetchAuthMenuResult();
@@ -139,7 +139,7 @@ export const useMenuStore = create<MenuStore>()(
         const locale    = useLocaleStore.getState().locale;
         const cacheKey  = `menus:${userId}:${projectId}:${locale}`;
         await idbDelete(cacheKey);
-        // menuLoading 가드 초기화 후 즉시 재fetch
+        // Reset menuLoading guard and immediately re-fetch
         set({ menuLoading: false });
         get().loadMenuForProject();
       },

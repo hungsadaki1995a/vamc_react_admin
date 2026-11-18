@@ -16,8 +16,8 @@ import { useTabContext } from '@/contexts/tab-context';
  *   tsg(field) → {sceId}.SCRIPT.GRID_{field}      (grid column headers)
  *   tsm(field) → {sceId}.SCRIPT.MSG_{field}       (success/error/confirm messages)
  *
- * 버튼은 섹션과 무관하게 tvb 하나로 쓴다 — 다이얼로그 버튼용 tsb(SCRIPT.BTN_)가 있었으나
- * 구분(BTN)만 보고는 섹션을 알 수 없게 만드는 유일한 원인이었고 실사용이 없어 폐기했다.
+ * Buttons always use tvb regardless of section — tsb(SCRIPT.BTN_) for dialog buttons once existed,
+ * but it was the sole cause of not being able to infer section from type (BTN) alone and was unused, so it was removed.
  *
  * Global MESSAGE context (cross-screen messages):
  *   tm(type, code) → MESSAGE.{type}.TEXT_{code}

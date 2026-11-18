@@ -4,22 +4,22 @@ import { FUniver } from '@univerjs/core/lib/facade';
 import { UniverSheetsCorePreset } from '@univerjs/preset-sheets-core';
 // @ts-expect-error — package ships js but lacks .d.ts at this path
 import sheetsCoreKoKR from '@univerjs/preset-sheets-core/lib/locales/ko-KR';
-// SheetJS — package.json 에 **CDN tarball URL** 로 고정돼 있다.
+// SheetJS — pinned in package.json to a **CDN tarball URL**.
 //   https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz
 //
-// npm 레지스트리(registry.npmjs.org)의 xlsx 는 0.18.5(2022-03-24)에서 발행이 멈췄고,
-// 그 판에는 Prototype Pollution(0.19.3 에서 수정)과 ReDoS(0.20.2 에서 수정)가 남아 있다.
-// 두 건을 모두 해결한 판은 SheetJS 자체 CDN 으로만 배포되므로 URL 로 받는다.
-// pnpm 이 lock 에 integrity 해시를 남기므로 재현성은 유지된다.
+// npm registry (registry.npmjs.org) stopped publishing xlsx at 0.18.5 (2022-03-24),
+// which still has Prototype Pollution (fixed in 0.19.3) and ReDoS (fixed in 0.20.2).
+// Versions fixing both are distributed only via SheetJS's own CDN, so we install by URL.
+// pnpm records the integrity hash in the lockfile, preserving reproducibility.
 //
-// ⚠️ 버전을 올릴 때는 레지스트리가 아니라 CDN 의 URL 을 바꿔야 한다.
-//    `pnpm update` 는 URL 의존성을 올리지 않는다.
-// ⚠️ 폐쇄망으로 이관하면 이 URL 이 막힌다. 그때는 tarball 을 사내 저장소(Nexus raw 등)에
-//    올리고 그 주소로 바꾼다.
+// ⚠️ To upgrade versions, change the CDN URL rather than the registry.
+//    `pnpm update` does not bump URL dependencies.
+// ⚠️ If migrating to an air-gapped network, this URL will be blocked. Upload the tarball
+//    to an internal registry (e.g. Nexus raw) and point to that URL instead.
 //
-// 방침 — 이 컴포넌트는 **사용자가 직접 고른 파일만** 브라우저에서 파싱한다.
-// 서버에서 받은 파일이나 외부 입력을 이 경로로 넣지 말 것. 서버측 파싱이 필요해지면
-// 백엔드(Apache POI)에서 처리하고 이 라이브러리를 쓰지 않는다.
+// Policy — this component parses **only user-selected files** in the browser.
+// Never feed server-received files or external input here. For server-side parsing,
+// handle it on the backend (Apache POI) and do not use this library.
 import * as XLSX from 'xlsx';
 
 import '@univerjs/preset-sheets-core/lib/index.css';
@@ -27,15 +27,15 @@ import '@univerjs/preset-sheets-core/lib/index.css';
 // ── Types ──
 
 export interface SpreadSheetRef {
-  /** 현재 워크북 데이터를 JSON snapshot으로 반환 */
+  /** Return current workbook data as a JSON snapshot */
   getSnapshot: () => object | null;
-  /** JSON snapshot 데이터를 로드 (기존 워크북 교체) */
+  /** Load JSON snapshot data (replaces existing workbook) */
   loadSnapshot: (data: object) => void;
-  /** XLSX 파일을 파싱하여 Univer에 로드 */
+  /** Parse XLSX file and load into Univer */
   importXLSX: (file: File) => Promise<void>;
-  /** 현재 데이터를 XLSX 파일로 다운로드 */
+  /** Download current data as an XLSX file */
   exportXLSX: (filename?: string) => Promise<void>;
-  /** 현재 데이터를 JSON 파일로 다운로드 */
+  /** Download current data as a JSON file */
   exportJSON: (filename?: string) => void;
 }
 
@@ -49,11 +49,11 @@ interface SpreadSheetProps {
   className?: string;
 }
 
-// ── SheetJS ↔ Univer 변환 유틸리티 ──
+// ── SheetJS ↔ Univer conversion utilities ──
 
 type CellValue = string | number | boolean;
 
-/** 시트 이름 정규화 — 엑셀은 31자를 넘기거나 중복된 시트명을 허용하지 않는다 */
+/** Normalize sheet name — Excel does not allow >31 chars or duplicate sheet names */
 function safeSheetName(raw: string, used: Set<string>): string {
   let name = (raw || 'Sheet').slice(0, 31);
   if (used.has(name)) {
@@ -66,9 +66,9 @@ function safeSheetName(raw: string, used: Set<string>): string {
   return name;
 }
 
-/** XLSX 버퍼 → Univer IWorkbookData 변환 */
+/** Convert XLSX buffer → Univer IWorkbookData */
 function excelToUniverData(buffer: ArrayBuffer): object {
-  // cellDates: 날짜 셀을 일련번호가 아니라 Date 로 받는다
+  // cellDates: receive date cells as Date objects instead of serial numbers
   const wb = XLSX.read(buffer, { type: 'array', cellDates: true });
 
   const sheetOrder: string[] = [];
@@ -83,7 +83,7 @@ function excelToUniverData(buffer: ArrayBuffer): object {
     let maxRow = 0;
     let maxCol = 0;
 
-    // SheetJS 는 셀을 'A1' 주소 키로 보관한다. !ref 가 사용 범위다.
+    // SheetJS stores cells by 'A1' address keys. !ref defines the used range.
     const ref = ws?.['!ref'];
     if (ref) {
       const range = XLSX.utils.decode_range(ref);
@@ -98,7 +98,7 @@ function excelToUniverData(buffer: ArrayBuffer): object {
           } else if (cell.t === 'n' || cell.t === 'b') {
             v = cell.v as CellValue;
           } else {
-            // 수식 셀은 w(표시 문자열)에 계산 결과가 들어 있다
+            // Formula cells store the evaluated result in w (formatted text)
             v = cell.w ?? String(cell.v);
           }
 
@@ -110,7 +110,7 @@ function excelToUniverData(buffer: ArrayBuffer): object {
       }
     }
 
-    // 열 너비: SheetJS 는 wpx(px) 또는 wch(문자수)로 준다
+    // Column width: SheetJS provides wpx (px) or wch (character count)
     const cols = (ws?.['!cols'] ?? []) as XLSX.ColInfo[];
     const colData: Record<number, { w: number; hd: number }> = {};
     for (let c = 0; c <= maxCol; c += 1) {
@@ -140,7 +140,7 @@ function excelToUniverData(buffer: ArrayBuffer): object {
   return { sheetOrder, sheets, locale: 'koKR', styles: {} };
 }
 
-/** Univer snapshot → XLSX 버퍼 변환 */
+/** Convert Univer snapshot → XLSX buffer */
 function univerDataToExcel(snapshot: Record<string, unknown>): ArrayBuffer {
   const wb = XLSX.utils.book_new();
   const sheetsMap = (snapshot.sheets ?? {}) as Record<string, Record<string, unknown>>;
@@ -175,7 +175,7 @@ function univerDataToExcel(snapshot: Record<string, unknown>): ArrayBuffer {
       }
     }
 
-    // !ref 가 없으면 SheetJS 가 빈 시트로 보고 쓰지 않는다
+    // Without !ref, SheetJS treats the sheet as empty and skips writing it
     ws['!ref'] = XLSX.utils.encode_range({ s: { r: 0, c: 0 }, e: { r: maxRow, c: maxCol } });
     XLSX.utils.book_append_sheet(wb, ws, safeSheetName((sheetData.name as string) || sheetId, usedNames));
   }
@@ -188,7 +188,7 @@ function univerDataToExcel(snapshot: Record<string, unknown>): ArrayBuffer {
   return XLSX.write(wb, { type: 'array', bookType: 'xlsx' }) as ArrayBuffer;
 }
 
-/** 파일 다운로드 헬퍼 */
+/** File download helper */
 function downloadBlob(blob: Blob, filename: string) {
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
@@ -218,7 +218,7 @@ const SpreadSheet = forwardRef<SpreadSheetRef, SpreadSheetProps>(function Spread
     const initUniver = () => {
       if (disposed || univerAPIRef.current) return;
 
-      // @univerjs/core를 직접 사용 (Pro 의존성 없음)
+      // Use @univerjs/core directly (no Pro dependency)
       const univer = new Univer({
         logLevel: LogLevel.WARN,
         locale: LocaleType.KO_KR,
@@ -227,7 +227,7 @@ const SpreadSheet = forwardRef<SpreadSheetRef, SpreadSheetProps>(function Spread
         },
       });
 
-      // preset-sheets-core 플러그인 등록
+      // Register preset-sheets-core plugin
       const { plugins } = UniverSheetsCorePreset({ container });
       plugins.forEach((plugin) => {
         const [Plugin, options] = Array.isArray(plugin) ? plugin : [plugin, undefined];

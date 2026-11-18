@@ -7,12 +7,12 @@ import { useLabelStore } from '@/stores/label-store';
 
 type NotifyType = 'success' | 'error' | 'warning' | 'info';
 
-// 알림·다이얼로그 제목 — 공용 컴포넌트 라벨을 쓴다.
+// Notification & dialog titles — use shared component labels.
 //
-// 종전 MESSAGE.SCRIPT.TEXT_* 는 DB 에 등록된 적이 없어 어떤 언어에서도 폴백
-// ('success' 같은 영어 소문자)이 그대로 제목에 보였다. MESSAGE 네임스페이스는
-// 섹션 자리에 CONFIRM/INFO/ERROR 가 들어가는 별도 규약이라 라벨 관리 화면으로는
-// 등록할 수 없다 — 화면에서 등록 가능한 COMPONENT.VIEW.TITLE_* 로 옮겼다.
+// Previously MESSAGE.SCRIPT.TEXT_* was never registered in DB, so the fallback
+// (lowercase English like 'success') appeared as the title in every language. Because the MESSAGE namespace
+// uses CONFIRM/INFO/ERROR in the section slot, it cannot be registered via the label management screen —
+// moved to COMPONENT.VIEW.TITLE_* which can be registered on screen.
 const NOTIFY_CONFIG: Record<NotifyType, { titleKey: string; titleFallback: string }> = {
   success: { titleKey: 'COMPONENT.VIEW.TITLE_success', titleFallback: '성공' },
   error:   { titleKey: 'COMPONENT.VIEW.TITLE_error',   titleFallback: '오류' },
@@ -21,7 +21,7 @@ const NOTIFY_CONFIG: Record<NotifyType, { titleKey: string; titleFallback: strin
 };
 
 type NotifyOptions = Parameters<ReturnType<typeof App.useApp>['notification']['success']>[0];
-/** 문자열 → description 자동 매핑. 객체 → 그대로 전달. */
+/** String → auto-mapped to description. Object → passed as-is. */
 type NotifyArg = string | NotifyOptions;
 
 // ── Dialog i18n config ────────────────────────────────────────────────────────
@@ -39,9 +39,9 @@ const DIALOG_CONFIG: Record<DialogType, {
   error:   { titleKey: 'COMPONENT.VIEW.TITLE_error',   titleFallback: '오류', danger: true  },
 };
 
-// 다이얼로그 확인/취소 버튼 — 공용 컴포넌트 라벨을 그대로 쓴다.
-// 종전 MESSAGE.SCRIPT.BTN_* 는 DB 에 등록된 적이 없어, 어떤 언어에서도
-// 아래 'OK'/'CANCEL' 폴백이 그대로 보였다.
+// Dialog OK/Cancel buttons — use shared component labels directly.
+// Previously MESSAGE.SCRIPT.BTN_* was never registered in DB, so the
+// 'OK'/'CANCEL' fallback below appeared in every language.
 const OK_KEY     = 'COMPONENT.VIEW.BTN_ok';
 const CANCEL_KEY = 'COMPONENT.VIEW.BTN_cancel';
 
@@ -58,22 +58,22 @@ function withFallback(value: string, key: string, fallback: string): string {
  * const { toast, notify, dialog } = useNotify();
  *
  * // Toast (auto-dismiss)
- * toast.success('저장됐습니다');
- * toast.error('오류가 발생했습니다');
+ * toast.success('Saved successfully');
+ * toast.error('An error occurred');
  *
- * // Notification (persistent panel) — 문자열이면 description으로 자동 매핑
- * notify.success('작업이 완료됐습니다.');                        // title: i18n '성공'
- * notify.error({ title: '오류', description: '상세 내용' });   // 객체 그대로 (message도 허용, title로 자동 매핑)
+ * // Notification (persistent panel) — string is auto-mapped to description
+ * notify.success('Operation completed.');                        // title: i18n 'Success'
+ * notify.error({ title: 'Error', description: 'Details' });    // object as-is (message also accepted, auto-mapped to title)
  *
  * // Dialog (modal) — i18n defaults: title / okText / cancelText / okButtonProps.danger
- * dialog.confirm({ content: '저장하시겠습니까?', onOk: handleSave });
- * dialog.warning({ title: '데이터 삭제', content: '복구할 수 없습니다.', okText: '삭제', onOk: handleDelete });
- * dialog.error({ content: '서버 오류가 발생했습니다.' });
+ * dialog.confirm({ content: 'Save changes?', onOk: handleSave });
+ * dialog.warning({ title: 'Delete Data', content: 'Cannot be undone.', okText: 'Delete', onOk: handleDelete });
+ * dialog.error({ content: 'A server error occurred.' });
  * ```
  *
- * 라벨 키 (전부 COMPONENT 네임스페이스 — 다국어 라벨 관리 화면에서 등록한다):
- *   제목   COMPONENT.VIEW.TITLE_success / _error / _warning / _info / _confirm
- *   버튼   COMPONENT.VIEW.BTN_ok / BTN_cancel
+ * Label keys (all in COMPONENT namespace — register in the multilingual label management screen):
+ *   Title    COMPONENT.VIEW.TITLE_success / _error / _warning / _info / _confirm
+ *   Button   COMPONENT.VIEW.BTN_ok / BTN_cancel
  *
  * Dialog type defaults:
  *   confirm  — danger: false
@@ -89,7 +89,7 @@ export function useNotify() {
   // ── toast: antd message API (auto-dismiss toast) ──────────────────────────
   const toast = useMemo(() => message, [message]);
 
-  // ── notify: antd notification API — 문자열이면 description으로 자동 매핑 ──
+  // ── notify: antd notification API — string is auto-mapped to description ──
   const openNotify = useCallback(
     (type: NotifyType, arg: NotifyArg) => {
       const cfg = NOTIFY_CONFIG[type];

@@ -54,7 +54,7 @@ export type GridCellAlign = 'left' | 'center' | 'right';
 /**
  * Extended ColDef — stores grid metadata in `context` to avoid AG Grid unknown-property warnings.
  * Paired fields (e.g. ickId alongside ickNm) are included in revert comparison without a hidden column.
- * gridRowUtils/ExcelUploadModal 등이 사용하는 타입 계약.
+ * Type contract used by gridRowUtils, ExcelUploadModal, etc.
  */
 export type ColDefEx<T> = ColDef<T> & {
   context?: {
@@ -350,13 +350,13 @@ export default function GridTable<TData = any>({
   rowDataRef.current = rowData;
   const { message } = App.useApp();
 
-  // 그리드 내부 문구(필터·컬럼 메뉴·페이지네이션 등)는 로케일 상수에서 온다.
-  // 종전에는 한국어 상수가 고정돼 있어 언어를 바꿔도 이 부분만 한국어로 남았다.
+  // Internal grid text (filters, column menu, pagination, etc.) comes from locale constants.
+  // Previously Korean constants were hardcoded, so this part stayed in Korean even when switching languages.
   const locale = useLocaleStore((s) => s.locale);
   const localeText = useMemo(() => getAgGridLocale(locale), [locale]);
 
-  // 빈 데이터 문구는 AG Grid 의 noRowsToShow 가 아니라 커스텀 오버레이(NoRowsOverlay)가 그린다.
-  // 그래서 로케일 상수로는 바뀌지 않는다 — 라벨 테이블에서 가져온다.
+  // Empty-data text is rendered by a custom overlay (NoRowsOverlay) rather than AG Grid's noRowsToShow.
+  // Therefore it does not change via locale constants — it is fetched from the label table.
   const { tvt } = useComponentLabel();
   const resolvedNoRowsMessage = noRowsMessage ?? tvt('noRowsToShow', '데이터가 없습니다.');
 

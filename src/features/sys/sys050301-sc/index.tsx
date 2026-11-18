@@ -25,23 +25,23 @@ import {
 import type { LblRow, LblMaster, LblKey } from '@/api/sys/lbl-mng-api';
 
 // ─────────────────────────────────────────────────────────────────────────────
-// 다국어 라벨 관리 (A06040300)
+// Multilingual label management (A06040300)
 //
-// LANG_LBL 의 PK 는 (LBL_CD, SCRN_ID, LBL_SE_CD) 3개다. 화면 전체가 이 3개를 하나의
-// 식별자로 다루며, 단일 키(lblId)로 줄여 부르지 않는다 — LBL_CD 만으로는 행이 특정되지 않는다.
+// LANG_LBL has a 3-column PK (LBL_CD, SCRN_ID, LBL_SE_CD). The entire screen treats these 3 as a single
+// identifier and never shortens it to a single key (lblId) — LBL_CD alone does not identify a row.
 //
-// 번역 언어는 LANG_MNG 가 정한다. 우측 그리드는 조회된 언어 수만큼 행을 만들므로
-// 언어가 늘어나면 DB 한 줄로 화면이 따라온다.
+// Translation languages are defined by LANG_MNG. The right grid creates as many rows as languages fetched,
+// so adding a language in DB automatically reflects on this screen.
 // ─────────────────────────────────────────────────────────────────────────────
 
 /**
- * 라벨구분코드(LBL_SE_CD) 후보와 설명 라벨 키.
+ * Label type code (LBL_SE_CD) candidates and description label keys.
  *
- * 공통코드(COM_CD)에 라벨 구분 도메인이 아직 없고 전체 코드 조회(`/api/comcd/all`)도
- * 미구현이라(`src/api/common/comCdApi.ts`) 값 목록을 화면 상수로 둔다. 공통코드가 등록되면
- * `ComcdSelect` 로 교체한다. MENU / CODE 는 기존 적재 데이터(메뉴·공통코드 라벨)의 값이다.
+ * Common code (COM_CD) lacks a label-type domain and full code lookup (`/api/comcd/all`) is
+ * unimplemented (`src/api/common/comCdApi.ts`), so options are kept as screen constants. Replace with
+ * `ComcdSelect` once common codes are registered. MENU / CODE are values from existing seeded data.
  *
- * 설명 문구는 라벨 테이블에서 가져온다 — 상수에 한국어를 박아두면 언어를 바꿔도 남는다.
+ * Descriptions are fetched from the label table — hardcoding Korean in constants would persist across language switches.
  */
 const LBL_SE_VALUES: { value: string; field: string; ko: string }[] = [
   { value: 'TEXT',  field: 'seText',  ko: '화면 텍스트' },
@@ -53,7 +53,7 @@ const LBL_SE_VALUES: { value: string; field: string; ko: string }[] = [
   { value: 'CODE',  field: 'seCode',  ko: '공통코드' },
 ];
 
-/** 라벨 키의 두 번째 마디 — `{화면ID}.{섹션}.{구분}_{세부}` */
+/** Second segment of label key — `{screenId}.{section}.{type}_{detail}` */
 const SECTION_VALUES: { value: string; field: string; ko: string }[] = [
   { value: 'VIEW',   field: 'sectionView',   ko: '화면 템플릿' },
   { value: 'SCRIPT', field: 'sectionScript', ko: '이벤트 핸들러' },
@@ -64,11 +64,11 @@ interface FormFields {
   section:  string;
   lblSeCd:  string;
   detail:   string;
-  lblCd:    string;   // 신규 등록 시 자동 생성 (readonly)
+  lblCd:    string;   // Auto-generated on new registration (readonly)
   lblExpln: string;
 }
 
-/** 우측 번역 그리드 1행 */
+/** One row in the right translation grid */
 interface TrnRow {
   langCd:  string;
   langNm:  string;
@@ -87,26 +87,26 @@ export default function SYS050301SC() {
   const { canWrite } = useMenuPermission();
   const queryClient = useQueryClient();
 
-  // ── 검색 조건
+  // ── Search filters
   const [filterScrnId, setFilterScrnId]   = useState('');
   const [filterLblCd, setFilterLblCd]     = useState('');
   const [filterLblSeCd, setFilterLblSeCd] = useState<string | undefined>(undefined);
   const [applied, setApplied] = useState<{ scrnId?: string; lblCd?: string; lblSeCd?: string } | null>(null);
 
-  // ── 좌측 그리드
+  // ── Left grid
   const grid1Ref = useRef<AgGridReact<LblMaster>>(null);
   const [selected, setSelected] = useState<LblMaster | null>(null);
 
-  // ── 우측 그리드
+  // ── Right grid
   const grid2Ref = useRef<AgGridReact<TrnRow>>(null);
   const [trnRows, setTrnRows] = useState<TrnRow[]>([]);
 
-  // ── 입력 폼
+  // ── Input form
   const [form] = Form.useForm<FormFields>();
   const [formCollapsed, setFormCollapsed] = useState(false);
   const isEditMode = selected !== null;
 
-  // ── 조회 ──────────────────────────────────────────────────────────────────
+  // ── Queries ──────────────────────────────────────────────────────────────────
 
   const { data: languages = [] } = useApiQuery<LangItem[]>(
     ['lbl', 'languages'],
@@ -122,12 +122,12 @@ export default function SYS050301SC() {
   const masters = useMemo(() => (applied === null ? [] : groupLabelRows(rows)), [rows, applied]);
 
   /**
-   * 저장/삭제 후 캐시 갱신 — 두 층을 모두 비운다.
+   * Refresh cache after save/delete — clear both layers.
    *
-   * ① react-query : `queryKey` 에 검색조건(`applied`)이 붙어 있으므로 **접두 무효화**를 쓴다.
-   *    `refetch()` 는 지금 조건의 캐시만 갱신해서, 조건을 바꿔 다시 조회하면 낡은 결과가 나온다.
-   * ② labelStore : 앱 전체가 쓰는 라벨 맵. 서버 캐시는 저장 시 evict 되지만
-   *    클라이언트 캐시(IndexedDB, TTL 5분)는 여기서 강제로 비운다.
+   * ① react-query : `queryKey` includes search conditions (`applied`), so use **prefix invalidation**.
+   *    `refetch()` only updates the current condition's cache, leaving stale results when filters change.
+   * ② labelStore : app-wide label map. Server cache is evicted on save, but
+   *    the client cache (IndexedDB, 5-min TTL) is force-cleared here.
    */
   const invalidateAfterWrite = useCallback(() => {
     queryClient.invalidateQueries({ queryKey: ['lbl', 'rows'] });
@@ -137,7 +137,7 @@ export default function SYS050301SC() {
   const saveMutation   = useApiMutation<void, LblRow[]>(saveLabelBatch);
   const deleteMutation = useApiMutation<void, LblKey>(deleteLabel);
 
-  /** 선택된 라벨 + 언어 목록 → 우측 그리드 행 (언어 수만큼 항상 채운다) */
+  /** Selected label + language list → right grid rows (always filled for all languages) */
   const buildTrnRows = useCallback(
     (master: LblMaster): TrnRow[] =>
       languages.map((l) => ({
@@ -148,7 +148,7 @@ export default function SYS050301SC() {
     [languages],
   );
 
-  // ── 핸들러 ────────────────────────────────────────────────────────────────
+  // ── Handlers ─────────────────────────────────────────────────────────────────
 
   const clearSelection = useCallback(() => {
     setSelected(null);
@@ -166,7 +166,7 @@ export default function SYS050301SC() {
     clearSelection();
   }, [filterScrnId, filterLblCd, filterLblSeCd, clearSelection]);
 
-  /** 검색 조건만 비운다 — 그리드/폼 상태는 유지 */
+  /** Clear search filters only — keep grid/form state */
   const handleFilterReset = useCallback(() => {
     setFilterScrnId('');
     setFilterLblCd('');
@@ -175,8 +175,8 @@ export default function SYS050301SC() {
 
   const handleRowClick = useCallback((row: LblMaster) => {
     setSelected(row);
-    // 기존 적재분(lbl.menu.* 등)은 키 조립 규약을 따르지 않으므로 역파싱하지 않는다.
-    // 편집 모드에서는 PK 3개를 있는 그대로 보여주고 라벨설명만 수정한다.
+    // Existing seeded entries (lbl.menu.*, etc.) do not follow the key assembly rule, so do not reverse-parse them.
+    // In edit mode, show the 3 PKs as-is and allow editing only the label description.
     form.setFieldsValue({
       scrnId:   row.scrnId,
       section:  '',
@@ -189,7 +189,7 @@ export default function SYS050301SC() {
     if (formCollapsed) setFormCollapsed(false);
   }, [form, formCollapsed, buildTrnRows]);
 
-  /** 신규 등록 모드에서만 키를 자동 조립한다 */
+  /** Auto-assemble key only in new registration mode */
   const handleValuesChange = useCallback(
     (changed: Partial<FormFields>, all: FormFields) => {
       if (isEditMode) return;
@@ -203,7 +203,7 @@ export default function SYS050301SC() {
     [form, isEditMode],
   );
 
-  /** 라벨 저장 — 번역 없이 LANG_LBL 만 upsert */
+  /** Save label — upsert LANG_LBL only without translations */
   const handleSave = useCallback(() => {
     form.validateFields().then((values) => {
       dialog.confirm({
@@ -215,8 +215,8 @@ export default function SYS050301SC() {
             lblSeCd:  values.lblSeCd,
             lblExpln: values.lblExpln ?? '',
           };
-          // onError 를 달지 않는다 — 에러 토스트는 apiClient 인터셉터가 이미 띄운다(중복 방지).
-          // 화면 고유 문구가 필요하면 요청에 `skipErrorToast: true` 를 주고 여기서 처리한다.
+          // Do not attach onError — the apiClient interceptor already shows error toasts (avoids duplicates).
+          // If screen-specific text is needed, pass `skipErrorToast: true` on the request and handle it here.
           saveMutation.mutate([item], {
             onSuccess: () => {
               notify.success(isEditMode ? tmi('I100003') : tmi('I100002'));
@@ -231,7 +231,7 @@ export default function SYS050301SC() {
     });
   }, [form, isEditMode, dialog, saveMutation, notify, tmc, tmi, tme, clearSelection, invalidateAfterWrite]);
 
-  /** 라벨 삭제 — 번역까지 함께 지워진다 */
+  /** Delete label — translations are also deleted together */
   const handleDelete = useCallback(() => {
     if (!selected) return;
     dialog.confirm({
@@ -252,7 +252,7 @@ export default function SYS050301SC() {
     });
   }, [selected, dialog, deleteMutation, notify, tsm, tmi, clearSelection, invalidateAfterWrite]);
 
-  /** 번역 저장 — 변경된 언어 행만 전송 */
+  /** Save translations — send only modified language rows */
   const handleTrnSave = useCallback(() => {
     if (!selected) return;
     const dirty = trnRows.filter((r) => r._dirty);
@@ -261,7 +261,7 @@ export default function SYS050301SC() {
     dialog.confirm({
       content: formatLabel(tsm('trnSaveConfirm', '번역 {0}건을 저장하시겠습니까?'), dirty.length),
       onOk: () => {
-        // lblExpln 을 함께 보내지 않으면 서버의 라벨 upsert 가 라벨설명을 빈값으로 덮어쓴다.
+        // Without sending lblExpln, the server's label upsert overwrites the description with an empty value.
         const items: LblRow[] = dirty.map((r) => ({
           lblCd:    selected.lblCd,
           scrnId:   selected.scrnId,
@@ -287,7 +287,7 @@ export default function SYS050301SC() {
     );
   }, []);
 
-  // ── 컬럼 ──────────────────────────────────────────────────────────────────
+  // ── Columns ──────────────────────────────────────────────────────────────────
 
   const grid1Cols = useMemo<ColDef<LblMaster>[]>(() => [
     { headerName: tsg('lblCd',    '라벨코드'),   field: 'lblCd',    minWidth: 260 },
@@ -303,7 +303,7 @@ export default function SYS050301SC() {
     { headerName: tsg('trslLtr', '번역문자'), field: 'trslLtr', minWidth: 200, editable: canWrite },
   ], [tsg, canWrite]);
 
-  // 셀렉트 표시 문구는 "코드 — 설명" 형태다. 코드는 그대로 두고 설명만 번역한다.
+  // Select display text is in "code — description" format. Keep the code as-is and translate only the description.
   const lblSeOptions = useMemo(
     () => LBL_SE_VALUES.map((o) => ({ value: o.value, label: `${o.value} — ${tvt(o.field, o.ko)}` })),
     [tvt],
@@ -319,7 +319,7 @@ export default function SYS050301SC() {
   return (
     <div className="page-container">
 
-      {/* ── 검색 필터 */}
+      {/* ── Search filter */}
       <FilterPanel
         onSearch={handleSearch}
         onReset={handleFilterReset}
@@ -356,14 +356,14 @@ export default function SYS050301SC() {
         </div>
       </FilterPanel>
 
-      {/* ── 좌우 분할 그리드
-          레이아웃은 SplitPanel 이 전담한다 — 화면에서 flex 를 다시 짜지 않는다.
-          영역 제목도 별도 줄을 얹지 않고 GridPanel 의 `title` 슬롯(= 툴바 좌측)에 넣는다.
-          그래야 좌우 툴바 높이가 저절로 맞는다. */}
+      {/* ── Left/right split grid
+          SplitPanel owns the layout — do not re-create flex layouts on the screen.
+          Put section titles in GridPanel's `title` slot (= left of toolbar) instead of a separate row,
+          so left and right toolbar heights align automatically. */}
       <div className="page-body">
         <SplitPanel direction="horizontal" defaultRatio={0.6} primaryMinSize={320} secondaryMinSize={280}>
 
-          {/* 좌: 라벨 목록 */}
+          {/* Left: label list */}
           <GridPanel<LblMaster>
             title={tvh('lblList', '라벨 목록')}
             totalCount={masters.length}
@@ -377,7 +377,7 @@ export default function SYS050301SC() {
             pagination={false}
           />
 
-          {/* 우: 언어별 번역 */}
+          {/* Right: translations by language */}
           <GridPanel<TrnRow>
             title={tvh('trnList', '언어별 번역')}
             totalCount={trnRows.length}
@@ -400,7 +400,7 @@ export default function SYS050301SC() {
         </SplitPanel>
       </div>
 
-      {/* ── 하단 입력 폼 (라벨 등록/수정) */}
+      {/* ── Bottom input form (register/edit label) */}
       <FormPanel
         title={tvh('input', '라벨 등록')}
         editMode={isEditMode}
@@ -427,7 +427,7 @@ export default function SYS050301SC() {
           onValuesChange={handleValuesChange}
         >
           <Row gutter={[12, 0]}>
-            {/* 좌: 화면ID / 섹션 / 라벨구분 / 세부코드 / 라벨코드 */}
+            {/* Left: screenId / section / labelType / detailCode / labelCode */}
             <Col span={15}>
               <Row gutter={[12, 0]}>
                 <Col span={8}>
@@ -485,7 +485,7 @@ export default function SYS050301SC() {
               </Row>
             </Col>
 
-            {/* 우: 라벨설명 (두 행에 걸쳐 표시) */}
+            {/* Right: label description (spans two rows) */}
             <Col span={9}>
               <Form.Item
                 label={tvt('lblExpln', '라벨설명')}

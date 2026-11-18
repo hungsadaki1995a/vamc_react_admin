@@ -3,11 +3,11 @@ import GridTable, { type GridTableProps } from './grid-table';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 interface GridPanelProps<TData = any> extends GridTableProps<TData> {
-  /** Grid title shown at the left of the toolbar (좌우 분할 등에서 어느 그리드인지 밝힐 때) */
+  /** Grid title shown at the left of the toolbar (e.g. to identify each grid in a split view) */
   title?: React.ReactNode;
-  /** Total count display in toolbar (e.g. "전체 102건") */
+  /** Total count display in toolbar (e.g. "Total 102 items") */
   totalCount?: number;
-  /** Count label in toolbar (default: "전체") */
+  /** Count label in toolbar (default: "Total") */
   countLabel?: string;
   /** Left slot in toolbar */
   toolbarLeft?: React.ReactNode;

@@ -51,7 +51,7 @@ const TabItem = memo(function TabItem({
       onClick={() => onActivate(tab.key)}
       onMouseDown={(e) => {
         if (e.button === 1 && tab.closable) {
-          e.preventDefault(); // 브라우저 자동 스크롤 방지
+          e.preventDefault(); // Prevent browser auto-scroll
           onClose(tab.key);
         }
       }}
@@ -97,7 +97,7 @@ export default function TabBar() {
   const homeMenuKey = useSettingsStore((s) => s.homeMenuKey);
 
   // Live menu label: re-derives on locale change so tabs always show current language
-  // (서버 메뉴는 menuLblVal, 정적 메뉴는 labelKey → 라벨 테이블)
+  // (server menu uses menuLblVal, static menu uses labelKey → label table)
   const allMenus = useAllMenus();
   const getTabLabel = useCallback(
     (tab: Tab) => findMenuByKey(allMenus, tab.menuKey)?.label ?? tab.title,

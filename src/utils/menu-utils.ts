@@ -19,7 +19,7 @@ export function findMenuByKey(
   return null;
 }
 
-/** componentPath(=sceId)로 메뉴 검색 — useNavigateTab용 */
+/** Find menu by componentPath (= sceId) — for useNavigateTab */
 export function findMenuByComponentPath(
   menus: MenuItem[],
   componentPath: string
@@ -34,7 +34,7 @@ export function findMenuByComponentPath(
   return null;
 }
 
-/** targetKey가 속한 최상위(1Depth) 메뉴 key — IconRail 활성화용 */
+/** Top-level (1Depth) menu key containing targetKey — for IconRail activation */
 export function findTopLevelMenuKey(
   menus: MenuItem[],
   targetKey: string

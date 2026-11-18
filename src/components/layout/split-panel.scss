@@ -30,8 +30,8 @@
     }
   }
 
-  /* 두 패널 모두 flex column 이다 — GridPanel(툴바 + height:100% 그리드)을 그대로 담기 위한 것.
-     스크롤은 패널이 아니라 안에 들어가는 컴포넌트가 책임진다(그리드는 자체 가상 스크롤). */
+  /* Both panels are flex columns — designed to directly host GridPanel (toolbar + height:100% grid).
+     Inner components own scrolling rather than the panel (grid has its own virtual scroll). */
   &-primary {
     @include split-pane;
     flex-shrink: 0;

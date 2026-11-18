@@ -8,7 +8,7 @@ export interface MenuItem {
   children?: MenuItem[];
   hidden?: boolean;
   permissions?: string[];
-  permType?: string;     // RD(읽기) | WT(쓰기) | AL(전체) | '' | undefined
+  permType?: string;     // RD(Read) | WT(Write) | AL(All) | '' | undefined
 }
 
 export interface MenuTreeItem {

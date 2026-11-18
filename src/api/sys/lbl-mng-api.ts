@@ -2,50 +2,50 @@ import { apiClient } from '@/lib/api/client';
 import type { ApiResponse } from '@/lib/api/types';
 
 // ─────────────────────────────────────────────────────────────────────────────
-// 다국어 라벨 관리 API — 시스템 운영 관리 도메인 (메뉴 A06040300 / 화면 SYS050301SC)
+// Multilingual label management API — system operations domain (menu A06040300 / screen SYS050301SC)
 //
-// 서버 계약은 LANG_LBL / LANG_LBL_TRSL 스키마를 그대로 따른다.
-//   · 라벨 식별자는 단일 키가 아니라 PK 3개 (LBL_CD, SCRN_ID, LBL_SE_CD) 다.
-//   · 번역은 라벨의 속성이며 (LANG_CD + 위 3개) 로 식별된다.
-// 화면에서 쓰던 lblId / lclCd / lblTxt / projTxt (PMS 유래) 는 대응 테이블이 없어 폐기했다.
+// Server contract follows the LANG_LBL / LANG_LBL_TRSL schema directly.
+//   · Label identifier is not a single key, but a 3-column PK (LBL_CD, SCRN_ID, LBL_SE_CD).
+//   · Translation is an attribute of a label, identified by (LANG_CD + the 3 columns above).
+// Legacy screen fields lblId / lclCd / lblTxt / projTxt (from PMS) were removed as no matching table exists.
 //
-// ⚠️ 부트스트랩용 라벨 조회(`/api/lbl/bulk`)와 사용 언어 목록(`/api/lbl/languages`)은
-//    전 화면이 공유하므로 `@/api/common/lblBulkApi` 에 있다. 여기에는 관리 화면 전용 CRUD 만 둔다.
+// ⚠️ Bootstrap label lookup (`/api/lbl/bulk`) and supported language list (`/api/lbl/languages`)
+//    are shared across all screens in `@/api/common/lblBulkApi`. Keep only management-screen CRUD here.
 // ─────────────────────────────────────────────────────────────────────────────
 
-/** 라벨-번역 1행 — 서버 LblSaveItem 과 1:1. 번역이 없는 라벨은 langCd/trslLtr 가 비어서 온다. */
+/** One label-translation row — 1:1 with server LblSaveItem. Labels without translation have empty langCd/trslLtr. */
 export interface LblRow {
-  lblCd:     string;   // 라벨코드 (전역 유일 규약 — 화면 라벨은 sceId 접두)
-  scrnId:    string;   // 화면아이디
-  lblSeCd:   string;   // 라벨구분코드
-  lblExpln?: string;   // 라벨설명 (기본 텍스트)
-  langCd?:   string;   // 언어코드 KR/EN/VN
-  trslLtr?:  string;   // 번역문자
+  lblCd:     string;   // Label code (globally unique convention — screen labels are prefixed with sceId)
+  scrnId:    string;   // Screen ID
+  lblSeCd:   string;   // Label type code
+  lblExpln?: string;   // Label description (default text)
+  langCd?:   string;   // Language code KR/EN/VN
+  trslLtr?:  string;   // Translated string
 }
 
-/** 좌측 그리드 1행 — 라벨 1건 + 언어별 번역 맵 */
+/** One row in the left grid — 1 label + per-language translation map */
 export interface LblMaster {
-  rowId:    string;                    // `${lblCd}|${scrnId}|${lblSeCd}` — AG Grid 행 키
+  rowId:    string;                    // `${lblCd}|${scrnId}|${lblSeCd}` — AG Grid row key
   lblCd:    string;
   scrnId:   string;
   lblSeCd:  string;
   lblExpln: string;
-  trsl:     Record<string, string>;    // langCd → 번역문자
+  trsl:     Record<string, string>;    // langCd → translated string
 }
 
-/** 라벨 PK 3개 */
+/** 3-column label PK */
 export interface LblKey {
   lblCd:   string;
   scrnId:  string;
   lblSeCd: string;
 }
 
-/** PK 3개를 하나의 행 키로 — LBL_CD 만으로는 행이 특정되지 않는다 */
+/** Combine the 3 PK columns into a single row key — LBL_CD alone does not uniquely identify a row */
 export function labelRowId(key: LblKey): string {
   return `${key.lblCd}|${key.scrnId}|${key.lblSeCd}`;
 }
 
-/** 평면 행(라벨×번역) → 라벨 단위로 묶기 */
+/** Group flat rows (label × translation) by label */
 export function groupLabelRows(rows: LblRow[]): LblMaster[] {
   const map = new Map<string, LblMaster>();
   for (const r of rows) {
@@ -67,17 +67,17 @@ export function groupLabelRows(rows: LblRow[]): LblMaster[] {
   return [...map.values()];
 }
 
-// ── API 함수 ────────────────────────────────────────────────────────────────
-// 서버는 { status, message, data } 만 내려주고 success 필드가 없다 —
-// useApiQuery / useApiMutation 이 success 로 성패를 판단하므로 여기서 만들어 채운다.
+// ── API functions ────────────────────────────────────────────────────────────
+// Server returns only { status, message, data } without a success field —
+// populate success here since useApiQuery / useApiMutation check it for pass/fail.
 
 export interface LblRowsParams {
   scrnId?:  string;
-  lblCd?:   string;   // 부분일치
+  lblCd?:   string;   // partial match
   lblSeCd?: string;
 }
 
-/** GET /api/lbl/rows — 라벨-번역 목록 조회 */
+/** GET /api/lbl/rows — fetch label-translation list */
 export async function getLabelRows(params: LblRowsParams): Promise<ApiResponse<LblRow[]>> {
   const { data } = await apiClient.get<ApiResponse<LblRow[]>>('/api/lbl/rows', { params });
   return {
@@ -88,17 +88,17 @@ export async function getLabelRows(params: LblRowsParams): Promise<ApiResponse<L
 }
 
 /**
- * POST /api/lbl/batch — 라벨/번역 배치 저장 (upsert).
+ * POST /api/lbl/batch — batch save (upsert) labels/translations.
  *
- * 서버는 항목마다 LANG_LBL 을 upsert 한 뒤 langCd/trslLtr 가 있으면 LANG_LBL_TRSL 도 upsert 한다.
- * 따라서 번역만 저장할 때도 **lblExpln 을 반드시 실어 보내야 한다** — 비우면 라벨설명이 지워진다.
+ * Server upserts LANG_LBL for each item, and also upserts LANG_LBL_TRSL if langCd/trslLtr is present.
+ * Therefore **lblExpln must always be included** even when saving translations only — omitting it clears the description.
  */
 export async function saveLabelBatch(items: LblRow[]): Promise<ApiResponse<void>> {
   const { data } = await apiClient.post<ApiResponse<void>>('/api/lbl/batch', items);
   return { success: data.status === 200, message: data.message, data: null };
 }
 
-/** DELETE /api/lbl — 라벨 삭제. 번역까지 함께 삭제된다 */
+/** DELETE /api/lbl — delete label. Translations are also deleted together */
 export async function deleteLabel(key: LblKey): Promise<ApiResponse<void>> {
   const { data } = await apiClient.delete<ApiResponse<void>>('/api/lbl', { params: key });
   return { success: data.status === 200, message: data.message, data: null };

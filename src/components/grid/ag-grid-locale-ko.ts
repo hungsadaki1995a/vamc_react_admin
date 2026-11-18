@@ -1,8 +1,8 @@
 /**
- * AG Grid 한국어 로케일
+ * AG Grid Korean locale
  */
 export const AG_GRID_LOCALE_KO: Record<string, string> = {
-  // 필터
+  // Filter
   searchOoo: '검색...',
   selectAll: '(전체 선택)',
   selectAllSearchResults: '(검색 결과 전체 선택)',
@@ -34,7 +34,7 @@ export const AG_GRID_LOCALE_KO: Record<string, string> = {
   clearFilter: '지우기',
   cancelFilter: '취소',
 
-  // 컬럼 메뉴
+  // Column menu
   pinColumn: '컬럼 고정',
   pinLeft: '왼쪽 고정',
   pinRight: '오른쪽 고정',
@@ -46,7 +46,7 @@ export const AG_GRID_LOCALE_KO: Record<string, string> = {
   sortDescending: '내림차순',
   sortUnSort: '정렬 해제',
 
-  // 페이지네이션
+  // Pagination
   page: '페이지',
   more: '더보기',
   to: '~',
@@ -57,18 +57,18 @@ export const AG_GRID_LOCALE_KO: Record<string, string> = {
   previous: '이전',
   pageSizeSelectorLabel: '페이지 크기:',
 
-  // 행 선택
+  // Row selection
   ariaChecked: '선택됨',
   ariaIndeterminate: '부분 선택',
   ariaUnchecked: '선택 안됨',
 
-  // 기타
+  // Miscellaneous
   loadingOoo: '로딩 중...',
   loadingError: '오류',
   noRowsToShow: '데이터가 없습니다.',
   enabled: '활성',
 
-  // 복사
+  // Copy
   copy: '복사',
   copyWithHeaders: '헤더 포함 복사',
   copyWithGroupHeaders: '그룹 헤더 포함 복사',
@@ -78,7 +78,7 @@ export const AG_GRID_LOCALE_KO: Record<string, string> = {
   csvExport: 'CSV 내보내기',
   export: '내보내기',
 
-  // 컬럼 필터 조건
+  // Column filter conditions
   columns: '컬럼',
   filters: '필터',
   rowGroupColumns: '행 그룹 컬럼',
@@ -91,10 +91,10 @@ export const AG_GRID_LOCALE_KO: Record<string, string> = {
   valueColumnsEmptyMessage: '여기로 드래그하여 집계',
   pivotColumnsEmptyMessage: '여기로 드래그하여 피벗 설정',
 
-  // 도구 패널
+  // Tool panel
   toolPanelButton: '도구 패널',
 
-  // 기타 ARIA
+  // Other ARIA
   ariaFilterColumnsInput: '필터 컬럼',
   ariaRowSelect: '이 행을 선택하려면 Space',
   ariaRowDeselect: '이 행의 선택을 해제하려면 Space',

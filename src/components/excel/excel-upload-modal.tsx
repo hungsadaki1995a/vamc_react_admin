@@ -319,7 +319,7 @@ export function ExcelUploadModal({
       fileSelectButton: t('COMPONENT.VIEW.BTN_fileSelect', '파일 선택'),
       stopButton: t('COMPONENT.VIEW.BTN_stop', '중단'),
     }),
-    // labelsVersion: t는 안정 참조라 로케일 변경 시 이 값으로만 재계산을 유발(의도적 의존성).
+    // labelsVersion: t is a stable reference, so this intentionally triggers recalculation on locale change.
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [labelsVersion, t],
   );

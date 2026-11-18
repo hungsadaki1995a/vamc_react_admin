@@ -9,12 +9,12 @@ interface ComcdSelectProps extends Omit<SelectProps, 'options'> {
   cdDmnId: string;
   /**
    * Prepend a blank option at the top of the list.
-   * Pass the label to display (e.g. '전체', '선택', '').
+   * Pass the label to display (e.g. 'All', 'Select', '').
    * The option value is always ''.
    *
    * @example
-   * <ComcdSelect cdDmnId="JBC_CD" prefixOption="전체" />
-   * <ComcdSelect cdDmnId="JBC_CD" prefixOption="선택" />
+   * <ComcdSelect cdDmnId="JBC_CD" prefixOption="All" />
+   * <ComcdSelect cdDmnId="JBC_CD" prefixOption="Select" />
    * <ComcdSelect cdDmnId="JBC_CD" prefixOption="" />
    */
   prefixOption?: string;

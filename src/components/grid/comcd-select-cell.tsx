@@ -23,7 +23,7 @@ export interface ComcdCellRendererParams extends ICellRendererParams {
  * @example
  * {
  *   field: 'jbcCd',
- *   headerName: '직책',
+ *   headerName: 'Position',
  *   cellRenderer: ComcdSelectCellRenderer,
  *   cellRendererParams: { cdDmnId: 'JBC_CD' },
  * }
@@ -60,7 +60,7 @@ interface ComcdCellEditorProps extends CustomCellEditorProps {
   cdDmnId: string;
   /**
    * Prepend a blank option at the top of the list (same as ComcdSelect.prefixOption).
-   * Value is always ''. Pass the label text: '전체', '선택', or '' for blank.
+   * Value is always ''. Pass the label text: 'All', 'Select', or '' for blank.
    */
   prefixOption?: string;
   /**
@@ -84,7 +84,7 @@ interface ComcdCellEditorProps extends CustomCellEditorProps {
  * @example
  * {
  *   field: 'jbcCd',
- *   headerName: '직책',
+ *   headerName: 'Position',
  *   editable: true,
  *   cellRenderer: ComcdSelectCellRenderer,
  *   cellRendererParams: { cdDmnId: 'JBC_CD' },

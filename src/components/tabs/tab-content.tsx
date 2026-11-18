@@ -20,7 +20,7 @@ const TabPanel = memo(function TabPanel({
   isActive: boolean;
 }) {
   const Component: ComponentType | undefined = componentRegistry[tab.componentKey];
-  // 탭별 헤더 슬롯 — 페이지가 usePageHeaderSlot로 등록
+  // Per-tab header slot — registered by the page via usePageHeaderSlot
   const [headerSlot, setHeaderSlot] = useState<PageHeaderSlot | null>(null);
 
   return (

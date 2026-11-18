@@ -112,8 +112,8 @@ export default function AppModal({
   useLabelStore((s) => s.labelsVersion);
   const resizeHandleLabel = t('COMPONENT.VIEW.TEXT_appModalResizeHandle', '모달 크기 조절');
 
-  // prop 변경에 따른 상태 리셋 — effect 대신 렌더 중 조정.
-  // effect 로 하면 이전 상태가 한 번 그려진 뒤 리렌더되어 모달이 깜빡인다.
+  // Reset state on prop change — adjust during render instead of effect.
+  // Using an effect would paint the previous state once and re-render, causing the modal to flicker.
   const [prevOpen, setPrevOpen] = useState(rest.open);
   if (prevOpen !== rest.open) {
     setPrevOpen(rest.open);
@@ -266,7 +266,7 @@ export default function AppModal({
       }
     : {
         ...contentGapStyle,
-        // top:20을 inline style로 주면 antd centered 리셋(top:0)을 덮어써 정중앙이 깨짐
+        // Passing top:20 as inline style overrides antd centered reset (top:0) and breaks vertical centering
         ...(centered ? {} : { top: 20 }),
         ...style,
       };

@@ -12,14 +12,14 @@ interface Props {
   onClose: () => void;
 }
 
-/** 오류 표시 상한 — 서버가 이 건수까지만 내려준다 */
+/** Error display cap — server returns at most this many entries */
 const ERROR_CAP = 100;
 
 /**
  * Modal that shows upload validation errors in a table.
  *
- * 라벨 키는 `ExcelUploadModal` 과 **같은 것을 쓴다** — 같은 문구를 두 벌로 관리하면
- * 번역이 갈라진다.
+ * Uses the **same label keys** as `ExcelUploadModal` — maintaining duplicate keys
+ * causes translations to diverge.
  *
  * ```tsx
  * <ExcelErrorModal {...errorModalProps} />

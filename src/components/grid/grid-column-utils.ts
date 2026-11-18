@@ -1,10 +1,10 @@
 import type { CellClassParams, CellClassRules, ColDef, EditableCallbackParams } from 'ag-grid-community';
 
 /**
- * 편집 가능한 셀에 `ds-cell-editable` 클래스를 부여하는 cellClassRules.
- * hover 시 cursor:text 표시는 global.css에서 처리.
- * colDef.editable은 defaultColDef가 병합된 값이므로 그리드 레벨 editable도 반영되고,
- * 함수형(행 조건부) editable은 행 데이터 변경 시 재평가된다.
+ * cellClassRules that adds `ds-cell-editable` class to editable cells.
+ * cursor:text on hover is handled in global.css.
+ * Because colDef.editable has defaultColDef merged in, grid-level editable is also reflected,
+ * and functional (row-conditional) editable is re-evaluated when row data changes.
  */
 export const editableCellClassRules: CellClassRules = {
   'ds-cell-editable': (params: CellClassParams) => {

@@ -45,7 +45,7 @@ export const useTabStore = create<TabStore>()(
         const existingTab = tabs.find((t) => t.menuKey === menuItem.key);
 
         if (existingTab) {
-          // 이미 열린 탭이면 활성화 + 전달된 params 갱신
+          // If tab is already open, activate it + update passed params
           set({
             activeTabKey: existingTab.key,
             ...(params

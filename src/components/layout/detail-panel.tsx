@@ -34,7 +34,7 @@ export default function DetailPanel({
   tabs,
   children,
 }: DetailPanelProps) {
-  // 어느 화면에서 그려지든 같은 문구여야 하므로 화면 라벨이 아니라 공용 컴포넌트 라벨을 쓴다
+  // Must display the same text regardless of which screen renders it, so use the shared component label instead of a screen label
   const { tvt } = useComponentLabel();
   const [height, setHeight] = useState(defaultHeight);
   const [activeTab, setActiveTab] = useState(tabs?.[0]?.key ?? '');

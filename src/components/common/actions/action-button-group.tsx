@@ -32,11 +32,11 @@ export interface ActionButtonGroupProps {
   size?: SpaceProps['size'];
   align?: SpaceProps['align'];
   wrap?: boolean;
-  /** useMenuPermission().canWrite 연동 — false면 쓰기 계열 버튼(addRow/deleteRow/saveChanges/register/excelUpload/upload)을 비활성화 */
+  /** Synced with useMenuPermission().canWrite — when false, disables write actions (addRow/deleteRow/saveChanges/register/excelUpload/upload) */
   canWrite?: boolean;
 }
 
-/** canWrite=false일 때 비활성화되는 쓰기 계열 액션 */
+/** Write actions disabled when canWrite=false */
 const WRITE_ACTIONS: ActionButtonAction[] = [
   'addRow', 'deleteRow', 'saveChanges', 'register', 'excelUpload', 'upload',
 ];

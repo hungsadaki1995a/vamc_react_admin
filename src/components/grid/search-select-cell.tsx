@@ -75,13 +75,13 @@ interface SearchSelectCellEditorProps extends CustomCellEditorProps {
  * @example
  * {
  *   field: 'dept',
- *   headerName: '부서',
+ *   headerName: 'Department',
  *   editable: true,
  *   cellRenderer: SearchSelectCellRenderer,
  *   cellEditor: SearchSelectCellEditor,
  *   cellEditorParams: {
  *     fetchOptions: async (kw) => {
- *       const res = await getOrgList({ orgNm: kw });   // src/api/{도메인}/org.ts
+ *       const res = await getOrgList({ orgNm: kw });   // src/api/{domain}/org.ts
  *       return (res.data ?? []).map(o => ({ label: o.orgNm, value: o.orgId }));
  *     },
  *   },

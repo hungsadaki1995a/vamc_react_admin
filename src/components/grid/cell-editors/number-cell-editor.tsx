@@ -19,7 +19,7 @@ interface NumberCellEditorProps extends CustomCellEditorProps {
  * @example
  * {
  *   field: 'progRate',
- *   headerName: '진척률',
+ *   headerName: 'Progress Rate',
  *   editable: true,
  *   cellRenderer: NumberCellRenderer,
  *   cellRendererParams: { suffix: '%' },

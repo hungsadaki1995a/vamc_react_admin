@@ -29,18 +29,18 @@ import {
   mapMenuTreesToMenuItems,
 } from '@/utils/menu-tree-utils';
 
-// dev(개발 도구)는 rail-bottom에 고정 배치
-// production 빌드에서는 menuConfig에 'dev' 항목이 없으므로 bottomRailMenu는 undefined —
-// 아래 렌더링부(`{bottomRailMenu && ...}`)가 이미 그 경우를 가드한다.
+// Pin dev (dev tools) at rail-bottom
+// In production builds menuConfig has no 'dev' entry, so bottomRailMenu is undefined —
+// the render guard below (`{bottomRailMenu && ...}`) already handles that case.
 //
-// ⚠️ menuConfig 를 직접 보지 않고 useAllMenus() 를 쓴다 — 모듈 상수로 잡으면
-//    로케일이 바뀌어도 툴팁의 메뉴명이 한국어로 굳는다.
+// ⚠️ Use useAllMenus() instead of reading menuConfig directly — capturing it as a module constant
+//    would freeze tooltip menu names in Korean even after switching locales.
 const BOTTOM_RAIL_KEY = 'dev';
 
-// Rail에 표시하지 않을 static 메뉴 키 (대시보드는 서버 메뉴 또는 홈탭으로 접근)
+// Static menu keys to hide from the Rail (dashboard is accessed via server menu or home tab)
 const EXCLUDED_RAIL_KEYS = new Set(['dashboard']);
 
-// 알림 뱃지를 표시할 메뉴 키
+// Menu key to display a notification badge on
 const badgeKeys = new Set(['notification']);
 
 const GNB_ICON_BY_KEY: Record<string, string> = {
@@ -110,7 +110,7 @@ export default function IconRail() {
     }))
   );
 
-  // 로케일이 적용된 전체 메뉴 (서버 메뉴 + 정적 메뉴)
+  // All menus with locale applied (server menus + static menus)
   const allMenus = useAllMenus();
   const bottomRailMenu = useMemo(
     () => allMenus.find((m) => m.key === BOTTOM_RAIL_KEY),
@@ -137,11 +137,11 @@ export default function IconRail() {
     return [...staticItems, ...serverMenus];
   }, [allMenus, menuTrees, serverMenus]);
   const confirmLogout = useLogout();
-  // 레일은 어느 화면 안에서 그려지느냐와 무관하므로 화면 라벨이 아니라 공용 컴포넌트 라벨을 쓴다
+  // Rail is independent of the screen it is rendered in, so use shared component labels instead of screen labels
   const { tvb } = useComponentLabel();
   const { t } = useTranslation();
 
-  // 현재 활성 탭이 속한 1단 카테고리(레일 아이콘).
+  // Top-level category (rail icon) containing the currently active tab.
   const activeTab = tabs.find((t) => t.key === activeTabKey);
   const activeTopKey = useMemo(() => {
     const key = activeTab?.menuKey;
@@ -152,7 +152,7 @@ export default function IconRail() {
   }, [activeTab?.menuKey, mainRailItems]);
 
   const handleRailClick = (item: MenuItem) => {
-    // leaf 아이콘 (대시보드 등 children 없음) → 직접 탭 열기 + Flyout 닫기
+    // leaf icon (no children, e.g. dashboard) → open tab directly + close flyout
     if (!item.children || item.children.length === 0) {
       if (item.componentPath) {
         const existingTab = tabs.find((t) => t.menuKey === item.key);
@@ -165,7 +165,7 @@ export default function IconRail() {
       closeFlyout();
       return;
     }
-    // children 있는 아이콘 → flyout 토글
+    // icon with children → toggle flyout
     toggleFlyout(item.key);
   };
 

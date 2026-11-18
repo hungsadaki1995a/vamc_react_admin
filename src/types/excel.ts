@@ -65,19 +65,19 @@ export interface ExcelUploadResult {
   errors: ExcelRowError[] | null;
   /**
    * Parsed row data — populated when success === true.
-   * comcd 필드는 코드값, 날짜 필드는 yyyyMMdd 포맷으로 변환된 상태.
-   * 이 값을 그리드에 INSERT 행으로 추가한 뒤 변경저장으로 DB에 저장.
+   * comcd fields are converted to code values, and date fields to yyyyMMdd format.
+   * Insert these rows into the grid and save to DB via Save Changes.
    */
   data?: Record<string, string>[] | null;
 }
 
 /**
- * 엑셀 "드라이런 → 확인 → 커밋" 처리 결과 (요약).
+ * Excel "dry-run → confirm → commit" processing result (summary).
  *
- * 미리보기(전 행 반환) 대신 검증/건수 요약만 받아 대용량 업로드 시 화면 멈춤을 방지한다.
- * - success=false → errors 표시, 미저장
- * - committed=false → 드라이런(예상 건수). 사용자 확인 후 commit=true 재요청
- * - committed=true → 실제 저장 완료(실제 건수)
+ * Receives only validation/count summary instead of full-row preview to prevent UI freeze on large uploads.
+ * - success=false → display errors, not saved
+ * - committed=false → dry-run (expected count). Re-request with commit=true after user confirmation
+ * - committed=true → actual save complete (actual count)
  */
 export interface ExcelProcessResult {
   success: boolean;

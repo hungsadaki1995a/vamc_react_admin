@@ -3,17 +3,17 @@ import { AG_GRID_LOCALE_KO } from './ag-grid-locale-ko';
 import { AG_GRID_LOCALE_VI } from './ag-grid-locale-vi';
 
 /**
- * 로케일별 AG Grid 내장 문구(localeText) 선택.
+ * Select built-in AG Grid UI strings (localeText) by locale.
  *
- * <p>AG Grid 의 기본 언어가 영어라서 `en` 은 `undefined` 를 돌려준다 —
- * 빈 객체를 넘기면 되레 키가 그대로 노출된다.</p>
+ * <p>Since AG Grid's default language is English, `en` returns `undefined` —
+ * passing an empty object would cause raw keys to be displayed instead.</p>
  *
- * <p>이 문구들은 라벨 테이블(LANG_LBL)이 아니라 번들 상수다. 그리드 내부 문구는
- * 수백 개인 데다 화면 라벨처럼 운영자가 바꿀 대상이 아니라서, DB 왕복 없이 즉시
- * 전환되는 쪽이 낫다. 화면 텍스트는 `useScreenLabel` 로 DB 라벨을 쓴다.</p>
+ * <p>These strings are bundled constants rather than DB label table (LANG_LBL) entries. Grid internals
+ * have hundreds of strings and are not meant to be edited by operators like screen labels, so instant
+ * switching without DB round-trips is preferable. Screen text uses DB labels via `useScreenLabel`.</p>
  */
 export function getAgGridLocale(locale: LocaleKey): Record<string, string> | undefined {
   if (locale === 'ko') return AG_GRID_LOCALE_KO;
   if (locale === 'vn') return AG_GRID_LOCALE_VI;
-  return undefined; // en — AG Grid 내장 영어
+  return undefined; // en — AG Grid built-in English
 }

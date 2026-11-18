@@ -1,6 +1,6 @@
 /**
- * Main Dashboard — 개발팀 인계용 빈 화면.
- * 데모 위젯(mock 프로젝트/업무 통계)은 제거했다. 실제 대시보드 구현은 여기서 시작한다.
+ * Main Dashboard — blank screen for handoff to the dev team.
+ * Demo widgets (mock project/task stats) have been removed. Actual dashboard implementation starts here.
  */
 export default function Dashboard() {
   return (

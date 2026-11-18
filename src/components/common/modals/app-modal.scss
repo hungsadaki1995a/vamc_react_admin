@@ -431,8 +431,8 @@
   &--compact-controls {
     --app-modal-compact-control-width: 280px;
 
-    /* .ant-picker(DateField)도 포함 — 누락 시 날짜 필드만 width:100%로 늘어나
-       다른 컨트롤(280px cap)과 우측 끝선이 어긋난다 */
+    /* Include .ant-picker (DateField) — otherwise only date fields expand to width:100%
+       and misalign on the right edge with other controls (280px cap) */
     .ant-form-item-control-input-content {
       > .ant-select,
       > .ant-picker,

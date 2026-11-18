@@ -15,11 +15,11 @@ interface PageHeaderProps {
   title?: string;
   /** Optional right-side slot */
   children?: React.ReactNode;
-  /** usePageHeaderSlot로 등록되는 우측 액션 영역 (PageHeaderSlotContext) */
+  /** Right-side action area registered via usePageHeaderSlot (PageHeaderSlotContext) */
   actions?: React.ReactNode;
-  /** usePageHeaderSlot로 등록되는 인라인 필터 영역 */
+  /** Inline filter area registered via usePageHeaderSlot */
   inlineFilters?: React.ReactNode;
-  /** 타이틀 우측 부가 요소 */
+  /** Extra element to the right of the title */
   titleExtra?: React.ReactNode;
 }
 
@@ -36,15 +36,15 @@ export default function PageHeader({
   const { t } = useScreenLabel();
   const { tvt } = useComponentLabel();
 
-  // 살아 있는 메뉴 트리에서 이름을 가져온다 — TabBar·ContentHeader 와 같은 방식이다.
-  // tab.title 은 탭을 열던 순간의 이름이 localStorage 에 그대로 굳은 값이라,
-  // 이것만 보면 그 뒤 언어를 바꿔도 처음 열었던 언어로 남는다.
+  // Read name from the live menu tree — same approach as TabBar and ContentHeader.
+  // tab.title is frozen in localStorage at the moment the tab was opened,
+  // so relying on it alone would keep the initial language after switching locales.
   const allMenus = useAllMenus();
 
   // code: explicit prop > tab.sceId > tab.componentKey
   const resolvedCode = code ?? ctx?.tab.sceId ?? ctx?.tab.componentKey;
 
-  // title: explicit prop > 현재 로케일의 메뉴 이름 > t(labelKey) > 저장된 tab.title
+  // title: explicit prop > current locale menu name > t(labelKey) > saved tab.title
   const resolvedTitle = title
     ?? (ctx ? findMenuByKey(allMenus, ctx.tab.menuKey)?.label : undefined)
     ?? (ctx?.tab.labelKey ? t(ctx.tab.labelKey) : undefined)

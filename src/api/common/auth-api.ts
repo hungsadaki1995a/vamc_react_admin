@@ -3,24 +3,24 @@ import { encryptPassword } from '@/lib/crypto';
 import type { ApiResponse, LoginRequest, LoginResponse, RefreshResponse } from '@/lib/api/types';
 
 // ─────────────────────────────────────────────────────────────────────────────
-// 인증(AUTH) API — 전역 도메인.
+// Auth (AUTH) API — global domain.
 //
-// 로그인 화면 하나가 아니라 앱 전체가 쓴다:
+// Used across the entire app, not just the login screen:
 //   · login          → src/features/auth/LoginPage
 //   · logout         → src/hooks/useLogout
-//   · refreshToken   → src/app/App.tsx (앱 로드 시 세션 복원)
-//   · fetchPublicKey → 로그인 + 비밀번호 변경(src/api/sys/usrPwdApi.ts)
+//   · refreshToken   → src/app/App.tsx (session restore on app load)
+//   · fetchPublicKey → login + password change (src/api/sys/usrPwdApi.ts)
 //
-// ⚠️ 401 발생 시의 silent refresh 는 이 파일이 아니라 `src/lib/api/client.ts` 인터셉터가
-//    axios 로 직접 호출한다(순환 import 회피). 여기 refreshToken 은 앱 로드 시 1회용이다.
+// ⚠️ On 401, silent refresh is called directly via axios in `src/lib/api/client.ts` interceptor
+//    (to avoid circular imports). refreshToken here is one-time use on app load.
 // ─────────────────────────────────────────────────────────────────────────────
 
 /**
- * GET /api/auth/public-key — 비밀번호 RSA-OAEP 암호화용 공개키.
+ * GET /api/auth/public-key — public key for RSA-OAEP password encryption.
  *
- * **매번 새로 받는다 (캐싱 금지)** — 서버가 재기동/회전 시 키를 바꾼다.
- * 조회 실패 시 `null` — 호출부가 평문 폴백 여부를 정한다
- * (서버 `auth.rsa.required=false` 이행기 대응).
+ * **Fetch fresh every time (no caching)** — server rotates keys on restart/rotation.
+ * Returns `null` on failure — caller decides whether to fall back to plaintext
+ * (supports server `auth.rsa.required=false` transition period).
  */
 export async function fetchPublicKey(): Promise<string | null> {
   try {
@@ -35,11 +35,11 @@ export async function fetchPublicKey(): Promise<string | null> {
 }
 
 /**
- * POST /api/auth/login — RSA-OAEP(SHA-256) 암호화 비밀번호 전송.
+ * POST /api/auth/login — sends RSA-OAEP (SHA-256) encrypted password.
  *
- * SubtleCrypto 는 secure context(HTTPS/localhost)에서만 동작하므로,
- * 그 밖에서는 평문으로 폴백한다.
- * 서버는 이 엔드포인트만 ApiResponse 래퍼 없이 raw LoginResponse 를 내려준다.
+ * SubtleCrypto only works in secure contexts (HTTPS/localhost), so
+ * falls back to plaintext otherwise.
+ * Only this endpoint returns raw LoginResponse without an ApiResponse wrapper.
  */
 export async function login(req: LoginRequest): Promise<ApiResponse<LoginResponse>> {
   let password = req.password;
@@ -56,13 +56,13 @@ export async function login(req: LoginRequest): Promise<ApiResponse<LoginRespons
   return { success: true, message: 'success', data };
 }
 
-/** POST /api/auth/logout — 서버측 refresh 토큰 폐기 */
+/** POST /api/auth/logout — revokes server-side refresh token */
 export async function logout(): Promise<ApiResponse<null>> {
   await apiClient.post('/api/auth/logout');
   return { success: true, message: 'success', data: null };
 }
 
-/** POST /api/auth/refresh — refresh_token 은 httpOnly 쿠키라 자동 전송된다 (withCredentials: true) */
+/** POST /api/auth/refresh — refresh_token is an httpOnly cookie sent automatically (withCredentials: true) */
 export async function refreshToken(): Promise<ApiResponse<RefreshResponse>> {
   const { data } = await apiClient.post<RefreshResponse>('/api/auth/refresh', {});
   return { success: true, message: 'success', data };

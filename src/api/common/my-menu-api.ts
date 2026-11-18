@@ -5,13 +5,13 @@ import { useLocaleStore } from '@/stores/locale-store';
 import { resolveMenuComponent } from '@/config/menu-component-fallback';
 
 // ─────────────────────────────────────────────────────────────────────────────
-// 내 권한 메뉴(MENU_MNG) 조회 API — 전역 도메인.
+// My authorized menus (MENU_MNG) lookup API — global domain.
 //
-// 로그인 사용자가 볼 수 있는 메뉴 트리(`GET /api/common/menus/my`)를 읽어
-// 좌측 레일·플라이아웃을 그린다. 권한(permType)도 이 응답이 정한다.
+// Reads the menu tree visible to the logged-in user (`GET /api/common/menus/my`)
+// to render the left rail and flyout. Permissions (permType) are also determined by this response.
 //
-// ⚠️ 메뉴를 **관리**하는 화면(SYS030101SC)의 호출은 `src/api/sys/menuMngApi.ts` 다.
-//    응답 DTO(MnuResponse)만 이 파일 것을 공유한다.
+// ⚠️ Calls for the menu management screen (SYS030101SC) live in `src/api/sys/menuMngApi.ts`.
+//    Only the response DTO (MnuResponse) is shared from this file.
 // ─────────────────────────────────────────────────────────────────────────────
 
 // ── vamc-npl-backend MnuResponse ──────────────────────────────────────────────
@@ -26,9 +26,9 @@ export interface MnuResponse {
   menuNmDisplay: string;    // display name in Korean (may have leading spaces — trim before use)
   menuLblVal?: string;      // multilingual label value from label table (locale-dependent via X-Lang)
   menuUrlAddr?: string;     // URL path for leaf menus (absent on parent menus)
-  menuAuthrt?: string;      // 역할별 권한 (RD=읽기, WT=쓰기, AL=전체) — /my 응답에만 존재
+  menuAuthrt?: string;      // Role-based permission (RD=read, WT=write, AL=all) — present only in /my response
   sortPath: string;         // sort order string (e.g. "001-001")
-  children: MnuResponse[];  // /my는 중첩 트리, /all은 빈 배열
+  children: MnuResponse[];  // /my returns a nested tree, /all returns an empty array
 }
 
 // ── Menu name → Ant Design icon name mapping ──────────────────────────────────
@@ -101,14 +101,14 @@ function buildServerMenuTree(items: MnuResponse[]): MenuItem[] {
 // X-Project-Id header is injected automatically by the axios request interceptor
 // (reads from projectStore.activeProject.id — set on login and project change)
 
-// /my 응답은 children이 중첩된 트리 — buildServerMenuTree(flat 가정) 재사용을 위해 평탄화
+// /my response is a nested tree of children — flatten to reuse buildServerMenuTree (expects flat)
 function flattenMenuTree(items: MnuResponse[]): MnuResponse[] {
   return items.flatMap((i) => [i, ...flattenMenuTree(i.children ?? [])]);
 }
 
 export async function fetchAuthMenuResult(): Promise<{ trees: MenuTreeItem[]; items: MenuItem[] }> {
   // Pass langCd as query param — backend uses this (not X-Lang header) to resolve MENU_LBL_VAL.
-  // DB LANG_CD는 KR/EN/VN — 서버 resolveLangCd가 ko→KR 보정.
+  // DB LANG_CD is KR/EN/VN — server resolveLangCd normalizes ko→KR.
   const locale = useLocaleStore.getState().locale;
   const { data } = await apiClient.get<ApiResponse<MnuResponse[]>>('/api/common/menus/my', {
     params: { langCd: locale },

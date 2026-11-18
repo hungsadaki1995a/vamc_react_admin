@@ -22,7 +22,7 @@ export function useTabRouteSync() {
   const allMenus = useAllMenus();
 
   const isNavigatingRef = useRef(false);
-  /** URL 이 요구했지만 아직 열지 못한 탭 키 (메뉴 로딩 대기 중) */
+  /** Tab key requested by URL but not yet opened (waiting for menus to load) */
   const pendingTabKeyRef = useRef<string | null>(null);
 
   const isMembersPath = location.pathname === '/members';
@@ -115,7 +115,7 @@ export function useTabRouteSync() {
         pendingTabKeyRef.current = null;
         openTab(menuItem);
       } else {
-        // 메뉴가 아직 안 왔을 수 있다 — 아래 재시도 이펙트가 이어받는다.
+        // Menus may not have arrived yet — the retry effect below takes over.
         pendingTabKeyRef.current = effectiveTabKey;
       }
     }
@@ -124,7 +124,7 @@ export function useTabRouteSync() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [effectiveTabKey, isMembersPath, isInquiryPath, isFaqPath]);
 
-  // 서버 메뉴 도착 후 보류된 URL 탭 재시도
+  // Retry pending URL tab after server menus arrive
   useEffect(() => {
     const pending = pendingTabKeyRef.current;
     if (!pending) return;
@@ -147,7 +147,7 @@ export function useTabRouteSync() {
       openTab(menuItem);
       syncRailFromKey(pending);
     } else {
-      // 메뉴가 도착했는데도 없다 → 잘못된 URL. 활성 탭 주소로 되돌린다.
+      // Still missing after menus arrived → invalid URL. Revert to active tab's address.
       const active = useTabStore.getState().activeTabKey;
       if (active) {
         isNavigatingRef.current = true;
@@ -169,7 +169,7 @@ export function useTabRouteSync() {
   // Tab → URL: when active tab changes
   useEffect(() => {
     if (!activeTabKey) return;
-    // URL 이 요구한 탭을 여는 중이면 주소를 건드리지 않는다.
+    // Do not touch URL while a tab requested by URL is still being opened.
     if (pendingTabKeyRef.current) return;
 
     if (activeTabKey === 'members' || activeTabKey === 'member.list') {
@@ -208,7 +208,7 @@ export function useTabRouteSync() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTabKey]);
 
-  // 서버 메뉴 도착 후 레일 하이라이트 재동기화 (최초 1회).
+  // Re-sync rail highlight after server menus arrive (once).
   const railSyncedRef = useRef(false);
   useEffect(() => {
     if (railSyncedRef.current) return;
@@ -219,7 +219,7 @@ export function useTabRouteSync() {
     if (key) syncRailFromKey(key);
   }, [allMenus, syncRailFromKey]);
 
-  // 홈 탭 보장 — 홈 메뉴가 서버 메뉴일 수도 있으므로 메뉴가 채워질 때마다 확인한다.
+  // Ensure home tab — since home menu may be a server menu, check whenever menus are populated.
   useEffect(() => {
     const homeKey = useSettingsStore.getState().homeMenuKey;
     if (tabs.some((t) => t.menuKey === homeKey)) return;
@@ -229,7 +229,7 @@ export function useTabRouteSync() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [allMenus]);
 
-  // 최초 진입 시 URL 보정 (1회)
+  // Correct URL on initial entry (once)
   useEffect(() => {
     if (
       location.pathname === '/members' ||

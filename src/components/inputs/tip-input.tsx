@@ -7,8 +7,8 @@ import './tip-input.scss';
  * Input with automatic overflow tooltip.
  * Shows a tooltip with the full value only when text is truncated (scrollWidth > offsetWidth).
  *
- * `readOnly` 는 표기까지 함께 책임진다 — 화면에서 배경색·커서를 인라인 style 로 지정하지 않는다.
- * 규칙이 컴포넌트 밖에 있으면 화면마다 조금씩 달라지고, 다크모드 토큰이 바뀔 때 추적할 곳이 늘어난다.
+ * `readOnly` also owns its visual styling — never set background color or cursor via inline styles on screens.
+ * Keeping rules outside the component causes drift across screens and more places to update when dark-mode tokens change.
  */
 export default function TipInput({ value, readOnly, className, onMouseEnter, onMouseLeave, ...props }: InputProps) {
   const inputRef = useRef<InputRef>(null);

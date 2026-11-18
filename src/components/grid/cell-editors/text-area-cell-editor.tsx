@@ -21,7 +21,7 @@ interface TextAreaCellEditorProps extends CustomCellEditorProps {
  * @example
  * {
  *   field: 'mrCont',
- *   headerName: '비고',
+ *   headerName: 'Remarks',
  *   editable: true,
  *   cellEditor: TextAreaCellEditor,
  *   cellEditorPopup: true,

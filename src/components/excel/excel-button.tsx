@@ -25,16 +25,16 @@ interface Props {
  *
  * ```tsx
  * const columns: ExcelColumnDef[] = [
- *   { key: 'prjId',  header: '프로젝트ID', width: 15, readOnly: true },
- *   { key: 'prjNm',  header: '프로젝트명', width: 30, required: true },
- *   { key: 'strtDt', header: '시작일',     width: 15, format: 'date', required: true },
+ *   { key: 'prjId',  header: 'Project ID',   width: 15, readOnly: true },
+ *   { key: 'prjNm',  header: 'Project Name', width: 30, required: true },
+ *   { key: 'strtDt', header: 'Start Date',   width: 15, format: 'date', required: true },
  * ];
  *
  * <ExcelButton
  *   columns={columns}
  *   downloadUrl="/api/prj/excel"
  *   uploadUrl="/api/prj/excel/upload"
- *   fileName="프로젝트목록"
+ *   fileName="project_list"
  *   queryParams={{ status: filters.status }}
  *   onUploadSuccess={refetch}
  *   disabled={!canWrite}

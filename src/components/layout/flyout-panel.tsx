@@ -13,7 +13,7 @@ import {
   mapMenuTreesToMenuItems,
 } from '@/utils/menu-tree-utils';
 
-/** 펼치기: 동일 레벨 3줄(접힌 메뉴) + 우하단 + 배지 */
+/** Expand: 3 equal-level lines (collapsed menu) + bottom-right '+' badge */
 function ExpandAllIcon() {
   return (
     <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -27,7 +27,7 @@ function ExpandAllIcon() {
   );
 }
 
-/** 접기: 들여쓰기 트리 3줄(펼친 메뉴) + 우하단 − 배지 */
+/** Collapse: 3 indented tree lines (expanded menu) + bottom-right '−' badge */
 function CollapseAllIcon() {
   return (
     <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -126,7 +126,7 @@ export default function FlyoutPanel() {
   const panelRef = useRef<HTMLDivElement>(null);
   const [expandedKeys, setExpandedKeys] = useState<string[]>([]);
 
-  // 현재 활성 탭의 menuKey
+  // menuKey of the currently active tab
   const activeMenuKey = tabs.find((t) => t.key === activeTabKey)?.menuKey ?? null;
 
   // Find selected top-level menu from login menuTrees when available
@@ -135,13 +135,13 @@ export default function FlyoutPanel() {
     [menuTrees, activeRailKey],
   );
 
-  // server menus 우선, 없으면 static menuConfig fallback
+  // Prefer server menus; fall back to static menuConfig if absent
   const allMenus = useAllMenus();
   const activeCategory = useMemo(() => {
     return allMenus.find((m) => m.key === activeRailKey)
       ?? (activeRailKey ? findMenuByKey(allMenus, activeRailKey) : null);
   }, [allMenus, activeRailKey]);
-  // `?? []` 를 렌더마다 새로 만들면 하위 useMemo 의존성이 매번 바뀌므로 메모이즈한다.
+  // Creating `?? []` on every render would invalidate downstream useMemo dependencies, so memoize it.
   const flyoutItems = useMemo(
     () => (activeMenuTree ? mapMenuTreesToMenuItems(activeMenuTree.children ?? []) : activeCategory?.children ?? []),
     [activeMenuTree, activeCategory],
@@ -150,7 +150,7 @@ export default function FlyoutPanel() {
   // Auto-expand parent keys when active menu changes (tab switch or menu click).
   // Rail change → replace with parent keys of new active menu (fresh start).
   // Same rail   → merge parent keys so previously expanded siblings stay open.
-  // effect 대신 렌더 중 조정 — 펼침 상태가 한 박자 늦게 반영되어 깜빡이는 것을 막는다.
+  // Adjust during render instead of effect — prevents expanded state from updating one tick late and flickering.
   const [prevRailKey, setPrevRailKey] = useState<string | null>(null);
   const [prevMenuKey, setPrevMenuKey] = useState<string | null>(null);
   if (prevRailKey !== activeRailKey || prevMenuKey !== activeMenuKey) {
@@ -203,9 +203,9 @@ export default function FlyoutPanel() {
         const hasChildren = item.children && item.children.length > 0;
         const isExpanded = expandedKeys.includes(item.key);
         const childCount = hasChildren ? countLeaves(item.children!) : 0;
-        // leaf active: 현재 활성 탭의 menuKey와 일치
+        // leaf active: matches menuKey of the currently active tab
         const isActive = !hasChildren && activeMenuKey === item.key;
-        // parent active: 자식 중 활성 메뉴가 있으면
+        // parent active: if any descendant menu is active
         const isParentActive = hasChildren && activeMenuKey?.startsWith(item.key + '.') || false;
 
         return (

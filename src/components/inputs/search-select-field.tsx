@@ -42,13 +42,13 @@ export interface SearchSelectFieldProps {
   placeholder?: string;
   disabled?: boolean;
   style?: React.CSSProperties;
-  /** Modal title (기본값: 공통 라벨 `COMPONENT.VIEW.TEXT_search` → '검색') */
+  /** Modal title (default: common label `COMPONENT.VIEW.TEXT_search` → 'Search') */
   modalTitle?: string;
   /** Modal width (default: 560) */
   modalWidth?: number;
   /**
-   * Level 1 — fully replace the default [명칭, 코드] columns.
-   * When omitted, defaults to [명칭, 코드].
+   * Level 1 — fully replace the default [Name, Code] columns.
+   * When omitted, defaults to [Name, Code].
    */
   columns?: ColumnsType<SearchSelectOption>;
   /**
@@ -75,7 +75,7 @@ export interface SearchSelectFieldProps {
 
 // ── Default columns ────────────────────────────────────────────────────────────
 
-/** 기본 컬럼 — 헤더 문구는 컴포넌트 안에서 라벨로 채운다(훅은 컴포넌트 밖에서 못 쓴다) */
+/** Default columns — header text is filled from labels inside the component (hooks cannot be called outside components) */
 function defaultColumns(nameTitle: string, codeTitle: string): ColumnsType<SearchSelectOption> {
   return [
     { title: nameTitle, dataIndex: 'label', key: 'label', ellipsis: true },
@@ -263,7 +263,7 @@ export default function SearchSelectField({
   // ── Derived display ────────────────────────────────────────────────────────
 
   const codeDisplay = selectedItems.map((i) => i.value).join(', ');
-  // 미지정 props 는 공통 라벨로 채운다 — 호출부가 넘긴 값이 있으면 그것을 우선한다.
+  // Fill unspecified props with common labels — caller-provided values take precedence.
   const resolvedPlaceholder = placeholder ?? tvt('searchPlaceholder', '검색어 입력');
   const resolvedModalTitle = modalTitle ?? tvt('search', '검색');
   const resolvedColumns = columns

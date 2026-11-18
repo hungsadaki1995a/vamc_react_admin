@@ -36,7 +36,7 @@ export default function GridExternalPaginationFooter({
 }: GridExternalPaginationFooterProps) {
   const t = useLabelStore((s) => s.t);
   const labelsVersion = useLabelStore((s) => s.labelsVersion);
-  // 건수 문구는 그리드 툴바와 같은 라벨을 쓴다 (useTotalCountLabel 이 폴백까지 들고 있다).
+  // Count text uses the same label as the grid toolbar (useTotalCountLabel also holds the fallback).
   const { format: formatTotalLabel } = useTotalCountLabel();
   const totalPages = Math.max(1, totalPagesProp ?? Math.ceil(totalCount / pageSize));
   const pageSizeTemplate = useMemo(

@@ -3,11 +3,11 @@ import './split-panel.scss';
 
 interface SplitPanelProps {
   direction: 'horizontal' | 'vertical';
-  /** 초기 크기(px). 비율로 잡으려면 `defaultRatio` 를 쓴다. */
+  /** Initial size in px. Use `defaultRatio` to specify a ratio instead. */
   defaultSize?: number;
   /**
-   * 초기 크기를 컨테이너 대비 비율(0~1)로 지정한다. `defaultSize` 가 있으면 무시된다.
-   * 화면 폭이 제각각인 업무 화면에서는 px 보다 비율이 맞다 — 기본값은 0.5(반반).
+   * Initial size as a ratio (0–1) of the container. Ignored if `defaultSize` is set.
+   * Ratios suit business screens with varying widths better than px — default is 0.5 (50/50).
    */
   defaultRatio?: number;
   primaryMinSize?: number;

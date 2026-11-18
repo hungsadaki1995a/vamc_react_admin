@@ -32,7 +32,7 @@ export function Users2Icon({ style }: { style?: React.CSSProperties }) {
   );
 }
 
-// icon_star.svg — 즐겨찾기
+// icon_star.svg — Favorites
 export function IconStarIcon({ style }: { style?: React.CSSProperties }) {
   return (
     <svg {...SVG_PROPS} style={{ ...BASE_STYLE, ...style }}>
@@ -66,7 +66,7 @@ export function TodoIcon({ style }: { style?: React.CSSProperties }) {
   );
 }
 
-// GearSix.svg — 공통
+// GearSix.svg — Common
 export function GearSixIcon({ style }: { style?: React.CSSProperties }) {
   return (
     <svg {...SVG_PROPS} style={{ ...BASE_STYLE, ...style }}>

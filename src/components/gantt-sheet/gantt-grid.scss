@@ -35,7 +35,7 @@
     text-overflow: ellipsis;
     user-select: none;
 
-    /* 헤더 셀 간 구분선 (리사이저가 없는 셀에만 — 리사이저 ::after가 대신 표시) */
+    /* Divider between header cells (only on cells without resizer — resizer ::after draws it instead) */
     &--separator::before {
       content: '';
       position: absolute;
@@ -62,7 +62,7 @@
     z-index: 3;
     background: transparent;
 
-    /* 드래그 가능 표시: 세로 점선 */
+    /* Draggable indicator: vertical dotted line */
     &::after {
       content: '';
       position: absolute;
@@ -100,7 +100,7 @@
     .gantt-grid-row {
       cursor: pointer;
 
-      /* 바디 행만 hover (헤더 제외) */
+      /* Hover only on body rows (exclude header) */
       &:hover {
         background: rgba(22, 119, 255, 0.04);
       }

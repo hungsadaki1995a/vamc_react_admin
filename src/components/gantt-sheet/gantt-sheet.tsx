@@ -87,10 +87,10 @@ export default function GanttSheet({
   rowBuffer = 5,
   columnWidth: columnWidthOverride,
 }: GanttSheetProps) {
-  // ── 타임라인을 헤더 div + 바디 div 로 분리
-  // 헤더 div: overflow: hidden (수평 스크롤 동기화 수신만)
-  // 바디 div: overflow: auto (실제 스크롤 컨테이너)
-  // → 두 패널 모두 내부 높이 = totalListHeight 로 일치 → scrollTop 완벽 동기화
+  // ── Split timeline into header div + body div
+  // header div: overflow: hidden (receives horizontal scroll sync only)
+  // body div: overflow: auto (actual scroll container)
+  // → Both panels have inner height = totalListHeight → perfect scrollTop sync
   const timelineHeaderRef = useRef<HTMLDivElement>(null);
   const timelineBodyRef = useRef<HTMLDivElement>(null);
   const gridBodyRef = useRef<HTMLDivElement>(null);
@@ -136,7 +136,7 @@ export default function GanttSheet({
     onProgressChange,
   });
 
-  // Virtualizer — 바디 div를 스크롤 컨테이너로 사용 (헤더 없음)
+  // Virtualizer — use body div as scroll container (no header)
   const rowVirtualizer = useVirtualizer({
     count: visibleTasks.length,
     getScrollElement: () => timelineBodyRef.current,
@@ -175,9 +175,9 @@ export default function GanttSheet({
     return criticalPath.criticalLines;
   }, [visibleTasks, criticalPath]);
 
-  // ── 스크롤 동기화
-  // timelineBody ↔ gridBody: scrollTop 동기화
-  // timelineBody → timelineHeader: scrollLeft 동기화 (헤더 수평 추적)
+  // ── Scroll synchronization
+  // timelineBody ↔ gridBody: sync scrollTop
+  // timelineBody → timelineHeader: sync scrollLeft (header horizontal tracking)
   useEffect(() => {
     const body = timelineBodyRef.current;
     const grid = gridBodyRef.current;
@@ -188,13 +188,13 @@ export default function GanttSheet({
       if (isSyncing.current) return;
       isSyncing.current = true;
 
-      // scrollTop 변경 시에만 그리드 동기화 (수평 스크롤 이벤트 무시)
+      // Sync grid only when scrollTop changes (ignore horizontal scroll events)
       if (body.scrollTop !== prevScrollTop.current) {
         grid.scrollTop = body.scrollTop;
         prevScrollTop.current = body.scrollTop;
       }
 
-      // 헤더 수평 동기화
+      // Sync header horizontally
       if (header) header.scrollLeft = body.scrollLeft;
 
       requestAnimationFrame(() => { isSyncing.current = false; });
@@ -301,7 +301,7 @@ export default function GanttSheet({
         </div>
       )}
 
-      {/* 좌측 그리드 패널 */}
+      {/* Left grid panel */}
       {showGrid && (
         <>
           <div className="gantt-grid-panel" style={{ width: gridWidth, flexShrink: 0, overflow: 'hidden', height: '100%' }}>
@@ -325,24 +325,24 @@ export default function GanttSheet({
         </>
       )}
 
-      {/* 우측 타임라인: 헤더(고정) + 바디(스크롤) 분리
-          ─ 헤더와 바디를 분리하면:
-            · timelineBodyRef 내부 높이 = totalListHeight (헤더 없음)
-            · gridBodyRef 내부 높이 = totalListHeight (동일)
-            → 수평 스크롤바 유무에 관계없이 max scrollTop이 항상 일치 */}
+      {/* Right timeline: split header (fixed) + body (scrollable)
+          ─ Splitting header and body ensures:
+            · timelineBodyRef inner height = totalListHeight (no header)
+            · gridBodyRef inner height = totalListHeight (identical)
+            → max scrollTop always matches regardless of horizontal scrollbar */}
       <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
 
-        {/* 헤더 — overflow: hidden (바디 scrollLeft 를 JS로 동기화) */}
+        {/* Header — overflow: hidden (body scrollLeft synced via JS) */}
         <div ref={timelineHeaderRef} style={{ flexShrink: 0, overflow: 'hidden' }}>
           <GanttSheetTimelineHeader dateEngine={dateEngine} headerHeight={HEADER_HEIGHT} />
         </div>
 
-        {/* 바디 — 실제 스크롤 컨테이너 (수직+수평) */}
+        {/* Body — actual scroll container (vertical + horizontal) */}
         <div
           ref={timelineBodyRef}
           style={{ flex: 1, minHeight: 0, overflowX: 'auto', overflowY: 'scroll', position: 'relative' }}
         >
-          {/* 바 영역 — 화살표 SVG 클리핑을 위해 overflow: hidden */}
+          {/* Bar area — overflow: hidden to clip dependency arrow SVGs */}
           <div
             style={{
               position: 'relative',
@@ -351,27 +351,27 @@ export default function GanttSheet({
               overflow: 'hidden',
             }}
           >
-            {/* 주말 하이라이트 */}
+            {/* Weekend highlight */}
             {dateEngine.weekendRanges.map((range, i) => (
               <div key={i} style={{ position: 'absolute', left: range.x, top: 0, width: range.width, height: '100%', background: 'var(--g-weekend-highlight-color, rgba(0,0,0,0.03))', pointerEvents: 'none' }} />
             ))}
 
-            {/* 수직 격자선 */}
+            {/* Vertical grid lines */}
             {(lines === 'vertical' || lines === 'both') && dateEngine.lowerHeaders.map((cell, i) => (
               <div key={`vl-${i}`} style={{ position: 'absolute', left: cell.x + cell.width - 1, top: 0, width: 1, height: '100%', background: 'var(--g-tick-color, rgba(0,0,0,0.06))', pointerEvents: 'none' }} />
             ))}
 
-            {/* 수평 행 구분선 */}
+            {/* Horizontal row dividers */}
             {(lines === 'horizontal' || lines === 'both') && virtualRows.map((vRow) => (
               <div key={`hl-${vRow.index}`} style={{ position: 'absolute', top: vRow.start + ROW_HEIGHT - 1, left: 0, width: '100%', height: 1, background: 'var(--g-row-border-color, var(--border-color))', pointerEvents: 'none' }} />
             ))}
 
-            {/* 오늘 수직선 */}
+            {/* Today vertical line */}
             {dateEngine.todayX !== null && (
               <div style={{ position: 'absolute', left: dateEngine.todayX, top: 0, width: 2, height: '100%', background: '#f5222d', pointerEvents: 'none', zIndex: 1 }} />
             )}
 
-            {/* 호버 행 하이라이트 */}
+            {/* Hovered row highlight */}
             {hoveredTaskId && (() => {
               const idx = taskIndexMap.get(hoveredTaskId);
               return idx !== undefined ? (
@@ -379,7 +379,7 @@ export default function GanttSheet({
               ) : null;
             })()}
 
-            {/* 선택 행 하이라이트 */}
+            {/* Selected row highlight */}
             {selectedTaskId && (() => {
               const idx = taskIndexMap.get(selectedTaskId);
               return idx !== undefined ? (
@@ -387,10 +387,10 @@ export default function GanttSheet({
               ) : null;
             })()}
 
-            {/* 의존성 화살표
-                SVG는 totalListHeight 전체를 덮는 절대 좌표계.
-                부모 wrapper의 overflow:hidden 이 클리핑을 담당하므로
-                scrollTop 보정 불필요 */}
+            {/* Dependency arrows
+                SVG uses absolute coordinates covering the full totalListHeight.
+                Parent wrapper's overflow:hidden handles clipping, so
+                no scrollTop adjustment is needed */}
             <GanttSheetArrows
               lines={dependencyLines}
               taskIndexMap={taskIndexMap}
@@ -403,7 +403,7 @@ export default function GanttSheet({
               totalListHeight={totalListHeight}
             />
 
-            {/* 가상 태스크 바 행 */}
+            {/* Virtualized task bar rows */}
             {virtualRows.map((vRow) => {
               const originalTask = visibleTasks[vRow.index];
               if (!originalTask) return null;
@@ -448,7 +448,7 @@ export default function GanttSheet({
         </div>
       </div>
 
-      {/* 오늘 버튼 */}
+      {/* Today button */}
       {todayButton && (
         <button
           style={{ position: 'absolute', bottom: 16, right: 24, zIndex: 15, padding: '4px 12px', fontSize: 12, background: 'var(--content-header-bg)', border: '1px solid var(--border-color)', borderRadius: 4, cursor: 'pointer', boxShadow: '0 2px 6px rgba(0,0,0,0.12)' }}

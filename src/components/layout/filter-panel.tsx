@@ -5,17 +5,17 @@ import { useComponentLabel } from '@/hooks/use-component-label';
 import './filter-panel.scss';
 
 interface FilterPanelProps {
-  /** 접힘 상태 (controlled) */
+  /** Collapsed state (controlled) */
   collapsed?: boolean;
-  /** 접힘 토글 콜백 */
+  /** Collapse toggle callback */
   onCollapsedChange?: (collapsed: boolean) => void;
-  /** 활성 필터 개수 (접혔을 때 배지 표시) */
+  /** Active filter count (shown as badge when collapsed) */
   activeFilterCount?: number;
-  /** 검색 버튼 클릭 */
+  /** Search button click */
   onSearch?: () => void;
-  /** 초기화 버튼 클릭 */
+  /** Reset button click */
   onReset?: () => void;
-  /** 필터 필드들 */
+  /** Filter fields */
   children: React.ReactNode;
 }
 

@@ -13,7 +13,7 @@ interface ApiMutationOptions<TData, TVariables>
 // Usage:
 //   const { mutate, isPending } = useApiMutation<Project, CreateProjectDto>(
 //     (dto) => projectApi.createProject(dto),
-//     { successMessage: '프로젝트가 생성되었습니다.' }
+//     { successMessage: 'Project created successfully.' }
 //   )
 export function useApiMutation<TData, TVariables = void>(
   mutationFn: (variables: TVariables) => Promise<ApiResponse<TData>>,

@@ -18,21 +18,21 @@ const DEFAULT_MESSAGES: Record<number, string> = {
 const UNKNOWN_ERROR = '알 수 없는 오류가 발생했습니다.';
 
 /**
- * HTTP 상태 기본 메시지 — 라벨 테이블 우선, 미등록이면 위 한국어 상수.
+ * Default HTTP status message — label table first, falling back to Korean constants above if unregistered.
  *
- * <p>React 밖(axios 인터셉터)에서도 불리므로 훅이 아니라 `getState()` 로 읽는다.
- * 라벨은 로케일이 바뀔 때 통째로 갈리므로 매번 읽어도 항상 현재 언어다.</p>
+ * <p>Called outside React (axios interceptor), so read via `getState()` instead of a hook.
+ * Labels are replaced wholesale on locale change, so reading each time always reflects the current language.</p>
  */
 function httpMessage(statusCode: number | undefined): string | undefined {
   if (statusCode === undefined) return undefined;
   const fallback = DEFAULT_MESSAGES[statusCode];
   const key = `MESSAGE.ERROR.TEXT_HTTP${statusCode}`;
   const msg = useLabelStore.getState().t(key, fallback);
-  // 라벨도 없고 폴백도 없는 상태코드면 키 문자열이 돌아온다 — 그건 메시지가 아니다.
+  // If neither label nor fallback exists for the status code, the key string is returned — that is not a message.
   return msg === key ? fallback : msg;
 }
 
-/** 어디에도 문구가 없을 때의 최종 폴백 */
+/** Final fallback when no message is found anywhere */
 function unknownMessage(): string {
   return useLabelStore.getState().t('MESSAGE.ERROR.TEXT_UNKNOWN', UNKNOWN_ERROR);
 }
@@ -59,12 +59,12 @@ export class ApiError extends Error {
   }
 
   get userMessage(): string {
-    // 1순위: DB 라벨에서 errorCode로 조회
+    // Priority 1: look up by errorCode in DB labels
     if (this.errorCode) {
       const { t } = useLabelStore.getState();
       const key = `MESSAGE.ERROR.TEXT_${this.errorCode}`;
       let msg = t(key);
-      // 키 그대로 반환되면 DB 미등록 → fallback
+      // If key is returned as-is, unregistered in DB → fallback
       if (msg !== key) {
         if (this.errorArgs?.length) {
           this.errorArgs.forEach((arg, i) => {
@@ -74,7 +74,7 @@ export class ApiError extends Error {
         return msg;
       }
     }
-    // 2순위: 서버 메시지 → HTTP 기본 메시지 → 폴백
+    // Priority 2: server message → HTTP default message → fallback
     return this.originalResponse.message
       || httpMessage(this.statusCode)
       || unknownMessage();

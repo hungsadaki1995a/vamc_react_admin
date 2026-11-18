@@ -1,11 +1,11 @@
 /**
- * AG Grid 베트남어 로케일
+ * AG Grid Vietnamese locale
  *
- * 키 구성은 `agGridLocaleKo.ts` 와 1:1로 맞춘다 — 한쪽에 키를 추가하면 이쪽에도 추가한다.
- * (영어는 AG Grid 내장 기본값을 쓰므로 별도 파일이 없다. `agGridLocale.ts` 참조)
+ * Keys are kept 1:1 with `agGridLocaleKo.ts` — whenever a key is added on one side, add it here too.
+ * (English uses AG Grid's built-in defaults, so there is no separate file. See `agGridLocale.ts`)
  */
 export const AG_GRID_LOCALE_VI: Record<string, string> = {
-  // 필터
+  // Filter
   searchOoo: 'Tìm kiếm...',
   selectAll: '(Chọn tất cả)',
   selectAllSearchResults: '(Chọn tất cả kết quả tìm kiếm)',
@@ -37,7 +37,7 @@ export const AG_GRID_LOCALE_VI: Record<string, string> = {
   clearFilter: 'Xóa',
   cancelFilter: 'Hủy',
 
-  // 컬럼 메뉴
+  // Column menu
   pinColumn: 'Ghim cột',
   pinLeft: 'Ghim trái',
   pinRight: 'Ghim phải',
@@ -49,7 +49,7 @@ export const AG_GRID_LOCALE_VI: Record<string, string> = {
   sortDescending: 'Sắp xếp giảm dần',
   sortUnSort: 'Bỏ sắp xếp',
 
-  // 페이지네이션
+  // Pagination
   page: 'Trang',
   more: 'Thêm',
   to: '~',
@@ -60,18 +60,18 @@ export const AG_GRID_LOCALE_VI: Record<string, string> = {
   previous: 'Trước',
   pageSizeSelectorLabel: 'Số dòng mỗi trang:',
 
-  // 행 선택
+  // Row selection
   ariaChecked: 'đã chọn',
   ariaIndeterminate: 'chọn một phần',
   ariaUnchecked: 'chưa chọn',
 
-  // 기타
+  // Miscellaneous
   loadingOoo: 'Đang tải...',
   loadingError: 'Lỗi',
   noRowsToShow: 'Không có dữ liệu.',
   enabled: 'Bật',
 
-  // 복사
+  // Copy
   copy: 'Sao chép',
   copyWithHeaders: 'Sao chép kèm tiêu đề',
   copyWithGroupHeaders: 'Sao chép kèm tiêu đề nhóm',
@@ -81,7 +81,7 @@ export const AG_GRID_LOCALE_VI: Record<string, string> = {
   csvExport: 'Xuất CSV',
   export: 'Xuất',
 
-  // 컬럼 필터 조건
+  // Column filter conditions
   columns: 'Cột',
   filters: 'Bộ lọc',
   rowGroupColumns: 'Cột nhóm dòng',
@@ -94,10 +94,10 @@ export const AG_GRID_LOCALE_VI: Record<string, string> = {
   valueColumnsEmptyMessage: 'Kéo vào đây để tổng hợp',
   pivotColumnsEmptyMessage: 'Kéo vào đây để thiết lập pivot',
 
-  // 도구 패널
+  // Tool panel
   toolPanelButton: 'Bảng công cụ',
 
-  // 기타 ARIA
+  // Other ARIA
   ariaFilterColumnsInput: 'Lọc cột',
   ariaRowSelect: 'Nhấn Space để chọn dòng này',
   ariaRowDeselect: 'Nhấn Space để bỏ chọn dòng này',

@@ -4,18 +4,18 @@ import { PlusCircleOutlined } from '@ant-design/icons';
 import type { ICellRendererParams } from 'ag-grid-community';
 
 interface IconBtnCellRendererParams<TData = unknown> extends ICellRendererParams<TData> {
-  /** Row 데이터를 받아 호출되는 클릭 핸들러. 안정 ref 콜백 권장. */
+  /** Click handler invoked with row data. A stable ref callback is recommended. */
   onClick: (data: TData) => void;
-  /** 기본값: <PlusCircleOutlined /> */
+  /** Default: <PlusCircleOutlined /> */
   icon?: ReactNode;
-  /** 정적 또는 row 기반 조건부 비활성화 */
+  /** Static or row-based conditional disabling */
   disabled?: boolean | ((data: TData) => boolean);
 }
 
 /**
- * AG Grid cell renderer — 아이콘 버튼 표시.
+ * AG Grid cell renderer — displays an icon button.
  *
- * PlusCircleOutlined 아이콘을 기본으로 표시하며, icon/disabled 파라미터로 커스터마이즈 가능.
+ * Displays PlusCircleOutlined by default; customizable via icon/disabled parameters.
  *
  * @example
  * const handleRef = useRef(handleClick);
@@ -51,8 +51,8 @@ function IconBtnCellRendererBase<TData = unknown>({
 }
 
 /**
- * 값이 바뀌지 않은 셀의 재렌더를 막아 스크롤/갱신 시 깜박임을 줄인다.
- * onClick 은 memoized columnDefs 에서 넘어오는 안정 참조라 memo 가 유효하게 동작한다.
- * memo 는 제네릭 시그니처를 잃으므로 원본 함수 타입으로 캐스팅해 호출부 타입을 유지한다.
+ * Prevents unnecessary re-renders of unchanged cells to reduce flicker during scroll/refresh.
+ * Because onClick is a stable reference from memoized columnDefs, memo works effectively.
+ * Since memo drops generic signatures, cast back to the original function type to preserve caller types.
  */
 export const IconBtnCellRenderer = memo(IconBtnCellRendererBase) as typeof IconBtnCellRendererBase;
