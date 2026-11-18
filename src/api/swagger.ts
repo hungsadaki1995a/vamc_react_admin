@@ -154,6 +154,30 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/screens/{scrnId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Detail / Chi tiết
+         * @description **Screens:** VPA005201, VPA0052P01
+         */
+        get: operations["detail"];
+        /**
+         * Update / Cập nhật
+         * @description **Screens:** VPA005201, VPA0052P01
+         */
+        put: operations["update_3"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/sale-brokerage-contracts/{ctrtCd}": {
         parameters: {
             query?: never;
@@ -340,6 +364,30 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/programs/{prgrmCd}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Detail / Chi tiết
+         * @description **Screens:** VPA005101, VPA0051P01
+         */
+        get: operations["detail_1"];
+        /**
+         * Update / Cập nhật
+         * @description **Screens:** VPA005101, VPA0051P01
+         */
+        put: operations["update_4"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/platform/fees/{feeId}": {
         parameters: {
             query?: never;
@@ -503,14 +551,14 @@ export interface paths {
          * Get menu permission matrix / Ma trận phân quyền menu
          * @description **Screens:** VPA004701
          *
-         *     Roles as columns (Super Admin fixed first), admin menus as rows. Only menuSeCd=A is supported (400 PRM003). / Cột là vai trò, dòng là menu quản trị.
+         *     Roles as columns, menus as rows. Supports menuSeCd=A (Admin) and menuSeCd=W (User Web member grades); other values return 400 PRM003. / Cột là vai trò/hạng thành viên, dòng là menu.
          */
         get: operations["getMatrix"];
         /**
          * Save menu permission matrix / Lưu ma trận phân quyền menu
          * @description **Screens:** VPA004701
          *
-         *     Replaces the permissions of every role sent. ADMIN is fixed (400 PRM004); a caller cannot edit a role they hold (403 PRM007). / Thay toàn bộ quyền của các vai trò gửi lên.
+         *     Replaces the permissions of every role sent (supports A and W). ADMIN is fixed (400 PRM004); a caller cannot edit a role they hold (403 PRM007). / Thay toàn bộ quyền của các vai trò gửi lên.
          */
         put: operations["saveMatrix"];
         post?: never;
@@ -674,7 +722,7 @@ export interface paths {
          *
          *     Null fields keep stored values; blank translation text removes it. / Trường null giữ nguyên.
          */
-        put: operations["update_3"];
+        put: operations["update_5"];
         /**
          * Create label / Tạo nhãn
          * @description **Screens:** VPA005301, VPA0053P01
@@ -856,6 +904,34 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/contents/terms-policies/{termsId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get version / Chi tiết phiên bản
+         * @description **Screens:** VPA005801, VPA0058P01
+         *
+         *     Returns Vietnamese and English contents; current marks the version in force. / Trả nội dung hai ngôn ngữ.
+         */
+        get: operations["detail_2"];
+        /**
+         * Edit version / Sửa phiên bản
+         * @description **Screens:** VPA005801, VPA0058P01
+         *
+         *     Returns 409 TRM004 once the effective date is reached, published or not; create a new version instead. / Trả 409 khi đã tới ngày hiệu lực.
+         */
+        put: operations["update_6"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/contents/support-contact": {
         parameters: {
             query?: never;
@@ -873,6 +949,24 @@ export interface paths {
          * @description Creates the item on the first save, otherwise updates it, and publishes it. English texts are optional (the platform shows the Vietnamese text instead). / Tạo khi lưu lần đầu, sau đó cập nhật; luôn ở trạng thái đăng. Tiếng Anh không bắt buộc.
          */
         put: operations["save"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/contents/slogans/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Detail / Chi tiết */
+        get: operations["detail_3"];
+        /** Update / Cập nhật */
+        put: operations["update_7"];
         post?: never;
         delete?: never;
         options?: never;
@@ -977,14 +1071,32 @@ export interface paths {
          *
          *     Detail with attachments. / Chi tiết kèm tệp đính kèm.
          */
-        get: operations["detail"];
+        get: operations["detail_4"];
         /**
          * Edit news content / Sửa nội dung tin
          * @description **Screens:** VPA002401, VPA002501, VPA002601, VPA0024P01, VPA0025P01, VPA0026P01
          *
          *     Returns 409 (CNT001) while published. Category, publication and featured flags are changed with PATCH /{pstNo}/status. / Trả 409 khi đang đăng.
          */
-        put: operations["update_4"];
+        put: operations["update_8"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/contents/logos/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Detail / Chi tiết */
+        get: operations["detail_5"];
+        /** Update / Cập nhật */
+        put: operations["update_9"];
         post?: never;
         delete?: never;
         options?: never;
@@ -1005,14 +1117,14 @@ export interface paths {
          *
          *     Detail with attachments. / Chi tiết kèm tệp đính kèm.
          */
-        get: operations["detail_1"];
+        get: operations["detail_6"];
         /**
          * Edit legal document / Sửa văn bản
          * @description **Screens:** VPA003301, VPA0033P01
          *
          *     Updates content, document type and publication status in one call. / Cập nhật nội dung, loại và trạng thái.
          */
-        put: operations["update_5"];
+        put: operations["update_10"];
         post?: never;
         delete?: never;
         options?: never;
@@ -1083,14 +1195,14 @@ export interface paths {
          *
          *     Detail with attachments. / Chi tiết kèm tệp đính kèm.
          */
-        get: operations["detail_2"];
+        get: operations["detail_7"];
         /**
          * Edit career posting / Sửa tin tuyển dụng
          * @description **Screens:** VPA003401, VPA0034P01
          *
          *     Updates content, publication status and pin in one call. / Cập nhật nội dung, trạng thái và ghim.
          */
-        put: operations["update_6"];
+        put: operations["update_11"];
         post?: never;
         delete?: never;
         options?: never;
@@ -1111,14 +1223,14 @@ export interface paths {
          *
          *     editable=false while in use. / editable=false khi đang sử dụng.
          */
-        get: operations["detail_3"];
+        get: operations["detail_8"];
         /**
          * Edit banner / Sửa banner
          * @description **Screens:** VPA003201, VPA0032P01
          *
          *     Returns 409 (BNR001) while in use. / Trả 409 khi đang sử dụng.
          */
-        put: operations["update_7"];
+        put: operations["update_12"];
         post?: never;
         delete?: never;
         options?: never;
@@ -1137,12 +1249,12 @@ export interface paths {
          * Detail / Chi tiết
          * @description Detail with attachments. / Chi tiết kèm tệp đính kèm.
          */
-        get: operations["detail_4"];
+        get: operations["detail_9"];
         /**
          * Edit item / Sửa mục
          * @description Updates every value and the publication status; the section cannot change. / Cập nhật toàn bộ giá trị và trạng thái.
          */
-        put: operations["update_8"];
+        put: operations["update_13"];
         post?: never;
         delete?: never;
         options?: never;
@@ -1190,7 +1302,7 @@ export interface paths {
          * Save the consulting report
          * @description **Screens:** VPA001501
          *
-         *     Execution 1: report PDF and summary (DRFT) once the contract runs and the advance is paid. Consultant or officer. Requires WRITE permission.
+         *     수행 1: report PDF and summary (DRFT) once the contract runs and the advance is paid. Consultant or officer. Requires WRITE permission.
          */
         put: operations["saveReport"];
         post?: never;
@@ -1233,14 +1345,14 @@ export interface paths {
          * Get the additional consulting switch
          * @description **Screens:** VPA001501
          *
-         *     Additional 12: whether members see the additional consulting button. Requires READ permission.
+         *     추가 12: whether members see the additional consulting button. Requires READ permission.
          */
         get: operations["getAdditionalConsultingSetting"];
         /**
          * Change the additional consulting switch
          * @description **Screens:** VPA001501
          *
-         *     Additional 12: show (Y) or hide (N) the additional consulting button to members. Requires WRITE permission.
+         *     추가 12: show (Y) or hide (N) the additional consulting button to members. Requires WRITE permission.
          */
         put: operations["updateAdditionalConsultingSetting"];
         post?: never;
@@ -1519,7 +1631,7 @@ export interface paths {
          * Cancel a application
          * @description **Screens:** VPA001101, VPA0011P01
          *
-         *     Cancellation 1-2: cancels an application that is not approved yet (CNCL) and closes its open approval session. Requires WRITE permission.
+         *     취소 1-2: cancels an application that is not approved yet (CNCL) and closes its open approval session. Requires WRITE permission.
          */
         post: operations["cancel"];
         delete?: never;
@@ -1657,7 +1769,7 @@ export interface paths {
          * Cancel a application
          * @description **Screens:** VPA001001, VPA0010P01, VPA0004P01, VPA0004P04
          *
-         *     Cancellation 1-2: cancels an application that is not approved yet (CNCL) and closes its open approval session. Requires WRITE permission.
+         *     취소 1-2: cancels an application that is not approved yet (CNCL) and closes its open approval session. Requires WRITE permission.
          */
         post: operations["cancel_1"];
         delete?: never;
@@ -1795,7 +1907,7 @@ export interface paths {
          * Cancel a application
          * @description **Screens:** VPA001201, VPA0012P01
          *
-         *     Cancellation 1-2: cancels an application that is not approved yet (CNCL) and closes its open approval session. Requires WRITE permission.
+         *     취소 1-2: cancels an application that is not approved yet (CNCL) and closes its open approval session. Requires WRITE permission.
          */
         post: operations["cancel_2"];
         delete?: never;
@@ -1821,6 +1933,34 @@ export interface paths {
          */
         post: operations["requestApproval_2"];
         delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/screens": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List screens / Danh sách màn hình
+         * @description **Screens:** VPA005201, VPA0052P01
+         */
+        get: operations["list"];
+        put?: never;
+        /**
+         * Create / Tạo mới
+         * @description **Screens:** VPA005201, VPA0052P01
+         */
+        post: operations["create_4"];
+        /**
+         * Delete / Xóa
+         * @description **Screens:** VPA005201, VPA0052P01
+         */
+        delete: operations["delete"];
         options?: never;
         head?: never;
         patch?: never;
@@ -2501,7 +2641,7 @@ export interface paths {
          * Decide the renewal of an expiring contract
          * @description **Screens:** VPA001301, VPA0013P01, VPA0013P02
          *
-         *     Expiration 2 (after the end date passed without a trade): EXTEND_ANNEX creates an extension annex; NEW_CONTRACT registers the termination (expired) and a new contract draft; NO_EXTEND registers the termination (expired). Requires WRITE permission.
+         *     만료 2 (after the end date passed without a trade): EXTEND_ANNEX creates an extension annex; NEW_CONTRACT registers the termination (expired) and a new contract draft; NO_EXTEND registers the termination (expired). Requires WRITE permission.
          */
         post: operations["decideRenewal_1"];
         delete?: never;
@@ -2655,10 +2795,38 @@ export interface paths {
          * Create an annex
          * @description **Screens:** VPA001301, VPA0013P01, VPA0013P02
          *
-         *     Extension 1 - 4: extension annex (new end date) of a purchase brokerage contract in progress; then the shared lifecycle with PROC_PUR_MDT_ANX. Requires WRITE permission.
+         *     연장 1 - 4: extension annex (new end date) of a purchase brokerage contract in progress; then the shared lifecycle with PROC_PUR_MDT_ANX. Requires WRITE permission.
          */
         post: operations["createAnnex_1"];
         delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/programs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List programs / Danh sách chương trình
+         * @description **Screens:** VPA005101, VPA0051P01
+         */
+        get: operations["list_1"];
+        put?: never;
+        /**
+         * Create / Tạo mới
+         * @description **Screens:** VPA005101, VPA0051P01
+         */
+        post: operations["create_5"];
+        /**
+         * Delete / Xóa
+         * @description **Screens:** VPA005101, VPA0051P01
+         */
+        delete: operations["delete_1"];
         options?: never;
         head?: never;
         patch?: never;
@@ -3350,6 +3518,59 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/contents/terms-policies": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List versions / Danh sách phiên bản
+         * @description **Screens:** VPA005801, VPA0058P01
+         *
+         *     Newest effective date first within each kind; filter by type, published, keyword. / Lọc theo loại, công bố, từ khóa.
+         */
+        get: operations["list_2"];
+        put?: never;
+        /**
+         * Register version / Đăng ký phiên bản
+         * @description **Screens:** VPA005801, VPA0058P01
+         *
+         *     Starts unpublished by default; 409 TRM002 duplicate version, TRM003 duplicate effective date. / Mặc định chưa công bố.
+         */
+        post: operations["create_6"];
+        /**
+         * Delete versions / Xóa phiên bản
+         * @description **Screens:** VPA005801, VPA0058P01
+         *
+         *     Soft delete; the version in force returns 409 TRM005. / Xóa mềm.
+         */
+        delete: operations["delete_2"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/contents/slogans": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List / Danh sách */
+        get: operations["list_3"];
+        put?: never;
+        /** Create / Tạo mới */
+        post: operations["create_7"];
+        /** Delete / Xóa */
+        delete: operations["delete_3"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/contents/service-guides": {
         parameters: {
             query?: never;
@@ -3379,6 +3600,28 @@ export interface paths {
          *     Soft-deletes the selected sections. / Xóa mềm các section được chọn.
          */
         delete: operations["deleteSections"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/contents/service-guides/exchange-rates/sync": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Sync exchange rates from Vietcombank / Đồng bộ tỷ giá từ Vietcombank
+         * @description **Screens:** VPA005701, VPA0057P01
+         *
+         *     Fetches latest daily exchange rates from Vietcombank API into EXCHRT_INFO. Requires WRITE permission.
+         */
+        post: operations["syncExchangeRates"];
+        delete?: never;
         options?: never;
         head?: never;
         patch?: never;
@@ -3465,7 +3708,7 @@ export interface paths {
          *
          *     Paginated list with the board search conditions. / Danh sách phân trang theo điều kiện tìm kiếm.
          */
-        get: operations["list"];
+        get: operations["list_4"];
         put?: never;
         /**
          * Register news / Đăng ký tin
@@ -3473,14 +3716,50 @@ export interface paths {
          *
          *     category = NWS, MED or RSC. Default unpublished. / Mặc định chưa đăng.
          */
-        post: operations["create_4"];
+        post: operations["create_8"];
         /**
          * Delete / Xóa
          * @description **Screens:** VPA002401, VPA002501, VPA002601, VPA0024P01, VPA0025P01, VPA0026P01
          *
          *     Soft-deletes the selected posts. / Xóa mềm các bài được chọn.
          */
-        delete: operations["delete"];
+        delete: operations["delete_4"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/contents/logos": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List / Danh sách */
+        get: operations["list_5"];
+        put?: never;
+        /** Create / Tạo mới */
+        post: operations["create_9"];
+        /** Delete / Xóa */
+        delete: operations["delete_5"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/contents/logos/images": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Upload logo image / Tải ảnh logo */
+        post: operations["uploadImage"];
+        delete?: never;
         options?: never;
         head?: never;
         patch?: never;
@@ -3499,7 +3778,7 @@ export interface paths {
          *
          *     Paginated list with the board search conditions. sortBy: postSn, published, category, docNumber, title, lawGroup, lawField, issuingAuthority, issueDate, attachmentCount, crtBy, mdfcnDt, mdfcnBy, viewCount (ASC/DESC). / Danh sách phân trang theo điều kiện tìm kiếm.
          */
-        get: operations["list_1"];
+        get: operations["list_6"];
         put?: never;
         /**
          * Register legal document / Đăng ký văn bản
@@ -3507,14 +3786,14 @@ export interface paths {
          *
          *     Default published. Required: type, number/sign, issue date, title. / Mặc định công bố.
          */
-        post: operations["create_5"];
+        post: operations["create_10"];
         /**
          * Delete / Xóa
          * @description **Screens:** VPA003301, VPA0033P01
          *
          *     Soft-deletes the selected posts. / Xóa mềm các bài được chọn.
          */
-        delete: operations["delete_1"];
+        delete: operations["delete_6"];
         options?: never;
         head?: never;
         patch?: never;
@@ -3587,7 +3866,7 @@ export interface paths {
          *
          *     Paginated list with the board search conditions. / Danh sách phân trang theo điều kiện tìm kiếm.
          */
-        get: operations["list_2"];
+        get: operations["list_7"];
         put?: never;
         /**
          * Register career posting / Đăng ký tin tuyển dụng
@@ -3595,14 +3874,14 @@ export interface paths {
          *
          *     Default published. / Mặc định công bố.
          */
-        post: operations["create_6"];
+        post: operations["create_11"];
         /**
          * Delete / Xóa
          * @description **Screens:** VPA003401, VPA0034P01
          *
          *     Soft-deletes the selected posts. / Xóa mềm các bài được chọn.
          */
-        delete: operations["delete_2"];
+        delete: operations["delete_7"];
         options?: never;
         head?: never;
         patch?: never;
@@ -3621,7 +3900,7 @@ export interface paths {
          *
          *     Ordered by position and display order. / Sắp theo vị trí và thứ tự.
          */
-        get: operations["list_3"];
+        get: operations["list_8"];
         put?: never;
         /**
          * Register banner / Đăng ký banner
@@ -3629,14 +3908,14 @@ export interface paths {
          *
          *     Starts not in use. / Mặc định không sử dụng.
          */
-        post: operations["create_7"];
+        post: operations["create_12"];
         /**
          * Delete banners / Xóa banner
          * @description **Screens:** VPA003201, VPA0032P01
          *
          *     Permanently deletes banners that are not in use; a banner in use returns 409 BNR004. / Chỉ xóa banner không sử dụng.
          */
-        delete: operations["delete_3"];
+        delete: operations["delete_8"];
         options?: never;
         head?: never;
         patch?: never;
@@ -3657,7 +3936,7 @@ export interface paths {
          *
          *     Returns the file group ID to pass as imageFileId. / Trả mã nhóm ảnh dùng cho imageFileId.
          */
-        post: operations["uploadImage"];
+        post: operations["uploadImage_1"];
         delete?: never;
         options?: never;
         head?: never;
@@ -3675,18 +3954,18 @@ export interface paths {
          * List / Danh sách
          * @description Paginated list with the board search conditions. / Danh sách phân trang theo điều kiện tìm kiếm.
          */
-        get: operations["list_4"];
+        get: operations["list_9"];
         put?: never;
         /**
          * Add item / Thêm mục
          * @description section = CEOM, HIST, HSTI, MSSN, FUNC, ORGS, DIRC, BEXB, BDIR, BSPV, PRTN or SPCT (Support > Contact Us). extraJson must be valid JSON matching the section format (CNT015): ORGS = department array or {"vi": [...], "en": [...]}, DIRC values = string or {"vi", "en"}, MSSN = {"keyFunctionsTitle", "organizationTitle"} with string or {"vi", "en"} values, PRTN = {"url": "https://..."}. MSSN: title = mission heading, content = paragraphs separated by a blank line, imageFileId = illustration. ORGS summary = overview as plain text or {"vi", "en"} (CNT015). SPCT: phone = hotline, email = support e-mail, extraJson = {"phoneHours", "portalHours", "portalHoursNote"} with string or {"vi", "en"} values. BEXB/BDIR/BSPV need name and tag = M or F; PRTN needs tag = DOMESTIC or FOREIGN (CNT017). CEOM ignores email/phone (company name and signatory title are platform i18n labels). / extraJson phải là JSON hợp lệ đúng định dạng section; ban lãnh đạo cần tên và giới tính M/F; đối tác cần nhóm DOMESTIC/FOREIGN; CEOM bỏ qua email/phone.
          */
-        post: operations["create_8"];
+        post: operations["create_13"];
         /**
          * Delete / Xóa
          * @description Soft-deletes the selected posts. / Xóa mềm các bài được chọn.
          */
-        delete: operations["delete_4"];
+        delete: operations["delete_9"];
         options?: never;
         head?: never;
         patch?: never;
@@ -3881,7 +4160,7 @@ export interface paths {
          * Complete the report
          * @description **Screens:** VPA001501
          *
-         *     Execution 6: APRV -> RDY (not published); the remaining fee is issued and mailed. The report is published when the fee is confirmed (Execution 11-1). Requires WRITE permission.
+         *     수행 6: APRV -> RDY (not published); the remaining fee is issued and mailed. The report is published when the fee is confirmed (수행 11-1). Requires WRITE permission.
          */
         post: operations["completeReport"];
         delete?: never;
@@ -3903,7 +4182,7 @@ export interface paths {
          * Request report approval
          * @description **Screens:** VPA001501
          *
-         *     Execution 2: PROC_CNSLT_RPTP; approval -> APRV, rejection -> DRFT. Requires WRITE permission.
+         *     수행 2: PROC_CNSLT_RPTP; approval -> APRV, rejection -> DRFT. Requires WRITE permission.
          */
         post: operations["requestReportApproval"];
         delete?: never;
@@ -4035,7 +4314,7 @@ export interface paths {
          * Receive an additional consultation
          * @description **Screens:** VPA001501
          *
-         *     Additional 15: RQST -> RCPT. Consultant or officer. Requires WRITE permission.
+         *     추가 15: RQST -> RCPT. Consultant or officer. Requires WRITE permission.
          */
         post: operations["receiveAdditionalConsultation"];
         delete?: never;
@@ -4057,7 +4336,7 @@ export interface paths {
          * Complete an additional consultation
          * @description **Screens:** VPA001501
          *
-         *     Additional 21: result recorded and mailed to the member. Requires WRITE permission.
+         *     추가 21: result recorded and mailed to the member. Requires WRITE permission.
          */
         post: operations["completeAdditionalConsultation"];
         delete?: never;
@@ -4570,6 +4849,30 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/auth/password-reset/verify": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Check password reset token (employee) / Kiểm tra token đặt lại mật khẩu
+         * @description **Screens:** VPA000701, VPA000101
+         *
+         *     Called by the reset page before POST /api/auth/password-reset. Checks the token of the reset mail without using it and returns the channel (EMAIL) and the masked employee number, so the page can show them and go on to the new password. Invalid, used or expired link, or an employee who is no longer active: 400 RCV003.
+         *
+         *     Kiểm tra token trước khi đặt mật khẩu mới; trả kênh và mã nhân viên đã che, token vẫn dùng được.
+         */
+        post: operations["verifyResetToken"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/auth/password-reset/request": {
         parameters: {
             query?: never;
@@ -4846,6 +5149,45 @@ export interface paths {
         patch: operations["updateUse_1"];
         trace?: never;
     };
+    "/api/v1/contents/terms-policies/publish": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Publish or unpublish versions / Công bố hoặc dừng công bố
+         * @description **Screens:** VPA005801, VPA0058P01
+         *
+         *     published is required; the version in force returns 409 TRM005 on unpublish. / Bắt buộc published.
+         */
+        patch: operations["publish"];
+        trace?: never;
+    };
+    "/api/v1/contents/slogans/use": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Change use status / Bật hoặc tắt sử dụng */
+        patch: operations["changeUse"];
+        trace?: never;
+    };
     "/api/v1/contents/service-guides/reorder": {
         parameters: {
             query?: never;
@@ -5019,7 +5361,24 @@ export interface paths {
          *
          *     Returns the number of updated posts. / Trả về số bài được cập nhật.
          */
-        patch: operations["publish"];
+        patch: operations["publish_1"];
+        trace?: never;
+    };
+    "/api/v1/contents/logos/use": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Change use status / Bật hoặc tắt sử dụng */
+        patch: operations["changeUse_1"];
         trace?: never;
     };
     "/api/v1/contents/legal-documents/publish": {
@@ -5041,7 +5400,7 @@ export interface paths {
          *
          *     Returns the number of updated posts. / Trả về số bài được cập nhật.
          */
-        patch: operations["publish_1"];
+        patch: operations["publish_2"];
         trace?: never;
     };
     "/api/v1/contents/inquiries/{pstNo}/category": {
@@ -5151,7 +5510,7 @@ export interface paths {
          *
          *     Returns the number of updated posts. / Trả về số bài được cập nhật.
          */
-        patch: operations["publish_2"];
+        patch: operations["publish_3"];
         trace?: never;
     };
     "/api/v1/contents/banners/use": {
@@ -5213,7 +5572,7 @@ export interface paths {
          * Bulk publish / unpublish / Đăng hoặc dừng đăng hàng loạt
          * @description Returns the number of updated posts. / Trả về số bài được cập nhật.
          */
-        patch: operations["publish_3"];
+        patch: operations["publish_4"];
         trace?: never;
     };
     "/api/v1/collateral-assets/{cltrAstCd}/home-posting": {
@@ -5458,6 +5817,46 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/screens/options": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Screen options / Danh sách chọn màn hình
+         * @description **Screens:** VPA005201, VPA0052P01
+         */
+        get: operations["options"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/screens/excel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Export Excel / Xuất Excel
+         * @description **Screens:** VPA005201, VPA0052P01
+         */
+        get: operations["exportExcel_3"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/sale-brokerage-contracts": {
         parameters: {
             query?: never;
@@ -5559,7 +5958,7 @@ export interface paths {
          *
          *     Excel download (VPA001301) of contracts and annexes with the same filters, at most 10,000 rows. Requires READ permission.
          */
-        get: operations["exportExcel_3"];
+        get: operations["exportExcel_4"];
         put?: never;
         post?: never;
         delete?: never;
@@ -5785,7 +6184,47 @@ export interface paths {
          *
          *     Excel download (VPA001301) of contracts and annexes with the same filters, at most 10,000 rows. Requires READ permission.
          */
-        get: operations["exportExcel_4"];
+        get: operations["exportExcel_5"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/programs/options": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Program options / Danh sách chọn chương trình
+         * @description **Screens:** VPA005101, VPA0051P01
+         */
+        get: operations["options_1"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/programs/excel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Export Excel / Xuất Excel
+         * @description **Screens:** VPA005101, VPA0051P01
+         */
+        get: operations["exportExcel_6"];
         put?: never;
         post?: never;
         delete?: never;
@@ -6429,7 +6868,7 @@ export interface paths {
          *
          *     Document types, groups, fields and issuing authorities. / Loại văn bản, nhóm, lĩnh vực, cơ quan ban hành.
          */
-        get: operations["options"];
+        get: operations["options_2"];
         put?: never;
         post?: never;
         delete?: never;
@@ -6713,7 +7152,7 @@ export interface paths {
          *
          *     Excel download (VPA001301) of contracts and annexes with the same filters, at most 10,000 rows. Requires READ permission.
          */
-        get: operations["exportExcel_5"];
+        get: operations["exportExcel_7"];
         put?: never;
         post?: never;
         delete?: never;
@@ -6876,7 +7315,7 @@ export interface paths {
          *
          *     AP or DQ, deposit not held, no bid (409 BDR005). Requires WRITE permission.
          */
-        delete: operations["delete_5"];
+        delete: operations["delete_10"];
         options?: never;
         head?: never;
         patch?: never;
@@ -7732,7 +8171,7 @@ export interface paths {
          * Delete attachment / Xóa tệp đính kèm
          * @description Soft-deletes one file of a group. / Xóa mềm một tệp trong nhóm.
          */
-        delete: operations["delete_6"];
+        delete: operations["delete_11"];
         options?: never;
         head?: never;
         patch?: never;
@@ -8221,6 +8660,54 @@ export interface components {
              * @example EMP0000002
              */
             tkcgEmpNo?: string;
+        };
+        ScreenRequest: {
+            /**
+             * @description Screen ID / Mã màn hình
+             * @example AD_SYS_040100
+             */
+            scrnId: string;
+            /**
+             * @description Program code / Mã chương trình
+             * @example SYS04010000
+             */
+            prgrmCd: string;
+            /** @description Description / Mô tả màn hình */
+            scrnExpln?: string;
+            /**
+             * Format: int32
+             * @description Display order (0-99) / Thứ tự hiển thị
+             * @example 1
+             */
+            scrnSeq: number;
+            /**
+             * @description Use flag (Y/N) / Trạng thái sử dụng
+             * @example Y
+             */
+            useYn: string;
+        };
+        ApiResponseScreenResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["ScreenResponse"];
+        };
+        ScreenResponse: {
+            scrnId?: string;
+            prgrmCd?: string;
+            prgrmNm?: string;
+            scrnExpln?: string;
+            /** Format: int32 */
+            scrnSeq?: number;
+            useYn?: string;
+            /** Format: date-time */
+            crtDt?: string;
+            crtBy?: string;
+            crtByNm?: string;
+            /** Format: date-time */
+            mdfcnDt?: string;
+            mdfcnBy?: string;
+            mdfcnByNm?: string;
         };
         UpdateTradeContractRequest: {
             /**
@@ -9036,6 +9523,65 @@ export interface components {
              * @example ADMIN
              */
             assignedBy?: string;
+        };
+        ProgramRequest: {
+            /**
+             * @description Program code / Mã chương trình
+             * @example SYS04010000
+             */
+            prgrmCd: string;
+            /**
+             * @description Menu code / Mã menu
+             * @example A06040100
+             */
+            menuCd: string;
+            /**
+             * @description Category (PAGE/POPUP) / Phân loại
+             * @example PAGE
+             */
+            prgrmSeCd: string;
+            /**
+             * @description Program name / Tên chương trình
+             * @example Program Management
+             */
+            prgrmNm: string;
+            /** @description Description / Mô tả */
+            prgrmExpln?: string;
+            /**
+             * Format: int32
+             * @description Display order (0-99) / Thứ tự hiển thị
+             * @example 1
+             */
+            prgrmSeq: number;
+            /**
+             * @description Use flag (Y/N) / Trạng thái sử dụng
+             * @example Y
+             */
+            useYn: string;
+        };
+        ApiResponseProgramResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["ProgramResponse"];
+        };
+        ProgramResponse: {
+            prgrmCd?: string;
+            menuCd?: string;
+            prgrmSeCd?: string;
+            prgrmNm?: string;
+            prgrmExpln?: string;
+            /** Format: int32 */
+            prgrmSeq?: number;
+            useYn?: string;
+            /** Format: date-time */
+            crtDt?: string;
+            crtBy?: string;
+            crtByNm?: string;
+            /** Format: date-time */
+            mdfcnDt?: string;
+            mdfcnBy?: string;
+            mdfcnByNm?: string;
         };
         FeeRequest: {
             /**
@@ -11204,6 +11750,116 @@ export interface components {
              */
             newPassword: string;
         };
+        UpdateTermsPolicyRequest: {
+            /**
+             * @description Version label, unique per kind / Phiên bản, duy nhất theo loại
+             * @example 2026.11.01
+             */
+            version: string;
+            /**
+             * Format: date
+             * @description Effective date (yyyy-MM-dd) / Ngày hiệu lực
+             * @example 2026-11-01
+             */
+            effectiveDate: string;
+            /**
+             * @description Title (Vietnamese) / Tiêu đề (tiếng Việt)
+             * @example Điều khoản sử dụng
+             */
+            title: string;
+            /**
+             * @description Title (English), omitted keeps the stored value / Tiêu đề (tiếng Anh), bỏ trống giữ giá trị cũ
+             * @example Terms of Use
+             */
+            titleEn?: string;
+            /** @description Content HTML (Vietnamese) / Nội dung HTML (tiếng Việt) */
+            content: string;
+            /** @description Content HTML (English), omitted keeps the stored value / Nội dung HTML (tiếng Anh), bỏ trống giữ giá trị cũ */
+            contentEn?: string;
+        };
+        ApiResponseTermsPolicyDetailResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["TermsPolicyDetailResponse"];
+        };
+        TermsPolicyDetailResponse: {
+            /**
+             * @description Document ID / Mã văn bản
+             * @example 3f2b1c9e-8a7d-4e6f-9b0a-1c2d3e4f5a6b
+             */
+            termsId?: string;
+            /**
+             * @description Kind: TRMS or PRVC / Loại văn bản
+             * @example TRMS
+             */
+            type?: string;
+            /**
+             * @description Version label / Phiên bản
+             * @example 2026.11.01
+             */
+            version?: string;
+            /**
+             * Format: date
+             * @description Effective date / Ngày hiệu lực
+             * @example 2026-11-01
+             */
+            effectiveDate?: string;
+            /**
+             * @description Title (Vietnamese) / Tiêu đề (tiếng Việt)
+             * @example Điều khoản sử dụng
+             */
+            title?: string;
+            /**
+             * @description Title (English) / Tiêu đề (tiếng Anh)
+             * @example Terms of Use
+             */
+            titleEn?: string;
+            /**
+             * @description Published (Y/N) / Đã công bố
+             * @example Y
+             */
+            published?: string;
+            /**
+             * @description Version currently in force for its kind / Phiên bản hiện hành
+             * @example true
+             */
+            current?: boolean;
+            /**
+             * @description Editable (false once the effective date is reached) / Có thể sửa
+             * @example false
+             */
+            editable?: boolean;
+            /**
+             * Format: date-time
+             * @description Created at / Ngày tạo
+             */
+            crtDt?: string;
+            /**
+             * @description Creator / Người tạo
+             * @example admin
+             */
+            crtBy?: string;
+            /**
+             * @description Creator name / Tên người tạo
+             * @example Mr. Park
+             */
+            crtByNm?: string;
+            /**
+             * Format: date-time
+             * @description Modified at / Ngày sửa
+             */
+            mdfcnDt?: string;
+            /**
+             * @description Modifier / Người sửa
+             * @example admin
+             */
+            mdfcnBy?: string;
+            /** @description Content HTML (Vietnamese) / Nội dung HTML (tiếng Việt) */
+            content?: string;
+            /** @description Content HTML (English) / Nội dung HTML (tiếng Anh) */
+            contentEn?: string;
+        };
         /** @description Text per language / Nội dung theo ngôn ngữ */
         LocalizedText: {
             /**
@@ -11286,37 +11942,31 @@ export interface components {
              */
             mdfcnByNm?: string;
         };
-        UpdateServiceGuideSectionRequest: {
+        SloganRequest: {
             /**
-             * @description Vietnamese title / Tiêu đề tiếng Việt
-             * @example Quy trình mua nợ xấu
+             * @description Main slogan text (VI) / Slogan chính (VI)
+             * @example Đồng hành xử lý nợ xấu quốc gia
              */
             title: string;
             /**
-             * @description Vietnamese content / Nội dung tiếng Việt
-             * @example Bước 1: Tìm kiếm và kiểm tra thông tin
-             */
-            content: string;
-            /**
-             * @description English title / Tiêu đề tiếng Anh
-             * @example NPL Purchase Process
+             * @description Main slogan text (EN) / Slogan chính (EN)
+             * @example Partnering in National NPL Resolution
              */
             titleEn?: string;
+            /** @description Sub-slogan or description (VI) / Slogan phụ hoặc mô tả (VI) */
+            subSlogan?: string;
+            /** @description Sub-slogan or description (EN) / Slogan phụ hoặc mô tả (EN) */
+            subSloganEn?: string;
             /**
-             * @description English content / Nội dung tiếng Anh
-             * @example STEP 1: Search and check information
+             * @description Display position key / Vị trí hiển thị
+             * @example MAIN_HERO
              */
-            contentEn?: string;
+            positionId: string;
             /**
-             * @description Summary (PST_SMRY_CN) / Tóm tắt
-             * @example Quy trình 5 bước mua khoản nợ xấu
+             * @description Use flag (Y/N) / Trạng thái sử dụng (Y/N)
+             * @example N
              */
-            summary?: string;
-            /**
-             * @description Attachment file group ID (null removes the link) / Mã nhóm tệp đính kèm
-             * @example 3f2b1c9e-8a7d-4e6f-9b0a-1c2d3e4f5a6b
-             */
-            attachmentFileId?: string;
+            useYn?: string;
         };
         ApiResponsePostDetailResponse: {
             /** Format: int32 */
@@ -11546,6 +12196,38 @@ export interface components {
              */
             mdfcnByNm?: string;
         };
+        UpdateServiceGuideSectionRequest: {
+            /**
+             * @description Vietnamese title / Tiêu đề tiếng Việt
+             * @example Quy trình mua nợ xấu
+             */
+            title: string;
+            /**
+             * @description Vietnamese content / Nội dung tiếng Việt
+             * @example Bước 1: Tìm kiếm và kiểm tra thông tin
+             */
+            content: string;
+            /**
+             * @description English title / Tiêu đề tiếng Anh
+             * @example NPL Purchase Process
+             */
+            titleEn?: string;
+            /**
+             * @description English content / Nội dung tiếng Anh
+             * @example STEP 1: Search and check information
+             */
+            contentEn?: string;
+            /**
+             * @description Summary (PST_SMRY_CN) / Tóm tắt
+             * @example Quy trình 5 bước mua khoản nợ xấu
+             */
+            summary?: string;
+            /**
+             * @description Attachment file group ID (null removes the link) / Mã nhóm tệp đính kèm
+             * @example 3f2b1c9e-8a7d-4e6f-9b0a-1c2d3e4f5a6b
+             */
+            attachmentFileId?: string;
+        };
         UpdateNplAnnouncementRequest: {
             /**
              * @description Title / Tiêu đề
@@ -11664,6 +12346,42 @@ export interface components {
              * @example 1
              */
             pinOrder?: number;
+        };
+        LogoRequest: {
+            /**
+             * @description Logo name (VI) / Tên logo (VI)
+             * @example VAMC Header Logo
+             */
+            title: string;
+            /**
+             * @description Logo name (EN) / Tên logo (EN)
+             * @example VAMC Header Logo
+             */
+            titleEn?: string;
+            /**
+             * @description Display position key / Vị trí hiển thị
+             * @example HEADER
+             */
+            positionId: string;
+            /**
+             * @description Uploaded logo image file group ID / Mã nhóm tệp ảnh logo
+             * @example 7c1d2e3f-4a5b-6c7d-8e9f-0a1b2c3d4e5f
+             */
+            imageFileId: string;
+            /**
+             * @description Optional link URL / Đường dẫn liên kết
+             * @example https://vamc.vn
+             */
+            linkUrl?: string;
+            /** @description Alt text or description (VI) / Mô tả hoặc alt text (VI) */
+            description?: string;
+            /** @description Alt text or description (EN) / Mô tả hoặc alt text (EN) */
+            descriptionEn?: string;
+            /**
+             * @description Use flag (Y/N) / Trạng thái sử dụng (Y/N)
+             * @example N
+             */
+            useYn?: string;
         };
         LegalDocumentRequest: {
             /**
@@ -13724,6 +14442,43 @@ export interface components {
              */
             jbpsNm?: string;
         };
+        CreateTermsPolicyRequest: {
+            /**
+             * @description Kind: TRMS (terms of use) or PRVC (privacy policy) / Loại văn bản
+             * @example TRMS
+             */
+            type: string;
+            /**
+             * @description Version label, unique per kind / Phiên bản, duy nhất theo loại
+             * @example 2026.11.01
+             */
+            version: string;
+            /**
+             * Format: date
+             * @description Effective date (yyyy-MM-dd) / Ngày hiệu lực
+             * @example 2026-11-01
+             */
+            effectiveDate: string;
+            /**
+             * @description Title (Vietnamese) / Tiêu đề (tiếng Việt)
+             * @example Điều khoản sử dụng
+             */
+            title: string;
+            /**
+             * @description Title (English) / Tiêu đề (tiếng Anh)
+             * @example Terms of Use
+             */
+            titleEn?: string;
+            /** @description Content HTML (Vietnamese) / Nội dung HTML (tiếng Việt) */
+            content: string;
+            /** @description Content HTML (English) / Nội dung HTML (tiếng Anh) */
+            contentEn?: string;
+            /**
+             * @description Publish on creation (Y/N, default N) / Công bố ngay (mặc định N)
+             * @example N
+             */
+            published?: string;
+        };
         CreateServiceGuideSectionRequest: {
             /**
              * @description Guide page: TRD trading, BUY purchase, SELL sale, CNSL consulting, FEE fee schedule, AUC auction guide / Trang hướng dẫn
@@ -13770,6 +14525,20 @@ export interface components {
              * @example 3f2b1c9e-8a7d-4e6f-9b0a-1c2d3e4f5a6b
              */
             attachmentFileId?: string;
+        };
+        ApiResponseBatchJobResult: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["BatchJobResult"];
+        };
+        BatchJobResult: {
+            /** Format: int64 */
+            totalCount?: number;
+            /** Format: int64 */
+            successCount?: number;
+            /** Format: int64 */
+            failCount?: number;
         };
         CreateNplAnnouncementRequest: {
             /**
@@ -14446,6 +15215,33 @@ export interface components {
              */
             newPassword: string;
         };
+        /** @description Employee password reset token check / Kiểm tra token đặt lại mật khẩu nhân viên */
+        EmpPasswordResetVerifyRequest: {
+            /**
+             * @description Token from the reset mail link / Token trong liên kết đặt lại mật khẩu
+             * @example Qm9vdHN0cmFwLXRva2VuLWV4YW1wbGUtMzItYnl0ZXM
+             */
+            token: string;
+        };
+        ApiResponseEmpPasswordResetTokenResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["EmpPasswordResetTokenResponse"];
+        };
+        /** @description Password reset token check result / Kết quả kiểm tra token đặt lại mật khẩu */
+        EmpPasswordResetTokenResponse: {
+            /**
+             * @description Channel the link was sent through / Kênh đã gửi liên kết
+             * @example EMAIL
+             */
+            channel?: string;
+            /**
+             * @description Masked employee number (login ID) / Mã nhân viên (ID đăng nhập) đã che
+             * @example EM******01
+             */
+            loginId?: string;
+        };
         /** @description Employee password reset link request / Yêu cầu liên kết đặt lại mật khẩu nhân viên */
         EmpPasswordResetLinkRequest: {
             /**
@@ -14454,11 +15250,6 @@ export interface components {
              * @enum {string}
              */
             channel: "EMAIL" | "ZALO";
-            /**
-             * @description Employee number (login ID, EMP_INFO.EMP_NO) / Mã nhân viên (ID đăng nhập)
-             * @example EMP0000001
-             */
-            loginId: string;
             /**
              * Format: email
              * @description Registered e-mail (required for EMAIL) / Email đã đăng ký (bắt buộc với EMAIL)
@@ -14510,7 +15301,7 @@ export interface components {
         /** @description Login Request / Yêu cầu đăng nhập */
         LoginRequest: {
             /**
-             * @description Login ID (Employee number EMP_INFO.EMP_NO) / Mã đăng nhập (Mã nhân viên EMP_INFO.EMP_NO)
+             * @description Login ID: employee number (EMP_INFO.EMP_NO), e-mail or mobile number / Mã đăng nhập: mã nhân viên (EMP_INFO.EMP_NO), email hoặc số điện thoại di động
              * @example admin
              */
             loginId: string;
@@ -14689,6 +15480,29 @@ export interface components {
         NotificationUseRequest: {
             /**
              * @description Y = use, N = stop (unlocks editing)
+             * @example Y
+             */
+            useYn: string;
+        };
+        TermsPolicyIdsRequest: {
+            /**
+             * @description Document IDs selected in the grid / Mã văn bản được chọn
+             * @example [
+             *       "3f2b1c9e-8a7d-4e6f-9b0a-1c2d3e4f5a6b"
+             *     ]
+             */
+            termsIds: string[];
+            /**
+             * @description Publish flag for PATCH /publish (Y/N) / Trạng thái công bố
+             * @example Y
+             */
+            published?: string;
+        };
+        ChangeSiteDisplayUseRequest: {
+            /** @description Target item IDs / Danh sách mã mục */
+            ids: string[];
+            /**
+             * @description Use flag (Y/N) / Trạng thái sử dụng (Y/N)
              * @example Y
              */
             useYn: string;
@@ -15089,6 +15903,56 @@ export interface components {
             message?: string;
             data?: components["schemas"]["TradeApplicationHistoryDto"][];
         };
+        ScreenSearchRequest: {
+            /**
+             * @description Use flag (Y/N) / Trạng thái sử dụng (Y/N)
+             * @example Y
+             */
+            useYn?: string;
+            /** @description Program code (LIKE) / Mã chương trình */
+            prgrmCd?: string;
+            /** @description Screen ID (LIKE) / Mã màn hình */
+            scrnId?: string;
+            /** @description Keyword on description or program name / Từ khóa mô tả hoặc tên chương trình */
+            keyword?: string;
+        };
+        ApiResponsePageResponseScreenResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["PageResponseScreenResponse"];
+        };
+        /** @description Paginated Response / Phản hồi phân trang */
+        PageResponseScreenResponse: {
+            /** @description Data list / Danh sách dữ liệu */
+            content?: components["schemas"]["ScreenResponse"][];
+            /**
+             * Format: int32
+             * @description Current page number (1-based) / Số trang hiện tại
+             */
+            page?: number;
+            /**
+             * Format: int32
+             * @description Page size / Số lượng bản ghi mỗi trang
+             */
+            size?: number;
+            /**
+             * Format: int64
+             * @description Total number of records / Tổng số bản ghi
+             */
+            totalElements?: number;
+            /**
+             * Format: int32
+             * @description Total number of pages / Tổng số trang
+             */
+            totalPages?: number;
+        };
+        ApiResponseListScreenResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["ScreenResponse"][];
+        };
         TradeContractSearchRequest: {
             /**
              * @description Contract types (CTRT_DSPSL_MDT, CTRT_DMDT_ANX, CTRT_DBAS_ANX)
@@ -15441,6 +16305,67 @@ export interface components {
             status?: number;
             message?: string;
             data?: components["schemas"]["RoleGroupResponse"][];
+        };
+        ProgramSearchRequest: {
+            /**
+             * @description Use flag (Y/N) / Trạng thái sử dụng (Y/N)
+             * @example Y
+             */
+            useYn?: string;
+            /**
+             * @description Category (PAGE/POPUP) / Phân loại
+             * @example PAGE
+             */
+            prgrmSeCd?: string;
+            /**
+             * @description Program code (LIKE) / Mã chương trình
+             * @example SYS
+             */
+            prgrmCd?: string;
+            /** @description Program name (LIKE) / Tên chương trình */
+            prgrmNm?: string;
+            /**
+             * @description Menu code / Mã menu
+             * @example A06040100
+             */
+            menuCd?: string;
+        };
+        ApiResponsePageResponseProgramResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["PageResponseProgramResponse"];
+        };
+        /** @description Paginated Response / Phản hồi phân trang */
+        PageResponseProgramResponse: {
+            /** @description Data list / Danh sách dữ liệu */
+            content?: components["schemas"]["ProgramResponse"][];
+            /**
+             * Format: int32
+             * @description Current page number (1-based) / Số trang hiện tại
+             */
+            page?: number;
+            /**
+             * Format: int32
+             * @description Page size / Số lượng bản ghi mỗi trang
+             */
+            size?: number;
+            /**
+             * Format: int64
+             * @description Total number of records / Tổng số bản ghi
+             */
+            totalElements?: number;
+            /**
+             * Format: int32
+             * @description Total number of pages / Tổng số trang
+             */
+            totalPages?: number;
+        };
+        ApiResponseListProgramResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["ProgramResponse"][];
         };
         FeeSearchRequest: {
             /**
@@ -17659,6 +18584,127 @@ export interface components {
              */
             assignedToMe?: number;
         };
+        TermsPolicySearchRequest: {
+            /**
+             * @description Kind filter: TRMS or PRVC (empty = all) / Lọc loại
+             * @example TRMS
+             */
+            type?: string;
+            /**
+             * @description Published filter (Y/N, empty = all) / Lọc trạng thái công bố
+             * @example Y
+             */
+            published?: string;
+            /**
+             * @description Keyword on version or title / Từ khóa theo phiên bản hoặc tiêu đề
+             * @example 2026
+             */
+            keyword?: string;
+        };
+        ApiResponsePageResponseTermsPolicyResponse: {
+            /** Format: int32 */
+            status?: number;
+            message?: string;
+            data?: components["schemas"]["PageResponseTermsPolicyResponse"];
+        };
+        /** @description Paginated Response / Phản hồi phân trang */
+        PageResponseTermsPolicyResponse: {
+            /** @description Data list / Danh sách dữ liệu */
+            content?: components["schemas"]["TermsPolicyResponse"][];
+            /**
+             * Format: int32
+             * @description Current page number (1-based) / Số trang hiện tại
+             */
+            page?: number;
+            /**
+             * Format: int32
+             * @description Page size / Số lượng bản ghi mỗi trang
+             */
+            size?: number;
+            /**
+             * Format: int64
+             * @description Total number of records / Tổng số bản ghi
+             */
+            totalElements?: number;
+            /**
+             * Format: int32
+             * @description Total number of pages / Tổng số trang
+             */
+            totalPages?: number;
+        };
+        TermsPolicyResponse: {
+            /**
+             * @description Document ID / Mã văn bản
+             * @example 3f2b1c9e-8a7d-4e6f-9b0a-1c2d3e4f5a6b
+             */
+            termsId?: string;
+            /**
+             * @description Kind: TRMS or PRVC / Loại văn bản
+             * @example TRMS
+             */
+            type?: string;
+            /**
+             * @description Version label / Phiên bản
+             * @example 2026.11.01
+             */
+            version?: string;
+            /**
+             * Format: date
+             * @description Effective date / Ngày hiệu lực
+             * @example 2026-11-01
+             */
+            effectiveDate?: string;
+            /**
+             * @description Title (Vietnamese) / Tiêu đề (tiếng Việt)
+             * @example Điều khoản sử dụng
+             */
+            title?: string;
+            /**
+             * @description Title (English) / Tiêu đề (tiếng Anh)
+             * @example Terms of Use
+             */
+            titleEn?: string;
+            /**
+             * @description Published (Y/N) / Đã công bố
+             * @example Y
+             */
+            published?: string;
+            /**
+             * @description Version currently in force for its kind / Phiên bản hiện hành
+             * @example true
+             */
+            current?: boolean;
+            /**
+             * @description Editable (false once the effective date is reached) / Có thể sửa
+             * @example false
+             */
+            editable?: boolean;
+            /**
+             * Format: date-time
+             * @description Created at / Ngày tạo
+             */
+            crtDt?: string;
+            /**
+             * @description Creator / Người tạo
+             * @example admin
+             */
+            crtBy?: string;
+            /**
+             * @description Creator name / Tên người tạo
+             * @example Mr. Park
+             */
+            crtByNm?: string;
+            /**
+             * Format: date-time
+             * @description Modified at / Ngày sửa
+             */
+            mdfcnDt?: string;
+            /**
+             * @description Modifier / Người sửa
+             * @example admin
+             */
+            mdfcnBy?: string;
+        };
         PostSearchRequest: {
             /**
              * @description Published filter (Y/N, empty = all) / Lọc trạng thái đăng (Y/N, trống = tất cả)
@@ -17714,6 +18760,11 @@ export interface components {
              * @example 31/12/2026
              */
             issueToDate?: string;
+            /**
+             * @description Exact tag / position filter (PST_TAG) / Lọc theo vị trí hoặc tag
+             * @example HEADER
+             */
+            tag?: string;
         };
         ApiResponsePageResponsePostResponse: {
             /** Format: int32 */
@@ -19248,6 +20299,14 @@ export interface components {
              */
             updatedAt?: string;
         };
+        DeleteScreensRequest: {
+            /** @description Screen IDs to delete / Danh sách mã màn hình cần xóa */
+            scrnIds: string[];
+        };
+        DeleteProgramsRequest: {
+            /** @description Program codes to delete / Danh sách mã chương trình cần xóa */
+            prgrmCds: string[];
+        };
         /** @description Notification template IDs / Danh sách mã mẫu thông báo */
         NotificationMessageIdsRequest: {
             /**
@@ -19266,6 +20325,10 @@ export interface components {
              *     ]
              */
             dbtrCds: string[];
+        };
+        DeleteSiteDisplayRequest: {
+            /** @description Target item IDs to delete / Danh sách mã mục cần xóa */
+            ids: string[];
         };
         DeletePostsRequest: {
             /**
@@ -19576,6 +20639,60 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["ApiResponseTradeApplicationStatusResponse"];
+                };
+            };
+        };
+    };
+    detail: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                scrnId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseScreenResponse"];
+                };
+            };
+        };
+    };
+    update_3: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                scrnId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ScreenRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseScreenResponse"];
                 };
             };
         };
@@ -20042,6 +21159,60 @@ export interface operations {
             };
         };
     };
+    detail_1: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                prgrmCd: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseProgramResponse"];
+                };
+            };
+        };
+    };
+    update_4: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                prgrmCd: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ProgramRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseProgramResponse"];
+                };
+            };
+        };
+    };
     getFee: {
         parameters: {
             query?: never;
@@ -20393,7 +21564,7 @@ export interface operations {
         parameters: {
             query?: {
                 /**
-                 * @description Menu type (A) / Loại menu
+                 * @description Menu type (A: Admin, W: Web) / Loại menu
                  * @example A
                  */
                 menuSeCd?: string;
@@ -20754,7 +21925,7 @@ export interface operations {
             };
         };
     };
-    update_3: {
+    update_5: {
         parameters: {
             query?: never;
             header?: {
@@ -21176,6 +22347,62 @@ export interface operations {
             };
         };
     };
+    detail_2: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Document ID / Mã văn bản */
+                termsId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseTermsPolicyDetailResponse"];
+                };
+            };
+        };
+    };
+    update_6: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                /** @description Document ID / Mã văn bản */
+                termsId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateTermsPolicyRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseTermsPolicyDetailResponse"];
+                };
+            };
+        };
+    };
     get: {
         parameters: {
             query?: never;
@@ -21222,6 +22449,60 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["ApiResponseSupportContactResponse"];
+                };
+            };
+        };
+    };
+    detail_3: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponsePostDetailResponse"];
+                };
+            };
+        };
+    };
+    update_7: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SloganRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponsePostDetailResponse"];
                 };
             };
         };
@@ -21394,7 +22675,7 @@ export interface operations {
             };
         };
     };
-    detail: {
+    detail_4: {
         parameters: {
             query?: never;
             header?: {
@@ -21420,7 +22701,7 @@ export interface operations {
             };
         };
     };
-    update_4: {
+    update_8: {
         parameters: {
             query?: never;
             header?: {
@@ -21450,7 +22731,61 @@ export interface operations {
             };
         };
     };
-    detail_1: {
+    detail_5: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponsePostDetailResponse"];
+                };
+            };
+        };
+    };
+    update_9: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LogoRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponsePostDetailResponse"];
+                };
+            };
+        };
+    };
+    detail_6: {
         parameters: {
             query?: never;
             header?: {
@@ -21476,7 +22811,7 @@ export interface operations {
             };
         };
     };
-    update_5: {
+    update_10: {
         parameters: {
             query?: never;
             header?: {
@@ -21592,7 +22927,7 @@ export interface operations {
             };
         };
     };
-    detail_2: {
+    detail_7: {
         parameters: {
             query?: never;
             header?: {
@@ -21618,7 +22953,7 @@ export interface operations {
             };
         };
     };
-    update_6: {
+    update_11: {
         parameters: {
             query?: never;
             header?: {
@@ -21648,7 +22983,7 @@ export interface operations {
             };
         };
     };
-    detail_3: {
+    detail_8: {
         parameters: {
             query?: never;
             header?: {
@@ -21674,7 +23009,7 @@ export interface operations {
             };
         };
     };
-    update_7: {
+    update_12: {
         parameters: {
             query?: never;
             header?: {
@@ -21704,7 +23039,7 @@ export interface operations {
             };
         };
     };
-    detail_4: {
+    detail_9: {
         parameters: {
             query?: never;
             header?: {
@@ -21730,7 +23065,7 @@ export interface operations {
             };
         };
     };
-    update_8: {
+    update_13: {
         parameters: {
             query?: never;
             header?: {
@@ -22940,6 +24275,86 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["ApiResponseTradeApplicationStatusResponse"];
+                };
+            };
+        };
+    };
+    list: {
+        parameters: {
+            query: {
+                pageRequest: components["schemas"]["PageRequest"];
+                cond: components["schemas"]["ScreenSearchRequest"];
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponsePageResponseScreenResponse"];
+                };
+            };
+        };
+    };
+    create_4: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ScreenRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseScreenResponse"];
+                };
+            };
+        };
+    };
+    delete: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DeleteScreensRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseInteger"];
                 };
             };
         };
@@ -24175,6 +25590,86 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["ApiResponseTradeContractStatusResponse"];
+                };
+            };
+        };
+    };
+    list_1: {
+        parameters: {
+            query: {
+                pageRequest: components["schemas"]["PageRequest"];
+                cond: components["schemas"]["ProgramSearchRequest"];
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponsePageResponseProgramResponse"];
+                };
+            };
+        };
+    };
+    create_5: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ProgramRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseProgramResponse"];
+                };
+            };
+        };
+    };
+    delete_1: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DeleteProgramsRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseInteger"];
                 };
             };
         };
@@ -25473,6 +26968,166 @@ export interface operations {
             };
         };
     };
+    list_2: {
+        parameters: {
+            query: {
+                pageRequest: components["schemas"]["PageRequest"];
+                cond: components["schemas"]["TermsPolicySearchRequest"];
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponsePageResponseTermsPolicyResponse"];
+                };
+            };
+        };
+    };
+    create_6: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateTermsPolicyRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseTermsPolicyDetailResponse"];
+                };
+            };
+        };
+    };
+    delete_2: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TermsPolicyIdsRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseInteger"];
+                };
+            };
+        };
+    };
+    list_3: {
+        parameters: {
+            query: {
+                pageRequest: components["schemas"]["PageRequest"];
+                cond: components["schemas"]["PostSearchRequest"];
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponsePageResponsePostResponse"];
+                };
+            };
+        };
+    };
+    create_7: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SloganRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponsePostDetailResponse"];
+                };
+            };
+        };
+    };
+    delete_3: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DeleteSiteDisplayRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseInteger"];
+                };
+            };
+        };
+    };
     getSections: {
         parameters: {
             query: {
@@ -25549,6 +27204,29 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["ApiResponseInteger"];
+                };
+            };
+        };
+    };
+    syncExchangeRates: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseBatchJobResult"];
                 };
             };
         };
@@ -25713,7 +27391,7 @@ export interface operations {
             };
         };
     };
-    list: {
+    list_4: {
         parameters: {
             query: {
                 pageRequest: components["schemas"]["PageRequest"];
@@ -25739,7 +27417,7 @@ export interface operations {
             };
         };
     };
-    create_4: {
+    create_8: {
         parameters: {
             query?: never;
             header?: {
@@ -25766,7 +27444,7 @@ export interface operations {
             };
         };
     };
-    delete: {
+    delete_4: {
         parameters: {
             query?: never;
             header?: {
@@ -25793,7 +27471,7 @@ export interface operations {
             };
         };
     };
-    list_1: {
+    list_5: {
         parameters: {
             query: {
                 pageRequest: components["schemas"]["PageRequest"];
@@ -25819,7 +27497,116 @@ export interface operations {
             };
         };
     };
-    create_5: {
+    create_9: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LogoRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponsePostDetailResponse"];
+                };
+            };
+        };
+    };
+    delete_5: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DeleteSiteDisplayRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseInteger"];
+                };
+            };
+        };
+    };
+    uploadImage: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "multipart/form-data": {
+                    files: string[];
+                };
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseContentFileGroupResponse"];
+                };
+            };
+        };
+    };
+    list_6: {
+        parameters: {
+            query: {
+                pageRequest: components["schemas"]["PageRequest"];
+                cond: components["schemas"]["PostSearchRequest"];
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponsePageResponsePostResponse"];
+                };
+            };
+        };
+    };
+    create_10: {
         parameters: {
             query?: never;
             header?: {
@@ -25846,7 +27633,7 @@ export interface operations {
             };
         };
     };
-    delete_1: {
+    delete_6: {
         parameters: {
             query?: never;
             header?: {
@@ -25880,7 +27667,7 @@ export interface operations {
                  * @description Board the files belong to (NOTICE, FAQ) / Bảng tin sở hữu tệp
                  * @example NOTICE
                  */
-                board: "NOTICE" | "FAQ" | "INQUIRY" | "NPL_ANNOUNCEMENT" | "SERVICE_GUIDE" | "LEGAL" | "NEWS" | "CAREER" | "ABOUT";
+                board: "NOTICE" | "FAQ" | "INQUIRY" | "NPL_ANNOUNCEMENT" | "SERVICE_GUIDE" | "LEGAL" | "NEWS" | "CAREER" | "ABOUT" | "SITE_DISPLAY";
                 /** @description Existing group to append to / Nhóm tệp cần thêm vào */
                 fileUnqId?: string;
             };
@@ -25990,7 +27777,7 @@ export interface operations {
             };
         };
     };
-    list_2: {
+    list_7: {
         parameters: {
             query: {
                 pageRequest: components["schemas"]["PageRequest"];
@@ -26016,7 +27803,7 @@ export interface operations {
             };
         };
     };
-    create_6: {
+    create_11: {
         parameters: {
             query?: never;
             header?: {
@@ -26043,7 +27830,7 @@ export interface operations {
             };
         };
     };
-    delete_2: {
+    delete_7: {
         parameters: {
             query?: never;
             header?: {
@@ -26070,7 +27857,7 @@ export interface operations {
             };
         };
     };
-    list_3: {
+    list_8: {
         parameters: {
             query: {
                 pageRequest: components["schemas"]["PageRequest"];
@@ -26096,7 +27883,7 @@ export interface operations {
             };
         };
     };
-    create_7: {
+    create_12: {
         parameters: {
             query?: never;
             header?: {
@@ -26123,7 +27910,7 @@ export interface operations {
             };
         };
     };
-    delete_3: {
+    delete_8: {
         parameters: {
             query?: never;
             header?: {
@@ -26150,7 +27937,7 @@ export interface operations {
             };
         };
     };
-    uploadImage: {
+    uploadImage_1: {
         parameters: {
             query?: never;
             header?: {
@@ -26179,7 +27966,7 @@ export interface operations {
             };
         };
     };
-    list_4: {
+    list_9: {
         parameters: {
             query: {
                 pageRequest: components["schemas"]["PageRequest"];
@@ -26205,7 +27992,7 @@ export interface operations {
             };
         };
     };
-    create_8: {
+    create_13: {
         parameters: {
             query?: never;
             header?: {
@@ -26232,7 +28019,7 @@ export interface operations {
             };
         };
     };
-    delete_4: {
+    delete_9: {
         parameters: {
             query?: never;
             header?: {
@@ -27569,6 +29356,33 @@ export interface operations {
             };
         };
     };
+    verifyResetToken: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["EmpPasswordResetVerifyRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseEmpPasswordResetTokenResponse"];
+                };
+            };
+        };
+    };
     requestPasswordReset: {
         parameters: {
             query?: never;
@@ -27923,6 +29737,60 @@ export interface operations {
             };
         };
     };
+    publish: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TermsPolicyIdsRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseInteger"];
+                };
+            };
+        };
+    };
+    changeUse: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ChangeSiteDisplayUseRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseInteger"];
+                };
+            };
+        };
+    };
     reorderSections: {
         parameters: {
             query?: never;
@@ -28121,7 +29989,7 @@ export interface operations {
             };
         };
     };
-    publish: {
+    publish_1: {
         parameters: {
             query?: never;
             header?: {
@@ -28148,7 +30016,34 @@ export interface operations {
             };
         };
     };
-    publish_1: {
+    changeUse_1: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ChangeSiteDisplayUseRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseInteger"];
+                };
+            };
+        };
+    };
+    publish_2: {
         parameters: {
             query?: never;
             header?: {
@@ -28289,7 +30184,7 @@ export interface operations {
             };
         };
     };
-    publish_2: {
+    publish_3: {
         parameters: {
             query?: never;
             header?: {
@@ -28370,7 +30265,7 @@ export interface operations {
             };
         };
     };
-    publish_3: {
+    publish_4: {
         parameters: {
             query?: never;
             header?: {
@@ -28713,6 +30608,55 @@ export interface operations {
             };
         };
     };
+    options: {
+        parameters: {
+            query?: {
+                prgrmCd?: string;
+                useYn?: string;
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseListScreenResponse"];
+                };
+            };
+        };
+    };
+    exportExcel_3: {
+        parameters: {
+            query: {
+                cond: components["schemas"]["ScreenSearchRequest"];
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     getContracts: {
         parameters: {
             query: {
@@ -28817,7 +30761,7 @@ export interface operations {
             };
         };
     };
-    exportExcel_3: {
+    exportExcel_4: {
         parameters: {
             query: {
                 searchRequest: components["schemas"]["TradeContractSearchRequest"];
@@ -29171,11 +31115,60 @@ export interface operations {
             };
         };
     };
-    exportExcel_4: {
+    exportExcel_5: {
         parameters: {
             query: {
                 searchRequest: components["schemas"]["TradeContractSearchRequest"];
                 sortBy?: string;
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    options_1: {
+        parameters: {
+            query?: {
+                useYn?: string;
+                menuCd?: string;
+            };
+            header?: {
+                /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
+                "Accept-Language"?: "vi" | "en";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseListProgramResponse"];
+                };
+            };
+        };
+    };
+    exportExcel_6: {
+        parameters: {
+            query: {
+                cond: components["schemas"]["ProgramSearchRequest"];
             };
             header?: {
                 /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
@@ -30143,7 +32136,7 @@ export interface operations {
             };
         };
     };
-    options: {
+    options_2: {
         parameters: {
             query?: never;
             header?: {
@@ -30272,7 +32265,7 @@ export interface operations {
                  * @description Board the files belong to / Bảng tin sở hữu tệp
                  * @example NOTICE
                  */
-                board: "NOTICE" | "FAQ" | "INQUIRY" | "NPL_ANNOUNCEMENT" | "SERVICE_GUIDE" | "LEGAL" | "NEWS" | "CAREER" | "ABOUT";
+                board: "NOTICE" | "FAQ" | "INQUIRY" | "NPL_ANNOUNCEMENT" | "SERVICE_GUIDE" | "LEGAL" | "NEWS" | "CAREER" | "ABOUT" | "SITE_DISPLAY";
             };
             header?: {
                 /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
@@ -30472,7 +32465,7 @@ export interface operations {
             };
         };
     };
-    exportExcel_5: {
+    exportExcel_7: {
         parameters: {
             query: {
                 searchRequest: components["schemas"]["TradeContractSearchRequest"];
@@ -30692,7 +32685,7 @@ export interface operations {
             };
         };
     };
-    delete_5: {
+    delete_10: {
         parameters: {
             query?: never;
             header?: {
@@ -31951,14 +33944,14 @@ export interface operations {
             };
         };
     };
-    delete_6: {
+    delete_11: {
         parameters: {
             query: {
                 /**
                  * @description Board the files belong to / Bảng tin sở hữu tệp
                  * @example NOTICE
                  */
-                board: "NOTICE" | "FAQ" | "INQUIRY" | "NPL_ANNOUNCEMENT" | "SERVICE_GUIDE" | "LEGAL" | "NEWS" | "CAREER" | "ABOUT";
+                board: "NOTICE" | "FAQ" | "INQUIRY" | "NPL_ANNOUNCEMENT" | "SERVICE_GUIDE" | "LEGAL" | "NEWS" | "CAREER" | "ABOUT" | "SITE_DISPLAY";
             };
             header?: {
                 /** @description Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi */
