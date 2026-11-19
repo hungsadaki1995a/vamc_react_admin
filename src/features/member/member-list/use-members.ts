@@ -1,12 +1,13 @@
-import { useQuery, keepPreviousData } from '@tanstack/react-query';
+import { useQuery, useMutation, keepPreviousData } from '@tanstack/react-query';
 import type { UseQueryResult } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 
-import { getMembers } from '@/api/generated/sdk.gen';
+import { getMembers, excel } from '@/api/generated/sdk.gen';
 import type {
   MemberResponse,
   PageResponseMemberResponse,
   GetMembersData,
+  ExcelData,
 } from '@/api/generated/types.gen';
 import type {
   MemberItem,
@@ -38,6 +39,7 @@ export interface UseMembersParams {
   searchField?: MemberSearchField;
   searchText?: string;
   dateRange?: [dayjs.Dayjs | null, dayjs.Dayjs | null] | null;
+  searchNonce?: number;
 }
 
 export interface UseMembersResult {
@@ -190,15 +192,13 @@ export function mapMemberResponseToItem(res: MemberResponse, index: number): Mem
       ? 'Offline'
       : '-';
 
-  // Membership
+  // Membership (type of currently valid period: Paid / Exempt, '-' if none)
   const payUpper = (res.mbrshpPayCd || '').toUpperCase();
   const membership = payUpper === 'PAID'
     ? 'Paid'
     : payUpper === 'EXEMPT'
       ? 'Exempt'
-      : payUpper === 'NONE'
-        ? 'None'
-        : '-';
+      : '-';
 
   return {
     id: res.mbrNo || res.lgnId || (res.no ? String(res.no) : `mem-${index + 1}`),
@@ -217,12 +217,14 @@ export function mapMemberResponseToItem(res: MemberResponse, index: number): Mem
     applicationDate: formatDate(res.aplyDt),
     receivedDate: formatDate(res.rcptDt),
     attachments: res.atchFileCnt ?? 0,
-    companyName: res.orgnzNm || '-',
+    companyName: memberType === 'Organization' ? (res.orgnzNm || '-') : '-',
     signUpChannel,
     membership,
     membershipExpiryDate: formatDate(res.mbrshpExprDt),
-    approvalDate: formatDate(res.aprvDt),
+    approvalDate: memberGrade === 'Temporary' ? '-' : formatDate(res.aprvDt),
     paymentDeadline: formatDate(res.payDdlnDt),
+    deletedDate: formatDate(res.delDt),
+    retentionEndDate: formatDate(res.rtnEndDt),
     phone: res.telno || '-',
     email: res.emlAddr || '-',
     accountStatus,
@@ -230,15 +232,10 @@ export function mapMemberResponseToItem(res: MemberResponse, index: number): Mem
 }
 
 /**
- * Builds GetMembersData query parameters from UI filter state
+ * Builds shared filter/sort query parameters from UI filter state
  */
-export function buildMemberQueryParams(params: UseMembersParams): NonNullable<GetMembersData['query']> {
-  const query: NonNullable<GetMembersData['query']> = {
-    page: params.page ?? 1,
-    size: params.pageSize ?? 20,
-    sortBy: params.sortBy,
-    sortDirection: params.sortDirection,
-  };
+function buildMemberFilterParams(params: UseMembersParams): NonNullable<ExcelData['query']> {
+  const query: NonNullable<ExcelData['query']> = {};
 
   // Member Grade filter
   if (params.selectedMemberGrades && params.selectedMemberGrades.length > 0) {
@@ -295,12 +292,27 @@ export function buildMemberQueryParams(params: UseMembersParams): NonNullable<Ge
   }
 
   // Approval Period (YYYY-MM-DD)
-  if (params.dateRange?.[0] && params.dateRange?.[1]) {
+  if (params.dateRange?.[0]) {
     query.aprvFromDt = params.dateRange[0].format('YYYY-MM-DD');
+  }
+  if (params.dateRange?.[1]) {
     query.aprvToDt = params.dateRange[1].format('YYYY-MM-DD');
   }
 
   return query;
+}
+
+/**
+ * Builds GetMembersData query parameters from UI filter state
+ */
+export function buildMemberQueryParams(params: UseMembersParams): NonNullable<GetMembersData['query']> {
+  return {
+    page: params.page ?? 1,
+    size: params.pageSize ?? 20,
+    sortBy: params.sortBy,
+    sortDirection: params.sortDirection,
+    ...buildMemberFilterParams(params),
+  };
 }
 
 // ── Custom Hook: useMembers ──────────────────────────────────────────────────
@@ -321,7 +333,7 @@ export function useMembers(
   const queryParams = buildMemberQueryParams(params);
 
   const queryResult = useQuery<UseMembersResult, Error>({
-    queryKey: ['members', 'list', queryParams],
+    queryKey: ['members', 'list', queryParams, params.searchNonce],
     queryFn: async () => {
       const response = await getMembers({
         query: queryParams,
@@ -364,5 +376,36 @@ export function useMembers(
     pageSize: queryResult.data?.pageSize ?? (params.pageSize ?? 20),
     totalPages: queryResult.data?.totalPages ?? 0,
   };
+}
+
+/**
+ * Custom hook to download member list Excel using `/api/v1/members/excel`
+ */
+export function useExportMembers() {
+  return useMutation({
+    mutationFn: async (params: UseMembersParams) => {
+      const response = await excel({
+        query: buildMemberFilterParams(params),
+        querySerializer: springQuerySerializer,
+        responseType: 'blob',
+        throwOnError: true,
+      });
+
+      const fileName = `VAMC_Member_Management_${dayjs().format('YYYYMMDD_HHmmss')}.xlsx`;
+      const objectUrl = window.URL.createObjectURL(new Blob([response.data as BlobPart]));
+      try {
+        const link = document.createElement('a');
+        link.href = objectUrl;
+        link.setAttribute('download', fileName);
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+      } finally {
+        window.URL.revokeObjectURL(objectUrl);
+      }
+
+      return fileName;
+    },
+  });
 }
 

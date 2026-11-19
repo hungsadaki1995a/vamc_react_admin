@@ -1,6 +1,4 @@
-import { useTranslation } from 'react-i18next';
 import {
-  LogoutOutlined,
   UserOutlined,
   GlobalOutlined,
   CheckOutlined,
@@ -16,8 +14,7 @@ import {
 } from '@/assets/images';
 import { useAuthStore } from '@/stores/auth-store';
 import { useLocaleStore, type LocaleKey } from '@/stores/locale-store';
-import { useLogout } from '@/hooks/use-logout';
-import { getLocaleShortLabel } from '@/utils/locale-storage';
+import { LOCALE_OPTIONS, getLocaleShortLabel } from '@/utils/locale-storage';
 
 const FLAG_ICON_MAP: Partial<Record<LocaleKey, string>> = {
   en: flagUkRound,
@@ -25,43 +22,41 @@ const FLAG_ICON_MAP: Partial<Record<LocaleKey, string>> = {
 };
 
 export default function Header() {
-  const { t } = useTranslation();
   const user = useAuthStore((s) => s.user);
   const { locale, setLocale } = useLocaleStore();
-  const confirmLogout = useLogout();
 
-  const languageMenuItems: MenuProps['items'] = [
-    {
-      key: 'en',
+  const languageMenuItems: MenuProps['items'] = LOCALE_OPTIONS.map((option) => {
+    const isSelected = locale === option.value;
+    const itemFlagSrc = FLAG_ICON_MAP[option.value];
+
+    return {
+      key: option.value,
+      icon: itemFlagSrc ? (
+        <img
+          src={itemFlagSrc}
+          alt={option.shortLabel}
+          className="w-4 h-4 rounded-full object-cover shrink-0"
+        />
+      ) : (
+        <GlobalOutlined className="text-sm text-text-tertiary" />
+      ),
       label: (
-        <div className="flex items-center justify-between gap-4 min-w-[105px]">
-          <span>English</span>
-          <span className="typo-b2-regular text-text-tertiary">Eng</span>
+        <div className="flex items-center justify-between gap-4 min-w-[120px]">
+          <span className={isSelected ? 'typo-b2-semibold text-text-brand' : 'typo-b2-regular text-text-primary'}>
+            {option.label}
+          </span>
+          <span className="flex items-center gap-2">
+            <span className="typo-b2-regular text-text-tertiary">{option.shortLabel}</span>
+            {isSelected ? (
+              <CheckOutlined className="text-text-brand text-xs" />
+            ) : (
+              <span className="inline-block w-3" />
+            )}
+          </span>
         </div>
       ),
-      icon: locale === 'en' ? <CheckOutlined style={{ color: '#1677ff' }} /> : <span className="inline-block w-[14px]" />,
-    },
-    {
-      key: 'vn',
-      label: (
-        <div className="flex items-center justify-between gap-4 min-w-[105px]">
-          <span>Tiếng Việt</span>
-          <span className="typo-b2-regular text-text-tertiary">Vie</span>
-        </div>
-      ),
-      icon: locale === 'vn' ? <CheckOutlined style={{ color: '#1677ff' }} /> : <span className="inline-block w-[14px]" />,
-    },
-  ];
-
-  const profileItems: MenuProps['items'] = [
-    {
-      key: 'logout',
-      icon: <LogoutOutlined />,
-      label: t('common.signOut'),
-      danger: true,
-      onClick: confirmLogout,
-    },
-  ];
+    };
+  });
 
   const flagSrc = FLAG_ICON_MAP[locale];
 
@@ -112,26 +107,21 @@ export default function Header() {
           </button>
         </Dropdown>
 
-        <Dropdown menu={{ items: profileItems }} trigger={['click']} placement="bottomRight">
-          <button
-            type="button"
-            className="flex items-center gap-1.5 bg-transparent border-0 p-0 cursor-pointer"
-          >
-            {userCircleFill ? (
-              <img
-                src={userCircleFill}
-                alt=""
-                aria-hidden="true"
-                className="w-6 h-6 shrink-0"
-              />
-            ) : (
-              <UserOutlined className="text-text-tertiary" />
-            )}
-            <span className="typo-b2-semibold text-text-tertiary whitespace-nowrap">
-              {user?.usrNm ?? 'admin'}
-            </span>
-          </button>
-        </Dropdown>
+        <div className="flex items-center gap-1.5">
+          {userCircleFill ? (
+            <img
+              src={userCircleFill}
+              alt=""
+              aria-hidden="true"
+              className="w-6 h-6 shrink-0"
+            />
+          ) : (
+            <UserOutlined className="text-text-tertiary" />
+          )}
+          <span className="typo-b2-semibold text-text-tertiary whitespace-nowrap">
+            {user?.usrNm ?? 'admin'}
+          </span>
+        </div>
       </div>
     </header>
   );

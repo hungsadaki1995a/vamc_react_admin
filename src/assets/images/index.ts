@@ -8,6 +8,7 @@ import gnbGavel from './navigation/gnb-gavel.svg';
 import gnbHandshake from './navigation/gnb-handshake.svg';
 import gnbLogout from './navigation/gnb-logout.svg';
 import gnbNetwork from './navigation/gnb-network.svg';
+import gnbPenNib from './navigation/gnb-pen-nib.svg';
 import gnbSetting from './navigation/gnb-setting.svg';
 import gnbUser from './navigation/gnb-user.svg';
 import gridNine from './navigation/grid-nine.svg';
@@ -178,6 +179,7 @@ export {
   gnbHandshake,
   gnbLogout,
   gnbNetwork,
+  gnbPenNib,
   gnbSetting,
   gnbUser,
   gridNine,

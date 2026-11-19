@@ -63,6 +63,8 @@ export interface MemberItem {
   membershipExpiryDate?: string;
   approvalDate: string;
   paymentDeadline?: string;
+  deletedDate?: string;
+  retentionEndDate?: string;
   phone: string;
   email: string;
   accountStatus: AccountStatus;

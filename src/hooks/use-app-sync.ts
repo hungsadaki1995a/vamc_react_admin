@@ -1,9 +1,7 @@
 import { useEffect } from 'react';
-import koKR from 'antd/locale/ko_KR';
 import enUS from 'antd/locale/en_US';
 import viVN from 'antd/locale/vi_VN';
 import dayjs from 'dayjs';
-import 'dayjs/locale/ko';
 import 'dayjs/locale/vi';
 import 'dayjs/locale/en';
 import { useLocaleStore } from '@/stores/locale-store';
@@ -17,7 +15,7 @@ import i18n from '@/lib/i18n';
 /** Syncs Dayjs/HTML locale and locale-dependent stores (common codes, menus, labels). */
 export function useAppSync() {
   const locale = useLocaleStore((s) => s.locale);
-  const antLocale = locale === 'en' ? enUS : locale === 'vn' ? viVN : koKR;
+  const antLocale = locale === 'vn' ? viVN : enUS;
 
   useEffect(() => {
     const isoTag = toIsoLangTag(locale);

@@ -1,6 +1,6 @@
 import type { StateStorage } from 'zustand/middleware';
 
-export type LocaleKey = 'en' | 'ko' | 'vn';
+export type LocaleKey = 'en' | 'vn';
 
 export const DEFAULT_LOCALE: LocaleKey = 'en';
 export const SUPPORTED_LOCALES: readonly LocaleKey[] = ['en', 'vn'] as const;
@@ -20,17 +20,16 @@ export const LOCALE_OPTIONS: LocaleOption[] = [
 ];
 
 /**
- * Returns 3-letter TitleCase label matching the header mockup ('Eng' | 'Kor' | 'Vie').
+ * Returns 3-letter TitleCase label matching the header mockup ('Eng' | 'Vie').
  */
 export function getLocaleShortLabel(locale: LocaleKey): string {
-  if (locale === 'ko') return 'Kor';
   if (locale === 'vn') return 'Vie';
   return 'Eng';
 }
 
 /**
- * Normalizes any language code or alias (e.g. 'vi', 'vi-VN', 'ko-KR', 'en-US')
- * into the supported LocaleKey ('en' | 'ko' | 'vn'). Defaults to 'en'.
+ * Normalizes any language code or alias (e.g. 'vi', 'vi-VN', 'en-US')
+ * into the supported LocaleKey ('en' | 'vn'). Defaults to 'en'.
  */
 export function normalizeLocale(locale: unknown): LocaleKey {
   if (typeof locale !== 'string') return DEFAULT_LOCALE;

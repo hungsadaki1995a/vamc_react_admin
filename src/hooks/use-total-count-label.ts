@@ -7,7 +7,6 @@ import { formatLabel } from '@/lib/i18n/format-label';
 const FALLBACK: Record<string, string> = {
   en: 'Total {0} items',
   vn: 'Tổng {0} mục',
-  ko: '전체 {0}건',
 };
 
 /**
@@ -22,7 +21,7 @@ export function useTotalCountLabel() {
   const locale = useLocaleStore((s) => s.locale);
 
   const template = useMemo(
-    () => t('COMPONENT.VIEW.TEXT_gridTotal', FALLBACK[locale] ?? FALLBACK.ko),
+    () => t('COMPONENT.VIEW.TEXT_gridTotal', FALLBACK[locale] ?? FALLBACK.en),
     // labelsVersion: t is a stable reference, so this intentionally triggers recalculation on locale change.
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [locale, t, labelsVersion],

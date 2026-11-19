@@ -9,6 +9,7 @@ import {
 } from 'antd';
 import { useNotify } from '@/hooks/use-notify';
 import type { TableProps, TableColumnsType } from 'antd';
+import type { SortOrder } from 'antd/es/table/interface';
 import type { CheckboxChangeEvent } from 'antd/es/checkbox';
 import {
   SearchOutlined,
@@ -16,7 +17,6 @@ import {
   HomeOutlined,
 } from '@ant-design/icons';
 import dayjs from 'dayjs';
-import * as XLSX from 'xlsx';
 
 import type {
   MemberItem,
@@ -28,13 +28,12 @@ import type {
   ApprovalStatus,
   AccountStatus,
 } from './member.types';
-import { useMembers } from './use-members';
+import { useMembers, useExportMembers } from './use-members';
+import { SysPagination } from '@/features/system/_shared/system-ui';
 import MemberDetailModal from './member-detail-modal';
 import ApprovalStatusModal from './approval-status-modal';
 import NewMemberModal from './new-member-modal';
 import styles from './member-list.module.scss';
-
-const { RangePicker } = DatePicker;
 
 const MEMBER_GRADE_OPTIONS: { label: string; value: MemberGrade }[] = [
   { label: 'Temporary Member', value: 'Temporary' },
@@ -63,6 +62,10 @@ const MEMBERSHIP_OPTIONS: { label: string; value: MembershipType }[] = [
   { label: 'Exempt', value: 'Exempt' },
   { label: 'None', value: 'None' },
 ];
+
+const DEFAULT_MEMBER_TYPES: MemberType[] = MEMBER_TYPE_OPTIONS.map((o) => o.value);
+const DEFAULT_STATUSES: MemberStatus[] = STATUS_OPTIONS.map((o) => o.value);
+const DEFAULT_MEMBERSHIPS: MembershipType[] = MEMBERSHIP_OPTIONS.map((o) => o.value);
 
 const SEARCH_FIELD_OPTIONS: { label: string; value: MemberSearchField }[] = [
   { label: 'Member Code', value: 'MBR_NO' },
@@ -97,24 +100,34 @@ function formatDisplayDate(val?: string): string {
   return d.isValid() ? d.format('DD-MM-YYYY') : val;
 }
 
-function formatPaymentDeadline(val?: string): { text: string; isDanger: boolean } {
+function formatPaymentDeadline(
+  val?: string,
+  grade?: MemberGrade,
+  status?: MemberStatus,
+): { text: string; isDanger: boolean } {
+  if (grade !== 'Temporary' || status !== 'Pending Approval') {
+    return { text: '-', isDanger: false };
+  }
   const formatted = formatDisplayDate(val);
   if (formatted === '-') return { text: '-', isDanger: false };
 
   const [d, m, y] = formatted.split('-');
   const target = dayjs(`${y}-${m}-${d}`);
-  if (!target.isValid()) return { text: formatted, isDanger: true };
+  if (!target.isValid()) return { text: formatted, isDanger: false };
 
   const diffDays = target.startOf('day').diff(dayjs().startOf('day'), 'day');
   const dDayLabel = diffDays >= 0 ? `D-${diffDays}` : `D+${Math.abs(diffDays)}`;
-  return { text: `${formatted} (${dDayLabel})`, isDanger: true };
+  return { text: `${formatted} (${dDayLabel})`, isDanger: diffDays <= 3 };
 }
 
 export default function MemberList() {
   const { toast } = useNotify();
-  // ── Pagination State ───────────────────────────────────────────────────────
+  // ── Pagination & Sort State ────────────────────────────────────────────────
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(20);
+  const [pageSize] = useState(20);
+  const [sortBy, setSortBy] = useState<string | undefined>(undefined);
+  const [sortDirection, setSortDirection] = useState<'ASC' | 'DESC' | undefined>(undefined);
+  const [searchNonce, setSearchNonce] = useState(0);
 
   // ── Local State & Overrides ────────────────────────────────────────────────
   const [addedMembers, setAddedMembers] = useState<MemberItem[]>([]);
@@ -140,7 +153,7 @@ export default function MemberList() {
 
   // Member Type (default: All checked)
   const [memberTypeAll, setMemberTypeAll] = useState(true);
-  const [selectedMemberTypes, setSelectedMemberTypes] = useState<MemberType[]>([]);
+  const [selectedMemberTypes, setSelectedMemberTypes] = useState<MemberType[]>(DEFAULT_MEMBER_TYPES);
 
   // Search Select + Input
   const [searchField, setSearchField] = useState<MemberSearchField>('MBR_NO');
@@ -148,11 +161,11 @@ export default function MemberList() {
 
   // Status (default: All checked)
   const [statusAll, setStatusAll] = useState(true);
-  const [selectedStatuses, setSelectedStatuses] = useState<MemberStatus[]>([]);
+  const [selectedStatuses, setSelectedStatuses] = useState<MemberStatus[]>(DEFAULT_STATUSES);
 
   // Membership (default: All checked)
   const [membershipAll, setMembershipAll] = useState(true);
-  const [selectedMemberships, setSelectedMemberships] = useState<MembershipType[]>([]);
+  const [selectedMemberships, setSelectedMemberships] = useState<MembershipType[]>(DEFAULT_MEMBERSHIPS);
 
   // Applied Filter Snapshot (triggers actual filter on Search button click)
   const [appliedFilters, setAppliedFilters] = useState({
@@ -160,13 +173,13 @@ export default function MemberList() {
     memberGradeAll: false,
     selectedMemberGrades: DEFAULT_MEMBER_GRADES,
     memberTypeAll: true,
-    selectedMemberTypes: [] as MemberType[],
+    selectedMemberTypes: DEFAULT_MEMBER_TYPES,
     searchField: 'MBR_NO' as MemberSearchField,
     searchText: '',
     statusAll: true,
-    selectedStatuses: [] as MemberStatus[],
+    selectedStatuses: DEFAULT_STATUSES,
     membershipAll: true,
-    selectedMemberships: [] as MembershipType[],
+    selectedMemberships: DEFAULT_MEMBERSHIPS,
   });
 
   // ── API Member Query Hook ──────────────────────────────────────────────────
@@ -178,57 +191,66 @@ export default function MemberList() {
   } = useMembers({
     page,
     pageSize,
+    sortBy,
+    sortDirection,
+    searchNonce,
     ...appliedFilters,
   });
 
-  // ── Filter Checkbox Handlers ───────────────────────────────────────────────
-  const handleMemberGradeAllChange = (e: CheckboxChangeEvent) => {
-    const checked = e.target.checked;
-    setMemberGradeAll(checked);
-    setSelectedMemberGrades(checked ? MEMBER_GRADE_OPTIONS.map((o) => o.value) : []);
-  };
+  const { mutate: exportMembers, isPending: isExporting } = useExportMembers();
 
-  const handleMemberGradeChange = (values: MemberGrade[]) => {
-    setSelectedMemberGrades(values);
-    setMemberGradeAll(values.length === MEMBER_GRADE_OPTIONS.length);
-  };
+  // ── Filter Checkbox Handlers (at least 1 sub-item must stay selected) ──────
+  const makeCheckboxHandlers = <T extends string>(
+    allValues: T[],
+    setAll: (v: boolean) => void,
+    setSelected: (v: T[]) => void,
+  ) => ({
+    onAllChange: (e: CheckboxChangeEvent) => {
+      if (!e.target.checked) return;
+      setAll(true);
+      setSelected(allValues);
+    },
+    onGroupChange: (values: T[]) => {
+      if (values.length === 0) return;
+      setSelected(values);
+      setAll(values.length === allValues.length);
+    },
+  });
 
-  const handleMemberTypeAllChange = (e: CheckboxChangeEvent) => {
-    const checked = e.target.checked;
-    setMemberTypeAll(checked);
-    if (checked) setSelectedMemberTypes([]);
-  };
-
-  const handleMemberTypeChange = (values: MemberType[]) => {
-    setSelectedMemberTypes(values);
-    setMemberTypeAll(values.length === 0 || values.length === MEMBER_TYPE_OPTIONS.length);
-  };
-
-  const handleStatusAllChange = (e: CheckboxChangeEvent) => {
-    const checked = e.target.checked;
-    setStatusAll(checked);
-    if (checked) setSelectedStatuses([]);
-  };
-
-  const handleStatusChange = (values: MemberStatus[]) => {
-    setSelectedStatuses(values);
-    setStatusAll(values.length === 0 || values.length === STATUS_OPTIONS.length);
-  };
-
-  const handleMembershipAllChange = (e: CheckboxChangeEvent) => {
-    const checked = e.target.checked;
-    setMembershipAll(checked);
-    if (checked) setSelectedMemberships([]);
-  };
-
-  const handleMembershipChange = (values: MembershipType[]) => {
-    setSelectedMemberships(values);
-    setMembershipAll(values.length === 0 || values.length === MEMBERSHIP_OPTIONS.length);
-  };
+  const memberGradeHandlers = makeCheckboxHandlers(
+    MEMBER_GRADE_OPTIONS.map((o) => o.value),
+    setMemberGradeAll,
+    setSelectedMemberGrades,
+  );
+  const memberTypeHandlers = makeCheckboxHandlers(
+    DEFAULT_MEMBER_TYPES,
+    setMemberTypeAll,
+    setSelectedMemberTypes,
+  );
+  const statusHandlers = makeCheckboxHandlers(
+    DEFAULT_STATUSES,
+    setStatusAll,
+    setSelectedStatuses,
+  );
+  const membershipHandlers = makeCheckboxHandlers(
+    DEFAULT_MEMBERSHIPS,
+    setMembershipAll,
+    setSelectedMemberships,
+  );
 
   // ── Search & Reset ─────────────────────────────────────────────────────────
   const handleSearch = () => {
+    if (
+      dateRange?.[0] &&
+      dateRange?.[1] &&
+      dateRange[0].startOf('day').isAfter(dateRange[1].startOf('day'))
+    ) {
+      toast.error('Start date cannot be later than end date. (E07)');
+      return;
+    }
+
     setPage(1);
+    setSearchNonce((n) => n + 1);
     setAppliedFilters({
       dateRange,
       memberGradeAll,
@@ -242,7 +264,6 @@ export default function MemberList() {
       membershipAll,
       selectedMemberships,
     });
-    toast.info('Filter applied');
   };
 
   const handleReset = () => {
@@ -250,29 +271,31 @@ export default function MemberList() {
     setMemberGradeAll(false);
     setSelectedMemberGrades(DEFAULT_MEMBER_GRADES);
     setMemberTypeAll(true);
-    setSelectedMemberTypes([]);
+    setSelectedMemberTypes(DEFAULT_MEMBER_TYPES);
     setSearchField('MBR_NO');
     setSearchText('');
     setStatusAll(true);
-    setSelectedStatuses([]);
+    setSelectedStatuses(DEFAULT_STATUSES);
     setMembershipAll(true);
-    setSelectedMemberships([]);
+    setSelectedMemberships(DEFAULT_MEMBERSHIPS);
+    setSortBy(undefined);
+    setSortDirection(undefined);
     setPage(1);
+    setSearchNonce((n) => n + 1);
 
     setAppliedFilters({
       dateRange: null,
       memberGradeAll: false,
       selectedMemberGrades: DEFAULT_MEMBER_GRADES,
       memberTypeAll: true,
-      selectedMemberTypes: [],
+      selectedMemberTypes: DEFAULT_MEMBER_TYPES,
       searchField: 'MBR_NO',
       searchText: '',
       statusAll: true,
-      selectedStatuses: [],
+      selectedStatuses: DEFAULT_STATUSES,
       membershipAll: true,
-      selectedMemberships: [],
+      selectedMemberships: DEFAULT_MEMBERSHIPS,
     });
-    toast.info('Filters reset to default');
   };
 
   // ── Combined Members Memo ─────────────────────────────────────────────────
@@ -357,60 +380,40 @@ export default function MemberList() {
 
   // ── Excel Export ───────────────────────────────────────────────────────────
   const handleExportExcel = () => {
-    try {
-      const exportRows = filteredData.map((row) => ({
-        'No': row.no,
-        'Member Grade': deriveMemberGrade(row),
-        'Status': deriveMemberStatus(row),
-        'Member Code': row.memberCode,
-        'SGDN Member Code': row.sgdnMemberCode || '-',
-        'Login ID': row.loginId || row.applicationId,
-        'Member Name': row.memberName,
-        'Member Type': row.memberType === 'General' ? 'Individual' : row.memberType,
-        'Company Name': row.companyName,
-        'Sign-up Channel': row.signUpChannel || '-',
-        'Membership': row.membership || '-',
-        'Membership Expiry Date': formatDisplayDate(row.membershipExpiryDate),
-        'Approval Date': formatDisplayDate(row.approvalDate),
-        'Payment Deadline': formatPaymentDeadline(row.paymentDeadline).text,
-        'Phone Number': row.phone,
-        'Email Address': row.email,
-        'Staff in Charge': row.assignee,
-      }));
-
-      const worksheet = XLSX.utils.json_to_sheet(exportRows);
-      const colWidths = Object.keys(exportRows[0] || {}).map((key) => ({
-        wch: Math.max(key.length, 16),
-      }));
-      worksheet['!cols'] = colWidths;
-
-      const workbook = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(workbook, worksheet, 'Members');
-
-      const fileName = `VAMC_Member_Management_${dayjs().format('YYYYMMDD_HHmmss')}.xlsx`;
-      XLSX.writeFile(workbook, fileName);
-      toast.success(`Exported ${filteredData.length} records to ${fileName}`);
-    } catch {
-      toast.error('Failed to export Excel file');
-    }
+    exportMembers(
+      { ...appliedFilters, sortBy, sortDirection },
+      {
+        onSuccess: (fileName) => {
+          toast.success(`Exported ${fileName}`);
+        },
+        onError: () => {
+          toast.error('Failed to export Excel file');
+        },
+      },
+    );
   };
 
-  // ── Table Column Definitions (17 columns matching Figma 3412:17631) ───────
+  // ── Table Column Definitions ───────────────────────────────────────────────
+  const showDeletedColumns = appliedFilters.selectedMemberGrades.includes('Deleted');
+
+  const getSortOrder = (field: string): SortOrder =>
+    sortBy === field ? (sortDirection === 'ASC' ? 'ascend' : 'descend') : null;
+
   const columns: TableColumnsType<MemberItem> = [
     {
       title: 'No',
       dataIndex: 'no',
       key: 'no',
       width: 80,
-      align: 'center',
-      sorter: (a, b) => a.no - b.no,
+      align: 'right',
     },
     {
       title: 'Member Grade',
-      key: 'memberGrade',
+      key: 'mbrGrdCd',
       width: 130,
       align: 'center',
-      sorter: (a, b) => deriveMemberGrade(a).localeCompare(deriveMemberGrade(b)),
+      sorter: true,
+      sortOrder: getSortOrder('mbrGrdCd'),
       render: (_: unknown, record: MemberItem) => {
         const grade = deriveMemberGrade(record);
         let gradeClass = styles.gradeTemporary;
@@ -423,10 +426,11 @@ export default function MemberList() {
     },
     {
       title: 'Status',
-      key: 'status',
+      key: 'sttsCd',
       width: 150,
       align: 'center',
-      sorter: (a, b) => deriveMemberStatus(a).localeCompare(deriveMemberStatus(b)),
+      sorter: true,
+      sortOrder: getSortOrder('sttsCd'),
       render: (_: unknown, record: MemberItem) => {
         const status = deriveMemberStatus(record);
         let statusClass = styles.statusActive;
@@ -453,9 +457,10 @@ export default function MemberList() {
     {
       title: 'Member Code',
       dataIndex: 'memberCode',
-      key: 'memberCode',
+      key: 'mbrNo',
       width: 155,
-      sorter: (a, b) => a.memberCode.localeCompare(b.memberCode),
+      sorter: true,
+      sortOrder: getSortOrder('mbrNo'),
       render: (val: string, record: MemberItem) => (
         <span
           className={styles.memberCodeLink}
@@ -469,16 +474,18 @@ export default function MemberList() {
     {
       title: 'SGDN Member Code',
       dataIndex: 'sgdnMemberCode',
-      key: 'sgdnMemberCode',
+      key: 'sgdnMbrNo',
       width: 180,
-      sorter: (a, b) => (a.sgdnMemberCode || '-').localeCompare(b.sgdnMemberCode || '-'),
+      sorter: true,
+      sortOrder: getSortOrder('sgdnMbrNo'),
       render: (val?: string) => <span>{val || '-'}</span>,
     },
     {
       title: 'Login ID',
-      key: 'loginId',
+      key: 'lgnId',
       width: 140,
-      sorter: (a, b) => (a.loginId || a.applicationId).localeCompare(b.loginId || b.applicationId),
+      sorter: true,
+      sortOrder: getSortOrder('lgnId'),
       render: (_: unknown, record: MemberItem) => (
         <span>{record.loginId || record.applicationId || '-'}</span>
       ),
@@ -486,95 +493,151 @@ export default function MemberList() {
     {
       title: 'Member Name',
       dataIndex: 'memberName',
-      key: 'memberName',
+      key: 'mbrNm',
       width: 150,
-      sorter: (a, b) => a.memberName.localeCompare(b.memberName),
+      sorter: true,
+      sortOrder: getSortOrder('mbrNm'),
     },
     {
       title: 'Member Type',
       dataIndex: 'memberType',
-      key: 'memberType',
+      key: 'mbrTypeCd',
       width: 140,
-      sorter: (a, b) => a.memberType.localeCompare(b.memberType),
+      sorter: true,
+      sortOrder: getSortOrder('mbrTypeCd'),
       render: (val: MemberType) => <span>{val === 'General' ? 'Individual' : val}</span>,
     },
     {
       title: 'Company Name',
       dataIndex: 'companyName',
-      key: 'companyName',
+      key: 'orgnzNm',
       width: 170,
-      sorter: (a, b) => a.companyName.localeCompare(b.companyName),
-      render: (val: string) => <span>{val || '-'}</span>,
+      sorter: true,
+      sortOrder: getSortOrder('orgnzNm'),
+      render: (val: string, record: MemberItem) => (
+        <span>{record.memberType === 'Organization' ? val || '-' : '-'}</span>
+      ),
     },
     {
       title: 'Sign-up Channel',
       dataIndex: 'signUpChannel',
-      key: 'signUpChannel',
+      key: 'mbrJoinChnlCd',
       width: 150,
-      sorter: (a, b) => (a.signUpChannel || '-').localeCompare(b.signUpChannel || '-'),
+      sorter: true,
+      sortOrder: getSortOrder('mbrJoinChnlCd'),
       render: (val?: string) => <span>{val || '-'}</span>,
     },
-    {
-      title: 'Membership',
-      dataIndex: 'membership',
-      key: 'membership',
-      width: 130,
-      sorter: (a, b) => (a.membership || '-').localeCompare(b.membership || '-'),
-      render: (val?: string) => <span>{val || '-'}</span>,
-    },
-    {
-      title: 'Membership Expiry Date',
-      dataIndex: 'membershipExpiryDate',
-      key: 'membershipExpiryDate',
-      width: 200,
-      align: 'center',
-      sorter: (a, b) => (a.membershipExpiryDate || '-').localeCompare(b.membershipExpiryDate || '-'),
-      render: (val?: string) => <span>{formatDisplayDate(val)}</span>,
-    },
-    {
-      title: 'Approval Date',
-      dataIndex: 'approvalDate',
-      key: 'approvalDate',
-      width: 140,
-      align: 'center',
-      sorter: (a, b) => a.approvalDate.localeCompare(b.approvalDate),
-      render: (val: string) => <span>{formatDisplayDate(val)}</span>,
-    },
-    {
-      title: 'Payment Deadline',
-      dataIndex: 'paymentDeadline',
-      key: 'paymentDeadline',
-      width: 170,
-      align: 'center',
-      sorter: (a, b) => (a.paymentDeadline || '-').localeCompare(b.paymentDeadline || '-'),
-      render: (val?: string) => {
-        const { text, isDanger } = formatPaymentDeadline(val);
-        return <span className={isDanger ? styles.paymentDeadlineDanger : undefined}>{text}</span>;
-      },
-    },
+    ...(showDeletedColumns
+      ? [
+          {
+            title: 'Deleted Date',
+            dataIndex: 'deletedDate',
+            key: 'delDt',
+            width: 140,
+            align: 'center' as const,
+            sorter: true,
+            sortOrder: getSortOrder('delDt'),
+            render: (val?: string) => <span>{formatDisplayDate(val)}</span>,
+          },
+          {
+            title: 'Retention End Date',
+            dataIndex: 'retentionEndDate',
+            key: 'rtnEndDt',
+            width: 160,
+            align: 'center' as const,
+            sorter: true,
+            sortOrder: getSortOrder('rtnEndDt'),
+            render: (val?: string) => <span>{formatDisplayDate(val)}</span>,
+          },
+        ]
+      : [
+          {
+            title: 'Membership',
+            dataIndex: 'membership',
+            key: 'mbrshpPayCd',
+            width: 130,
+            sorter: true,
+            sortOrder: getSortOrder('mbrshpPayCd'),
+            render: (val?: string) => <span>{val && val !== 'None' ? val : '-'}</span>,
+          },
+          {
+            title: 'Membership Expiry Date',
+            dataIndex: 'membershipExpiryDate',
+            key: 'mbrshpExprDt',
+            width: 200,
+            align: 'center' as const,
+            sorter: true,
+            sortOrder: getSortOrder('mbrshpExprDt'),
+            render: (val?: string) => <span>{formatDisplayDate(val)}</span>,
+          },
+          {
+            title: 'Approval Date',
+            dataIndex: 'approvalDate',
+            key: 'aprvDt',
+            width: 140,
+            align: 'center' as const,
+            sorter: true,
+            sortOrder: getSortOrder('aprvDt'),
+            render: (val: string, record: MemberItem) => (
+              <span>{deriveMemberGrade(record) === 'Temporary' ? '-' : formatDisplayDate(val)}</span>
+            ),
+          },
+          {
+            title: 'Payment Deadline',
+            dataIndex: 'paymentDeadline',
+            key: 'payDdlnDt',
+            width: 170,
+            align: 'center' as const,
+            sorter: true,
+            sortOrder: getSortOrder('payDdlnDt'),
+            render: (val?: string, record?: MemberItem) => {
+              const { text, isDanger } = formatPaymentDeadline(
+                val,
+                record ? deriveMemberGrade(record) : undefined,
+                record ? deriveMemberStatus(record) : undefined,
+              );
+              return <span className={isDanger ? styles.paymentDeadlineDanger : undefined}>{text}</span>;
+            },
+          },
+        ]),
     {
       title: 'Phone Number',
       dataIndex: 'phone',
-      key: 'phone',
+      key: 'telno',
       width: 150,
-      sorter: (a, b) => a.phone.localeCompare(b.phone),
+      sorter: true,
+      sortOrder: getSortOrder('telno'),
     },
     {
       title: 'Email Address',
       dataIndex: 'email',
-      key: 'email',
+      key: 'emlAddr',
       width: 160,
-      sorter: (a, b) => a.email.localeCompare(b.email),
+      sorter: true,
+      sortOrder: getSortOrder('emlAddr'),
     },
     {
       title: 'Staff in Charge',
       dataIndex: 'assignee',
-      key: 'assignee',
+      key: 'assigneeNm',
       width: 150,
-      sorter: (a, b) => a.assignee.localeCompare(b.assignee),
+      sorter: true,
+      sortOrder: getSortOrder('assigneeNm'),
       render: (val: string) => <span>{val || '-'}</span>,
     },
   ];
+
+  const handleTableChange: TableProps<MemberItem>['onChange'] = (_pagination, _filters, sorter) => {
+    const singleSorter = Array.isArray(sorter) ? sorter[0] : sorter;
+    if (singleSorter?.columnKey && singleSorter.order) {
+      setSortBy(String(singleSorter.columnKey));
+      setSortDirection(singleSorter.order === 'ascend' ? 'ASC' : 'DESC');
+    } else {
+      setSortBy(undefined);
+      setSortDirection(undefined);
+    }
+    setPage(1);
+  };
 
   // ── Row Selection ──────────────────────────────────────────────────────────
   const rowSelection: TableProps<MemberItem>['rowSelection'] = {
@@ -606,13 +669,23 @@ export default function MemberList() {
             <div className={styles.filterField}>
               <span className={styles.filterLabel}>Approval Period</span>
               <div className={styles.filterControl}>
-                <RangePicker
-                  format="DD-MM-YYYY"
-                  placeholder={['DD-MM-YYYY', 'DD-MM-YYYY']}
-                  value={dateRange}
-                  onChange={(dates) => setDateRange(dates as [dayjs.Dayjs | null, dayjs.Dayjs | null] | null)}
-                  style={{ width: '100%' }}
-                />
+                <div className={styles.dateRangeGroup}>
+                  <DatePicker
+                    className={styles.dateRangeInput}
+                    format="DD-MM-YYYY"
+                    placeholder="DD-MM-YYYY"
+                    value={dateRange?.[0] ?? null}
+                    onChange={(date) => setDateRange([date, dateRange?.[1] ?? null])}
+                  />
+                  <span className={styles.dateRangeSeparator}>~</span>
+                  <DatePicker
+                    className={styles.dateRangeInput}
+                    format="DD-MM-YYYY"
+                    placeholder="DD-MM-YYYY"
+                    value={dateRange?.[1] ?? null}
+                    onChange={(date) => setDateRange([dateRange?.[0] ?? null, date])}
+                  />
+                </div>
               </div>
             </div>
 
@@ -620,13 +693,13 @@ export default function MemberList() {
               <span className={styles.filterLabel}>Member Grade</span>
               <div className={styles.filterControl}>
                 <div className={styles.filterCheckboxGroup}>
-                  <Checkbox checked={memberGradeAll} onChange={handleMemberGradeAllChange}>
+                  <Checkbox checked={memberGradeAll} onChange={memberGradeHandlers.onAllChange}>
                     All
                   </Checkbox>
                   <Checkbox.Group
                     options={MEMBER_GRADE_OPTIONS}
                     value={selectedMemberGrades}
-                    onChange={handleMemberGradeChange}
+                    onChange={memberGradeHandlers.onGroupChange}
                   />
                 </div>
               </div>
@@ -636,13 +709,13 @@ export default function MemberList() {
               <span className={styles.filterLabel}>Member Type</span>
               <div className={styles.filterControl}>
                 <div className={styles.filterCheckboxGroup}>
-                  <Checkbox checked={memberTypeAll} onChange={handleMemberTypeAllChange}>
+                  <Checkbox checked={memberTypeAll} onChange={memberTypeHandlers.onAllChange}>
                     All
                   </Checkbox>
                   <Checkbox.Group
                     options={MEMBER_TYPE_OPTIONS}
                     value={selectedMemberTypes}
-                    onChange={handleMemberTypeChange}
+                    onChange={memberTypeHandlers.onGroupChange}
                   />
                 </div>
               </div>
@@ -676,13 +749,13 @@ export default function MemberList() {
               <span className={styles.filterLabel}>Status</span>
               <div className={styles.filterControl}>
                 <div className={styles.filterCheckboxGroup}>
-                  <Checkbox checked={statusAll} onChange={handleStatusAllChange}>
+                  <Checkbox checked={statusAll} onChange={statusHandlers.onAllChange}>
                     All
                   </Checkbox>
                   <Checkbox.Group
                     options={STATUS_OPTIONS}
                     value={selectedStatuses}
-                    onChange={handleStatusChange}
+                    onChange={statusHandlers.onGroupChange}
                   />
                 </div>
               </div>
@@ -692,13 +765,13 @@ export default function MemberList() {
               <span className={styles.filterLabel}>Membership</span>
               <div className={styles.filterControl}>
                 <div className={styles.filterCheckboxGroup}>
-                  <Checkbox checked={membershipAll} onChange={handleMembershipAllChange}>
+                  <Checkbox checked={membershipAll} onChange={membershipHandlers.onAllChange}>
                     All
                   </Checkbox>
                   <Checkbox.Group
                     options={MEMBERSHIP_OPTIONS}
                     value={selectedMemberships}
-                    onChange={handleMembershipChange}
+                    onChange={membershipHandlers.onGroupChange}
                   />
                 </div>
               </div>
@@ -735,7 +808,7 @@ export default function MemberList() {
         </div>
 
         <div className={styles.resultsActions}>
-          <Button className={styles.btnExcel} onClick={handleExportExcel}>
+          <Button className={styles.btnExcel} loading={isExporting} onClick={handleExportExcel}>
             <span className={styles.excelIconWrapper}>X</span>
             <span>Excel Download</span>
           </Button>
@@ -758,21 +831,14 @@ export default function MemberList() {
           dataSource={filteredData}
           rowSelection={rowSelection}
           loading={isLoading || isFetching}
-          pagination={{
-            current: page,
-            pageSize: pageSize,
-            total: totalCount,
-            showSizeChanger: true,
-            pageSizeOptions: ['10', '20', '50', '100'],
-            showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
-            onChange: (newPage, newPageSize) => {
-              setPage(newPage);
-              setPageSize(newPageSize);
-            },
-          }}
+          pagination={false}
+          sortDirections={['ascend', 'descend']}
+          onChange={handleTableChange}
+          locale={{ emptyText: 'No members found.' }}
           scroll={{ x: 'max-content', y: 560 }}
           size="middle"
         />
+        <SysPagination page={page} pageSize={pageSize} total={totalCount} onChange={setPage} />
       </div>
 
       {/* ── Dialog Modals ───────────────────────────────────────────────────── */}

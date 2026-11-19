@@ -3,7 +3,9 @@ import {
   gnbBuildingOffice,
   gnbChartPieSlice,
   gnbGavel,
+  gnbHandshake,
   gnbNetwork,
+  gnbPenNib,
   gnbUser,
 } from '@/assets/images';
 import type { MenuItem, MenuTreeItem } from '@/types/menu';
@@ -11,12 +13,13 @@ import { resolveMenuComponent } from '@/config/menu-component-fallback';
 
 export const MENU_ICON_BY_CODE: Record<string, string> = {
   A01000000: gnbUser,
-  A02000000: gnbBookOpenText,
+  A02000000: gnbHandshake,
   A03000000: gnbBuildingOffice,
   A04000000: gnbBookOpenText,
   A05000000: gnbChartPieSlice,
   A06000000: gnbNetwork,
   A07000000: gnbGavel,
+  A08000000: gnbPenNib,
 };
 
 /** Returns the top-level (first list) items from login menuTrees. */

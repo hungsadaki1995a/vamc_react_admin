@@ -11,6 +11,7 @@ import {
   gnbChartPieSlice,
   gnbNetwork,
   gnbGavel,
+  gnbPenNib,
   gnbSetting,
   gnbLogout,
 } from '@/assets/images';
@@ -54,6 +55,7 @@ const GNB_ICON_BY_KEY: Record<string, string> = {
   stats: gnbChartPieSlice,
   system: gnbNetwork,
   auction: gnbGavel,
+  approval: gnbPenNib,
 };
 
 const GNB_ICON_BY_NAME: Record<string, string> = {

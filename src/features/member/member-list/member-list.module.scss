@@ -121,6 +121,47 @@
   padding: 4px 8px 4px 4px;
 }
 
+.dateRangeGroup {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+.dateRangeInput {
+  flex: 1;
+  min-width: 0;
+  height: 32px;
+  border-radius: 4px;
+  border-color: #d1d1e0;
+  padding: 0 8px 0 12px;
+  font-size: 12px;
+
+  :global(.ant-picker-input > input) {
+    font-size: 12px;
+    line-height: 16px;
+    letter-spacing: -0.02em;
+    color: #222222;
+
+    &::placeholder {
+      color: #a8b2c8;
+    }
+  }
+
+  :global(.ant-picker-suffix) {
+    color: #545c6d;
+    font-size: 16px;
+  }
+}
+
+.dateRangeSeparator {
+  flex-shrink: 0;
+  font-size: 12px;
+  line-height: 16px;
+  letter-spacing: -0.02em;
+  color: #222222;
+}
+
 .filterSearchGroup {
   display: flex;
   align-items: center;

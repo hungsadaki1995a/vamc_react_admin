@@ -12,7 +12,6 @@ interface LanguageOption {
 
 const LANGUAGE_OPTIONS: LanguageOption[] = [
   { key: 'en', name: 'English', shortName: 'Eng' },
-  { key: 'ko', name: '한국어', shortName: 'Kor' },
   { key: 'vn', name: 'Tiếng Việt', shortName: 'Vie' },
 ];
 
