@@ -81,13 +81,21 @@ interface SysPaginationProps {
   pageSize: number;
   total: number;
   onChange: (page: number) => void;
+  hideOnSinglePage?: boolean;
 }
 
 const BLOCK_SIZE = 10;
 
 /** Centered numeric pagination in blocks of 10 pages. */
-export function SysPagination({ page, pageSize, total, onChange }: SysPaginationProps) {
+export function SysPagination({
+  page,
+  pageSize,
+  total,
+  onChange,
+  hideOnSinglePage = false,
+}: SysPaginationProps) {
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
+  if (hideOnSinglePage && totalPages <= 1) return null;
   const start = Math.floor((page - 1) / BLOCK_SIZE) * BLOCK_SIZE + 1;
   const end = Math.min(start + BLOCK_SIZE - 1, totalPages);
   const pages = Array.from({ length: end - start + 1 }, (_, i) => start + i);

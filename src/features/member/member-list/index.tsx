@@ -13,7 +13,7 @@ import type { SortOrder } from 'antd/es/table/interface';
 import type { CheckboxChangeEvent } from 'antd/es/checkbox';
 import {
   SearchOutlined,
-  UndoOutlined,
+  ReloadOutlined,
   HomeOutlined,
 } from '@ant-design/icons';
 import dayjs from 'dayjs';
@@ -132,7 +132,6 @@ export default function MemberList() {
   // ── Local State & Overrides ────────────────────────────────────────────────
   const [addedMembers, setAddedMembers] = useState<MemberItem[]>([]);
   const [memberOverrides, setMemberOverrides] = useState<Record<string, Partial<MemberItem>>>({});
-  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
 
   // ── Modals State ───────────────────────────────────────────────────────────
   const [detailModalVisible, setDetailModalVisible] = useState(false);
@@ -404,8 +403,8 @@ export default function MemberList() {
       title: 'No',
       dataIndex: 'no',
       key: 'no',
-      width: 80,
-      align: 'right',
+      width: 60,
+      align: 'center',
     },
     {
       title: 'Member Grade',
@@ -639,12 +638,6 @@ export default function MemberList() {
     setPage(1);
   };
 
-  // ── Row Selection ──────────────────────────────────────────────────────────
-  const rowSelection: TableProps<MemberItem>['rowSelection'] = {
-    selectedRowKeys,
-    onChange: (keys) => setSelectedRowKeys(keys),
-  };
-
   const totalCount = memberResult ? memberResult.total : filteredData.length;
 
   return (
@@ -782,7 +775,7 @@ export default function MemberList() {
         {/* Filter Action Buttons */}
         <div className={styles.filterActionRow}>
           <div className={styles.filterActionButtons}>
-            <Button className={styles.btnReset} icon={<UndoOutlined />} onClick={handleReset}>
+            <Button className={styles.btnReset} icon={<ReloadOutlined />} onClick={handleReset}>
               Reset
             </Button>
             <Button
@@ -829,7 +822,6 @@ export default function MemberList() {
           rowKey="id"
           columns={columns}
           dataSource={filteredData}
-          rowSelection={rowSelection}
           loading={isLoading || isFetching}
           pagination={false}
           sortDirections={['ascend', 'descend']}
@@ -838,8 +830,14 @@ export default function MemberList() {
           scroll={{ x: 'max-content', y: 560 }}
           size="middle"
         />
-        <SysPagination page={page} pageSize={pageSize} total={totalCount} onChange={setPage} />
       </div>
+      <SysPagination
+        page={page}
+        pageSize={pageSize}
+        total={totalCount}
+        onChange={setPage}
+        hideOnSinglePage
+      />
 
       {/* ── Dialog Modals ───────────────────────────────────────────────────── */}
       <MemberDetailModal

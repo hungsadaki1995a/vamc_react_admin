@@ -1,19 +1,14 @@
+import { GlobalOutlined, CheckOutlined } from '@ant-design/icons';
 import { Dropdown } from 'antd';
 import type { MenuProps } from 'antd';
-import { GlobalOutlined, DownOutlined, CheckOutlined } from '@ant-design/icons';
+import { flagUkRound, flagVnRound, chevronDown } from '@/assets/images';
 import { useLocaleStore, type LocaleKey } from '@/stores/locale-store';
-import { getLocaleShortLabel } from '@/utils/locale-storage';
+import { LOCALE_OPTIONS, getLocaleShortLabel } from '@/utils/locale-storage';
 
-interface LanguageOption {
-  key: LocaleKey;
-  name: string;
-  shortName: string;
-}
-
-const LANGUAGE_OPTIONS: LanguageOption[] = [
-  { key: 'en', name: 'English', shortName: 'Eng' },
-  { key: 'vn', name: 'Tiếng Việt', shortName: 'Vie' },
-];
+const FLAG_ICON_MAP: Partial<Record<LocaleKey, string>> = {
+  en: flagUkRound,
+  vn: flagVnRound,
+};
 
 export interface LanguageSelectorProps {
   className?: string;
@@ -23,35 +18,74 @@ export interface LanguageSelectorProps {
 export default function LanguageSelector({ className }: LanguageSelectorProps) {
   const { locale, setLocale } = useLocaleStore();
 
-  const menuItems: MenuProps['items'] = LANGUAGE_OPTIONS.map((opt) => ({
-    key: opt.key,
-    label: (
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, minWidth: 105 }}>
-        <span>{opt.name}</span>
-        <span style={{ fontSize: 11, color: 'var(--text-tertiary, #999)' }}>{opt.shortName}</span>
-      </div>
-    ),
-    icon: locale === opt.key ? <CheckOutlined style={{ color: '#1677ff' }} /> : <span style={{ width: 14 }} />,
-  }));
+  const languageMenuItems: MenuProps['items'] = LOCALE_OPTIONS.map((option) => {
+    const isSelected = locale === option.value;
+    const itemFlagSrc = FLAG_ICON_MAP[option.value];
+
+    return {
+      key: option.value,
+      icon: itemFlagSrc ? (
+        <img
+          src={itemFlagSrc}
+          alt={option.shortLabel}
+          className="w-4 h-4 rounded-full object-cover shrink-0"
+        />
+      ) : (
+        <GlobalOutlined className="text-sm text-text-tertiary" />
+      ),
+      label: (
+        <div className="flex items-center justify-between gap-4 min-w-[120px]">
+          <span className={isSelected ? 'typo-b2-semibold text-text-brand' : 'typo-b2-regular text-text-primary'}>
+            {option.label}
+          </span>
+          <span className="flex items-center gap-2">
+            <span className="typo-b2-regular text-text-tertiary">{option.shortLabel}</span>
+            {isSelected ? (
+              <CheckOutlined className="text-text-brand text-xs" />
+            ) : (
+              <span className="inline-block w-3" />
+            )}
+          </span>
+        </div>
+      ),
+    };
+  });
+
+  const flagSrc = FLAG_ICON_MAP[locale];
 
   return (
     <div className={className}>
       <Dropdown
         menu={{
-          items: menuItems,
+          items: languageMenuItems,
           selectedKeys: [locale],
           onClick: ({ key }) => setLocale(key as LocaleKey),
         }}
         trigger={['click']}
         placement="bottomRight"
       >
-        <div style={{ display: 'inline-flex', alignItems: 'center', gap: 5, cursor: 'pointer', userSelect: 'none' }}>
-          <GlobalOutlined style={{ fontSize: 13, color: 'var(--text-secondary, #666)' }} />
-          <span style={{ fontSize: 12, fontWeight: 500, color: 'var(--text-primary)' }}>
-            {getLocaleShortLabel(locale)}
+        <button
+          type="button"
+          className="flex items-center gap-2 bg-transparent border-0 p-0 cursor-pointer"
+        >
+          {flagSrc ? (
+            <img
+              src={flagSrc}
+              alt={getLocaleShortLabel(locale)}
+              className="w-6 h-6 rounded-full object-cover shrink-0"
+            />
+          ) : (
+            <span className="w-6 h-6 rounded-full inline-flex items-center justify-center bg-bg-secondary text-text-tertiary shrink-0">
+              <GlobalOutlined className="text-sm" />
+            </span>
+          )}
+          <span className="flex items-center gap-1">
+            <span className="typo-b1-medium text-text-tertiary">
+              {getLocaleShortLabel(locale)}
+            </span>
+            <img src={chevronDown} alt="" aria-hidden="true" className="w-[14px] h-[14px] shrink-0" />
           </span>
-          <DownOutlined style={{ fontSize: 9, opacity: 0.65, color: 'var(--text-tertiary, #999)' }} />
-        </div>
+        </button>
       </Dropdown>
     </div>
   );

@@ -58,9 +58,6 @@
 
 /* Filter Card */
 .filterCard {
-  background: #f6f6f9;
-  border-radius: 4px;
-  padding: 12px;
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -71,7 +68,7 @@
   border: 1px solid #e2e5eb;
   border-radius: 4px;
   padding: 8px 0;
-  background: #ffffff;
+  background: #f6f6f9;
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -170,7 +167,7 @@
 }
 
 .filterSearchSelect {
-  width: 130px;
+  width: 160px;
   flex-shrink: 0;
 }
 
@@ -259,10 +256,11 @@
 
 .resultsCount {
   font-size: 13px;
-  color: #222222;
+  color: #616161;
   font-weight: 500;
 
   &Num {
+    color: #222222;
     font-weight: 600;
   }
 }
@@ -325,10 +323,13 @@
   border: 1px solid #d1d1e0;
   border-radius: 4px;
   overflow: hidden;
-  flex: 1;
-  min-height: 400px;
-  display: flex;
-  flex-direction: column;
+
+  :global(.ant-table-thead > tr > th) {
+    background: #f6f6f9;
+    color: #6f7b95;
+    font-weight: 500;
+    border-bottom: 1px solid #d1d1e0;
+  }
 }
 
 /* Member Grade Badges (Figma 3393:5337) */

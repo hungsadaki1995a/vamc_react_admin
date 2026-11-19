@@ -3,7 +3,7 @@ import { App as AntApp, ConfigProvider } from 'antd';
 import { apiNotify } from '@/lib/api/api-notify';
 import { useRestoreSession } from '@/hooks/use-restore-session';
 import { useAppSync } from '@/hooks/use-app-sync';
-import GlobalLoadingBar from '@/components/common/feedback/global-loading-bar';
+import GlobalLoadingSpinner from '@/components/common/feedback/global-loading-spinner';
 import AppRoutes from './app-routes';
 
 // Registers axios interceptor error messages into the antd message context.
@@ -43,7 +43,7 @@ export default function App() {
       }}
     >
       <AntApp>
-        <GlobalLoadingBar />
+        <GlobalLoadingSpinner />
         <ApiNotifyBridge />
         <AppRoutes />
       </AntApp>
