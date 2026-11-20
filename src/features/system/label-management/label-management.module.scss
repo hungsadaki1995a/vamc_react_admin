@@ -1,34 +1,121 @@
-/* Multilingual label management — input form layout. Selectors are doubled so they outrank antd defaults. */
+/* i18n Label Management (VPA09040301 / VPA090403P01) — screen-specific bits on top of _shared/sys-ui. */
 
-.fullWidth.fullWidth {
+$border: var(--color-border-secondary, #e2e5eb);
+$text: var(--color-text-primary, #3a404a);
+$text-sub: var(--color-text-secondary, #6f7b95);
+$brand: var(--color-text-brand, #1764ff);
+$danger: var(--color-text-negative, #e62e44);
+
+.fullWidth {
   width: 100%;
 }
 
-.form .labelCol.labelCol {
-  width: 72px;
-  text-align: right;
+.filterNote {
+  flex: 0 0 auto;
+  font-size: 12px;
+  color: $text-sub;
+  white-space: nowrap;
 }
 
-.form .wrapperCol.wrapperCol {
-  flex: 1;
+/* Label Key cell: opens the edit popup. */
+.keyLink {
+  padding: 0;
+  border: none;
+  background: none;
+  color: $brand;
+  text-align: left;
+  word-break: break-all;
+  cursor: pointer;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.selectedRow > td {
+  background: #eaf3ff !important;
+}
+
+/* ── Text by Language ───────────────────────────────────────────────────── */
+.panelTitle {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 8px;
   min-width: 0;
 }
 
-.form .formItem.formItem {
-  margin: 0 0 6px;
+.panelKey {
+  overflow: hidden;
+  font-size: 12px;
+  font-weight: 400;
+  color: $text-sub;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.form .formItemLast.formItemLast {
+.textPanel {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.requiredMark {
+  margin-left: 2px;
+  color: $danger;
+}
+
+.textCell {
+  min-height: 22px;
+  padding: 2px 6px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.textCell[data-editable] {
+  cursor: text;
+}
+
+.textCell[data-editable]:hover {
+  border-color: $border;
+}
+
+.textCell[data-error] {
+  border-color: $danger;
+}
+
+.placeholder {
+  color: $text-sub;
+  font-style: italic;
+}
+
+.editingRow > td {
+  background: #fffbe6 !important;
+}
+
+.panelError {
   margin: 0;
+  font-size: 12px;
+  color: $danger;
 }
 
-.form .formItemFill.formItemFill {
+.panelHint {
   margin: 0;
-  height: 100%;
+  font-size: 12px;
+  color: $text-sub;
 }
 
-.form .descriptionInput.descriptionInput {
-  resize: none;
-  height: 100%;
-  min-height: 60px;
+.uploadErrors {
+  max-height: 320px;
+  overflow-y: auto;
+
+  p {
+    margin: 0 0 6px;
+  }
+
+  ul {
+    margin: 0;
+    padding-left: 18px;
+  }
 }
