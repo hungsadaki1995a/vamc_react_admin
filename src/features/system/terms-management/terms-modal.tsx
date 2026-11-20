@@ -112,7 +112,7 @@ function TermsFormModal({ detail, canWrite, onClose }: TermsFormModalProps) {
       extraActions={
         !isCreate &&
         editable && (
-          <SysButton look="primary" danger loading={deleteTerms.isPending} onClick={handleDelete}>
+          <SysButton className={styles.deleteAction} look="primary" danger loading={deleteTerms.isPending} onClick={handleDelete}>
             Delete
           </SysButton>
         )

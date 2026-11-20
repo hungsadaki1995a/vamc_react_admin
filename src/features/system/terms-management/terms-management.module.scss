@@ -11,3 +11,8 @@
   min-height: 160px;
   color: var(--color-text-secondary, #6f7b95);
 }
+
+/* [Delete] sits at the left of the popup footer, apart from [Cancel] / [Edit]. */
+.deleteAction {
+  margin-right: auto;
+}

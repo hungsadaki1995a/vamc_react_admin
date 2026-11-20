@@ -111,7 +111,7 @@ export function ScreenModal({ item, canWrite, onClose }: ScreenModalProps) {
       extraActions={
         !isCreate &&
         canWrite && (
-          <SysButton look="primary" danger loading={deleteScreen.isPending} onClick={handleDelete}>
+          <SysButton className={styles.deleteAction} look="primary" danger loading={deleteScreen.isPending} onClick={handleDelete}>
             Delete
           </SysButton>
         )
