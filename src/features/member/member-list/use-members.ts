@@ -1,12 +1,28 @@
-import { useQuery, useMutation, keepPreviousData } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query';
 import type { UseQueryResult } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 
-import { getMembers, excel } from '@/api/generated/sdk.gen';
+import {
+  getMembers,
+  getMember,
+  createMember,
+  updateMember,
+  unlock,
+  resendTemporaryPassword,
+  requestDeletion,
+  requestRestoration,
+  getActiveProvinces,
+  getActiveDistrictsByProvince,
+  uploadFile,
+  excel,
+} from '@/api/generated/sdk.gen';
 import type {
   MemberResponse,
+  MemberDetailResponse,
   PageResponseMemberResponse,
   GetMembersData,
+  CreateMemberRequest,
+  UpdateMemberRequest,
   ExcelData,
 } from '@/api/generated/types.gen';
 import type {
@@ -405,6 +421,179 @@ export function useExportMembers() {
       }
 
       return fileName;
+    },
+  });
+}
+
+/**
+ * Custom hook to fetch complete member details using `getMember` API
+ */
+export function useMemberDetail(mbrNo?: string, enabled = true) {
+  return useQuery<MemberDetailResponse | null>({
+    queryKey: ['memberDetail', mbrNo],
+    queryFn: async () => {
+      if (!mbrNo) return null;
+      const res = await getMember({
+        path: { mbrNo },
+        throwOnError: true,
+      });
+      return res.data?.data ?? null;
+    },
+    enabled: enabled && Boolean(mbrNo),
+  });
+}
+
+/**
+ * Custom hook to unlock a locked member account (`PUT /api/v1/members/{mbrNo}/unlock`)
+ */
+export function useUnlockMember() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (mbrNo: string) => {
+      const res = await unlock({ path: { mbrNo }, throwOnError: true });
+      return res.data;
+    },
+    onSuccess: (_data, mbrNo) => {
+      queryClient.invalidateQueries({ queryKey: ['members'] });
+      queryClient.invalidateQueries({ queryKey: ['memberDetail', mbrNo] });
+    },
+  });
+}
+
+/**
+ * Custom hook to resend temporary password for an Offline member (`POST /api/v1/members/{mbrNo}/temporary-password`)
+ */
+export function useResendTempPassword() {
+  return useMutation({
+    mutationFn: async (mbrNo: string) => {
+      const res = await resendTemporaryPassword({ path: { mbrNo }, throwOnError: true });
+      return res.data;
+    },
+  });
+}
+
+/**
+ * Custom hook to request member deletion (`POST /api/v1/members/{mbrNo}/deletion-request`)
+ */
+export function useRequestMemberDeletion() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      mbrNo,
+      reason,
+      approverEmpNo,
+    }: {
+      mbrNo: string;
+      reason: string;
+      approverEmpNo: string;
+    }) => {
+      const res = await requestDeletion({
+        path: { mbrNo },
+        body: { reason, approverEmpNo },
+        throwOnError: true,
+      });
+      return res.data;
+    },
+    onSuccess: (_data, { mbrNo }) => {
+      queryClient.invalidateQueries({ queryKey: ['members'] });
+      queryClient.invalidateQueries({ queryKey: ['memberDetail', mbrNo] });
+    },
+  });
+}
+
+/**
+ * Custom hook to request member restoration (`POST /api/v1/members/{mbrNo}/restoration-request`)
+ */
+export function useRequestMemberRestoration() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ mbrNo, approverEmpNo }: { mbrNo: string; approverEmpNo: string }) => {
+      const res = await requestRestoration({
+        path: { mbrNo },
+        body: { approverEmpNo },
+        throwOnError: true,
+      });
+      return res.data;
+    },
+    onSuccess: (_data, { mbrNo }) => {
+      queryClient.invalidateQueries({ queryKey: ['members'] });
+      queryClient.invalidateQueries({ queryKey: ['memberDetail', mbrNo] });
+    },
+  });
+}
+
+/**
+ * Custom hook to register a new member (`POST /api/v1/members`)
+ */
+export function useCreateMember() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (body: CreateMemberRequest) => {
+      const res = await createMember({ body, throwOnError: true });
+      return res.data?.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['members'] });
+    },
+  });
+}
+
+/**
+ * Custom hook to update an existing member (`PUT /api/v1/members/{mbrNo}`)
+ */
+export function useUpdateMember() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ mbrNo, body }: { mbrNo: string; body: UpdateMemberRequest }) => {
+      const res = await updateMember({ path: { mbrNo }, body, throwOnError: true });
+      return res.data?.data;
+    },
+    onSuccess: (_data, { mbrNo }) => {
+      queryClient.invalidateQueries({ queryKey: ['members'] });
+      queryClient.invalidateQueries({ queryKey: ['memberDetail', mbrNo] });
+    },
+  });
+}
+
+/**
+ * Custom hook to fetch active provinces (`/api/common/locations/provinces`)
+ */
+export function useActiveProvinces(enabled = true) {
+  return useQuery({
+    queryKey: ['locations', 'provinces'],
+    queryFn: async () => {
+      const res = await getActiveProvinces({ throwOnError: true });
+      return res.data?.data ?? [];
+    },
+    enabled,
+    staleTime: 5 * 60 * 1000,
+  });
+}
+
+/**
+ * Custom hook to fetch active districts by province (`/api/common/locations/provinces/{mctpvCd}/districts`)
+ */
+export function useActiveDistricts(mctpvCd?: string) {
+  return useQuery({
+    queryKey: ['locations', 'districts', mctpvCd],
+    queryFn: async () => {
+      if (!mctpvCd) return [];
+      const res = await getActiveDistrictsByProvince({ path: { mctpvCd }, throwOnError: true });
+      return res.data?.data ?? [];
+    },
+    enabled: Boolean(mctpvCd),
+    staleTime: 5 * 60 * 1000,
+  });
+}
+
+/**
+ * Custom hook to upload a single file (`/api/files/upload`)
+ */
+export function useUploadMemberFile() {
+  return useMutation({
+    mutationFn: async (file: File) => {
+      const res = await uploadFile({ body: { file }, throwOnError: true });
+      return res.data;
     },
   });
 }

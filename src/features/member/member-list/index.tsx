@@ -130,7 +130,6 @@ export default function MemberList() {
   const [searchNonce, setSearchNonce] = useState(0);
 
   // ── Local State & Overrides ────────────────────────────────────────────────
-  const [addedMembers, setAddedMembers] = useState<MemberItem[]>([]);
   const [memberOverrides, setMemberOverrides] = useState<Record<string, Partial<MemberItem>>>({});
 
   // ── Modals State ───────────────────────────────────────────────────────────
@@ -141,6 +140,8 @@ export default function MemberList() {
   const [approvalMember, setApprovalMember] = useState<MemberItem | null>(null);
 
   const [newMemberModalVisible, setNewMemberModalVisible] = useState(false);
+  const [memberFormMode, setMemberFormMode] = useState<'register' | 'edit'>('register');
+  const [editMemberTarget, setEditMemberTarget] = useState<MemberItem | null>(null);
 
   // ── Filter State (matches Figma 3412:17631) ────────────────────────────────
   // Approval Period
@@ -299,13 +300,11 @@ export default function MemberList() {
 
   // ── Combined Members Memo ─────────────────────────────────────────────────
   const filteredData = useMemo(() => {
-    return [...addedMembers, ...memberItems].map((item) => {
+    return memberItems.map((item) => {
       const override = memberOverrides[item.id];
       return override ? { ...item, ...override } : item;
     });
-  }, [memberItems, addedMembers, memberOverrides]);
-
-  const allMembers = filteredData;
+  }, [memberItems, memberOverrides]);
 
   // ── Actions ────────────────────────────────────────────────────────────────
   const handleOpenDetail = (member: MemberItem) => {
@@ -360,21 +359,6 @@ export default function MemberList() {
         assignee: newAssignee !== undefined ? newAssignee : selectedMember.assignee,
       });
     }
-  };
-
-  const handleAddMember = (newMemberData: Omit<MemberItem, 'id' | 'no'>) => {
-    const nextNo = Math.max(...allMembers.map((d) => d.no), 199) + 1;
-    const newEntry: MemberItem = {
-      ...newMemberData,
-      id: `mem-${nextNo}`,
-      no: nextNo,
-      memberGrade: 'Temporary',
-      status: 'Pending Approval',
-      loginId: newMemberData.applicationId,
-      signUpChannel: 'Offline',
-      membership: 'None',
-    };
-    setAddedMembers((prev) => [newEntry, ...prev]);
   };
 
   // ── Excel Export ───────────────────────────────────────────────────────────
@@ -809,7 +793,11 @@ export default function MemberList() {
           <Button
             type="primary"
             className={styles.btnNew}
-            onClick={() => setNewMemberModalVisible(true)}
+            onClick={() => {
+              setMemberFormMode('register');
+              setEditMemberTarget(null);
+              setNewMemberModalVisible(true);
+            }}
           >
             New
           </Button>
@@ -846,6 +834,12 @@ export default function MemberList() {
         onClose={() => setDetailModalVisible(false)}
         onStatusChange={handleUpdateAccountStatus}
         onApprovalChange={(id, status) => handleUpdateApprovalStatus(id, status)}
+        onEdit={(target) => {
+          setDetailModalVisible(false);
+          setMemberFormMode('edit');
+          setEditMemberTarget(target);
+          setNewMemberModalVisible(true);
+        }}
       />
 
       <ApprovalStatusModal
@@ -857,8 +851,10 @@ export default function MemberList() {
 
       <NewMemberModal
         visible={newMemberModalVisible}
+        mode={memberFormMode}
+        member={editMemberTarget}
         onClose={() => setNewMemberModalVisible(false)}
-        onAddMember={handleAddMember}
+        onSuccess={() => setSearchNonce((n) => n + 1)}
       />
     </div>
   );

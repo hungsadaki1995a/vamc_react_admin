@@ -1,68 +1,89 @@
 @mixin footer-btn-base {
-  min-width: 80px;
-  height: 36px;
-  font-size: 13px;
+  height: 32px;
+  padding: 0 14px;
+  font-size: 12px;
+  font-weight: 600;
   border-radius: 4px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .modalContent {
-  padding: 8px 12px 16px 12px;
+  display: flex;
+  flex-direction: column;
+  padding: 4px 8px 8px;
   font-family: inherit;
   color: #1f2937;
+}
+
+.modalHeaderRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  padding-right: 28px;
+  flex-shrink: 0;
 }
 
 .modalTitle {
   font-size: 20px;
   font-weight: 700;
   color: #1e293b;
-  margin: 0 0 20px 0;
+  margin: 0;
   letter-spacing: -0.01em;
 }
 
+.modalBodyScroll {
+  max-height: 68vh;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
 .section {
-  margin-bottom: 22px;
+  margin-bottom: 18px;
 
   &Header {
     display: flex;
     align-items: center;
-    gap: 8px;
-    margin-bottom: 8px;
+    gap: 6px;
+    margin-bottom: 6px;
   }
 
   &Badge {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 20px;
-    height: 20px;
+    width: 17px;
+    height: 17px;
     border-radius: 50%;
-    background-color: #4b5563;
+    background-color: #3a404a;
     color: #ffffff;
     font-size: 11px;
-    font-weight: 700;
+    font-weight: 600;
     line-height: 1;
   }
 
   &Title {
     font-size: 14px;
     font-weight: 700;
-    color: #1f2937;
+    color: #3a404a;
   }
 }
 
 .subSectionTitle {
   font-size: 13px;
-  font-weight: 700;
-  color: #111827;
-  margin-top: 14px;
-  margin-bottom: 8px;
+  font-weight: 600;
+  color: #3a404a;
+  margin-top: 12px;
+  margin-bottom: 6px;
 }
 
 .tableContainer {
   width: 100%;
-  border: 1px solid #e5e7eb;
+  border: 1px solid #d1d1e0;
   border-radius: 4px;
   overflow: hidden;
   background-color: #ffffff;
@@ -70,11 +91,12 @@
 
 .detailTable {
   width: 100%;
+  table-layout: fixed;
   border-collapse: collapse;
   font-size: 13px;
 
   tr {
-    border-bottom: 1px solid #e5e7eb;
+    border-bottom: 1px solid #eaeaf1;
 
     &:last-child {
       border-bottom: none;
@@ -88,48 +110,175 @@
 }
 
 .labelCell {
-  background-color: #f9fafb;
-  color: #4b5563;
+  width: 155px;
+  background-color: #f6f6f9;
+  color: #6f7b95;
+  font-size: 12px;
   font-weight: 500;
-  padding: 10px 14px;
-  border-right: 1px solid #e5e7eb;
+  padding: 8px 12px;
+  border-right: 1px solid #eaeaf1;
   vertical-align: middle;
-  white-space: nowrap;
+  line-height: 16px;
 }
 
 .valueCell {
   background-color: #ffffff;
-  color: #111827;
-  padding: 10px 14px;
-  border-right: 1px solid #e5e7eb;
+  color: #3a404a;
+  font-size: 13px;
+  padding: 8px 12px;
+  border-right: 1px solid #eaeaf1;
   vertical-align: middle;
   word-break: break-word;
+  line-height: 18px;
 }
 
-.classificationControl {
-  display: flex;
+.inlineGroup {
+  display: inline-flex;
   align-items: center;
   gap: 8px;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
 }
 
-.btnApprovalRequest {
-  height: 32px;
-  padding: 0 12px;
+.statusLabel {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 22px;
+  padding: 0 8px;
+  border-radius: 4px;
   font-size: 12px;
-  font-weight: 500;
-  color: #374151;
-  background-color: #ffffff;
+  font-weight: 400;
+  white-space: nowrap;
+}
+
+.statusActive {
+  background: #edf8f1;
+  border: 1px solid #a1dcba;
+  color: #107037;
+}
+
+.statusPending {
+  background: #fff2e6;
+  border: 1px solid #ffbf7f;
+  color: #ce4f00;
+}
+
+.statusRejected {
+  background: #fff0f1;
+  border: 1px solid #ffdbe0;
+  color: #d92d20;
+}
+
+.statusLocked {
+  background: #e9ecf1;
+  border: 1px solid #959dd5;
+  color: #545c6d;
+}
+
+.statusDeleted {
+  background: #f3f4f6;
   border: 1px solid #d1d5db;
+  color: #4b5563;
+}
+
+.inlineActionBtn {
+  height: 24px;
+  padding: 0 8px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #005be2;
+  background-color: #ffffff;
+  border: 1px solid #005be2;
   border-radius: 4px;
   cursor: pointer;
   white-space: nowrap;
-  transition: all 0.2s ease;
+  transition: all 0.15s ease;
+
+  &:hover:not(:disabled) {
+    background-color: #f0f6ff;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.btnRestore {
+  height: 30px;
+  padding: 0 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #005be2;
+  background-color: #ffffff;
+  border: 1px solid #005be2;
+  border-radius: 4px;
+  cursor: pointer;
 
   &:hover {
-    border-color: #1677ff;
-    color: #1677ff;
+    background-color: #f0f6ff;
   }
+}
+
+.deadlineDanger {
+  color: #d92d20;
+  font-weight: 600;
+}
+
+.historyTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+
+  th {
+    background: #f6f6f9;
+    color: #6f7b95;
+    font-weight: 500;
+    padding: 8px 12px;
+    border-bottom: 1px solid #e5e7eb;
+    border-right: 1px solid #e5e7eb;
+    text-align: center;
+
+    &:last-child {
+      border-right: none;
+    }
+  }
+
+  td {
+    padding: 8px 12px;
+    border-bottom: 1px solid #e5e7eb;
+    border-right: 1px solid #e5e7eb;
+    color: #111827;
+
+    &:last-child {
+      border-right: none;
+    }
+  }
+
+  tr:last-child td {
+    border-bottom: none;
+  }
+}
+
+.currentBadge {
+  display: inline-flex;
+  align-items: center;
+  height: 20px;
+  padding: 0 6px;
+  margin-left: 8px;
+  border-radius: 4px;
+  background: #ebf3ff;
+  border: 1px solid #93c5fd;
+  color: #1876ff;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.emptyHistory {
+  padding: 16px;
+  text-align: center;
+  color: #6f7b95;
+  font-size: 13px;
 }
 
 .attachmentsList {
@@ -139,61 +288,141 @@
 }
 
 .attachmentItem {
-  color: #374151;
+  color: #005be2;
   text-decoration: none;
   cursor: pointer;
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   font-size: 13px;
   transition: color 0.15s ease;
 
   &:hover {
-    color: #1677ff;
     text-decoration: underline;
   }
 }
 
 .footerActions {
   display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-  margin-top: 24px;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 16px;
+  margin-top: 12px;
+  border-top: 1px solid #e5e7eb;
+  flex-shrink: 0;
+}
+
+.footerRight {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.btnDelete {
+  @include footer-btn-base;
+  border: none;
+  background-color: #ff334b;
+  color: #ffffff;
+
+  &:hover {
+    background-color: #e0243b;
+  }
 }
 
 .btnCancel {
   @include footer-btn-base;
-  border: 1px solid #d1d5db;
+  border: 1px solid #005be2;
   background-color: #ffffff;
-  color: #374151;
+  color: #005be2;
 
   &:hover {
-    border-color: #9ca3af;
-    color: #111827;
+    background-color: #f0f6ff;
   }
 }
 
 .btnEdit {
   @include footer-btn-base;
-  background-color: #e5e7eb;
-  border: 1px solid #e5e7eb;
-  color: #4b5563;
-  font-weight: 500;
+  background-color: #005be2;
+  border: none;
+  color: #ffffff;
 
   &:hover {
-    background-color: #d1d5db;
-    border-color: #d1d5db;
-    color: #111827;
+    background-color: #0046b3;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
   }
 }
 
-.btnSave {
-  @include footer-btn-base;
-  background-color: #1677ff;
-  border: 1px solid #1677ff;
-  color: #ffffff;
-  font-weight: 500;
+.ocrBanner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 14px;
+  margin-bottom: 14px;
+  background: #f0f6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 4px;
+}
 
-  &:hover {
-    background-color: #4096ff;
-    border-color: #4096ff;
-  }
+.ocrTextGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ocrTitle {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1876ff;
+}
+
+.ocrGuide {
+  font-size: 12px;
+  color: #545c6d;
+}
+
+.requiredMark {
+  color: #ff334b;
+  margin-left: 2px;
+}
+
+.formItemCompact {
+  margin-bottom: 0 !important;
+}
+
+.subHeaderRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 12px;
+  margin-bottom: 6px;
+}
+
+.paymentFormBox {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr 1fr auto;
+  gap: 12px;
+  align-items: end;
+  padding: 12px;
+  background: #f6f6f9;
+  border: 1px solid #d1d1e0;
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
+
+.uploadRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.uploadGuide {
+  font-size: 12px;
+  color: #6f7b95;
 }
