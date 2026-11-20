@@ -12,10 +12,25 @@
   width: 100%;
 }
 
+/* Content template with the Insert Variable chips under it (same cell, as in the frame). */
+.contentCell {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
 .variableBar {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   gap: 6px;
+}
+
+.variableLabel {
+  margin-right: 4px;
+  font-size: 13px;
+  color: var(--color-text-secondary, #6f7b95);
 }
 
 .legacyNote {

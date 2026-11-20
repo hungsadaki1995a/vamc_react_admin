@@ -17,6 +17,7 @@ import type {
 } from '@/api/system/notification-api';
 import { getRoleGroups } from '@/api/system/role-group-api';
 import type { RoleGroup } from '@/api/system/role-group-api';
+import { HIDDEN_ROLE_GROUP_IDS } from './notification-message-constants';
 
 // Data hooks of Notification Message Management (VPA09050101 / VPA090501P01).
 
@@ -54,7 +55,9 @@ export function useRecipientGroups() {
   return useMemo(() => {
     const list = groups ?? [];
     return {
-      options: list.map((group) => ({ value: group.roleGroupId, label: group.roleGroupNm })),
+      options: list
+        .filter((group) => !HIDDEN_ROLE_GROUP_IDS.includes(group.roleGroupId))
+        .map((group) => ({ value: group.roleGroupId, label: group.roleGroupNm })),
       nameOf: (id?: string) => list.find((group) => group.roleGroupId === id)?.roleGroupNm,
       loading: query.isFetching,
     };

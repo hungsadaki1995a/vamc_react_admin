@@ -44,16 +44,15 @@ export const MENU_CODE_PATTERN = /^A\d{8}$/;
 
 /**
  * Variables offered by [Insert Variable]. TODO(api): replace with the server list once the
- * send timing / variable registry exists; the names follow the design example `{mbrName}`.
+ * send timing / variable registry exists; these are the three drawn in the v0.8 frame.
  */
 export const TEMPLATE_VARIABLES = [
   { key: '{mbrName}', label: 'Member Name' },
-  { key: '{mbrId}', label: 'Member ID' },
-  { key: '{empName}', label: 'Staff Name' },
-  { key: '{serviceName}', label: 'Service' },
-  { key: '{applicationNo}', label: 'Application No.' },
-  { key: '{processDate}', label: 'Date' },
-  { key: '{linkUrl}', label: 'Link' },
+  { key: '{otpCode}', label: 'Verification Code' },
+  { key: '{expireTime}', label: 'Expiry Time' },
 ] as const;
+
+/** Role group of web member grades (used by Web Menu Permission), not a staff group: hidden from Recipient. */
+export const HIDDEN_ROLE_GROUP_IDS: readonly string[] = ['RG00100'];
 
 export const NOT_AVAILABLE_HINT = 'Not available yet (waiting for a schema change); not saved.';

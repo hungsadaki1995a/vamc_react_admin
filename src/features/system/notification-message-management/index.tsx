@@ -64,13 +64,12 @@ export default function NotificationMessageManagement() {
     () => [
       { title: 'Use', dataIndex: 'useYn', align: 'center', width: 100, render: (v: YesNo) => <UseBadge value={v} /> },
       // No. / Service Type wait for the schema change.
-      { title: 'No.', key: 'no', align: 'center', width: 90, render: () => '-' },
-      { title: 'Service Type', key: 'serviceType', align: 'center', width: 140, render: () => '-' },
+      { title: 'No.', key: 'no', width: 140, render: () => '-' },
+      { title: 'Service Type', key: 'serviceType', width: 180, render: () => '-' },
       {
         title: 'Channel',
         dataIndex: 'notiMediaSe',
         key: 'notiMediaSe',
-        align: 'center',
         width: 120,
         sorter: true,
         render: (v: NotiChannel) => NOTI_CHANNEL_LABELS[v] ?? v,
@@ -78,14 +77,12 @@ export default function NotificationMessageManagement() {
       {
         title: 'Recipient Type',
         dataIndex: 'notiRcvrSeCd',
-        align: 'center',
         width: 130,
         render: (v?: NotiRecipientType) => (v ? NOTI_RECIPIENT_LABELS[v] : '-'),
       },
       {
         title: 'Recipient',
         dataIndex: 'roleGroupId',
-        align: 'center',
         width: 180,
         render: (v: string | undefined, row) =>
           row.notiRcvrSeCd === 'EMP' && v ? (recipients.nameOf(v) ?? v) : '-',
