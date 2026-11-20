@@ -30,3 +30,30 @@ export function toUseYnFilter(yes: boolean, no: boolean): 'Y' | 'N' | undefined 
   if (no && !yes) return 'N';
   return undefined;
 }
+
+/** v0.8 display format `DD-MM-YYYY HH:mm` (`withSeconds` adds `:ss`, `dateOnly` drops the time); `-` when empty. */
+export function formatSysDateTime(
+  value?: string | null,
+  { withSeconds = false, dateOnly = false }: { withSeconds?: boolean; dateOnly?: boolean } = {},
+): string {
+  if (!value) return '-';
+  const parsed = dayjs(value);
+  if (!parsed.isValid()) return value;
+  if (dateOnly) return parsed.format('DD-MM-YYYY');
+  return parsed.format(withSeconds ? 'DD-MM-YYYY HH:mm:ss' : 'DD-MM-YYYY HH:mm');
+}
+
+/** Business error code of a rejected call (`ErrorResponse.errorCode`, e.g. `MNU002`). */
+export function apiErrorCode(error: unknown): string | undefined {
+  if (error && typeof error === 'object' && 'errorCode' in error) {
+    const code = (error as { errorCode?: unknown }).errorCode;
+    return typeof code === 'string' ? code : undefined;
+  }
+  return undefined;
+}
+
+/** `[today - (days - 1), today]` — e.g. 7 → the last 7 days including today. */
+export function lastDaysRange(days: number): [dayjs.Dayjs, dayjs.Dayjs] {
+  const today = dayjs().startOf('day');
+  return [today.subtract(days - 1, 'day'), today];
+}

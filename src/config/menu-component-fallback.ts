@@ -56,6 +56,7 @@ const MENU_COMPONENT_FALLBACK: Record<string, string> = {
   A06030300: 'FinanceCodeManagement',
   A06040100: 'ProgramManagement',
   A06040200: 'ScreenManagement',
+  A06040300: 'LabelManagement', // i18n Label Management (DB path SYS050301SC wins when set)
   A06040400: 'BatchManagement',
   A06060100: 'NotificationMessageManagement',
   A06060200: 'NotificationHistoryManagement',
