@@ -10,7 +10,7 @@ import {
   UpOutlined,
 } from '@ant-design/icons';
 import { splitDateTime } from './system-utils';
-import styles from './system-page.module.css';
+import styles from './system-page.module.scss';
 
 // Small building blocks shared by the System Operation Management screens.
 
@@ -43,7 +43,7 @@ export function SysPageHeader({
       <div className={styles.breadcrumb}>
         <span>Home</span>
         {breadcrumb.map((item, index) => (
-          <span key={item} style={{ display: 'contents' }}>
+          <span key={item} className={styles.contents}>
             <span className={styles.breadcrumbSeparator}>&gt;</span>
             <span className={index === breadcrumb.length - 1 ? styles.breadcrumbCurrent : undefined}>
               {item}
@@ -61,7 +61,7 @@ export function SysPageHeader({
           )}
           {onSearch && (
             <button type="button" className={styles.btnDark} onClick={onSearch}>
-              <SearchOutlined style={{ fontSize: 13 }} />
+              <SearchOutlined className={styles.iconSm} />
               {searchLabel}
             </button>
           )}

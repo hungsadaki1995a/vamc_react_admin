@@ -2,20 +2,11 @@ import { useState } from 'react';
 import { DatePicker, Descriptions, Input, Modal, Radio, Select, Table } from 'antd';
 import type { TableColumnsType } from 'antd';
 import type { Dayjs } from 'dayjs';
-import { keepPreviousData } from '@tanstack/react-query';
-import { useApiQuery } from '@/hooks/use-api-query';
-import {
-  downloadTradeContractsExcel,
-  getTradeContract,
-  getTradeContracts,
-  type TradeContractItem,
-  type TradeContractKind,
-  type TradeContractSearch,
-} from '@/api/trade/trade-api';
-import type { PageResponse } from '@/api/common/api-utils';
+import type { TradeContractItem, TradeContractKind, TradeContractSearch } from '@/api/trade/trade-api';
 import { SysPageHeader, SysPagination } from '@/features/system/_shared/system-ui';
 import { rowNumber } from '@/features/system/_shared/system-utils';
-import styles from '@/features/system/_shared/system-page.module.css';
+import styles from '@/features/system/_shared/system-page.module.scss';
+import { useDownloadTradeContractsExcel, useTradeContract, useTradeContracts } from './use-trade-contracts';
 
 const PAGE_SIZE = 15;
 type DateRange = [Dayjs | null, Dayjs | null] | null;
@@ -32,16 +23,9 @@ export default function TradeContractBoard({ kind, title }: { kind: TradeContrac
   const [filterCollapsed, setFilterCollapsed] = useState(false);
   const [detailId, setDetailId] = useState<string | null>(null);
 
-  const { data, isFetching } = useApiQuery<PageResponse<TradeContractItem>>(
-    ['trade', 'contract', kind, applied, page],
-    () => getTradeContracts(kind, applied, page, PAGE_SIZE),
-    { placeholderData: keepPreviousData },
-  );
-  const { data: detail } = useApiQuery<TradeContractItem>(
-    ['trade', 'contract-detail', kind, detailId],
-    () => getTradeContract(kind, detailId as string),
-    { enabled: !!detailId },
-  );
+  const { data, isFetching } = useTradeContracts(kind, applied, page, PAGE_SIZE);
+  const { data: detail } = useTradeContract(kind, detailId);
+  const downloadExcel = useDownloadTradeContractsExcel();
 
   const rows = data?.content ?? [];
   const total = data?.totalElements ?? 0;
@@ -100,12 +84,12 @@ export default function TradeContractBoard({ kind, title }: { kind: TradeContrac
         <div className={styles.filterCard}>
           <div className={styles.filterGroup}>
             <span className={styles.filterLabel}>Contract Period</span>
-            <DatePicker.RangePicker format="DD/MM/YYYY" value={period} onChange={(d) => setPeriod(d as DateRange)} style={{ width: 240 }} />
+            <DatePicker.RangePicker format="DD/MM/YYYY" value={period} onChange={(d) => setPeriod(d as DateRange)} className={styles.w240} />
           </div>
           <div className={styles.filterGroup}>
             <span className={styles.filterLabel}>Status</span>
             <Select
-              style={{ width: 150 }}
+              className={styles.w150}
               value={ctrtSttsCd}
               onChange={setCtrtSttsCd}
               options={[
@@ -140,7 +124,7 @@ export default function TradeContractBoard({ kind, title }: { kind: TradeContrac
       )}
       <div className={styles.summaryRow}>
         <span className={styles.totalCount}>Total ({total})</span>
-        <button type="button" className={`${styles.btn} ${styles.btnSmall}`} onClick={() => void downloadTradeContractsExcel(kind, applied as Record<string, unknown>)}>Excel Download</button>
+        <button type="button" className={`${styles.btn} ${styles.btnSmall}`} onClick={() => downloadExcel.mutate({ kind, search: applied })}>Excel Download</button>
       </div>
       <div className={styles.tableWrapper}>
         <Table<TradeContractItem> rowKey="srvcCtrtCd" columns={columns} dataSource={rows} loading={isFetching} pagination={false} size="small" scroll={{ x: 'max-content' }} />

@@ -305,7 +305,7 @@ export default function InquiryManagement() {
             Reset
           </button>
           <button className={styles.btnView} onClick={handleView}>
-            <SearchOutlined style={{ fontSize: 13 }} />
+            <SearchOutlined className={styles.searchIcon} />
             View
           </button>
           <button
@@ -361,7 +361,7 @@ export default function InquiryManagement() {
               placeholder={['dd/mm/yyyy', 'dd/mm/yyyy']}
               value={dateRange}
               onChange={(dates) => setDateRange(dates as [dayjs.Dayjs | null, dayjs.Dayjs | null] | null)}
-              style={{ width: 260 }}
+              className={styles.periodPicker}
             />
           </div>
         </div>

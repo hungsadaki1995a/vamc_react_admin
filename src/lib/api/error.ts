@@ -37,6 +37,13 @@ function unknownMessage(): string {
   return useLabelStore.getState().t('MESSAGE.ERROR.TEXT_UNKNOWN', UNKNOWN_ERROR);
 }
 
+/** Keeps only string → string entries of the backend `validation` map. */
+function toValidationMap(value: unknown): Record<string, string> | undefined {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return undefined;
+  const entries = Object.entries(value).filter((entry): entry is [string, string] => typeof entry[1] === 'string');
+  return entries.length > 0 ? Object.fromEntries(entries) : undefined;
+}
+
 export class ApiError extends Error {
   statusCode: number;
   path: string;
@@ -46,6 +53,8 @@ export class ApiError extends Error {
   errorCode?: string;
   /** Label substitution args for $1, $2, ... */
   errorArgs?: string[];
+  /** Per-field validation messages of a 400 `COM001` response (request field → message). */
+  validation?: Record<string, string>;
 
   constructor(response: ApiErrorResponse) {
     super(response.message || httpMessage(response.statusCode) || unknownMessage());
@@ -56,6 +65,7 @@ export class ApiError extends Error {
     this.originalResponse = response;
     this.errorCode = response.errorCode;
     this.errorArgs = response.errorArgs;
+    this.validation = response.validation;
   }
 
   get userMessage(): string {
@@ -100,11 +110,16 @@ export class ApiError extends Error {
     const response = error.response;
 
     if (response?.data && typeof response.data === 'object') {
-      const data = response.data as Partial<ApiErrorResponse> & { errorCode?: string; errorArgs?: string[] };
+      const data = response.data as Partial<ApiErrorResponse> & {
+        errorCode?: string;
+        errorArgs?: string[];
+        validation?: unknown;
+      };
       return new ApiError({
         code: data.code ?? 'E' + response.status,
         errorCode: data.errorCode,
         errorArgs: data.errorArgs,
+        validation: toValidationMap(data.validation),
         data: null,
         message: data.message || httpMessage(response.status) || unknownMessage(),
         statusCode: data.statusCode ?? response.status,

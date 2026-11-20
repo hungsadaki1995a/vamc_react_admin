@@ -1,85 +1,68 @@
-import { apiClient } from '@/lib/api/client';
-import { apiDelete, apiDownload, apiGet, apiPost, apiPut } from '@/api/common/api-utils';
-import type { PageResponse } from '@/api/common/api-utils';
+import { apiDownload, apiGet, apiPost, apiPut } from '@/api/common/api-utils';
+import type { PageQuery, PageResponse } from '@/api/common/api-utils';
 
-// Form Management API (VPA004001 / VPA0040P01, guard menu A06010200, table FORM_MNG).
+// Form Management API (VPA09010201 / VPA090102P01, guard menu A06010200, table FORM_MNG).
 //
-// ⚠️ NOT IMPLEMENTED IN THE ADMIN BACKEND YET. There is no controller / service /
-//    mapper for FORM_MNG, and no upload endpoint that creates an ATCH_FILE group for
-//    a form. The paths and fields below follow the planned contract in
-//    `vamc-analysis-tracker/admin/07-system-operation/VPA004001.md` and `VPA0040P01.md`.
-//    Re-check every signature once the backend lands.
+// NOT IMPLEMENTED IN THE ADMIN BACKEND YET: no controller exists and FORM_MNG has no URL column
+// (waits for the FORM_FILE_URL DDL). Paths and fields follow the planned contract in
+// `vamc-analysis-tracker/admin/07-system-operation/figma-v08/01-platform.md` §2.4.
+// The screen checks FORM_API_AVAILABLE and never calls these functions while it is false.
 
-/** COM_CD FORM_SE_CD — APFR application form, CTFR contract agreement, STFR statistical report. */
-export type FormCategory = 'APFR' | 'CTFR' | 'STFR';
+/** Flip to true once `/api/v1/platform/forms` is deployed. TODO(api) */
+export const FORM_API_AVAILABLE = false;
+
 export type FormLang = 'VN' | 'EN';
+export type YesNo = 'Y' | 'N';
 
 export interface FormItem {
+  /** 4 digits, primary key. */
   formNo: string;
+  useYn: YesNo;
   langCd: FormLang;
   formNm: string;
-  formSeCd: FormCategory;
-  useYn: 'Y' | 'N';
-  fileUnqId?: string;
-  fileNm?: string;
-  fileExtnNm?: string;
-  fileSz?: number;
+  /** https URL of a docx / xlsx / pdf file. */
+  fileUrl: string;
   crtDt?: string;
   crtBy?: string;
-  crtByNm?: string;
   mdfcnDt?: string;
   mdfcnBy?: string;
-  mdfcnByNm?: string;
 }
 
 export interface FormSearch {
-  /** dd/MM/yyyy */
-  crtDtFrom?: string;
-  crtDtTo?: string;
-  useYn?: 'Y' | 'N';
-  langCd?: FormLang;
-  /** LIKE */
+  useYn?: YesNo | '';
+  langCd?: FormLang | '';
+  /** Partial match. */
   formNm?: string;
 }
 
 export interface FormSaveRequest {
   formNo: string;
   langCd: FormLang;
+  useYn: YesNo;
+  /** Up to 100 characters. */
   formNm: string;
-  formSeCd: FormCategory;
-  useYn: 'Y' | 'N';
-  /** ATCH_FILE group of the uploaded file; optional on update (keeps the current file). */
-  fileUnqId?: string;
+  /** `^https://\S+\.(docx|xlsx|pdf)$` (case-insensitive). */
+  fileUrl: string;
 }
 
-const BASE = '/api/v1/forms';
+/** Planned error codes: FRM001 not found, FRM002 duplicate form no. (E02), FRM003 invalid URL (E03). */
+export const FORM_ERRORS = { notFound: 'FRM001', duplicate: 'FRM002', invalidUrl: 'FRM003' } as const;
 
-export const getForms = (search: FormSearch, page: number, size: number) =>
-  apiGet<PageResponse<FormItem>>(BASE, { ...search, page, size });
+const BASE = '/api/v1/platform/forms';
 
-export const getForm = (formNo: string, langCd: string) =>
-  apiGet<FormItem>(`${BASE}/${encodeURIComponent(formNo)}/${langCd}`);
+// TODO(api) GET /platform/forms
+export const getForms = (search: FormSearch, query: PageQuery) =>
+  apiGet<PageResponse<FormItem>>(BASE, { ...search, ...query });
 
-export const createForm = (request: FormSaveRequest) => apiPost<void>(BASE, request);
+// TODO(api) GET /platform/forms/{formNo}
+export const getForm = (formNo: string) => apiGet<FormItem>(`${BASE}/${encodeURIComponent(formNo)}`);
 
+// TODO(api) POST /platform/forms
+export const createForm = (request: FormSaveRequest) => apiPost<FormItem>(BASE, request);
+
+// TODO(api) PUT /platform/forms/{formNo}
 export const updateForm = (request: FormSaveRequest) =>
-  apiPut<void>(`${BASE}/${encodeURIComponent(request.formNo)}/${request.langCd}`, request);
+  apiPut<FormItem>(`${BASE}/${encodeURIComponent(request.formNo)}`, request);
 
-export const deleteForms = (items: Array<Pick<FormItem, 'formNo' | 'langCd'>>) =>
-  apiDelete<void>(BASE, { items });
-
-export const downloadFormFile = (form: Pick<FormItem, 'formNo' | 'langCd' | 'fileNm'>) =>
-  apiDownload(
-    `${BASE}/${encodeURIComponent(form.formNo)}/${form.langCd}/file`,
-    form.fileNm ?? `${form.formNo}_${form.langCd}`,
-  );
-
-/** Planned shared upload — `POST /api/v1/attachments` (multipart part `file`) → fileUnqId. */
-export async function uploadFormFile(file: File): Promise<string> {
-  const body = new FormData();
-  body.append('file', file);
-  const { data } = await apiClient.post<{ data?: { fileUnqId?: string } }>('/api/v1/attachments', body);
-  const fileUnqId = data.data?.fileUnqId;
-  if (!fileUnqId) throw new Error('Upload did not return a file id.');
-  return fileUnqId;
-}
+// TODO(api) GET /platform/forms/excel
+export const downloadFormExcel = (search: FormSearch) => apiDownload(`${BASE}/excel`, 'forms.xlsx', search);

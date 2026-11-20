@@ -46,3 +46,5 @@ CLAUDE.md
 # pnpm is the only package manager — installing with npm creates two lockfiles and diverges versions
 package-lock.json
 yarn.lock
+.agents
+admin-system-operation

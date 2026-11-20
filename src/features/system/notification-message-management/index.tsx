@@ -1,230 +1,174 @@
-import { useState, type CSSProperties } from 'react';
-import { DatePicker, Input, Modal, Radio, Select, Table } from 'antd';
+import { useMemo, useState } from 'react';
+import { Input, Select } from 'antd';
 import type { TableColumnsType } from 'antd';
-import type { Dayjs } from 'dayjs';
-import { useQueryClient, keepPreviousData } from '@tanstack/react-query';
-import { useApiQuery } from '@/hooks/use-api-query';
-import { useNotify } from '@/hooks/use-notify';
 import { useMenuPermission } from '@/hooks/use-menu-permission';
+import { NOTI_CHANNEL_LABELS, NOTI_RECIPIENT_LABELS } from '@/api/system/notification-api';
+import type {
+  NotiChannel,
+  NotiRecipientType,
+  NotificationMessageItem,
+  NotificationMessageSearch,
+  YesNo,
+} from '@/api/system/notification-api';
 import {
-  createNotificationMessage,
-  deleteNotificationMessages,
-  getNotificationMessages,
-  toggleNotificationMessageUse,
-  updateNotificationMessage,
-  type NotificationMessageItem,
-} from '@/api/system/system-operations-api';
-import type { PageResponse } from '@/api/common/api-utils';
-import { DateTimeCell, FormField, SysPageHeader, SysPagination } from '@/features/system/_shared/system-ui';
-import { errorMessage, rowNumber } from '@/features/system/_shared/system-utils';
-import styles from '@/features/system/_shared/system-page.module.css';
+  SysButton,
+  SysExcelButton,
+  SysFilterItem,
+  SysFilterPanel,
+  SysNotAvailable,
+  SysPage,
+  SysPager,
+  SysSearchActions,
+  SysSectionHeader,
+  SysTable,
+  SysTitleBar,
+  UseBadge,
+} from '../_shared/sys-list-ui';
+import { ALL, SYS_PAGE_SIZE, USE_YN_FILTER_OPTIONS } from '../_shared/sys-constants';
+import { usePagedList } from '../_shared/use-paged-list';
+import { CHANNEL_FILTER_OPTIONS, RECIPIENT_TYPE_FILTER_OPTIONS } from './notification-message-constants';
+import NotificationMessageModal from './notification-message-modal';
+import { useNotificationMessages, useRecipientGroups } from './use-notification-messages';
+import styles from './notification-message-management.module.scss';
 
-const PAGE_SIZE = 15;
-type DateRange = [Dayjs | null, Dayjs | null] | null;
+// Notification Message Management - List (VPA09050101), v0.8 model.
+// Only the Use filter reaches the server for now; Channel / Recipient Type / No. filters, Excel, No. and
+// Service Type wait for the NOTI_MSG_MNG schema change and are shown disabled.
 
-/** Notification Message Management (menu A06060100). */
-export default function NotificationMessageManagement() {
-  const { toast, dialog } = useNotify();
-  const { canWrite } = useMenuPermission();
-  const queryClient = useQueryClient();
-
-  const [period, setPeriod] = useState<DateRange>(null);
-  const [prcsSttsCd, setPrcsSttsCd] = useState('');
-  const [notiTtl, setNotiTtl] = useState('');
-  const [applied, setApplied] = useState<{ crtFromDt?: string; crtToDt?: string; prcsSttsCd?: string; notiTtl?: string }>({});
-  const [page, setPage] = useState(1);
-  const [filterCollapsed, setFilterCollapsed] = useState(false);
-  const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
-  const [modalItem, setModalItem] = useState<NotificationMessageItem | null | undefined>(undefined);
-
-  const { data, isFetching } = useApiQuery<PageResponse<NotificationMessageItem>>(
-    ['sys', 'noti-messages', applied, page],
-    () => getNotificationMessages(applied, page, PAGE_SIZE),
-    { placeholderData: keepPreviousData },
-  );
-  const rows = data?.content ?? [];
-  const total = data?.totalElements ?? 0;
-
-  const refresh = () => {
-    setSelectedKeys([]);
-    void queryClient.invalidateQueries({ queryKey: ['sys', 'noti-messages'] });
-  };
-
-  const handleSearch = () => {
-    setApplied({
-      crtFromDt: period?.[0]?.format('YYYY-MM-DD'),
-      crtToDt: period?.[1]?.format('YYYY-MM-DD'),
-      prcsSttsCd: prcsSttsCd || undefined,
-      notiTtl: notiTtl.trim() || undefined,
-    });
-    setPage(1);
-  };
-
-  const handleReset = () => {
-    setPeriod(null);
-    setPrcsSttsCd('');
-    setNotiTtl('');
-    setApplied({});
-    setPage(1);
-  };
-
-  const handleDelete = () => {
-    if (!selectedKeys.length) { toast.warning('Select at least one message.'); return; }
-    dialog.warning({
-      okCancel: true,
-      content: `Delete ${selectedKeys.length} selected message(s)?`,
-      onOk: async () => {
-        try {
-          await deleteNotificationMessages(selectedKeys);
-          toast.success('Deleted.');
-          refresh();
-        } catch (e) {
-          toast.error(errorMessage(e));
-        }
-      },
-    });
-  };
-
-  const columns: TableColumnsType<NotificationMessageItem> = [
-    { title: 'No', key: 'no', width: 60, align: 'center', render: (_v, _r, i) => rowNumber(total, page, PAGE_SIZE, i) },
-    {
-      title: 'Use',
-      dataIndex: 'useYn',
-      width: 80,
-      align: 'center',
-      render: (v: string, row) => (
-        <a
-          className={v === 'Y' ? styles.useY : styles.useN}
-          onClick={() => canWrite && void toggleNotificationMessageUse(row.notiMsgId, v === 'Y' ? 'N' : 'Y').then(refresh)}
-        >
-          {v === 'Y' ? 'Used' : 'Unused'}
-        </a>
-      ),
-    },
-    { title: 'Media', dataIndex: 'notiMediaSe', width: 100, align: 'center' },
-    { title: 'Processing', dataIndex: 'prcsSttsCd', width: 110, align: 'center', render: (v?: string) => v || '-' },
-    { title: 'Lang', dataIndex: 'langCd', width: 70, align: 'center' },
-    {
-      title: 'Title',
-      dataIndex: 'notiTtl',
-      width: 300,
-      render: (v: string, row) => <a className={styles.cellLink} onClick={() => setModalItem(row)}>{v}</a>,
-    },
-    { title: 'Menu', dataIndex: 'menuNm', width: 160, render: (v?: string) => v || '-' },
-    { title: 'Created At', dataIndex: 'crtDt', width: 130, align: 'center', render: (v?: string) => <DateTimeCell value={v} /> },
-  ];
-
-  return (
-    <div className={styles.container}>
-      <SysPageHeader
-        breadcrumb={['System Operation Management', 'Notification Management', 'Notification Message Management']}
-        title="Notification Message Management"
-        onReset={handleReset}
-        onSearch={handleSearch}
-        filterCollapsed={filterCollapsed}
-        onToggleFilter={() => setFilterCollapsed((v) => !v)}
-      />
-
-      {!filterCollapsed && (
-        <div className={styles.filterCard}>
-          <div className={styles.filterGroup}>
-            <span className={styles.filterLabel}>Registration Period</span>
-            <DatePicker.RangePicker format="DD/MM/YYYY" value={period} onChange={(d) => setPeriod(d as DateRange)} style={{ width: 240 }} />
-          </div>
-          <div className={styles.filterGroup}>
-            <span className={styles.filterLabel}>Processing Type</span>
-            <Select
-              style={{ width: 150 }}
-              value={prcsSttsCd}
-              onChange={setPrcsSttsCd}
-              options={[
-                { value: '', label: 'All' },
-                { value: 'RCPT', label: 'Receipt' },
-                { value: 'PRCS', label: 'Processing' },
-                { value: '1ST_ATRZ', label: '1st Approval' },
-                { value: '2ND_ATRZ', label: '2nd Approval' },
-              ]}
-            />
-          </div>
-          <div className={styles.filterGroup}>
-            <span className={styles.filterLabel}>Title</span>
-            <Input className={styles.filterInput} value={notiTtl} onChange={(e) => setNotiTtl(e.target.value)} onPressEnter={handleSearch} allowClear />
-          </div>
-        </div>
-      )}
-
-      <div className={styles.summaryRow}><span className={styles.totalCount}>Total ({total})</span></div>
-
-      <div className={styles.tableWrapper}>
-        <Table<NotificationMessageItem>
-          rowKey="notiMsgId"
-          columns={columns}
-          dataSource={rows}
-          loading={isFetching}
-          pagination={false}
-          size="small"
-          scroll={{ x: 'max-content' }}
-          rowSelection={{ selectedRowKeys: selectedKeys, onChange: (k) => setSelectedKeys(k.map(String)) }}
-        />
-      </div>
-
-      <SysPagination page={page} pageSize={PAGE_SIZE} total={total} onChange={setPage} />
-
-      <div className={styles.bottomActions}>
-        <button type="button" className={styles.btnDanger} disabled={!canWrite} onClick={handleDelete}>Delete</button>
-        <button type="button" className={styles.btnDark} disabled={!canWrite} onClick={() => setModalItem(null)}>Add New</button>
-      </div>
-
-      {modalItem !== undefined && (
-        <NotiMessageModal item={modalItem} canWrite={canWrite} onClose={() => setModalItem(undefined)} onSaved={refresh} />
-      )}
-    </div>
-  );
+interface MessageFilter {
+  useYn: YesNo | '';
+  channel: NotiChannel | '';
+  recipientType: NotiRecipientType | '';
+  no: string;
 }
 
-function NotiMessageModal({ item, canWrite, onClose, onSaved }: { item: NotificationMessageItem | null; canWrite: boolean; onClose: () => void; onSaved: () => void }) {
-  const isCreate = item === null;
-  const { toast } = useNotify();
-  const [notiMediaSe, setNotiMediaSe] = useState(item?.notiMediaSe ?? 'EMAIL');
-  const [langCd, setLangCd] = useState(item?.langCd ?? 'VN');
-  const [notiTtl, setNotiTtl] = useState(item?.notiTtl ?? '');
-  const [notiCn, setNotiCn] = useState(item?.notiCn ?? '');
-  const [useYn, setUseYn] = useState<'Y' | 'N'>(item?.useYn ?? 'Y');
+const INITIAL_FILTER: MessageFilter = { useYn: ALL, channel: ALL, recipientType: ALL, no: '' };
 
-  const handleSave = async () => {
-    if (!notiTtl.trim() || !notiCn.trim()) { toast.warning('Enter title and content.'); return; }
-    try {
-      const req = { notiMediaSe, langCd, notiTtl: notiTtl.trim(), notiCn: notiCn.trim(), useYn };
-      if (isCreate) await createNotificationMessage(req);
-      else await updateNotificationMessage(item.notiMsgId, req);
-      toast.success('Saved.');
-      onSaved();
-      onClose();
-    } catch (e) {
-      toast.error(errorMessage(e));
-    }
-  };
+function toSearch(filter: MessageFilter): NotificationMessageSearch {
+  // TODO(api): send channel / recipient type / No. once the server filters on them.
+  return { useYns: filter.useYn };
+}
+
+/** Popup state: closed, register (null) or edit (template id). */
+type ModalState = { notiMsgId: string | null } | null;
+
+export default function NotificationMessageManagement() {
+  const { canWrite } = useMenuPermission();
+  const list = usePagedList<MessageFilter>(INITIAL_FILTER);
+  const search = toSearch(list.applied);
+  const { data, isFetching } = useNotificationMessages(search, list.pageQuery);
+  const recipients = useRecipientGroups();
+  const [modal, setModal] = useState<ModalState>(null);
+  const total = data?.totalElements ?? 0;
+
+  const columns = useMemo<TableColumnsType<NotificationMessageItem>>(
+    () => [
+      { title: 'Use', dataIndex: 'useYn', align: 'center', width: 100, render: (v: YesNo) => <UseBadge value={v} /> },
+      // No. / Service Type wait for the schema change.
+      { title: 'No.', key: 'no', width: 140, render: () => '-' },
+      { title: 'Service Type', key: 'serviceType', width: 180, render: () => '-' },
+      {
+        title: 'Channel',
+        dataIndex: 'notiMediaSe',
+        key: 'notiMediaSe',
+        width: 120,
+        sorter: true,
+        render: (v: NotiChannel) => NOTI_CHANNEL_LABELS[v] ?? v,
+      },
+      {
+        title: 'Recipient Type',
+        dataIndex: 'notiRcvrSeCd',
+        width: 130,
+        render: (v?: NotiRecipientType) => (v ? NOTI_RECIPIENT_LABELS[v] : '-'),
+      },
+      {
+        title: 'Recipient',
+        dataIndex: 'roleGroupId',
+        width: 180,
+        render: (v: string | undefined, row) =>
+          row.notiRcvrSeCd === 'EMP' && v ? (recipients.nameOf(v) ?? v) : '-',
+      },
+      {
+        title: 'Title Template',
+        dataIndex: 'notiTtl',
+        key: 'notiTtl',
+        sorter: true,
+        render: (v: string) => <span className={styles.titleCell}>{v}</span>,
+      },
+    ],
+    [recipients],
+  );
 
   return (
-    <Modal open width={720} centered title={isCreate ? 'Register Notification Message' : 'Edit Notification Message'} onCancel={onClose} footer={
-      <div className={styles.modalFooter}>
-        <button type="button" className={styles.btn} onClick={onClose}>Cancel</button>
-        <button type="button" className={styles.btnDark} disabled={!canWrite} onClick={handleSave}>Confirm</button>
-      </div>
-    }>
-      <div className={styles.formGrid} style={{ '--form-cols': 2 } as CSSProperties}>
-        <FormField label="Media" required>
-          <Select style={{ width: '100%' }} value={notiMediaSe} onChange={setNotiMediaSe} options={[{ value: 'EMAIL', label: 'EMAIL' }, { value: 'SMS', label: 'SMS' }, { value: 'PUSH', label: 'PUSH' }]} />
-        </FormField>
-        <FormField label="Language" required>
-          <Select style={{ width: '100%' }} value={langCd} onChange={setLangCd} options={[{ value: 'VN', label: 'VN' }, { value: 'EN', label: 'EN' }]} />
-        </FormField>
-        <FormField label="Use" span="full">
-          <Radio.Group value={useYn} onChange={(e) => setUseYn(e.target.value)}><Radio value="Y">Y</Radio><Radio value="N">N</Radio></Radio.Group>
-        </FormField>
-        <FormField label="Title" required span="full"><Input value={notiTtl} onChange={(e) => setNotiTtl(e.target.value)} /></FormField>
-        <FormField label="Content" required span="full"><Input.TextArea rows={5} value={notiCn} onChange={(e) => setNotiCn(e.target.value)} /></FormField>
-      </div>
-    </Modal>
+    <SysPage>
+      <SysTitleBar
+        title="Notification Message Management"
+        breadcrumb={['System Operation Management', 'Notification Management', 'Notification Message Management']}
+      />
+      <SysNotAvailable title="Partly available">
+        No., Service Type, Remarks, the Channel / Recipient Type / No. filters and Excel Download wait for a schema
+        change. Only the Use filter is applied for now.
+      </SysNotAvailable>
+      <SysFilterPanel columns={4}>
+        <SysFilterItem label="Use">
+          <Select value={list.draft.useYn} options={USE_YN_FILTER_OPTIONS} onChange={(useYn) => list.setDraft({ useYn })} />
+        </SysFilterItem>
+        <SysFilterItem label="Channel">
+          <Select
+            value={list.draft.channel}
+            options={CHANNEL_FILTER_OPTIONS}
+            disabled
+            onChange={(channel) => list.setDraft({ channel })}
+          />
+        </SysFilterItem>
+        <SysFilterItem label="Recipient Type">
+          <Select
+            value={list.draft.recipientType}
+            options={RECIPIENT_TYPE_FILTER_OPTIONS}
+            disabled
+            onChange={(recipientType) => list.setDraft({ recipientType })}
+          />
+        </SysFilterItem>
+        <SysFilterItem label="No.">
+          <Input
+            value={list.draft.no}
+            placeholder="No. or Service Type"
+            disabled
+            onChange={(e) => list.setDraft({ no: e.target.value })}
+          />
+        </SysFilterItem>
+      </SysFilterPanel>
+      <SysSearchActions onReset={list.reset} onSearch={() => list.search()} loading={isFetching} />
+      <SysSectionHeader
+        total={total}
+        // TODO(api): no Excel endpoint for notification messages yet.
+        actions={<SysExcelButton onClick={() => undefined} disabled />}
+        primaryActions={
+          canWrite && (
+            <SysButton look="navy" onClick={() => setModal({ notiMsgId: null })}>
+              New
+            </SysButton>
+          )
+        }
+      />
+      <SysTable<NotificationMessageItem>
+        rowKey="notiMsgId"
+        columns={columns}
+        dataSource={data?.content ?? []}
+        loading={isFetching}
+        onRowClick={(row) => setModal({ notiMsgId: row.notiMsgId })}
+        sort={list.sort}
+        onSortChange={list.setSort}
+      />
+      <SysPager page={list.page} pageSize={SYS_PAGE_SIZE} total={total} onChange={list.setPage} />
+      {modal && (
+        <NotificationMessageModal
+          key={modal.notiMsgId ?? 'new'}
+          notiMsgId={modal.notiMsgId}
+          canWrite={canWrite}
+          onClose={() => setModal(null)}
+        />
+      )}
+    </SysPage>
   );
 }

@@ -1,507 +1,347 @@
-import { useState, useMemo, useCallback, useRef } from 'react';
-import type { AgGridReact } from 'ag-grid-react';
-import type { ColDef, CellValueChangedEvent } from 'ag-grid-community';
-import { Form, Row, Col, Input, Select } from 'antd';
-import GridPanel from '@/components/grid/grid-panel';
-import TipInput from '@/components/inputs/tip-input';
-import ActionButton from '@/components/common/actions/action-button';
-import ActionButtonGroup from '@/components/common/actions/action-button-group';
-import FilterPanel from '@/components/layout/filter-panel';
-import FormPanel from '@/components/layout/form-panel';
-import SplitPanel from '@/components/layout/split-panel';
-import { useScreenLabel } from '@/hooks/use-screen-label';
-import { useQueryClient } from '@tanstack/react-query';
-import { useApiQuery } from '@/hooks/use-api-query';
-import { useApiMutation } from '@/hooks/use-api-mutation';
+import { useMemo, useState } from 'react';
+import { Checkbox, Input, Select, Upload } from 'antd';
+import type { TableColumnsType } from 'antd';
+import { UploadOutlined } from '@ant-design/icons';
 import { useNotify } from '@/hooks/use-notify';
 import { useMenuPermission } from '@/hooks/use-menu-permission';
-import { useLabelStore } from '@/stores/label-store';
-import { formatLabel } from '@/lib/i18n/format-label';
-import { getLanguages } from '@/api/common/label-bulk-api';
-import type { LangItem } from '@/api/common/label-bulk-api';
+import type { LabelKey, LabelListItem, LabelSearch } from '@/api/system/label-management-api';
+import { SYS_PAGE_SIZE } from '@/features/system/_shared/sys-constants';
+import { SYS_DIALOG_LABELS } from '@/features/system/_shared/sys-messages';
 import {
-  getLabelRows, saveLabelBatch, deleteLabel, groupLabelRows,
-} from '@/api/system/label-management-api';
-import type { LblRow, LblMaster, LblKey } from '@/api/system/label-management-api';
+  DateTimeText,
+  SysButton,
+  SysExcelButton,
+  SysFilterItem,
+  SysFilterPanel,
+  SysNotAvailable,
+  SysPage,
+  SysPager,
+  SysSearchActions,
+  SysSectionHeader,
+  SysSplit,
+  SysTable,
+  SysTitleBar,
+} from '@/features/system/_shared/sys-list-ui';
+import { errorMessage } from '@/features/system/_shared/system-utils';
+import { usePagedList } from '@/features/system/_shared/use-paged-list';
+import { useSysDialogs } from '@/features/system/_shared/use-sys-dialogs';
+import LabelModal from './label-modal';
+import LabelTextPanel from './label-text-panel';
+import { hasTextChanges, LABEL_MESSAGES, labelRowId, sameLabel, storedTexts } from './label-utils';
+import {
+  useDownloadLabels,
+  useLabelDetail,
+  useLabelLanguages,
+  useLabels,
+  useReloadLabelCache,
+  useUploadLabelsExcel,
+} from './use-labels';
+import styles from './label-management.module.scss';
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Multilingual label management (A06040300)
-//
-// LANG_LBL has a 3-column PK (LBL_CD, SCRN_ID, LBL_SE_CD). The entire screen treats these 3 as a single
-// identifier and never shortens it to a single key (lblId) — LBL_CD alone does not identify a row.
-//
-// Translation languages are defined by LANG_MNG. The right grid creates as many rows as languages fetched,
-// so adding a language in DB automatically reflects on this screen.
-// ─────────────────────────────────────────────────────────────────────────────
+interface LabelFilter {
+  /** Type (Web/Admin) — disabled until SYS_SE_CD exists, never sent. */
+  sysSeCd: string;
+  lblKey: string;
+  keyword: string;
+  missingOnly: boolean;
+}
 
-/**
- * Label type code (LBL_SE_CD) candidates and description label keys.
- *
- * Common code (COM_CD) lacks a label-type domain and full code lookup (`/api/comcd/all`) is
- * unimplemented (`src/api/common/comCdApi.ts`), so options are kept as screen constants. Replace with
- * `ComcdSelect` once common codes are registered. MENU / CODE are values from existing seeded data.
- *
- * Descriptions are fetched from the label table — hardcoding Korean in constants would persist across language switches.
- */
-const LBL_SE_VALUES: { value: string; field: string; ko: string }[] = [
-  { value: 'TEXT',  field: 'seText',  ko: '화면 텍스트' },
-  { value: 'BTN',   field: 'seBtn',   ko: '버튼' },
-  { value: 'TITLE', field: 'seTitle', ko: '제목' },
-  { value: 'GRID',  field: 'seGrid',  ko: '그리드 헤더' },
-  { value: 'MSG',   field: 'seMsg',   ko: '메시지' },
-  { value: 'MENU',  field: 'seMenu',  ko: '메뉴' },
-  { value: 'CODE',  field: 'seCode',  ko: '공통코드' },
+const INITIAL_FILTER: LabelFilter = { sysSeCd: '', lblKey: '', keyword: '', missingOnly: false };
+
+const TYPE_FILTER_OPTIONS = [
+  { value: '', label: 'All' },
+  { value: 'W', label: 'Web' },
+  { value: 'A', label: 'Admin' },
 ];
 
-/** Second segment of label key — `{screenId}.{section}.{type}_{detail}` */
-const SECTION_VALUES: { value: string; field: string; ko: string }[] = [
-  { value: 'VIEW',   field: 'sectionView',   ko: '화면 템플릿' },
-  { value: 'SCRIPT', field: 'sectionScript', ko: '이벤트 핸들러' },
-];
+/** Edit popup target: `null` = closed, `'new'` = register mode. */
+type EditTarget = LabelListItem | 'new' | null;
 
-interface FormFields {
-  scrnId:   string;
-  section:  string;
-  lblSeCd:  string;
-  detail:   string;
-  lblCd:    string;   // Auto-generated on new registration (readonly)
-  lblExpln: string;
-}
+const toSearch = ({ lblKey, keyword, missingOnly }: LabelFilter): LabelSearch => ({
+  lblKey: lblKey.trim(),
+  keyword: keyword.trim(),
+  missingOnly,
+});
 
-/** One row in the right translation grid */
-interface TrnRow {
-  langCd:  string;
-  langNm:  string;
-  trslLtr: string;
-  _dirty?: boolean;
-}
+const toKey = ({ scrnId, lblSeCd, lblCd }: LabelKey): LabelKey => ({ scrnId, lblSeCd, lblCd });
 
-function buildLblCd(scrnId: string, section: string, lblSeCd: string, detail: string) {
-  if (!scrnId && !section && !lblSeCd && !detail) return '';
-  return `${scrnId}.${section}.${lblSeCd}_${detail}`;
-}
-
-export default function SYS050301SC() {
-  const { toast, notify, dialog } = useNotify();
-  const { tvt, tvb, tvh, tsg, tsm, tmc, tmi, tme } = useScreenLabel();
+/** i18n Label Management - List (VPA09040301, menu A06040300). */
+export default function LabelManagement() {
+  const { toast, dialog } = useNotify();
+  const { confirm, guardDiscard } = useSysDialogs();
   const { canWrite } = useMenuPermission();
-  const queryClient = useQueryClient();
 
-  // ── Search filters
-  const [filterScrnId, setFilterScrnId]   = useState('');
-  const [filterLblCd, setFilterLblCd]     = useState('');
-  const [filterLblSeCd, setFilterLblSeCd] = useState<string | undefined>(undefined);
-  const [applied, setApplied] = useState<{ scrnId?: string; lblCd?: string; lblSeCd?: string } | null>(null);
+  const list = usePagedList<LabelFilter>(INITIAL_FILTER);
+  const search = useMemo(() => toSearch(list.applied), [list.applied]);
+  const { data, isFetching } = useLabels(search, list.pageQuery);
+  const { data: languages = [] } = useLabelLanguages();
 
-  // ── Left grid
-  const grid1Ref = useRef<AgGridReact<LblMaster>>(null);
-  const [selected, setSelected] = useState<LblMaster | null>(null);
+  const [selected, setSelected] = useState<LabelKey | null>(null);
+  const [drafts, setDrafts] = useState<Record<string, string>>({});
+  const [editTarget, setEditTarget] = useState<EditTarget>(null);
+  const { data: detail, isFetching: detailLoading } = useLabelDetail(selected);
 
-  // ── Right grid
-  const grid2Ref = useRef<AgGridReact<TrnRow>>(null);
-  const [trnRows, setTrnRows] = useState<TrnRow[]>([]);
+  const download = useDownloadLabels();
+  const upload = useUploadLabelsExcel();
+  const reloadCache = useReloadLabelCache();
 
-  // ── Input form
-  const [form] = Form.useForm<FormFields>();
-  const [formCollapsed, setFormCollapsed] = useState(false);
-  const isEditMode = selected !== null;
+  const dirty = selected !== null && hasTextChanges(drafts, storedTexts(detail));
 
-  // ── Queries ──────────────────────────────────────────────────────────────────
-
-  const { data: languages = [] } = useApiQuery<LangItem[]>(
-    ['lbl', 'languages'],
-    () => getLanguages(),
-  );
-
-  const { data: rows = [], isLoading } = useApiQuery<LblRow[]>(
-    ['lbl', 'rows', applied],
-    () => getLabelRows(applied ?? {}),
-    { enabled: applied !== null },
-  );
-
-  const masters = useMemo(() => (applied === null ? [] : groupLabelRows(rows)), [rows, applied]);
-
-  /**
-   * Refresh cache after save/delete — clear both layers.
-   *
-   * ① react-query : `queryKey` includes search conditions (`applied`), so use **prefix invalidation**.
-   *    `refetch()` only updates the current condition's cache, leaving stale results when filters change.
-   * ② labelStore : app-wide label map. Server cache is evicted on save, but
-   *    the client cache (IndexedDB, 5-min TTL) is force-cleared here.
-   */
-  const invalidateAfterWrite = useCallback(() => {
-    queryClient.invalidateQueries({ queryKey: ['lbl', 'rows'] });
-    void useLabelStore.getState().invalidateLabelCache();
-  }, [queryClient]);
-
-  const saveMutation   = useApiMutation<void, LblRow[]>(saveLabelBatch);
-  const deleteMutation = useApiMutation<void, LblKey>(deleteLabel);
-
-  /** Selected label + language list → right grid rows (always filled for all languages) */
-  const buildTrnRows = useCallback(
-    (master: LblMaster): TrnRow[] =>
-      languages.map((l) => ({
-        langCd:  l.langCd,
-        langNm:  l.langNm,
-        trslLtr: master.trsl[l.langCd] ?? '',
-      })),
-    [languages],
-  );
-
-  // ── Handlers ─────────────────────────────────────────────────────────────────
-
-  const clearSelection = useCallback(() => {
-    setSelected(null);
-    setTrnRows([]);
-    form.resetFields();
-    grid1Ref.current?.api?.deselectAll();
-  }, [form]);
-
-  const handleSearch = useCallback(() => {
-    setApplied({
-      scrnId:  filterScrnId.trim()  || undefined,
-      lblCd:   filterLblCd.trim()   || undefined,
-      lblSeCd: filterLblSeCd        || undefined,
+  /** C04: runs `action` (dropping unsaved texts) once the user agrees. */
+  const guarded = (action: () => void) =>
+    guardDiscard(dirty, () => {
+      setDrafts({});
+      action();
     });
-    clearSelection();
-  }, [filterScrnId, filterLblCd, filterLblSeCd, clearSelection]);
 
-  /** Clear search filters only — keep grid/form state */
-  const handleFilterReset = useCallback(() => {
-    setFilterScrnId('');
-    setFilterLblCd('');
-    setFilterLblSeCd(undefined);
-  }, []);
+  /** Selects after register / edit / delete; unsaved texts survive a description edit of the same label. */
+  const selectLabel = (key: LabelKey | null) => {
+    if (sameLabel(selected, key)) return;
+    setSelected(key);
+    setDrafts({});
+  };
 
-  const handleRowClick = useCallback((row: LblMaster) => {
-    setSelected(row);
-    // Existing seeded entries (lbl.menu.*, etc.) do not follow the key assembly rule, so do not reverse-parse them.
-    // In edit mode, show the 3 PKs as-is and allow editing only the label description.
-    form.setFieldsValue({
-      scrnId:   row.scrnId,
-      section:  '',
-      lblSeCd:  row.lblSeCd,
-      detail:   '',
-      lblCd:    row.lblCd,
-      lblExpln: row.lblExpln,
-    });
-    setTrnRows(buildTrnRows(row));
-    if (formCollapsed) setFormCollapsed(false);
-  }, [form, formCollapsed, buildTrnRows]);
+  const selectRow = (row: LabelListItem) => {
+    if (sameLabel(selected, row)) return;
+    guarded(() => setSelected(toKey(row)));
+  };
 
-  /** Auto-assemble key only in new registration mode */
-  const handleValuesChange = useCallback(
-    (changed: Partial<FormFields>, all: FormFields) => {
-      if (isEditMode) return;
-      if ('scrnId' in changed || 'section' in changed || 'lblSeCd' in changed || 'detail' in changed) {
-        form.setFieldValue(
-          'lblCd',
-          buildLblCd(all.scrnId ?? '', all.section ?? '', all.lblSeCd ?? '', all.detail ?? ''),
-        );
-      }
-    },
-    [form, isEditMode],
-  );
-
-  /** Save label — upsert LANG_LBL only without translations */
-  const handleSave = useCallback(() => {
-    form.validateFields().then((values) => {
-      dialog.confirm({
-        content: isEditMode ? tmc('C100002') : tmc('C100001'),
-        onOk: () => {
-          const item: LblRow = {
-            lblCd:    values.lblCd,
-            scrnId:   values.scrnId,
-            lblSeCd:  values.lblSeCd,
-            lblExpln: values.lblExpln ?? '',
-          };
-          // Do not attach onError — the apiClient interceptor already shows error toasts (avoids duplicates).
-          // If screen-specific text is needed, pass `skipErrorToast: true` on the request and handle it here.
-          saveMutation.mutate([item], {
-            onSuccess: () => {
-              notify.success(isEditMode ? tmi('I100003') : tmi('I100002'));
-              if (!isEditMode) clearSelection();
-              invalidateAfterWrite();
-            },
-          });
-        },
+  const openEdit = (row: LabelListItem) => {
+    if (sameLabel(selected, row)) setEditTarget(row);
+    else
+      guarded(() => {
+        setSelected(toKey(row));
+        setEditTarget(row);
       });
-    }).catch(() => {
-      notify.error(tme('E100001'));
-    });
-  }, [form, isEditMode, dialog, saveMutation, notify, tmc, tmi, tme, clearSelection, invalidateAfterWrite]);
+  };
 
-  /** Delete label — translations are also deleted together */
-  const handleDelete = useCallback(() => {
-    if (!selected) return;
-    dialog.confirm({
-      content: tsm('deleteConfirm', '라벨과 번역이 함께 삭제됩니다. 삭제하시겠습니까?'),
-      okButtonProps: { danger: true },
-      onOk: () => {
-        deleteMutation.mutate(
-          { lblCd: selected.lblCd, scrnId: selected.scrnId, lblSeCd: selected.lblSeCd },
-          {
-            onSuccess: () => {
-              notify.success(tmi('I100004'));
-              clearSelection();
-              invalidateAfterWrite();
-            },
-          },
-        );
+  const refreshCache = () =>
+    confirm({
+      content: LABEL_MESSAGES.confirmRefreshCache,
+      okText: SYS_DIALOG_LABELS.apply,
+      onOk: async () => {
+        try {
+          await reloadCache.run();
+          toast.success(LABEL_MESSAGES.cacheRefreshed);
+        } catch (error) {
+          toast.error(errorMessage(error));
+        }
       },
     });
-  }, [selected, dialog, deleteMutation, notify, tsm, tmi, clearSelection, invalidateAfterWrite]);
 
-  /** Save translations — send only modified language rows */
-  const handleTrnSave = useCallback(() => {
-    if (!selected) return;
-    const dirty = trnRows.filter((r) => r._dirty);
-    if (dirty.length === 0) { toast.warning(tsm('noChanges', '변경된 내용이 없습니다.')); return; }
-
-    dialog.confirm({
-      content: formatLabel(tsm('trnSaveConfirm', '번역 {0}건을 저장하시겠습니까?'), dirty.length),
-      onOk: () => {
-        // Without sending lblExpln, the server's label upsert overwrites the description with an empty value.
-        const items: LblRow[] = dirty.map((r) => ({
-          lblCd:    selected.lblCd,
-          scrnId:   selected.scrnId,
-          lblSeCd:  selected.lblSeCd,
-          lblExpln: selected.lblExpln,
-          langCd:   r.langCd,
-          trslLtr:  r.trslLtr,
-        }));
-        saveMutation.mutate(items, {
-          onSuccess: () => {
-            notify.success(tmi('I100003'));
-            setTrnRows((prev) => prev.map((r) => ({ ...r, _dirty: false })));
-            invalidateAfterWrite();
-          },
+  const uploadExcel = async (file: File) => {
+    try {
+      const response = await upload.run(file);
+      const result = response.data;
+      if (result && !result.success) {
+        dialog.error({
+          content: (
+            <div className={styles.uploadErrors}>
+              <p>{LABEL_MESSAGES.uploadFailed}</p>
+              <ul>
+                {(result.errors ?? []).slice(0, 20).map((e) => (
+                  <li key={`${e.row}-${e.col ?? ''}-${e.message}`}>
+                    Row {e.row}
+                    {e.header ? ` (${e.header})` : ''}: {e.message}
+                  </li>
+                ))}
+              </ul>
+              {(result.errors?.length ?? 0) > 20 && <p>… {(result.errors?.length ?? 0) - 20} more</p>}
+            </div>
+          ),
         });
-      },
-    });
-  }, [selected, trnRows, dialog, toast, saveMutation, notify, tsm, tmi, invalidateAfterWrite]);
+        return;
+      }
+      toast.success(LABEL_MESSAGES.uploadDone(result?.totalRows ?? 0));
+    } catch (error) {
+      toast.error(errorMessage(error));
+    }
+  };
 
-  const handleCellValueChanged = useCallback((e: CellValueChangedEvent<TrnRow>) => {
-    setTrnRows((prev) =>
-      prev.map((r) => (r.langCd === e.data.langCd ? { ...r, trslLtr: e.data.trslLtr, _dirty: true } : r)),
-    );
-  }, []);
+  const columns: TableColumnsType<LabelListItem> = [
+    {
+      title: 'Type',
+      key: 'sysSeCd',
+      width: 70,
+      // TODO(schema): SYS_SE_CD pending; the API omits it.
+      render: (_value, row) => (row.sysSeCd === 'W' ? 'Web' : row.sysSeCd === 'A' ? 'Admin' : '-'),
+    },
+    {
+      title: 'Scope',
+      dataIndex: 'scopeCd',
+      width: 100,
+      render: (value: string) => (value === 'C' ? 'Common' : 'Business'),
+    },
+    {
+      title: 'Label Key',
+      dataIndex: 'lblKey',
+      render: (value: string, row) => (
+        <button
+          type="button"
+          className={styles.keyLink}
+          onClick={(e) => {
+            e.stopPropagation();
+            openEdit(row);
+          }}
+        >
+          {value}
+        </button>
+      ),
+    },
+    { title: 'Description', dataIndex: 'lblExpln', ellipsis: true },
+    {
+      title: 'Translation',
+      dataIndex: 'missingCnt',
+      width: 110,
+      render: (value: number) =>
+        value > 0 ? <span className={styles.missing}>Missing {value}</span> : 'Complete',
+    },
+    {
+      title: 'Modified Date',
+      dataIndex: 'mdfcnDt',
+      width: 150,
+      render: (value?: string) => <DateTimeText value={value} />,
+    },
+    { title: 'Modified By', dataIndex: 'mdfcnBy', width: 120 },
+  ];
 
-  // ── Columns ──────────────────────────────────────────────────────────────────
-
-  const grid1Cols = useMemo<ColDef<LblMaster>[]>(() => [
-    { headerName: tsg('lblCd',    '라벨코드'),   field: 'lblCd',    minWidth: 260 },
-    { headerName: tsg('scrnId',   '화면ID'),     field: 'scrnId',   width: 140, flex: 0 },
-    { headerName: tsg('lblSeCd',  '라벨구분'),   field: 'lblSeCd',  width: 110, flex: 0 },
-    { headerName: tsg('lblExpln', '라벨설명'),   field: 'lblExpln', minWidth: 200 },
-  // tsg 는 labelsVersion 이 바뀔 때만 새 함수가 되므로(useScreenLabel), 이것만 의존하면 충분하다.
-  ], [tsg]);
-
-  const grid2Cols = useMemo<ColDef<TrnRow>[]>(() => [
-    { headerName: tsg('langCd',  '언어코드'), field: 'langCd',  width: 90,  flex: 0 },
-    { headerName: tsg('langNm',  '언어'),     field: 'langNm',  width: 110, flex: 0 },
-    { headerName: tsg('trslLtr', '번역문자'), field: 'trslLtr', minWidth: 200, editable: canWrite },
-  ], [tsg, canWrite]);
-
-  // Select display text is in "code — description" format. Keep the code as-is and translate only the description.
-  const lblSeOptions = useMemo(
-    () => LBL_SE_VALUES.map((o) => ({ value: o.value, label: `${o.value} — ${tvt(o.field, o.ko)}` })),
-    [tvt],
-  );
-  const sectionOptions = useMemo(
-    () => SECTION_VALUES.map((o) => ({ value: o.value, label: `${o.value} — ${tvt(o.field, o.ko)}` })),
-    [tvt],
-  );
-
-  const activeFilterCount =
-    (filterScrnId ? 1 : 0) + (filterLblCd ? 1 : 0) + (filterLblSeCd ? 1 : 0);
+  const total = data?.totalElements ?? 0;
+  const selectedId = selected ? labelRowId(selected) : null;
 
   return (
-    <div className="page-container">
-
-      {/* ── Search filter */}
-      <FilterPanel
-        onSearch={handleSearch}
-        onReset={handleFilterReset}
-        activeFilterCount={activeFilterCount}
-      >
-        <div className="ds-filter-field">
-          <span className="ds-filter-field-label">{tvt('scrnId', '화면ID')}</span>
-          <Input
-            value={filterScrnId}
-            onChange={(e) => setFilterScrnId(e.target.value)}
-            onPressEnter={handleSearch}
-            allowClear
-          />
-        </div>
-        <div className="ds-filter-field">
-          <span className="ds-filter-field-label">{tvt('lblCd', '라벨코드')}</span>
-          <Input
-            value={filterLblCd}
-            onChange={(e) => setFilterLblCd(e.target.value)}
-            onPressEnter={handleSearch}
-            allowClear
-          />
-        </div>
-        <div className="ds-filter-field">
-          <span className="ds-filter-field-label">{tvt('lblSeCd', '라벨구분')}</span>
+    <SysPage>
+      <SysTitleBar
+        title="i18n Label Management"
+        breadcrumb={['System Operation Management', 'System Management', 'i18n Label Management']}
+      />
+      <SysFilterPanel columns={4}>
+        <SysFilterItem label="Type" hint={<SysNotAvailable variant="inline" />}>
+          {/* TODO(schema): SYS_SE_CD pending — disabled, never sent. */}
           <Select
-            value={filterLblSeCd}
-            onChange={setFilterLblSeCd}
-            options={lblSeOptions}
-            placeholder={tvt('all', '전체')}
+            options={TYPE_FILTER_OPTIONS}
+            value={list.draft.sysSeCd}
+            disabled
+            title={LABEL_MESSAGES.typeNotAvailable}
+          />
+        </SysFilterItem>
+        <SysFilterItem label="Label Key">
+          <Input
+            value={list.draft.lblKey}
+            maxLength={100}
             allowClear
-            style={{ width: '100%' }}
+            onChange={(e) => list.setDraft({ lblKey: e.target.value })}
+            onPressEnter={() => guarded(() => list.search())}
           />
-        </div>
-      </FilterPanel>
-
-      {/* ── Left/right split grid
-          SplitPanel owns the layout — do not re-create flex layouts on the screen.
-          Put section titles in GridPanel's `title` slot (= left of toolbar) instead of a separate row,
-          so left and right toolbar heights align automatically. */}
-      <div className="page-body">
-        <SplitPanel direction="horizontal" defaultRatio={0.6} primaryMinSize={320} secondaryMinSize={280}>
-
-          {/* Left: label list */}
-          <GridPanel<LblMaster>
-            title={tvh('lblList', '라벨 목록')}
-            totalCount={masters.length}
-            columnDefs={grid1Cols}
-            rowData={masters}
-            rowKey="rowId"
-            gridRef={grid1Ref}
-            onRowClick={handleRowClick}
-            loading={isLoading}
-            height="100%"
-            pagination={false}
+        </SysFilterItem>
+        <SysFilterItem label="Text">
+          <Input
+            value={list.draft.keyword}
+            maxLength={100}
+            allowClear
+            onChange={(e) => list.setDraft({ keyword: e.target.value })}
+            onPressEnter={() => guarded(() => list.search())}
           />
+        </SysFilterItem>
+        <SysFilterItem label="Translation Status">
+          <Checkbox checked={list.draft.missingOnly} onChange={(e) => list.setDraft({ missingOnly: e.target.checked })}>
+            Show missing translations only
+          </Checkbox>
+        </SysFilterItem>
+      </SysFilterPanel>
+      <SysSearchActions
+        onReset={() => guarded(list.reset)}
+        onSearch={() => guarded(() => list.search())}
+        loading={isFetching}
+      />
 
-          {/* Right: translations by language */}
-          <GridPanel<TrnRow>
-            title={tvh('trnList', '언어별 번역')}
-            totalCount={trnRows.length}
-            columnDefs={grid2Cols}
-            rowData={trnRows}
-            rowKey="langCd"
-            gridRef={grid2Ref}
-            height="100%"
-            pagination={false}
-            editable={canWrite}
-            onCellValueChanged={handleCellValueChanged}
-            actions={
-              <ActionButtonGroup canWrite={canWrite}>
-                <ActionButton action="saveChanges" onClick={handleTrnSave} disabled={!selected}>
-                  {tvb('save', '저장')}
-                </ActionButton>
-              </ActionButtonGroup>
-            }
-          />
-        </SplitPanel>
-      </div>
-
-      {/* ── Bottom input form (register/edit label) */}
-      <FormPanel
-        title={tvh('input', '라벨 등록')}
-        editMode={isEditMode}
-        collapsed={formCollapsed}
-        onCollapsedChange={setFormCollapsed}
-        actions={
-          <ActionButtonGroup
-            preset="formEdit"
+      <SysSplit
+        ratio="7fr 4fr"
+        left={
+          <>
+            <SysSectionHeader
+              // The design titles the list with the Type filter value ("All | Total n").
+              title="All"
+              total={total}
+              actions={
+                <>
+                  {canWrite && (
+                    <>
+                      <SysButton loading={reloadCache.isPending} onClick={refreshCache}>
+                        Refresh Cache
+                      </SysButton>
+                      <span className={styles.actionDivider} />
+                      <Upload
+                        accept=".xlsx"
+                        showUploadList={false}
+                        beforeUpload={(file) => {
+                          void uploadExcel(file);
+                          return false;
+                        }}
+                      >
+                        <SysButton icon={<UploadOutlined />} loading={upload.isPending}>
+                          Excel Upload
+                        </SysButton>
+                      </Upload>
+                    </>
+                  )}
+                  <SysExcelButton loading={download.isPending} onClick={() => download.mutate(search)} />
+                </>
+              }
+              primaryActions={
+                canWrite && (
+                  <SysButton look="navy" onClick={() => setEditTarget('new')}>
+                    New
+                  </SysButton>
+                )
+              }
+            />
+            <SysTable<LabelListItem>
+              rowKey={labelRowId}
+              columns={columns}
+              dataSource={data?.content}
+              loading={isFetching && !data}
+              onRowClick={selectRow}
+              selectedRowKey={selectedId}
+            />
+            <SysPager
+              page={list.page}
+              pageSize={SYS_PAGE_SIZE}
+              total={total}
+              onChange={(page) => guarded(() => list.setPage(page))}
+            />
+          </>
+        }
+        right={
+          <LabelTextPanel
+            key={selectedId ?? 'none'}
+            selected={selected}
+            detail={detail}
+            loading={detailLoading && !detail}
+            languages={languages}
+            drafts={drafts}
+            onDraftChange={(langCd, text) => setDrafts((prev) => ({ ...prev, [langCd]: text }))}
+            onSaved={() => setDrafts({})}
             canWrite={canWrite}
-            items={[
-              { key: 'reset',  action: 'reset',       label: tvb('reset', '초기화'),  onClick: clearSelection },
-              { key: 'delete', action: 'deleteRow',   label: tvb('delete', '삭제'),   onClick: handleDelete, disabled: !isEditMode },
-              { key: 'save',   action: 'saveChanges', label: tvb('save', '저장'),     onClick: handleSave },
-            ]}
           />
         }
-      >
-        <Form
-          form={form}
-          layout="horizontal"
-          labelCol={{ style: { width: 72, textAlign: 'right' } }}
-          wrapperCol={{ style: { flex: 1, minWidth: 0 } }}
-          initialValues={{ section: 'VIEW', lblSeCd: 'TEXT' }}
-          onValuesChange={handleValuesChange}
-        >
-          <Row gutter={[12, 0]}>
-            {/* Left: screenId / section / labelType / detailCode / labelCode */}
-            <Col span={15}>
-              <Row gutter={[12, 0]}>
-                <Col span={8}>
-                  <Form.Item
-                    label={tvt('scrnId', '화면ID')}
-                    name="scrnId"
-                    rules={[{ required: true, message: '' }, { max: 20, message: '' }]}
-                    style={{ margin: '0 0 6px' }}
-                  >
-                    <TipInput readOnly={isEditMode} maxLength={20} placeholder="SYS050301SC" />
-                  </Form.Item>
-                </Col>
-                <Col span={8}>
-                  <Form.Item
-                    label={tvt('section', '섹션')}
-                    name="section"
-                    rules={[{ required: !isEditMode, message: '' }]}
-                    style={{ margin: '0 0 6px' }}
-                  >
-                    <Select options={sectionOptions} disabled={isEditMode} style={{ width: '100%' }} />
-                  </Form.Item>
-                </Col>
-                <Col span={8}>
-                  <Form.Item
-                    label={tvt('lblSeCd', '라벨구분')}
-                    name="lblSeCd"
-                    rules={[{ required: true, message: '' }]}
-                    style={{ margin: '0 0 6px' }}
-                  >
-                    <Select options={lblSeOptions} disabled={isEditMode} style={{ width: '100%' }} />
-                  </Form.Item>
-                </Col>
-              </Row>
-              <Row gutter={[12, 0]}>
-                <Col span={8}>
-                  <Form.Item
-                    label={tvt('detail', '세부코드')}
-                    name="detail"
-                    rules={[{ required: !isEditMode, message: '' }]}
-                    style={{ margin: 0 }}
-                  >
-                    <TipInput readOnly={isEditMode} maxLength={60} placeholder="usrId" />
-                  </Form.Item>
-                </Col>
-                <Col span={16}>
-                  <Form.Item
-                    label={tvt('lblCd', '라벨코드')}
-                    name="lblCd"
-                    rules={[{ required: true, message: '' }, { max: 100, message: '' }]}
-                    style={{ margin: 0 }}
-                  >
-                    <TipInput readOnly maxLength={100} />
-                  </Form.Item>
-                </Col>
-              </Row>
-            </Col>
+      />
 
-            {/* Right: label description (spans two rows) */}
-            <Col span={9}>
-              <Form.Item
-                label={tvt('lblExpln', '라벨설명')}
-                name="lblExpln"
-                style={{ margin: 0, height: '100%' }}
-              >
-                <Input.TextArea
-                  maxLength={500}
-                  style={{ resize: 'none', height: '100%', minHeight: 60 }}
-                />
-              </Form.Item>
-            </Col>
-          </Row>
-        </Form>
-      </FormPanel>
-
-    </div>
+      {editTarget && (
+        <LabelModal
+          key={editTarget === 'new' ? 'new' : labelRowId(editTarget)}
+          label={editTarget === 'new' ? undefined : editTarget}
+          canWrite={canWrite}
+          onClose={() => setEditTarget(null)}
+          onSaved={(key) => {
+            setEditTarget(null);
+            selectLabel(key);
+          }}
+          onDeleted={(key) => {
+            setEditTarget(null);
+            if (sameLabel(selected, key)) selectLabel(null);
+          }}
+        />
+      )}
+    </SysPage>
   );
 }

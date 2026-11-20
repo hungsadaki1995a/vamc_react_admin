@@ -28,6 +28,8 @@ export interface ApiErrorResponse {
   errorCode?: string;
   /** i18n label substitution values for $1, $2, ... */
   errorArgs?: string[];
+  /** Per-field messages of a 400 validation failure (`ErrorResponse.validation`, field → message). */
+  validation?: Record<string, string>;
   data: null;
   message: string;
   statusCode: number;

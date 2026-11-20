@@ -2,22 +2,15 @@ import { useState } from 'react';
 import { DatePicker, Input, Table } from 'antd';
 import type { TableColumnsType } from 'antd';
 import type { Dayjs } from 'dayjs';
-import { useQueryClient, keepPreviousData } from '@tanstack/react-query';
-import { useApiQuery } from '@/hooks/use-api-query';
 import { useNotify } from '@/hooks/use-notify';
 import { useMenuPermission } from '@/hooks/use-menu-permission';
-import {
-  changeLogoUse,
-  deleteLogos,
-  getLogos,
-} from '@/api/contents/site-display-api';
 import type { SiteDisplaySearch } from '@/api/contents/site-display-api';
 import type { Post } from '@/api/contents/post-api';
-import type { PageResponse } from '@/api/common/api-utils';
 import { DateTimeCell, SysPageHeader, SysPagination, UseYnChecks } from '@/features/system/_shared/system-ui';
 import { errorMessage, rowNumber, toUseYnFilter } from '@/features/system/_shared/system-utils';
-import styles from '@/features/system/_shared/system-page.module.css';
+import styles from '@/features/system/_shared/system-page.module.scss';
 import LogoModal from './logo-modal';
+import { useChangeLogoUse, useDeleteLogos, useLogos } from './use-logos';
 
 // Logo Management - List (menu A04110200).
 
@@ -39,7 +32,6 @@ const EMPTY_FILTER: FilterState = { used: true, unused: true, tag: '', keyword: 
 export default function LogoManagement() {
   const { toast, dialog } = useNotify();
   const { canWrite } = useMenuPermission();
-  const queryClient = useQueryClient();
 
   const [filter, setFilter] = useState<FilterState>(EMPTY_FILTER);
   const [applied, setApplied] = useState<SiteDisplaySearch>({});
@@ -49,18 +41,11 @@ export default function LogoManagement() {
   /** undefined = closed, null = register, string = view/edit that logo. */
   const [modalLogoId, setModalLogoId] = useState<string | null | undefined>(undefined);
 
-  const { data, isFetching, error } = useApiQuery<PageResponse<Post>>(
-    ['contents', 'logos', applied, page],
-    () => getLogos(applied, page, PAGE_SIZE),
-    { placeholderData: keepPreviousData },
-  );
+  const { data, isFetching, error } = useLogos(applied, page, PAGE_SIZE);
+  const changeLogoUse = useChangeLogoUse();
+  const deleteLogos = useDeleteLogos();
   const rows = data?.content ?? [];
   const total = data?.totalElements ?? 0;
-
-  const refresh = () => {
-    setSelectedKeys([]);
-    void queryClient.invalidateQueries({ queryKey: ['contents', 'logos'] });
-  };
 
   const handleSearch = () => {
     setApplied({
@@ -87,9 +72,9 @@ export default function LogoManagement() {
       return;
     }
     try {
-      const response = await changeLogoUse(selectedKeys, useYn);
+      const response = await changeLogoUse.mutateAsync({ ids: selectedKeys, useYn });
       toast.success(response.message || 'Updated.');
-      refresh();
+      setSelectedKeys([]);
     } catch (e) {
       toast.error(errorMessage(e));
     }
@@ -105,9 +90,9 @@ export default function LogoManagement() {
       content: `Delete the ${selectedKeys.length} selected logo(s)?`,
       onOk: async () => {
         try {
-          const response = await deleteLogos(selectedKeys);
+          const response = await deleteLogos.mutateAsync(selectedKeys);
           toast.success(response.message || 'Deleted.');
-          refresh();
+          setSelectedKeys([]);
         } catch (e) {
           toast.error(errorMessage(e));
         }
@@ -213,7 +198,7 @@ export default function LogoManagement() {
               placeholder={['dd/mm/yyyy', 'dd/mm/yyyy']}
               value={filter.period}
               onChange={(dates) => setFilter((f) => ({ ...f, period: dates as DateRange }))}
-              style={{ width: 250 }}
+              className={styles.w250}
             />
           </div>
         </div>
@@ -263,7 +248,7 @@ export default function LogoManagement() {
           logoId={modalLogoId}
           canWrite={canWrite}
           onClose={() => setModalLogoId(undefined)}
-          onSaved={refresh}
+          onSaved={() => setSelectedKeys([])}
         />
       )}
     </div>

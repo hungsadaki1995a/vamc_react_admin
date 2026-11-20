@@ -1,6 +1,6 @@
 import MenuSettings from '../_shared/menu-settings';
 
-/** Admin Menu Management — VPA004401 / VPA0044P01 (menu A06020100). */
+/** Admin Menu Settings — VPA09020101 (menu A06020100). */
 export default function SYS030101SC() {
   return <MenuSettings menuSeCd="A" />;
 }

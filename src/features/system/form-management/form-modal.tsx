@@ -1,192 +1,166 @@
-import { useRef, useState } from 'react';
-import { Input, Modal, Radio, Select } from 'antd';
+import { useState } from 'react';
+import { Input, Radio, Select } from 'antd';
 import { useNotify } from '@/hooks/use-notify';
-import { useScreenLabel } from '@/hooks/use-screen-label';
-import { createForm, downloadFormFile, updateForm, uploadFormFile } from '@/api/system/form-api';
-import type { FormCategory, FormItem, FormLang } from '@/api/system/form-api';
-import { FormField } from '../_shared/system-ui';
+import { FORM_API_AVAILABLE, FORM_ERRORS } from '@/api/system/form-api';
+import type { FormItem, FormLang, FormSaveRequest, YesNo } from '@/api/system/form-api';
+import { SysField, SysFieldGrid, SysFormModal } from '../_shared/sys-form-ui';
+import { USE_YN_RADIO_OPTIONS } from '../_shared/sys-constants';
+import { SYS_MESSAGES } from '../_shared/sys-messages';
 import { errorMessage } from '../_shared/system-utils';
-import styles from '../_shared/system-page.module.css';
+import { useFieldErrors } from '../_shared/use-field-errors';
+import { useSysDialogs } from '../_shared/use-sys-dialogs';
+import { useSaveForm } from './use-forms';
 
-// Form Management - Register/Edit popup (VPA0040P01).
-// The wireframe reserves this popup for a "Document Management Program" whose
-// environment is still undecided; until then it is a plain form + file upload
-// mapped to FORM_MNG. ⚠️ Backend API not implemented yet — see `@/api/sys/form-api`.
+// Form Management - Register / Edit popup (VPA090102P01).
 
-interface FormModalProps {
-  /** null = register a new form. */
-  form: FormItem | null;
-  canWrite: boolean;
-  onClose: () => void;
-  onSaved: () => void;
-}
+type FieldKey = 'formNo' | 'langCd' | 'useYn' | 'formNm' | 'fileUrl';
 
 interface FormState {
   formNo: string;
-  langCd: FormLang;
+  langCd: FormLang | undefined;
+  useYn: YesNo;
   formNm: string;
-  formSeCd: FormCategory;
-  useYn: 'Y' | 'N';
+  fileUrl: string;
 }
 
-/** Extensions the backend file whitelist accepts for documents. */
-const ACCEPT = '.pdf,.doc,.docx,.xls,.xlsx,.hwp,.zip';
+const LANG_OPTIONS: { value: FormLang; label: string }[] = [
+  { value: 'VN', label: 'VN' },
+  { value: 'EN', label: 'EN' },
+];
 
-export default function FormModal({ form: editing, canWrite, onClose, onSaved }: FormModalProps) {
-  const isCreate = editing === null;
+const FORM_NO_PATTERN = /^\d{4}$/;
+const FILE_URL_PATTERN = /^https:\/\/\S+\.(docx|xlsx|pdf)$/i;
+
+const FORM_MESSAGES = {
+  /** E02 */
+  duplicate: SYS_MESSAGES.duplicate('form no.'),
+  /** E03 */
+  invalidUrl: 'Please enter a docx, xlsx or pdf file URL starting with https.',
+  formNoDigits: 'Enter a 4-digit number.',
+  notAvailable: 'Saving forms is not available yet: the backend API is waiting for a schema change.',
+} as const;
+
+interface FormModalProps {
+  /** null = register. */
+  form: FormItem | null;
+  canWrite: boolean;
+  onClose: () => void;
+}
+
+export default function FormModal({ form, canWrite, onClose }: FormModalProps) {
+  const isCreate = form === null;
   const { toast } = useNotify();
-  const { tvt, tvb, tvh, tsm } = useScreenLabel();
-  const fileInput = useRef<HTMLInputElement>(null);
+  const { alert } = useSysDialogs();
+  const saveForm = useSaveForm();
+  const { errors, setError, clearError, checkRequired, applyApiError } = useFieldErrors<FieldKey>();
 
-  const [form, setForm] = useState<FormState>({
-    formNo: editing?.formNo ?? '',
-    langCd: editing?.langCd ?? 'VN',
-    formNm: editing?.formNm ?? '',
-    formSeCd: editing?.formSeCd ?? 'APFR',
-    useYn: editing?.useYn ?? 'N',
-  });
-  const [file, setFile] = useState<File | null>(null);
-  const [saving, setSaving] = useState(false);
+  const [values, setValues] = useState<FormState>(() => ({
+    formNo: form?.formNo ?? '',
+    langCd: form?.langCd,
+    useYn: form?.useYn ?? 'Y',
+    formNm: form?.formNm ?? '',
+    fileUrl: form?.fileUrl ?? '',
+  }));
 
-  const patch = (values: Partial<FormState>) => setForm((prev) => ({ ...prev, ...values }));
-  const disabled = !canWrite;
+  const patch = (key: FieldKey, value: Partial<FormState>) => {
+    setValues((prev) => ({ ...prev, ...value }));
+    clearError(key);
+  };
 
-  const handleConfirm = async () => {
-    if (!form.formNo.trim() || !form.formNm.trim()) {
-      toast.warning(tsm('required', 'Enter the form number and form name.'));
+  const validate = (): boolean => {
+    if (!checkRequired(values, ['formNo', 'langCd', 'useYn', 'formNm', 'fileUrl'])) return false;
+    let valid = true;
+    if (!FORM_NO_PATTERN.test(values.formNo.trim())) {
+      setError('formNo', FORM_MESSAGES.formNoDigits);
+      valid = false;
+    }
+    if (!FILE_URL_PATTERN.test(values.fileUrl.trim())) {
+      setError('fileUrl', FORM_MESSAGES.invalidUrl);
+      valid = false;
+    }
+    return valid;
+  };
+
+  const handleSubmit = async () => {
+    if (!validate()) return;
+    if (!FORM_API_AVAILABLE) {
+      alert(FORM_MESSAGES.notAvailable);
       return;
     }
-    if (isCreate && !file) {
-      toast.warning(tsm('fileRequired', 'Attach the form file.'));
-      return;
-    }
-    setSaving(true);
+    const request: FormSaveRequest = {
+      formNo: values.formNo.trim(),
+      langCd: values.langCd as FormLang,
+      useYn: values.useYn,
+      formNm: values.formNm.trim(),
+      fileUrl: values.fileUrl.trim(),
+    };
     try {
-      // Upload first; the form row then references the returned file group.
-      const fileUnqId = file ? await uploadFormFile(file) : undefined;
-      const request = { ...form, formNo: form.formNo.trim(), formNm: form.formNm.trim(), fileUnqId };
-      const response = isCreate ? await createForm(request) : await updateForm(request);
-      toast.success(response.message || tsm('saved', 'Saved.'));
-      onSaved();
+      await saveForm.mutateAsync({ isCreate, request });
+      toast.success(isCreate ? SYS_MESSAGES.registered : SYS_MESSAGES.updated);
       onClose();
     } catch (error) {
-      toast.error(errorMessage(error));
-    } finally {
-      setSaving(false);
+      const handled = applyApiError(error, {
+        [FORM_ERRORS.duplicate]: ['formNo', FORM_MESSAGES.duplicate],
+        [FORM_ERRORS.invalidUrl]: ['fileUrl', FORM_MESSAGES.invalidUrl],
+      });
+      if (!handled) toast.error(errorMessage(error));
     }
   };
 
-  const handleDownload = async () => {
-    if (!editing) return;
-    try {
-      await downloadFormFile(editing);
-    } catch (error) {
-      toast.error(errorMessage(error));
-    }
-  };
+  const title = isCreate ? 'Register Form' : 'Edit Form';
 
   return (
-    <Modal
+    <SysFormModal
+      width={1200}
       open
-      width={820}
-      centered
-      title={tvh('formModal', 'Register/Edit Form')}
+      title={title}
+      submitText={isCreate ? 'Register' : 'Edit'}
+      onSubmit={canWrite ? handleSubmit : undefined}
+      submitting={saveForm.isPending}
       onCancel={onClose}
-      maskClosable={false}
-      footer={
-        <div className={styles.modalFooter}>
-          <button type="button" className={styles.btn} onClick={onClose}>
-            {tvb('cancel', 'Cancel')}
-          </button>
-          <button type="button" className={styles.btnDark} disabled={disabled || saving} onClick={handleConfirm}>
-            {tvb('confirm', 'Confirm')}
-          </button>
-        </div>
-      }
     >
-      <div className={styles.formGrid} style={{ ['--form-cols' as string]: 2 }}>
-        <FormField label={tvt('formNo', 'Form Number')} required>
+      <SysFieldGrid columns={3}>
+        <SysField label="Form No." required error={errors.formNo}>
           <Input
-            value={form.formNo}
-            maxLength={100}
-            disabled={disabled || !isCreate}
-            onChange={(e) => patch({ formNo: e.target.value })}
+            value={values.formNo}
+            placeholder="e.g. 1000"
+            maxLength={4}
+            inputMode="numeric"
+            disabled={!isCreate}
+            onChange={(e) => patch('formNo', { formNo: e.target.value.replace(/\D/g, '') })}
           />
-        </FormField>
-        <FormField label={tvt('langCd', 'Language')} required>
-          <Select
-            style={{ width: '100%' }}
-            value={form.langCd}
-            disabled={disabled || !isCreate}
-            onChange={(langCd) => patch({ langCd })}
-            options={[
-              { value: 'VN', label: tvt('langVn', 'Vietnamese (VN)') },
-              { value: 'EN', label: tvt('langEn', 'English (EN)') },
-            ]}
+        </SysField>
+        <SysField label="Language" required error={errors.langCd}>
+          <Select<FormLang>
+            value={values.langCd}
+            placeholder="Select"
+            options={LANG_OPTIONS}
+            onChange={(langCd) => patch('langCd', { langCd })}
           />
-        </FormField>
-
-        <FormField label={tvt('formSeCd', 'Category')} required>
-          <Select
-            style={{ width: '100%' }}
-            value={form.formSeCd}
-            disabled={disabled}
-            onChange={(formSeCd) => patch({ formSeCd })}
-            options={[
-              { value: 'APFR', label: tvt('catApplication', 'Application Form') },
-              { value: 'CTFR', label: tvt('catContract', 'Contract Agreement') },
-              { value: 'STFR', label: tvt('catStatistics', 'Statistical Report') },
-            ]}
-          />
-        </FormField>
-        <FormField label={tvt('useYn', 'Use')}>
+        </SysField>
+        <SysField label="Use" required error={errors.useYn}>
           <Radio.Group
-            value={form.useYn}
-            disabled={disabled}
-            onChange={(e) => patch({ useYn: e.target.value as 'Y' | 'N' })}
-            options={[
-              { value: 'Y', label: 'Y' },
-              { value: 'N', label: 'N' },
-            ]}
+            value={values.useYn}
+            options={USE_YN_RADIO_OPTIONS}
+            onChange={(e) => patch('useYn', { useYn: e.target.value as YesNo })}
           />
-        </FormField>
-
-        <FormField label={tvt('formNm', 'Form Name')} required span="full">
+        </SysField>
+        <SysField label="Form Name" required span="full" error={errors.formNm}>
           <Input
-            value={form.formNm}
-            maxLength={300}
-            disabled={disabled}
-            onChange={(e) => patch({ formNm: e.target.value })}
+            value={values.formNm}
+            maxLength={100}
+            onChange={(e) => patch('formNm', { formNm: e.target.value })}
           />
-        </FormField>
-
-        <FormField label={tvt('file', 'File')} required={isCreate} span="full">
-          <input
-            ref={fileInput}
-            type="file"
-            accept={ACCEPT}
-            hidden
-            onChange={(e) => setFile(e.target.files?.[0] ?? null)}
+        </SysField>
+        <SysField label="File URL" required span="full" error={errors.fileUrl}>
+          <Input
+            value={values.fileUrl}
+            placeholder="e.g. https://cdn.vamc.vn/form/1000_en.docx"
+            maxLength={2000}
+            onChange={(e) => patch('fileUrl', { fileUrl: e.target.value })}
           />
-          <button
-            type="button"
-            className={`${styles.btn} ${styles.btnSmall}`}
-            disabled={disabled}
-            onClick={() => fileInput.current?.click()}
-          >
-            {tvb('chooseFile', 'Choose File')}
-          </button>
-          {file ? (
-            <span>{file.name}</span>
-          ) : editing?.fileNm ? (
-            <a className={styles.cellLink} onClick={handleDownload}>
-              {editing.fileNm}
-            </a>
-          ) : (
-            <span className={styles.textMuted}>{tvt('noFile', 'No file selected')}</span>
-          )}
-        </FormField>
-      </div>
-    </Modal>
+        </SysField>
+      </SysFieldGrid>
+    </SysFormModal>
   );
 }

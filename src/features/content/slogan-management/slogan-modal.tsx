@@ -1,17 +1,13 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import type { CSSProperties } from 'react';
 import { Input, Modal, Radio, Spin } from 'antd';
-import { useApiQuery } from '@/hooks/use-api-query';
 import { useNotify } from '@/hooks/use-notify';
-import {
-  createSlogan,
-  getSlogan,
-  updateSlogan,
-} from '@/api/contents/site-display-api';
 import type { SloganRequest } from '@/api/contents/site-display-api';
 import type { PostDetail } from '@/api/contents/post-api';
 import { FormField } from '@/features/system/_shared/system-ui';
 import { errorMessage } from '@/features/system/_shared/system-utils';
-import styles from '@/features/system/_shared/system-page.module.css';
+import styles from '@/features/system/_shared/system-page.module.scss';
+import { useSaveSlogan, useSlogan } from './use-slogans';
 
 // Slogan Management - Detail / Register / Edit popup (menu A04110300).
 
@@ -45,17 +41,15 @@ export default function SloganModal({ sloganId, canWrite, onClose, onSaved }: Sl
   const isCreate = sloganId === null;
   const { toast } = useNotify();
 
-  const { data: detail, isFetching } = useApiQuery<PostDetail>(
-    ['contents', 'slogans', 'detail', sloganId],
-    () => getSlogan(sloganId as string),
-    { enabled: !isCreate, gcTime: 0 },
-  );
+  const { data: detail, isFetching } = useSlogan(sloganId);
+  const saveSlogan = useSaveSlogan();
 
   const [form, setForm] = useState<FormState>(NEW_FORM);
-  const [saving, setSaving] = useState(false);
 
-  useEffect(() => {
-    if (!detail) return;
+  // Fill the form when the detail arrives — adjusted during render, not in an effect.
+  const [loadedDetail, setLoadedDetail] = useState<PostDetail | undefined>(undefined);
+  if (detail && detail !== loadedDetail) {
+    setLoadedDetail(detail);
     setForm({
       useYn: detail.published === 'Y' ? 'Y' : 'N',
       positionId: detail.tag ?? 'MAIN_HERO',
@@ -64,7 +58,7 @@ export default function SloganModal({ sloganId, canWrite, onClose, onSaved }: Sl
       subSlogan: detail.content ?? '',
       subSloganEn: detail.contentEn ?? '',
     });
-  }, [detail]);
+  }
 
   const patch = (values: Partial<FormState>) => setForm((prev) => ({ ...prev, ...values }));
 
@@ -80,7 +74,6 @@ export default function SloganModal({ sloganId, canWrite, onClose, onSaved }: Sl
       toast.warning(invalid);
       return;
     }
-    setSaving(true);
     try {
       const request: SloganRequest = {
         title: form.title.trim(),
@@ -90,18 +83,12 @@ export default function SloganModal({ sloganId, canWrite, onClose, onSaved }: Sl
         positionId: form.positionId.trim(),
         useYn: form.useYn,
       };
-      if (isCreate) {
-        await createSlogan(request);
-      } else {
-        await updateSlogan(sloganId as string, request);
-      }
+      await saveSlogan.mutateAsync({ sloganId, request });
       toast.success('Saved.');
       onSaved();
       onClose();
     } catch (e) {
       toast.error(errorMessage(e));
-    } finally {
-      setSaving(false);
     }
   };
 
@@ -121,7 +108,7 @@ export default function SloganModal({ sloganId, canWrite, onClose, onSaved }: Sl
           <button
             type="button"
             className={styles.btnDark}
-            disabled={!canWrite || saving || isFetching}
+            disabled={!canWrite || saveSlogan.isPending || isFetching}
             onClick={handleConfirm}
           >
             Confirm
@@ -130,7 +117,7 @@ export default function SloganModal({ sloganId, canWrite, onClose, onSaved }: Sl
       }
     >
       <Spin spinning={isFetching}>
-        <div className={styles.formGrid} style={{ '--form-cols': 2 } as React.CSSProperties}>
+        <div className={styles.formGrid} style={{ '--form-cols': 2 } as CSSProperties}>
           {!isCreate && detail && (
             <FormField label="Slogan ID" span="full">
               <Input value={detail.pstNo} disabled />

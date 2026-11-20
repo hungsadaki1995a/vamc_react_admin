@@ -586,3 +586,120 @@
 .matrix td.dirty {
   background: #fef9c3;
 }
+
+/* ── Utilities (replace static inline styles — see .agents/rules/styling-convention.md) ── */
+@each $size in 56, 84, 90, 110, 130, 140, 150, 160, 180, 220, 240, 250, 260 {
+  .w#{$size} {
+    width: #{$size}px;
+  }
+}
+
+.wFull {
+  width: 100%;
+}
+
+.noShrink {
+  flex-shrink: 0;
+}
+
+@each $gap in 6, 8, 10, 12 {
+  .mb#{$gap} {
+    margin-bottom: #{$gap}px;
+  }
+
+  .mt#{$gap} {
+    margin-top: #{$gap}px;
+  }
+}
+
+.m0 {
+  margin: 0;
+}
+
+.iconSm {
+  font-size: 13px;
+}
+
+/* Small in-row action button (grid cells). */
+.btnTiny {
+  height: 24px;
+  padding: 0 8px;
+  font-size: 11px;
+}
+
+/* Two side-by-side panes filling the remaining height (master / detail). */
+.twoPane,
+.twoPaneWide {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  flex: 1;
+  min-height: 0;
+}
+
+.twoPaneWide {
+  grid-template-columns: 1fr 1.4fr;
+}
+
+.contents {
+  display: contents;
+}
+
+.centered {
+  justify-content: center;
+}
+
+.textWarning {
+  color: #b45309;
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+
+.inline {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.imagePreview {
+  max-width: 100%;
+  max-height: 180px;
+  object-fit: contain;
+  border: 1px solid #e2e8f0;
+  align-self: flex-start;
+}
+
+/* Tree indent driven by the --depth custom property (dynamic runtime value). */
+.treeIndent {
+  padding-left: calc(var(--depth, 0) * 16px);
+}
+
+.matrixScroll {
+  max-height: calc(100vh - 320px);
+}
+
+.matrix .cellFlush {
+  padding: 0;
+}
+
+.matrix .cellEmpty {
+  padding: 40px;
+}
+
+.matrixSplit {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+
+  > span {
+    padding: 6px 10px;
+  }
+
+  > span:first-child {
+    border-right: 1px solid #e2e8f0;
+  }
+}
