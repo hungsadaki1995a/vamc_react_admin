@@ -61,7 +61,7 @@ export default function UserManagement() {
       align: 'center',
       render: (code: Employee['acntSttsCd']) =>
         code ? (
-          <StatusBadge tone={code === 'LOCKED' ? 'red' : 'blue'}>{ACCOUNT_STATUS_LABEL[code] ?? code}</StatusBadge>
+          <StatusBadge tone={code === 'LOCKED' ? 'gray' : 'green'}>{ACCOUNT_STATUS_LABEL[code] ?? code}</StatusBadge>
         ) : (
           '-'
         ),

@@ -9,6 +9,7 @@ import { useSysDialogs } from '../_shared/use-sys-dialogs';
 import { useFieldErrors } from '../_shared/use-field-errors';
 import { errorMessage } from '../_shared/system-utils';
 import { EMAIL_PATTERN, EMP_NO_PATTERN, EMP_STATUS_OPTIONS, MOBILE_PATTERN } from './user-constants';
+import styles from './user-management.module.scss';
 import { useCreateEmployee, useDeleteEmployee, useResetEmployeePassword, useUpdateEmployee } from './use-employees';
 
 // User Management - Register/Edit popup (VPA090202P01).
@@ -71,7 +72,7 @@ export default function UserModal({ detail, canWrite, onClose }: UserModalProps)
       valid = false;
     }
     if (!EMAIL_PATTERN.test(form.empEmlAddr.trim())) {
-      setError('empEmlAddr', 'Please check the email format.');
+      setError('empEmlAddr', 'Invalid email format.');
       valid = false;
     }
     if (!MOBILE_PATTERN.test(form.empMoblTelno.trim())) {
@@ -139,8 +140,8 @@ export default function UserModal({ detail, canWrite, onClose }: UserModalProps)
   const handleResetPassword = () => {
     if (!detail) return;
     confirm({
-      content: `Send a temporary password to ${detail.empEmlAddr ?? 'the user'}? The account is unlocked as well.`,
-      okText: SYS_DIALOG_LABELS.send,
+      content: `Send a temporary password to ${detail.empEmlAddr ?? 'the user'}? The lock will also be released.`,
+      okText: 'Reset',
       onOk: async () => {
         try {
           const response = await resetPassword.mutateAsync(detail.empNo);
@@ -158,57 +159,62 @@ export default function UserModal({ detail, canWrite, onClose }: UserModalProps)
   };
 
   const readOnly = !canWrite;
+  // Design: [Delete] sits on the left of the footer, [Cancel] [Edit] on the right.
   const extraActions =
     isEdit && canWrite ? (
-      <>
-        <SysButton loading={resetPassword.isPending} onClick={handleResetPassword}>
-          Reset Password
-        </SysButton>
-        <SysButton danger loading={deleteEmployee.isPending} onClick={handleDelete}>
-          Delete
-        </SysButton>
-      </>
+      <SysButton
+        look="primary"
+        danger
+        className={styles.deleteButton}
+        loading={deleteEmployee.isPending}
+        onClick={handleDelete}
+      >
+        Delete
+      </SysButton>
     ) : undefined;
+
+  const statusField = (
+    <SysField label="Status" required error={errors.empSttsCd}>
+      <Select
+        options={EMP_STATUS_OPTIONS}
+        value={form.empSttsCd || undefined}
+        disabled={readOnly}
+        onChange={(empSttsCd: EmpStatus) => change({ empSttsCd })}
+      />
+    </SysField>
+  );
 
   return (
     <SysFormModal
       open
-      title={isEdit ? 'Edit User' : 'Register User'}
+      width={1100}
+      title={isEdit ? 'Edit User Information' : 'Register User Information'}
       submitText={isEdit ? 'Edit' : 'Register'}
       onSubmit={canWrite ? () => void handleSubmit() : undefined}
       submitting={createEmployee.isPending || updateEmployee.isPending}
       extraActions={extraActions}
-      notice={isEdit ? undefined : 'A temporary password is sent to the email on registration and must be changed at first login.'}
       onCancel={onClose}
     >
-      <SysFieldGrid columns={2}>
-        <SysField label="Status" required error={errors.empSttsCd}>
-          <Select
-            options={EMP_STATUS_OPTIONS}
-            value={form.empSttsCd || undefined}
-            disabled={readOnly}
-            onChange={(empSttsCd: EmpStatus) => change({ empSttsCd })}
-          />
-        </SysField>
+      <SysFieldGrid columns={3}>
         <SysField label="Employee No." required error={errors.empNo}>
           <Input
             value={form.empNo}
             maxLength={10}
             disabled={isEdit || readOnly}
-            placeholder="e.g. staff01"
+            placeholder="e.g. emp100"
             onChange={(e) => change({ empNo: e.target.value })}
           />
         </SysField>
         <SysField label="Name" required error={errors.empNm}>
           <Input value={form.empNm} maxLength={100} disabled={readOnly} onChange={(e) => change({ empNm: e.target.value })} />
         </SysField>
+        {statusField}
         <SysField label="Email" required error={errors.empEmlAddr}>
           <Input
             type="email"
             value={form.empEmlAddr}
             maxLength={256}
             disabled={readOnly}
-            placeholder="e.g. staff01@vamc.vn"
             onChange={(e) => change({ empEmlAddr: e.target.value })}
           />
         </SysField>
@@ -227,10 +233,16 @@ export default function UserModal({ detail, canWrite, onClose }: UserModalProps)
             value={form.empMoblTelno}
             maxLength={20}
             disabled={readOnly}
-            placeholder="e.g. +84901234567"
             onChange={(e) => change({ empMoblTelno: e.target.value })}
           />
         </SysField>
+        {isEdit && (
+          <SysField label="Password" span="full">
+            <SysButton disabled={readOnly} loading={resetPassword.isPending} onClick={handleResetPassword}>
+              Reset Password
+            </SysButton>
+          </SysField>
+        )}
       </SysFieldGrid>
     </SysFormModal>
   );

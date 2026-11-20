@@ -103,18 +103,6 @@ export default function MenuSettingsDetail({
           />
         </SysField>
 
-        {isAdmin && (
-          <SysField
-            label="Show in Menu"
-            required
-            span="full"
-            hint="Not available yet: waits for a database change. Every menu is shown in the LNB for now."
-          >
-            {/* TODO(schema): MENU_EXPSR_YN — enable and send once the column exists. */}
-            <Radio.Group options={SHOW_IN_MENU_OPTIONS} value={form.showInMenu} disabled />
-          </SysField>
-        )}
-
         <SysField
           label="Label Key"
           required
@@ -157,6 +145,18 @@ export default function MenuSettingsDetail({
             />
           </SysField>
         )}
+        {isAdmin && (
+          <SysField
+            label="Show in Menu"
+            required
+            span="full"
+            hint="Not available yet: waits for a database change. Every menu is shown in the LNB for now."
+          >
+            {/* TODO(schema): MENU_EXPSR_YN — enable and send once the column exists. */}
+            <Radio.Group options={SHOW_IN_MENU_OPTIONS} value={form.showInMenu} disabled />
+          </SysField>
+        )}
+
       </SysFieldGrid>
 
       {canWrite && (

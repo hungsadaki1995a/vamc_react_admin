@@ -30,6 +30,7 @@ export default function UserGroupManagement() {
   const roles = useRoles(groupId);
   const staff = useRoleAssignees(groupId, roleId);
   const saveAssignees = useSaveRoleAssignees();
+  const selectedGroup = groups.data?.find((group) => group.roleGroupId === groupId);
 
   const selectGroup = (id: string) => {
     if (id === groupId) return;
@@ -156,7 +157,7 @@ export default function UserGroupManagement() {
 
         <section className={styles.panel}>
           <SysSectionHeader
-            title="Group Roles"
+            title={selectedGroup ? `[${selectedGroup.roleGroupNm}] Roles` : 'Roles'}
             total={groupId ? (roles.data?.length ?? 0) : undefined}
             primaryActions={
               canWrite && (
