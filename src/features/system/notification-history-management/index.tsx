@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { DatePicker, Input, Select, Table } from 'antd';
 import type { TableColumnsType } from 'antd';
 import type { Dayjs } from 'dayjs';
-import type { NotificationHistoryItem } from '@/api/system/system-operations-api';
+import type { NotificationHistoryItem } from '@/api/system/notification-api';
 import { DateTimeCell, SysPageHeader, SysPagination } from '@/features/system/_shared/system-ui';
 import { rowNumber } from '@/features/system/_shared/system-utils';
 import styles from '@/features/system/_shared/system-page.module.scss';

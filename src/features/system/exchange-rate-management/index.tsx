@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 import { Checkbox, Input, Table } from 'antd';
 import type { TableColumnsType } from 'antd';
 import { useNotify } from '@/hooks/use-notify';
-import type { ExchangeRateItem } from '@/api/system/system-operations-api';
+import type { ExchangeRateItem } from '@/api/system/exchange-rate-api';
 import { DateTimeCell, SysPageHeader } from '@/features/system/_shared/system-ui';
 import { errorMessage } from '@/features/system/_shared/system-utils';
 import styles from '@/features/system/_shared/system-page.module.scss';

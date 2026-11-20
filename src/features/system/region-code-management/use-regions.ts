@@ -11,8 +11,8 @@ import {
   getProvinces,
   updateDistrict,
   updateProvince,
-} from '@/api/system/system-operations-api';
-import type { DistrictItem, ProvinceItem } from '@/api/system/system-operations-api';
+} from '@/api/system/location-api';
+import type { DistrictItem, ProvinceItem } from '@/api/system/location-api';
 import type { PageResponse } from '@/api/common/api-utils';
 
 // Data hooks of Region Code Management (menu A06030200).

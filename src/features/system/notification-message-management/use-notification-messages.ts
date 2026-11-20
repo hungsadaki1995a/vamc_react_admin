@@ -7,8 +7,8 @@ import {
   getNotificationMessages,
   toggleNotificationMessageUse,
   updateNotificationMessage,
-} from '@/api/system/system-operations-api';
-import type { NotificationMessageItem } from '@/api/system/system-operations-api';
+} from '@/api/system/notification-api';
+import type { NotificationMessageItem } from '@/api/system/notification-api';
 import type { PageResponse } from '@/api/common/api-utils';
 
 // Data hooks of Notification Message Management (menu A06060100).

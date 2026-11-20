@@ -11,8 +11,8 @@ import {
   getInstitutions,
   updateBranch,
   updateInstitution,
-} from '@/api/system/system-operations-api';
-import type { BranchItem, InstitutionItem } from '@/api/system/system-operations-api';
+} from '@/api/system/institution-api';
+import type { BranchItem, InstitutionItem } from '@/api/system/institution-api';
 import type { PageResponse } from '@/api/common/api-utils';
 
 // Data hooks of Finance Code Management (menu A06030300).

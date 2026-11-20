@@ -3,7 +3,7 @@ import { Input, Modal, Radio, Table, Tabs } from 'antd';
 import type { TableColumnsType } from 'antd';
 import { useNotify } from '@/hooks/use-notify';
 import { useMenuPermission } from '@/hooks/use-menu-permission';
-import type { BatchHistoryItem, BatchJobItem } from '@/api/system/system-operations-api';
+import type { BatchHistoryItem, BatchJobItem } from '@/api/system/batch-api';
 import { DateTimeCell, FormField, SysPageHeader, SysPagination } from '@/features/system/_shared/system-ui';
 import { errorMessage } from '@/features/system/_shared/system-utils';
 import styles from '@/features/system/_shared/system-page.module.scss';

@@ -1,4 +1,4 @@
-import { apiDelete, apiGet, apiPost, apiPut } from '@/api/common/api-utils';
+import { apiDelete, apiGet, apiPatch, apiPost, apiPut } from '@/api/common/api-utils';
 
 // Menu Settings API — MenuSettingController (`/api/v1/menus`).
 // Shared by Platform Menu Management (VPA003901, menuSeCd=W, guard A06010100)
@@ -47,8 +47,8 @@ export interface SaveMenuSettingRequest {
   upMenuCd: string;
   menuNmVn: string;
   menuNmEn: string;
-  /** 0–99 */
-  menuSeq: number;
+  /** 0–99; omitted → appended after the last sibling. */
+  menuSeq?: number;
   menuUrlAddr?: string;
   /** Blank → server uses `lbl.menu.{menuCd}`. */
   lblCd?: string;
@@ -67,13 +67,35 @@ export const getMenuSetting = (menuCd: string) =>
 export const createMenuSetting = (request: SaveMenuSettingRequest) =>
   apiPost<void>('/api/v1/menus', request);
 
-/**
- * A menu in use (stored useYn=Y) only accepts a change of `useYn` — any other
- * difference is rejected with 409 MNU007. Resend the stored values to deactivate.
- */
 export const updateMenuSetting = (request: SaveMenuSettingRequest) =>
   apiPut<void>(`/api/v1/menus/${request.menuCd}`, request);
 
 /** Deletes the menu and its whole subtree; every node must be not-in-use (409 MNU009). */
 export const deleteMenuSetting = (menuCd: string) =>
   apiDelete<void>(`/api/v1/menus/${menuCd}`);
+
+export interface MoveMenuSettingRequest {
+  /** New parent (root row W00000000 / A00000000 for a top menu). */
+  upMenuCd: string;
+  /** All children of the new parent, in their new order, including the moved menu. */
+  siblingOrder: string[];
+}
+
+/**
+ * Drag & drop move: re-parents and re-orders in one call and answers the refreshed flat tree.
+ * Errors: MNU006 depth limit (Web 3), MNU013 sibling list mismatch.
+ */
+export const moveMenuSetting = (menuCd: string, request: MoveMenuSettingRequest) =>
+  apiPatch<MenuSetting[]>(`/api/v1/menus/${menuCd}/move`, request);
+
+export interface MenuOption {
+  menuCd: string;
+  menuSeCd: MenuSeCd;
+  menuNmVn?: string;
+  menuNmEn?: string;
+  useYn: YesNo;
+}
+
+/** Lightweight menu list for selects (e.g. Screen Management "Business"). */
+export const getMenuOptions = (params: { menuSeCd?: MenuSeCd; useYn?: YesNo }) =>
+  apiGet<MenuOption[]>('/api/v1/menus/options', params, []);

@@ -4,7 +4,7 @@ import type { TableColumnsType } from 'antd';
 import type { Dayjs } from 'dayjs';
 import { useNotify } from '@/hooks/use-notify';
 import { useMenuPermission } from '@/hooks/use-menu-permission';
-import type { NotificationMessageItem } from '@/api/system/system-operations-api';
+import type { NotificationMessageItem } from '@/api/system/notification-api';
 import { DateTimeCell, FormField, SysPageHeader, SysPagination } from '@/features/system/_shared/system-ui';
 import { errorMessage, rowNumber } from '@/features/system/_shared/system-utils';
 import styles from '@/features/system/_shared/system-page.module.scss';

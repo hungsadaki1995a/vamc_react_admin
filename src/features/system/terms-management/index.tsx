@@ -8,7 +8,7 @@ import type {
   TermsPolicyItem,
   TermsPolicyRequest,
   TermsPolicySearch,
-} from '@/api/system/system-operations-api';
+} from '@/api/system/terms-api';
 import { DateTimeCell, FormField, SysPageHeader, SysPagination } from '@/features/system/_shared/system-ui';
 import { errorMessage, rowNumber } from '@/features/system/_shared/system-utils';
 import styles from '@/features/system/_shared/system-page.module.scss';

@@ -3,7 +3,7 @@ import { Input, Modal, Radio, Table } from 'antd';
 import type { TableColumnsType } from 'antd';
 import { useNotify } from '@/hooks/use-notify';
 import { useMenuPermission } from '@/hooks/use-menu-permission';
-import type { DistrictItem, ProvinceItem } from '@/api/system/system-operations-api';
+import type { DistrictItem, ProvinceItem } from '@/api/system/location-api';
 import { FormField, SysPageHeader, SysPagination, UseYnChecks } from '@/features/system/_shared/system-ui';
 import { errorMessage, toUseYnFilter } from '@/features/system/_shared/system-utils';
 import styles from '@/features/system/_shared/system-page.module.scss';

@@ -1,8 +1,8 @@
 import { keepPreviousData } from '@tanstack/react-query';
 import { useApiQuery } from '@/hooks/use-api-query';
 import { useApiDownload } from '@/hooks/use-api-action';
-import { downloadNotificationHistoriesExcel, getNotificationHistories } from '@/api/system/system-operations-api';
-import type { NotificationHistoryItem } from '@/api/system/system-operations-api';
+import { downloadNotificationHistoriesExcel, getNotificationHistories } from '@/api/system/notification-api';
+import type { NotificationHistoryItem } from '@/api/system/notification-api';
 import type { PageResponse } from '@/api/common/api-utils';
 
 // Data hooks of Notification Send History (menu A06060200).

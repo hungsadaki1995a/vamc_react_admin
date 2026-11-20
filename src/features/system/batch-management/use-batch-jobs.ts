@@ -6,8 +6,8 @@ import {
   getBatchHistory,
   getBatchJobs,
   updateBatchSchedule,
-} from '@/api/system/system-operations-api';
-import type { BatchHistoryItem, BatchJobItem } from '@/api/system/system-operations-api';
+} from '@/api/system/batch-api';
+import type { BatchHistoryItem, BatchJobItem } from '@/api/system/batch-api';
 import type { PageResponse } from '@/api/common/api-utils';
 
 // Data hooks of Batch Management (menu A06040400).

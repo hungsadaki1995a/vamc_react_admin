@@ -35,7 +35,9 @@ export interface RoleUser {
 
 // ── Groups ──────────────────────────────────────────────────────────────────
 
-export const getRoleGroups = () => apiGet<RoleGroup[]>('/api/v1/role-groups/all', undefined, []);
+/** All role groups (no paging); `useYn` filters by use status, empty = all. */
+export const getRoleGroups = (params?: { useYn?: 'Y' | 'N'; keyword?: string }) =>
+  apiGet<RoleGroup[]>('/api/v1/role-groups/all', params, []);
 
 /** `roleGroupId` must match `^RG\d{5}$` and is supplied by the client. */
 export const createRoleGroup = (request: Pick<RoleGroup, 'roleGroupId' | 'roleGroupNm' | 'useYn'>) =>

@@ -1,7 +1,7 @@
 import { useApiQuery } from '@/hooks/use-api-query';
 import { useApiAction } from '@/hooks/use-api-action';
-import { getExchangeRates, syncExchangeRates } from '@/api/system/system-operations-api';
-import type { ExchangeRateItem } from '@/api/system/system-operations-api';
+import { getExchangeRates, syncExchangeRates } from '@/api/system/exchange-rate-api';
+import type { ExchangeRateItem } from '@/api/system/exchange-rate-api';
 
 // Data hooks of Exchange Rate Management (menu A06010500).
 

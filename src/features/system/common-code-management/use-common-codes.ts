@@ -9,8 +9,8 @@ import {
   getCodeGroups,
   getCodesByGroup,
   updateCodeGroup,
-} from '@/api/system/system-operations-api';
-import type { CodeGroupItem, CommonCodeItem } from '@/api/system/system-operations-api';
+} from '@/api/system/code-group-api';
+import type { CodeGroupItem, CommonCodeItem } from '@/api/system/code-group-api';
 import type { PageResponse } from '@/api/common/api-utils';
 
 // Data hooks of Common Code Management (menu A06030100).

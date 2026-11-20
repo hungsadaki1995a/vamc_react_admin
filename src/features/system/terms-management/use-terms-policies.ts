@@ -8,13 +8,13 @@ import {
   getTermsPolicy,
   publishTermsPolicies,
   updateTermsPolicy,
-} from '@/api/system/system-operations-api';
+} from '@/api/system/terms-api';
 import type {
   TermsPolicyDetail,
   TermsPolicyItem,
   TermsPolicyRequest,
   TermsPolicySearch,
-} from '@/api/system/system-operations-api';
+} from '@/api/system/terms-api';
 import type { PageResponse } from '@/api/common/api-utils';
 
 // Data hooks of Terms Management (menu A06010700).
