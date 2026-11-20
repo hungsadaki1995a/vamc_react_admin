@@ -13,9 +13,9 @@ const SVG_PROPS = {
   xmlns: 'http://www.w3.org/2000/svg',
 } as const;
 
-interface IconProps {
+type IconProps = {
   className?: string;
-}
+};
 
 // ── Icons ──────────────────────────────────────────────────────────────────────
 

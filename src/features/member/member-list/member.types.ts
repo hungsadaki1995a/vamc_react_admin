@@ -40,7 +40,7 @@ export type ApprovalStatus =
 
 export type AccountStatus = 'Active' | 'Locked';
 
-export interface MemberItem {
+export type MemberItem = {
   id: string;
   no: number;
   memberClassification: MemberClassification;
@@ -68,9 +68,9 @@ export interface MemberItem {
   phone: string;
   email: string;
   accountStatus: AccountStatus;
-}
+};
 
-export interface MemberFilterState {
+export type MemberFilterState = {
   memberClassification: MemberClassification[];
   isClassificationAll: boolean;
   memberType: MemberType[];
@@ -85,5 +85,5 @@ export interface MemberFilterState {
   phoneNumber: string;
   email: string;
   dateRange: [string | null, string | null] | null;
-}
+};
 

@@ -3,16 +3,13 @@ import { Dropdown } from 'antd';
 import type { MenuProps } from 'antd';
 import { flagUkRound, flagVnRound, chevronDown } from '@/assets/images';
 import { useLocaleStore, type LocaleKey } from '@/stores/locale-store';
+import type { LanguageSelectorProps } from '@/types/language-selector';
 import { LOCALE_OPTIONS, getLocaleShortLabel } from '@/utils/locale-storage';
 
 const FLAG_ICON_MAP: Partial<Record<LocaleKey, string>> = {
   en: flagUkRound,
   vn: flagVnRound,
 };
-
-export interface LanguageSelectorProps {
-  className?: string;
-}
 
 /** Dropdown selector for switching the active UI locale. */
 export default function LanguageSelector({ className }: LanguageSelectorProps) {

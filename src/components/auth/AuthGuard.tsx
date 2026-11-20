@@ -3,9 +3,9 @@ import { Navigate } from 'react-router-dom';
 import { Spin } from 'antd';
 import { useAuthStore } from '@/stores/auth-store';
 
-interface AuthGuardProps {
+type AuthGuardProps = {
   children: ReactNode;
-}
+};
 
 export default function AuthGuard({ children }: AuthGuardProps) {
   const isLoading = useAuthStore((s) => s.isLoading);

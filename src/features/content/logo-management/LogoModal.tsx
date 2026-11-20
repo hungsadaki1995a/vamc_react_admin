@@ -17,15 +17,15 @@ import { ImageField } from '../_shared/PostFiles';
 
 // Logo Management - Detail / Register / Edit popup (menu A04110200).
 
-interface LogoModalProps {
+type LogoModalProps = {
   /** null = register a new logo. */
   logoId: string | null;
   canWrite: boolean;
   onClose: () => void;
   onSaved: () => void;
-}
+};
 
-interface FormState {
+type FormState = {
   useYn: 'Y' | 'N';
   positionId: string;
   title: string;
@@ -34,7 +34,7 @@ interface FormState {
   description: string;
   descriptionEn: string;
   imageFileId?: string;
-}
+};
 
 const NEW_FORM: FormState = {
   useYn: 'N',

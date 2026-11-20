@@ -1,20 +1,5 @@
-import type { ReactNode } from 'react';
+import type { ContentTabsProps } from '@/types/content-tabs';
 import styles from './content-tabs.module.scss';
-
-export interface ContentTabItem<T extends string = string> {
-  key: T;
-  label: ReactNode;
-  disabled?: boolean;
-}
-
-export interface ContentTabsProps<T extends string = string> {
-  items: ContentTabItem<T>[];
-  activeKey: T;
-  onChange: (key: T) => void;
-  ariaLabel?: string;
-  fullWidth?: boolean;
-  className?: string;
-}
 
 /** Underline content tabs matching the VNPL Admin Design System (contents-tabs_type1). */
 export default function ContentTabs<T extends string = string>({

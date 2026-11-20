@@ -3,7 +3,7 @@ import { Button } from 'antd';
 import { UpOutlined, DownOutlined } from '@ant-design/icons';
 import './form-panel.scss';
 
-interface FormPanelProps {
+type FormPanelProps = {
   /** Panel title (left side of header) */
   title?: React.ReactNode;
   /** Action buttons (right side of header, before collapse toggle) */
@@ -16,7 +16,7 @@ interface FormPanelProps {
   onCollapsedChange?: (collapsed: boolean) => void;
   /** Form content */
   children?: React.ReactNode;
-}
+};
 
 export default function FormPanel({
   title,

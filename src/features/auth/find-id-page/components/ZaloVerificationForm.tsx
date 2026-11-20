@@ -6,18 +6,15 @@ import { DownOutlined } from '@ant-design/icons';
 import { useLocaleStore } from '@/stores/locale-store';
 import { ApiError } from '@/lib/api/error';
 import { useConfirmFindIdMutation, useFindIdMutation } from '../hooks/use-find-id';
+import type { FindIdZaloVerificationFormProps } from '@/types/auth';
 import styles from '../index.module.scss';
 
-interface ZaloFormValues {
+type ZaloFormValues = {
   name: string;
   countryCode: string;
   phoneNumber: string;
   code: string;
-}
-
-export interface ZaloVerificationFormProps {
-  onConfirmSuccess: (loginId: string) => void;
-}
+};
 
 const CODE_TTL_SECONDS = 180;
 
@@ -33,7 +30,7 @@ function formatCountdown(totalSeconds: number): string {
 }
 
 /** Zalo phone verification form for finding a user's login ID. */
-export default function ZaloVerificationForm({ onConfirmSuccess }: ZaloVerificationFormProps) {
+export default function ZaloVerificationForm({ onConfirmSuccess }: FindIdZaloVerificationFormProps) {
   const { t } = useTranslation();
   const { message } = App.useApp();
   const locale = useLocaleStore((s) => s.locale);

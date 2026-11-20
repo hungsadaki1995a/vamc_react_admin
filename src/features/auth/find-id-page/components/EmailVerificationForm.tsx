@@ -6,10 +6,10 @@ import { useLocaleStore } from '@/stores/locale-store';
 import { useFindIdMutation } from '../hooks/use-find-id';
 import styles from '../index.module.scss';
 
-interface EmailFormValues {
+type EmailFormValues = {
   name: string;
   email: string;
-}
+};
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 

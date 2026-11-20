@@ -8,37 +8,12 @@ import {
   UploadOutlined,
 } from '@ant-design/icons';
 import './action-button.scss';
+import type { ActionButtonAction, ActionButtonIntent, ActionButtonProps } from '@/types/action-button';
 
-export type ActionButtonAction =
-  | 'reset'
-  | 'search'
-  | 'copy'
-  | 'addRow'
-  | 'deleteRow'
-  | 'saveChanges'
-  | 'excelDownload'
-  | 'excelUpload'
-  | 'register'
-  | 'cancel'
-  | 'close'
-  | 'confirm'
-  | 'download'
-  | 'upload'
-  | 'collapse'
-  | 'expand';
-
-export type ActionButtonIntent =
-  | 'default'
-  | 'primary'
-  | 'danger'
-  | 'excel'
-  | 'text'
-  | 'icon';
-
-interface ActionDefaults {
+type ActionDefaults = {
   intent: ActionButtonIntent;
   icon?: ButtonProps['icon'];
-}
+};
 
 const ACTION_DEFAULTS: Record<ActionButtonAction, ActionDefaults> = {
   reset: { intent: 'default', icon: <ReloadOutlined /> },
@@ -58,11 +33,6 @@ const ACTION_DEFAULTS: Record<ActionButtonAction, ActionDefaults> = {
   collapse: { intent: 'icon' },
   expand: { intent: 'icon' },
 };
-
-export interface ActionButtonProps extends ButtonProps {
-  action?: ActionButtonAction;
-  intent?: ActionButtonIntent;
-}
 
 export default function ActionButton({
   action,

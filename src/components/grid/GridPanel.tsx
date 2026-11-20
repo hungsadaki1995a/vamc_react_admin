@@ -1,8 +1,9 @@
 import GridToolbar from '@/components/layout/GridToolbar';
-import GridTable, { type GridTableProps } from './GridTable';
+import type { GridTableProps } from '@/types/grid';
+import GridTable from './GridTable';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-interface GridPanelProps<TData = any> extends GridTableProps<TData> {
+type GridPanelProps<TData = any> = GridTableProps<TData> & {
   /** Grid title shown at the left of the toolbar (e.g. to identify each grid in a split view) */
   title?: React.ReactNode;
   /** Total count display in toolbar (e.g. "Total 102 items") */
@@ -13,7 +14,7 @@ interface GridPanelProps<TData = any> extends GridTableProps<TData> {
   toolbarLeft?: React.ReactNode;
   /** Right action buttons in toolbar */
   actions?: React.ReactNode;
-}
+};
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default function GridPanel<TData = any>({

@@ -26,13 +26,13 @@ const DATE_FORMAT = 'DD/MM/YYYY';
 
 type DateRange = [Dayjs | null, Dayjs | null] | null;
 
-interface FilterState {
+type FilterState = {
   used: boolean;
   unused: boolean;
   tag: string;
   keyword: string;
   period: DateRange;
-}
+};
 
 const EMPTY_FILTER: FilterState = { used: true, unused: true, tag: '', keyword: '', period: null };
 

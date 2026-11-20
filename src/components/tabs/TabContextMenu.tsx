@@ -2,13 +2,13 @@ import { useEffect, useRef } from 'react';
 import { useTabStore } from '@/stores/tab-store';
 import { useComponentLabel } from '@/hooks/use-component-label';
 
-interface TabContextMenuProps {
+type TabContextMenuProps = {
   visible: boolean;
   x: number;
   y: number;
   tabKey: string;
   onClose: () => void;
-}
+};
 
 /**
  * Context menu wrapper — only mounts the inner menu when visible.

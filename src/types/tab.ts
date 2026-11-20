@@ -1,4 +1,4 @@
-export interface Tab {
+export type Tab = {
   key: string;
   menuKey: string;
   title: string;         // fallback display name (menuItem.label)
@@ -8,4 +8,4 @@ export interface Tab {
   params?: Record<string, unknown>; // Screen parameters passed via navigateTab(key, params)
   pinned: boolean;
   closable: boolean;
-}
+};

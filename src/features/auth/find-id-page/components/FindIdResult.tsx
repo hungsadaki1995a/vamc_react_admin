@@ -2,11 +2,8 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { Button, Input } from 'antd';
 import { PUBLIC_ROUTES } from '@/app/route-constants';
+import type { FindIdResultProps } from '@/types/auth';
 import styles from '../index.module.scss';
-
-export interface FindIdResultProps {
-  loginId: string;
-}
 
 /** Displays the confirmed masked login ID with navigation actions. */
 export default function FindIdResult({ loginId }: FindIdResultProps) {

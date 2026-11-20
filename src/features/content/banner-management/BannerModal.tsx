@@ -18,22 +18,22 @@ import { ImageField } from '../_shared/PostFiles';
 // Banner Management - Detail / Register / Edit popup (VPA0032P01).
 // Policy: a banner in use cannot be edited — save it as Unused, then reopen to edit.
 
-interface BannerModalProps {
+type BannerModalProps = {
   /** null = register a new banner. */
   bannerId: string | null;
   canWrite: boolean;
   onClose: () => void;
   onSaved: () => void;
-}
+};
 
-interface FormState {
+type FormState = {
   useYn: 'Y' | 'N';
   order: number | null;
   positionId: string;
   title: string;
   linkUrl: string;
   imageFileId?: string;
-}
+};
 
 const NEW_FORM: FormState = { useYn: 'N', order: null, positionId: '', title: '', linkUrl: '' };
 const URL_PATTERN = /^https?:\/\/.+/;

@@ -1,7 +1,7 @@
 import { useRef, useState, useCallback, useEffect } from 'react';
 import './split-panel.scss';
 
-interface SplitPanelProps {
+type SplitPanelProps = {
   direction: 'horizontal' | 'vertical';
   /** Initial size in px. Use `defaultRatio` to specify a ratio instead. */
   defaultSize?: number;
@@ -16,7 +16,7 @@ interface SplitPanelProps {
   onResize?: (primarySize: number) => void;
   className?: string;
   children: [React.ReactNode, React.ReactNode];
-}
+};
 
 export default function SplitPanel({
   direction,

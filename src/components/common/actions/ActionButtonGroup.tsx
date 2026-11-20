@@ -1,40 +1,14 @@
-import { Space, type SpaceProps } from 'antd';
+import { Space } from 'antd';
 import { Children, cloneElement, isValidElement, type ReactNode } from 'react';
-import ActionButton, { type ActionButtonAction, type ActionButtonProps } from './ActionButton';
+import type {
+  ActionButtonAction,
+  ActionButtonGroupItem,
+  ActionButtonGroupPreset,
+  ActionButtonGroupProps,
+  ActionButtonProps,
+} from '@/types/action-button';
+import ActionButton from './ActionButton';
 import './action-button-group.scss';
-
-export type ActionButtonGroupPreset =
-  | 'gridEdit'
-  | 'search'
-  | 'formEdit'
-  | 'modal'
-  | 'excelRegister';
-
-export type ActionButtonGroupJustify =
-  | 'start'
-  | 'center'
-  | 'end'
-  | 'between';
-
-export interface ActionButtonGroupItem extends ActionButtonProps {
-  key: string;
-  label?: ReactNode;
-  hidden?: boolean;
-  order?: number;
-}
-
-export interface ActionButtonGroupProps {
-  children?: ReactNode;
-  className?: string;
-  items?: ActionButtonGroupItem[];
-  preset?: ActionButtonGroupPreset;
-  justify?: ActionButtonGroupJustify;
-  size?: SpaceProps['size'];
-  align?: SpaceProps['align'];
-  wrap?: boolean;
-  /** Synced with useMenuPermission().canWrite — when false, disables write actions (addRow/deleteRow/saveChanges/register/excelUpload/upload) */
-  canWrite?: boolean;
-}
 
 /** Write actions disabled when canWrite=false */
 const WRITE_ACTIONS: ActionButtonAction[] = [

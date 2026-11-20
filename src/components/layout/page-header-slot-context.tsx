@@ -1,14 +1,5 @@
-import { createContext, useContext, useLayoutEffect, type Dispatch, type ReactNode, type SetStateAction } from 'react';
-
-export interface PageHeaderSlot {
-  actions?: ReactNode;
-  inlineFilters?: ReactNode;
-  titleExtra?: ReactNode;
-  supportSlotEnabled?: boolean;
-  className?: string;
-}
-
-export type PageHeaderSlotSetter = Dispatch<SetStateAction<PageHeaderSlot | null>>;
+import { createContext, useContext, useLayoutEffect } from 'react';
+import type { PageHeaderSlot, PageHeaderSlotSetter } from '@/types/layout';
 
 export const PageHeaderSlotContext = createContext<PageHeaderSlotSetter | null>(null);
 

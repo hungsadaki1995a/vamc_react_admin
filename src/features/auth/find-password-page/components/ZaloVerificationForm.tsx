@@ -6,22 +6,14 @@ import { DownOutlined } from '@ant-design/icons';
 import { useLocaleStore } from '@/stores/locale-store';
 import { ApiError } from '@/lib/api/error';
 import { useRequestPasswordResetMutation } from '../hooks/use-find-password';
+import type { FindPasswordZaloVerificationFormProps } from '@/types/auth';
 import styles from '../../find-id-page/index.module.scss';
 
-interface ZaloFormValues {
+type ZaloFormValues = {
   countryCode: string;
   phoneNumber: string;
   code: string;
-}
-
-export interface ZaloVerificationResult {
-  token: string;
-  maskedLoginId: string;
-}
-
-export interface ZaloVerificationFormProps {
-  onConfirmSuccess: (result: ZaloVerificationResult) => void;
-}
+};
 
 const CODE_TTL_SECONDS = 180;
 
@@ -37,7 +29,7 @@ function formatCountdown(totalSeconds: number): string {
 }
 
 /** Zalo phone verification form for resetting a user's password. */
-export default function ZaloVerificationForm({ onConfirmSuccess }: ZaloVerificationFormProps) {
+export default function ZaloVerificationForm({ onConfirmSuccess }: FindPasswordZaloVerificationFormProps) {
   const { t } = useTranslation();
   const { message } = App.useApp();
   const locale = useLocaleStore((s) => s.locale);

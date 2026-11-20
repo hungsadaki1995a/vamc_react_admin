@@ -2,7 +2,7 @@ export type InquiryStatus = 'Unanswered' | 'Completed' | string;
 
 export type InquiryType = 'Consulting' | 'General' | string;
 
-export interface InquiryItem {
+export type InquiryItem = {
   no: number;
   id: string;
   pstNo?: string;
@@ -24,9 +24,9 @@ export interface InquiryItem {
   ansEmpNm?: string | null;
   responder: string | null; // Responder Name or null
   responseContent?: string;
-}
+};
 
-export interface InquiryFilterState {
+export type InquiryFilterState = {
   responseStatus: {
     all: boolean;
     completed: boolean;
@@ -38,4 +38,4 @@ export interface InquiryFilterState {
     general: boolean;
   };
   dateRange: [string, string] | null; // ['YYYY-MM-DD', 'YYYY-MM-DD']
-}
+};

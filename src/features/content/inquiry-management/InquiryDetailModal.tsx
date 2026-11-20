@@ -9,12 +9,12 @@ import type { InquiryItem } from './inquiry.types';
 import { useInquiryDetail } from './use-inquiry-detail';
 import styles from './inquiry-detail-modal.module.scss';
 
-interface InquiryDetailModalProps {
+type InquiryDetailModalProps = {
   visible: boolean;
   inquiry: InquiryItem | null;
   onClose: () => void;
   onRefresh?: () => void;
-}
+};
 
 function formatDateTime(val?: string | null): string {
   if (!val || val === '-') return '-';

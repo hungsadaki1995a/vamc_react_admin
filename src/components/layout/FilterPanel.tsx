@@ -4,7 +4,7 @@ import { SearchOutlined, UndoOutlined, UpOutlined, DownOutlined } from '@ant-des
 import { useComponentLabel } from '@/hooks/use-component-label';
 import './filter-panel.scss';
 
-interface FilterPanelProps {
+type FilterPanelProps = {
   /** Collapsed state (controlled) */
   collapsed?: boolean;
   /** Collapse toggle callback */
@@ -17,7 +17,7 @@ interface FilterPanelProps {
   onReset?: () => void;
   /** Filter fields */
   children: React.ReactNode;
-}
+};
 
 export default function FilterPanel({
   collapsed: controlledCollapsed,

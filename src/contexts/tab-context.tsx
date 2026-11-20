@@ -1,9 +1,9 @@
 import { createContext, useContext } from 'react';
 import type { Tab } from '@/types/tab';
 
-interface TabContextValue {
+type TabContextValue = {
   tab: Tab;
-}
+};
 
 export const TabContext = createContext<TabContextValue | null>(null);
 

@@ -14,13 +14,13 @@ import { useFaqCategories } from './use-faq-categories';
 import { ApiError } from '@/lib/api/error';
 import styles from './faq-detail-modal.module.scss';
 
-interface FaqDetailModalProps {
+type FaqDetailModalProps = {
   visible: boolean;
   mode: 'create' | 'detail';
   faq: FaqItem | null;
   onClose: () => void;
   onRefresh?: () => void;
-}
+};
 
 function formatDateTime(val?: string | null): string {
   if (!val || val === '-') return '-';

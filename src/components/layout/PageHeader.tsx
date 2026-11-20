@@ -8,7 +8,7 @@ import { useAllMenus } from '@/hooks/use-all-menus';
 import { findMenuByKey } from '@/utils/menu-utils';
 import './page-header.scss';
 
-interface PageHeaderProps {
+type PageHeaderProps = {
   /** Screen code displayed in brackets. Auto-derived from tab.sceId if omitted. */
   code?: string;
   /** Page title. Auto-derived via t(tab.labelKey) → tab.title fallback if omitted. */
@@ -21,7 +21,7 @@ interface PageHeaderProps {
   inlineFilters?: React.ReactNode;
   /** Extra element to the right of the title */
   titleExtra?: React.ReactNode;
-}
+};
 
 export default function PageHeader({
   code,

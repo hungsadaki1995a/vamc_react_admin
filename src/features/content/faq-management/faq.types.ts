@@ -1,6 +1,6 @@
 export type FaqPublishStatus = 'Y' | 'N' | string;
 
-export interface FaqItem {
+export type FaqItem = {
   no: number;
   id: string;
   pstNo?: string;
@@ -20,13 +20,13 @@ export interface FaqItem {
   mdfcnDt?: string | null;
   mdfcnBy?: string | null;
   mdfcnByNm?: string | null;
-}
+};
 
-export interface FaqFilterState {
+export type FaqFilterState = {
   published: string;   // '' for All, 'Y' for Posted, 'N' for Not Posted
   category: string;    // Default 'FAQS'
   fromDate: string;    // Default '01/10/2026'
   toDate: string;      // Default current day 'DD/MM/YYYY'
   keyword: string;
-}
+};
 

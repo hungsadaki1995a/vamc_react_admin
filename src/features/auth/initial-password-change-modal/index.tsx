@@ -4,16 +4,16 @@ import { changePwd } from '@/api/system/user-password-api';
 
 const { Text } = Typography;
 
-interface Props {
+type Props = {
   open: boolean;
   usrId: string;
   onSuccess: () => void;
-}
+};
 
-interface FormValues {
+type FormValues = {
   chgPasswd: string;
   chgPasswdChk: string;
-}
+};
 
 export default function InitChangePwModal({ open, usrId, onSuccess }: Props) {
   const [form] = Form.useForm<FormValues>();

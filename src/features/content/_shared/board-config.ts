@@ -3,10 +3,10 @@ import type { BoardPath, FileBoard } from '@/api/contents/post-api';
 // One entry per Content Management menu that is backed by a BBS board.
 // The list screen (post-board.tsx) and the popup (post-modal.tsx) are driven by it.
 
-export interface CategoryOption {
+export type CategoryOption = {
   value: string;
   label: string;
-}
+};
 
 /** How a menu relates to the board's category (PST_KND_CD). */
 export type CategoryMode =
@@ -19,7 +19,7 @@ export type CategoryMode =
   /** The board has a single implicit category (careers). */
   | { kind: 'none' };
 
-export interface BoardConfig {
+export type BoardConfig = {
   /** Unique key — also the react-query key. */
   id: string;
   board: BoardPath;
@@ -54,7 +54,7 @@ export interface BoardConfig {
   contentRequired?: boolean;
   /** GET /excel is available. */
   excel?: boolean;
-}
+};
 
 const NEWS = { board: 'news', fileBoard: 'NEWS', parents: ['VAMC News Management'] } as const;
 const NPL = {

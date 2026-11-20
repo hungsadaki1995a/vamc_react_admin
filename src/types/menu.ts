@@ -1,4 +1,4 @@
-export interface MenuItem {
+export type MenuItem = {
   key: string;           // mnuId
   label: string;         // labelNm || mnuNm (display name)
   icon?: string;
@@ -9,9 +9,9 @@ export interface MenuItem {
   hidden?: boolean;
   permissions?: string[];
   permType?: string;     // RD(Read) | WT(Write) | AL(All) | '' | undefined
-}
+};
 
-export interface MenuTreeItem {
+export type MenuTreeItem = {
   menuCd?: string;
   upMenuCd?: string;
   lblCd?: string;
@@ -23,4 +23,4 @@ export interface MenuTreeItem {
   menuUrlAddr?: string;
   menuAuthrt?: string;
   children?: MenuTreeItem[];
-}
+};

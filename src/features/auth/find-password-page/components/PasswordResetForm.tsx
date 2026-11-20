@@ -8,18 +8,13 @@ import { PUBLIC_ROUTES } from '@/app/route-constants';
 import { useLocaleStore } from '@/stores/locale-store';
 import { ApiError } from '@/lib/api/error';
 import { useResetPasswordMutation } from '../hooks/use-find-password';
+import type { PasswordResetFormProps } from '@/types/auth';
 import styles from '../../find-id-page/index.module.scss';
 
-interface PasswordResetFormValues {
+type PasswordResetFormValues = {
   newPassword: string;
   confirmPassword: string;
-}
-
-export interface PasswordResetFormProps {
-  token: string;
-  maskedLoginId?: string;
-  onTokenExpired: () => void;
-}
+};
 
 const PASSWORD_REGEX = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,72}$/;
 

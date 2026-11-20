@@ -7,9 +7,9 @@ import { ApiError } from '@/lib/api/error';
 import { useRequestPasswordResetMutation } from '../hooks/use-find-password';
 import styles from '../../find-id-page/index.module.scss';
 
-interface EmailFormValues {
+type EmailFormValues = {
   email: string;
-}
+};
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const EMAIL_STORAGE_KEY = 'findPassword_email';

@@ -15,22 +15,22 @@ import styles from '@/features/system/_shared/system-page.module.css';
 
 // Slogan Management - Detail / Register / Edit popup (menu A04110300).
 
-interface SloganModalProps {
+type SloganModalProps = {
   /** null = register a new slogan. */
   sloganId: string | null;
   canWrite: boolean;
   onClose: () => void;
   onSaved: () => void;
-}
+};
 
-interface FormState {
+type FormState = {
   useYn: 'Y' | 'N';
   positionId: string;
   title: string;
   titleEn: string;
   subSlogan: string;
   subSloganEn: string;
-}
+};
 
 const NEW_FORM: FormState = {
   useYn: 'N',

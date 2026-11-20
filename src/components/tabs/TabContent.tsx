@@ -4,7 +4,8 @@ import { useTabStore } from '@/stores/tab-store';
 import { componentRegistry } from '@/config/component-registry';
 import { TabContext } from '@/contexts/tab-context';
 import PageHeader from '@/components/layout/PageHeader';
-import { PageHeaderSlotContext, type PageHeaderSlot } from '@/components/layout/page-header-slot-context';
+import { PageHeaderSlotContext } from '@/components/layout/page-header-slot-context';
+import type { PageHeaderSlot } from '@/types/layout';
 import type { ComponentType } from 'react';
 import type { Tab } from '@/types/tab';
 

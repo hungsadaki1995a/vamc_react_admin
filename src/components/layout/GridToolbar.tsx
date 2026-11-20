@@ -1,7 +1,7 @@
 import { useTotalCountLabel } from '@/hooks/use-total-count-label';
 import './grid-toolbar.scss';
 
-interface GridToolbarProps {
+type GridToolbarProps = {
   /**
    * Grid section title. Use only when needed to identify a grid, such as in a split view.
    * Place it here instead of adding a separate title row — a separate div misaligns left/right toolbar heights.
@@ -18,7 +18,7 @@ interface GridToolbarProps {
   left?: React.ReactNode;
   /** Right action buttons */
   actions?: React.ReactNode;
-}
+};
 
 export default function GridToolbar({ title, totalCount, countLabel, left, actions }: GridToolbarProps) {
   const { template } = useTotalCountLabel();
