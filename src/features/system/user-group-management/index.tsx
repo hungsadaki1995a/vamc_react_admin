@@ -1,361 +1,246 @@
-import { useMemo, useState } from 'react';
-import { Table } from 'antd';
+import { useState } from 'react';
 import type { TableColumnsType } from 'antd';
 import { useNotify } from '@/hooks/use-notify';
-import { useScreenLabel } from '@/hooks/use-screen-label';
 import { useMenuPermission } from '@/hooks/use-menu-permission';
-import type { Role } from '@/api/system/role-group-api';
-import type { EmployeeLookup } from '@/api/system/employee-api';
-import { SysPageHeader } from '../_shared/system-ui';
+import type { Role, RoleGroup, RoleUser } from '@/api/system/role-group-api';
+import { SysButton, SysEmpty, SysPage, SysSectionHeader, SysTable, SysTitleBar, UseBadge } from '../_shared/sys-list-ui';
+import { SYS_DIALOG_LABELS, SYS_MESSAGES } from '../_shared/sys-messages';
+import { useSysDialogs } from '../_shared/use-sys-dialogs';
 import { errorMessage } from '../_shared/system-utils';
-import styles from '../_shared/system-page.module.scss';
-import CodeNameCard from './code-name-card';
-import type { CodeNameItem } from './code-name-card';
-import SelectEmployeeModal from './select-employee-modal';
-import {
-  useDeleteRole,
-  useDeleteRoleGroup,
-  useRoleAssignees,
-  useRoleGroups,
-  useRoles,
-  useSaveRole,
-  useSaveRoleAssignees,
-  useSaveRoleGroup,
-} from './use-role-groups';
+import RoleGroupModal from './role-group-modal';
+import type { RoleGroupModalTarget } from './role-group-modal';
+import StaffSearchModal from './staff-search-modal';
+import { useRoleAssignees, useRoleGroups, useRoles, useSaveRoleAssignees } from './use-role-groups';
+import styles from './user-group-management.module.scss';
 
-// User Group Management (VPA004601) — User Group → Group Role → Role Assignee.
-// Menu A06020300. Nothing in the role / assignee columns works until its parent is selected.
-
-interface AssigneeRow {
-  empNo: string;
-  name: string;
-  /** Picked in the popup, not saved yet. */
-  pending: boolean;
-}
-
-const GROUP_ID_PATTERN = /^RG\d{5}$/;
+// User Group Management - List (VPA09020301): User Group → Group Roles → Role Staff.
 
 export default function UserGroupManagement() {
-  const { toast, dialog } = useNotify();
-  const { tvt, tvb, tvh, tsg, tsm } = useScreenLabel();
+  const { toast } = useNotify();
+  const { confirm } = useSysDialogs();
   const { canWrite } = useMenuPermission();
 
   const [groupId, setGroupId] = useState<string | null>(null);
   const [roleId, setRoleId] = useState<string | null>(null);
+  const [staffKeys, setStaffKeys] = useState<string[]>([]);
+  const [modal, setModal] = useState<RoleGroupModalTarget | null>(null);
+  const [staffSearchOpen, setStaffSearchOpen] = useState(false);
 
-  // ── Data ──────────────────────────────────────────────────────────────────
-  const { data: groups = [], isFetching: groupsLoading } = useRoleGroups();
-  const { data: roles = [], isFetching: rolesLoading } = useRoles(groupId);
-  const { data: assignees = [], isFetching: assigneesLoading } = useRoleAssignees(groupId, roleId);
-  const saveRoleGroup = useSaveRoleGroup();
-  const deleteRoleGroup = useDeleteRoleGroup();
-  const saveRoleItem = useSaveRole();
-  const deleteRole = useDeleteRole();
-  const saveRoleAssignees = useSaveRoleAssignees();
+  const groups = useRoleGroups();
+  const roles = useRoles(groupId);
+  const staff = useRoleAssignees(groupId, roleId);
+  const saveAssignees = useSaveRoleAssignees();
+  const selectedGroup = groups.data?.find((group) => group.roleGroupId === groupId);
 
-  // Newest first, as in the wireframe (No counts down).
-  const groupItems = useMemo<CodeNameItem[]>(
-    () => [...groups].reverse().map((g) => ({ id: g.roleGroupId, name: g.roleGroupNm, useYn: g.useYn })),
-    [groups],
-  );
-  const roleItems = useMemo<CodeNameItem[]>(
-    () =>
-      groupId === null
-        ? []
-        : [...roles].reverse().map((r) => ({ id: r.roleId, name: r.roleNm, useYn: r.useYn })),
-    [roles, groupId],
-  );
-
-  // ── Assignee edits (saved as one batch) ───────────────────────────────────
-  const [added, setAdded] = useState<EmployeeLookup[]>([]);
-  const [removed, setRemoved] = useState<string[]>([]);
-  const [checked, setChecked] = useState<string[]>([]);
-  const [lookupOpen, setLookupOpen] = useState(false);
-
-  const resetAssigneeEdits = () => {
-    setAdded([]);
-    setRemoved([]);
-    setChecked([]);
-  };
-
-  const selectGroup = (item: CodeNameItem | null) => {
-    setGroupId(item?.id ?? null);
+  const selectGroup = (id: string) => {
+    if (id === groupId) return;
+    setGroupId(id);
     setRoleId(null);
-    resetAssigneeEdits();
+    setStaffKeys([]);
   };
 
-  const selectRole = (item: CodeNameItem | null) => {
-    setRoleId(item?.id ?? null);
-    resetAssigneeEdits();
+  const selectRole = (id: string) => {
+    if (id === roleId) return;
+    setRoleId(id);
+    setStaffKeys([]);
   };
 
-  const assigneeRows = useMemo<AssigneeRow[]>(
-    () =>
-      roleId === null
-        ? []
-        : [
-            ...added.map((e) => ({ empNo: e.empNo, name: e.empNm, pending: true })),
-            ...assignees
-              .filter((a) => !removed.includes(a.userNo))
-              .map((a) => ({ empNo: a.userNo, name: a.userNm, pending: false })),
-          ],
-    [added, assignees, removed, roleId],
+  const handleAddStaff = async (empNos: string[]) => {
+    if (!groupId || !roleId) return;
+    try {
+      await saveAssignees.mutateAsync({ roleGroupId: groupId, roleId, addEmpNos: empNos, removeEmpNos: [] });
+      toast.success(SYS_MESSAGES.saved);
+      setStaffSearchOpen(false);
+    } catch (e) {
+      toast.error(errorMessage(e));
+    }
+  };
+
+  const handleDeleteStaff = () => {
+    if (!groupId || !roleId || staffKeys.length === 0) return;
+    confirm({
+      content: SYS_MESSAGES.confirmDeleteCount(staffKeys.length),
+      okText: SYS_DIALOG_LABELS.delete,
+      danger: true,
+      onOk: async () => {
+        try {
+          await saveAssignees.mutateAsync({ roleGroupId: groupId, roleId, addEmpNos: [], removeEmpNos: staffKeys });
+          toast.success(SYS_MESSAGES.deleted);
+          setStaffKeys([]);
+        } catch (e) {
+          toast.error(errorMessage(e));
+        }
+      },
+    });
+  };
+
+  /** ID cell: selects the row and opens the edit popup. */
+  const idLink = (id: string, onOpen: () => void) => (
+    <button
+      type="button"
+      className={styles.idLink}
+      onClick={(event) => {
+        event.stopPropagation();
+        onOpen();
+      }}
+    >
+      {id}
+    </button>
   );
-  const assigneeDirty = added.length > 0 || removed.length > 0;
 
-  // ── Group handlers ────────────────────────────────────────────────────────
-  const runWrite = async (action: () => Promise<{ message: string }>, fallback: string) => {
-    try {
-      const response = await action();
-      toast.success(response.message || fallback);
-      return true;
-    } catch (error) {
-      toast.error(errorMessage(error));
-      return false;
-    }
-  };
-
-  const saveGroup = async (item: CodeNameItem, isEdit: boolean) => {
-    if (!GROUP_ID_PATTERN.test(item.id)) {
-      toast.warning(tsm('invalidGroupId', 'Group ID must be "RG" followed by 5 digits (e.g. RG01001).'));
-      return false;
-    }
-    if (!item.name) {
-      toast.warning(tsm('groupNameRequired', 'Enter the group name.'));
-      return false;
-    }
-    const request = { roleGroupId: item.id, roleGroupNm: item.name, useYn: item.useYn };
-    const ok = await runWrite(
-      () => saveRoleGroup.mutateAsync({ isEdit, request }),
-      tsm('saved', 'Saved.'),
-    );
-    // A newly registered group becomes the selection so its roles can be added.
-    if (ok && !isEdit) selectGroup(item);
-    return ok;
-  };
-
-  const removeGroup = (item: CodeNameItem) => {
-    dialog.warning({
-      okCancel: true,
-      content: tsm('confirmDeleteGroup', 'Delete this user group? A group that still has roles cannot be deleted.'),
-      onOk: async () => {
-        if (await runWrite(() => deleteRoleGroup.mutateAsync(item.id), tsm('deleted', 'Deleted.'))) {
-          selectGroup(null);
-        }
-      },
-    });
-  };
-
-  // ── Role handlers ─────────────────────────────────────────────────────────
-  const saveRole = async (item: CodeNameItem, isEdit: boolean) => {
-    if (groupId === null) return false;
-    if (!item.id || !item.name) {
-      toast.warning(tsm('roleRequired', 'Enter the role ID and role name.'));
-      return false;
-    }
-    const request: Role = { roleId: item.id, roleNm: item.name, roleGroupId: groupId, useYn: item.useYn };
-    const ok = await runWrite(
-      () => saveRoleItem.mutateAsync({ isEdit, request }),
-      tsm('saved', 'Saved.'),
-    );
-    if (ok && !isEdit) selectRole(item);
-    return ok;
-  };
-
-  const removeRole = (item: CodeNameItem) => {
-    dialog.warning({
-      okCancel: true,
-      content: tsm(
-        'confirmDeleteRole',
-        'Delete this role? A role that still has assignees or menu permissions cannot be deleted.',
-      ),
-      onOk: async () => {
-        if (await runWrite(() => deleteRole.mutateAsync(item.id), tsm('deleted', 'Deleted.'))) {
-          selectRole(null);
-        }
-      },
-    });
-  };
-
-  // ── Assignee handlers ─────────────────────────────────────────────────────
-  const handleAddEmployees = (employees: EmployeeLookup[]) => {
-    setAdded((prev) => [...prev, ...employees.filter((e) => !prev.some((p) => p.empNo === e.empNo))]);
-    setLookupOpen(false);
-  };
-
-  const handleRemoveChecked = () => {
-    if (checked.length === 0) {
-      toast.warning(tsm('selectAssignee', 'Select the assignee(s) to remove.'));
-      return;
-    }
-    // Unsaved picks are simply dropped; saved assignees are queued for removal.
-    const saved = checked.filter((empNo) => !added.some((e) => e.empNo === empNo));
-    setAdded((prev) => prev.filter((e) => !checked.includes(e.empNo)));
-    setRemoved((prev) => [...prev, ...saved]);
-    setChecked([]);
-  };
-
-  const handleSaveAssignees = async () => {
-    if (groupId === null || roleId === null) return;
-    try {
-      const response = await saveRoleAssignees.mutateAsync({
-        roleGroupId: groupId,
-        roleId,
-        addEmpNos: added.map((e) => e.empNo),
-        removeEmpNos: removed,
-      });
-      toast.success(response.message || tsm('saved', 'Saved.'));
-      resetAssigneeEdits();
-    } catch (error) {
-      toast.error(errorMessage(error));
-    }
-  };
-
-  const assigneeColumns: TableColumnsType<AssigneeRow> = [
-    { title: tsg('empNo', 'Employee Number'), dataIndex: 'empNo', width: 140, align: 'center' },
+  const groupColumns: TableColumnsType<RoleGroup> = [
     {
-      title: tsg('empNm', 'Name'),
-      dataIndex: 'name',
+      title: 'Group ID',
+      dataIndex: 'roleGroupId',
+      width: 120,
       align: 'center',
-      render: (value: string, row) => (
-        <>
-          {value}
-          {row.pending && <span className={styles.textMuted}> ({tvt('pending', 'new')})</span>}
-        </>
-      ),
+      render: (id: string, row) =>
+        idLink(id, () => {
+          selectGroup(id);
+          setModal({ kind: 'group', record: row });
+        }),
     },
+    { title: 'Group Name', dataIndex: 'roleGroupNm', ellipsis: true },
+    { title: 'Use', dataIndex: 'useYn', width: 100, align: 'center', render: (v: string) => <UseBadge value={v} /> },
   ];
 
-  const common = {
-    use: tvt('use', 'Use'),
-    reset: tvb('reset', 'Reset'),
-    delete: tvb('delete', 'Delete'),
-    save: tvb('save', 'Save'),
-  };
-  const title = tvh('page', 'User Group Management');
-  const assigneeLocked = !canWrite || roleId === null;
+  const roleColumns: TableColumnsType<Role> = [
+    {
+      title: 'Role ID',
+      dataIndex: 'roleId',
+      width: 120,
+      align: 'center',
+      render: (id: string, row) =>
+        idLink(id, () => {
+          selectRole(id);
+          setModal({ kind: 'role', roleGroupId: row.roleGroupId, record: row });
+        }),
+    },
+    { title: 'Role Name', dataIndex: 'roleNm', ellipsis: true },
+    { title: 'Use', dataIndex: 'useYn', width: 100, align: 'center', render: (v: string) => <UseBadge value={v} /> },
+  ];
+
+  const staffColumns: TableColumnsType<RoleUser> = [
+    { title: 'Employee No.', dataIndex: 'userNo', width: 140, align: 'center' },
+    { title: 'Name', dataIndex: 'userNm', ellipsis: true },
+  ];
 
   return (
-    <div className={styles.container}>
-      <SysPageHeader
-        breadcrumb={[
-          tvt('bcSystem', 'System Operations Management'),
-          tvt('bcAdmin', 'Admin Management'),
-          title,
-        ]}
-        title={title}
+    <SysPage fill>
+      <SysTitleBar
+        title="User Group Management"
+        breadcrumb={['System Operation Management', 'Admin Management', 'User Group Management']}
       />
+      <div className={styles.panels}>
+        <section className={styles.panel}>
+          <SysSectionHeader
+            title="User Group"
+            total={groups.data?.length ?? 0}
+            primaryActions={
+              canWrite && (
+                <SysButton look="navy" onClick={() => setModal({ kind: 'group' })}>
+                  New
+                </SysButton>
+              )
+            }
+          />
+          <SysTable<RoleGroup>
+            fill
+            rowKey="roleGroupId"
+            columns={groupColumns}
+            dataSource={groups.data ?? []}
+            loading={groups.isFetching}
+            selectedRowKey={groupId}
+            onRowClick={(row) => selectGroup(row.roleGroupId)}
+          />
+        </section>
 
-      <div className={styles.columns}>
-        <CodeNameCard
-          labels={{
-            ...common,
-            title: tvh('userGroup', 'User Group'),
-            formTitle: tvh('groupForm', 'Group New/Edit'),
-            id: tvt('groupId', 'Group ID'),
-            name: tvt('groupName', 'Group Name'),
-            idPlaceholder: tvt('phGroupId', 'Enter Group ID (RG + 5 digits)'),
-            namePlaceholder: tvt('phGroupName', 'Enter Group Name'),
-          }}
-          items={groupItems}
-          loading={groupsLoading}
-          canWrite={canWrite}
-          saving={saveRoleGroup.isPending}
-          idMaxLength={7}
-          selectedId={groupId}
-          onSelect={selectGroup}
-          onSave={saveGroup}
-          onDelete={removeGroup}
-        />
+        <section className={styles.panel}>
+          <SysSectionHeader
+            title={selectedGroup ? `[${selectedGroup.roleGroupNm}] Roles` : 'Roles'}
+            total={groupId ? (roles.data?.length ?? 0) : undefined}
+            primaryActions={
+              canWrite && (
+                <SysButton
+                  look="navy"
+                  disabled={!groupId}
+                  onClick={() => groupId && setModal({ kind: 'role', roleGroupId: groupId })}
+                >
+                  New
+                </SysButton>
+              )
+            }
+          />
+          {groupId ? (
+            <SysTable<Role>
+              fill
+              rowKey="roleId"
+              columns={roleColumns}
+              dataSource={roles.data ?? []}
+              loading={roles.isFetching}
+              selectedRowKey={roleId}
+              onRowClick={(row) => selectRole(row.roleId)}
+            />
+          ) : (
+            <SysEmpty>Select a user group.</SysEmpty>
+          )}
+        </section>
 
-        <CodeNameCard
-          labels={{
-            ...common,
-            title: tvh('groupRole', 'Group Role'),
-            formTitle: tvh('roleForm', 'New/Modify Role'),
-            id: tvt('roleId', 'Role ID'),
-            name: tvt('roleName', 'Role Name'),
-            idPlaceholder: tvt('phRoleId', 'Enter Role ID'),
-            namePlaceholder: tvt('phRoleName', 'Enter Role Name'),
-            emptyHint: tvt('selectGroup', 'Please select a group.'),
-          }}
-          items={roleItems}
-          loading={rolesLoading}
-          disabled={groupId === null}
-          canWrite={canWrite}
-          saving={saveRoleItem.isPending}
-          idMaxLength={7}
-          selectedId={roleId}
-          onSelect={selectRole}
-          onSave={saveRole}
-          onDelete={removeRole}
-        />
-
-        <section className={styles.card}>
-          <h2 className={styles.cardTitle}>{tvh('roleAssignee', 'Role Assignee')}</h2>
-          <span className={styles.totalCount}>Total ({assigneeRows.length})</span>
-          <div className={styles.cardBody}>
-            <div className={styles.tableWrapper}>
-              <Table<AssigneeRow>
-                rowKey="empNo"
-                columns={assigneeColumns}
-                dataSource={assigneeRows}
-                loading={assigneesLoading}
-                pagination={false}
-                size="small"
-                scroll={{ y: 420 }}
-                locale={{ emptyText: ' ' }}
-                rowSelection={{
-                  selectedRowKeys: checked,
-                  onChange: (keys) => setChecked(keys.map(String)),
-                  getCheckboxProps: () => ({ disabled: assigneeLocked }),
-                }}
-              />
-            </div>
-            {roleId === null && (
-              <div className={styles.cardEmpty}>{tvt('selectRole', 'Please select a role.')}</div>
-            )}
-          </div>
-          <div className={styles.cardFooter}>
-            <button
-              type="button"
-              className={`${styles.btn} ${styles.btnSmall}`}
-              disabled={assigneeLocked}
-              onClick={() => setLookupOpen(true)}
-            >
-              {tvb('addAssignee', 'Add Assignee')}
-            </button>
-            <div className={styles.actions}>
-              <button
-                type="button"
-                className={`${styles.btn} ${styles.btnSmall}`}
-                disabled={assigneeLocked}
-                onClick={handleRemoveChecked}
-              >
-                {common.delete}
-              </button>
-              <button
-                type="button"
-                className={`${styles.btnDark} ${styles.btnSmall}`}
-                disabled={assigneeLocked || !assigneeDirty || saveRoleAssignees.isPending}
-                onClick={handleSaveAssignees}
-              >
-                {common.save}
-              </button>
-            </div>
-          </div>
+        <section className={styles.panel}>
+          <SysSectionHeader
+            title="Role Staff"
+            total={roleId ? (staff.data?.length ?? 0) : undefined}
+            actions={
+              canWrite && (
+                <SysButton disabled={!roleId || staffKeys.length === 0} onClick={handleDeleteStaff}>
+                  Delete
+                </SysButton>
+              )
+            }
+            primaryActions={
+              canWrite && (
+                <SysButton look="navy" disabled={!roleId} onClick={() => setStaffSearchOpen(true)}>
+                  Add Staff
+                </SysButton>
+              )
+            }
+          />
+          {roleId ? (
+            <SysTable<RoleUser>
+              fill
+              rowKey="userNo"
+              columns={staffColumns}
+              dataSource={staff.data ?? []}
+              loading={staff.isFetching || saveAssignees.isPending}
+              rowSelection={
+                canWrite
+                  ? { selectedRowKeys: staffKeys, onChange: (keys) => setStaffKeys(keys.map(String)) }
+                  : undefined
+              }
+            />
+          ) : (
+            <SysEmpty>Select a role.</SysEmpty>
+          )}
         </section>
       </div>
 
-      {lookupOpen && groupId !== null && roleId !== null && (
-        <SelectEmployeeModal
-          roleGroupId={groupId}
-          roleId={roleId}
-          pendingEmpNos={added.map((e) => e.empNo)}
-          onClose={() => setLookupOpen(false)}
-          onConfirm={handleAddEmployees}
+      {modal && (
+        <RoleGroupModal
+          key={`${modal.kind}-${modal.record ? 'edit' : 'new'}`}
+          target={modal}
+          canWrite={canWrite}
+          onClose={() => setModal(null)}
         />
       )}
-    </div>
+      {staffSearchOpen && groupId && roleId && (
+        <StaffSearchModal
+          roleGroupId={groupId}
+          roleId={roleId}
+          saving={saveAssignees.isPending}
+          onClose={() => setStaffSearchOpen(false)}
+          onSelect={(empNos) => void handleAddStaff(empNos)}
+        />
+      )}
+    </SysPage>
   );
 }

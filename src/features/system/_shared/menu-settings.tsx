@@ -1,474 +1,242 @@
 import { useMemo, useState } from 'react';
-import type { CSSProperties } from 'react';
-import { Input, InputNumber, Radio, Table, Tooltip } from 'antd';
-import type { TableColumnsType } from 'antd';
+import { Alert } from 'antd';
 import { useNotify } from '@/hooks/use-notify';
-import { useScreenLabel } from '@/hooks/use-screen-label';
 import { useMenuPermission } from '@/hooks/use-menu-permission';
 import { useMenuStore } from '@/stores/menu-store';
-import type {
-  MenuSeCd,
-  MenuSetting,
-  MenuSettingSearch,
-  SaveMenuSettingRequest,
-  YesNo,
-} from '@/api/system/menu-setting-api';
-import { FormField, SysPageHeader, UseFlag } from './system-ui';
-import { errorMessage } from './system-utils';
-import styles from './system-page.module.scss';
-import { useDeleteMenuSetting, useMenuSettings, useSaveMenuSetting } from './use-menu-settings';
+import type { MenuSeCd, MenuSetting, SaveMenuSettingRequest } from '@/api/system/menu-setting-api';
+import { SysPage, SysSplit, SysTitleBar } from './sys-list-ui';
+import { SYS_MESSAGES } from './sys-messages';
+import { useSysDialogs } from './use-sys-dialogs';
+import { useFieldErrors } from './use-field-errors';
+import { apiErrorCode, errorMessage } from './system-utils';
+import { buildMenuTree, menuName, parentCodes, visibleNodes } from './menu-tree';
+import type { MenuMove, MenuNode } from './menu-tree';
+import {
+  REQUIRED_MENU_FIELDS,
+  defaultLabelKey,
+  emptyMenuForm,
+  menuCodePattern,
+  sameMenuForm,
+  suggestMenuCode,
+  toMenuForm,
+} from './menu-settings-form';
+import type { MenuForm, MenuFormKey } from './menu-settings-form';
+import MenuSettingsTree from './menu-settings-tree';
+import MenuSettingsDetail from './menu-settings-detail';
+import { useMenuSettings, useMoveMenuSetting, useSaveMenuSetting } from './use-menu-settings';
 
-// Menu Settings — list + inline New/Edit form.
-//   menuSeCd = W → Platform Menu Management (VPA003901 / VPA0039P01)
-//   menuSeCd = A → Admin Menu Management    (VPA004401 / VPA0044P01)
+// Menu Settings (VPA09010101, menuSeCd=W) and Admin Menu Settings (VPA09020101, menuSeCd=A):
+// tree on the left (drag & drop saved on drop), details of the selected menu on the right. No delete.
 
-interface MenuSettingsProps {
+interface Props {
   menuSeCd: MenuSeCd;
 }
 
-interface FormState {
-  useYn: YesNo;
-  menuCd: string;
-  menuNmVn: string;
-  menuNmEn: string;
+/** Selected menu: `menuCd` null = unsaved draft under `upMenuCd`. */
+interface Selection {
+  menuCd: string | null;
   upMenuCd: string;
-  menuSeq: number | null;
-  menuUrlAddr: string;
-  lblCd: string;
-  menuExpln: string;
 }
 
-const EMPTY_FORM: FormState = {
-  useYn: 'N',
-  menuCd: '',
-  menuNmVn: '',
-  menuNmEn: '',
-  upMenuCd: '',
-  menuSeq: null,
-  menuUrlAddr: '',
-  lblCd: '',
-  menuExpln: '',
-};
+const WEB_MAX_DEPTH = 3;
+const ADMIN_MAX_DEPTH = 9;
 
-const EMPTY_FILTER = { menuCd: '', menuNmVn: '', menuNmEn: '' };
+const SCREEN = {
+  W: {
+    title: 'Menu Settings',
+    breadcrumb: ['System Operation Management', 'NPL Platform Management', 'Menu Settings'],
+  },
+  A: {
+    title: 'Admin Menu Settings',
+    breadcrumb: ['System Operation Management', 'Admin Management', 'Admin Menu Settings'],
+  },
+} as const;
 
-function toForm(row: MenuSetting): FormState {
-  return {
-    useYn: row.useYn,
-    menuCd: row.menuCd,
-    menuNmVn: row.menuNmVn ?? '',
-    menuNmEn: row.menuNmEn ?? '',
-    upMenuCd: row.upMenuCd,
-    menuSeq: row.menuSeq,
-    menuUrlAddr: row.menuUrlAddr ?? '',
-    lblCd: row.lblCd ?? '',
-    menuExpln: row.menuExpln ?? '',
-  };
-}
+const EMPTY_FORM = emptyMenuForm('');
 
-export default function MenuSettings({ menuSeCd }: MenuSettingsProps) {
-  const isWeb = menuSeCd === 'W';
-  const { toast, dialog } = useNotify();
-  const { tvt, tvb, tvh, tsg, tsm } = useScreenLabel();
+export default function MenuSettings({ menuSeCd }: Props) {
+  const screen = SCREEN[menuSeCd];
+  const maxDepth = menuSeCd === 'W' ? WEB_MAX_DEPTH : ADMIN_MAX_DEPTH;
+  const { toast } = useNotify();
+  const { guardDiscard } = useSysDialogs();
   const { canWrite } = useMenuPermission();
-  const title = isWeb
-    ? tvh('pageWeb', 'Platform Menu Management')
-    : tvh('pageAdmin', 'Admin Menu Management');
-  const codePattern = isWeb ? /^W\d{8}$/ : /^A\d{8}$/;
 
-  // ── Filter ────────────────────────────────────────────────────────────────
-  const [filter, setFilter] = useState(EMPTY_FILTER);
-  const [applied, setApplied] = useState<MenuSettingSearch>({ menuSeCd });
-  const [filterCollapsed, setFilterCollapsed] = useState(false);
-
-  // The menu tree is small and fixed by the IA, so it loads on entry.
-  const { data: menus = [], isFetching } = useMenuSettings(applied);
+  const { data, isLoading, error } = useMenuSettings(menuSeCd);
   const saveMenu = useSaveMenuSetting();
-  const deleteMenu = useDeleteMenuSetting();
+  const moveMenu = useMoveMenuSetting();
+  const { errors, setError, clearError, clearAll, checkRequired, applyApiError } = useFieldErrors<MenuFormKey>();
 
-  // ── Form ──────────────────────────────────────────────────────────────────
-  const [selected, setSelected] = useState<MenuSetting | null>(null);
-  const [form, setForm] = useState<FormState>(EMPTY_FORM);
+  const [selection, setSelection] = useState<Selection | null>(null);
+  const [baseline, setBaseline] = useState<MenuForm>(EMPTY_FORM);
+  const [form, setForm] = useState<MenuForm>(EMPTY_FORM);
+  const [collapsed, setCollapsed] = useState<ReadonlySet<string>>(new Set());
 
-  const isEdit = selected !== null;
-  // Policy: a menu in use can only be viewed — switch it to N and save first.
-  const locked = selected?.useYn === 'Y';
-  const fieldsDisabled = !canWrite || locked;
+  const tree = useMemo(() => buildMenuTree(data ?? []), [data]);
+  const visible = useMemo(() => visibleNodes(tree, collapsed), [tree, collapsed]);
+  const expandable = useMemo(() => parentCodes(tree), [tree]);
+  const allExpanded = expandable.every((cd) => !collapsed.has(cd));
 
-  const patch = (values: Partial<FormState>) => setForm((prev) => ({ ...prev, ...values }));
+  const isNew = selection !== null && selection.menuCd === null;
+  const selectedNode = selection?.menuCd ? tree.byCd.get(selection.menuCd) : undefined;
+  const dirty = selection !== null && !sameMenuForm(form, baseline);
 
-  const handleSearch = () => {
-    setApplied({
-      menuSeCd,
-      menuCd: filter.menuCd.trim() || undefined,
-      menuNmVn: filter.menuNmVn.trim() || undefined,
-      menuNmEn: filter.menuNmEn.trim() || undefined,
+  const load = (next: Selection, values: MenuForm) => {
+    setSelection(next);
+    setBaseline(values);
+    setForm(values);
+    clearAll();
+  };
+
+  const handleSelect = (node: MenuNode<MenuSetting>) => {
+    if (selection?.menuCd === node.menu.menuCd) return;
+    guardDiscard(dirty, () => load({ menuCd: node.menu.menuCd, upMenuCd: node.menu.upMenuCd }, toMenuForm(node.menu)));
+  };
+
+  const startDraft = (upMenuCd: string) => {
+    guardDiscard(dirty, () => {
+      load({ menuCd: null, upMenuCd }, emptyMenuForm(suggestMenuCode(menuSeCd, tree, upMenuCd)));
+      setCollapsed((prev) => {
+        if (!prev.has(upMenuCd)) return prev;
+        const next = new Set(prev);
+        next.delete(upMenuCd);
+        return next;
+      });
     });
   };
 
-  const handleFilterReset = () => {
-    setFilter(EMPTY_FILTER);
-    setApplied({ menuSeCd });
+  const handleChange = (patch: Partial<MenuForm>) => {
+    setForm((prev) => {
+      const next = { ...prev, ...patch };
+      // Keep the conventional label key in step with a new menu code.
+      if (patch.menuCd !== undefined && prev.lblCd === defaultLabelKey(prev.menuCd)) {
+        next.lblCd = defaultLabelKey(patch.menuCd);
+      }
+      return next;
+    });
+    (Object.keys(patch) as MenuFormKey[]).forEach(clearError);
   };
 
-  const handleRowClick = (row: MenuSetting) => {
-    setSelected(row);
-    setForm(toForm(row));
-  };
+  const toggleNode = (menuCd: string) =>
+    setCollapsed((prev) => {
+      const next = new Set(prev);
+      if (next.has(menuCd)) next.delete(menuCd);
+      else next.add(menuCd);
+      return next;
+    });
 
-  const handleFormReset = () => {
-    setSelected(null);
-    setForm(EMPTY_FORM);
-  };
+  const toggleAll = () => setCollapsed(allExpanded ? new Set(expandable) : new Set());
 
-  /** Refreshes the rail / flyout menu tree that reads the same table (the hooks refresh the grid). */
-  const refreshMenuTree = () => {
-    void useMenuStore.getState().invalidateMenuCache();
-  };
-
-  const validate = (): string | null => {
-    if (!codePattern.test(form.menuCd.trim())) {
-      return tsm('invalidMenuCd', `Menu Code must be "${menuSeCd}" followed by 8 digits.`);
+  const handleMove = async (menuCd: string, move: MenuMove) => {
+    try {
+      await moveMenu.mutateAsync({ menuCd, request: move });
+      toast.success('The menu position was saved.');
+      void useMenuStore.getState().invalidateMenuCache();
+    } catch (e) {
+      if (apiErrorCode(e) === 'MNU006') toast.error(`A menu cannot be placed below ${maxDepth}Depth.`);
+      else toast.error(errorMessage(e));
     }
-    if (!codePattern.test(form.upMenuCd.trim())) {
-      return tsm('invalidUpMenuCd', `Parent Menu Code must be "${menuSeCd}" followed by 8 digits.`);
-    }
-    if (!form.menuNmVn.trim() || !form.menuNmEn.trim()) {
-      return tsm('nameRequired', 'Enter both the Vietnamese and English menu names.');
-    }
-    if (form.menuSeq === null) return tsm('orderRequired', 'Enter the menu order.');
-    return null;
   };
 
-  const handleSave = () => {
-    // A menu in use only accepts a usage change: resend the stored values.
-    const source = locked && selected ? { ...toForm(selected), useYn: form.useYn } : form;
-    if (!locked) {
-      const invalid = validate();
-      if (invalid) {
-        toast.warning(invalid);
+  const handleSave = async () => {
+    if (!selection) return;
+    if (!checkRequired(form, REQUIRED_MENU_FIELDS)) return;
+    if (isNew) {
+      if (!menuCodePattern(menuSeCd).test(form.menuCd)) {
+        setError('menuCd', `Enter ${menuSeCd} followed by 8 digits.`);
+        return;
+      }
+      if (tree.byCd.has(form.menuCd) || form.menuCd === tree.rootCd) {
+        setError('menuCd', SYS_MESSAGES.duplicate('menu code'));
         return;
       }
     }
+
+    const stored = selectedNode?.menu;
     const request: SaveMenuSettingRequest = {
       menuSeCd,
-      menuCd: source.menuCd.trim(),
-      upMenuCd: source.upMenuCd.trim(),
-      menuNmVn: source.menuNmVn.trim(),
-      menuNmEn: source.menuNmEn.trim(),
-      menuSeq: source.menuSeq ?? 0,
-      menuUrlAddr: source.menuUrlAddr.trim() || undefined,
-      lblCd: source.lblCd.trim() || undefined,
-      menuExpln: source.menuExpln.trim() || undefined,
-      useYn: source.useYn,
+      menuCd: form.menuCd,
+      // Parent from the current tree: a drag & drop may have moved the menu since it was selected.
+      upMenuCd: stored?.upMenuCd ?? selection.upMenuCd,
+      menuNmVn: form.menuNmVn.trim(),
+      menuNmEn: form.menuNmEn.trim(),
+      menuUrlAddr: form.menuUrlAddr || undefined,
+      lblCd: form.lblCd,
+      menuExpln: stored?.menuExpln,
+      useYn: form.useYn,
     };
 
-    dialog.confirm({
-      content: isEdit
-        ? tsm('confirmUpdate', 'Do you want to save the changes?')
-        : tsm('confirmCreate', 'Do you want to register this menu?'),
-      onOk: async () => {
-        try {
-          const response = await saveMenu.mutateAsync({ isEdit, request });
-          toast.success(response.message || tsm('saved', 'Saved.'));
-          handleFormReset();
-          refreshMenuTree();
-        } catch (error) {
-          toast.error(errorMessage(error));
-        }
-      },
-    });
+    try {
+      await saveMenu.mutateAsync({ isEdit: !isNew, request });
+      toast.success(isNew ? SYS_MESSAGES.registered : SYS_MESSAGES.saved);
+      load({ menuCd: form.menuCd, upMenuCd: request.upMenuCd }, form);
+      void useMenuStore.getState().invalidateMenuCache();
+    } catch (e) {
+      const handled = applyApiError(e, {
+        MNU002: ['menuCd', SYS_MESSAGES.duplicate('menu code')],
+        MNU012: ['lblCd', 'This label key is already used by another menu.'],
+        MNU014: ['lblCd', 'This label key is not registered in i18n Label Management.'],
+      });
+      if (handled) return;
+      if (apiErrorCode(e) === 'MNU006') toast.error(`A menu cannot be added below ${maxDepth}Depth.`);
+      else toast.error(errorMessage(e));
+    }
   };
 
-  const handleDelete = () => {
-    if (!selected) return;
-    dialog.warning({
-      okCancel: true,
-      content: tsm(
-        'confirmDelete',
-        'Delete the selected menu? All of its sub-menus will be deleted as well.',
-      ),
-      onOk: async () => {
-        try {
-          const response = await deleteMenu.mutateAsync(selected.menuCd);
-          toast.success(response.message || tsm('deleted', 'Deleted.'));
-          handleFormReset();
-          refreshMenuTree();
-        } catch (error) {
-          toast.error(errorMessage(error));
-        }
-      },
-    });
-  };
+  // Title / Location of the detail panel.
+  const parentNode = selection ? tree.byCd.get(selectedNode?.menu.upMenuCd ?? selection.upMenuCd) : undefined;
+  const parentPath = parentNode ? [...parentNode.path, parentNode.menu].map(menuName) : [];
+  const title = selectedNode ? menuName(selectedNode.menu) : form.menuNmEn || form.menuNmVn || 'New Menu';
+  const location = [...parentPath, title].join(' > ');
 
-  // ── Grid ──────────────────────────────────────────────────────────────────
-  const columns = useMemo<TableColumnsType<MenuSetting>>(() => {
-    const depth = (row: MenuSetting) => ({ '--depth': Math.max(0, row.menuDpth - 1) }) as CSSProperties;
-    return [
-      {
-        title: tsg('useYn', 'Use'),
-        dataIndex: 'useYn',
-        width: 60,
-        align: 'center',
-        render: (value: string) => <UseFlag value={value} />,
-      },
-      { title: tsg('menuCd', 'Menu Code'), dataIndex: 'menuCd', width: 110, align: 'center' },
-      {
-        title: tsg('menuNmVn', 'Menu Name (VN)'),
-        dataIndex: 'menuNmVn',
-        width: 240,
-        render: (value: string | undefined, row) => (
-          <span className={styles.treeIndent} style={depth(row)}>
-            {value ?? '-'}
-          </span>
-        ),
-      },
-      {
-        title: tsg('menuNmEn', 'Menu Name (EN)'),
-        dataIndex: 'menuNmEn',
-        width: 240,
-        render: (value: string | undefined, row) => (
-          <span className={styles.treeIndent} style={depth(row)}>
-            {value ?? '-'}
-          </span>
-        ),
-      },
-      { title: tsg('upMenuCd', 'Parent Menu Code'), dataIndex: 'upMenuCd', width: 120, align: 'center' },
-      { title: tsg('menuSeq', 'Menu Order'), dataIndex: 'menuSeq', width: 70, align: 'center' },
-      { title: tsg('menuDpth', 'Menu Level'), dataIndex: 'menuDpth', width: 70, align: 'center' },
-      {
-        title: tsg('menuUrlAddr', 'Component Path'),
-        dataIndex: 'menuUrlAddr',
-        width: 220,
-        render: (value?: string) => value || '-',
-      },
-      {
-        title: tsg('lblCd', 'Label Code'),
-        dataIndex: 'lblCd',
-        width: 200,
-        render: (value?: string) => value || '-',
-      },
-    ];
-  }, [tsg]);
+  const addSubDisabled = !selectedNode || (menuSeCd === 'W' && selectedNode.level >= WEB_MAX_DEPTH);
 
   return (
-    <div className={styles.container}>
-      <SysPageHeader
-        breadcrumb={[
-          tvt('bcSystem', 'System Operations Management'),
-          isWeb ? tvt('bcPlatform', 'Platform Management') : tvt('bcAdmin', 'Admin Management'),
-          title,
-        ]}
-        title={title}
-        resetLabel={tvb('reset', 'Reset')}
-        searchLabel={tvb('search', 'Search')}
-        onReset={handleFilterReset}
-        onSearch={handleSearch}
-        filterCollapsed={filterCollapsed}
-        onToggleFilter={() => setFilterCollapsed((v) => !v)}
+    <SysPage fill>
+      <SysTitleBar title={screen.title} breadcrumb={[...screen.breadcrumb]} />
+      {error && <Alert type="error" showIcon title="The menu list could not be loaded." description={error.message} />}
+      <SysSplit
+        ratio="minmax(360px, 2fr) 3fr"
+        left={
+          <MenuSettingsTree
+            tree={tree}
+            visible={visible}
+            collapsed={collapsed}
+            allExpanded={allExpanded}
+            selectedCd={selection?.menuCd}
+            draft={isNew && selection ? { upMenuCd: selection.upMenuCd, name: form.menuNmEn, useYn: form.useYn } : null}
+            maxDepth={maxDepth}
+            canWrite={canWrite}
+            addSubDisabled={addSubDisabled}
+            loading={isLoading}
+            moving={moveMenu.isPending}
+            onToggle={toggleNode}
+            onToggleAll={toggleAll}
+            onSelect={handleSelect}
+            onAddSub={() => selectedNode && startDraft(selectedNode.menu.menuCd)}
+            onAddTop={() => tree.rootCd && startDraft(tree.rootCd)}
+            onMove={(menuCd, move) => void handleMove(menuCd, move)}
+          />
+        }
+        right={
+          <MenuSettingsDetail
+            menuSeCd={menuSeCd}
+            active={selection !== null}
+            isNew={isNew}
+            title={title}
+            location={location}
+            form={form}
+            errors={errors}
+            canWrite={canWrite}
+            saving={saveMenu.isPending}
+            onChange={handleChange}
+            onCancel={() => {
+              setForm(baseline);
+              clearAll();
+            }}
+            onSave={() => void handleSave()}
+          />
+        }
       />
-
-      {!filterCollapsed && (
-        <div className={styles.filterCard}>
-          <div className={styles.filterGroup}>
-            <span className={styles.filterLabel}>{tvt('menuCd', 'Menu Code')}</span>
-            <Input
-              className={styles.filterInput}
-              placeholder={tvt('phMenuCd', 'Enter Menu Code')}
-              value={filter.menuCd}
-              maxLength={9}
-              onChange={(e) => setFilter((f) => ({ ...f, menuCd: e.target.value }))}
-              onPressEnter={handleSearch}
-              allowClear
-            />
-          </div>
-          <div className={styles.filterGroup}>
-            <span className={styles.filterLabel}>{tvt('menuNmVn', 'Menu Name (VN)')}</span>
-            <Input
-              className={styles.filterInput}
-              placeholder={tvt('phMenuNmVn', 'Enter Vietnamese Menu Name')}
-              value={filter.menuNmVn}
-              onChange={(e) => setFilter((f) => ({ ...f, menuNmVn: e.target.value }))}
-              onPressEnter={handleSearch}
-              allowClear
-            />
-          </div>
-          <div className={styles.filterGroup}>
-            <span className={styles.filterLabel}>{tvt('menuNmEn', 'Menu Name (EN)')}</span>
-            <Input
-              className={styles.filterInput}
-              placeholder={tvt('phMenuNmEn', 'Enter English Menu Name')}
-              value={filter.menuNmEn}
-              onChange={(e) => setFilter((f) => ({ ...f, menuNmEn: e.target.value }))}
-              onPressEnter={handleSearch}
-              allowClear
-            />
-          </div>
-        </div>
-      )}
-
-      <div className={styles.summaryRow}>
-        <span className={styles.totalCount}>Total ({menus.length})</span>
-      </div>
-
-      <div className={`${styles.tableWrapper} ${styles.rowClickable}`}>
-        <Table<MenuSetting>
-          rowKey="menuCd"
-          columns={columns}
-          dataSource={menus}
-          loading={isFetching}
-          pagination={false}
-          size="small"
-          scroll={{ x: 'max-content', y: 380 }}
-          rowClassName={(row) => (row.menuCd === selected?.menuCd ? 'rowSelected' : '')}
-          onRow={(row) => ({ onClick: () => handleRowClick(row) })}
-        />
-      </div>
-
-      {/* ── New / Edit form (VPA0039P01 / VPA0044P01) ─────────────────────── */}
-      <div className={styles.formPanel}>
-        <div className={styles.formPanelHeader}>
-          <span className={styles.formPanelTitle}>
-            {isWeb
-              ? tvh('formWeb', 'New/Edit Platform Menu')
-              : tvh('formAdmin', 'Admin Menu New/Edit')}
-            {locked && (
-              <span className={styles.formNotice}>
-                {tvt(
-                  'lockedNotice',
-                  'A menu in use can only be viewed. Select N and save to edit it.',
-                )}
-              </span>
-            )}
-          </span>
-          <div className={styles.actions}>
-            <button type="button" className={`${styles.btn} ${styles.btnSmall}`} onClick={handleFormReset}>
-              {tvb('reset', 'Reset')}
-            </button>
-            <button
-              type="button"
-              className={`${styles.btnDanger} ${styles.btnSmall}`}
-              disabled={!canWrite || !isEdit || locked}
-              onClick={handleDelete}
-            >
-              {tvb('delete', 'Delete')}
-            </button>
-            <button
-              type="button"
-              className={`${styles.btnDark} ${styles.btnSmall}`}
-              disabled={!canWrite || saveMenu.isPending}
-              onClick={handleSave}
-            >
-              {tvb('save', 'Save')}
-            </button>
-          </div>
-        </div>
-
-        <div className={styles.formGrid}>
-          <FormField label={tvt('useYn', 'Usage Status')}>
-            <Radio.Group
-              value={form.useYn}
-              disabled={!canWrite}
-              onChange={(e) => patch({ useYn: e.target.value as YesNo })}
-              options={[
-                { value: 'Y', label: 'Y' },
-                { value: 'N', label: 'N' },
-              ]}
-            />
-          </FormField>
-          <FormField label={tvt('menuCd', 'Menu Code')} required>
-            <Input
-              placeholder={tvt('phMenuCd', 'Enter Menu Code')}
-              value={form.menuCd}
-              maxLength={9}
-              disabled={fieldsDisabled || isEdit}
-              onChange={(e) => patch({ menuCd: e.target.value.toUpperCase() })}
-            />
-          </FormField>
-          <FormField label={tvt('menuNmVn', 'Menu Name (VN)')} required>
-            <Input
-              placeholder={tvt('phMenuNmVn', 'Enter Vietnamese Menu Name')}
-              value={form.menuNmVn}
-              maxLength={1000}
-              disabled={fieldsDisabled}
-              onChange={(e) => patch({ menuNmVn: e.target.value })}
-            />
-          </FormField>
-          <FormField label={tvt('menuNmEn', 'Menu Name (EN)')} required>
-            <Input
-              placeholder={tvt('phMenuNmEn', 'Enter English Menu Name')}
-              value={form.menuNmEn}
-              maxLength={1000}
-              disabled={fieldsDisabled}
-              onChange={(e) => patch({ menuNmEn: e.target.value })}
-            />
-          </FormField>
-
-          <FormField label={tvt('upMenuCd', 'Parent Menu Code')} required>
-            <Input
-              placeholder={tvt('phUpMenuCd', 'Enter Parent Menu Code')}
-              value={form.upMenuCd}
-              maxLength={9}
-              disabled={fieldsDisabled}
-              onChange={(e) => patch({ upMenuCd: e.target.value.toUpperCase() })}
-            />
-          </FormField>
-          <FormField label={tvt('menuSeq', 'Menu Order')} required>
-            <InputNumber
-              placeholder={tvt('phMenuSeq', 'Enter Menu Order')}
-              value={form.menuSeq}
-              min={0}
-              max={99}
-              precision={0}
-              disabled={fieldsDisabled}
-              onChange={(value) => patch({ menuSeq: value })}
-            />
-          </FormField>
-          <FormField label={tvt('menuUrlAddr', 'Component Path')}>
-            <Input
-              placeholder={tvt('phMenuUrlAddr', 'e.g. sys030101-sc')}
-              value={form.menuUrlAddr}
-              maxLength={2000}
-              disabled={fieldsDisabled}
-              onChange={(e) => patch({ menuUrlAddr: e.target.value })}
-            />
-          </FormField>
-          <FormField label={tvt('lblCd', 'Label Code')}>
-            <Input
-              placeholder={tvt('phLblCd', 'Enter Label Code')}
-              value={form.lblCd}
-              maxLength={100}
-              disabled={fieldsDisabled}
-              onChange={(e) => patch({ lblCd: e.target.value })}
-            />
-          </FormField>
-
-          <FormField label={tvt('menuExpln', 'Menu Description')} span={isWeb ? 'wide' : 'full'}>
-            <Input
-              placeholder={tvt('phMenuExpln', 'Enter Description for Menu')}
-              value={form.menuExpln}
-              maxLength={4000}
-              disabled={fieldsDisabled}
-              onChange={(e) => patch({ menuExpln: e.target.value })}
-            />
-          </FormField>
-          {isWeb && (
-            <FormField label={tvt('accessRights', 'Access Rights')} span="full">
-              {/* MENU_MNG has no access-rights column yet (proposed ACS_AUTHRT_SE_CD). */}
-              <Tooltip title={tvt('accessRightsPending', 'Not supported by the API yet.')}>
-                <Radio.Group
-                  value="MBR"
-                  disabled
-                  options={[
-                    { value: 'ALL', label: tvt('accessAll', 'ALL') },
-                    { value: 'MBR', label: tvt('accessMember', 'Member (Login)') },
-                  ]}
-                />
-              </Tooltip>
-            </FormField>
-          )}
-        </div>
-      </div>
-    </div>
+    </SysPage>
   );
 }
