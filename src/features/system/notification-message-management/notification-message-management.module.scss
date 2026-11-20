@@ -1,0 +1,45 @@
+/* Notification Message Management (VPA09050101 / VPA090501P01) — screen-specific layout only. */
+
+.loading {
+  min-height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-secondary, #6f7b95);
+}
+
+.fullWidth {
+  width: 100%;
+}
+
+/* Content template with the Insert Variable chips under it (same cell, as in the frame). */
+.contentCell {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.variableBar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.variableLabel {
+  margin-right: 4px;
+  font-size: 13px;
+  color: var(--color-text-secondary, #6f7b95);
+}
+
+.legacyNote {
+  margin: 0 0 8px;
+  font-size: 12px;
+  color: var(--color-text-secondary, #6f7b95);
+}
+
+.titleCell {
+  white-space: normal;
+  word-break: break-word;
+}

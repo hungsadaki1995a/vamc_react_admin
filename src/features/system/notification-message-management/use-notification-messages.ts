@@ -1,66 +1,93 @@
+import { useMemo } from 'react';
 import { keepPreviousData } from '@tanstack/react-query';
 import { useApiQuery } from '@/hooks/use-api-query';
-import { useApiAction } from '@/hooks/use-api-action';
+import { useApiTask } from '@/hooks/use-api-action';
+import type { PageQuery, PageResponse } from '@/api/common/api-utils';
 import {
+  changeNotificationMessageUse,
   createNotificationMessage,
-  deleteNotificationMessages,
+  getNotificationMessage,
   getNotificationMessages,
-  toggleNotificationMessageUse,
   updateNotificationMessage,
 } from '@/api/system/notification-api';
-import type { NotificationMessageItem } from '@/api/system/notification-api';
-import type { PageResponse } from '@/api/common/api-utils';
+import type {
+  NotificationMessageItem,
+  NotificationMessageRequest,
+  NotificationMessageSearch,
+} from '@/api/system/notification-api';
+import { getRoleGroups } from '@/api/system/role-group-api';
+import type { RoleGroup } from '@/api/system/role-group-api';
+import { HIDDEN_ROLE_GROUP_IDS } from './notification-message-constants';
 
-// Data hooks of Notification Message Management (menu A06060100).
-
-export interface NotificationMessageSearch {
-  crtFromDt?: string;
-  crtToDt?: string;
-  prcsSttsCd?: string;
-  notiTtl?: string;
-}
+// Data hooks of Notification Message Management (VPA09050101 / VPA090501P01).
 
 const NOTIFICATION_MESSAGE_KEYS = {
   all: ['system', 'notification-messages'] as const,
-  list: (search: NotificationMessageSearch, page: number, size: number) =>
-    ['system', 'notification-messages', 'list', search, page, size] as const,
+  list: (search: NotificationMessageSearch, query: PageQuery) =>
+    ['system', 'notification-messages', 'list', search, query] as const,
+  detail: (id: string | null) => ['system', 'notification-messages', 'detail', id] as const,
+  roleGroups: ['system', 'notification-messages', 'role-groups'] as const,
 };
 
-export function useNotificationMessages(search: NotificationMessageSearch, page: number, size: number) {
+export function useNotificationMessages(search: NotificationMessageSearch, query: PageQuery) {
   return useApiQuery<PageResponse<NotificationMessageItem>>(
-    NOTIFICATION_MESSAGE_KEYS.list(search, page, size),
-    () => getNotificationMessages(search, page, size),
+    NOTIFICATION_MESSAGE_KEYS.list(search, query),
+    () => getNotificationMessages(search, query),
     { placeholderData: keepPreviousData },
   );
 }
 
-export function useDeleteNotificationMessages() {
-  return useApiAction(deleteNotificationMessages, { invalidate: [NOTIFICATION_MESSAGE_KEYS.all] });
-}
-
-export interface ToggleNotificationMessageUseVariables {
-  notiMsgId: string;
-  useYn: 'Y' | 'N';
-}
-
-export function useToggleNotificationMessageUse() {
-  return useApiAction(
-    ({ notiMsgId, useYn }: ToggleNotificationMessageUseVariables) => toggleNotificationMessageUse(notiMsgId, useYn),
-    { invalidate: [NOTIFICATION_MESSAGE_KEYS.all] },
+/** Template with its content for the edit popup; skipped while `id` is null (register). */
+export function useNotificationMessage(id: string | null) {
+  return useApiQuery<NotificationMessageItem>(
+    NOTIFICATION_MESSAGE_KEYS.detail(id),
+    () => getNotificationMessage(id as string),
+    { enabled: id !== null, gcTime: 0 },
   );
+}
+
+/** Active staff groups (Recipient select) and an id → name lookup for the list. */
+export function useRecipientGroups() {
+  const query = useApiQuery<RoleGroup[]>(NOTIFICATION_MESSAGE_KEYS.roleGroups, () => getRoleGroups({ useYn: 'Y' }), {
+    staleTime: 5 * 60 * 1000,
+  });
+  const groups = query.data;
+  return useMemo(() => {
+    const list = groups ?? [];
+    return {
+      options: list
+        .filter((group) => !HIDDEN_ROLE_GROUP_IDS.includes(group.roleGroupId))
+        .map((group) => ({ value: group.roleGroupId, label: group.roleGroupNm })),
+      nameOf: (id?: string) => list.find((group) => group.roleGroupId === id)?.roleGroupNm,
+      loading: query.isFetching,
+    };
+  }, [groups, query.isFetching]);
 }
 
 export interface SaveNotificationMessageVariables {
   /** null = register. */
-  notiMsgId: string | null;
-  request: Partial<NotificationMessageItem>;
+  current: NotificationMessageItem | null;
+  request: NotificationMessageRequest;
 }
 
-/** Registers or edits a notification message. */
+/**
+ * Registers or edits a template. The API only edits a template that is not in use (NTF002), while v0.8
+ * allows free edit: an active template is switched off, saved with the chosen Use, and switched back
+ * on if the save fails.
+ */
 export function useSaveNotificationMessage() {
-  return useApiAction(
-    ({ notiMsgId, request }: SaveNotificationMessageVariables) =>
-      notiMsgId === null ? createNotificationMessage(request) : updateNotificationMessage(notiMsgId, request),
+  return useApiTask(
+    async ({ current, request }: SaveNotificationMessageVariables) => {
+      if (current === null) return createNotificationMessage(request);
+      const wasActive = current.useYn === 'Y';
+      if (wasActive) await changeNotificationMessageUse(current.notiMsgId, 'N');
+      try {
+        return await updateNotificationMessage(current.notiMsgId, request);
+      } catch (error) {
+        if (wasActive) await changeNotificationMessageUse(current.notiMsgId, 'Y').catch(() => undefined);
+        throw error;
+      }
+    },
     { invalidate: [NOTIFICATION_MESSAGE_KEYS.all] },
   );
 }

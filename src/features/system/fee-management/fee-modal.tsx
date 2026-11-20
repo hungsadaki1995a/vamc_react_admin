@@ -1,29 +1,37 @@
 import { useState } from 'react';
-import type { CSSProperties } from 'react';
-import { Input, InputNumber, Modal, Radio, Select, Spin } from 'antd';
+import { Input, InputNumber, Radio, Select, Spin } from 'antd';
 import { useNotify } from '@/hooks/use-notify';
-import { useScreenLabel } from '@/hooks/use-screen-label';
-import type { Fee, FeeCategory, FeeCurrency, FeeMethod, FeeRequest } from '@/api/system/fee-api';
-import { FormField } from '../_shared/system-ui';
+import { FEE_ERRORS } from '@/api/system/fee-api';
+import type { Fee, FeeCategory, FeeCurrency, FeeMethod, FeeRequest, YesNo } from '@/api/system/fee-api';
+import { SysButton } from '../_shared/sys-list-ui';
+import { SysField, SysFieldGrid, SysFormModal } from '../_shared/sys-form-ui';
+import { USE_YN_RADIO_OPTIONS } from '../_shared/sys-constants';
+import { SYS_DIALOG_LABELS, SYS_MESSAGES } from '../_shared/sys-messages';
 import { errorMessage } from '../_shared/system-utils';
-import styles from '../_shared/system-page.module.scss';
-import { useFee, useSaveFee } from './use-fees';
-import type { SaveFeeVariables } from './use-fees';
+import { useFieldErrors } from '../_shared/use-field-errors';
+import { useSysDialogs } from '../_shared/use-sys-dialogs';
+import {
+  FEE_CATEGORY_OPTIONS,
+  FEE_CURRENCY_OPTIONS,
+  FEE_METHOD_OPTIONS,
+  amountFormatter,
+  amountParser,
+  feeCategoryLabel,
+  isLegacyFee,
+} from './fee-constants';
+import { useChangeFeeUse, useDeleteFee, useFee, useSaveFee } from './use-fees';
+import styles from './fee-management.module.scss';
 
-// Fee Management - Detail / Register / Edit popup (VPA0041P01).
-// Policy: an item in use (Y) cannot be modified — save it as N, then reopen to edit.
+// Fee Management - Register / Edit popup (VPA090103P01).
+// Saved in one call (Use included); items stay editable while in use.
+// A legacy `MDT` item cannot be saved by PUT (FEE004): only Use can be switched, or it can be deleted.
 
-interface FeeModalProps {
-  /** null = register a new item. */
-  feeId: string | null;
-  canWrite: boolean;
-  onClose: () => void;
-  onSaved: () => void;
-}
+type FieldKey = 'useYn' | 'category' | 'order' | 'name' | 'method' | 'currency' | 'fee' | 'rate' | 'minAmount' | 'description';
 
-interface FormState {
-  useYn: 'Y' | 'N';
-  category: FeeCategory;
+interface FeeFormState {
+  useYn: YesNo;
+  /** FeeCategory, or `MDT` for a legacy row. */
+  category: string;
   order: number | null;
   name: string;
   method: FeeMethod;
@@ -34,8 +42,8 @@ interface FormState {
   description: string;
 }
 
-const NEW_FORM: FormState = {
-  useYn: 'N',
+const NEW_FEE: FeeFormState = {
+  useYn: 'Y',
   category: 'ANFE',
   order: null,
   name: '',
@@ -47,17 +55,19 @@ const NEW_FORM: FormState = {
   description: '',
 };
 
-const CURRENCY_OPTIONS = [
-  { value: 'VND', label: 'VND' },
-  { value: 'USD', label: 'USD' },
-];
+const FEE_MESSAGES = {
+  rateRange: 'Enter a rate greater than 0 and up to 100.',
+  positive: 'Enter an amount greater than 0.',
+  legacyNotice:
+    'This item uses the old Brokerage type, which can no longer be saved. Only Use can be changed; register it again as Purchase Brokerage or Sale Brokerage.',
+} as const;
 
-function toForm(fee: Fee): FormState {
+function toState(fee: Fee): FeeFormState {
   return {
     useYn: fee.useYn,
     category: fee.category,
-    order: fee.order,
-    name: fee.name,
+    order: fee.order ?? null,
+    name: fee.name ?? '',
     method: fee.method,
     currency: fee.currency,
     fee: fee.fee ?? null,
@@ -67,217 +77,248 @@ function toForm(fee: Fee): FormState {
   };
 }
 
-const amountFormatter = (value?: number | string) =>
-  value === undefined || value === '' ? '' : `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-const amountParser = (value?: string) => Number((value ?? '').replace(/,/g, ''));
+interface FeeModalProps {
+  /** null = register. */
+  feeId: string | null;
+  canWrite: boolean;
+  onClose: () => void;
+}
 
-export default function FeeModal({ feeId, canWrite, onClose, onSaved }: FeeModalProps) {
+/** Loads the item in edit mode, then mounts the form with it. */
+export default function FeeModal({ feeId, canWrite, onClose }: FeeModalProps) {
+  const { data: detail, isFetching, isError } = useFee(feeId);
   const isCreate = feeId === null;
-  const { toast } = useNotify();
-  const { tvt, tvb, tvh, tsm } = useScreenLabel();
 
-  const { data: detail, isFetching } = useFee(feeId);
-  const saveFee = useSaveFee();
-
-  const [form, setForm] = useState<FormState>(NEW_FORM);
-
-  // Fill the form when the detail arrives — adjusted during render, not in an effect.
-  const [loadedDetail, setLoadedDetail] = useState<Fee | undefined>(undefined);
-  if (detail && detail !== loadedDetail) {
-    setLoadedDetail(detail);
-    setForm(toForm(detail));
+  if (!isCreate && !detail) {
+    return (
+      <SysFormModal open title="Edit Fee Information" onCancel={onClose}>
+        <Spin spinning={isFetching}>
+          <div className={styles.loading}>{isError ? 'The fee item could not be loaded.' : null}</div>
+        </Spin>
+      </SysFormModal>
+    );
   }
 
-  const inUse = !isCreate && detail?.useYn === 'Y';
-  const fieldsDisabled = !canWrite || inUse;
-  const isRate = form.method === 'TRF';
-  const patch = (values: Partial<FormState>) => setForm((prev) => ({ ...prev, ...values }));
+  return <FeeForm fee={detail ?? null} canWrite={canWrite} onClose={onClose} />;
+}
 
-  const validate = (): string | null => {
-    if (form.order === null) return tsm('orderRequired', 'Enter the display order.');
-    if (!form.name.trim()) return tsm('nameRequired', 'Enter the fee item name.');
-    if (isRate && !(form.rate && form.rate > 0 && form.rate <= 100)) {
-      return tsm('rateRequired', 'Enter a rate greater than 0 and up to 100.');
-    }
-    if (!isRate && !(form.fee && form.fee > 0)) {
-      return tsm('amountRequired', 'Enter a fee amount greater than 0.');
-    }
-    return null;
+function FeeForm({ fee, canWrite, onClose }: { fee: Fee | null; canWrite: boolean; onClose: () => void }) {
+  const isCreate = fee === null;
+  const legacy = !isCreate && isLegacyFee(fee.category);
+  const { toast } = useNotify();
+  const { confirm } = useSysDialogs();
+  const saveFee = useSaveFee();
+  const changeUse = useChangeFeeUse();
+  const deleteFee = useDeleteFee();
+  const { errors, setError, clearError, checkRequired, applyApiError } = useFieldErrors<FieldKey>();
+  const [values, setValues] = useState<FeeFormState>(() => (fee ? toState(fee) : NEW_FEE));
+
+  const isRate = values.method === 'TRF';
+  const locked = !canWrite || legacy;
+
+  const patch = (key: FieldKey, value: Partial<FeeFormState>) => {
+    setValues((prev) => ({ ...prev, ...value }));
+    clearError(key);
   };
 
-  const handleConfirm = async () => {
-    let variables: SaveFeeVariables;
-    if (inUse) {
-      // Only the usage flag can change while the item is in use.
-      variables = { feeId, useYn: form.useYn === 'N' ? 'N' : undefined };
-    } else {
-      const invalid = validate();
-      if (invalid) {
-        toast.warning(invalid);
-        return;
-      }
-      const request: FeeRequest = {
-        category: form.category,
-        order: form.order as number,
-        name: form.name.trim(),
-        description: form.description.trim() || undefined,
-        method: form.method,
-        currency: form.currency,
-        fee: isRate ? undefined : (form.fee ?? undefined),
-        rate: isRate ? (form.rate ?? undefined) : undefined,
-        minAmount: isRate ? (form.minAmount ?? undefined) : undefined,
-      };
-      variables = { feeId, request, useYn: form.useYn === 'Y' ? 'Y' : undefined };
+  const changeMethod = (method: FeeMethod) => {
+    // Fields of the other method are cleared, as the server drops them anyway.
+    setValues((prev) => ({ ...prev, method, ...(method === 'TRF' ? { fee: null } : { rate: null, minAmount: null }) }));
+    ['method', 'fee', 'rate', 'minAmount'].forEach((key) => clearError(key as FieldKey));
+  };
+
+  const validate = (): boolean => {
+    const required: FieldKey[] = ['useYn', 'category', 'order', 'name', 'method', 'currency', isRate ? 'rate' : 'fee'];
+    if (!checkRequired(values, required)) return false;
+    let valid = true;
+    if (isRate && !(values.rate !== null && values.rate > 0 && values.rate <= 100)) {
+      setError('rate', FEE_MESSAGES.rateRange);
+      valid = false;
     }
+    if (!isRate && !(values.fee !== null && values.fee > 0)) {
+      setError('fee', FEE_MESSAGES.positive);
+      valid = false;
+    }
+    if (isRate && values.minAmount !== null && values.minAmount <= 0) {
+      setError('minAmount', FEE_MESSAGES.positive);
+      valid = false;
+    }
+    return valid;
+  };
+
+  const saveLegacyUse = async () => {
+    if (!fee) return;
     try {
-      await saveFee.mutateAsync(variables);
-      toast.success(tsm('saved', 'Saved.'));
-      onSaved();
+      await changeUse.mutateAsync({ feeId: fee.feeId, useYn: values.useYn });
+      toast.success(SYS_MESSAGES.updated);
       onClose();
     } catch (error) {
       toast.error(errorMessage(error));
     }
   };
 
+  const handleSubmit = async () => {
+    if (legacy) {
+      await saveLegacyUse();
+      return;
+    }
+    if (!validate()) return;
+    const request: FeeRequest = {
+      useYn: values.useYn,
+      category: values.category as FeeCategory,
+      order: values.order as number,
+      name: values.name.trim(),
+      description: values.description.trim() || undefined,
+      method: values.method,
+      currency: values.currency,
+      fee: isRate ? undefined : (values.fee ?? undefined),
+      rate: isRate ? (values.rate ?? undefined) : undefined,
+      minAmount: isRate ? (values.minAmount ?? undefined) : undefined,
+    };
+    try {
+      await saveFee.mutateAsync({ feeId: fee?.feeId ?? null, request });
+      toast.success(isCreate ? SYS_MESSAGES.registered : SYS_MESSAGES.updated);
+      onClose();
+    } catch (error) {
+      const message = errorMessage(error);
+      const handled = applyApiError(error, {
+        [FEE_ERRORS.invalid]: ['category', message],
+        [FEE_ERRORS.amountRequired]: [isRate ? 'rate' : 'fee', SYS_MESSAGES.required],
+      });
+      if (!handled) toast.error(message);
+    }
+  };
+
+  const handleDelete = () => {
+    if (!fee) return;
+    confirm({
+      content: SYS_MESSAGES.confirmDelete('this fee item'),
+      okText: SYS_DIALOG_LABELS.delete,
+      danger: true,
+      onOk: async () => {
+        try {
+          await deleteFee.mutateAsync(fee.feeId);
+          toast.success(SYS_MESSAGES.deleted);
+          onClose();
+        } catch (error) {
+          toast.error(errorMessage(error));
+        }
+      },
+    });
+  };
+
+  const categoryOptions = legacy && fee
+    ? [{ value: values.category, label: feeCategoryLabel(fee) }, ...FEE_CATEGORY_OPTIONS]
+    : FEE_CATEGORY_OPTIONS;
+
   return (
-    <Modal
+    <SysFormModal
       open
-      width={860}
-      centered
-      title={tvh('feeModal', 'View Fee Information')}
+      title={isCreate ? 'Register Fee Information' : 'Edit Fee Information'}
+      submitText={isCreate ? 'Register' : 'Edit'}
+      onSubmit={canWrite ? handleSubmit : undefined}
+      submitting={saveFee.isPending || changeUse.isPending}
       onCancel={onClose}
-      maskClosable={false}
-      footer={
-        <div className={styles.modalFooter}>
-          <button type="button" className={styles.btn} onClick={onClose}>
-            {tvb('cancel', 'Cancel')}
-          </button>
-          <button
-            type="button"
-            className={styles.btnDark}
-            disabled={!canWrite || saveFee.isPending || isFetching}
-            onClick={handleConfirm}
-          >
-            {tvb('confirm', 'Confirm')}
-          </button>
-        </div>
+      extraActions={
+        legacy && canWrite ? (
+          <SysButton danger loading={deleteFee.isPending} onClick={handleDelete}>
+            Delete
+          </SysButton>
+        ) : undefined
       }
+      notice={legacy ? FEE_MESSAGES.legacyNotice : undefined}
     >
-      <Spin spinning={isFetching}>
-        {inUse && (
-          <div className={`${styles.formNotice} ${styles.mb8}`}>
-            {tvt('inUseNotice', 'An item in use cannot be modified. Save it as N, then reopen to edit.')}
-          </div>
-        )}
-        <div className={styles.formGrid} style={{ '--form-cols': 2 } as CSSProperties}>
-          <FormField label={tvt('feeId', 'Fee Code')}>
-            <Input value={detail?.feeId ?? ''} placeholder={tvt('phFeeId', 'Generated on save')} disabled />
-          </FormField>
-          <FormField label={tvt('useYn', 'Use')}>
-            <Radio.Group
-              value={form.useYn}
-              disabled={!canWrite}
-              onChange={(e) => patch({ useYn: e.target.value as 'Y' | 'N' })}
-              options={[
-                { value: 'Y', label: 'Y' },
-                { value: 'N', label: 'N' },
-              ]}
-            />
-          </FormField>
-
-          <FormField label={tvt('category', 'Fee Category')} required>
-            <Radio.Group
-              value={form.category}
-              disabled={fieldsDisabled}
-              onChange={(e) => patch({ category: e.target.value as FeeCategory })}
-              options={[
-                { value: 'ANFE', label: tvt('catAnnual', 'Annual Fee') },
-                { value: 'CNSLT', label: tvt('catConsulting', 'Consulting') },
-                { value: 'MDT', label: tvt('catBrokerage', 'Brokerage') },
-              ]}
-            />
-          </FormField>
-          <FormField label={tvt('order', 'Display Order')} required>
-            <InputNumber
-              value={form.order}
-              min={1}
-              max={99}
-              precision={0}
-              disabled={fieldsDisabled}
-              onChange={(order) => patch({ order })}
-            />
-          </FormField>
-
-          <FormField label={tvt('name', 'Fee Item Name')} required>
-            <Input
-              value={form.name}
-              maxLength={300}
-              disabled={fieldsDisabled}
-              onChange={(e) => patch({ name: e.target.value })}
-            />
-          </FormField>
-          <FormField label={tvt('method', 'Imposition Method')} required>
-            <Radio.Group
-              value={form.method}
-              disabled={fieldsDisabled}
-              onChange={(e) => patch({ method: e.target.value as FeeMethod })}
-              options={[
-                { value: 'FXAMT', label: tvt('methodFixed', 'Fixed Amount') },
-                { value: 'TRF', label: tvt('methodRate', 'Rate') },
-              ]}
-            />
-            <InputNumber
-              className={`${styles.w90} ${styles.noShrink}`}
-              value={form.rate}
-              min={0}
-              max={100}
-              suffix="%"
-              disabled={fieldsDisabled || !isRate}
-              onChange={(rate) => patch({ rate })}
-            />
-          </FormField>
-
-          <FormField label={tvt('fee', 'Fee Amount')} required={!isRate}>
-            <Select
-              className={`${styles.w84} ${styles.noShrink}`}
-              value={form.currency}
-              options={CURRENCY_OPTIONS}
-              disabled={fieldsDisabled}
-              onChange={(currency) => patch({ currency })}
-            />
-            <InputNumber
-              value={form.fee}
-              min={0}
-              formatter={amountFormatter}
-              parser={amountParser}
-              disabled={fieldsDisabled || isRate}
-              onChange={(fee) => patch({ fee })}
-            />
-          </FormField>
-          <FormField label={tvt('minAmount', 'Minimum Applicable Amount')}>
-            {/* The minimum amount is stored in the fee currency. */}
-            <Select className={`${styles.w84} ${styles.noShrink}`} value={form.currency} options={CURRENCY_OPTIONS} disabled />
-            <InputNumber
-              value={form.minAmount}
-              min={0}
-              formatter={amountFormatter}
-              parser={amountParser}
-              disabled={fieldsDisabled || !isRate}
-              onChange={(minAmount) => patch({ minAmount })}
-            />
-          </FormField>
-
-          <FormField label={tvt('description', 'Fee Item Details')} span="full">
-            <Input.TextArea
-              rows={3}
-              value={form.description}
-              maxLength={1000}
-              disabled={fieldsDisabled}
-              onChange={(e) => patch({ description: e.target.value })}
-            />
-          </FormField>
-        </div>
-      </Spin>
-    </Modal>
+      {/* Frame layout: Fee Code | Type | Order / Use | Method | Currency / Fee Amount | Minimum Amount | Item Name / Item Content */}
+      <SysFieldGrid columns={3}>
+        <SysField label="Fee Code">
+          <Input value={fee?.feeId ?? ''} placeholder="Auto-generated" disabled />
+        </SysField>
+        <SysField label="Type" required error={errors.category}>
+          <Select
+            className={styles.fullWidth}
+            value={values.category}
+            options={categoryOptions}
+            disabled={locked}
+            onChange={(category) => patch('category', { category })}
+          />
+        </SysField>
+        <SysField label="Order" required error={errors.order}>
+          <InputNumber
+            className={styles.fullWidth}
+            value={values.order}
+            min={1}
+            max={99}
+            precision={0}
+            disabled={locked}
+            onChange={(order) => patch('order', { order })}
+          />
+        </SysField>
+        <SysField label="Use" required error={errors.useYn}>
+          <Radio.Group
+            value={values.useYn}
+            options={USE_YN_RADIO_OPTIONS}
+            disabled={!canWrite}
+            onChange={(e) => patch('useYn', { useYn: e.target.value as YesNo })}
+          />
+        </SysField>
+        <SysField label="Method" required error={errors.method ?? errors.rate}>
+          <Select className={styles.methodSelect} value={values.method} options={FEE_METHOD_OPTIONS} disabled={locked} onChange={changeMethod} />
+          {/* Rate % input, enabled for the Rate method (spec: "Rate : % input"). */}
+          <InputNumber
+            className={styles.rateInput}
+            value={values.rate}
+            min={0}
+            max={100}
+            precision={2}
+            suffix="%"
+            disabled={locked || !isRate}
+            onChange={(rate) => patch('rate', { rate })}
+          />
+        </SysField>
+        <SysField label="Currency" required error={errors.currency}>
+          <Select
+            className={styles.fullWidth}
+            value={values.currency}
+            options={FEE_CURRENCY_OPTIONS}
+            disabled={locked}
+            onChange={(currency) => patch('currency', { currency })}
+          />
+        </SysField>
+        <SysField label="Fee Amount" required={!isRate} error={errors.fee}>
+          <InputNumber
+            className={`${styles.fullWidth} ${styles.amountInput}`}
+            value={values.fee}
+            min={0}
+            placeholder="0"
+            formatter={amountFormatter}
+            parser={amountParser}
+            disabled={locked || isRate}
+            onChange={(amount) => patch('fee', { fee: amount })}
+          />
+        </SysField>
+        <SysField label="Minimum Amount" error={errors.minAmount}>
+          <InputNumber
+            className={`${styles.fullWidth} ${styles.amountInput}`}
+            value={values.minAmount}
+            min={0}
+            formatter={amountFormatter}
+            parser={amountParser}
+            disabled={locked || !isRate}
+            onChange={(minAmount) => patch('minAmount', { minAmount })}
+          />
+        </SysField>
+        <SysField label="Item Name" required error={errors.name}>
+          <Input value={values.name} maxLength={300} disabled={locked} onChange={(e) => patch('name', { name: e.target.value })} />
+        </SysField>
+        <SysField label="Item Content" span="full" error={errors.description}>
+          <Input
+            value={values.description}
+            maxLength={1000}
+            disabled={locked}
+            onChange={(e) => patch('description', { description: e.target.value })}
+          />
+        </SysField>
+      </SysFieldGrid>
+    </SysFormModal>
   );
 }
