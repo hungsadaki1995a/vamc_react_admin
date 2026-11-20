@@ -57,3 +57,12 @@ export function lastDaysRange(days: number): [dayjs.Dayjs, dayjs.Dayjs] {
   const today = dayjs().startOf('day');
   return [today.subtract(days - 1, 'day'), today];
 }
+
+/** Per-field messages of a 400 validation failure (`ApiError.validation`), or undefined. */
+export function apiValidationErrors(error: unknown): Record<string, string> | undefined {
+  if (error && typeof error === 'object' && 'validation' in error) {
+    const validation = (error as { validation?: unknown }).validation;
+    if (validation && typeof validation === 'object') return validation as Record<string, string>;
+  }
+  return undefined;
+}

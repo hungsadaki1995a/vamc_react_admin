@@ -3,6 +3,7 @@ import { Button, Table } from 'antd';
 import type { ButtonProps, TableColumnsType, TableProps } from 'antd';
 import type { SortOrder, SorterResult } from 'antd/es/table/interface';
 import {
+  ClockCircleOutlined,
   DoubleLeftOutlined,
   DoubleRightOutlined,
   FileExcelFilled,
@@ -59,12 +60,24 @@ export function SysFilterPanel({ children, columns = 3 }: { children: ReactNode;
   );
 }
 
+interface SysFilterItemProps {
+  label: string;
+  children: ReactNode;
+  /** Grid columns the item spans. */
+  span?: 1 | 2 | 3;
+  /** Small grey note after the control, e.g. "Not available yet" next to a disabled filter. */
+  hint?: ReactNode;
+}
+
 /** Label + control of one search condition; `span` widens it over several columns. */
-export function SysFilterItem({ label, children, span = 1 }: { label: string; children: ReactNode; span?: 1 | 2 | 3 }) {
+export function SysFilterItem({ label, children, span = 1, hint }: SysFilterItemProps) {
   return (
     <div className={styles.filterItem} data-span={span}>
       <span className={styles.filterLabel}>{label}</span>
-      <div className={styles.filterControl}>{children}</div>
+      <div className={styles.filterControl}>
+        {children}
+        {hint && <span className={styles.filterHint}>{hint}</span>}
+      </div>
     </div>
   );
 }
@@ -197,12 +210,21 @@ type SysTableProps<T> = Omit<TableProps<T>, 'pagination' | 'onChange' | 'columns
   onRowClick?: (row: T) => void;
   /** Highlighted row of a master-detail list. */
   selectedRowKey?: Key | null;
-  /** Server-side sort; columns opt in with `sorter: true` and a `key` (or string `dataIndex`) = API sort field. */
+  /**
+   * Server-side sort: columns with `sorter: true` and a `key` (or string `dataIndex`) = API sort field
+   * are controlled by `sort` / `onSortChange`. Columns with a compare function (`sorter: (a, b) => …`)
+   * sort the loaded rows on the client and are left to antd.
+   */
   sort?: SortState;
   onSortChange?: (sort?: SortState) => void;
   /** Stretch to the panel height and scroll inside it (master-detail panels). */
   fill?: boolean;
 };
+
+/** Server sort applies only to `sorter: true` columns of a table that has `onSortChange`. */
+function isServerSorted<T>(column: TableColumnsType<T>[number], onSortChange?: (sort?: SortState) => void): boolean {
+  return Boolean(onSortChange) && column.sorter === true;
+}
 
 function columnSortKey<T>(column: TableColumnsType<T>[number]): string | undefined {
   if (column.key !== undefined) return String(column.key);
@@ -223,7 +245,7 @@ export function SysTable<T extends object>({
   ...rest
 }: SysTableProps<T>) {
   const controlledColumns = columns.map((column) => {
-    if (!column.sorter) return column;
+    if (!isServerSorted(column, onSortChange)) return column;
     const key = columnSortKey(column);
     const sortOrder: SortOrder = sort && key === sort.sortBy ? (sort.sortDirection === 'ASC' ? 'ascend' : 'descend') : null;
     return { ...column, sortOrder };
@@ -232,6 +254,8 @@ export function SysTable<T extends object>({
   const handleChange: TableProps<T>['onChange'] = (_pagination, _filters, sorter) => {
     if (!onSortChange) return;
     const single = (Array.isArray(sorter) ? sorter[0] : sorter) as SorterResult<T> | undefined;
+    // Client-sorted column: antd already reordered the rows.
+    if (single?.column && !isServerSorted(single.column as TableColumnsType<T>[number], onSortChange)) return;
     const key = single?.column ? columnSortKey(single.column as TableColumnsType<T>[number]) : undefined;
     if (!single?.order || !key) {
       onSortChange(undefined);
@@ -346,4 +370,35 @@ export function SysSplit({ left, right, ratio = '1fr 1fr' }: { left: ReactNode; 
 /** Empty-state text inside a detail panel (e.g. "Select a code group."). */
 export function SysEmpty({ children }: { children: ReactNode }) {
   return <div className={styles.empty}>{children}</div>;
+}
+
+interface SysNotAvailableProps {
+  /** Headline, default "Not available yet". */
+  title?: ReactNode;
+  /** Reason / what it waits for, e.g. "Waits for the FORM_MNG schema change." */
+  children?: ReactNode;
+  /** `banner` = full-width block (screen / section), `inline` = one-line note (next to a field or button). */
+  variant?: 'banner' | 'inline';
+}
+
+/** Notice for a feature waiting on a backend / schema change; keep the matching `TODO(schema)` in code. */
+export function SysNotAvailable({ title = 'Not available yet', children, variant = 'banner' }: SysNotAvailableProps) {
+  if (variant === 'inline') {
+    return (
+      <span className={styles.notAvailableInline}>
+        <ClockCircleOutlined />
+        {title}
+        {children && <span className={styles.notAvailableReason}>{children}</span>}
+      </span>
+    );
+  }
+  return (
+    <div className={styles.notAvailable} role="note">
+      <ClockCircleOutlined className={styles.notAvailableIcon} />
+      <div>
+        <div className={styles.notAvailableTitle}>{title}</div>
+        {children && <div className={styles.notAvailableReason}>{children}</div>}
+      </div>
+    </div>
+  );
 }

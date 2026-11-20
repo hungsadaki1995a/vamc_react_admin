@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useState } from 'react';
-import { apiErrorCode } from './system-utils';
+import { apiErrorCode, apiValidationErrors } from './system-utils';
 import { SYS_MESSAGES } from './sys-messages';
 
 // Inline field errors (E0x) of the v0.8 register/edit popups and edit panels.
@@ -21,6 +21,8 @@ function isEmpty(value: unknown): boolean {
  * try { await save() } catch (e) {
  *   if (!applyApiError(e, { FRM002: ['formNo', SYS_MESSAGES.duplicate('form no.')] })) toast.error(errorMessage(e));
  * }
+ * // 400 COM001 field messages land under the fields too; map request names that differ from form keys:
+ * applyApiError(e, {}, { fileUrl: 'fileUrl', formNm: 'formName' });
  */
 export function useFieldErrors<K extends string>() {
   const [errors, setErrors] = useState<FieldErrors<K>>({});
@@ -51,13 +53,34 @@ export function useFieldErrors<K extends string>() {
     return Object.keys(next).length === 0;
   }, []);
 
-  /** Maps a server error code to a field message; true when handled (caller toasts otherwise). */
+  /**
+   * Shows a rejected save under the fields; true when at least one field message was set
+   * (the caller toasts otherwise).
+   * - `codeMap`: business error code → [field, message] (E02 duplicates, E03 formats…).
+   * - 400 validation map (`ApiError.validation`): each request field goes to `fieldMap[field]`,
+   *   or to the same-named form key when `fieldMap` is omitted. Unmapped fields are ignored.
+   */
   const applyApiError = useCallback(
-    (error: unknown, map: Partial<Record<string, [K, string]>>): boolean => {
+    (
+      error: unknown,
+      codeMap: Partial<Record<string, [K, string]>> = {},
+      fieldMap?: Partial<Record<string, K>>,
+    ): boolean => {
       const code = apiErrorCode(error);
-      const target = code ? map[code] : undefined;
-      if (!target) return false;
-      setError(target[0], target[1]);
+      const target = code ? codeMap[code] : undefined;
+      if (target) {
+        setError(target[0], target[1]);
+        return true;
+      }
+      const validation = apiValidationErrors(error);
+      if (!validation) return false;
+      const next: FieldErrors<K> = {};
+      Object.entries(validation).forEach(([field, message]) => {
+        const key = fieldMap ? fieldMap[field] : (field as K);
+        if (key) next[key] = message;
+      });
+      if (Object.keys(next).length === 0) return false;
+      setErrors((prev) => ({ ...prev, ...next }));
       return true;
     },
     [setError],
