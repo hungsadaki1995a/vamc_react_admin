@@ -4,7 +4,7 @@ import { getMenuPermissionMatrix, saveMenuPermissionMatrix } from '@/api/system/
 import type { MenuPermissionMatrix } from '@/api/system/menu-permission-api';
 import type { MenuSeCd } from '@/api/system/menu-setting-api';
 
-// Data hooks of the Menu Permission matrix (VPA004301 / VPA004701).
+// Data hooks of the Menu Permission matrix (VPA09010501 / VPA09020401).
 
 export const MENU_PERMISSION_KEYS = {
   all: ['system', 'menu-permissions'] as const,
