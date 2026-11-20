@@ -7,7 +7,8 @@ import tseslint from 'typescript-eslint'
 import { defineConfig, globalIgnores } from 'eslint/config'
 
 export default defineConfig([
-  globalIgnores(['dist']),
+  // Generated OpenAPI client is overwritten by `pnpm api:generate`; not linted.
+  globalIgnores(['dist', 'src/api/generated']),
   {
     files: ['**/*.{ts,tsx}'],
     extends: [

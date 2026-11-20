@@ -1,242 +1,159 @@
 import { useState } from 'react';
-import { Input, Table, Tooltip } from 'antd';
+import { Alert, Input } from 'antd';
 import type { TableColumnsType } from 'antd';
-import { useNotify } from '@/hooks/use-notify';
-import { useScreenLabel } from '@/hooks/use-screen-label';
 import { useMenuPermission } from '@/hooks/use-menu-permission';
-import type { Employee, EmployeeSearch, EmpStatus } from '@/api/system/employee-api';
-import { DateTimeCell, SysPageHeader, SysPagination } from '../_shared/system-ui';
-import { errorMessage } from '../_shared/system-utils';
-import styles from '../_shared/system-page.module.scss';
+import type { Employee, EmployeeSearch } from '@/api/system/employee-api';
+import {
+  DateTimeText,
+  StatusBadge,
+  SysButton,
+  SysExcelButton,
+  SysFilterItem,
+  SysFilterPanel,
+  SysPage,
+  SysPager,
+  SysSearchActions,
+  SysSectionHeader,
+  SysTable,
+  SysTitleBar,
+} from '../_shared/sys-list-ui';
+import { SYS_PAGE_SIZE } from '../_shared/sys-constants';
+import { usePagedList } from '../_shared/use-paged-list';
 import UserModal from './user-modal';
-import { EMP_STATUS_FALLBACK, LOCK_FAIL_COUNT } from './user-constants';
-import { useDeleteEmployees, useEmployees } from './use-employees';
+import { ACCOUNT_STATUS_LABEL, EMP_STATUS_LABEL } from './user-constants';
+import { useEmployee, useEmployees, useEmployeesExcel } from './use-employees';
 
-// User Management - List (VPA004501), menu A06020200.
+// User Management - List (VPA09020201), menu A06020200.
 
-const PAGE_SIZE = 15;
-const EMPTY_FILTER = { empNo: '', empNm: '' };
+const INITIAL_FILTER: EmployeeSearch = { empNo: '', empNm: '' };
+
+/** undefined = closed, null = register, string = edit that employee. */
+type ModalTarget = string | null | undefined;
+
+const trimSearch = (search: EmployeeSearch): EmployeeSearch => ({
+  empNo: search.empNo?.trim(),
+  empNm: search.empNm?.trim(),
+});
 
 export default function UserManagement() {
-  const { toast, dialog } = useNotify();
-  const { tvt, tvb, tvh, tsg, tsm } = useScreenLabel();
   const { canWrite } = useMenuPermission();
+  const list = usePagedList<EmployeeSearch>(INITIAL_FILTER);
+  const search = trimSearch(list.applied);
+  const { data, isFetching } = useEmployees(search, list.pageQuery);
+  const excel = useEmployeesExcel();
 
-  const [filter, setFilter] = useState(EMPTY_FILTER);
-  const [applied, setApplied] = useState<EmployeeSearch>({});
-  const [page, setPage] = useState(1);
-  const [filterCollapsed, setFilterCollapsed] = useState(false);
-  const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
-  /** undefined = closed, null = register, string = view/edit that employee. */
-  const [modalEmpNo, setModalEmpNo] = useState<string | null | undefined>(undefined);
-
-  const { data, isFetching } = useEmployees(applied, page, PAGE_SIZE);
-  const deleteEmployees = useDeleteEmployees();
-  const employees = data?.content ?? [];
-  const total = data?.totalElements ?? 0;
-
-  const statusName = (code: EmpStatus) => tvt(`status${code}`, EMP_STATUS_FALLBACK[code] ?? code);
-
-  const handleSearch = () => {
-    setApplied({
-      empNo: filter.empNo.trim() || undefined,
-      empNm: filter.empNm.trim() || undefined,
-    });
-    setPage(1);
-    setSelectedKeys([]);
-  };
-
-  const handleReset = () => {
-    setFilter(EMPTY_FILTER);
-    setApplied({});
-    setPage(1);
-    setSelectedKeys([]);
-  };
-
-  const handleDelete = () => {
-    if (selectedKeys.length === 0) {
-      toast.warning(tsm('selectToDelete', 'Select at least one user to delete.'));
-      return;
-    }
-    dialog.warning({
-      okCancel: true,
-      content: tsm('confirmDelete', 'Delete the selected user(s)? This cannot be undone.'),
-      onOk: async () => {
-        try {
-          // The API deletes one employee per call; report the ones that were rejected.
-          const failed = await deleteEmployees.mutateAsync(selectedKeys);
-          if (failed.length === 0) toast.success(tsm('deleted', 'Deleted.'));
-          else toast.error(failed.map(({ empNo, error }) => `${empNo}: ${errorMessage(error)}`).join('\n'));
-        } catch (error) {
-          toast.error(errorMessage(error));
-        }
-        setSelectedKeys([]);
-      },
-    });
-  };
+  const [target, setTarget] = useState<ModalTarget>(undefined);
+  const editEmpNo = typeof target === 'string' ? target : null;
+  const detail = useEmployee(editEmpNo);
 
   const columns: TableColumnsType<Employee> = [
     {
-      title: tsg('status', 'Status'),
+      title: 'Status',
       dataIndex: 'empSttsCd',
-      width: 90,
-      align: 'center',
-      render: (value: EmpStatus) => statusName(value),
-    },
-    {
-      title: tsg('empNo', 'Employee Number'),
-      dataIndex: 'empNo',
-      width: 120,
-      align: 'center',
-      render: (value: string) => (
-        <a className={styles.cellLink} onClick={() => setModalEmpNo(value)}>
-          {value}
-        </a>
-      ),
-    },
-    { title: tsg('empNm', 'Name'), dataIndex: 'empNm', width: 180, align: 'center' },
-    {
-      title: tsg('email', 'Email'),
-      dataIndex: 'empEmlAddr',
-      width: 200,
-      align: 'center',
-      render: (value?: string) => value || '-',
-    },
-    {
-      title: tsg('telno', 'Phone Number'),
-      dataIndex: 'empTelno',
-      width: 130,
-      align: 'center',
-      render: (value?: string) => value || '-',
-    },
-    {
-      title: tsg('mobile', 'Mobile'),
-      dataIndex: 'empMoblTelno',
-      width: 130,
-      align: 'center',
-      render: (value?: string) => value || '-',
-    },
-    {
-      title: tsg('position', 'Position'),
-      dataIndex: 'jbpsNm',
-      width: 130,
-      align: 'center',
-      render: (value?: string) => value || '-',
-    },
-    {
-      title: tsg('pwFail', 'P/W Fail'),
-      dataIndex: 'pswdFailNmtm',
-      width: 80,
-      align: 'center',
-      render: (value: number | undefined, row) =>
-        row.empSttsCd === 'L' || (value ?? 0) >= LOCK_FAIL_COUNT ? (
-          <span className={styles.textDanger}>{tvt('lock', 'Lock')}</span>
-        ) : (
-          (value ?? 0)
-        ),
-    },
-    {
-      title: tsg('updatedAt', 'Modification Date'),
-      dataIndex: 'updatedAt',
       width: 110,
       align: 'center',
-      render: (value?: string) => <DateTimeCell value={value} />,
+      render: (code: Employee['empSttsCd']) => EMP_STATUS_LABEL[code] ?? code,
+    },
+    {
+      title: 'Account Status',
+      dataIndex: 'acntSttsCd',
+      width: 130,
+      align: 'center',
+      render: (code: Employee['acntSttsCd']) =>
+        code ? (
+          <StatusBadge tone={code === 'LOCKED' ? 'gray' : 'green'}>{ACCOUNT_STATUS_LABEL[code] ?? code}</StatusBadge>
+        ) : (
+          '-'
+        ),
+    },
+    { title: 'Employee No.', dataIndex: 'empNo', width: 130, align: 'center' },
+    { title: 'Name', dataIndex: 'empNm', ellipsis: true },
+    { title: 'Email', dataIndex: 'empEmlAddr', ellipsis: true, render: (v?: string) => v || '-' },
+    { title: 'Office Phone', dataIndex: 'empTelno', width: 130, align: 'center', render: (v?: string) => v || '-' },
+    {
+      title: 'Mobile Number',
+      dataIndex: 'empMoblTelno',
+      width: 150,
+      align: 'center',
+      render: (v?: string) => v || '-',
+    },
+    {
+      title: 'P/W Fail',
+      dataIndex: 'pswdFailNmtm',
+      width: 90,
+      align: 'center',
+      render: (v?: number) => v ?? 0,
+    },
+    {
+      title: 'Registered Date',
+      dataIndex: 'createdAt',
+      width: 150,
+      align: 'center',
+      render: (v?: string) => <DateTimeText value={v} />,
     },
   ];
 
-  const title = tvh('page', 'User Management');
+  const total = data?.totalElements ?? 0;
+  const modalOpen = target === null || (editEmpNo !== null && detail.data !== undefined);
 
   return (
-    <div className={styles.container}>
-      <SysPageHeader
-        breadcrumb={[
-          tvt('bcSystem', 'System Management'),
-          tvt('bcAdmin', 'Admin Management'),
-          title,
-        ]}
-        title={title}
-        resetLabel={tvb('reset', 'Reset')}
-        searchLabel={tvb('search', 'Search')}
-        onReset={handleReset}
-        onSearch={handleSearch}
-        filterCollapsed={filterCollapsed}
-        onToggleFilter={() => setFilterCollapsed((v) => !v)}
+    <SysPage>
+      <SysTitleBar title="User Management" breadcrumb={['System Operation Management', 'Admin Management', 'User Management']} />
+
+      <SysFilterPanel columns={2}>
+        <SysFilterItem label="Employee No.">
+          <Input
+            value={list.draft.empNo}
+            maxLength={10}
+            allowClear
+            onChange={(e) => list.setDraft({ empNo: e.target.value })}
+            onPressEnter={() => list.search()}
+          />
+        </SysFilterItem>
+        <SysFilterItem label="Staff Name">
+          <Input
+            value={list.draft.empNm}
+            maxLength={100}
+            allowClear
+            onChange={(e) => list.setDraft({ empNm: e.target.value })}
+            onPressEnter={() => list.search()}
+          />
+        </SysFilterItem>
+      </SysFilterPanel>
+      <SysSearchActions onReset={list.reset} onSearch={() => list.search()} loading={isFetching} />
+
+      {detail.error && (
+        <Alert type="error" showIcon closable title="The user could not be loaded." description={detail.error.message} />
+      )}
+
+      <SysSectionHeader
+        total={total}
+        actions={<SysExcelButton loading={excel.isPending} onClick={() => excel.mutate(search)} />}
+        primaryActions={
+          canWrite && (
+            <SysButton look="navy" onClick={() => setTarget(null)}>
+              New
+            </SysButton>
+          )
+        }
       />
+      <SysTable<Employee>
+        rowKey="empNo"
+        columns={columns}
+        dataSource={data?.content ?? []}
+        loading={isFetching || detail.isFetching}
+        onRowClick={(row) => (row.empNo === editEmpNo ? void detail.refetch() : setTarget(row.empNo))}
+      />
+      <SysPager page={list.page} pageSize={SYS_PAGE_SIZE} total={total} onChange={list.setPage} />
 
-      {!filterCollapsed && (
-        <div className={styles.filterCard}>
-          <div className={styles.filterGroup}>
-            <span className={styles.filterLabel}>{tvt('empNo', 'Employee Number')}</span>
-            <Input
-              className={styles.filterInput}
-              placeholder={tvt('phEmpNo', 'Enter the employee number')}
-              value={filter.empNo}
-              maxLength={10}
-              onChange={(e) => setFilter((f) => ({ ...f, empNo: e.target.value }))}
-              onPressEnter={handleSearch}
-              allowClear
-            />
-          </div>
-          <div className={styles.filterGroup}>
-            <span className={styles.filterLabel}>{tvt('empNm', 'Employee Name')}</span>
-            <Input
-              className={styles.filterInput}
-              placeholder={tvt('phEmpNm', 'Enter the employee name')}
-              value={filter.empNm}
-              maxLength={100}
-              onChange={(e) => setFilter((f) => ({ ...f, empNm: e.target.value }))}
-              onPressEnter={handleSearch}
-              allowClear
-            />
-          </div>
-        </div>
-      )}
-
-      <div className={styles.summaryRow}>
-        <span className={styles.totalCount}>Total ({total})</span>
-        {/* GET /api/v1/employees/excel does not exist in the backend yet. */}
-        <Tooltip title={tvt('excelPending', 'Excel export is not provided by the API yet.')}>
-          <button type="button" className={`${styles.btn} ${styles.btnSmall}`} disabled>
-            {tvb('excel', 'Excel Download')}
-          </button>
-        </Tooltip>
-      </div>
-
-      <div className={styles.tableWrapper}>
-        <Table<Employee>
-          rowKey="empNo"
-          columns={columns}
-          dataSource={employees}
-          loading={isFetching}
-          pagination={false}
-          size="small"
-          scroll={{ x: 'max-content' }}
-          rowSelection={{
-            selectedRowKeys: selectedKeys,
-            onChange: (keys) => setSelectedKeys(keys.map(String)),
-          }}
-        />
-      </div>
-
-      <SysPagination page={page} pageSize={PAGE_SIZE} total={total} onChange={setPage} />
-
-      <div className={styles.bottomActions}>
-        <button type="button" className={styles.btn} disabled={!canWrite} onClick={handleDelete}>
-          {tvb('delete', 'Delete')}
-        </button>
-        <button type="button" className={styles.btnDark} disabled={!canWrite} onClick={() => setModalEmpNo(null)}>
-          {tvb('addNew', 'Add New')}
-        </button>
-      </div>
-
-      {modalEmpNo !== undefined && (
+      {modalOpen && (
         <UserModal
-          empNo={modalEmpNo}
+          key={editEmpNo ?? '__new'}
+          detail={editEmpNo !== null ? detail.data : undefined}
           canWrite={canWrite}
-          onClose={() => setModalEmpNo(undefined)}
-          onSaved={() => setSelectedKeys([])}
+          onClose={() => setTarget(undefined)}
         />
       )}
-    </div>
+    </SysPage>
   );
 }

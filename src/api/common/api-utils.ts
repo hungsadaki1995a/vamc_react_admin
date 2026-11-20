@@ -21,6 +21,17 @@ export interface PageResponse<T> {
   totalPages: number;
 }
 
+export type SortDirection = 'ASC' | 'DESC';
+
+/** Paging / sort query params of the admin backend `PageRequest` (page is 1-based, size ≤ 100). */
+export interface PageQuery {
+  page: number;
+  size: number;
+  /** Response field name; the server ignores fields it does not allow. */
+  sortBy?: string;
+  sortDirection?: SortDirection;
+}
+
 export const EMPTY_PAGE: PageResponse<never> = {
   content: [],
   page: 1,

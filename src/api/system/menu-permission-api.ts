@@ -2,7 +2,9 @@ import { apiGet, apiPut } from '@/api/common/api-utils';
 import type { MenuSeCd } from './menu-setting-api';
 
 // Menu Permission matrix API — MenuPermissionController (`/api/v1/menu-permissions`).
-// Supports both menuSeCd=A (Admin, A06020400) and menuSeCd=W (Web, A06010400).
+// menuSeCd=W (Web Menu Permission Management VPA09010501, columns = member grades of RG00100)
+// and menuSeCd=A (Menu Permission Management VPA09020401, columns = every admin role).
+// Errors: PRM003 bad menuSeCd, PRM004 Super Admin sent, PRM007 caller edits a role they hold, PRM009 duplicate item.
 
 export interface MatrixColumn {
   roleGroupId: string;
@@ -28,7 +30,7 @@ export interface MatrixRow {
   useYn: string;
   menuNmVn?: string;
   menuNmEn?: string;
-  /** One entry per column, in column order. */
+  /** One entry per column, in column order. Inactive menus keep their permissions. */
   permissions: MatrixCell[];
 }
 
@@ -40,7 +42,10 @@ export interface MenuPermissionMatrix {
 
 export interface SaveMatrixRequest {
   menuSeCd: MenuSeCd;
-  /** Full replace per role sent; roles left out are untouched. */
+  /**
+   * Full replace per role sent; roles left out are untouched. Every menu of a sent role must be
+   * included (parents and Inactive menus too) — a missing menu loses its mapping.
+   */
   roles: Array<{
     roleGroupId: string;
     roleId: string;

@@ -1,34 +1,40 @@
 import { keepPreviousData } from '@tanstack/react-query';
 import { useApiQuery } from '@/hooks/use-api-query';
 import { useApiDownload } from '@/hooks/use-api-action';
-import { downloadNotificationHistoriesExcel, getNotificationHistories } from '@/api/system/system-operations-api';
-import type { NotificationHistoryItem } from '@/api/system/system-operations-api';
-import type { PageResponse } from '@/api/common/api-utils';
+import type { PageQuery, PageResponse } from '@/api/common/api-utils';
+import {
+  downloadNotificationHistoriesExcel,
+  getNotificationHistories,
+  getNotificationHistory,
+} from '@/api/system/notification-api';
+import type { NotificationHistoryItem, NotificationHistorySearch } from '@/api/system/notification-api';
 
-// Data hooks of Notification Send History (menu A06060200).
-
-export interface NotificationHistorySearch {
-  fromDt?: string;
-  toDt?: string;
-  notiMediaSe?: string;
-  sndngScsYn?: string;
-  keyword?: string;
-}
+// Data hooks of Notification Send History (VPA09050201 / VPA090502P01).
 
 const NOTIFICATION_HISTORY_KEYS = {
   all: ['system', 'notification-histories'] as const,
-  list: (search: NotificationHistorySearch, page: number, size: number) =>
-    ['system', 'notification-histories', 'list', search, page, size] as const,
+  list: (search: NotificationHistorySearch, query: PageQuery) =>
+    ['system', 'notification-histories', 'list', search, query] as const,
+  detail: (logId: string) => ['system', 'notification-histories', 'detail', logId] as const,
 };
 
-export function useNotificationHistories(search: NotificationHistorySearch, page: number, size: number) {
+/** Paged send history; `fromDt` / `toDt` are always set (the server rejects a call without them). */
+export function useNotificationHistories(search: NotificationHistorySearch, query: PageQuery) {
   return useApiQuery<PageResponse<NotificationHistoryItem>>(
-    NOTIFICATION_HISTORY_KEYS.list(search, page, size),
-    () => getNotificationHistories(search, page, size),
+    NOTIFICATION_HISTORY_KEYS.list(search, query),
+    () => getNotificationHistories(search, query),
     { placeholderData: keepPreviousData },
   );
 }
 
+/** One sent notification with its content and failure reason. */
+export function useNotificationHistory(logId: string) {
+  return useApiQuery<NotificationHistoryItem>(NOTIFICATION_HISTORY_KEYS.detail(logId), () => getNotificationHistory(logId), {
+    gcTime: 0,
+  });
+}
+
+/** [Excel Download] of the searched list. */
 export function useDownloadNotificationHistoriesExcel() {
-  return useApiDownload((search: NotificationHistorySearch) => downloadNotificationHistoriesExcel({ ...search }));
+  return useApiDownload((search: NotificationHistorySearch) => downloadNotificationHistoriesExcel(search));
 }

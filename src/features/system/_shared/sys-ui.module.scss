@@ -1,0 +1,569 @@
+/* v0.8 (Figma 2026.11.11) look of the System Operation Management screens.
+   Used by sys-list-ui.tsx / sys-form-ui.tsx; screens add their own module for anything specific. */
+
+$border: var(--color-border-secondary, #e2e5eb);
+$border-strong: var(--color-border-primary, #d1d1e0);
+$label-bg: var(--color-bg-secondary, #f6f6f9);
+$text: var(--color-text-primary, #3a404a);
+$text-sub: var(--color-text-secondary, #6f7b95);
+$brand: var(--color-text-brand, #1764ff);
+$danger: var(--color-text-negative, #e62e44);
+$navy: #4a4f73;
+$navy-hover: #3b3f5e;
+
+/* ── Page ───────────────────────────────────────────────────────────────── */
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  height: 100%;
+  padding: 20px 24px 24px;
+  overflow-y: auto;
+  background: var(--color-bg-primary, #ffffff);
+  color: $text;
+}
+
+/* Last child takes the remaining height (tree + details, master-detail lists). */
+.pageFill > :last-child {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.titleBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 32px;
+}
+
+.title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 26px;
+  color: $text;
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: $text-sub;
+  white-space: nowrap;
+}
+
+.breadcrumbItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.breadcrumbSep {
+  font-size: 9px;
+  color: #a8b2c8;
+}
+
+/* ── Search conditions ──────────────────────────────────────────────────── */
+.filterPanel {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px 24px;
+  padding: 14px 20px;
+  border: 1px solid $border;
+  border-radius: 4px;
+  background: $label-bg;
+}
+
+.filterPanel[data-cols='2'] {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.filterPanel[data-cols='4'] {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.filterItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.filterItem[data-span='2'] {
+  grid-column: span 2;
+}
+
+.filterItem[data-span='3'] {
+  grid-column: span 3;
+}
+
+.filterLabel {
+  flex: 0 0 auto;
+  min-width: 96px;
+  font-size: 13px;
+  text-align: right;
+  color: $text;
+}
+
+.filterControl {
+  display: flex;
+  flex: 1 1 auto;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+
+  > :global(.ant-select),
+  > :global(.ant-input),
+  > :global(.ant-input-affix-wrapper),
+  > :global(.ant-picker) {
+    flex: 1 1 auto;
+    width: 100%;
+  }
+}
+
+.filterHint {
+  flex: 0 0 auto;
+  font-size: 12px;
+  color: $text-sub;
+  white-space: nowrap;
+}
+
+.searchActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+/* ── List header / buttons ─────────────────────────────────────────────── */
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 36px;
+}
+
+.sectionTitle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  color: $text;
+}
+
+.sectionTotal {
+  padding-left: 10px;
+  border-left: 1px solid $border-strong;
+  font-size: 14px;
+  font-weight: 400;
+  color: $text-sub;
+
+  strong {
+    color: $text;
+  }
+}
+
+.sectionActions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.actionDivider {
+  width: 1px;
+  height: 24px;
+  margin: 0 6px;
+  background: $border-strong;
+}
+
+.btnNavy:global(.ant-btn) {
+  border-color: $navy;
+  background: $navy;
+  color: #ffffff;
+
+  &:not(:disabled):hover {
+    border-color: $navy-hover;
+    background: $navy-hover;
+    color: #ffffff;
+  }
+}
+
+.excelIcon {
+  color: #1d6f42;
+}
+
+/* ── Badges ─────────────────────────────────────────────────────────────── */
+.badge {
+  display: inline-block;
+  padding: 0 8px;
+  border: 1px solid #c9ced8;
+  border-radius: 3px;
+  background: #f4f5f7;
+  font-size: 12px;
+  line-height: 20px;
+  color: #6f7b95;
+  white-space: nowrap;
+}
+
+.badge[data-tone='blue'] {
+  border-color: #9cc3ff;
+  background: #eef5ff;
+  color: #1764ff;
+}
+
+.badge[data-tone='green'] {
+  border-color: #9bd8b4;
+  background: #eefaf3;
+  color: #17894a;
+}
+
+.badge[data-tone='red'] {
+  border-color: #f5a8b2;
+  background: #fff1f3;
+  color: $danger;
+}
+
+.badge[data-tone='orange'] {
+  border-color: #f6c58f;
+  background: #fff6ec;
+  color: #c96a00;
+}
+
+.badge[data-tone='navy'] {
+  border-color: #b4b7cf;
+  background: #f0f1f7;
+  color: $navy;
+}
+
+.nowrap {
+  white-space: nowrap;
+}
+
+/* ── Table ──────────────────────────────────────────────────────────────── */
+.tableWrap {
+  border: 1px solid $border;
+  border-radius: 4px;
+  background: #ffffff;
+
+  :global(.ant-table) {
+    font-size: 13px;
+  }
+
+  :global(.ant-table-thead > tr > th) {
+    background: $label-bg;
+    color: $text-sub;
+    font-weight: 500;
+    text-align: center;
+  }
+
+  :global(.ant-table-tbody > tr > td) {
+    color: $text;
+  }
+}
+
+.tableFill {
+  min-height: 0;
+  overflow: auto;
+}
+
+.rowClickable :global(.ant-table-tbody > tr) {
+  cursor: pointer;
+}
+
+/* Selected master row (SysTable `selectedRowKey`); doubled class so it also beats antd's row hover background. */
+.tableWrap.tableWrap :global(.ant-table-tbody) > tr.rowSelected > td,
+.tableWrap.tableWrap :global(.ant-table-tbody) > tr.rowSelected:hover > td {
+  background: #eaf3ff;
+}
+
+/* ── Pager ──────────────────────────────────────────────────────────────── */
+.pager {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 0;
+}
+
+.pagerNav,
+.pagerNumber {
+  min-width: 28px;
+  height: 28px;
+  padding: 0 6px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  background: transparent;
+  font-size: 13px;
+  color: $text;
+  cursor: pointer;
+}
+
+.pagerNav {
+  border-color: $border-strong;
+  color: $text-sub;
+}
+
+.pagerNav:disabled {
+  color: #c4c9d4;
+  cursor: default;
+}
+
+.pagerNumber:hover {
+  background: $label-bg;
+}
+
+.pagerNumber[data-active] {
+  background: $brand;
+  color: #ffffff;
+}
+
+/* ── Split panels ───────────────────────────────────────────────────────── */
+.split {
+  display: grid;
+  grid-template-columns: var(--split-cols, 1fr 1fr);
+  gap: 24px;
+  min-height: 0;
+}
+
+.splitPane {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+  min-height: 0;
+}
+
+.splitPane > :last-child {
+  flex: 1 1 auto;
+}
+
+.empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 160px;
+  border: 1px dashed $border-strong;
+  border-radius: 4px;
+  color: $text-sub;
+  font-size: 13px;
+}
+
+/* ── Register / edit popup ─────────────────────────────────────────────── */
+.modal :global(.ant-modal-container) {
+  padding: 0;
+}
+
+.modal :global(.ant-modal-header) {
+  margin: 0;
+  padding: 10px 16px;
+  border-bottom: 1px solid $border;
+  background: $label-bg;
+}
+
+.modal :global(.ant-modal-body) {
+  padding: 16px 40px 8px;
+}
+
+.modal :global(.ant-modal-footer) {
+  margin: 0;
+  padding: 12px 40px 24px;
+}
+
+.modalBarTitle {
+  font-size: 13px;
+  font-weight: 400;
+  color: $text-sub;
+}
+
+.modalHeading {
+  margin: 8px 0 16px;
+  font-size: 22px;
+  font-weight: 700;
+  color: $text;
+}
+
+.modalNotice {
+  margin: 12px 0 0;
+  font-size: 12px;
+  color: $text-sub;
+}
+
+.modalFooter {
+  display: flex;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.modalFooterLeft {
+  display: flex;
+  gap: 6px;
+  margin-right: auto;
+}
+
+.fieldGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 140px minmax(0, 1fr));
+  border-top: 1px solid $border;
+  border-left: 1px solid $border;
+}
+
+.fieldGrid[data-cols='1'] {
+  grid-template-columns: 140px minmax(0, 1fr);
+}
+
+.fieldGrid[data-cols='3'] {
+  grid-template-columns: repeat(3, 140px minmax(0, 1fr));
+}
+
+.fieldLabel {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  border-right: 1px solid $border;
+  border-bottom: 1px solid $border;
+  background: $label-bg;
+  font-size: 13px;
+  color: $text-sub;
+}
+
+.requiredMark {
+  margin-left: 2px;
+  color: $danger;
+}
+
+.fieldValue {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  min-width: 0;
+  padding: 6px 10px;
+  border-right: 1px solid $border;
+  border-bottom: 1px solid $border;
+}
+
+.fieldValue[data-span='2'] {
+  grid-column: span 3;
+}
+
+.fieldValue[data-span='3'] {
+  grid-column: span 5;
+}
+
+.fieldLabel[data-span='full'] {
+  grid-column-start: 1;
+}
+
+/* `full`: own row, value from the second track to the end. */
+.fieldValue[data-span='full'] {
+  grid-column: 2 / -1;
+}
+
+.fieldControl {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+
+  > :global(.ant-input),
+  > :global(.ant-input-affix-wrapper),
+  > :global(.ant-input-number),
+  > :global(.ant-select),
+  > :global(.ant-picker),
+  > textarea {
+    flex: 1 1 auto;
+    width: 100%;
+  }
+}
+
+.fieldValue[data-error] .fieldControl {
+  :global(.ant-input),
+  :global(.ant-input-affix-wrapper),
+  :global(.ant-input-number),
+  :global(.ant-select-selector),
+  :global(.ant-select),
+  :global(.ant-picker) {
+    border-color: $danger;
+  }
+}
+
+.fieldHint {
+  font-size: 12px;
+  color: $text-sub;
+}
+
+.fieldError {
+  font-size: 12px;
+  color: $danger;
+}
+
+.formSection {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.fieldGrid + .formSection {
+  margin-top: 20px;
+}
+
+.formSectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.formSectionTitle {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: $text;
+}
+
+/* ── Not available yet (waits for a schema change) ─────────────────────── */
+.notAvailable {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 14px;
+  border: 1px solid #f6c58f;
+  border-radius: 4px;
+  background: #fff8ef;
+  color: $text;
+}
+
+.notAvailableIcon {
+  margin-top: 3px;
+  color: #c96a00;
+}
+
+.notAvailableTitle {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.notAvailableReason {
+  font-size: 12px;
+  color: $text-sub;
+}
+
+.notAvailableInline {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: #c96a00;
+
+  .notAvailableTitleInline {
+    white-space: nowrap;
+  }
+
+  .notAvailableReason {
+    margin-left: 4px;
+  }
+}

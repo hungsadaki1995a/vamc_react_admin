@@ -1,20 +1,37 @@
+import { useQueryClient } from '@tanstack/react-query';
 import { useApiQuery } from '@/hooks/use-api-query';
 import { useApiAction } from '@/hooks/use-api-action';
-import { getExchangeRates, syncExchangeRates } from '@/api/system/system-operations-api';
-import type { ExchangeRateItem } from '@/api/system/system-operations-api';
+import { getExchangeRateStatus, syncExchangeRates } from '@/api/system/exchange-rate-api';
+import type { ExchangeRateStatus } from '@/api/system/exchange-rate-api';
 
 // Data hooks of Exchange Rate Management (menu A06010500).
 
 const EXCHANGE_RATE_KEYS = {
   all: ['system', 'exchange-rates'] as const,
-  list: (displayedOnly: boolean) => ['system', 'exchange-rates', 'list', displayedOnly] as const,
+  status: ['system', 'exchange-rates', 'status'] as const,
 };
 
-export function useExchangeRates(displayedOnly: boolean) {
-  return useApiQuery<ExchangeRateItem[]>(EXCHANGE_RATE_KEYS.list(displayedOnly), () => getExchangeRates(displayedOnly));
+/** Sync status, rates shown to users and the latest 5 runs. */
+export function useExchangeRateStatus() {
+  return useApiQuery<ExchangeRateStatus>(EXCHANGE_RATE_KEYS.status, getExchangeRateStatus);
 }
 
-/** Pulls the latest rates from Vietcombank, then reloads the list. */
+/**
+ * [Sync Now]: the response is the new status, written straight into the cache.
+ * The status is refetched after a failure too, so the Failed run shows up.
+ */
 export function useSyncExchangeRates() {
-  return useApiAction(syncExchangeRates, { invalidate: [EXCHANGE_RATE_KEYS.all] });
+  const queryClient = useQueryClient();
+  const action = useApiAction(syncExchangeRates);
+  return {
+    ...action,
+    sync: async () => {
+      try {
+        const response = await action.mutateAsync();
+        if (response.data) queryClient.setQueryData(EXCHANGE_RATE_KEYS.status, response.data);
+      } finally {
+        void queryClient.invalidateQueries({ queryKey: EXCHANGE_RATE_KEYS.all });
+      }
+    },
+  };
 }
