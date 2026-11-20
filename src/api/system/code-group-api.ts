@@ -70,7 +70,7 @@ export const getCodeGroups = (search: CodeGroupSearch, page: PageQuery) =>
   apiGet<PageResponse<CodeGroupItem>>(`${CODE_BASE}/groups`, { ...search, ...page });
 export const downloadCodeGroupsExcel = (search: CodeGroupSearch) =>
   apiDownload(`${CODE_BASE}/groups/excel`, 'code-groups.xlsx', search);
-/** Errors: COD002 duplicate group code. */
+/** Errors: 409 CODE_GROUP_DUPLICATED duplicate group code. */
 export const createCodeGroup = (req: CreateCodeGroupRequest) => apiPost<CodeGroupItem>(`${CODE_BASE}/groups`, req);
 export const updateCodeGroup = (groupCd: string, req: UpdateCodeGroupRequest) =>
   apiPut<CodeGroupItem>(`${CODE_BASE}/groups/${encodeURIComponent(groupCd)}`, req);

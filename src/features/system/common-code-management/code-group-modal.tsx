@@ -52,7 +52,9 @@ export function CodeGroupModal({ item, canWrite, onClose }: CodeGroupModalProps)
       }
       onClose();
     } catch (e) {
-      if (!applyApiError(e, { COD002: ['groupCd', SYS_MESSAGES.duplicate('code')] })) toast.error(errorMessage(e));
+      // The server answers CODE_GROUP_DUPLICATED (COD002 in the enum).
+      const duplicate: [Field, string] = ['groupCd', SYS_MESSAGES.duplicate('code')];
+      if (!applyApiError(e, { CODE_GROUP_DUPLICATED: duplicate, COD002: duplicate })) toast.error(errorMessage(e));
     }
   };
 
