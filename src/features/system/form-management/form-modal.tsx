@@ -35,7 +35,7 @@ const FORM_MESSAGES = {
   /** E02 */
   duplicate: SYS_MESSAGES.duplicate('form no.'),
   /** E03 */
-  invalidUrl: 'Enter a file URL that starts with https and ends with docx, xlsx or pdf.',
+  invalidUrl: 'Please enter a docx, xlsx or pdf file URL starting with https.',
   formNoDigits: 'Enter a 4-digit number.',
   notAvailable: 'Saving forms is not available yet: the backend API is waiting for a schema change.',
 } as const;
