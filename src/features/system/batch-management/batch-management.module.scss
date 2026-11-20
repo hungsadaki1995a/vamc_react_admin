@@ -1,0 +1,27 @@
+/* Batch Management (VPA09040401 / P01 / P02) — screen-specific bits on top of _shared/sys-ui. */
+
+.fullWidth {
+  width: 100%;
+}
+
+/* Job Name column reads as the edit link of the row. */
+.link {
+  color: var(--color-text-brand, #1764ff);
+}
+
+/* JSON parameters. */
+.code:global(.ant-input) {
+  font-family: var(--font-family-mono, ui-monospace, SFMono-Regular, Menlo, monospace);
+  font-size: 12px;
+}
+
+.errorText {
+  color: var(--color-text-negative, #e62e44);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.historyTable {
+  max-height: 520px;
+  overflow-y: auto;
+}

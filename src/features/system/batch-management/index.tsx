@@ -1,178 +1,176 @@
-import { useState, type CSSProperties } from 'react';
-import { Input, Modal, Radio, Table, Tabs } from 'antd';
+import { useState } from 'react';
+import { Input, Select } from 'antd';
 import type { TableColumnsType } from 'antd';
+import { SyncOutlined } from '@ant-design/icons';
 import { useNotify } from '@/hooks/use-notify';
 import { useMenuPermission } from '@/hooks/use-menu-permission';
-import type { BatchHistoryItem, BatchJobItem } from '@/api/system/batch-api';
-import { DateTimeCell, FormField, SysPageHeader, SysPagination } from '@/features/system/_shared/system-ui';
+import type { BatchJobItem, BatchJobSearch } from '@/api/system/batch-api';
+import { SYS_PAGE_SIZE, USE_YN_FILTER_OPTIONS } from '@/features/system/_shared/sys-constants';
+import { SYS_DIALOG_LABELS } from '@/features/system/_shared/sys-messages';
+import {
+  DateTimeText,
+  ResultBadge,
+  SysButton,
+  SysExcelButton,
+  SysFilterItem,
+  SysFilterPanel,
+  SysPage,
+  SysPager,
+  SysSearchActions,
+  SysSectionHeader,
+  SysTable,
+  SysTitleBar,
+  UseBadge,
+} from '@/features/system/_shared/sys-list-ui';
 import { errorMessage } from '@/features/system/_shared/system-utils';
-import styles from '@/features/system/_shared/system-page.module.scss';
-import { useBatchHistory, useBatchJobs, useExecuteBatchJob, useUpdateBatchSchedule } from './use-batch-jobs';
+import { usePagedList } from '@/features/system/_shared/use-paged-list';
+import { useSysDialogs } from '@/features/system/_shared/use-sys-dialogs';
+import BatchHistoryModal from './batch-history-modal';
+import BatchJobModal from './batch-job-modal';
+import { BATCH_BREADCRUMB, BATCH_MESSAGES, toResult } from './batch-utils';
+import { useBatchJobs, useDownloadBatchJobs, useRefreshBatchSchedules } from './use-batch-jobs';
+import styles from './batch-management.module.scss';
 
-const PAGE_SIZE = 15;
+/** Edit popup target: `null` = closed, `'new'` = register mode. */
+type EditTarget = BatchJobItem | 'new' | null;
 
-/** Batch Management (menu A06040400). */
+const COLUMNS: TableColumnsType<BatchJobItem> = [
+  {
+    title: 'Use',
+    dataIndex: 'scheduleVtlzYn',
+    width: 90,
+    align: 'center',
+    render: (value: boolean) => <UseBadge value={value} />,
+  },
+  { title: 'Job Name', dataIndex: 'btchJobNm', width: 220, render: (value: string) => <span className={styles.link}>{value}</span> },
+  { title: 'Group', dataIndex: 'btchGroup', width: 110, align: 'center' },
+  { title: 'Description', dataIndex: 'jobExpln', ellipsis: true },
+  { title: 'Cron', dataIndex: 'cronExpression', width: 140, align: 'center', render: (value?: string) => value || '-' },
+  {
+    title: 'Last Run',
+    dataIndex: 'lastExcnAt',
+    width: 170,
+    align: 'center',
+    render: (value?: string) => <DateTimeText value={value} seconds />,
+  },
+  {
+    title: 'Latest Result',
+    dataIndex: 'lastBtchStts',
+    width: 120,
+    align: 'center',
+    render: (value?: string) => <ResultBadge value={toResult(value)} />,
+  },
+  {
+    title: 'Modified Date',
+    key: 'mdfcnDt',
+    width: 170,
+    align: 'center',
+    render: (_value, row) => <DateTimeText value={row.mdfcnDt ?? row.crtDt} seconds />,
+  },
+];
+
+/** Batch Management - List (VPA09040401, menu A06040400). */
 export default function BatchManagement() {
-  const { toast, dialog } = useNotify();
+  const { toast } = useNotify();
+  const { confirm } = useSysDialogs();
   const { canWrite } = useMenuPermission();
 
-  const [tab, setTab] = useState<'jobs' | 'history'>('jobs');
-  const [keyword, setKeyword] = useState('');
-  const [histPage, setHistPage] = useState(1);
-  const [schedModal, setSchedModal] = useState<BatchJobItem | null>(null);
+  const list = usePagedList<BatchJobSearch>({ useYn: '', btchGroup: '', btchJobNm: '' });
+  const { data, isFetching } = useBatchJobs(list.applied, list.pageQuery);
+  const download = useDownloadBatchJobs();
+  const refresh = useRefreshBatchSchedules();
 
-  const { data: jobsData, isFetching: jobsLoading, refetch: refetchJobs } = useBatchJobs();
-  const { data: histData, isFetching: histLoading, refetch: refetchHist } = useBatchHistory(
-    histPage,
-    PAGE_SIZE,
-    tab === 'history',
-  );
-  const executeJob = useExecuteBatchJob();
+  const [editTarget, setEditTarget] = useState<EditTarget>(null);
+  const [historyJob, setHistoryJob] = useState<string | null>(null);
 
-  const jobs = (jobsData?.content ?? []).filter((j) =>
-    !keyword.trim() || j.btchJobNm.toLowerCase().includes(keyword.trim().toLowerCase()),
-  );
-  const histories = histData?.content ?? [];
-  const histTotal = histData?.totalElements ?? 0;
-
-  const handleExecute = (jobName: string) => {
-    dialog.warning({
-      okCancel: true,
-      content: `Execute batch job "${jobName}" now?`,
+  const refreshSchedule = () =>
+    confirm({
+      content: BATCH_MESSAGES.confirmRefresh,
+      okText: SYS_DIALOG_LABELS.apply,
       onOk: async () => {
         try {
-          await executeJob.mutateAsync(jobName);
-          toast.success(`Executed ${jobName}.`);
-        } catch (e) {
-          toast.error(errorMessage(e));
+          await refresh.mutateAsync();
+          toast.success(BATCH_MESSAGES.refreshed);
+        } catch (error) {
+          toast.error(errorMessage(error));
         }
       },
     });
-  };
 
-  const jobColumns: TableColumnsType<BatchJobItem> = [
-    { title: 'Job Name', dataIndex: 'btchJobNm', width: 220 },
-    { title: 'Group', dataIndex: 'btchGroup', width: 130, align: 'center', render: (v?: string) => v || '-' },
-    { title: 'Description', dataIndex: 'jobExpln', render: (v?: string) => v || '-' },
-    { title: 'Cron', dataIndex: 'cronExpression', width: 140, align: 'center', render: (v?: string) => v || '-' },
-    {
-      title: 'Scheduled',
-      dataIndex: 'scheduleVtlzYn',
-      width: 90,
-      align: 'center',
-      render: (v?: string) => <span className={v === 'Y' ? styles.useY : styles.useN}>{v ?? 'N'}</span>,
-    },
-    { title: 'Last Run', dataIndex: 'lastExcnAt', width: 140, align: 'center', render: (v?: string) => <DateTimeCell value={v} /> },
-    {
-      title: 'Actions',
-      key: 'act',
-      width: 160,
-      align: 'center',
-      render: (_v, row) => (
-        <div className={`${styles.actions} ${styles.centered}`}>
-          <button type="button" className={`${styles.btn} ${styles.btnSmall}`} disabled={!canWrite} onClick={() => setSchedModal(row)}>Schedule</button>
-          <button type="button" className={`${styles.btnDark} ${styles.btnSmall}`} disabled={!canWrite} onClick={() => handleExecute(row.btchJobNm)}>Run</button>
-        </div>
-      ),
-    },
-  ];
-
-  const histColumns: TableColumnsType<BatchHistoryItem> = [
-    { title: 'Job Name', dataIndex: 'btchJobNm', width: 200 },
-    { title: 'Status', dataIndex: 'btchStts', width: 110, align: 'center' },
-    { title: 'Trigger', dataIndex: 'trgrType', width: 100, align: 'center' },
-    { title: 'Total', dataIndex: 'tprcsNocs', width: 70, align: 'right' },
-    { title: 'Success', dataIndex: 'scsNocs', width: 70, align: 'right' },
-    { title: 'Fail', dataIndex: 'failNocs', width: 70, align: 'right' },
-    { title: 'Started At', dataIndex: 'bgngDt', width: 140, align: 'center', render: (v?: string) => <DateTimeCell value={v} /> },
-    { title: 'Ended At', dataIndex: 'endDt', width: 140, align: 'center', render: (v?: string) => <DateTimeCell value={v} /> },
-  ];
+  const total = data?.totalElements ?? 0;
 
   return (
-    <div className={styles.container}>
-      <SysPageHeader
-        breadcrumb={['System Operation Management', 'System Management', 'Batch Management']}
-        title="Batch Management"
-        onReset={() => setKeyword('')}
-        onSearch={() => (tab === 'jobs' ? void refetchJobs() : void refetchHist())}
+    <SysPage>
+      <SysTitleBar title="Batch Management" breadcrumb={BATCH_BREADCRUMB} />
+      <SysFilterPanel>
+        <SysFilterItem label="Use">
+          <Select
+            options={USE_YN_FILTER_OPTIONS}
+            value={list.draft.useYn}
+            onChange={(useYn) => list.setDraft({ useYn })}
+          />
+        </SysFilterItem>
+        <SysFilterItem label="Group">
+          <Input
+            value={list.draft.btchGroup}
+            maxLength={50}
+            allowClear
+            onChange={(e) => list.setDraft({ btchGroup: e.target.value })}
+            onPressEnter={() => list.search()}
+          />
+        </SysFilterItem>
+        <SysFilterItem label="Job Name">
+          <Input
+            value={list.draft.btchJobNm}
+            maxLength={100}
+            allowClear
+            onChange={(e) => list.setDraft({ btchJobNm: e.target.value })}
+            onPressEnter={() => list.search()}
+          />
+        </SysFilterItem>
+      </SysFilterPanel>
+      <SysSearchActions onReset={list.reset} onSearch={() => list.search()} loading={isFetching} />
+      <SysSectionHeader
+        total={total}
+        actions={
+          <>
+            {canWrite && (
+              <SysButton icon={<SyncOutlined />} loading={refresh.isPending} onClick={refreshSchedule}>
+                Refresh Schedule
+              </SysButton>
+            )}
+            <SysExcelButton loading={download.isPending} onClick={() => download.mutate(list.applied)} />
+          </>
+        }
+        primaryActions={
+          canWrite && (
+            <SysButton look="navy" onClick={() => setEditTarget('new')}>
+              New
+            </SysButton>
+          )
+        }
       />
-
-      <Tabs
-        activeKey={tab}
-        onChange={(k) => setTab(k as 'jobs' | 'history')}
-        items={[
-          {
-            key: 'jobs',
-            label: 'Batch Jobs',
-            children: (
-              <>
-                <div className={`${styles.filterCard} ${styles.mb12}`}>
-                  <div className={styles.filterGroup}>
-                    <span className={styles.filterLabel}>Job Name</span>
-                    <Input className={styles.filterInput} value={keyword} onChange={(e) => setKeyword(e.target.value)} allowClear />
-                  </div>
-                </div>
-                <div className={styles.tableWrapper}>
-                  <Table<BatchJobItem> rowKey="btchJobNm" columns={jobColumns} dataSource={jobs} loading={jobsLoading} pagination={false} size="small" scroll={{ x: 'max-content' }} />
-                </div>
-              </>
-            ),
-          },
-          {
-            key: 'history',
-            label: 'Execution History',
-            children: (
-              <>
-                <div className={styles.tableWrapper}>
-                  <Table<BatchHistoryItem> rowKey="btchHstryId" columns={histColumns} dataSource={histories} loading={histLoading} pagination={false} size="small" scroll={{ x: 'max-content' }} />
-                </div>
-                <div className={styles.mt12}>
-                  <SysPagination page={histPage} pageSize={PAGE_SIZE} total={histTotal} onChange={setHistPage} />
-                </div>
-              </>
-            ),
-          },
-        ]}
+      <SysTable<BatchJobItem>
+        rowKey="btchJobNm"
+        columns={COLUMNS}
+        dataSource={data?.content}
+        loading={isFetching && !data}
+        onRowClick={setEditTarget}
       />
+      <SysPager page={list.page} pageSize={SYS_PAGE_SIZE} total={total} onChange={list.setPage} />
 
-      {schedModal && (
-        <ScheduleModal
-          job={schedModal}
+      {editTarget && (
+        <BatchJobModal
+          key={editTarget === 'new' ? 'new' : editTarget.btchJobNm}
+          job={editTarget === 'new' ? undefined : editTarget}
           canWrite={canWrite}
-          onClose={() => setSchedModal(null)}
+          onClose={() => setEditTarget(null)}
+          onOpenHistory={setHistoryJob}
         />
       )}
-    </div>
-  );
-}
-
-function ScheduleModal({ job, canWrite, onClose }: { job: BatchJobItem; canWrite: boolean; onClose: () => void }) {
-  const { toast } = useNotify();
-  const [cron, setCron] = useState(job.cronExpression ?? '');
-  const [enabled, setEnabled] = useState<'Y' | 'N'>(job.scheduleVtlzYn ?? 'N');
-  const updateSchedule = useUpdateBatchSchedule();
-
-  const handleSave = async () => {
-    try {
-      await updateSchedule.mutateAsync({ jobName: job.btchJobNm, cronExpression: cron.trim(), scheduleVtlzYn: enabled });
-      toast.success('Schedule updated.');
-      onClose();
-    } catch (e) {
-      toast.error(errorMessage(e));
-    }
-  };
-
-  return (
-    <Modal open centered title={`Schedule: ${job.btchJobNm}`} onCancel={onClose} footer={
-      <div className={styles.modalFooter}>
-        <button type="button" className={styles.btn} onClick={onClose}>Cancel</button>
-        <button type="button" className={styles.btnDark} disabled={!canWrite} onClick={handleSave}>Confirm</button>
-      </div>
-    }>
-      <div className={styles.formGrid} style={{ '--form-cols': 2 } as CSSProperties}>
-        <FormField label="Cron Expression" span="full"><Input value={cron} placeholder="0 0 * * * *" onChange={(e) => setCron(e.target.value)} /></FormField>
-        <FormField label="Active" span="full"><Radio.Group value={enabled} onChange={(e) => setEnabled(e.target.value)}><Radio value="Y">Y</Radio><Radio value="N">N</Radio></Radio.Group></FormField>
-      </div>
-    </Modal>
+      {historyJob && (
+        <BatchHistoryModal key={historyJob} jobName={historyJob} allowRerun={canWrite} onClose={() => setHistoryJob(null)} />
+      )}
+    </SysPage>
   );
 }
