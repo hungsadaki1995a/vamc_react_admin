@@ -7,8 +7,6 @@ export const EXCHANGE_RATE_MESSAGES = {
   syncFailed: 'Could not receive exchange rates. Please try again later.',
   syncRunning: 'Exchange rate sync is already running. Please try again later.',
   synced: 'Exchange rates were received.',
-  lastRunFailed:
-    'The last run failed. The last successfully received rates and base date/time are kept and shown to users.',
 } as const;
 
 const RATE_FORMAT = new Intl.NumberFormat('vi-VN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -40,9 +38,9 @@ export function describeCron(cron: string): string {
   const minStep = /^(?:\*|0)\/(\d+)$/.exec(min);
   if (minStep && hour === '*') return `Every ${minStep[1]} minutes`;
   if (!NUMBER.test(min)) return cron;
-  if (hour === '*') return `Every hour at minute ${pad(min)}`;
+  if (hour === '*') return `Hourly at :${pad(min)}`;
   const hourStep = /^(?:\*|0)\/(\d+)$/.exec(hour);
-  if (hourStep) return `Every ${hourStep[1]} hours at minute ${pad(min)}`;
+  if (hourStep) return `Every ${hourStep[1]} hours at :${pad(min)}`;
   if (/^\d+(,\d+)*$/.test(hour)) {
     return `Every day at ${hour
       .split(',')
@@ -55,6 +53,7 @@ export function describeCron(cron: string): string {
 /** Run Schedule text: described cron + zone, or why there is none. */
 export function formatSchedule(schedule?: ExchangeRateSchedule | null): string {
   if (!schedule?.cron) return schedule && !schedule.enabled ? 'Not scheduled' : '-';
-  const text = `${describeCron(schedule.cron)}${schedule.zone ? ` (${schedule.zone})` : ''}`;
+  // The zone is the server's (Asia/Ho_Chi_Minh); the design shows the schedule only.
+  const text = describeCron(schedule.cron);
   return schedule.enabled ? text : `${text} · Off`;
 }

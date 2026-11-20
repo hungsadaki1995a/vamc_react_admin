@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import type { TableColumnsType } from 'antd';
-import { SyncOutlined } from '@ant-design/icons';
 import { useNotify } from '@/hooks/use-notify';
 import type { ExchangeRateItem, ExchangeRateRun } from '@/api/system/exchange-rate-api';
 import { SYS_DIALOG_LABELS } from '@/features/system/_shared/sys-messages';
@@ -42,8 +41,7 @@ export default function ExchangeRateManagement() {
   const sync = useSyncExchangeRates();
   const [historyOpen, setHistoryOpen] = useState(false);
 
-  const lastFailed = status?.lastRun?.result?.toUpperCase() === 'FAILED';
-
+  // Sync Failed state: only the Last Run badge turns Failed; base date/time and rates keep the last good values.
   // C01 — the design uses [Cancel] / [Sync] here (not [Close]).
   const confirmSync = () =>
     dialog.confirm({
@@ -74,7 +72,7 @@ export default function ExchangeRateManagement() {
         <div className={styles.syncHeader}>
           <h2 className={styles.blockTitle}>Sync Status</h2>
           {status?.canSync && (
-            <SysButton look="navy" icon={<SyncOutlined />} loading={sync.isPending} onClick={confirmSync}>
+            <SysButton look="outline" loading={sync.isPending} onClick={confirmSync}>
               Sync Now
             </SysButton>
           )}
@@ -98,10 +96,9 @@ export default function ExchangeRateManagement() {
           </div>
           <div className={styles.syncItem}>
             <span className={styles.syncLabel}>Run Schedule</span>
-            <span className={styles.syncText}>{formatSchedule(status?.schedule)}</span>
+            <strong className={styles.syncValue}>{formatSchedule(status?.schedule)}</strong>
           </div>
         </div>
-        {lastFailed && <p className={styles.failedNote}>{EXCHANGE_RATE_MESSAGES.lastRunFailed}</p>}
       </section>
 
       <div className={styles.columns}>
@@ -119,7 +116,7 @@ export default function ExchangeRateManagement() {
         <section className={styles.block}>
           <div className={styles.blockHeader}>
             <h2 className={styles.blockTitle}>Recent Runs</h2>
-            <SysButton size="small" onClick={() => setHistoryOpen(true)}>
+            <SysButton onClick={() => setHistoryOpen(true)}>
               View All History
             </SysButton>
           </div>

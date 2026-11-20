@@ -69,21 +69,9 @@ $text-sub: var(--color-text-secondary, #6f7b95);
   min-height: 28px;
 }
 
-.syncText {
-  font-size: 14px;
-  line-height: 28px;
-  color: $text;
-}
-
-.failedNote {
-  margin: 0;
-  font-size: 13px;
-  color: var(--color-text-negative, #e62e44);
-}
-
 .columns {
   display: grid;
-  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
   gap: 24px;
   align-items: start;
 }
