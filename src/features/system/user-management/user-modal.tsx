@@ -9,7 +9,6 @@ import { useSysDialogs } from '../_shared/use-sys-dialogs';
 import { useFieldErrors } from '../_shared/use-field-errors';
 import { errorMessage } from '../_shared/system-utils';
 import { EMAIL_PATTERN, EMP_NO_PATTERN, EMP_STATUS_OPTIONS, MOBILE_PATTERN } from './user-constants';
-import styles from './user-management.module.scss';
 import { useCreateEmployee, useDeleteEmployee, useResetEmployeePassword, useUpdateEmployee } from './use-employees';
 
 // User Management - Register/Edit popup (VPA090202P01).
@@ -160,12 +159,11 @@ export default function UserModal({ detail, canWrite, onClose }: UserModalProps)
 
   const readOnly = !canWrite;
   // Design: [Delete] sits on the left of the footer, [Cancel] [Edit] on the right.
-  const extraActions =
+  const leftActions =
     isEdit && canWrite ? (
       <SysButton
         look="primary"
         danger
-        className={styles.deleteButton}
         loading={deleteEmployee.isPending}
         onClick={handleDelete}
       >
@@ -192,7 +190,7 @@ export default function UserModal({ detail, canWrite, onClose }: UserModalProps)
       submitText={isEdit ? 'Edit' : 'Register'}
       onSubmit={canWrite ? () => void handleSubmit() : undefined}
       submitting={createEmployee.isPending || updateEmployee.isPending}
-      extraActions={extraActions}
+      leftActions={leftActions}
       onCancel={onClose}
     >
       <SysFieldGrid columns={3}>

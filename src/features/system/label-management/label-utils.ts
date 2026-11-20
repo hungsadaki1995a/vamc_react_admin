@@ -15,7 +15,7 @@ export const LABEL_MESSAGES = {
   invalidScreenId: 'Use letters, numbers and _ only.',
   invalidLabelCode: 'Use letters, numbers, _ . - only.',
   keyTooLong: 'The label key must be 100 characters or less.',
-  typeNotAvailable: 'Not available yet (pending schema change).',
+  typeNotAvailable: 'Waits for a schema change.',
   uploadDone: (rows: number) => `Excel uploaded (${rows.toLocaleString('en-US')} rows checked).`,
   uploadFailed: 'Nothing was saved. Fix the rows below and upload again.',
 } as const;

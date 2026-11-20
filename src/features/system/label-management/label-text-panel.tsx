@@ -157,7 +157,7 @@ export default function LabelTextPanel({
             dataSource={rows}
             loading={loading}
             onRowClick={canWrite ? (row) => setEditingLang(row.langCd) : undefined}
-            rowClassName={(row) => (row.langCd === editingLang ? styles.editingRow : '')}
+            selectedRowKey={editingLang}
           />
           {errorText && <p className={styles.panelError}>{errorText}</p>}
           <p className={styles.panelHint}>

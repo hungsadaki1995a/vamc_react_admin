@@ -18,8 +18,8 @@ export const POPUP_OPTIONS = [
   { value: 'N', label: 'No' },
 ];
 
-/** Shown on v0.8 fields the backend cannot store yet. */
-export const NOT_AVAILABLE_NOTE = 'Not available yet (waiting for the screen schema change).';
+/** Reason shown with "Not available yet" on v0.8 fields the backend cannot store yet. */
+export const NOT_AVAILABLE_REASON = 'Waits for the screen schema change.';
 
 /**
  * Type guessed from the Screen ID prefix (WB_… / AD_…) until SCRN_MNG stores it.

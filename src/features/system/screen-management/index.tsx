@@ -9,6 +9,7 @@ import {
   SysExcelButton,
   SysFilterItem,
   SysFilterPanel,
+  SysNotAvailable,
   SysPage,
   SysPager,
   SysSearchActions,
@@ -18,7 +19,7 @@ import {
 } from '@/features/system/_shared/sys-list-ui';
 import { ALL, SYS_PAGE_SIZE } from '@/features/system/_shared/sys-constants';
 import { usePagedList } from '@/features/system/_shared/use-paged-list';
-import { NOT_AVAILABLE_NOTE, SCREEN_TYPE_FILTER_OPTIONS, screenTypeOf } from './screen-constants';
+import { NOT_AVAILABLE_REASON, SCREEN_TYPE_FILTER_OPTIONS, screenTypeOf } from './screen-constants';
 import { ScreenModal } from './screen-modal';
 import { useDownloadScreensExcel, useScreens } from './use-screens';
 import styles from './screen-management.module.scss';
@@ -85,11 +86,11 @@ export default function ScreenManagement() {
         breadcrumb={['System Operation Management', 'System Management', 'Screen Management']}
       />
       <SysFilterPanel columns={4}>
-        <SysFilterItem label="Type">
-          <Select options={SCREEN_TYPE_FILTER_OPTIONS} value={ALL} disabled title={NOT_AVAILABLE_NOTE} />
+        <SysFilterItem label="Type" hint={<SysNotAvailable variant="inline" />}>
+          <Select options={SCREEN_TYPE_FILTER_OPTIONS} value={ALL} disabled title={NOT_AVAILABLE_REASON} />
         </SysFilterItem>
-        <SysFilterItem label="Business">
-          <Select options={[{ value: ALL, label: 'All' }]} value={ALL} disabled title={NOT_AVAILABLE_NOTE} />
+        <SysFilterItem label="Business" hint={<SysNotAvailable variant="inline" />}>
+          <Select options={[{ value: ALL, label: 'All' }]} value={ALL} disabled title={NOT_AVAILABLE_REASON} />
         </SysFilterItem>
         <SysFilterItem label="Screen ID">
           <Input
@@ -109,7 +110,6 @@ export default function ScreenManagement() {
           />
         </SysFilterItem>
       </SysFilterPanel>
-      <p className={styles.filterNote}>Type and Business filters: {NOT_AVAILABLE_NOTE}</p>
       <SysSearchActions onReset={list.reset} onSearch={() => list.search()} loading={isFetching} />
 
       <SysSectionHeader

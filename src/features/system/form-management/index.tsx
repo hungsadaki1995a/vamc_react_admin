@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Alert, Input, Select } from 'antd';
+import { Input, Select } from 'antd';
 import type { TableColumnsType } from 'antd';
 import { useMenuPermission } from '@/hooks/use-menu-permission';
 import { FORM_API_AVAILABLE } from '@/api/system/form-api';
@@ -10,6 +10,7 @@ import {
   SysExcelButton,
   SysFilterItem,
   SysFilterPanel,
+  SysNotAvailable,
   SysPage,
   SysPager,
   SysSearchActions,
@@ -86,12 +87,10 @@ export default function FormManagement() {
         breadcrumb={['System Operation Management', 'NPL Platform Management', 'Form Management']}
       />
       {!FORM_API_AVAILABLE && (
-        <Alert
-          type="warning"
-          showIcon
-          title="Not available yet"
-          description="The form API is waiting for a schema change (file URL column). The list stays empty and saving is disabled until it is deployed."
-        />
+        <SysNotAvailable>
+          The form API is waiting for a schema change (file URL column). The list stays empty and saving is disabled
+          until it is deployed.
+        </SysNotAvailable>
       )}
       <SysFilterPanel>
         <SysFilterItem label="Use">

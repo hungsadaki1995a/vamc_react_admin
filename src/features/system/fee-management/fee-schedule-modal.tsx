@@ -4,7 +4,7 @@ import type { UploadFile } from 'antd';
 import type { Dayjs } from 'dayjs';
 import { UploadOutlined } from '@ant-design/icons';
 import { FEE_SCHEDULE_API_AVAILABLE } from '@/api/system/fee-api';
-import { SysButton } from '../_shared/sys-list-ui';
+import { SysButton, SysNotAvailable } from '../_shared/sys-list-ui';
 import { SysField, SysFieldGrid, SysFormModal } from '../_shared/sys-form-ui';
 import { SYS_DATE_FORMAT } from '../_shared/sys-constants';
 import styles from './fee-management.module.scss';
@@ -19,8 +19,9 @@ interface FeeScheduleState {
   files: UploadFile[];
 }
 
-const NOT_AVAILABLE =
-  'Not available yet: saving the fee schedule waits for a schema change (Basis and fee schedule storage).';
+const NOT_AVAILABLE = (
+  <SysNotAvailable>Saving the fee schedule waits for a schema change (Basis and fee schedule storage).</SysNotAvailable>
+);
 
 export default function FeeScheduleModal({ canWrite, onClose }: { canWrite: boolean; onClose: () => void }) {
   const [values, setValues] = useState<FeeScheduleState>({ effectiveDate: null, basis: '', notes: '', files: [] });

@@ -55,4 +55,4 @@ export const TEMPLATE_VARIABLES = [
 /** Role group of web member grades (used by Web Menu Permission), not a staff group: hidden from Recipient. */
 export const HIDDEN_ROLE_GROUP_IDS: readonly string[] = ['RG00100'];
 
-export const NOT_AVAILABLE_HINT = 'Not available yet (waiting for a schema change); not saved.';
+export const NOT_AVAILABLE_REASON = 'Waits for a schema change; not saved.';

@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Alert, Input, Select } from 'antd';
+import { Input, Select } from 'antd';
 import type { TableColumnsType } from 'antd';
 import { useMenuPermission } from '@/hooks/use-menu-permission';
 import { NOTI_CHANNEL_LABELS, NOTI_RECIPIENT_LABELS } from '@/api/system/notification-api';
@@ -15,6 +15,7 @@ import {
   SysExcelButton,
   SysFilterItem,
   SysFilterPanel,
+  SysNotAvailable,
   SysPage,
   SysPager,
   SysSearchActions,
@@ -104,12 +105,10 @@ export default function NotificationMessageManagement() {
         title="Notification Message Management"
         breadcrumb={['System Operation Management', 'Notification Management', 'Notification Message Management']}
       />
-      <Alert
-        type="warning"
-        showIcon
-        title="Partly available"
-        description="No., Service Type, Remarks, the Channel / Recipient Type / No. filters and Excel Download wait for a schema change. Only the Use filter is applied for now."
-      />
+      <SysNotAvailable title="Partly available">
+        No., Service Type, Remarks, the Channel / Recipient Type / No. filters and Excel Download wait for a schema
+        change. Only the Use filter is applied for now.
+      </SysNotAvailable>
       <SysFilterPanel columns={4}>
         <SysFilterItem label="Use">
           <Select value={list.draft.useYn} options={USE_YN_FILTER_OPTIONS} onChange={(useYn) => list.setDraft({ useYn })} />

@@ -20,6 +20,7 @@ import {
   SysExcelButton,
   SysFilterItem,
   SysFilterPanel,
+  SysNotAvailable,
   SysPage,
   SysPager,
   SysSearchActions,
@@ -143,12 +144,10 @@ export default function NotificationHistoryManagement() {
         title="Notification Send History"
         breadcrumb={['System Operation Management', 'Notification Management', 'Notification Send History']}
       />
-      <Alert
-        type="info"
-        showIcon
-        title="Sends are not recorded yet"
-        description="The backend does not write the send history yet, so the list stays empty. Code, Service and the recipient address wait for a schema change; Recipient shows the member / employee number."
-      />
+      <SysNotAvailable title="Sends are not recorded yet">
+        The backend does not write the send history yet, so the list stays empty. Code, Service and the recipient
+        address wait for a schema change; Recipient shows the member / employee number.
+      </SysNotAvailable>
       <SysFilterPanel>
         <SysFilterItem label="Send Period">
           <DatePicker.RangePicker

@@ -242,6 +242,7 @@ export function SysTable<T extends object>({
   fill = false,
   rowKey,
   className,
+  rowClassName,
   ...rest
 }: SysTableProps<T>) {
   const controlledColumns = columns.map((column) => {
@@ -285,11 +286,12 @@ export function SysTable<T extends object>({
         scroll={{ x: 'max-content' }}
         onChange={handleChange}
         onRow={(row) => ({ onClick: onRowClick ? () => onRowClick(row) : undefined })}
-        rowClassName={(row, index) =>
-          selectedRowKey !== undefined && selectedRowKey !== null && resolveKey(row, index) === selectedRowKey
-            ? styles.rowSelected
-            : ''
-        }
+        rowClassName={(row, index, indent) => {
+          const own = typeof rowClassName === 'function' ? rowClassName(row, index, indent) : rowClassName;
+          const selected =
+            selectedRowKey !== undefined && selectedRowKey !== null && resolveKey(row, index) === selectedRowKey;
+          return [own, selected ? styles.rowSelected : ''].filter(Boolean).join(' ');
+        }}
         {...rest}
       />
     </div>
@@ -387,7 +389,7 @@ export function SysNotAvailable({ title = 'Not available yet', children, variant
     return (
       <span className={styles.notAvailableInline}>
         <ClockCircleOutlined />
-        {title}
+        <span className={styles.notAvailableTitleInline}>{title}</span>
         {children && <span className={styles.notAvailableReason}>{children}</span>}
       </span>
     );

@@ -1,6 +1,6 @@
 import { Input, Spin } from 'antd';
 import { NOTI_CHANNEL_LABELS, NOTI_RECIPIENT_LABELS } from '@/api/system/notification-api';
-import { ResultBadge } from '../_shared/sys-list-ui';
+import { ResultBadge, SysNotAvailable } from '../_shared/sys-list-ui';
 import { SysField, SysFieldGrid, SysFormModal } from '../_shared/sys-form-ui';
 import { formatSysDateTime } from '../_shared/system-utils';
 import { useNotificationHistory } from './use-notification-histories';
@@ -10,8 +10,11 @@ import styles from './notification-history-management.module.scss';
 // Frame layout: Sent At | Send Result | Channel / Service | Code | Recipient Type / Recipient /
 // Failure Reason (failed only) / Title / Content.
 
-const PENDING_HISTORY_FIELDS_NOTE =
-  'Code, Service and the recipient address are not available yet (waiting for a schema change); Recipient shows the member / employee number.';
+const PENDING_HISTORY_FIELDS_NOTE = (
+  <SysNotAvailable>
+    Code, Service and the recipient address wait for a schema change; Recipient shows the member / employee number.
+  </SysNotAvailable>
+);
 
 /** Read-only value box like the frame's grey inputs. */
 function ReadOnly({ value }: { value?: string | null }) {

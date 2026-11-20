@@ -1,6 +1,6 @@
 import { Input, Radio } from 'antd';
 import type { MenuSeCd, YesNo } from '@/api/system/menu-setting-api';
-import { SysButton, SysEmpty } from './sys-list-ui';
+import { SysButton, SysEmpty, SysNotAvailable } from './sys-list-ui';
 import { SysField, SysFieldGrid } from './sys-form-ui';
 import { USE_YN_RADIO_OPTIONS } from './sys-constants';
 import type { FieldErrors } from './use-field-errors';
@@ -150,7 +150,11 @@ export default function MenuSettingsDetail({
             label="Show in Menu"
             required
             span={2}
-            hint="Not available yet: waits for a database change. Every menu is shown in the LNB for now."
+            hint={
+              <SysNotAvailable variant="inline">
+                Waits for a database change. Every menu is shown in the LNB for now.
+              </SysNotAvailable>
+            }
           >
             {/* TODO(schema): MENU_EXPSR_YN — enable and send once the column exists. */}
             <Radio.Group options={SHOW_IN_MENU_OPTIONS} value={form.showInMenu} disabled />

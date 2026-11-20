@@ -12,7 +12,7 @@ import type {
   NotificationMessageRequest,
   YesNo,
 } from '@/api/system/notification-api';
-import { SysButton } from '../_shared/sys-list-ui';
+import { SysButton, SysNotAvailable } from '../_shared/sys-list-ui';
 import { SysField, SysFieldGrid, SysFormModal, SysFormSection } from '../_shared/sys-form-ui';
 import { USE_YN_RADIO_OPTIONS } from '../_shared/sys-constants';
 import { SYS_MESSAGES } from '../_shared/sys-messages';
@@ -22,7 +22,7 @@ import {
   CHANNEL_OPTIONS,
   LANG_OPTIONS,
   MENU_CODE_PATTERN,
-  NOT_AVAILABLE_HINT,
+  NOT_AVAILABLE_REASON,
   PROCESS_TYPE_OPTIONS,
   RECIPIENT_TYPE_OPTIONS,
   TEMPLATE_VARIABLES,
@@ -46,6 +46,8 @@ type FieldKey =
   | 'langCd';
 
 type TemplateField = 'notiTtl' | 'notiCn';
+
+const NOT_AVAILABLE_HINT = <SysNotAvailable variant="inline">{NOT_AVAILABLE_REASON}</SysNotAvailable>;
 
 interface MessageFormState {
   notiMediaSe: NotiChannel;

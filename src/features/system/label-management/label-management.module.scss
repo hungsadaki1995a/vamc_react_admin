@@ -10,11 +10,6 @@ $danger: var(--color-text-negative, #e62e44);
   width: 100%;
 }
 
-.typeFilter {
-  display: flex;
-  flex: 1 1 auto;
-  min-width: 0;
-}
 
 /* Divider between [Refresh Cache] and the Excel buttons (design groups). */
 .actionDivider {
@@ -22,13 +17,6 @@ $danger: var(--color-text-negative, #e62e44);
   height: 24px;
   margin: 0 6px;
   background: var(--color-border-primary, #d1d1e0);
-}
-
-/* Edit popup: [Delete] pinned left. */
-.footerLeft {
-  display: flex;
-  gap: 6px;
-  margin-right: auto;
 }
 
 .missing {
@@ -48,10 +36,6 @@ $danger: var(--color-text-negative, #e62e44);
   &:hover {
     text-decoration: underline;
   }
-}
-
-.selectedRow > td {
-  background: #eaf3ff !important;
 }
 
 /* ── Text by Language ───────────────────────────────────────────────────── */
@@ -108,10 +92,6 @@ $danger: var(--color-text-negative, #e62e44);
 .placeholder {
   color: $text-sub;
   font-style: italic;
-}
-
-.editingRow > td {
-  background: #eaf6ff !important;
 }
 
 .panelError {

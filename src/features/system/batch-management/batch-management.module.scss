@@ -30,13 +30,6 @@
   background: var(--color-border-primary, #d1d1e0);
 }
 
-/* Edit popup: [Run Now] [Execution History] pinned left, [Cancel] [Edit] right. */
-.footerLeft {
-  display: flex;
-  gap: 6px;
-  margin-right: auto;
-}
-
 /* Job Information strip of the history popup. */
 .jobInfo {
   display: flex;

@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Checkbox, Input, Select, Tooltip, Upload } from 'antd';
+import { Checkbox, Input, Select, Upload } from 'antd';
 import type { TableColumnsType } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import { useNotify } from '@/hooks/use-notify';
@@ -13,6 +13,7 @@ import {
   SysExcelButton,
   SysFilterItem,
   SysFilterPanel,
+  SysNotAvailable,
   SysPage,
   SysPager,
   SysSearchActions,
@@ -214,13 +215,14 @@ export default function LabelManagement() {
         breadcrumb={['System Operation Management', 'System Management', 'i18n Label Management']}
       />
       <SysFilterPanel columns={4}>
-        <SysFilterItem label="Type">
+        <SysFilterItem label="Type" hint={<SysNotAvailable variant="inline" />}>
           {/* TODO(schema): SYS_SE_CD pending — disabled, never sent. */}
-          <Tooltip title={LABEL_MESSAGES.typeNotAvailable}>
-            <span className={styles.typeFilter}>
-              <Select options={TYPE_FILTER_OPTIONS} value={list.draft.sysSeCd} disabled className={styles.fullWidth} />
-            </span>
-          </Tooltip>
+          <Select
+            options={TYPE_FILTER_OPTIONS}
+            value={list.draft.sysSeCd}
+            disabled
+            title={LABEL_MESSAGES.typeNotAvailable}
+          />
         </SysFilterItem>
         <SysFilterItem label="Label Key">
           <Input
@@ -299,8 +301,7 @@ export default function LabelManagement() {
               dataSource={data?.content}
               loading={isFetching && !data}
               onRowClick={selectRow}
-              // Local selected-row class (see report: shared rowSelected class is not exported by the module).
-              rowClassName={(row) => (labelRowId(row) === selectedId ? styles.selectedRow : '')}
+              selectedRowKey={selectedId}
             />
             <SysPager
               page={list.page}

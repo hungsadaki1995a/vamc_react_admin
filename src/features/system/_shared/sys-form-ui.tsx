@@ -23,8 +23,10 @@ interface SysFormModalProps {
   submitText?: string;
   submitting?: boolean;
   submitDisabled?: boolean;
-  /** Buttons placed before [Cancel], e.g. [Delete], [Reset Password], [Run Now], [Execution History]. */
+  /** Buttons placed before [Cancel], e.g. [Run Now], [Execution History]. */
   extraActions?: ReactNode;
+  /** Buttons aligned to the left of the footer, e.g. [Delete], [Reset Password]. */
+  leftActions?: ReactNode;
   /** Fixed guide text above the footer (e.g. Batch "Use and Cron changes are applied …"). */
   notice?: ReactNode;
   width?: number;
@@ -40,11 +42,13 @@ export function SysFormModal({
   submitting = false,
   submitDisabled = false,
   extraActions,
+  leftActions,
   notice,
   width = 960,
 }: SysFormModalProps) {
   const footer = (
     <div className={styles.modalFooter}>
+      {leftActions && <div className={styles.modalFooterLeft}>{leftActions}</div>}
       {extraActions}
       {onSubmit ? (
         <>
@@ -77,7 +81,7 @@ export function SysFormModal({
     >
       <h2 className={styles.modalHeading}>{title}</h2>
       {children}
-      {notice && <p className={styles.modalNotice}>{notice}</p>}
+      {notice && <div className={styles.modalNotice}>{notice}</div>}
     </Modal>
   );
 }
@@ -96,7 +100,7 @@ interface SysFieldProps {
   required?: boolean;
   /** E0x message shown under the control with a red border. */
   error?: string;
-  /** Pairs the field spans (2, 3) or `full` = rest of the row. */
+  /** Pairs the field spans (2, 3) or `full` = a row of its own. */
   span?: 1 | 2 | 3 | 'full';
   /** Grey hint under the control (format examples, policy notes). */
   hint?: ReactNode;
@@ -106,9 +110,12 @@ interface SysFieldProps {
 export function SysField({ label, required, error, span = 1, hint, children }: SysFieldProps) {
   return (
     <>
-      <div className={styles.fieldLabel}>
-        {label}
-        {required && <span className={styles.requiredMark}>*</span>}
+      <div className={styles.fieldLabel} data-span={span === 'full' ? span : undefined}>
+        {/* One inline box so a wrapped label keeps the * right after the text. */}
+        <span>
+          {label}
+          {required && <span className={styles.requiredMark}>*</span>}
+        </span>
       </div>
       <div className={styles.fieldValue} data-span={span} data-error={error ? true : undefined}>
         <div className={styles.fieldControl}>{children}</div>

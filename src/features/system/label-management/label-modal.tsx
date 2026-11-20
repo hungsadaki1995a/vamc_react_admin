@@ -5,7 +5,7 @@ import { useCommonCodes } from '@/hooks/use-common-codes';
 import { COMMON_SCREEN_ID } from '@/api/system/label-management-api';
 import type { LabelKey, LabelListItem } from '@/api/system/label-management-api';
 import { SYS_DIALOG_LABELS, SYS_MESSAGES } from '@/features/system/_shared/sys-messages';
-import { SysButton } from '@/features/system/_shared/sys-list-ui';
+import { SysButton, SysNotAvailable } from '@/features/system/_shared/sys-list-ui';
 import { SysField, SysFieldGrid, SysFormModal } from '@/features/system/_shared/sys-form-ui';
 import { errorMessage } from '@/features/system/_shared/system-utils';
 import { useFieldErrors } from '@/features/system/_shared/use-field-errors';
@@ -171,20 +171,17 @@ export default function LabelModal({ label, canWrite, onClose, onSaved, onDelete
       onSubmit={canWrite ? (isEdit ? edit : register) : undefined}
       submitting={createLabel.isPending || updateLabel.isPending}
       onCancel={onClose}
-      extraActions={
+      leftActions={
         isEdit &&
         canWrite && (
-          // [Delete] sits on the left of the footer (solid red), [Cancel] [Edit] on the right.
-          <span className={styles.footerLeft}>
-            <SysButton look="primary" danger loading={deleteLabel.isPending} onClick={remove}>
-              Delete
-            </SysButton>
-          </span>
+          <SysButton look="primary" danger loading={deleteLabel.isPending} onClick={remove}>
+            Delete
+          </SysButton>
         )
       }
     >
       <SysFieldGrid columns={2}>
-        <SysField label="Type" required hint={LABEL_MESSAGES.typeNotAvailable}>
+        <SysField label="Type" required hint={<SysNotAvailable variant="inline">{LABEL_MESSAGES.typeNotAvailable}</SysNotAvailable>}>
           {/* TODO(schema): SYS_SE_CD column pending; not sent. */}
           <Radio.Group options={TYPE_OPTIONS} value="W" disabled />
         </SysField>

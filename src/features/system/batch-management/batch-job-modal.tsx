@@ -137,8 +137,8 @@ export default function BatchJobModal({ job, canWrite, onClose, onOpenHistory }:
   };
 
   // [Run Now] [Execution History] sit on the left of the footer, [Cancel] [Edit] on the right.
-  const extraActions = isEdit && (
-    <span className={styles.footerLeft}>
+  const leftActions = isEdit && (
+    <>
       {canWrite && (
         // Disabled by the saved Use value, not the edited one.
         <SysButton disabled={!job.scheduleVtlzYn} loading={execute.isPending} onClick={runNow}>
@@ -146,7 +146,7 @@ export default function BatchJobModal({ job, canWrite, onClose, onOpenHistory }:
         </SysButton>
       )}
       <SysButton onClick={() => onOpenHistory(job.btchJobNm)}>Execution History</SysButton>
-    </span>
+    </>
   );
 
   return (
@@ -157,7 +157,7 @@ export default function BatchJobModal({ job, canWrite, onClose, onOpenHistory }:
       onSubmit={canWrite ? submit : undefined}
       submitting={createJob.isPending || updateJob.isPending}
       onCancel={onClose}
-      extraActions={extraActions}
+      leftActions={leftActions}
       notice={BATCH_MESSAGES.notice}
     >
       <SysFieldGrid columns={2}>

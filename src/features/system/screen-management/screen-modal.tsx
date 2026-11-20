@@ -4,13 +4,13 @@ import { useNotify } from '@/hooks/use-notify';
 import type { YesNo } from '@/api/system/code-group-api';
 import type { ScreenItem } from '@/api/system/program-screen-api';
 import { SysField, SysFieldGrid, SysFormModal, SysFormSection } from '@/features/system/_shared/sys-form-ui';
-import { SysButton } from '@/features/system/_shared/sys-list-ui';
+import { SysButton, SysNotAvailable } from '@/features/system/_shared/sys-list-ui';
 import { USE_YN_RADIO_OPTIONS } from '@/features/system/_shared/sys-constants';
 import { SYS_DIALOG_LABELS, SYS_MESSAGES } from '@/features/system/_shared/sys-messages';
 import { useFieldErrors } from '@/features/system/_shared/use-field-errors';
 import { useSysDialogs } from '@/features/system/_shared/use-sys-dialogs';
 import { apiErrorCode, errorMessage } from '@/features/system/_shared/system-utils';
-import { NOT_AVAILABLE_NOTE, POPUP_OPTIONS, SCREEN_TYPE_OPTIONS, screenTypeOf } from './screen-constants';
+import { NOT_AVAILABLE_REASON, POPUP_OPTIONS, SCREEN_TYPE_OPTIONS, screenTypeOf } from './screen-constants';
 import type { ScreenType } from './screen-constants';
 import { useBusinessOptions, useCreateScreen, useDeleteScreen, useProgramOptions, useUpdateScreen } from './use-screens';
 import styles from './screen-management.module.scss';
@@ -21,6 +21,8 @@ import styles from './screen-management.module.scss';
 // TODO(schema): SCRN_MNG DDL (ddl-proposals/03-SCRN_MNG.sql).
 
 type Field = 'scrnId' | 'scrnExpln' | 'prgrmCd' | 'scrnSeq' | 'useYn';
+
+const NOT_AVAILABLE_HINT = <SysNotAvailable variant="inline">{NOT_AVAILABLE_REASON}</SysNotAvailable>;
 
 interface ScreenModalProps {
   /** null = register. */
@@ -108,20 +110,20 @@ export function ScreenModal({ item, canWrite, onClose }: ScreenModalProps) {
       onSubmit={canWrite ? () => void handleSubmit() : undefined}
       submitting={createScreen.isPending || updateScreen.isPending}
       onCancel={onClose}
-      extraActions={
+      leftActions={
         !isCreate &&
         canWrite && (
-          <SysButton className={styles.deleteAction} look="primary" danger loading={deleteScreen.isPending} onClick={handleDelete}>
+          <SysButton look="primary" danger loading={deleteScreen.isPending} onClick={handleDelete}>
             Delete
           </SysButton>
         )
       }
     >
       <SysFieldGrid columns={2}>
-        <SysField label="Type" required hint={NOT_AVAILABLE_NOTE}>
+        <SysField label="Type" required hint={NOT_AVAILABLE_HINT}>
           <Radio.Group options={SCREEN_TYPE_OPTIONS} value={screenType} disabled />
         </SysField>
-        <SysField label="Business" required hint={NOT_AVAILABLE_NOTE}>
+        <SysField label="Business" required hint={NOT_AVAILABLE_HINT}>
           <Select className={styles.fullWidth} options={businessOptions} placeholder="Select" disabled />
         </SysField>
         <SysField label="Screen ID" required error={errors.scrnId}>
@@ -133,16 +135,16 @@ export function ScreenModal({ item, canWrite, onClose }: ScreenModalProps) {
             onChange={(e) => change('scrnId', e.target.value)}
           />
         </SysField>
-        <SysField label="Screen Name" required hint={NOT_AVAILABLE_NOTE}>
+        <SysField label="Screen Name" required hint={NOT_AVAILABLE_HINT}>
           <Input disabled />
         </SysField>
-        <SysField label="Popup" required hint={NOT_AVAILABLE_NOTE}>
+        <SysField label="Popup" required hint={NOT_AVAILABLE_HINT}>
           <Radio.Group options={POPUP_OPTIONS} value="N" disabled />
         </SysField>
-        <SysField label="Component Path" required hint={NOT_AVAILABLE_NOTE}>
+        <SysField label="Component Path" required hint={NOT_AVAILABLE_HINT}>
           <Input disabled />
         </SysField>
-        <SysField label="Label Key" hint={NOT_AVAILABLE_NOTE}>
+        <SysField label="Label Key" hint={NOT_AVAILABLE_HINT}>
           <Input disabled />
         </SysField>
         <SysField label="Remarks" error={errors.scrnExpln}>

@@ -109,10 +109,10 @@ function TermsFormModal({ detail, canWrite, onClose }: TermsFormModalProps) {
       onSubmit={editable ? () => void handleSubmit() : undefined}
       submitting={createTerms.isPending || updateTerms.isPending}
       onCancel={onClose}
-      extraActions={
+      leftActions={
         !isCreate &&
         editable && (
-          <SysButton className={styles.deleteAction} look="primary" danger loading={deleteTerms.isPending} onClick={handleDelete}>
+          <SysButton look="primary" danger loading={deleteTerms.isPending} onClick={handleDelete}>
             Delete
           </SysButton>
         )
