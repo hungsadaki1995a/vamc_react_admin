@@ -2,17 +2,14 @@ import { useState } from 'react';
 import { DatePicker, Input, Table } from 'antd';
 import type { TableColumnsType } from 'antd';
 import type { Dayjs } from 'dayjs';
-import { useQueryClient, keepPreviousData } from '@tanstack/react-query';
-import { useApiQuery } from '@/hooks/use-api-query';
 import { useNotify } from '@/hooks/use-notify';
 import { useMenuPermission } from '@/hooks/use-menu-permission';
-import { deleteBanners, downloadBannerExcel, getBanners } from '@/api/contents/banner-api';
 import type { Banner, BannerSearch } from '@/api/contents/banner-api';
-import type { PageResponse } from '@/api/common/api-utils';
 import { DateTimeCell, SysPageHeader, SysPagination, UseYnChecks } from '@/features/system/_shared/SystemUi';
 import { errorMessage, rowNumber, toUseYnFilter } from '@/features/system/_shared/system-utils';
-import styles from '@/features/system/_shared/system-page.module.css';
+import styles from '@/features/system/_shared/system-page.module.scss';
 import BannerModal from './BannerModal';
+import { useBanners, useDeleteBanners, useDownloadBannerExcel } from './use-banners';
 
 // Banner Management - List (VPA003201), menu A04060000.
 
@@ -21,19 +18,18 @@ const DATE_FORMAT = 'DD/MM/YYYY';
 
 type DateRange = [Dayjs | null, Dayjs | null] | null;
 
-type FilterState = {
+interface FilterState {
   used: boolean;
   unused: boolean;
   keyword: string;
   period: DateRange;
-};
+}
 
 const EMPTY_FILTER: FilterState = { used: true, unused: true, keyword: '', period: null };
 
 export default function BannerManagement() {
   const { toast, dialog } = useNotify();
   const { canWrite } = useMenuPermission();
-  const queryClient = useQueryClient();
 
   const [filter, setFilter] = useState<FilterState>(EMPTY_FILTER);
   const [applied, setApplied] = useState<BannerSearch>({});
@@ -42,20 +38,12 @@ export default function BannerManagement() {
   const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
   /** undefined = closed, null = register, string = view/edit that banner. */
   const [modalBannerId, setModalBannerId] = useState<string | null | undefined>(undefined);
-  const [downloading, setDownloading] = useState(false);
 
-  const { data, isFetching, error } = useApiQuery<PageResponse<Banner>>(
-    ['contents', 'banners', applied, page],
-    () => getBanners(applied, page, PAGE_SIZE),
-    { placeholderData: keepPreviousData },
-  );
+  const { data, isFetching, error } = useBanners(applied, page, PAGE_SIZE);
+  const deleteBanners = useDeleteBanners();
+  const downloadExcel = useDownloadBannerExcel();
   const banners = data?.content ?? [];
   const total = data?.totalElements ?? 0;
-
-  const refresh = () => {
-    setSelectedKeys([]);
-    void queryClient.invalidateQueries({ queryKey: ['contents', 'banners'] });
-  };
 
   const handleSearch = () => {
     setApplied({
@@ -75,16 +63,7 @@ export default function BannerManagement() {
     setSelectedKeys([]);
   };
 
-  const handleExcel = async () => {
-    setDownloading(true);
-    try {
-      await downloadBannerExcel(applied);
-    } catch (e) {
-      toast.error(errorMessage(e));
-    } finally {
-      setDownloading(false);
-    }
-  };
+  const handleExcel = () => downloadExcel.mutate(applied, { onError: (e) => toast.error(errorMessage(e)) });
 
   const handleDelete = () => {
     if (selectedKeys.length === 0) {
@@ -96,9 +75,9 @@ export default function BannerManagement() {
       content: `Delete the ${selectedKeys.length} selected banner(s)?`,
       onOk: async () => {
         try {
-          const response = await deleteBanners(selectedKeys);
+          const response = await deleteBanners.mutateAsync(selectedKeys);
           toast.success(response.message || 'Deleted.');
-          refresh();
+          setSelectedKeys([]);
         } catch (e) {
           toast.error(errorMessage(e));
         }
@@ -211,7 +190,7 @@ export default function BannerManagement() {
               placeholder={['dd/mm/yyyy', 'dd/mm/yyyy']}
               value={filter.period}
               onChange={(dates) => setFilter((f) => ({ ...f, period: dates as DateRange }))}
-              className="w-[250px]"
+              className={styles.w250}
             />
           </div>
         </div>
@@ -224,7 +203,7 @@ export default function BannerManagement() {
         <button
           type="button"
           className={`${styles.btn} ${styles.btnSmall}`}
-          disabled={downloading}
+          disabled={downloadExcel.isPending}
           onClick={handleExcel}
         >
           Excel Download
@@ -263,7 +242,7 @@ export default function BannerManagement() {
           bannerId={modalBannerId}
           canWrite={canWrite}
           onClose={() => setModalBannerId(undefined)}
-          onSaved={refresh}
+          onSaved={() => setSelectedKeys([])}
         />
       )}
     </div>

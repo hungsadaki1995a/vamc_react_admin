@@ -382,3 +382,16 @@
     cursor: not-allowed;
   }
 }
+
+/* ── Fixed sizes (moved from inline styles) ── */
+.searchIcon {
+  font-size: 13px;
+}
+
+.categorySelect {
+  width: 220px;
+}
+
+.periodPicker {
+  width: 250px;
+}

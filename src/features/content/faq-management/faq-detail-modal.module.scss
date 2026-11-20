@@ -138,3 +138,27 @@
     cursor: not-allowed;
   }
 }
+
+/* ── Moved from inline styles ── */
+.modalTitle {
+  font-size: 16px;
+  font-weight: 700;
+  color: #111827;
+}
+
+/* Column widths of the first row (label | value | label | value). */
+.labelCol {
+  width: 15%;
+}
+
+.valueCol {
+  width: 35%;
+}
+
+.categorySelect {
+  width: 180px;
+}
+
+.dataCell.lockedNotice {
+  color: #b45309;
+}

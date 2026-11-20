@@ -1,8 +1,9 @@
-import { apiDelete, apiGet, apiPost, apiPut } from '@/api/common/api-utils';
+import { apiGet, apiPost, apiPut } from '@/api/common/api-utils';
 
 // User Group Management API — RoleGroupController (`/api/v1/role-groups`) and
-// RoleInfoController (`/api/v1/roles`). Guard menu A06020300 (VPA004601 / VPA0046P01).
+// RoleInfoController (`/api/v1/roles`). Screens VPA09020301 / VPA090203P01.
 // Protected records: group RG09999 and role ADMIN (Super Admin).
+// Group RG00100 holds the Web member grades used by Web Menu Permission Management.
 
 export type YesNo = 'Y' | 'N';
 
@@ -27,15 +28,25 @@ export interface Role {
 export interface RoleUser {
   userNo: string;
   userNm: string;
+  email?: string;
+  mobilePhone?: string;
   jbpsNm?: string;
   empSttsCd?: string;
   roleGroupId: string;
   roleId: string;
+  assignedAt?: string;
+  assignedBy?: string;
 }
+
+/** E02 codes of the register calls. */
+export const ROLE_GROUP_DUPLICATED = 'error.roleGroup.alreadyExists';
+export const ROLE_DUPLICATED = 'error.role.alreadyExists';
 
 // ── Groups ──────────────────────────────────────────────────────────────────
 
-export const getRoleGroups = () => apiGet<RoleGroup[]>('/api/v1/role-groups/all', undefined, []);
+/** All role groups (no paging); `useYn` filters by use status, empty = all. */
+export const getRoleGroups = (params?: { useYn?: 'Y' | 'N'; keyword?: string }) =>
+  apiGet<RoleGroup[]>('/api/v1/role-groups/all', params, []);
 
 /** `roleGroupId` must match `^RG\d{5}$` and is supplied by the client. */
 export const createRoleGroup = (request: Pick<RoleGroup, 'roleGroupId' | 'roleGroupNm' | 'useYn'>) =>
@@ -46,10 +57,6 @@ export const updateRoleGroup = (request: Pick<RoleGroup, 'roleGroupId' | 'roleGr
     roleGroupNm: request.roleGroupNm,
     useYn: request.useYn,
   });
-
-/** Rejected while the group still has roles (error.roleGroup.hasRoles). */
-export const deleteRoleGroup = (roleGroupId: string) =>
-  apiDelete<void>(`/api/v1/role-groups/${roleGroupId}`);
 
 // ── Roles ───────────────────────────────────────────────────────────────────
 
@@ -66,9 +73,6 @@ export const updateRole = (request: Role) =>
     roleGroupId: request.roleGroupId,
     useYn: request.useYn,
   });
-
-/** Rejected while the role still has assignees or menu permissions (error.role.hasMappings). */
-export const deleteRole = (roleId: string) => apiDelete<void>(`/api/v1/roles/${roleId}`);
 
 // ── Assignees ───────────────────────────────────────────────────────────────
 

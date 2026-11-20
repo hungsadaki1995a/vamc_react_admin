@@ -2,22 +2,13 @@ import { useState } from 'react';
 import { DatePicker, Descriptions, Input, Modal, Radio, Table } from 'antd';
 import type { TableColumnsType } from 'antd';
 import type { Dayjs } from 'dayjs';
-import { useQueryClient, keepPreviousData } from '@tanstack/react-query';
-import { useApiQuery } from '@/hooks/use-api-query';
 import { useNotify } from '@/hooks/use-notify';
 import { useMenuPermission } from '@/hooks/use-menu-permission';
-import {
-  deleteDebtors,
-  downloadDebtorsExcel,
-  getDebtor,
-  getDebtors,
-  type DebtorItem,
-  type DebtorSearch,
-} from '@/api/npl/npl-api';
-import type { PageResponse } from '@/api/common/api-utils';
+import type { DebtorItem, DebtorSearch } from '@/api/npl/npl-api';
 import { SysPageHeader, SysPagination } from '@/features/system/_shared/SystemUi';
 import { errorMessage, rowNumber } from '@/features/system/_shared/system-utils';
-import styles from '@/features/system/_shared/system-page.module.css';
+import styles from '@/features/system/_shared/system-page.module.scss';
+import { useDebtor, useDebtors, useDeleteDebtors, useDownloadDebtorsExcel } from './use-debtors';
 
 const PAGE_SIZE = 15;
 type DateRange = [Dayjs | null, Dayjs | null] | null;
@@ -26,7 +17,6 @@ type DateRange = [Dayjs | null, Dayjs | null] | null;
 export default function DebtorManagement() {
   const { toast, dialog } = useNotify();
   const { canWrite } = useMenuPermission();
-  const queryClient = useQueryClient();
 
   const [period, setPeriod] = useState<DateRange>(null);
   const [dbtrTypeCd, setDbtrTypeCd] = useState<'' | 'P' | 'O'>('');
@@ -40,16 +30,10 @@ export default function DebtorManagement() {
   const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
   const [detailId, setDetailId] = useState<string | null>(null);
 
-  const { data, isFetching } = useApiQuery<PageResponse<DebtorItem>>(
-    ['npl', 'debtors', applied, page],
-    () => getDebtors(applied, page, PAGE_SIZE),
-    { placeholderData: keepPreviousData },
-  );
-  const { data: detail } = useApiQuery<Record<string, unknown>>(
-    ['npl', 'debtor-detail', detailId],
-    () => getDebtor(detailId as string),
-    { enabled: !!detailId },
-  );
+  const { data, isFetching } = useDebtors(applied, page, PAGE_SIZE);
+  const { data: detail } = useDebtor(detailId);
+  const deleteDebtors = useDeleteDebtors();
+  const downloadExcel = useDownloadDebtorsExcel();
 
   const rows = data?.content ?? [];
   const total = data?.totalElements ?? 0;
@@ -85,10 +69,9 @@ export default function DebtorManagement() {
       content: `Delete ${selectedKeys.length} selected debtor(s)?`,
       onOk: async () => {
         try {
-          await deleteDebtors(selectedKeys);
+          await deleteDebtors.mutateAsync(selectedKeys);
           toast.success('Deleted.');
           setSelectedKeys([]);
-          void queryClient.invalidateQueries({ queryKey: ['npl', 'debtors'] });
         } catch (e) {
           toast.error(errorMessage(e));
         }
@@ -125,7 +108,7 @@ export default function DebtorManagement() {
         <div className={styles.filterCard}>
           <div className={styles.filterGroup}>
             <span className={styles.filterLabel}>Registration Period</span>
-            <DatePicker.RangePicker format="DD/MM/YYYY" value={period} onChange={(d) => setPeriod(d as DateRange)} className="w-[240px]" />
+            <DatePicker.RangePicker format="DD/MM/YYYY" value={period} onChange={(d) => setPeriod(d as DateRange)} className={styles.w240} />
           </div>
           <div className={styles.filterGroup}>
             <span className={styles.filterLabel}>Type</span>
@@ -159,7 +142,7 @@ export default function DebtorManagement() {
       )}
       <div className={styles.summaryRow}>
         <span className={styles.totalCount}>Total ({total})</span>
-        <button type="button" className={`${styles.btn} ${styles.btnSmall}`} onClick={() => void downloadDebtorsExcel(applied as Record<string, unknown>)}>Excel Download</button>
+        <button type="button" className={`${styles.btn} ${styles.btnSmall}`} onClick={() => downloadExcel.mutate(applied)}>Excel Download</button>
       </div>
       <div className={styles.tableWrapper}>
         <Table<DebtorItem> rowKey="dbtrCd" columns={columns} dataSource={rows} loading={isFetching} pagination={false} size="small" scroll={{ x: 'max-content' }} rowSelection={{ selectedRowKeys: selectedKeys, onChange: (k) => setSelectedKeys(k.map(String)) }} />

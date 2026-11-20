@@ -1,16 +1,18 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRef } from 'react';
 import { DeleteOutlined, DownloadOutlined } from '@ant-design/icons';
 import { useNotify } from '@/hooks/use-notify';
-import {
-  deleteContentFile,
-  downloadContentFile,
-  fetchAttachmentPreview,
-  originalFileName,
-  uploadContentFiles,
-} from '@/api/contents/post-api';
 import type { ContentFile, FileBoard } from '@/api/contents/post-api';
 import { errorMessage } from '@/features/system/_shared/system-utils';
-import styles from '@/features/system/_shared/system-page.module.css';
+import styles from '@/features/system/_shared/system-page.module.scss';
+import postStyles from './post.module.scss';
+import {
+  originalFileName,
+  useAttachmentPreview,
+  useDeleteContentFile,
+  useDownloadContentFile,
+  useImageUpload,
+  useUploadContentFiles,
+} from './use-content-files';
 
 // File inputs of the content popups. Files are uploaded as soon as they are picked;
 // the popup then only stores the returned file-group id on the post.
@@ -29,7 +31,10 @@ interface AttachmentFieldProps {
 export function AttachmentField({ board, fileUnqId, files, disabled, onChange }: AttachmentFieldProps) {
   const { toast } = useNotify();
   const input = useRef<HTMLInputElement>(null);
-  const [busy, setBusy] = useState(false);
+  const uploadFiles = useUploadContentFiles(board);
+  const deleteFile = useDeleteContentFile(board);
+  const downloadFile = useDownloadContentFile();
+  const busy = uploadFiles.isPending || deleteFile.isPending;
 
   const handlePick = async (picked: FileList | null) => {
     if (!picked?.length) return;
@@ -37,42 +42,37 @@ export function AttachmentField({ board, fileUnqId, files, disabled, onChange }:
       toast.warning(`Up to ${MAX_FILES} files can be attached.`);
       return;
     }
-    setBusy(true);
     try {
-      const group = await uploadContentFiles(board, Array.from(picked), fileUnqId);
+      const group = await uploadFiles.mutateAsync({ files: Array.from(picked), fileUnqId });
       onChange(group.fileUnqId, group.files);
     } catch (e) {
       toast.error(errorMessage(e));
     } finally {
-      setBusy(false);
       if (input.current) input.current.value = '';
     }
   };
 
   const handleRemove = async (file: ContentFile) => {
-    setBusy(true);
     try {
-      await deleteContentFile(board, file.fileUnqId, file.fileSeq);
+      await deleteFile.mutateAsync(file);
       const rest = files.filter((f) => f.fileSeq !== file.fileSeq);
       onChange(rest.length > 0 ? fileUnqId : undefined, rest);
     } catch (e) {
       toast.error(errorMessage(e));
-    } finally {
-      setBusy(false);
     }
   };
 
   const handleDownload = async (file: ContentFile) => {
     try {
-      await downloadContentFile(file);
+      await downloadFile.mutateAsync(file);
     } catch (e) {
       toast.error(errorMessage(e));
     }
   };
 
   return (
-    <div className="flex flex-col gap-1.5 w-full">
-      <div className="flex items-center gap-2.5">
+    <div className={styles.stack}>
+      <div className={styles.inline}>
         <input ref={input} type="file" multiple hidden onChange={(e) => handlePick(e.target.files)} />
         <button
           type="button"
@@ -87,7 +87,7 @@ export function AttachmentField({ board, fileUnqId, files, disabled, onChange }:
         </span>
       </div>
       {files.map((file) => (
-        <div key={file.fileSeq} className="flex items-center gap-2.5 text-[13px]">
+        <div key={file.fileSeq} className={`${styles.inline} ${postStyles.fileRow}`}>
           <a className={styles.cellLink} onClick={() => handleDownload(file)}>
             <DownloadOutlined /> {originalFileName(file.fileNm)}
           </a>
@@ -102,59 +102,38 @@ export function AttachmentField({ board, fileUnqId, files, disabled, onChange }:
   );
 }
 
-type ImageFieldProps = {
+interface ImageFieldProps {
   /** Uploads the picked image and resolves the new file-group id. */
   upload: (file: File) => Promise<string>;
   fileUnqId?: string;
   disabled?: boolean;
   onChange: (fileUnqId: string | undefined) => void;
-};
+}
 
 /** "Attach image" row with a preview (thumbnail, portrait, logo, banner image). */
 export function ImageField({ upload, fileUnqId, disabled, onChange }: ImageFieldProps) {
   const { toast } = useNotify();
   const input = useRef<HTMLInputElement>(null);
-  const [busy, setBusy] = useState(false);
-  const [preview, setPreview] = useState<string | null>(null);
-
+  const uploadImage = useImageUpload(upload);
+  const busy = uploadImage.isPending;
   // The preview endpoint needs the bearer token, so the image is loaded as a blob URL.
-  useEffect(() => {
-    if (!fileUnqId) return undefined;
-    let url: string | null = null;
-    let cancelled = false;
-    fetchAttachmentPreview(fileUnqId)
-      .then((objectUrl) => {
-        url = objectUrl;
-        if (cancelled) window.URL.revokeObjectURL(objectUrl);
-        else setPreview(objectUrl);
-      })
-      .catch(() => {
-        if (!cancelled) setPreview(null);
-      });
-    return () => {
-      cancelled = true;
-      if (url) window.URL.revokeObjectURL(url);
-      setPreview(null);
-    };
-  }, [fileUnqId]);
+  const preview = useAttachmentPreview(fileUnqId);
 
   const handlePick = async (picked: FileList | null) => {
     const file = picked?.[0];
     if (!file) return;
-    setBusy(true);
     try {
-      onChange(await upload(file));
+      onChange(await uploadImage.mutateAsync(file));
     } catch (e) {
       toast.error(errorMessage(e));
     } finally {
-      setBusy(false);
       if (input.current) input.current.value = '';
     }
   };
 
   return (
-    <div className="flex flex-col gap-1.5 w-full">
-      <div className="flex items-center gap-2.5">
+    <div className={styles.stack}>
+      <div className={styles.inline}>
         <input ref={input} type="file" accept="image/*" hidden onChange={(e) => handlePick(e.target.files)} />
         <button
           type="button"
@@ -171,13 +150,7 @@ export function ImageField({ upload, fileUnqId, disabled, onChange }: ImageField
         )}
         {!fileUnqId && <span className={styles.textMuted}>No image</span>}
       </div>
-      {preview && (
-        <img
-          src={preview}
-          alt=""
-          className="max-w-full max-h-[180px] object-contain border border-[#e2e8f0] self-start"
-        />
-      )}
+      {preview && <img src={preview} alt="" className={styles.imagePreview} />}
     </div>
   );
 }

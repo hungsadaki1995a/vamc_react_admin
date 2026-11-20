@@ -1,304 +1,170 @@
 import { useState } from 'react';
-import { DatePicker, Input, Select, Table } from 'antd';
+import { DatePicker, Input, Select } from 'antd';
 import type { TableColumnsType } from 'antd';
 import type { Dayjs } from 'dayjs';
-import { useQueryClient, keepPreviousData } from '@tanstack/react-query';
-import { useApiQuery } from '@/hooks/use-api-query';
-import { useNotify } from '@/hooks/use-notify';
-import { useScreenLabel } from '@/hooks/use-screen-label';
 import { useMenuPermission } from '@/hooks/use-menu-permission';
-import { deleteFees, downloadFeeExcel, getFees } from '@/api/system/fee-api';
-import type { Fee, FeeCategory, FeeSearch } from '@/api/system/fee-api';
-import type { PageResponse } from '@/api/common/api-utils';
-import { DateTimeCell, SysPageHeader, SysPagination, UseFlag, UseYnChecks } from '../_shared/SystemUi';
-import { errorMessage, formatAmount, rowNumber, toUseYnFilter } from '../_shared/system-utils';
-import styles from '../_shared/system-page.module.css';
+import type { Fee, FeeCategory, FeeSearch, YesNo } from '@/api/system/fee-api';
+import {
+  DateTimeText,
+  SysButton,
+  SysExcelButton,
+  SysFilterItem,
+  SysFilterPanel,
+  SysPage,
+  SysPager,
+  SysSearchActions,
+  SysSectionHeader,
+  SysTable,
+  SysTitleBar,
+  UseBadge,
+} from '../_shared/SysListUi';
+import { ALL, API_DATE_DMY, SYS_DATE_FORMAT, SYS_PAGE_SIZE, USE_YN_FILTER_OPTIONS } from '../_shared/sys-constants';
+import { usePagedList } from '../_shared/use-paged-list';
+import {
+  FEE_CATEGORY_FILTER_OPTIONS,
+  FEE_METHOD_LABELS,
+  feeCategoryLabel,
+  feeValueText,
+  formatFeeNumber,
+} from './fee-constants';
 import FeeModal from './FeeModal';
+import FeeScheduleModal from './FeeScheduleModal';
+import { useDownloadFeeExcel, useFees } from './use-fees';
+import styles from './fee-management.module.scss';
 
-// Fee Management - List (VPA004101), menu A06010300.
+// Fee Management - List (VPA09010301). Saved items apply to the user Fee Guide immediately.
 
-const PAGE_SIZE = 10;
-const DATE_FORMAT = 'DD/MM/YYYY';
-
-type DateRange = [Dayjs | null, Dayjs | null] | null;
-
-interface FilterState {
-  period: DateRange;
-  used: boolean;
-  unused: boolean;
+interface FeeFilter {
+  useYn: YesNo | '';
   category: FeeCategory | '';
+  period: [Dayjs | null, Dayjs | null] | null;
   keyword: string;
 }
 
-const EMPTY_FILTER: FilterState = { period: null, used: true, unused: true, category: '', keyword: '' };
+const INITIAL_FILTER: FeeFilter = { useYn: ALL, category: ALL, period: null, keyword: '' };
 
-export default function SYS020103SC() {
-  const { toast, dialog } = useNotify();
-  const { tvt, tvb, tvh, tsg, tsm } = useScreenLabel();
+function toSearch(filter: FeeFilter): FeeSearch {
+  return {
+    useYn: filter.useYn,
+    category: filter.category,
+    fromDate: filter.period?.[0]?.format(API_DATE_DMY),
+    toDate: filter.period?.[1]?.format(API_DATE_DMY),
+    keyword: filter.keyword.trim(),
+  };
+}
+
+// Column order of the v0.8 frame: Fee Code, Use, Type, Order, Item Name, Fee Item Content, Method, Currency, Fee, Minimum Amount, Registered Date.
+const columns: TableColumnsType<Fee> = [
+  { title: 'Fee Code', dataIndex: 'feeId', align: 'center', width: 130 },
+  { title: 'Use', dataIndex: 'useYn', align: 'center', width: 100, render: (v: YesNo) => <UseBadge value={v} /> },
+  { title: 'Type', dataIndex: 'category', width: 170, render: (_: string, row) => feeCategoryLabel(row) },
+  { title: 'Order', dataIndex: 'order', align: 'center', width: 80 },
+  { title: 'Item Name', dataIndex: 'name', width: 220 },
+  {
+    title: 'Fee Item Content',
+    dataIndex: 'description',
+    width: 280,
+    ellipsis: true,
+    render: (v?: string) => v || '-',
+  },
+  {
+    title: 'Method',
+    dataIndex: 'method',
+    width: 100,
+    render: (v: Fee['method'], row) => FEE_METHOD_LABELS[v] ?? row.methodNm ?? v,
+  },
+  { title: 'Currency', dataIndex: 'currency', width: 100 },
+  {
+    title: 'Fee',
+    key: 'fee',
+    align: 'right',
+    width: 130,
+    render: (_: unknown, row) => <span className={styles.numberCell}>{feeValueText(row)}</span>,
+  },
+  {
+    title: 'Minimum Amount',
+    dataIndex: 'minAmount',
+    align: 'right',
+    width: 140,
+    render: (v?: number) => <span className={styles.numberCell}>{formatFeeNumber(v)}</span>,
+  },
+  { title: 'Registered Date', dataIndex: 'crtDt', align: 'center', width: 160, render: (v?: string) => <DateTimeText value={v} /> },
+];
+
+/** Popup state: closed, register (null) or edit (fee id). */
+type ModalState = { feeId: string | null } | null;
+
+export default function FeeManagement() {
   const { canWrite } = useMenuPermission();
-  const queryClient = useQueryClient();
-
-  const [filter, setFilter] = useState<FilterState>(EMPTY_FILTER);
-  const [applied, setApplied] = useState<FeeSearch>({});
-  const [page, setPage] = useState(1);
-  const [filterCollapsed, setFilterCollapsed] = useState(false);
-  const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
-  /** undefined = closed, null = register, string = view/edit that fee. */
-  const [modalFeeId, setModalFeeId] = useState<string | null | undefined>(undefined);
-  const [downloading, setDownloading] = useState(false);
-
-  const categoryOptions = [
-    { value: 'ANFE', label: tvt('catAnnual', 'Annual Fee') },
-    { value: 'CNSLT', label: tvt('catConsulting', 'Consulting') },
-    { value: 'MDT', label: tvt('catBrokerage', 'Brokerage') },
-  ];
-  const categoryName = (fee: Fee) =>
-    categoryOptions.find((o) => o.value === fee.category)?.label ?? fee.categoryNm ?? fee.category;
-
-  const { data, isFetching } = useApiQuery<PageResponse<Fee>>(
-    ['sys', 'fees', applied, page],
-    () => getFees(applied, page, PAGE_SIZE),
-    { placeholderData: keepPreviousData },
-  );
-  const fees = data?.content ?? [];
+  const list = usePagedList<FeeFilter>(INITIAL_FILTER);
+  const search = toSearch(list.applied);
+  const { data, isFetching } = useFees(search, list.pageQuery);
+  const excel = useDownloadFeeExcel();
+  const [modal, setModal] = useState<ModalState>(null);
+  const [scheduleOpen, setScheduleOpen] = useState(false);
   const total = data?.totalElements ?? 0;
 
-  const refresh = () => {
-    setSelectedKeys([]);
-    void queryClient.invalidateQueries({ queryKey: ['sys', 'fees'] });
-  };
-
-  const handleSearch = () => {
-    setApplied({
-      fromDate: filter.period?.[0]?.format(DATE_FORMAT),
-      toDate: filter.period?.[1]?.format(DATE_FORMAT),
-      useYn: toUseYnFilter(filter.used, filter.unused),
-      category: filter.category || undefined,
-      keyword: filter.keyword.trim() || undefined,
-    });
-    setPage(1);
-    setSelectedKeys([]);
-  };
-
-  const handleReset = () => {
-    setFilter(EMPTY_FILTER);
-    setApplied({});
-    setPage(1);
-    setSelectedKeys([]);
-  };
-
-  const handleExcel = async () => {
-    setDownloading(true);
-    try {
-      await downloadFeeExcel(applied);
-    } catch (error) {
-      toast.error(errorMessage(error));
-    } finally {
-      setDownloading(false);
-    }
-  };
-
-  const handleDelete = () => {
-    if (selectedKeys.length === 0) {
-      toast.warning(tsm('selectToDelete', 'Select at least one fee item to delete.'));
-      return;
-    }
-    dialog.warning({
-      okCancel: true,
-      content: tsm('confirmDelete', 'Delete the selected fee item(s)? Items in use cannot be deleted.'),
-      onOk: async () => {
-        try {
-          const response = await deleteFees(selectedKeys);
-          toast.success(response.message || tsm('deleted', 'Deleted.'));
-          refresh();
-        } catch (error) {
-          toast.error(errorMessage(error));
-        }
-      },
-    });
-  };
-
-  const columns: TableColumnsType<Fee> = [
-    {
-      title: tsg('no', 'No'),
-      key: 'no',
-      width: 60,
-      align: 'center',
-      render: (_v, _row, index) => rowNumber(total, page, PAGE_SIZE, index),
-    },
-    {
-      title: tsg('useYn', 'Use'),
-      dataIndex: 'useYn',
-      width: 60,
-      align: 'center',
-      render: (value: string) => <UseFlag value={value} />,
-    },
-    { title: tsg('feeId', 'Fee Code'), dataIndex: 'feeId', width: 120, align: 'center' },
-    {
-      title: tsg('category', 'Fee Category'),
-      key: 'category',
-      width: 110,
-      align: 'center',
-      render: (_v, row) => categoryName(row),
-    },
-    { title: tsg('order', 'Order'), dataIndex: 'order', width: 60, align: 'center' },
-    { title: tsg('name', 'Item Name'), dataIndex: 'name', width: 160, align: 'center' },
-    {
-      title: tsg('description', 'Fee item details'),
-      dataIndex: 'description',
-      width: 320,
-      render: (value: string | undefined, row) => (
-        <a className={styles.cellLink} onClick={() => setModalFeeId(row.feeId)}>
-          {value || row.name}
-        </a>
-      ),
-    },
-    {
-      title: tsg('method', 'Method'),
-      key: 'method',
-      width: 100,
-      align: 'center',
-      render: (_v, row) =>
-        row.method === 'FXAMT' ? tvt('methodFixed', 'Fixed Amount') : tvt('methodRate', 'Rate'),
-    },
-    { title: tsg('currency', 'Currency'), dataIndex: 'currency', width: 70, align: 'center' },
-    {
-      title: tsg('fee', 'Fee'),
-      key: 'fee',
-      width: 110,
-      align: 'right',
-      render: (_v, row) => (row.method === 'TRF' ? `${row.rate ?? '-'} %` : formatAmount(row.fee)),
-    },
-    {
-      title: tsg('minAmount', 'Minimum Applicable Amount'),
-      dataIndex: 'minAmount',
-      width: 130,
-      align: 'right',
-      render: (value?: number) => formatAmount(value),
-    },
-    {
-      title: tsg('crtDt', 'Registration Date'),
-      dataIndex: 'crtDt',
-      width: 110,
-      align: 'center',
-      render: (value?: string) => <DateTimeCell value={value} />,
-    },
-    {
-      title: tsg('crtBy', 'Registrant'),
-      key: 'crtBy',
-      width: 110,
-      align: 'center',
-      render: (_v, row) => row.crtByNm || row.crtBy || '-',
-    },
-  ];
-
-  const title = tvh('page', 'Fee Management');
-
   return (
-    <div className={styles.container}>
-      <SysPageHeader
-        breadcrumb={[
-          tvt('bcSystem', 'System Operations Management'),
-          tvt('bcPlatform', 'Platform Management'),
-          title,
-        ]}
-        title={title}
-        resetLabel={tvb('reset', 'Reset')}
-        searchLabel={tvb('search', 'Search')}
-        onReset={handleReset}
-        onSearch={handleSearch}
-        filterCollapsed={filterCollapsed}
-        onToggleFilter={() => setFilterCollapsed((v) => !v)}
+    <SysPage>
+      <SysTitleBar title="Fee Management" breadcrumb={['System Operation Management', 'NPL Platform Management', 'Fee Management']} />
+      <SysFilterPanel columns={4}>
+        <SysFilterItem label="Use">
+          <Select value={list.draft.useYn} options={USE_YN_FILTER_OPTIONS} onChange={(useYn) => list.setDraft({ useYn })} />
+        </SysFilterItem>
+        <SysFilterItem label="Type">
+          <Select
+            value={list.draft.category}
+            options={FEE_CATEGORY_FILTER_OPTIONS}
+            onChange={(category) => list.setDraft({ category })}
+          />
+        </SysFilterItem>
+        <SysFilterItem label="Registration Period">
+          <DatePicker.RangePicker
+            className={styles.rangePicker}
+            value={list.draft.period}
+            format={SYS_DATE_FORMAT}
+            placeholder={['DD-MM-YYYY', 'DD-MM-YYYY']}
+            allowEmpty={[true, true]}
+            onChange={(period) => list.setDraft({ period })}
+          />
+        </SysFilterItem>
+        <SysFilterItem label="Item/Content">
+          <Input
+            value={list.draft.keyword}
+            allowClear
+            onChange={(e) => list.setDraft({ keyword: e.target.value })}
+            onPressEnter={() => list.search()}
+          />
+        </SysFilterItem>
+      </SysFilterPanel>
+      <SysSearchActions onReset={list.reset} onSearch={() => list.search()} loading={isFetching} />
+      <SysSectionHeader
+        total={total}
+        actions={<SysExcelButton onClick={() => excel.mutate(search)} loading={excel.isPending} />}
+        primaryActions={
+          // Frame: [Excel Download] | [Fee Schedule] [New]
+          <>
+            <SysButton onClick={() => setScheduleOpen(true)}>Fee Schedule</SysButton>
+            {canWrite && (
+              <SysButton look="navy" onClick={() => setModal({ feeId: null })}>
+                New
+              </SysButton>
+            )}
+          </>
+        }
       />
-
-      {!filterCollapsed && (
-        <div className={styles.filterCard}>
-          <div className={styles.filterGroup}>
-            <span className={styles.filterLabel}>{tvt('period', 'Registration Period')}</span>
-            <DatePicker.RangePicker
-              format={DATE_FORMAT}
-              placeholder={['dd/mm/yyyy', 'dd/mm/yyyy']}
-              value={filter.period}
-              onChange={(dates) => setFilter((f) => ({ ...f, period: dates as DateRange }))}
-              className="w-[250px]"
-            />
-          </div>
-          <div className={styles.filterGroup}>
-            <span className={styles.filterLabel}>{tvt('status', 'Status')}</span>
-            <UseYnChecks
-              yes={filter.used}
-              no={filter.unused}
-              onChange={(used, unused) => setFilter((f) => ({ ...f, used, unused }))}
-              allLabel={tvt('all', 'ALL')}
-              yesLabel={tvt('used', 'Used')}
-              noLabel={tvt('unused', 'Unused')}
-            />
-          </div>
-          <div className={styles.filterGroup}>
-            <span className={styles.filterLabel}>{tvt('category', 'Category')}</span>
-            <Select
-              className="w-[180px]"
-              value={filter.category}
-              onChange={(category) => setFilter((f) => ({ ...f, category }))}
-              options={[{ value: '', label: tvt('all', 'ALL') }, ...categoryOptions]}
-            />
-          </div>
-          <div className={styles.filterGroup}>
-            <span className={styles.filterLabel}>{tvt('keyword', 'Item/Content')}</span>
-            <Input
-              className={styles.filterInput}
-              placeholder={tvt('phKeyword', 'Enter item or content')}
-              value={filter.keyword}
-              onChange={(e) => setFilter((f) => ({ ...f, keyword: e.target.value }))}
-              onPressEnter={handleSearch}
-              allowClear
-            />
-          </div>
-        </div>
+      <SysTable<Fee>
+        rowKey="feeId"
+        columns={columns}
+        dataSource={data?.content ?? []}
+        loading={isFetching}
+        onRowClick={(fee) => setModal({ feeId: fee.feeId })}
+      />
+      <SysPager page={list.page} pageSize={SYS_PAGE_SIZE} total={total} onChange={list.setPage} />
+      {modal && (
+        <FeeModal key={modal.feeId ?? 'new'} feeId={modal.feeId} canWrite={canWrite} onClose={() => setModal(null)} />
       )}
-
-      <div className={styles.summaryRow}>
-        <span className={styles.totalCount}>Total ({total})</span>
-        <button
-          type="button"
-          className={`${styles.btn} ${styles.btnSmall}`}
-          disabled={downloading}
-          onClick={handleExcel}
-        >
-          {tvb('excel', 'Excel Download')}
-        </button>
-      </div>
-
-      <div className={styles.tableWrapper}>
-        <Table<Fee>
-          rowKey="feeId"
-          columns={columns}
-          dataSource={fees}
-          loading={isFetching}
-          pagination={false}
-          size="small"
-          scroll={{ x: 'max-content' }}
-          rowSelection={{
-            selectedRowKeys: selectedKeys,
-            onChange: (keys) => setSelectedKeys(keys.map(String)),
-          }}
-        />
-      </div>
-
-      <SysPagination page={page} pageSize={PAGE_SIZE} total={total} onChange={setPage} />
-
-      <div className={styles.bottomActions}>
-        <button type="button" className={styles.btn} disabled={!canWrite} onClick={handleDelete}>
-          {tvb('delete', 'Delete')}
-        </button>
-        <button type="button" className={styles.btnDark} disabled={!canWrite} onClick={() => setModalFeeId(null)}>
-          {tvb('addNew', 'Add New')}
-        </button>
-      </div>
-
-      {modalFeeId !== undefined && (
-        <FeeModal feeId={modalFeeId} canWrite={canWrite} onClose={() => setModalFeeId(undefined)} onSaved={refresh} />
-      )}
-    </div>
+      {scheduleOpen && <FeeScheduleModal canWrite={canWrite} onClose={() => setScheduleOpen(false)} />}
+    </SysPage>
   );
 }

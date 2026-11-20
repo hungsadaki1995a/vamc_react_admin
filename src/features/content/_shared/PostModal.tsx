@@ -1,31 +1,26 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import type { CSSProperties } from 'react';
 import { DatePicker, Input, InputNumber, Modal, Radio, Select, Spin } from 'antd';
 import dayjs from 'dayjs';
 import type { Dayjs } from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
-import { useApiQuery } from '@/hooks/use-api-query';
 import { useNotify } from '@/hooks/use-notify';
-import {
-  createPost,
-  getPost,
-  publishPosts,
-  updatePost,
-  updatePostStatus,
-  uploadContentFiles,
-} from '@/api/contents/post-api';
 import type { ContentFile, LegalOptions, PostDetail, YesNo } from '@/api/contents/post-api';
 import { FormField } from '@/features/system/_shared/SystemUi';
 import { errorMessage, splitDateTime } from '@/features/system/_shared/system-utils';
-import styles from '@/features/system/_shared/system-page.module.css';
+import styles from '@/features/system/_shared/system-page.module.scss';
 import type { BoardConfig, CategoryOption } from './board-config';
 import { AttachmentField, ImageField } from './PostFiles';
+import { useUploadContentImage } from './use-content-files';
+import { usePost, useSavePost } from './use-posts';
+import type { SavePostVariables } from './use-posts';
 
 dayjs.extend(customParseFormat);
 
 // Generic Detail / Register / Edit popup of a content board
 // (wireframes VPA0023P01 – VPA0034P01). Which rows appear is decided by the board config.
 
-type PostModalProps = {
+interface PostModalProps {
   config: BoardConfig;
   /** null = register a new post. */
   pstNo: string | null;
@@ -35,9 +30,9 @@ type PostModalProps = {
   legalOptions?: LegalOptions;
   onClose: () => void;
   onSaved: () => void;
-};
+}
 
-type FormState = {
+interface FormState {
   category: string;
   published: YesNo;
   pinned: YesNo;
@@ -173,24 +168,26 @@ export default function PostModal({
   const { toast } = useNotify();
   const { category } = config;
 
-  const { data: detail, isFetching } = useApiQuery<PostDetail>(
-    ['contents', 'posts', config.id, 'detail', pstNo],
-    () => getPost(config.board, pstNo as string),
-    { enabled: !isCreate, gcTime: 0 },
-  );
+  const { data: detail, isFetching } = usePost(config, pstNo);
+  const savePost = useSavePost(config);
+  const uploadImage = useUploadContentImage(config.fileBoard);
 
   const defaultCategory = category.kind === 'fixed' ? category.value : (categoryOptions[0]?.value ?? '');
   const [form, setForm] = useState<FormState>(() => emptyForm(defaultCategory));
-  const [saving, setSaving] = useState(false);
 
-  useEffect(() => {
-    if (detail) setForm(toForm(detail));
-  }, [detail]);
+  // Fill the form when the detail arrives — adjusted during render, not in an effect.
+  const [loadedDetail, setLoadedDetail] = useState<PostDetail | undefined>(undefined);
+  if (detail && detail !== loadedDetail) {
+    setLoadedDetail(detail);
+    setForm(toForm(detail));
+  }
 
   // Options may arrive after the popup opened — give a new post its first category then.
-  useEffect(() => {
-    if (isCreate && defaultCategory) setForm((prev) => (prev.category ? prev : { ...prev, category: defaultCategory }));
-  }, [isCreate, defaultCategory]);
+  const [appliedDefaultCategory, setAppliedDefaultCategory] = useState(defaultCategory);
+  if (defaultCategory !== appliedDefaultCategory) {
+    setAppliedDefaultCategory(defaultCategory);
+    if (isCreate && defaultCategory && !form.category) setForm({ ...form, category: defaultCategory });
+  }
 
   const patch = (values: Partial<FormState>) => setForm((prev) => ({ ...prev, ...values }));
 
@@ -226,32 +223,30 @@ export default function PostModal({
         return;
       }
     }
-    setSaving(true);
-    try {
-      if (isCreate) {
-        await createPost(config.board, buildBody(config, form, true));
-      } else {
-        const id = pstNo as string;
-        if (!contentLocked) await updatePost(config.board, id, buildBody(config, form, false));
-        if (config.statusMode === 'endpoint') {
-          await updatePostStatus(config.board, id, {
-            category: form.category,
-            published: form.published,
-            ...(config.pin
-              ? { pinned: form.pinned, pinOrder: form.pinned === 'Y' ? (form.pinOrder ?? undefined) : undefined }
-              : {}),
-          });
-        } else if (config.statusMode === 'bulk' && detail && detail.published !== form.published) {
-          await publishPosts(config.board, [id], form.published);
-        }
+    let variables: SavePostVariables;
+    if (isCreate) {
+      variables = { pstNo: null, body: buildBody(config, form, true) };
+    } else {
+      variables = { pstNo, body: contentLocked ? undefined : buildBody(config, form, false) };
+      if (config.statusMode === 'endpoint') {
+        variables.status = {
+          category: form.category,
+          published: form.published,
+          ...(config.pin
+            ? { pinned: form.pinned, pinOrder: form.pinned === 'Y' ? (form.pinOrder ?? undefined) : undefined }
+            : {}),
+        };
+      } else if (config.statusMode === 'bulk' && detail && detail.published !== form.published) {
+        variables.published = form.published;
       }
+    }
+    try {
+      await savePost.mutateAsync(variables);
       toast.success('Saved.');
       onSaved();
       onClose();
     } catch (e) {
       toast.error(errorMessage(e));
-    } finally {
-      setSaving(false);
     }
   };
 
@@ -263,7 +258,7 @@ export default function PostModal({
   ) => (
     <FormField label={label}>
       <Select
-        className="w-full"
+        className={styles.wFull}
         allowClear
         placeholder={`Select ${label.toLowerCase()}`}
         value={form[key] || undefined}
@@ -297,7 +292,7 @@ export default function PostModal({
           <button
             type="button"
             className={styles.btnDark}
-            disabled={!canWrite || saving || isFetching}
+            disabled={!canWrite || savePost.isPending || isFetching}
             onClick={handleConfirm}
           >
             Confirm
@@ -306,12 +301,12 @@ export default function PostModal({
       }
     >
       <Spin spinning={isFetching}>
-        <div className={`${styles.formGrid} [--form-cols:3]`}>
+        <div className={styles.formGrid} style={{ '--form-cols': 3 } as CSSProperties}>
           {/* ── Status area ─────────────────────────────────────────────── */}
           {showCategorySelect && (
             <FormField label={categoryLabel} required>
               <Select
-                className="w-full"
+                className={styles.wFull}
                 value={form.category || undefined}
                 disabled={categoryDisabled}
                 onChange={(value) => patch({ category: value })}
@@ -375,7 +370,7 @@ export default function PostModal({
               </FormField>
               <FormField label="Issue Date" required>
                 <DatePicker
-                  className="w-full"
+                  className={styles.wFull}
                   format={DATE_FORMAT}
                   placeholder="DD/MM/YYYY"
                   value={form.issueDate}
@@ -470,7 +465,7 @@ export default function PostModal({
           {config.thumbnail && (
             <FormField label="Thumbnail" span="full">
               <ImageField
-                upload={async (file) => (await uploadContentFiles(config.fileBoard, [file])).fileUnqId}
+                upload={uploadImage.mutateAsync}
                 fileUnqId={form.thumbnailFileId}
                 disabled={fieldsDisabled}
                 onChange={(thumbnailFileId) => patch({ thumbnailFileId })}
@@ -480,7 +475,7 @@ export default function PostModal({
           {config.image && (
             <FormField label="Image" span="full">
               <ImageField
-                upload={async (file) => (await uploadContentFiles(config.fileBoard, [file])).fileUnqId}
+                upload={uploadImage.mutateAsync}
                 fileUnqId={form.imageFileId}
                 disabled={fieldsDisabled}
                 onChange={(imageFileId) => patch({ imageFileId })}

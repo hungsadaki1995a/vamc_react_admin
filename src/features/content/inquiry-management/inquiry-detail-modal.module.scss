@@ -205,3 +205,17 @@
   margin-top: 4px;
   font-weight: 500;
 }
+
+/* ── Moved from inline styles ── */
+.modalTitle {
+  font-size: 16px;
+  font-weight: 700;
+  color: #111827;
+}
+
+/* Column widths of the first row. */
+@each $pct in 13, 14, 20, 27 {
+  .col#{$pct} {
+    width: $pct * 1%;
+  }
+}

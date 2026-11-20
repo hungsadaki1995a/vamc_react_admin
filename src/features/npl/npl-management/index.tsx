@@ -2,13 +2,11 @@ import { useState } from 'react';
 import { DatePicker, Descriptions, Input, Modal, Radio, Select, Table } from 'antd';
 import type { TableColumnsType } from 'antd';
 import type { Dayjs } from 'dayjs';
-import { keepPreviousData } from '@tanstack/react-query';
-import { useApiQuery } from '@/hooks/use-api-query';
-import { getNpl, getNpls, type NplItem, type NplSearch } from '@/api/npl/npl-api';
-import type { PageResponse } from '@/api/common/api-utils';
+import type { NplItem, NplSearch } from '@/api/npl/npl-api';
 import { SysPageHeader, SysPagination } from '@/features/system/_shared/SystemUi';
 import { rowNumber } from '@/features/system/_shared/system-utils';
-import styles from '@/features/system/_shared/system-page.module.css';
+import styles from '@/features/system/_shared/system-page.module.scss';
+import { useNpl, useNpls } from './use-npls';
 
 const PAGE_SIZE = 15;
 type DateRange = [Dayjs | null, Dayjs | null] | null;
@@ -27,16 +25,8 @@ export default function NplManagement() {
   const [filterCollapsed, setFilterCollapsed] = useState(false);
   const [detailId, setDetailId] = useState<string | null>(null);
 
-  const { data, isFetching } = useApiQuery<PageResponse<NplItem>>(
-    ['npl', 'list', applied, page],
-    () => getNpls(applied, page, PAGE_SIZE),
-    { placeholderData: keepPreviousData },
-  );
-  const { data: detail } = useApiQuery<NplItem>(
-    ['npl', 'detail', detailId],
-    () => getNpl(detailId as string),
-    { enabled: !!detailId },
-  );
+  const { data, isFetching } = useNpls(applied, page, PAGE_SIZE);
+  const { data: detail } = useNpl(detailId);
 
   const rows = data?.content ?? [];
   const total = data?.totalElements ?? 0;
@@ -103,12 +93,12 @@ export default function NplManagement() {
         <div className={styles.filterCard}>
           <div className={styles.filterGroup}>
             <span className={styles.filterLabel}>Loan Period</span>
-            <DatePicker.RangePicker format="DD/MM/YYYY" value={period} onChange={(d) => setPeriod(d as DateRange)} className="w-[240px]" />
+            <DatePicker.RangePicker format="DD/MM/YYYY" value={period} onChange={(d) => setPeriod(d as DateRange)} className={styles.w240} />
           </div>
           <div className={styles.filterGroup}>
             <span className={styles.filterLabel}>Status</span>
             <Select
-              className="w-[140px]"
+              className={styles.w140}
               value={bndSttsCd}
               onChange={setBndSttsCd}
               options={[

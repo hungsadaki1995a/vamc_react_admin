@@ -1,22 +1,14 @@
 import { useState } from 'react';
 import { Input, Table } from 'antd';
 import type { TableColumnsType } from 'antd';
-import { useQueryClient, keepPreviousData } from '@tanstack/react-query';
-import { useApiQuery } from '@/hooks/use-api-query';
 import { useNotify } from '@/hooks/use-notify';
 import { useMenuPermission } from '@/hooks/use-menu-permission';
-import {
-  approveBidder,
-  getBidderAuctions,
-  getBiddersByAuction,
-  rejectBidder,
-  type AuctionItem,
-  type BidderItem,
-} from '@/api/auction/auction-api';
-import type { PageResponse } from '@/api/common/api-utils';
+import type { AuctionItem, BidderItem } from '@/api/auction/auction-api';
 import { SysPageHeader, SysPagination } from '@/features/system/_shared/SystemUi';
 import { errorMessage } from '@/features/system/_shared/system-utils';
-import styles from '@/features/system/_shared/system-page.module.css';
+import styles from '@/features/system/_shared/system-page.module.scss';
+import { useApproveBidder, useBidderAuctions, useBidders, useRejectBidder } from './use-bidders';
+import type { BidderAuctionSearch } from './use-bidders';
 
 const PAGE_SIZE = 15;
 
@@ -24,24 +16,17 @@ const PAGE_SIZE = 15;
 export default function BidderManagement() {
   const { toast } = useNotify();
   const { canWrite } = useMenuPermission();
-  const queryClient = useQueryClient();
 
   const [keyword, setKeyword] = useState('');
-  const [applied, setApplied] = useState<{ keyword?: string }>({});
+  const [applied, setApplied] = useState<BidderAuctionSearch>({});
   const [page, setPage] = useState(1);
   const [selectedAuction, setSelectedAuction] = useState<string | null>(null);
   const [bidderPage, setBidderPage] = useState(1);
 
-  const { data: auctData, isFetching: auctLoading } = useApiQuery<PageResponse<AuctionItem>>(
-    ['auction', 'bidder-auctions', applied, page],
-    () => getBidderAuctions(applied, page, PAGE_SIZE),
-    { placeholderData: keepPreviousData },
-  );
-  const { data: bidderData, isFetching: bidderLoading } = useApiQuery<PageResponse<BidderItem>>(
-    ['auction', 'bidders', selectedAuction, bidderPage],
-    () => getBiddersByAuction(selectedAuction as string, bidderPage, PAGE_SIZE),
-    { enabled: !!selectedAuction, placeholderData: keepPreviousData },
-  );
+  const { data: auctData, isFetching: auctLoading } = useBidderAuctions(applied, page, PAGE_SIZE);
+  const { data: bidderData, isFetching: bidderLoading } = useBidders(selectedAuction, bidderPage, PAGE_SIZE);
+  const approveBidder = useApproveBidder();
+  const rejectBidder = useRejectBidder();
 
   const auctions = auctData?.content ?? [];
   const totalAuctions = auctData?.totalElements ?? 0;
@@ -50,10 +35,9 @@ export default function BidderManagement() {
 
   const handleAction = async (bdrNo: string, action: 'approve' | 'reject') => {
     try {
-      if (action === 'approve') await approveBidder(bdrNo);
-      else await rejectBidder(bdrNo);
+      if (action === 'approve') await approveBidder.mutateAsync(bdrNo);
+      else await rejectBidder.mutateAsync(bdrNo);
       toast.success('Updated.');
-      void queryClient.invalidateQueries({ queryKey: ['auction', 'bidders', selectedAuction] });
     } catch (e) {
       toast.error(errorMessage(e));
     }
@@ -76,7 +60,7 @@ export default function BidderManagement() {
       width: 150,
       align: 'center',
       render: (_v, r) => (
-        <div className={`${styles.actions} justify-center`}>
+        <div className={`${styles.actions} ${styles.centered}`}>
           <button type="button" className={`${styles.btnDark} ${styles.btnSmall}`} disabled={!canWrite} onClick={() => void handleAction(r.bdrNo, 'approve')}>Approve</button>
           <button type="button" className={`${styles.btnDanger} ${styles.btnSmall}`} disabled={!canWrite} onClick={() => void handleAction(r.bdrNo, 'reject')}>Reject</button>
         </div>
@@ -99,7 +83,7 @@ export default function BidderManagement() {
         </div>
       </div>
 
-      <div className="grid grid-cols-[1fr_1.4fr] gap-4 flex-1 min-h-0">
+      <div className={styles.twoPaneWide}>
         <div className={styles.card}>
           <span className={styles.cardTitle}>Auctions ({totalAuctions})</span>
           <div className={styles.tableWrapper}>

@@ -1,0 +1,37 @@
+/* Notification Send History (VPA09050201 / VPA090502P01) — screen-specific layout only. */
+
+.rangePicker {
+  width: 100%;
+}
+
+/* Grey read-only boxes of the detail popup. */
+.readOnly {
+  background: var(--color-bg-secondary, #f6f6f9);
+}
+
+.valueBox {
+  width: 100%;
+  padding: 8px 11px;
+  border: 1px solid var(--color-border-secondary, #e2e5eb);
+  border-radius: 6px;
+  background: var(--color-bg-secondary, #f6f6f9);
+  white-space: pre-wrap;
+  word-break: break-word;
+  line-height: 1.6;
+}
+
+.failText {
+  color: var(--color-text-negative, #e62e44);
+}
+
+/* Long content scrolls inside the area. */
+.contentBox {
+  min-height: 120px;
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+.errorText {
+  margin: 0 0 8px;
+  color: var(--color-text-negative, #e62e44);
+}

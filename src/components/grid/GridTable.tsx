@@ -12,35 +12,15 @@ import type {
   ColDef,
   GridReadyEvent,
   RowDataUpdatedEvent,
-  CellValueChangedEvent,
-  CellClickedEvent,
-  CellDoubleClickedEvent,
   RowClickedEvent,
   RowDoubleClickedEvent,
   SelectionChangedEvent,
-  SortChangedEvent,
-  FilterChangedEvent,
-  PaginationChangedEvent,
-  FirstDataRenderedEvent,
-  CellEditingStartedEvent,
-  CellEditingStoppedEvent,
-  ColumnResizedEvent,
-  ColumnMovedEvent,
-  ColumnVisibleEvent,
-  RowClassParams,
-  RowStyle,
-  IRowNode,
-  GetContextMenuItems,
   GridApi,
-  BodyScrollEndEvent,
-  ModelUpdatedEvent,
-  RowSelectedEvent,
   CellContextMenuEvent,
-  CellKeyDownEvent,
   GetContextMenuItemsParams,
   MenuItemDef,
 } from 'ag-grid-community';
-import type { AgGridReactProps } from 'ag-grid-react';
+import type { GridTableProps } from '@/types/grid';
 import { App } from 'antd';
 import DOMPurify from 'dompurify';
 import { useLocaleStore } from '@/stores/locale-store';

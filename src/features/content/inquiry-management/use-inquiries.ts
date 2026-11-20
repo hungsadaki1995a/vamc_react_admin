@@ -11,6 +11,12 @@ import {
 } from '@/api/contents/inquiry-api';
 import type { InquiryItem } from './inquiry.types';
 
+export const INQUIRY_KEYS = {
+  all: ['contents', 'inquiries'] as const,
+  details: ['inquiry-detail'] as const,
+  detail: (pstNo?: string) => ['inquiry-detail', pstNo] as const,
+};
+
 // ── Types ────────────────────────────────────────────────────────────────────
 
 export interface UseInquiriesParams {
@@ -145,7 +151,7 @@ export function useInquiries(
   const { pageRequest, cond } = buildInquiryQueryParams(params);
 
   const queryResult = useQuery<UseInquiriesResult, Error>({
-    queryKey: ['contents', 'inquiries', pageRequest, cond],
+    queryKey: [...INQUIRY_KEYS.all, pageRequest, cond],
     queryFn: async (): Promise<UseInquiriesResult> => {
       // Errors surface to the caller — no mock fallback, so an API failure is visible.
       const response = await getInquiries({

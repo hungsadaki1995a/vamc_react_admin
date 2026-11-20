@@ -1,0 +1,51 @@
+// Editable detail grid of the code screens.
+
+$border: var(--color-border-secondary, #e2e5eb);
+$label-bg: var(--color-bg-secondary, #f6f6f9);
+$danger: var(--color-text-negative, #e62e44);
+
+.gridWrap {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  border: 1px solid $border;
+  border-radius: 4px;
+
+  :global(.ant-table-thead > tr > th) {
+    background: $label-bg;
+    text-align: center;
+    font-weight: 500;
+  }
+}
+
+.control {
+  width: 100%;
+  min-width: 72px;
+}
+
+.readonly {
+  white-space: nowrap;
+}
+
+.requiredMark {
+  margin-left: 2px;
+  color: $danger;
+}
+
+.cellError {
+  margin-top: 2px;
+  font-size: 11px;
+  line-height: 1.3;
+  color: $danger;
+  white-space: normal;
+}
+
+.gridError {
+  margin-bottom: 8px;
+  font-size: 13px;
+  color: $danger;
+}
+
+.newRow > td {
+  background: var(--color-bg-brand-subtle, #f0f6ff);
+}

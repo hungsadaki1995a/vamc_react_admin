@@ -481,7 +481,7 @@ function MemberFormModalContent({
 
   const { data: staffData, isFetching: isStaffLoading } = useQuery({
     queryKey: ['staffLookupForm', appliedStaffKeyword],
-    queryFn: () => lookupEmployees({ empNm: appliedStaffKeyword || undefined }, 1, 10),
+    queryFn: () => lookupEmployees({ empNm: appliedStaffKeyword || undefined }, { page: 1, size: 10 }),
     enabled: staffPickerOpen,
   });
 

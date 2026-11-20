@@ -1,105 +1,135 @@
 import { apiClient } from '@/lib/api/client';
 import type { ApiResponse } from '@/lib/api/types';
+import { apiDownload, apiGet, apiPost, apiPut } from '@/api/common/api-utils';
+import type { PageQuery, PageResponse } from '@/api/common/api-utils';
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Multilingual label management API — system operations domain (menu A06040300 / screen SYS050301SC)
-//
-// Server contract follows the LANG_LBL / LANG_LBL_TRSL schema directly.
-//   · Label identifier is not a single key, but a 3-column PK (LBL_CD, SCRN_ID, LBL_SE_CD).
-//   · Translation is an attribute of a label, identified by (LANG_CD + the 3 columns above).
-// Legacy screen fields lblId / lclCd / lblTxt / projTxt (from PMS) were removed as no matching table exists.
-//
-// ⚠️ Bootstrap label lookup (`/api/lbl/bulk`) and supported language list (`/api/lbl/languages`)
-//    are shared across all screens in `@/api/common/lblBulkApi`. Keep only management-screen CRUD here.
-// ─────────────────────────────────────────────────────────────────────────────
+// ── i18n Label Management (menu A06040300 / screen SYS050301SC) ──────────────
+// A label is identified by (SCRN_ID, LBL_SE_CD, LBL_CD); LBL_CD is the label key as stored.
+// App-wide label lookup (`/api/lbl/bulk`) stays in `@/api/common/label-bulk-api`.
 
-/** One label-translation row — 1:1 with server LblSaveItem. Labels without translation have empty langCd/trslLtr. */
-export interface LblRow {
-  lblCd:     string;   // Label code (globally unique convention — screen labels are prefixed with sceId)
-  scrnId:    string;   // Screen ID
-  lblSeCd:   string;   // Label type code
-  lblExpln?: string;   // Label description (default text)
-  langCd?:   string;   // Language code KR/EN/VN
-  trslLtr?:  string;   // Translated string
-}
+/** Default language: required, shown on user screens when another language is empty. */
+export const DEFAULT_LANG_CD = 'VN';
 
-/** One row in the left grid — 1 label + per-language translation map */
-export interface LblMaster {
-  rowId:    string;                    // `${lblCd}|${scrnId}|${lblSeCd}` — AG Grid row key
-  lblCd:    string;
-  scrnId:   string;
-  lblSeCd:  string;
-  lblExpln: string;
-  trsl:     Record<string, string>;    // langCd → translated string
-}
+/** Screen ID of labels with the Common scope. */
+export const COMMON_SCREEN_ID = 'COM';
 
-/** 3-column label PK */
-export interface LblKey {
-  lblCd:   string;
-  scrnId:  string;
+export interface LabelKey {
+  scrnId: string;
   lblSeCd: string;
+  lblCd: string;
 }
 
-/** Combine the 3 PK columns into a single row key — LBL_CD alone does not uniquely identify a row */
-export function labelRowId(key: LblKey): string {
-  return `${key.lblCd}|${key.scrnId}|${key.lblSeCd}`;
+export interface LabelTranslation {
+  langCd: string;
+  langNm?: string;
+  trslLtr?: string | null;
+  mdfcnDt?: string;
 }
 
-/** Group flat rows (label × translation) by label */
-export function groupLabelRows(rows: LblRow[]): LblMaster[] {
-  const map = new Map<string, LblMaster>();
-  for (const r of rows) {
-    const rowId = labelRowId(r);
-    let master = map.get(rowId);
-    if (!master) {
-      master = {
-        rowId,
-        lblCd:    r.lblCd,
-        scrnId:   r.scrnId,
-        lblSeCd:  r.lblSeCd,
-        lblExpln: r.lblExpln ?? '',
-        trsl:     {},
-      };
-      map.set(rowId, master);
-    }
-    if (r.langCd) master.trsl[r.langCd] = r.trslLtr ?? '';
-  }
-  return [...map.values()];
+export interface LabelListItem extends LabelKey {
+  /** W / A — not returned until the SYS_SE_CD column exists. */
+  sysSeCd?: string | null;
+  /** B = Business, C = Common (SCRN_ID = COM). */
+  scopeCd: 'B' | 'C' | string;
+  lblKey: string;
+  lblExpln?: string;
+  useYn?: string;
+  /** Number of active languages with empty text. */
+  missingCnt: number;
+  mdfcnDt?: string;
+  mdfcnBy?: string;
+  translations: LabelTranslation[];
 }
 
-// ── API functions ────────────────────────────────────────────────────────────
-// Server returns only { status, message, data } without a success field —
-// populate success here since useApiQuery / useApiMutation check it for pass/fail.
-
-export interface LblRowsParams {
-  scrnId?:  string;
-  lblCd?:   string;   // partial match
-  lblSeCd?: string;
+export interface LabelDetail extends LabelKey {
+  useYn?: string;
+  lblExpln?: string;
+  crtDt?: string;
+  crtBy?: string;
+  mdfcnDt?: string;
+  mdfcnBy?: string;
+  translations: LabelTranslation[];
 }
 
-/** GET /api/lbl/rows — fetch label-translation list */
-export async function getLabelRows(params: LblRowsParams): Promise<ApiResponse<LblRow[]>> {
-  const { data } = await apiClient.get<ApiResponse<LblRow[]>>('/api/lbl/rows', { params });
-  return {
-    success: data.status === 200,
-    message: data.message,
-    data: data.data ?? [],
-  };
+export interface LabelSearch {
+  /** W / A; any value returns an empty page until the schema change. */
+  sysSeCd?: string;
+  /** Partial match on the label key. */
+  lblKey?: string;
+  /** Partial match on description and text of every language. */
+  keyword?: string;
+  /** Only labels with at least one empty language. */
+  missingOnly?: boolean;
 }
+
+export interface LabelSaveRequest extends LabelKey {
+  lblExpln?: string;
+  /** Omit to keep stored texts (description-only edit); a blank non-default text removes that language. */
+  translations?: { langCd: string; trslLtr: string }[];
+}
+
+export interface LabelLanguage {
+  langCd: string;
+  langNm: string;
+  useYn: string;
+  sortSeq?: number;
+}
+
+export interface LabelCacheReloadResult {
+  caches: string[];
+  reloadedAt?: string;
+}
+
+export interface LabelExcelRowError {
+  row: number;
+  col?: string;
+  header?: string;
+  value?: string;
+  message: string;
+}
+
+/** Upload result; `success=false` means nothing was saved (header or row errors). */
+export interface LabelExcelUploadResult {
+  success: boolean;
+  totalRows: number;
+  failRows: number;
+  errors?: LabelExcelRowError[];
+}
+
+const BASE = '/api/v1/labels';
+
+export const getLabels = (search: LabelSearch, page: PageQuery) =>
+  apiGet<PageResponse<LabelListItem>>(BASE, { ...search, missingOnly: search.missingOnly || undefined, ...page });
+
+export const getLabelDetail = (key: LabelKey) => apiGet<LabelDetail>(`${BASE}/detail`, key);
+
+/** 409 LBL002 duplicate, 400 LBL004 menu screen, LBL005 / LBL006 only when translations are sent. */
+export const createLabel = (body: LabelSaveRequest) => apiPost<LabelDetail>(BASE, body);
+
+/** Null fields keep stored values; 400 LBL005 empty default text, LBL006 variables differ. */
+export const updateLabel = (body: LabelSaveRequest) => apiPut<LabelDetail>(BASE, body);
+
+/** Clears the admin label caches (the client app expires its own). */
+export const reloadLabelCache = () => apiPost<LabelCacheReloadResult>(`${BASE}/cache/reload`);
+
+export const downloadLabelsExcel = (search: LabelSearch) =>
+  apiDownload(`${BASE}/excel`, 'labels.xlsx', { ...search, missingOnly: search.missingOnly || undefined });
+
+/** Bulk text edit from the downloaded layout; 400 LBL007 (> 10,000 rows) / LBL008 (> 5 MB). */
+export const uploadLabelsExcel = (file: File) => {
+  const form = new FormData();
+  form.append('file', file);
+  return apiPost<LabelExcelUploadResult>(`${BASE}/excel/upload`, form);
+};
+
+/** All languages (including unused ones). */
+export const getLabelLanguages = () => apiGet<LabelLanguage[]>('/api/v1/languages');
 
 /**
- * POST /api/lbl/batch — batch save (upsert) labels/translations.
- *
- * Server upserts LANG_LBL for each item, and also upserts LANG_LBL_TRSL if langCd/trslLtr is present.
- * Therefore **lblExpln must always be included** even when saving translations only — omitting it clears the description.
+ * Deletes a label and its translations.
+ * TODO(api): no v1 delete endpoint exists yet — uses the legacy `DELETE /api/lbl`.
  */
-export async function saveLabelBatch(items: LblRow[]): Promise<ApiResponse<void>> {
-  const { data } = await apiClient.post<ApiResponse<void>>('/api/lbl/batch', items);
-  return { success: data.status === 200, message: data.message, data: null };
-}
-
-/** DELETE /api/lbl — delete label. Translations are also deleted together */
-export async function deleteLabel(key: LblKey): Promise<ApiResponse<void>> {
-  const { data } = await apiClient.delete<ApiResponse<void>>('/api/lbl', { params: key });
-  return { success: data.status === 200, message: data.message, data: null };
+export async function deleteLabel(key: LabelKey): Promise<ApiResponse<void>> {
+  const { data } = await apiClient.delete<{ status?: number; message?: string }>('/api/lbl', { params: key });
+  return { status: data.status, success: data.status === 200, message: data.message ?? '', data: null };
 }

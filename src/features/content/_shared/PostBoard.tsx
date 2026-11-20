@@ -5,14 +5,10 @@ import { PaperClipOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import type { Dayjs } from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
-import { useQueryClient, keepPreviousData } from '@tanstack/react-query';
-import { useApiQuery } from '@/hooks/use-api-query';
 import { useNotify } from '@/hooks/use-notify';
 import { useMenuPermission } from '@/hooks/use-menu-permission';
 import { useCommonCodes } from '@/hooks/use-common-codes';
-import { deletePosts, downloadPostExcel, getLegalOptions, getPosts, publishPosts } from '@/api/contents/post-api';
 import type { LegalOptions, Post, PostSearch, YesNo } from '@/api/contents/post-api';
-import type { PageResponse } from '@/api/common/api-utils';
 import {
   DateTimeCell,
   SysPageHeader,
@@ -20,9 +16,10 @@ import {
   UseYnChecks,
 } from '@/features/system/_shared/SystemUi';
 import { errorMessage, toUseYnFilter } from '@/features/system/_shared/system-utils';
-import styles from '@/features/system/_shared/system-page.module.css';
+import styles from '@/features/system/_shared/system-page.module.scss';
 import type { BoardConfig, CategoryOption } from './board-config';
 import PostModal from './PostModal';
+import { useDeletePosts, useDownloadPostExcel, useLegalOptions, usePosts, usePublishPosts } from './use-posts';
 
 dayjs.extend(customParseFormat);
 
@@ -34,7 +31,7 @@ const DATE_FORMAT = 'DD/MM/YYYY';
 
 type DateRange = [Dayjs | null, Dayjs | null] | null;
 
-type FilterState = {
+interface FilterState {
   posted: boolean;
   stopped: boolean;
   category: string;
@@ -44,7 +41,7 @@ type FilterState = {
   lawGroup: string;
   lawField: string;
   issuePeriod: DateRange;
-};
+}
 
 const EMPTY_FILTER: FilterState = {
   posted: true,
@@ -62,15 +59,11 @@ const withAll = (options: CategoryOption[]) => [{ value: '', label: 'All' }, ...
 export default function PostBoard({ config }: { config: BoardConfig }) {
   const { toast, dialog } = useNotify();
   const { canWrite } = useMenuPermission();
-  const queryClient = useQueryClient();
   const { category } = config;
 
   // ── Category options ──────────────────────────────────────────────────────
   const codeOptions = useCommonCodes(category.kind === 'codes' ? category.groupCd : null);
-  const { data: legalOptions } = useApiQuery<LegalOptions>(['contents', 'legal-options'], getLegalOptions, {
-    enabled: !!config.legal,
-    staleTime: 5 * 60 * 1000,
-  });
+  const { data: legalOptions } = useLegalOptions(!!config.legal);
   const categoryOptions = useMemo<CategoryOption[]>(() => {
     if (config.legal) return (legalOptions?.docTypes ?? []).map((o) => ({ value: o.code, label: o.name }));
     if (category.kind === 'codes') return codeOptions;
@@ -103,20 +96,14 @@ export default function PostBoard({ config }: { config: BoardConfig }) {
   const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
   /** undefined = closed, null = register, string = view/edit that post. */
   const [modalPstNo, setModalPstNo] = useState<string | null | undefined>(undefined);
-  const [busy, setBusy] = useState(false);
 
-  const { data, isFetching, error } = useApiQuery<PageResponse<Post>>(
-    ['contents', 'posts', config.id, applied, page],
-    () => getPosts(config.board, applied, page, PAGE_SIZE),
-    { placeholderData: keepPreviousData },
-  );
+  const { data, isFetching, error } = usePosts(config, applied, page, PAGE_SIZE);
+  const publishPosts = usePublishPosts(config);
+  const deletePosts = useDeletePosts(config);
+  const downloadExcel = useDownloadPostExcel(config);
+  const busy = publishPosts.isPending || deletePosts.isPending || downloadExcel.isPending;
   const rows = data?.content ?? [];
   const total = data?.totalElements ?? 0;
-
-  const refresh = () => {
-    setSelectedKeys([]);
-    void queryClient.invalidateQueries({ queryKey: ['contents', 'posts', config.id] });
-  };
 
   const handleSearch = () => {
     setApplied({
@@ -149,15 +136,12 @@ export default function PostBoard({ config }: { config: BoardConfig }) {
   };
 
   const runBulk = async (action: () => Promise<{ message: string }>, fallback: string) => {
-    setBusy(true);
     try {
       const response = await action();
       toast.success(response.message || fallback);
-      refresh();
+      setSelectedKeys([]);
     } catch (e) {
       toast.error(errorMessage(e));
-    } finally {
-      setBusy(false);
     }
   };
 
@@ -168,7 +152,7 @@ export default function PostBoard({ config }: { config: BoardConfig }) {
         published === 'Y'
           ? `Post the ${selectedKeys.length} selected item(s) on the platform?`
           : `Stop posting the ${selectedKeys.length} selected item(s)?`,
-      onOk: () => runBulk(() => publishPosts(config.board, selectedKeys, published), 'Saved.'),
+      onOk: () => runBulk(() => publishPosts.mutateAsync({ pstNos: selectedKeys, published }), 'Saved.'),
     });
   };
 
@@ -177,20 +161,11 @@ export default function PostBoard({ config }: { config: BoardConfig }) {
     dialog.warning({
       okCancel: true,
       content: `Delete the ${selectedKeys.length} selected item(s)?`,
-      onOk: () => runBulk(() => deletePosts(config.board, selectedKeys), 'Deleted.'),
+      onOk: () => runBulk(() => deletePosts.mutateAsync(selectedKeys), 'Deleted.'),
     });
   };
 
-  const handleExcel = async () => {
-    setBusy(true);
-    try {
-      await downloadPostExcel(config.board, applied);
-    } catch (e) {
-      toast.error(errorMessage(e));
-    } finally {
-      setBusy(false);
-    }
-  };
+  const handleExcel = () => downloadExcel.mutate(applied, { onError: (e) => toast.error(errorMessage(e)) });
 
   // ── Grid ──────────────────────────────────────────────────────────────────
   const categoryName = (row: Post) =>
@@ -327,7 +302,7 @@ export default function PostBoard({ config }: { config: BoardConfig }) {
     <div className={styles.filterGroup}>
       <span className={styles.filterLabel}>{label}</span>
       <Select
-        className="w-[180px]"
+        className={styles.w180}
         value={filter[key]}
         onChange={(value) => setFilter((f) => ({ ...f, [key]: value }))}
         options={withAll((options ?? []).map((o) => ({ value: o.code, label: o.name })))}
@@ -363,7 +338,7 @@ export default function PostBoard({ config }: { config: BoardConfig }) {
             <div className={styles.filterGroup}>
               <span className={styles.filterLabel}>{categoryLabel}</span>
               <Select
-                className="w-[220px]"
+                className={styles.w220}
                 value={filter.category}
                 onChange={(value) => setFilter((f) => ({ ...f, category: value }))}
                 options={sectionOnly ? categoryOptions : withAll(categoryOptions)}
@@ -379,7 +354,7 @@ export default function PostBoard({ config }: { config: BoardConfig }) {
               placeholder={['dd/mm/yyyy', 'dd/mm/yyyy']}
               value={filter.period}
               onChange={(dates) => setFilter((f) => ({ ...f, period: dates as DateRange }))}
-              className="w-[250px]"
+              className={styles.w250}
             />
           </div>
           {config.legal && (
@@ -390,7 +365,7 @@ export default function PostBoard({ config }: { config: BoardConfig }) {
                 placeholder={['dd/mm/yyyy', 'dd/mm/yyyy']}
                 value={filter.issuePeriod}
                 onChange={(dates) => setFilter((f) => ({ ...f, issuePeriod: dates as DateRange }))}
-                className="w-[250px]"
+                className={styles.w250}
               />
             </div>
           )}
@@ -473,7 +448,7 @@ export default function PostBoard({ config }: { config: BoardConfig }) {
           categoryLabel={categoryLabel}
           legalOptions={legalOptions}
           onClose={() => setModalPstNo(undefined)}
-          onSaved={refresh}
+          onSaved={() => setSelectedKeys([])}
         />
       )}
     </div>

@@ -1,0 +1,49 @@
+// Master-detail layout of the code screens (Common / Region / Finance).
+
+/* Fills a split pane: header, scrolling body, pager. */
+.pane {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 0;
+}
+
+.paneBody {
+  flex: 1 1 auto;
+  min-height: 240px;
+}
+
+.paneDetail {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+/* Detail grid / empty state stretch to the pane height like the master list. */
+.paneDetail > :last-child {
+  flex: 1 1 auto;
+}
+
+/* Clickable code that opens the edit popup. */
+.codeLink {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--color-text-brand, #1764ff);
+  cursor: pointer;
+  text-align: left;
+}
+
+.codeLink:hover {
+  text-decoration: underline;
+}
+
+/* Long names are cut so the master list keeps Use / Registered Date in view (frame VPA09030101). */
+.ellipsis {
+  display: inline-block;
+  max-width: 160px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  vertical-align: bottom;
+}

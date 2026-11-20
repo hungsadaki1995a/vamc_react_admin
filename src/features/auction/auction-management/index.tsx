@@ -2,22 +2,13 @@ import { useState } from 'react';
 import { DatePicker, Descriptions, Input, Modal, Select, Table } from 'antd';
 import type { TableColumnsType } from 'antd';
 import type { Dayjs } from 'dayjs';
-import { useQueryClient, keepPreviousData } from '@tanstack/react-query';
-import { useApiQuery } from '@/hooks/use-api-query';
 import { useNotify } from '@/hooks/use-notify';
 import { useMenuPermission } from '@/hooks/use-menu-permission';
-import {
-  deleteAuctions,
-  downloadAuctionsExcel,
-  getAuction,
-  getAuctions,
-  type AuctionItem,
-  type AuctionSearch,
-} from '@/api/auction/auction-api';
-import type { PageResponse } from '@/api/common/api-utils';
+import type { AuctionItem, AuctionSearch } from '@/api/auction/auction-api';
 import { SysPageHeader, SysPagination } from '@/features/system/_shared/SystemUi';
 import { errorMessage, rowNumber } from '@/features/system/_shared/system-utils';
-import styles from '@/features/system/_shared/system-page.module.css';
+import styles from '@/features/system/_shared/system-page.module.scss';
+import { useAuction, useAuctions, useDeleteAuctions, useDownloadAuctionsExcel } from './use-auctions';
 
 const PAGE_SIZE = 15;
 type DateRange = [Dayjs | null, Dayjs | null] | null;
@@ -26,7 +17,6 @@ type DateRange = [Dayjs | null, Dayjs | null] | null;
 export default function AuctionManagement() {
   const { toast, dialog } = useNotify();
   const { canWrite } = useMenuPermission();
-  const queryClient = useQueryClient();
 
   const [period, setPeriod] = useState<DateRange>(null);
   const [auctnSttsCd, setAuctnSttsCd] = useState('');
@@ -39,16 +29,10 @@ export default function AuctionManagement() {
   const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
   const [detailId, setDetailId] = useState<string | null>(null);
 
-  const { data, isFetching } = useApiQuery<PageResponse<AuctionItem>>(
-    ['auction', 'list', applied, page],
-    () => getAuctions(applied, page, PAGE_SIZE),
-    { placeholderData: keepPreviousData },
-  );
-  const { data: detail } = useApiQuery<AuctionItem>(
-    ['auction', 'detail', detailId],
-    () => getAuction(detailId as string),
-    { enabled: !!detailId },
-  );
+  const { data, isFetching } = useAuctions(applied, page, PAGE_SIZE);
+  const { data: detail } = useAuction(detailId);
+  const deleteAuctions = useDeleteAuctions();
+  const downloadExcel = useDownloadAuctionsExcel();
 
   const rows = data?.content ?? [];
   const total = data?.totalElements ?? 0;
@@ -82,10 +66,9 @@ export default function AuctionManagement() {
       content: `Delete ${selectedKeys.length} selected auction(s)?`,
       onOk: async () => {
         try {
-          await deleteAuctions(selectedKeys);
+          await deleteAuctions.mutateAsync(selectedKeys);
           toast.success('Deleted.');
           setSelectedKeys([]);
-          void queryClient.invalidateQueries({ queryKey: ['auction', 'list'] });
         } catch (e) {
           toast.error(errorMessage(e));
         }
@@ -122,12 +105,12 @@ export default function AuctionManagement() {
         <div className={styles.filterCard}>
           <div className={styles.filterGroup}>
             <span className={styles.filterLabel}>Auction Period</span>
-            <DatePicker.RangePicker format="DD/MM/YYYY" value={period} onChange={(d) => setPeriod(d as DateRange)} className="w-[240px]" />
+            <DatePicker.RangePicker format="DD/MM/YYYY" value={period} onChange={(d) => setPeriod(d as DateRange)} className={styles.w240} />
           </div>
           <div className={styles.filterGroup}>
             <span className={styles.filterLabel}>Status</span>
             <Select
-              className="w-[140px]"
+              className={styles.w140}
               value={auctnSttsCd}
               onChange={setAuctnSttsCd}
               options={[
@@ -144,7 +127,7 @@ export default function AuctionManagement() {
           <div className={styles.filterGroup}>
             <span className={styles.filterLabel}>Approval Status</span>
             <Select
-              className="w-[140px]"
+              className={styles.w140}
               value={pbancSttsCd}
               onChange={setPbancSttsCd}
               options={[
@@ -159,7 +142,7 @@ export default function AuctionManagement() {
           <div className={styles.filterGroup}>
             <span className={styles.filterLabel}>Method</span>
             <Select
-              className="w-[140px]"
+              className={styles.w140}
               value={auctnType}
               onChange={setAuctnType}
               options={[
@@ -178,7 +161,7 @@ export default function AuctionManagement() {
       )}
       <div className={styles.summaryRow}>
         <span className={styles.totalCount}>Total ({total})</span>
-        <button type="button" className={`${styles.btn} ${styles.btnSmall}`} onClick={() => void downloadAuctionsExcel(applied as Record<string, unknown>)}>Excel Download</button>
+        <button type="button" className={`${styles.btn} ${styles.btnSmall}`} onClick={() => downloadExcel.mutate(applied)}>Excel Download</button>
       </div>
       <div className={styles.tableWrapper}>
         <Table<AuctionItem> rowKey="auctnNo" columns={columns} dataSource={rows} loading={isFetching} pagination={false} size="small" scroll={{ x: 'max-content' }} rowSelection={{ selectedRowKeys: selectedKeys, onChange: (k) => setSelectedKeys(k.map(String)) }} />

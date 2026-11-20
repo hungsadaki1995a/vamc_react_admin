@@ -1,0 +1,121 @@
+/* i18n Label Management (VPA09040301 / VPA090403P01) — screen-specific bits on top of _shared/sys-ui. */
+
+$border: var(--color-border-secondary, #e2e5eb);
+$text: var(--color-text-primary, #3a404a);
+$text-sub: var(--color-text-secondary, #6f7b95);
+$brand: var(--color-text-brand, #1764ff);
+$danger: var(--color-text-negative, #e62e44);
+
+.fullWidth {
+  width: 100%;
+}
+
+
+/* Divider between [Refresh Cache] and the Excel buttons (design groups). */
+.actionDivider {
+  width: 1px;
+  height: 24px;
+  margin: 0 6px;
+  background: var(--color-border-primary, #d1d1e0);
+}
+
+.missing {
+  color: $danger;
+}
+
+/* Label Key cell: opens the edit popup. */
+.keyLink {
+  padding: 0;
+  border: none;
+  background: none;
+  color: $brand;
+  text-align: left;
+  word-break: break-all;
+  cursor: pointer;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+/* ── Text by Language ───────────────────────────────────────────────────── */
+.panelTitle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.titleDivider {
+  align-self: center;
+  width: 1px;
+  height: 14px;
+  background: var(--color-border-primary, #d1d1e0);
+}
+
+.panelKey {
+  overflow: hidden;
+  font-size: 14px;
+  font-weight: 400;
+  color: $text-sub;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.textPanel {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.textCell {
+  min-height: 22px;
+  padding: 2px 6px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.textCell[data-editable] {
+  cursor: text;
+}
+
+.textCell[data-editable]:hover {
+  border-color: $border;
+}
+
+.textCell[data-error] {
+  border-color: $danger;
+}
+
+.placeholder {
+  color: $text-sub;
+  font-style: italic;
+}
+
+.panelError {
+  margin: 0;
+  font-size: 12px;
+  color: $danger;
+}
+
+.panelHint {
+  margin: 0;
+  font-size: 12px;
+  color: $text-sub;
+}
+
+.uploadErrors {
+  max-height: 320px;
+  overflow-y: auto;
+
+  p {
+    margin: 0 0 6px;
+  }
+
+  ul {
+    margin: 0;
+    padding-left: 18px;
+  }
+}
