@@ -13,7 +13,7 @@ import {
   type LiveAuctionItem,
 } from '@/api/auction/auction-api';
 import type { PageResponse } from '@/api/common/api-utils';
-import { DateTimeCell, SysPageHeader, SysPagination } from '@/features/system/_shared/system-ui';
+import { DateTimeCell, SysPageHeader, SysPagination } from '@/features/system/_shared/SystemUi';
 import { errorMessage, rowNumber } from '@/features/system/_shared/system-utils';
 import styles from '@/features/system/_shared/system-page.module.css';
 

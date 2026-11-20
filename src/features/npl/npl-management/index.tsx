@@ -6,7 +6,7 @@ import { keepPreviousData } from '@tanstack/react-query';
 import { useApiQuery } from '@/hooks/use-api-query';
 import { getNpl, getNpls, type NplItem, type NplSearch } from '@/api/npl/npl-api';
 import type { PageResponse } from '@/api/common/api-utils';
-import { SysPageHeader, SysPagination } from '@/features/system/_shared/system-ui';
+import { SysPageHeader, SysPagination } from '@/features/system/_shared/SystemUi';
 import { rowNumber } from '@/features/system/_shared/system-utils';
 import styles from '@/features/system/_shared/system-page.module.css';
 
@@ -103,12 +103,12 @@ export default function NplManagement() {
         <div className={styles.filterCard}>
           <div className={styles.filterGroup}>
             <span className={styles.filterLabel}>Loan Period</span>
-            <DatePicker.RangePicker format="DD/MM/YYYY" value={period} onChange={(d) => setPeriod(d as DateRange)} style={{ width: 240 }} />
+            <DatePicker.RangePicker format="DD/MM/YYYY" value={period} onChange={(d) => setPeriod(d as DateRange)} className="w-[240px]" />
           </div>
           <div className={styles.filterGroup}>
             <span className={styles.filterLabel}>Status</span>
             <Select
-              style={{ width: 140 }}
+              className="w-[140px]"
               value={bndSttsCd}
               onChange={setBndSttsCd}
               options={[

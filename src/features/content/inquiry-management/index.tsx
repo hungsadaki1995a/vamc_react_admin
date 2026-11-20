@@ -7,10 +7,10 @@ import {
   DownOutlined,
 } from '@ant-design/icons';
 import dayjs from 'dayjs';
-import { DateTimeCell, SysPagination } from '@/features/system/_shared/system-ui';
+import { DateTimeCell, SysPagination } from '@/features/system/_shared/SystemUi';
 import type { InquiryItem } from './inquiry.types';
 import { useInquiries } from './use-inquiries';
-import InquiryDetailModal from './inquiry-detail-modal';
+import InquiryDetailModal from './InquiryDetailModal';
 import styles from './inquiry-management.module.scss';
 
 const { RangePicker } = DatePicker;
@@ -305,7 +305,7 @@ export default function InquiryManagement() {
             Reset
           </button>
           <button className={styles.btnView} onClick={handleView}>
-            <SearchOutlined style={{ fontSize: 13 }} />
+            <SearchOutlined className="text-[13px]" />
             View
           </button>
           <button
@@ -361,7 +361,7 @@ export default function InquiryManagement() {
               placeholder={['dd/mm/yyyy', 'dd/mm/yyyy']}
               value={dateRange}
               onChange={(dates) => setDateRange(dates as [dayjs.Dayjs | null, dayjs.Dayjs | null] | null)}
-              style={{ width: 260 }}
+              className="w-[260px]"
             />
           </div>
         </div>

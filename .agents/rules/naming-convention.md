@@ -9,7 +9,7 @@ Follow these naming conventions for all source code in this project:
 | Item | Convention | Example |
 | :--- | :--- | :--- |
 | Folder names | `kebab-case` | `customer-management/` |
-| React component filenames | `kebab-case` | `customer-table.tsx` |
+| React component filenames | `PascalCase` | `CustomerTable.tsx` |
 | React component names | `PascalCase` | `CustomerTable` |
 | Hook filenames | `use-kebab-case` | `use-customers.ts` |
 | Hook function names | `camelCase` | `useCustomers()` |

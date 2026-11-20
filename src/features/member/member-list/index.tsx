@@ -29,10 +29,10 @@ import type {
   AccountStatus,
 } from './member.types';
 import { useMembers, useExportMembers } from './use-members';
-import { SysPagination } from '@/features/system/_shared/system-ui';
-import MemberDetailModal from './member-detail-modal';
-import ApprovalStatusModal from './approval-status-modal';
-import NewMemberModal from './new-member-modal';
+import { SysPagination } from '@/features/system/_shared/SystemUi';
+import MemberDetailModal from './MemberDetailModal';
+import ApprovalStatusModal from './ApprovalStatusModal';
+import NewMemberModal from './NewMemberModal';
 import styles from './member-list.module.scss';
 
 const MEMBER_GRADE_OPTIONS: { label: string; value: MemberGrade }[] = [
@@ -630,7 +630,7 @@ export default function MemberList() {
       <div className={styles.pageHeader}>
         <h1 className={styles.pageTitle}>Member Management</h1>
         <div className={styles.breadcrumb}>
-          <HomeOutlined style={{ fontSize: 13 }} />
+          <HomeOutlined className="text-[13px]" />
           <span>&gt;</span>
           <span className={styles.breadcrumbItem}>Member Management</span>
           <span>&gt;</span>

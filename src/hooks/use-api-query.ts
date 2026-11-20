@@ -27,7 +27,7 @@ export function useApiQuery<T>(
         throw new ApiError({
           code: 'E_API',
           data: null,
-          message: response.message || '데이터를 불러오지 못했습니다.',
+          message: response.message || 'Failed to load data.',
           statusCode: 0,
           timestamp: new Date().toISOString(),
           path: '',

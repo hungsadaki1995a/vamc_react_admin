@@ -1,4 +1,4 @@
-import { useState, type CSSProperties } from 'react';
+import { useState } from 'react';
 import { Input, Modal, Table } from 'antd';
 import type { TableColumnsType } from 'antd';
 import { useQueryClient, keepPreviousData } from '@tanstack/react-query';
@@ -15,7 +15,7 @@ import {
   type NplLotSearch,
 } from '@/api/npl/npl-api';
 import type { PageResponse } from '@/api/common/api-utils';
-import { DateTimeCell, FormField, SysPageHeader, SysPagination } from '@/features/system/_shared/system-ui';
+import { DateTimeCell, FormField, SysPageHeader, SysPagination } from '@/features/system/_shared/SystemUi';
 import { errorMessage, rowNumber } from '@/features/system/_shared/system-utils';
 import styles from '@/features/system/_shared/system-page.module.css';
 
@@ -93,7 +93,7 @@ export default function NplLotManagement() {
       width: 90,
       align: 'center',
       render: (_v, row) => (
-        <button type="button" className={styles.btnDanger} style={{ height: 24, padding: '0 8px', fontSize: 11 }} disabled={!canWrite} onClick={() => handleDelete(row.bndLotId)}>
+        <button type="button" className={`${styles.btnDanger} h-6! px-2! text-[11px]!`} disabled={!canWrite} onClick={() => handleDelete(row.bndLotId)}>
           Delete
         </button>
       ),
@@ -168,7 +168,7 @@ function LotModal({ item, canWrite, onClose, onSaved }: { item: NplLotItem | nul
         <button type="button" className={styles.btnDark} disabled={!canWrite} onClick={handleSave}>Confirm</button>
       </div>
     }>
-      <div className={styles.formGrid} style={{ '--form-cols': 2 } as CSSProperties}>
+      <div className={`${styles.formGrid} [--form-cols:2]`}>
         <FormField label="LOT No" span="full"><Input value={bndLotNo} disabled={!isCreate} onChange={(e) => setBndLotNo(e.target.value)} /></FormField>
         <FormField label="LOT Name" required span="full"><Input value={bndLotNm} onChange={(e) => setBndLotNm(e.target.value)} /></FormField>
         <FormField label="Description" span="full"><Input.TextArea rows={3} value={bndLotExpln} onChange={(e) => setBndLotExpln(e.target.value)} /></FormField>

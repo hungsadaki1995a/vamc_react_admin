@@ -1,4 +1,4 @@
-import TradeContractBoard from '../_shared/trade-contract-board';
+import TradeContractBoard from '../_shared/TradeContractBoard';
 
 /** Sale Brokerage Contract Management (menu A02020200). */
 export default function SaleContractManagement() {

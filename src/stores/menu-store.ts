@@ -118,7 +118,7 @@ export const useMenuStore = create<MenuStore>()(
               set({ menuTrees: fresh.trees, menuLocale: locale, serverMenus: fresh.items });
               idbSet(cacheKey, fresh);
             })
-            .catch(() => { /* 오류 시 캐시 유지 */ });
+            .catch(() => { /* Keep cached menus on error */ });
           return;
         }
 

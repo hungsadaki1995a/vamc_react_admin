@@ -77,7 +77,7 @@ export const contentManagementMenu: MenuItem = {
 export const menuConfig: MenuItem[] = [
   {
     key: 'dashboard',
-    label: '대시보드',
+    label: 'Dashboard',
     labelKey: 'lbl.menu.dashboard',
     icon: 'DashboardOutlined',
     componentPath: 'Dashboard',

@@ -1,4 +1,4 @@
-import { useState, type CSSProperties } from 'react';
+import { useState } from 'react';
 import { Input, Modal, Radio, Table } from 'antd';
 import type { TableColumnsType } from 'antd';
 import { useQueryClient, keepPreviousData } from '@tanstack/react-query';
@@ -19,7 +19,7 @@ import {
   type InstitutionItem,
 } from '@/api/system/system-operations-api';
 import type { PageResponse } from '@/api/common/api-utils';
-import { FormField, SysPageHeader, SysPagination, UseYnChecks } from '@/features/system/_shared/system-ui';
+import { FormField, SysPageHeader, SysPagination, UseYnChecks } from '@/features/system/_shared/SystemUi';
 import { errorMessage, toUseYnFilter } from '@/features/system/_shared/system-utils';
 import styles from '@/features/system/_shared/system-page.module.css';
 
@@ -120,7 +120,7 @@ export default function FinanceCodeManagement() {
       width: 65,
       align: 'center',
       render: (_v, row) => (
-        <button type="button" className={styles.btnDanger} style={{ height: 24, padding: '0 8px', fontSize: 11 }} disabled={!canWrite} onClick={(e) => { e.stopPropagation(); handleDeleteInst(row.fnstCd); }}>
+        <button type="button" className={`${styles.btnDanger} h-6! px-2! text-[11px]!`} disabled={!canWrite} onClick={(e) => { e.stopPropagation(); handleDeleteInst(row.fnstCd); }}>
           Del
         </button>
       ),
@@ -145,7 +145,7 @@ export default function FinanceCodeManagement() {
       width: 65,
       align: 'center',
       render: (_v, row) => (
-        <button type="button" className={styles.btnDanger} style={{ height: 24, padding: '0 8px', fontSize: 11 }} disabled={!canWrite} onClick={() => handleDeleteBranch(row.fnstBrnchCd)}>
+        <button type="button" className={`${styles.btnDanger} h-6! px-2! text-[11px]!`} disabled={!canWrite} onClick={() => handleDeleteBranch(row.fnstBrnchCd)}>
           Del
         </button>
       ),
@@ -172,7 +172,7 @@ export default function FinanceCodeManagement() {
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, flex: 1, minHeight: 0 }}>
+      <div className="grid grid-cols-2 gap-4 flex-1 min-h-0">
         <div className={styles.card}>
           <div className={styles.summaryRow}>
             <span className={styles.cardTitle}>Institutions ({total})</span>
@@ -252,7 +252,7 @@ function InstModal({ item, canWrite, onClose, onSaved }: { item: InstitutionItem
         <button type="button" className={styles.btnDark} disabled={!canWrite} onClick={handleSave}>Confirm</button>
       </div>
     }>
-      <div className={styles.formGrid} style={{ '--form-cols': 2 } as CSSProperties}>
+      <div className={`${styles.formGrid} [--form-cols:2]`}>
         <FormField label="Code" required span="full"><Input value={fnstCd} disabled={!isCreate} onChange={(e) => setFnstCd(e.target.value)} /></FormField>
         <FormField label="Name" required span="full"><Input value={fnstNm} onChange={(e) => setFnstNm(e.target.value)} /></FormField>
         <FormField label="Abbr Name" span="full"><Input value={fnstAbbrNm} onChange={(e) => setFnstAbbrNm(e.target.value)} /></FormField>
@@ -290,7 +290,7 @@ function BranchModal({ fnstCd, item, canWrite, onClose, onSaved }: { fnstCd: str
         <button type="button" className={styles.btnDark} disabled={!canWrite} onClick={handleSave}>Confirm</button>
       </div>
     }>
-      <div className={styles.formGrid} style={{ '--form-cols': 2 } as CSSProperties}>
+      <div className={`${styles.formGrid} [--form-cols:2]`}>
         <FormField label="Branch Code" required span="full"><Input value={fnstBrnchCd} disabled={!isCreate} onChange={(e) => setFnstBrnchCd(e.target.value)} /></FormField>
         <FormField label="Branch Name" required span="full"><Input value={fnstBrnchNm} onChange={(e) => setFnstBrnchNm(e.target.value)} /></FormField>
         <FormField label="Address" span="full"><Input value={fnstBrnchAddr} onChange={(e) => setFnstBrnchAddr(e.target.value)} /></FormField>

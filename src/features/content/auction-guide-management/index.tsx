@@ -1,4 +1,4 @@
-import PostBoard from '../_shared/post-board';
+import PostBoard from '../_shared/PostBoard';
 import { BOARDS } from '../_shared/board-config';
 
 /** Auction Guide Management — AUC page of the service guide board (menu A04120000). */

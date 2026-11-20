@@ -10,7 +10,7 @@ import {
   type NotificationHistoryItem,
 } from '@/api/system/system-operations-api';
 import type { PageResponse } from '@/api/common/api-utils';
-import { DateTimeCell, SysPageHeader, SysPagination } from '@/features/system/_shared/system-ui';
+import { DateTimeCell, SysPageHeader, SysPagination } from '@/features/system/_shared/SystemUi';
 import { rowNumber } from '@/features/system/_shared/system-utils';
 import styles from '@/features/system/_shared/system-page.module.css';
 
@@ -86,15 +86,15 @@ export default function NotificationHistoryManagement() {
         <div className={styles.filterCard}>
           <div className={styles.filterGroup}>
             <span className={styles.filterLabel}>Period</span>
-            <DatePicker.RangePicker format="DD/MM/YYYY" value={period} onChange={(d) => setPeriod(d as DateRange)} style={{ width: 240 }} />
+            <DatePicker.RangePicker format="DD/MM/YYYY" value={period} onChange={(d) => setPeriod(d as DateRange)} className="w-[240px]" />
           </div>
           <div className={styles.filterGroup}>
             <span className={styles.filterLabel}>Media</span>
-            <Select style={{ width: 130 }} value={notiMediaSe} onChange={setNotiMediaSe} options={[{ value: '', label: 'All' }, { value: 'EMAIL', label: 'EMAIL' }, { value: 'SMS', label: 'SMS' }, { value: 'PUSH', label: 'PUSH' }]} />
+            <Select className="w-[130px]" value={notiMediaSe} onChange={setNotiMediaSe} options={[{ value: '', label: 'All' }, { value: 'EMAIL', label: 'EMAIL' }, { value: 'SMS', label: 'SMS' }, { value: 'PUSH', label: 'PUSH' }]} />
           </div>
           <div className={styles.filterGroup}>
             <span className={styles.filterLabel}>Result</span>
-            <Select style={{ width: 130 }} value={sndngScsYn} onChange={setSndngScsYn} options={[{ value: '', label: 'All' }, { value: 'Y', label: 'Success' }, { value: 'N', label: 'Failed' }]} />
+            <Select className="w-[130px]" value={sndngScsYn} onChange={setSndngScsYn} options={[{ value: '', label: 'All' }, { value: 'Y', label: 'Success' }, { value: 'N', label: 'Failed' }]} />
           </div>
           <div className={styles.filterGroup}>
             <span className={styles.filterLabel}>Keyword</span>

@@ -19,10 +19,10 @@ export function useLogout() {
   const confirmLogout = () => {
     setTimeout(() => {
       modal.confirm({
-        title: tvh('logout', '로그아웃'),
-        content: tsm('logoutConfirm', '로그아웃 하시겠습니까?'),
-        okText: tvb('logout', '로그아웃'),
-        cancelText: tvb('cancel', '취소'),
+        title: tvh('logout', 'Log Out'),
+        content: tsm('logoutConfirm', 'Are you sure you want to log out?'),
+        okText: tvb('logout', 'Log Out'),
+        cancelText: tvb('cancel', 'Cancel'),
         okButtonProps: { danger: true },
         onOk: async () => {
           try { await logoutApi(); } catch { /* ignore */ }

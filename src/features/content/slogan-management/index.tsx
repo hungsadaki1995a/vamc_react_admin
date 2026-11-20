@@ -14,10 +14,10 @@ import {
 import type { SiteDisplaySearch } from '@/api/contents/site-display-api';
 import type { Post } from '@/api/contents/post-api';
 import type { PageResponse } from '@/api/common/api-utils';
-import { DateTimeCell, SysPageHeader, SysPagination, UseYnChecks } from '@/features/system/_shared/system-ui';
+import { DateTimeCell, SysPageHeader, SysPagination, UseYnChecks } from '@/features/system/_shared/SystemUi';
 import { errorMessage, rowNumber, toUseYnFilter } from '@/features/system/_shared/system-utils';
 import styles from '@/features/system/_shared/system-page.module.css';
-import SloganModal from './slogan-modal';
+import SloganModal from './SloganModal';
 
 // Slogan Management - List (menu A04110300).
 
@@ -213,7 +213,7 @@ export default function SloganManagement() {
               placeholder={['dd/mm/yyyy', 'dd/mm/yyyy']}
               value={filter.period}
               onChange={(dates) => setFilter((f) => ({ ...f, period: dates as DateRange }))}
-              style={{ width: 250 }}
+              className="w-[250px]"
             />
           </div>
         </div>

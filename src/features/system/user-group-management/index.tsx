@@ -20,12 +20,12 @@ import {
 } from '@/api/system/role-group-api';
 import type { Role, RoleGroup, RoleUser } from '@/api/system/role-group-api';
 import type { EmployeeLookup } from '@/api/system/employee-api';
-import { SysPageHeader } from '../_shared/system-ui';
+import { SysPageHeader } from '../_shared/SystemUi';
 import { errorMessage } from '../_shared/system-utils';
 import styles from '../_shared/system-page.module.css';
-import CodeNameCard from './code-name-card';
-import type { CodeNameItem } from './code-name-card';
-import SelectEmployeeModal from './select-employee-modal';
+import CodeNameCard from './CodeNameCard';
+import type { CodeNameItem } from './CodeNameCard';
+import SelectEmployeeModal from './SelectEmployeeModal';
 
 // User Group Management (VPA004601) — User Group → Group Role → Role Assignee.
 // Menu A06020300. Nothing in the role / assignee columns works until its parent is selected.

@@ -1,4 +1,4 @@
-import TradeApplicationBoard from '../_shared/trade-application-board';
+import TradeApplicationBoard from '../_shared/TradeApplicationBoard';
 
 /** Sale Brokerage Application Management (menu A02010200). */
 export default function SaleApplicationManagement() {

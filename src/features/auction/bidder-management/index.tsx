@@ -14,7 +14,7 @@ import {
   type BidderItem,
 } from '@/api/auction/auction-api';
 import type { PageResponse } from '@/api/common/api-utils';
-import { SysPageHeader, SysPagination } from '@/features/system/_shared/system-ui';
+import { SysPageHeader, SysPagination } from '@/features/system/_shared/SystemUi';
 import { errorMessage } from '@/features/system/_shared/system-utils';
 import styles from '@/features/system/_shared/system-page.module.css';
 
@@ -76,7 +76,7 @@ export default function BidderManagement() {
       width: 150,
       align: 'center',
       render: (_v, r) => (
-        <div className={styles.actions} style={{ justifyContent: 'center' }}>
+        <div className={`${styles.actions} justify-center`}>
           <button type="button" className={`${styles.btnDark} ${styles.btnSmall}`} disabled={!canWrite} onClick={() => void handleAction(r.bdrNo, 'approve')}>Approve</button>
           <button type="button" className={`${styles.btnDanger} ${styles.btnSmall}`} disabled={!canWrite} onClick={() => void handleAction(r.bdrNo, 'reject')}>Reject</button>
         </div>
@@ -99,7 +99,7 @@ export default function BidderManagement() {
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.4fr', gap: 16, flex: 1, minHeight: 0 }}>
+      <div className="grid grid-cols-[1fr_1.4fr] gap-4 flex-1 min-h-0">
         <div className={styles.card}>
           <span className={styles.cardTitle}>Auctions ({totalAuctions})</span>
           <div className={styles.tableWrapper}>

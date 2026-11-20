@@ -14,10 +14,10 @@ type NotifyType = 'success' | 'error' | 'warning' | 'info';
 // uses CONFIRM/INFO/ERROR in the section slot, it cannot be registered via the label management screen —
 // moved to COMPONENT.VIEW.TITLE_* which can be registered on screen.
 const NOTIFY_CONFIG: Record<NotifyType, { titleKey: string; titleFallback: string }> = {
-  success: { titleKey: 'COMPONENT.VIEW.TITLE_success', titleFallback: '성공' },
-  error:   { titleKey: 'COMPONENT.VIEW.TITLE_error',   titleFallback: '오류' },
-  warning: { titleKey: 'COMPONENT.VIEW.TITLE_warning', titleFallback: '경고' },
-  info:    { titleKey: 'COMPONENT.VIEW.TITLE_info',    titleFallback: '안내' },
+  success: { titleKey: 'COMPONENT.VIEW.TITLE_success', titleFallback: 'Success' },
+  error:   { titleKey: 'COMPONENT.VIEW.TITLE_error',   titleFallback: 'Error' },
+  warning: { titleKey: 'COMPONENT.VIEW.TITLE_warning', titleFallback: 'Warning' },
+  info:    { titleKey: 'COMPONENT.VIEW.TITLE_info',    titleFallback: 'Info' },
 };
 
 type NotifyOptions = Parameters<ReturnType<typeof App.useApp>['notification']['success']>[0];
@@ -33,10 +33,10 @@ const DIALOG_CONFIG: Record<DialogType, {
   titleFallback: string;
   danger: boolean;
 }> = {
-  confirm: { titleKey: 'COMPONENT.VIEW.TITLE_confirm', titleFallback: '확인', danger: false },
-  info:    { titleKey: 'COMPONENT.VIEW.TITLE_info',    titleFallback: '안내', danger: false },
-  warning: { titleKey: 'COMPONENT.VIEW.TITLE_warning', titleFallback: '경고', danger: true  },
-  error:   { titleKey: 'COMPONENT.VIEW.TITLE_error',   titleFallback: '오류', danger: true  },
+  confirm: { titleKey: 'COMPONENT.VIEW.TITLE_confirm', titleFallback: 'Confirm', danger: false },
+  info:    { titleKey: 'COMPONENT.VIEW.TITLE_info',    titleFallback: 'Info',    danger: false },
+  warning: { titleKey: 'COMPONENT.VIEW.TITLE_warning', titleFallback: 'Warning', danger: true  },
+  error:   { titleKey: 'COMPONENT.VIEW.TITLE_error',   titleFallback: 'Error',   danger: true  },
 };
 
 // Dialog OK/Cancel buttons — use shared component labels directly.

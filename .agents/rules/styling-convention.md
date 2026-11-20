@@ -11,7 +11,7 @@ Follow these rules for all styling in this React project to keep component logic
 
 ## 2. Co-located Stylesheet Files
 
-- Place component styles in a co-located stylesheet using `kebab-case` naming (matching `naming-convention.md`):
+- Place component styles in a co-located stylesheet using `kebab-case` naming:
   - Prefer **CSS Modules** (`<component-name>.module.css`) for new components and feature pages to keep class names locally scoped and prevent global collisions.
   - Co-located plain CSS (`<component-name>.css`) is acceptable when matching an existing shared component directory convention, provided class names are prefixed/scoped to the component.
 - Keep `@keyframes`, pseudo-classes (`:hover`, `:focus`, `:disabled`), media queries, and state variants in the stylesheet—never in JSX.

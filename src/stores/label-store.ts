@@ -68,14 +68,14 @@ export const useLabelStore = create<LabelStore>()((set, get) => ({
       apply(cached.data);
       if (Date.now() - cached.ts < CACHE_TTL_MS) return;
       // Stale cache — keep UI as-is and refresh in background
-      fetchAndStore().catch(() => { /* 갱신 실패 시 기존 라벨 유지 */ });
+      fetchAndStore().catch(() => { /* Keep existing labels if background refresh fails */ });
       return;
     }
 
     try {
       await fetchAndStore();
     } catch {
-      // 라벨 로드 실패 시 기존 라벨/키 폴백 유지 (치명적 아님)
+      // Keep existing labels / key fallbacks on load failure (non-fatal)
     }
   },
 

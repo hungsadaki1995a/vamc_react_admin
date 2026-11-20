@@ -35,10 +35,10 @@ export default function InitChangePwModal({ open, usrId, onSuccess }: Props) {
 
   return (
     <Modal
-      title="비밀번호 변경 필요"
+      title="Password Change Required"
       open={open}
       onOk={handleOk}
-      okText="변경"
+      okText="Change"
       footer={(_, { OkBtn }) => <OkBtn />}
       closable={false}
       mask={{ closable: false }}
@@ -46,33 +46,33 @@ export default function InitChangePwModal({ open, usrId, onSuccess }: Props) {
       destroyOnHidden
       width={420}
     >
-      <Text type="secondary" style={{ display: 'block', marginBottom: 16 }}>
-        최초 로그인입니다. 새 비밀번호로 변경 후 이용하실 수 있습니다.
+      <Text type="secondary" className="block mb-4!">
+        This is your first login. Please change your password to continue.
       </Text>
       <Form form={form} layout="vertical">
         <Form.Item
-          label="새 비밀번호"
+          label="New Password"
           name="chgPasswd"
           rules={[
-            { required: true, message: '새 비밀번호를 입력하세요.' },
+            { required: true, message: 'Please enter a new password.' },
             {
               pattern: /^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@!%*#?&])[A-Za-z\d$@!%*#?&]{8,20}$/,
-              message: '영문+숫자+특수문자($@!%*#?&) 조합 8~20자',
+              message: '8–20 characters including letters, numbers, and special characters ($@!%*#?&).',
             },
           ]}
         >
           <Input.Password autoComplete="new-password" />
         </Form.Item>
         <Form.Item
-          label="비밀번호 확인"
+          label="Confirm Password"
           name="chgPasswdChk"
           dependencies={['chgPasswd']}
           rules={[
-            { required: true, message: '비밀번호 확인을 입력하세요.' },
+            { required: true, message: 'Please confirm your new password.' },
             ({ getFieldValue }) => ({
               validator(_, value) {
                 if (!value || getFieldValue('chgPasswd') === value) return Promise.resolve();
-                return Promise.reject(new Error('비밀번호가 일치하지 않습니다.'));
+                return Promise.reject(new Error('Passwords do not match.'));
               },
             }),
           ]}

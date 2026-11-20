@@ -1,4 +1,4 @@
-import TradeContractBoard from '../_shared/trade-contract-board';
+import TradeContractBoard from '../_shared/TradeContractBoard';
 
 /** Consulting Contract Management (menu A02020300). */
 export default function ConsultingContractManagement() {

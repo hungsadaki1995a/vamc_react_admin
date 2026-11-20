@@ -1,4 +1,4 @@
-import PostBoard from '../_shared/post-board';
+import PostBoard from '../_shared/PostBoard';
 import { BOARDS } from '../_shared/board-config';
 
 /** VAMC News > News Management — VPA002401 / VPA0024P01 (menu A04020100). */

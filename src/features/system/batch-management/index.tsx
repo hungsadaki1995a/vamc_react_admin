@@ -1,4 +1,4 @@
-import { useState, type CSSProperties } from 'react';
+import { useState } from 'react';
 import { Input, Modal, Radio, Table, Tabs } from 'antd';
 import type { TableColumnsType } from 'antd';
 import { useQueryClient, keepPreviousData } from '@tanstack/react-query';
@@ -14,7 +14,7 @@ import {
   type BatchJobItem,
 } from '@/api/system/system-operations-api';
 import type { PageResponse } from '@/api/common/api-utils';
-import { DateTimeCell, FormField, SysPageHeader, SysPagination } from '@/features/system/_shared/system-ui';
+import { DateTimeCell, FormField, SysPageHeader, SysPagination } from '@/features/system/_shared/SystemUi';
 import { errorMessage } from '@/features/system/_shared/system-utils';
 import styles from '@/features/system/_shared/system-page.module.css';
 
@@ -84,7 +84,7 @@ export default function BatchManagement() {
       width: 160,
       align: 'center',
       render: (_v, row) => (
-        <div className={styles.actions} style={{ justifyContent: 'center' }}>
+        <div className={`${styles.actions} justify-center`}>
           <button type="button" className={`${styles.btn} ${styles.btnSmall}`} disabled={!canWrite} onClick={() => setSchedModal(row)}>Schedule</button>
           <button type="button" className={`${styles.btnDark} ${styles.btnSmall}`} disabled={!canWrite} onClick={() => handleExecute(row.btchJobNm)}>Run</button>
         </div>
@@ -121,7 +121,7 @@ export default function BatchManagement() {
             label: 'Batch Jobs',
             children: (
               <>
-                <div className={styles.filterCard} style={{ marginBottom: 12 }}>
+                <div className={`${styles.filterCard} mb-3!`}>
                   <div className={styles.filterGroup}>
                     <span className={styles.filterLabel}>Job Name</span>
                     <Input className={styles.filterInput} value={keyword} onChange={(e) => setKeyword(e.target.value)} allowClear />
@@ -141,7 +141,7 @@ export default function BatchManagement() {
                 <div className={styles.tableWrapper}>
                   <Table<BatchHistoryItem> rowKey="btchHstryId" columns={histColumns} dataSource={histories} loading={histLoading} pagination={false} size="small" scroll={{ x: 'max-content' }} />
                 </div>
-                <div style={{ marginTop: 12 }}>
+                <div className="mt-3">
                   <SysPagination page={histPage} pageSize={PAGE_SIZE} total={histTotal} onChange={setHistPage} />
                 </div>
               </>
@@ -185,7 +185,7 @@ function ScheduleModal({ job, canWrite, onClose, onSaved }: { job: BatchJobItem;
         <button type="button" className={styles.btnDark} disabled={!canWrite} onClick={handleSave}>Confirm</button>
       </div>
     }>
-      <div className={styles.formGrid} style={{ '--form-cols': 2 } as CSSProperties}>
+      <div className={`${styles.formGrid} [--form-cols:2]`}>
         <FormField label="Cron Expression" span="full"><Input value={cron} placeholder="0 0 * * * *" onChange={(e) => setCron(e.target.value)} /></FormField>
         <FormField label="Active" span="full"><Radio.Group value={enabled} onChange={(e) => setEnabled(e.target.value)}><Radio value="Y">Y</Radio><Radio value="N">N</Radio></Radio.Group></FormField>
       </div>

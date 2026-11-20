@@ -1,4 +1,4 @@
-import PostBoard from '../_shared/post-board';
+import PostBoard from '../_shared/PostBoard';
 import { BOARDS } from '../_shared/board-config';
 
 /** Careers Management — VPA003401 / VPA0034P01 (menu A04090000). */

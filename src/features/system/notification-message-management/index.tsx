@@ -1,4 +1,4 @@
-import { useState, type CSSProperties } from 'react';
+import { useState } from 'react';
 import { DatePicker, Input, Modal, Radio, Select, Table } from 'antd';
 import type { TableColumnsType } from 'antd';
 import type { Dayjs } from 'dayjs';
@@ -15,7 +15,7 @@ import {
   type NotificationMessageItem,
 } from '@/api/system/system-operations-api';
 import type { PageResponse } from '@/api/common/api-utils';
-import { DateTimeCell, FormField, SysPageHeader, SysPagination } from '@/features/system/_shared/system-ui';
+import { DateTimeCell, FormField, SysPageHeader, SysPagination } from '@/features/system/_shared/SystemUi';
 import { errorMessage, rowNumber } from '@/features/system/_shared/system-utils';
 import styles from '@/features/system/_shared/system-page.module.css';
 
@@ -129,12 +129,12 @@ export default function NotificationMessageManagement() {
         <div className={styles.filterCard}>
           <div className={styles.filterGroup}>
             <span className={styles.filterLabel}>Registration Period</span>
-            <DatePicker.RangePicker format="DD/MM/YYYY" value={period} onChange={(d) => setPeriod(d as DateRange)} style={{ width: 240 }} />
+            <DatePicker.RangePicker format="DD/MM/YYYY" value={period} onChange={(d) => setPeriod(d as DateRange)} className="w-[240px]" />
           </div>
           <div className={styles.filterGroup}>
             <span className={styles.filterLabel}>Processing Type</span>
             <Select
-              style={{ width: 150 }}
+              className="w-[150px]"
               value={prcsSttsCd}
               onChange={setPrcsSttsCd}
               options={[
@@ -212,12 +212,12 @@ function NotiMessageModal({ item, canWrite, onClose, onSaved }: { item: Notifica
         <button type="button" className={styles.btnDark} disabled={!canWrite} onClick={handleSave}>Confirm</button>
       </div>
     }>
-      <div className={styles.formGrid} style={{ '--form-cols': 2 } as CSSProperties}>
+      <div className={`${styles.formGrid} [--form-cols:2]`}>
         <FormField label="Media" required>
-          <Select style={{ width: '100%' }} value={notiMediaSe} onChange={setNotiMediaSe} options={[{ value: 'EMAIL', label: 'EMAIL' }, { value: 'SMS', label: 'SMS' }, { value: 'PUSH', label: 'PUSH' }]} />
+          <Select className="w-full" value={notiMediaSe} onChange={setNotiMediaSe} options={[{ value: 'EMAIL', label: 'EMAIL' }, { value: 'SMS', label: 'SMS' }, { value: 'PUSH', label: 'PUSH' }]} />
         </FormField>
         <FormField label="Language" required>
-          <Select style={{ width: '100%' }} value={langCd} onChange={setLangCd} options={[{ value: 'VN', label: 'VN' }, { value: 'EN', label: 'EN' }]} />
+          <Select className="w-full" value={langCd} onChange={setLangCd} options={[{ value: 'VN', label: 'VN' }, { value: 'EN', label: 'EN' }]} />
         </FormField>
         <FormField label="Use" span="full">
           <Radio.Group value={useYn} onChange={(e) => setUseYn(e.target.value)}><Radio value="Y">Y</Radio><Radio value="N">N</Radio></Radio.Group>

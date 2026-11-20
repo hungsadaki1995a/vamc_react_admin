@@ -1,4 +1,4 @@
-import { useState, type CSSProperties } from 'react';
+import { useState } from 'react';
 import { Input, Modal, Radio, Table } from 'antd';
 import type { TableColumnsType } from 'antd';
 import { useQueryClient, keepPreviousData } from '@tanstack/react-query';
@@ -17,7 +17,7 @@ import {
   type CommonCodeItem,
 } from '@/api/system/system-operations-api';
 import type { PageResponse } from '@/api/common/api-utils';
-import { FormField, SysPageHeader, SysPagination, UseYnChecks } from '@/features/system/_shared/system-ui';
+import { FormField, SysPageHeader, SysPagination, UseYnChecks } from '@/features/system/_shared/SystemUi';
 import { errorMessage, toUseYnFilter } from '@/features/system/_shared/system-utils';
 import styles from '@/features/system/_shared/system-page.module.css';
 
@@ -124,7 +124,7 @@ export default function CommonCodeManagement() {
       width: 80,
       align: 'center',
       render: (_v, row) => (
-        <button type="button" className={styles.btnDanger} style={{ height: 24, padding: '0 8px', fontSize: 11 }} disabled={!canWrite} onClick={(e) => { e.stopPropagation(); handleDeleteGroup(row.groupCd); }}>
+        <button type="button" className={`${styles.btnDanger} h-6! px-2! text-[11px]!`} disabled={!canWrite} onClick={(e) => { e.stopPropagation(); handleDeleteGroup(row.groupCd); }}>
           Del
         </button>
       ),
@@ -156,7 +156,7 @@ export default function CommonCodeManagement() {
       width: 80,
       align: 'center',
       render: (_v, row) => (
-        <button type="button" className={styles.btnDanger} style={{ height: 24, padding: '0 8px', fontSize: 11 }} disabled={!canWrite} onClick={() => handleDeleteCode(row.cd)}>
+        <button type="button" className={`${styles.btnDanger} h-6! px-2! text-[11px]!`} disabled={!canWrite} onClick={() => handleDeleteCode(row.cd)}>
           Del
         </button>
       ),
@@ -183,7 +183,7 @@ export default function CommonCodeManagement() {
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, flex: 1, minHeight: 0 }}>
+      <div className="grid grid-cols-2 gap-4 flex-1 min-h-0">
         <div className={styles.card}>
           <div className={styles.summaryRow}>
             <span className={styles.cardTitle}>Code Groups ({total})</span>
@@ -274,7 +274,7 @@ function GroupModal({ item, canWrite, onClose, onSaved }: { item: CodeGroupItem 
         <button type="button" className={styles.btnDark} disabled={!canWrite} onClick={handleSave}>Confirm</button>
       </div>
     }>
-      <div className={styles.formGrid} style={{ '--form-cols': 2 } as CSSProperties}>
+      <div className={`${styles.formGrid} [--form-cols:2]`}>
         <FormField label="Group Code" required span="full"><Input value={groupCd} disabled={!isCreate} onChange={(e) => setGroupCd(e.target.value)} /></FormField>
         <FormField label="Group Name" required span="full"><Input value={groupNm} onChange={(e) => setGroupNm(e.target.value)} /></FormField>
         <FormField label="Description" span="full"><Input.TextArea rows={2} value={groupExpln} onChange={(e) => setGroupExpln(e.target.value)} /></FormField>
@@ -316,7 +316,7 @@ function CodeModal({ groupCd, item, canWrite, onClose, onSaved }: { groupCd: str
         <button type="button" className={styles.btnDark} disabled={!canWrite} onClick={handleSave}>Confirm</button>
       </div>
     }>
-      <div className={styles.formGrid} style={{ '--form-cols': 2 } as CSSProperties}>
+      <div className={`${styles.formGrid} [--form-cols:2]`}>
         <FormField label="Code" required span="full"><Input value={cd} disabled={!isCreate} onChange={(e) => setCd(e.target.value)} /></FormField>
         <FormField label="Code Name" required span="full"><Input value={cdNm} onChange={(e) => setCdNm(e.target.value)} /></FormField>
         <FormField label="Order" span="full"><Input value={sortSeq} onChange={(e) => setSortSeq(e.target.value)} /></FormField>

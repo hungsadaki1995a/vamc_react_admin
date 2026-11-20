@@ -9,10 +9,10 @@ import { useMenuPermission } from '@/hooks/use-menu-permission';
 import { deleteBanners, downloadBannerExcel, getBanners } from '@/api/contents/banner-api';
 import type { Banner, BannerSearch } from '@/api/contents/banner-api';
 import type { PageResponse } from '@/api/common/api-utils';
-import { DateTimeCell, SysPageHeader, SysPagination, UseYnChecks } from '@/features/system/_shared/system-ui';
+import { DateTimeCell, SysPageHeader, SysPagination, UseYnChecks } from '@/features/system/_shared/SystemUi';
 import { errorMessage, rowNumber, toUseYnFilter } from '@/features/system/_shared/system-utils';
 import styles from '@/features/system/_shared/system-page.module.css';
-import BannerModal from './banner-modal';
+import BannerModal from './BannerModal';
 
 // Banner Management - List (VPA003201), menu A04060000.
 
@@ -211,7 +211,7 @@ export default function BannerManagement() {
               placeholder={['dd/mm/yyyy', 'dd/mm/yyyy']}
               value={filter.period}
               onChange={(dates) => setFilter((f) => ({ ...f, period: dates as DateRange }))}
-              style={{ width: 250 }}
+              className="w-[250px]"
             />
           </div>
         </div>

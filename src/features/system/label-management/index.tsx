@@ -2,13 +2,13 @@ import { useState, useMemo, useCallback, useRef } from 'react';
 import type { AgGridReact } from 'ag-grid-react';
 import type { ColDef, CellValueChangedEvent } from 'ag-grid-community';
 import { Form, Row, Col, Input, Select } from 'antd';
-import GridPanel from '@/components/grid/grid-panel';
-import TipInput from '@/components/inputs/tip-input';
-import ActionButton from '@/components/common/actions/action-button';
-import ActionButtonGroup from '@/components/common/actions/action-button-group';
-import FilterPanel from '@/components/layout/filter-panel';
-import FormPanel from '@/components/layout/form-panel';
-import SplitPanel from '@/components/layout/split-panel';
+import GridPanel from '@/components/grid/GridPanel';
+import TipInput from '@/components/inputs/TipInput';
+import ActionButton from '@/components/common/actions/ActionButton';
+import ActionButtonGroup from '@/components/common/actions/ActionButtonGroup';
+import FilterPanel from '@/components/layout/FilterPanel';
+import FormPanel from '@/components/layout/FormPanel';
+import SplitPanel from '@/components/layout/SplitPanel';
 import { useScreenLabel } from '@/hooks/use-screen-label';
 import { useQueryClient } from '@tanstack/react-query';
 import { useApiQuery } from '@/hooks/use-api-query';
@@ -43,20 +43,20 @@ import type { LblRow, LblMaster, LblKey } from '@/api/system/label-management-ap
  *
  * Descriptions are fetched from the label table — hardcoding Korean in constants would persist across language switches.
  */
-const LBL_SE_VALUES: { value: string; field: string; ko: string }[] = [
-  { value: 'TEXT',  field: 'seText',  ko: '화면 텍스트' },
-  { value: 'BTN',   field: 'seBtn',   ko: '버튼' },
-  { value: 'TITLE', field: 'seTitle', ko: '제목' },
-  { value: 'GRID',  field: 'seGrid',  ko: '그리드 헤더' },
-  { value: 'MSG',   field: 'seMsg',   ko: '메시지' },
-  { value: 'MENU',  field: 'seMenu',  ko: '메뉴' },
-  { value: 'CODE',  field: 'seCode',  ko: '공통코드' },
+const LBL_SE_VALUES: { value: string; field: string; en: string }[] = [
+  { value: 'TEXT',  field: 'seText',  en: 'Screen Text' },
+  { value: 'BTN',   field: 'seBtn',   en: 'Button' },
+  { value: 'TITLE', field: 'seTitle', en: 'Title' },
+  { value: 'GRID',  field: 'seGrid',  en: 'Grid Header' },
+  { value: 'MSG',   field: 'seMsg',   en: 'Message' },
+  { value: 'MENU',  field: 'seMenu',  en: 'Menu' },
+  { value: 'CODE',  field: 'seCode',  en: 'Common Code' },
 ];
 
 /** Second segment of label key — `{screenId}.{section}.{type}_{detail}` */
-const SECTION_VALUES: { value: string; field: string; ko: string }[] = [
-  { value: 'VIEW',   field: 'sectionView',   ko: '화면 템플릿' },
-  { value: 'SCRIPT', field: 'sectionScript', ko: '이벤트 핸들러' },
+const SECTION_VALUES: { value: string; field: string; en: string }[] = [
+  { value: 'VIEW',   field: 'sectionView',   en: 'View Template' },
+  { value: 'SCRIPT', field: 'sectionScript', en: 'Event Handler' },
 ];
 
 interface FormFields {
@@ -235,7 +235,7 @@ export default function SYS050301SC() {
   const handleDelete = useCallback(() => {
     if (!selected) return;
     dialog.confirm({
-      content: tsm('deleteConfirm', '라벨과 번역이 함께 삭제됩니다. 삭제하시겠습니까?'),
+      content: tsm('deleteConfirm', 'This label and its translations will be deleted together. Delete?'),
       okButtonProps: { danger: true },
       onOk: () => {
         deleteMutation.mutate(
@@ -256,10 +256,10 @@ export default function SYS050301SC() {
   const handleTrnSave = useCallback(() => {
     if (!selected) return;
     const dirty = trnRows.filter((r) => r._dirty);
-    if (dirty.length === 0) { toast.warning(tsm('noChanges', '변경된 내용이 없습니다.')); return; }
+    if (dirty.length === 0) { toast.warning(tsm('noChanges', 'No changes to save.')); return; }
 
     dialog.confirm({
-      content: formatLabel(tsm('trnSaveConfirm', '번역 {0}건을 저장하시겠습니까?'), dirty.length),
+      content: formatLabel(tsm('trnSaveConfirm', 'Save {0} translation(s)?'), dirty.length),
       onOk: () => {
         // Without sending lblExpln, the server's label upsert overwrites the description with an empty value.
         const items: LblRow[] = dirty.map((r) => ({
@@ -290,26 +290,26 @@ export default function SYS050301SC() {
   // ── Columns ──────────────────────────────────────────────────────────────────
 
   const grid1Cols = useMemo<ColDef<LblMaster>[]>(() => [
-    { headerName: tsg('lblCd',    '라벨코드'),   field: 'lblCd',    minWidth: 260 },
-    { headerName: tsg('scrnId',   '화면ID'),     field: 'scrnId',   width: 140, flex: 0 },
-    { headerName: tsg('lblSeCd',  '라벨구분'),   field: 'lblSeCd',  width: 110, flex: 0 },
-    { headerName: tsg('lblExpln', '라벨설명'),   field: 'lblExpln', minWidth: 200 },
-  // tsg 는 labelsVersion 이 바뀔 때만 새 함수가 되므로(useScreenLabel), 이것만 의존하면 충분하다.
+    { headerName: tsg('lblCd',    'Label Code'),        field: 'lblCd',    minWidth: 260 },
+    { headerName: tsg('scrnId',   'Screen ID'),         field: 'scrnId',   width: 140, flex: 0 },
+    { headerName: tsg('lblSeCd',  'Label Type'),        field: 'lblSeCd',  width: 110, flex: 0 },
+    { headerName: tsg('lblExpln', 'Label Description'), field: 'lblExpln', minWidth: 200 },
+  // tsg only gets a new reference when labelsVersion changes (useScreenLabel), so depending on it is sufficient.
   ], [tsg]);
 
   const grid2Cols = useMemo<ColDef<TrnRow>[]>(() => [
-    { headerName: tsg('langCd',  '언어코드'), field: 'langCd',  width: 90,  flex: 0 },
-    { headerName: tsg('langNm',  '언어'),     field: 'langNm',  width: 110, flex: 0 },
-    { headerName: tsg('trslLtr', '번역문자'), field: 'trslLtr', minWidth: 200, editable: canWrite },
+    { headerName: tsg('langCd',  'Lang Code'),   field: 'langCd',  width: 90,  flex: 0 },
+    { headerName: tsg('langNm',  'Language'),    field: 'langNm',  width: 110, flex: 0 },
+    { headerName: tsg('trslLtr', 'Translation'), field: 'trslLtr', minWidth: 200, editable: canWrite },
   ], [tsg, canWrite]);
 
   // Select display text is in "code — description" format. Keep the code as-is and translate only the description.
   const lblSeOptions = useMemo(
-    () => LBL_SE_VALUES.map((o) => ({ value: o.value, label: `${o.value} — ${tvt(o.field, o.ko)}` })),
+    () => LBL_SE_VALUES.map((o) => ({ value: o.value, label: `${o.value} — ${tvt(o.field, o.en)}` })),
     [tvt],
   );
   const sectionOptions = useMemo(
-    () => SECTION_VALUES.map((o) => ({ value: o.value, label: `${o.value} — ${tvt(o.field, o.ko)}` })),
+    () => SECTION_VALUES.map((o) => ({ value: o.value, label: `${o.value} — ${tvt(o.field, o.en)}` })),
     [tvt],
   );
 
@@ -326,7 +326,7 @@ export default function SYS050301SC() {
         activeFilterCount={activeFilterCount}
       >
         <div className="ds-filter-field">
-          <span className="ds-filter-field-label">{tvt('scrnId', '화면ID')}</span>
+          <span className="ds-filter-field-label">{tvt('scrnId', 'Screen ID')}</span>
           <Input
             value={filterScrnId}
             onChange={(e) => setFilterScrnId(e.target.value)}
@@ -335,7 +335,7 @@ export default function SYS050301SC() {
           />
         </div>
         <div className="ds-filter-field">
-          <span className="ds-filter-field-label">{tvt('lblCd', '라벨코드')}</span>
+          <span className="ds-filter-field-label">{tvt('lblCd', 'Label Code')}</span>
           <Input
             value={filterLblCd}
             onChange={(e) => setFilterLblCd(e.target.value)}
@@ -344,14 +344,14 @@ export default function SYS050301SC() {
           />
         </div>
         <div className="ds-filter-field">
-          <span className="ds-filter-field-label">{tvt('lblSeCd', '라벨구분')}</span>
+          <span className="ds-filter-field-label">{tvt('lblSeCd', 'Label Type')}</span>
           <Select
             value={filterLblSeCd}
             onChange={setFilterLblSeCd}
             options={lblSeOptions}
-            placeholder={tvt('all', '전체')}
+            placeholder={tvt('all', 'All')}
             allowClear
-            style={{ width: '100%' }}
+            className="w-full"
           />
         </div>
       </FilterPanel>
@@ -365,7 +365,7 @@ export default function SYS050301SC() {
 
           {/* Left: label list */}
           <GridPanel<LblMaster>
-            title={tvh('lblList', '라벨 목록')}
+            title={tvh('lblList', 'Label List')}
             totalCount={masters.length}
             columnDefs={grid1Cols}
             rowData={masters}
@@ -379,7 +379,7 @@ export default function SYS050301SC() {
 
           {/* Right: translations by language */}
           <GridPanel<TrnRow>
-            title={tvh('trnList', '언어별 번역')}
+            title={tvh('trnList', 'Translations by Language')}
             totalCount={trnRows.length}
             columnDefs={grid2Cols}
             rowData={trnRows}
@@ -392,7 +392,7 @@ export default function SYS050301SC() {
             actions={
               <ActionButtonGroup canWrite={canWrite}>
                 <ActionButton action="saveChanges" onClick={handleTrnSave} disabled={!selected}>
-                  {tvb('save', '저장')}
+                  {tvb('save', 'Save')}
                 </ActionButton>
               </ActionButtonGroup>
             }
@@ -402,7 +402,7 @@ export default function SYS050301SC() {
 
       {/* ── Bottom input form (register/edit label) */}
       <FormPanel
-        title={tvh('input', '라벨 등록')}
+        title={tvh('input', 'Label Registration')}
         editMode={isEditMode}
         collapsed={formCollapsed}
         onCollapsedChange={setFormCollapsed}
@@ -411,9 +411,9 @@ export default function SYS050301SC() {
             preset="formEdit"
             canWrite={canWrite}
             items={[
-              { key: 'reset',  action: 'reset',       label: tvb('reset', '초기화'),  onClick: clearSelection },
-              { key: 'delete', action: 'deleteRow',   label: tvb('delete', '삭제'),   onClick: handleDelete, disabled: !isEditMode },
-              { key: 'save',   action: 'saveChanges', label: tvb('save', '저장'),     onClick: handleSave },
+              { key: 'reset',  action: 'reset',       label: tvb('reset', 'Reset'),  onClick: clearSelection },
+              { key: 'delete', action: 'deleteRow',   label: tvb('delete', 'Delete'), onClick: handleDelete, disabled: !isEditMode },
+              { key: 'save',   action: 'saveChanges', label: tvb('save', 'Save'),    onClick: handleSave },
             ]}
           />
         }
@@ -421,8 +421,8 @@ export default function SYS050301SC() {
         <Form
           form={form}
           layout="horizontal"
-          labelCol={{ style: { width: 72, textAlign: 'right' } }}
-          wrapperCol={{ style: { flex: 1, minWidth: 0 } }}
+          labelCol={{ className: 'w-[72px] text-right' }}
+          wrapperCol={{ className: 'flex-1 min-w-0' }}
           initialValues={{ section: 'VIEW', lblSeCd: 'TEXT' }}
           onValuesChange={handleValuesChange}
         >
@@ -432,52 +432,52 @@ export default function SYS050301SC() {
               <Row gutter={[12, 0]}>
                 <Col span={8}>
                   <Form.Item
-                    label={tvt('scrnId', '화면ID')}
+                    label={tvt('scrnId', 'Screen ID')}
                     name="scrnId"
                     rules={[{ required: true, message: '' }, { max: 20, message: '' }]}
-                    style={{ margin: '0 0 6px' }}
+                    className="m-0! mb-1.5!"
                   >
                     <TipInput readOnly={isEditMode} maxLength={20} placeholder="SYS050301SC" />
                   </Form.Item>
                 </Col>
                 <Col span={8}>
                   <Form.Item
-                    label={tvt('section', '섹션')}
+                    label={tvt('section', 'Section')}
                     name="section"
                     rules={[{ required: !isEditMode, message: '' }]}
-                    style={{ margin: '0 0 6px' }}
+                    className="m-0! mb-1.5!"
                   >
-                    <Select options={sectionOptions} disabled={isEditMode} style={{ width: '100%' }} />
+                    <Select options={sectionOptions} disabled={isEditMode} className="w-full" />
                   </Form.Item>
                 </Col>
                 <Col span={8}>
                   <Form.Item
-                    label={tvt('lblSeCd', '라벨구분')}
+                    label={tvt('lblSeCd', 'Label Type')}
                     name="lblSeCd"
                     rules={[{ required: true, message: '' }]}
-                    style={{ margin: '0 0 6px' }}
+                    className="m-0! mb-1.5!"
                   >
-                    <Select options={lblSeOptions} disabled={isEditMode} style={{ width: '100%' }} />
+                    <Select options={lblSeOptions} disabled={isEditMode} className="w-full" />
                   </Form.Item>
                 </Col>
               </Row>
               <Row gutter={[12, 0]}>
                 <Col span={8}>
                   <Form.Item
-                    label={tvt('detail', '세부코드')}
+                    label={tvt('detail', 'Detail Code')}
                     name="detail"
                     rules={[{ required: !isEditMode, message: '' }]}
-                    style={{ margin: 0 }}
+                    className="m-0!"
                   >
                     <TipInput readOnly={isEditMode} maxLength={60} placeholder="usrId" />
                   </Form.Item>
                 </Col>
                 <Col span={16}>
                   <Form.Item
-                    label={tvt('lblCd', '라벨코드')}
+                    label={tvt('lblCd', 'Label Code')}
                     name="lblCd"
                     rules={[{ required: true, message: '' }, { max: 100, message: '' }]}
-                    style={{ margin: 0 }}
+                    className="m-0!"
                   >
                     <TipInput readOnly maxLength={100} />
                   </Form.Item>
@@ -488,13 +488,13 @@ export default function SYS050301SC() {
             {/* Right: label description (spans two rows) */}
             <Col span={9}>
               <Form.Item
-                label={tvt('lblExpln', '라벨설명')}
+                label={tvt('lblExpln', 'Label Description')}
                 name="lblExpln"
-                style={{ margin: 0, height: '100%' }}
+                className="m-0! h-full"
               >
                 <Input.TextArea
                   maxLength={500}
-                  style={{ resize: 'none', height: '100%', minHeight: 60 }}
+                  className="resize-none h-full min-h-[60px]"
                 />
               </Form.Item>
             </Col>

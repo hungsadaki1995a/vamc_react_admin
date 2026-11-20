@@ -1,4 +1,4 @@
-import { useState, type CSSProperties } from 'react';
+import { useState } from 'react';
 import { Input, InputNumber, Modal, Radio, Select, Table } from 'antd';
 import type { TableColumnsType } from 'antd';
 import { useQueryClient, keepPreviousData } from '@tanstack/react-query';
@@ -15,7 +15,7 @@ import {
   type ProgramSearch,
 } from '@/api/system/program-screen-api';
 import type { PageResponse } from '@/api/common/api-utils';
-import { DateTimeCell, FormField, SysPageHeader, SysPagination, UseYnChecks } from '@/features/system/_shared/system-ui';
+import { DateTimeCell, FormField, SysPageHeader, SysPagination, UseYnChecks } from '@/features/system/_shared/SystemUi';
 import { errorMessage, rowNumber, toUseYnFilter } from '@/features/system/_shared/system-utils';
 import styles from '@/features/system/_shared/system-page.module.css';
 
@@ -131,7 +131,7 @@ export default function ProgramManagement() {
           </div>
           <div className={styles.filterGroup}>
             <span className={styles.filterLabel}>Category</span>
-            <Select style={{ width: 130 }} value={prgrmSeCd} onChange={setPrgrmSeCd} options={[{ value: '', label: 'All' }, { value: 'PAGE', label: 'PAGE' }, { value: 'POPUP', label: 'POPUP' }]} />
+            <Select className="w-[130px]" value={prgrmSeCd} onChange={setPrgrmSeCd} options={[{ value: '', label: 'All' }, { value: 'PAGE', label: 'PAGE' }, { value: 'POPUP', label: 'POPUP' }]} />
           </div>
           <div className={styles.filterGroup}>
             <span className={styles.filterLabel}>Program Code</span>
@@ -219,11 +219,11 @@ function ProgramModal({ item, canWrite, onClose, onSaved }: { item: ProgramItem 
         <button type="button" className={styles.btnDark} disabled={!canWrite} onClick={handleSave}>Confirm</button>
       </div>
     }>
-      <div className={styles.formGrid} style={{ '--form-cols': 2 } as CSSProperties}>
+      <div className={`${styles.formGrid} [--form-cols:2]`}>
         <FormField label="Program Code" required><Input value={prgrmCd} disabled={!isCreate} maxLength={12} onChange={(e) => setPrgrmCd(e.target.value)} /></FormField>
         <FormField label="Menu Code" required><Input value={menuCd} maxLength={9} placeholder="e.g. A06040100" onChange={(e) => setMenuCd(e.target.value)} /></FormField>
         <FormField label="Category" required>
-          <Select style={{ width: '100%' }} value={prgrmSeCd} disabled={!isCreate} onChange={setPrgrmSeCd} options={[{ value: 'PAGE', label: 'PAGE' }, { value: 'POPUP', label: 'POPUP' }]} />
+          <Select className="w-full" value={prgrmSeCd} disabled={!isCreate} onChange={setPrgrmSeCd} options={[{ value: 'PAGE', label: 'PAGE' }, { value: 'POPUP', label: 'POPUP' }]} />
         </FormField>
         <FormField label="Order" required><InputNumber min={0} max={99} value={prgrmSeq} onChange={(v) => setPrgrmSeq(v ?? 1)} /></FormField>
         <FormField label="Use" required span="full">

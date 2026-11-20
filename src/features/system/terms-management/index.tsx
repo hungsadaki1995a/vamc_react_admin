@@ -1,4 +1,4 @@
-import { useEffect, useState, type CSSProperties } from 'react';
+import { useEffect, useState } from 'react';
 import { Input, Modal, Radio, Select, Spin, Table } from 'antd';
 import type { TableColumnsType } from 'antd';
 import { useQueryClient, keepPreviousData } from '@tanstack/react-query';
@@ -18,7 +18,7 @@ import {
   type TermsPolicySearch,
 } from '@/api/system/system-operations-api';
 import type { PageResponse } from '@/api/common/api-utils';
-import { DateTimeCell, FormField, SysPageHeader, SysPagination } from '@/features/system/_shared/system-ui';
+import { DateTimeCell, FormField, SysPageHeader, SysPagination } from '@/features/system/_shared/SystemUi';
 import { errorMessage, rowNumber } from '@/features/system/_shared/system-utils';
 import styles from '@/features/system/_shared/system-page.module.css';
 
@@ -144,7 +144,7 @@ export default function TermsManagement() {
           <div className={styles.filterGroup}>
             <span className={styles.filterLabel}>Type</span>
             <Select
-              style={{ width: 180 }}
+              className="w-[180px]"
               value={type}
               onChange={setType}
               options={[
@@ -157,7 +157,7 @@ export default function TermsManagement() {
           <div className={styles.filterGroup}>
             <span className={styles.filterLabel}>Published</span>
             <Select
-              style={{ width: 140 }}
+              className="w-[140px]"
               value={published}
               onChange={(v) => setPublished(v as 'Y' | 'N' | '')}
               options={[
@@ -293,10 +293,10 @@ function TermsModal({
       }
     >
       <Spin spinning={isFetching}>
-        <div className={styles.formGrid} style={{ '--form-cols': 2 } as CSSProperties}>
+        <div className={`${styles.formGrid} [--form-cols:2]`}>
           <FormField label="Type" required>
             <Select
-              style={{ width: '100%' }}
+              className="w-full"
               value={form.type}
               disabled={!isCreate || !canWrite}
               onChange={(type) => setForm((p) => ({ ...p, type }))}

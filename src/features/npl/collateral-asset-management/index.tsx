@@ -11,7 +11,7 @@ import {
   type CollateralSearch,
 } from '@/api/npl/npl-api';
 import type { PageResponse } from '@/api/common/api-utils';
-import { SysPageHeader, SysPagination } from '@/features/system/_shared/system-ui';
+import { SysPageHeader, SysPagination } from '@/features/system/_shared/SystemUi';
 import { rowNumber } from '@/features/system/_shared/system-utils';
 import styles from '@/features/system/_shared/system-page.module.css';
 

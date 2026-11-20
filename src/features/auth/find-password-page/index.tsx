@@ -2,13 +2,13 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Alert, Spin } from 'antd';
-import AuthHeader from '@/components/auth/auth-header';
-import ContentTabs, { type ContentTabItem } from '@/components/common/content-tabs/content-tabs';
+import AuthHeader from '@/components/auth/AuthHeader';
+import ContentTabs, { type ContentTabItem } from '@/components/common/content-tabs/ContentTabs';
 import { PUBLIC_ROUTES } from '@/app/route-constants';
 import vamcLogoLogin from '@/assets/vamc-logo-login.png';
-import EmailVerificationForm from './components/email-verification-form';
-import PasswordResetForm from './components/password-reset-form';
-import ZaloVerificationForm, { type ZaloVerificationResult } from './components/zalo-verification-form';
+import EmailVerificationForm from './components/EmailVerificationForm';
+import PasswordResetForm from './components/PasswordResetForm';
+import ZaloVerificationForm, { type ZaloVerificationResult } from './components/ZaloVerificationForm';
 import { useVerifyResetTokenQuery } from './hooks/use-find-password';
 import styles from '../find-id-page/index.module.scss';
 

@@ -10,10 +10,10 @@ import { useMenuPermission } from '@/hooks/use-menu-permission';
 import { deleteFees, downloadFeeExcel, getFees } from '@/api/system/fee-api';
 import type { Fee, FeeCategory, FeeSearch } from '@/api/system/fee-api';
 import type { PageResponse } from '@/api/common/api-utils';
-import { DateTimeCell, SysPageHeader, SysPagination, UseFlag, UseYnChecks } from '../_shared/system-ui';
+import { DateTimeCell, SysPageHeader, SysPagination, UseFlag, UseYnChecks } from '../_shared/SystemUi';
 import { errorMessage, formatAmount, rowNumber, toUseYnFilter } from '../_shared/system-utils';
 import styles from '../_shared/system-page.module.css';
-import FeeModal from './fee-modal';
+import FeeModal from './FeeModal';
 
 // Fee Management - List (VPA004101), menu A06010300.
 
@@ -220,7 +220,7 @@ export default function SYS020103SC() {
               placeholder={['dd/mm/yyyy', 'dd/mm/yyyy']}
               value={filter.period}
               onChange={(dates) => setFilter((f) => ({ ...f, period: dates as DateRange }))}
-              style={{ width: 250 }}
+              className="w-[250px]"
             />
           </div>
           <div className={styles.filterGroup}>
@@ -237,7 +237,7 @@ export default function SYS020103SC() {
           <div className={styles.filterGroup}>
             <span className={styles.filterLabel}>{tvt('category', 'Category')}</span>
             <Select
-              style={{ width: 180 }}
+              className="w-[180px]"
               value={filter.category}
               onChange={(category) => setFilter((f) => ({ ...f, category }))}
               options={[{ value: '', label: tvt('all', 'ALL') }, ...categoryOptions]}

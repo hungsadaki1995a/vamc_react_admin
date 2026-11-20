@@ -1,4 +1,4 @@
-import { useState, type CSSProperties } from 'react';
+import { useState } from 'react';
 import { Input, Modal, Radio, Table } from 'antd';
 import type { TableColumnsType } from 'antd';
 import { useQueryClient, keepPreviousData } from '@tanstack/react-query';
@@ -19,7 +19,7 @@ import {
   type ProvinceItem,
 } from '@/api/system/system-operations-api';
 import type { PageResponse } from '@/api/common/api-utils';
-import { FormField, SysPageHeader, SysPagination, UseYnChecks } from '@/features/system/_shared/system-ui';
+import { FormField, SysPageHeader, SysPagination, UseYnChecks } from '@/features/system/_shared/SystemUi';
 import { errorMessage, toUseYnFilter } from '@/features/system/_shared/system-utils';
 import styles from '@/features/system/_shared/system-page.module.css';
 
@@ -119,7 +119,7 @@ export default function RegionCodeManagement() {
       width: 70,
       align: 'center',
       render: (_v, row) => (
-        <button type="button" className={styles.btnDanger} style={{ height: 24, padding: '0 8px', fontSize: 11 }} disabled={!canWrite} onClick={(e) => { e.stopPropagation(); handleDeleteProvince(row.mctpvCd); }}>
+        <button type="button" className={`${styles.btnDanger} h-6! px-2! text-[11px]!`} disabled={!canWrite} onClick={(e) => { e.stopPropagation(); handleDeleteProvince(row.mctpvCd); }}>
           Del
         </button>
       ),
@@ -144,7 +144,7 @@ export default function RegionCodeManagement() {
       width: 70,
       align: 'center',
       render: (_v, row) => (
-        <button type="button" className={styles.btnDanger} style={{ height: 24, padding: '0 8px', fontSize: 11 }} disabled={!canWrite} onClick={() => handleDeleteDistrict(row.distCd)}>
+        <button type="button" className={`${styles.btnDanger} h-6! px-2! text-[11px]!`} disabled={!canWrite} onClick={() => handleDeleteDistrict(row.distCd)}>
           Del
         </button>
       ),
@@ -171,7 +171,7 @@ export default function RegionCodeManagement() {
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, flex: 1, minHeight: 0 }}>
+      <div className="grid grid-cols-2 gap-4 flex-1 min-h-0">
         <div className={styles.card}>
           <div className={styles.summaryRow}>
             <span className={styles.cardTitle}>Provinces ({total})</span>
@@ -251,7 +251,7 @@ function ProvinceModal({ item, canWrite, onClose, onSaved }: { item: ProvinceIte
         <button type="button" className={styles.btnDark} disabled={!canWrite} onClick={handleSave}>Confirm</button>
       </div>
     }>
-      <div className={styles.formGrid} style={{ '--form-cols': 2 } as CSSProperties}>
+      <div className={`${styles.formGrid} [--form-cols:2]`}>
         <FormField label="Province Code" required span="full"><Input value={mctpvCd} disabled={!isCreate} onChange={(e) => setMctpvCd(e.target.value)} /></FormField>
         <FormField label="Province Name" required span="full"><Input value={mctpvNm} onChange={(e) => setMctpvNm(e.target.value)} /></FormField>
         <FormField label="Order" span="full"><Input value={sortSeq} onChange={(e) => setSortSeq(e.target.value)} /></FormField>
@@ -289,7 +289,7 @@ function DistrictModal({ mctpvCd, item, canWrite, onClose, onSaved }: { mctpvCd:
         <button type="button" className={styles.btnDark} disabled={!canWrite} onClick={handleSave}>Confirm</button>
       </div>
     }>
-      <div className={styles.formGrid} style={{ '--form-cols': 2 } as CSSProperties}>
+      <div className={`${styles.formGrid} [--form-cols:2]`}>
         <FormField label="District Code" required span="full"><Input value={distCd} disabled={!isCreate} onChange={(e) => setDistCd(e.target.value)} /></FormField>
         <FormField label="District Name" required span="full"><Input value={distNm} onChange={(e) => setDistNm(e.target.value)} /></FormField>
         <FormField label="Order" span="full"><Input value={sortSeq} onChange={(e) => setSortSeq(e.target.value)} /></FormField>

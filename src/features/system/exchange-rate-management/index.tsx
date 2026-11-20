@@ -4,7 +4,7 @@ import type { TableColumnsType } from 'antd';
 import { useApiQuery } from '@/hooks/use-api-query';
 import { useNotify } from '@/hooks/use-notify';
 import { getExchangeRates, syncExchangeRates, type ExchangeRateItem } from '@/api/system/system-operations-api';
-import { DateTimeCell, SysPageHeader } from '@/features/system/_shared/system-ui';
+import { DateTimeCell, SysPageHeader } from '@/features/system/_shared/SystemUi';
 import { errorMessage } from '@/features/system/_shared/system-utils';
 import styles from '@/features/system/_shared/system-page.module.css';
 

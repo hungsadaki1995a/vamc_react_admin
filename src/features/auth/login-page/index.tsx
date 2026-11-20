@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useForm, useWatch, Controller } from 'react-hook-form';
 import { Form, Input, Button } from 'antd';
 import { EyeOutlined, EyeInvisibleOutlined } from '@ant-design/icons';
-import AuthHeader from '@/components/auth/auth-header';
+import AuthHeader from '@/components/auth/AuthHeader';
 import { login } from '@/api/generated/sdk.gen';
 import { fetchPublicKey } from '@/api/common/auth-api';
 import { encryptPassword } from '@/lib/crypto';

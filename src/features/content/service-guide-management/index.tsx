@@ -1,4 +1,4 @@
-import PostBoard from '../_shared/post-board';
+import PostBoard from '../_shared/PostBoard';
 import { BOARDS } from '../_shared/board-config';
 
 /** Service Guide Management (menu A04100000). */

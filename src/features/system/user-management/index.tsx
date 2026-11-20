@@ -9,10 +9,10 @@ import { useMenuPermission } from '@/hooks/use-menu-permission';
 import { deleteEmployee, getEmployees } from '@/api/system/employee-api';
 import type { Employee, EmployeeSearch, EmpStatus } from '@/api/system/employee-api';
 import type { PageResponse } from '@/api/common/api-utils';
-import { DateTimeCell, SysPageHeader, SysPagination } from '../_shared/system-ui';
+import { DateTimeCell, SysPageHeader, SysPagination } from '../_shared/SystemUi';
 import { errorMessage } from '../_shared/system-utils';
 import styles from '../_shared/system-page.module.css';
-import UserModal from './user-modal';
+import UserModal from './UserModal';
 import { EMP_STATUS_FALLBACK, LOCK_FAIL_COUNT } from './user-constants';
 
 // User Management - List (VPA004501), menu A06020200.

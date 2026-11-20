@@ -10,12 +10,12 @@ import dayjs from 'dayjs';
 import { deleteFaqs } from '@/api/contents/faq-api';
 import { ApiError } from '@/lib/api/error';
 import { useNotify } from '@/hooks/use-notify';
-import { DateTimeCell, SysPagination } from '@/features/system/_shared/system-ui';
+import { DateTimeCell, SysPagination } from '@/features/system/_shared/SystemUi';
 import type { FaqItem } from './faq.types';
 import {
   useFaqs,
 } from './use-faqs';
-import FaqDetailModal from './faq-detail-modal';
+import FaqDetailModal from './FaqDetailModal';
 import { useFaqCategories } from './use-faq-categories';
 import styles from './faq-management.module.scss';
 
@@ -276,7 +276,7 @@ export default function FaqManagement() {
             Reset
           </button>
           <button className={styles.btnView} onClick={handleView}>
-            <SearchOutlined style={{ fontSize: 13 }} />
+            <SearchOutlined className="text-[13px]" />
             View
           </button>
           <button
@@ -312,7 +312,7 @@ export default function FaqManagement() {
             <Select
               value={category}
               onChange={(val) => setCategory(val)}
-              style={{ width: 220 }}
+              className="w-[220px]"
               options={categoryOptions}
             />
           </div>
@@ -326,7 +326,7 @@ export default function FaqManagement() {
               onChange={(dates) =>
                 setDateRange(dates as [dayjs.Dayjs | null, dayjs.Dayjs | null] | null)
               }
-              style={{ width: 250 }}
+              className="w-[250px]"
             />
           </div>
         </div>

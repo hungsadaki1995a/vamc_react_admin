@@ -10,10 +10,10 @@ import { useMenuPermission } from '@/hooks/use-menu-permission';
 import { deleteForms, getForms } from '@/api/system/form-api';
 import type { FormItem, FormLang, FormSearch } from '@/api/system/form-api';
 import type { PageResponse } from '@/api/common/api-utils';
-import { DateTimeCell, SysPageHeader, SysPagination, UseFlag, UseYnChecks } from '../_shared/system-ui';
+import { DateTimeCell, SysPageHeader, SysPagination, UseFlag, UseYnChecks } from '../_shared/SystemUi';
 import { errorMessage, rowNumber, toUseYnFilter } from '../_shared/system-utils';
 import styles from '../_shared/system-page.module.css';
-import FormModal from './form-modal';
+import FormModal from './FormModal';
 
 // Form Management - List (VPA004001), menu A06010200.
 // ⚠️ The admin backend has no Form Management API yet — see `@/api/sys/form-api`.
@@ -201,7 +201,7 @@ export default function SYS020102SC() {
               placeholder={['dd/mm/yyyy', 'dd/mm/yyyy']}
               value={filter.period}
               onChange={(dates) => setFilter((f) => ({ ...f, period: dates as DateRange }))}
-              style={{ width: 250 }}
+              className="w-[250px]"
             />
           </div>
           <div className={styles.filterGroup}>
@@ -218,7 +218,7 @@ export default function SYS020102SC() {
           <div className={styles.filterGroup}>
             <span className={styles.filterLabel}>{tvt('language', 'Select Language')}</span>
             <Select
-              style={{ width: 160 }}
+              className="w-[160px]"
               value={filter.langCd}
               onChange={(langCd) => setFilter((f) => ({ ...f, langCd }))}
               options={[

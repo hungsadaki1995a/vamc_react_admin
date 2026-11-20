@@ -1,4 +1,4 @@
-import TradeApplicationBoard from '../_shared/trade-application-board';
+import TradeApplicationBoard from '../_shared/TradeApplicationBoard';
 
 /** Consulting Application Management (menu A02010300). */
 export default function ConsultingApplicationManagement() {

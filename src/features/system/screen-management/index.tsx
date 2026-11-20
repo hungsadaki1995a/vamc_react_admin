@@ -1,4 +1,4 @@
-import { useState, type CSSProperties } from 'react';
+import { useState } from 'react';
 import { Input, InputNumber, Modal, Radio, Select, Table } from 'antd';
 import type { TableColumnsType } from 'antd';
 import { useQueryClient, keepPreviousData } from '@tanstack/react-query';
@@ -17,7 +17,7 @@ import {
   type ScreenSearch,
 } from '@/api/system/program-screen-api';
 import type { PageResponse } from '@/api/common/api-utils';
-import { DateTimeCell, FormField, SysPageHeader, SysPagination, UseYnChecks } from '@/features/system/_shared/system-ui';
+import { DateTimeCell, FormField, SysPageHeader, SysPagination, UseYnChecks } from '@/features/system/_shared/SystemUi';
 import { errorMessage, rowNumber, toUseYnFilter } from '@/features/system/_shared/system-utils';
 import styles from '@/features/system/_shared/system-page.module.css';
 
@@ -221,12 +221,12 @@ function ScreenModal({ item, canWrite, onClose, onSaved }: { item: ScreenItem | 
         <button type="button" className={styles.btnDark} disabled={!canWrite} onClick={handleSave}>Confirm</button>
       </div>
     }>
-      <div className={styles.formGrid} style={{ '--form-cols': 2 } as CSSProperties}>
+      <div className={`${styles.formGrid} [--form-cols:2]`}>
         <FormField label="Screen ID" required><Input value={scrnId} disabled={!isCreate} maxLength={20} placeholder="e.g. AD_SYS_040200" onChange={(e) => setScrnId(e.target.value)} /></FormField>
         <FormField label="Program Code" required>
           <Select
             showSearch
-            style={{ width: '100%' }}
+            className="w-full"
             value={prgrmCd || undefined}
             placeholder="Select program"
             onChange={setPrgrmCd}

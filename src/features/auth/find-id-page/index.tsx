@@ -2,13 +2,13 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Alert, Button, Spin } from 'antd';
-import AuthHeader from '@/components/auth/auth-header';
-import ContentTabs, { type ContentTabItem } from '@/components/common/content-tabs/content-tabs';
+import AuthHeader from '@/components/auth/AuthHeader';
+import ContentTabs, { type ContentTabItem } from '@/components/common/content-tabs/ContentTabs';
 import { PUBLIC_ROUTES } from '@/app/route-constants';
 import vamcLogoLogin from '@/assets/vamc-logo-login.png';
-import EmailVerificationForm from './components/email-verification-form';
-import FindIdResult from './components/find-id-result';
-import ZaloVerificationForm from './components/zalo-verification-form';
+import EmailVerificationForm from './components/EmailVerificationForm';
+import FindIdResult from './components/FindIdResult';
+import ZaloVerificationForm from './components/ZaloVerificationForm';
 import { useConfirmFindIdQuery } from './hooks/use-find-id';
 import styles from './index.module.scss';
 
@@ -49,7 +49,7 @@ export default function FindIdPage() {
     if (confirmQuery.isError) {
       return (
         <div className={styles.confirmResult}>
-          <Alert type="error" showIcon message={confirmQuery.error.userMessage} style={{ width: '100%' }} />
+          <Alert type="error" showIcon message={confirmQuery.error.userMessage} className="w-full" />
           <Button
             type="primary"
             block

@@ -29,7 +29,7 @@ export function useApiMutation<TData, TVariables = void>(
         throw new ApiError({
           code: 'E_API',
           data: null,
-          message: response.message || '요청을 처리하지 못했습니다.',
+          message: response.message || 'Failed to process request.',
           statusCode: 0,
           timestamp: new Date().toISOString(),
           path: '',

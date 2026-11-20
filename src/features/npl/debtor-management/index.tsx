@@ -15,7 +15,7 @@ import {
   type DebtorSearch,
 } from '@/api/npl/npl-api';
 import type { PageResponse } from '@/api/common/api-utils';
-import { SysPageHeader, SysPagination } from '@/features/system/_shared/system-ui';
+import { SysPageHeader, SysPagination } from '@/features/system/_shared/SystemUi';
 import { errorMessage, rowNumber } from '@/features/system/_shared/system-utils';
 import styles from '@/features/system/_shared/system-page.module.css';
 
@@ -125,7 +125,7 @@ export default function DebtorManagement() {
         <div className={styles.filterCard}>
           <div className={styles.filterGroup}>
             <span className={styles.filterLabel}>Registration Period</span>
-            <DatePicker.RangePicker format="DD/MM/YYYY" value={period} onChange={(d) => setPeriod(d as DateRange)} style={{ width: 240 }} />
+            <DatePicker.RangePicker format="DD/MM/YYYY" value={period} onChange={(d) => setPeriod(d as DateRange)} className="w-[240px]" />
           </div>
           <div className={styles.filterGroup}>
             <span className={styles.filterLabel}>Type</span>

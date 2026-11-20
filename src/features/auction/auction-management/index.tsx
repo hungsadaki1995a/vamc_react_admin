@@ -15,7 +15,7 @@ import {
   type AuctionSearch,
 } from '@/api/auction/auction-api';
 import type { PageResponse } from '@/api/common/api-utils';
-import { SysPageHeader, SysPagination } from '@/features/system/_shared/system-ui';
+import { SysPageHeader, SysPagination } from '@/features/system/_shared/SystemUi';
 import { errorMessage, rowNumber } from '@/features/system/_shared/system-utils';
 import styles from '@/features/system/_shared/system-page.module.css';
 
@@ -122,12 +122,12 @@ export default function AuctionManagement() {
         <div className={styles.filterCard}>
           <div className={styles.filterGroup}>
             <span className={styles.filterLabel}>Auction Period</span>
-            <DatePicker.RangePicker format="DD/MM/YYYY" value={period} onChange={(d) => setPeriod(d as DateRange)} style={{ width: 240 }} />
+            <DatePicker.RangePicker format="DD/MM/YYYY" value={period} onChange={(d) => setPeriod(d as DateRange)} className="w-[240px]" />
           </div>
           <div className={styles.filterGroup}>
             <span className={styles.filterLabel}>Status</span>
             <Select
-              style={{ width: 140 }}
+              className="w-[140px]"
               value={auctnSttsCd}
               onChange={setAuctnSttsCd}
               options={[
@@ -144,7 +144,7 @@ export default function AuctionManagement() {
           <div className={styles.filterGroup}>
             <span className={styles.filterLabel}>Approval Status</span>
             <Select
-              style={{ width: 140 }}
+              className="w-[140px]"
               value={pbancSttsCd}
               onChange={setPbancSttsCd}
               options={[
@@ -159,7 +159,7 @@ export default function AuctionManagement() {
           <div className={styles.filterGroup}>
             <span className={styles.filterLabel}>Method</span>
             <Select
-              style={{ width: 140 }}
+              className="w-[140px]"
               value={auctnType}
               onChange={setAuctnType}
               options={[
