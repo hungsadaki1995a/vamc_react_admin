@@ -1,0 +1,43 @@
+// Master-detail layout of the code screens (Common / Region / Finance).
+
+/* Fills a split pane: header, scrolling body, pager. */
+.pane {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 0;
+}
+
+.paneBody {
+  flex: 1 1 auto;
+  min-height: 240px;
+}
+
+.paneDetail {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+/* Clickable code that opens the edit popup. */
+.codeLink {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--color-text-brand, #1764ff);
+  cursor: pointer;
+  text-align: left;
+}
+
+.codeLink:hover {
+  text-decoration: underline;
+}
+
+.ellipsis {
+  display: inline-block;
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  vertical-align: bottom;
+}
