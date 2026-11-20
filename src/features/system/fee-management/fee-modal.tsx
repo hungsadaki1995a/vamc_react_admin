@@ -91,7 +91,7 @@ export default function FeeModal({ feeId, canWrite, onClose }: FeeModalProps) {
 
   if (!isCreate && !detail) {
     return (
-      <SysFormModal open title="Edit Fee Information" onCancel={onClose}>
+      <SysFormModal width={1200} open title="Edit Fee Information" onCancel={onClose}>
         <Spin spinning={isFetching}>
           <div className={styles.loading}>{isError ? 'The fee item could not be loaded.' : null}</div>
         </Spin>
@@ -213,6 +213,7 @@ function FeeForm({ fee, canWrite, onClose }: { fee: Fee | null; canWrite: boolea
 
   return (
     <SysFormModal
+      width={1200}
       open
       title={isCreate ? 'Register Fee Information' : 'Edit Fee Information'}
       submitText={isCreate ? 'Register' : 'Edit'}

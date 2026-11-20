@@ -281,11 +281,12 @@ export function CodeDetailGrid({
 
   const tableColumns: TableColumnsType<GridRow> = columns.map((column) => ({
     key: column.field,
+    // An element, not a fragment: antd attaches a ref to the header title.
     title: column.required ? (
-      <>
+      <span>
         {column.title}
         <span className={styles.requiredMark}>*</span>
-      </>
+      </span>
     ) : (
       column.title
     ),

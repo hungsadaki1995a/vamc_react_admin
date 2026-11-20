@@ -19,6 +19,11 @@
   min-height: 0;
 }
 
+/* Detail grid / empty state stretch to the pane height like the master list. */
+.paneDetail > :last-child {
+  flex: 1 1 auto;
+}
+
 /* Clickable code that opens the edit popup. */
 .codeLink {
   padding: 0;
@@ -33,9 +38,10 @@
   text-decoration: underline;
 }
 
+/* Long names are cut so the master list keeps Use / Registered Date in view (frame VPA09030101). */
 .ellipsis {
   display: inline-block;
-  max-width: 220px;
+  max-width: 160px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

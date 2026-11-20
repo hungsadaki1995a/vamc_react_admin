@@ -26,7 +26,7 @@ export default function NotificationHistoryDetailModal({ logId, onClose }: { log
   const failed = data?.sndngScsYn === 'N';
 
   return (
-    <SysFormModal open title="Notification Send Detail" onCancel={onClose} notice={PENDING_HISTORY_FIELDS_NOTE}>
+    <SysFormModal width={1200} open title="Notification Send Detail" onCancel={onClose} notice={PENDING_HISTORY_FIELDS_NOTE}>
       <Spin spinning={isFetching}>
         {isError && <p className={styles.errorText}>{error.message}</p>}
         <SysFieldGrid columns={3}>

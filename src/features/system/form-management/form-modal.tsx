@@ -111,6 +111,7 @@ export default function FormModal({ form, canWrite, onClose }: FormModalProps) {
 
   return (
     <SysFormModal
+      width={1200}
       open
       title={title}
       submitText={isCreate ? 'Register' : 'Edit'}

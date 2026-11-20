@@ -94,7 +94,7 @@ export default function NotificationMessageModal({ notiMsgId, canWrite, onClose 
 
   if (notiMsgId !== null && !detail) {
     return (
-      <SysFormModal open title="Edit Notification Message" onCancel={onClose}>
+      <SysFormModal width={1200} open title="Edit Notification Message" onCancel={onClose}>
         <Spin spinning={isFetching}>
           <div className={styles.loading}>{isError ? 'The notification message could not be loaded.' : null}</div>
         </Spin>
@@ -191,6 +191,7 @@ function MessageForm({
 
   return (
     <SysFormModal
+      width={1200}
       open
       title={isCreate ? 'Register Notification Message' : 'Edit Notification Message'}
       submitText={isCreate ? 'Register' : 'Edit'}

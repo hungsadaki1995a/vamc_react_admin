@@ -43,7 +43,8 @@ const COLUMNS: TableColumnsType<BatchJobItem> = [
   },
   { title: 'Job Name', dataIndex: 'btchJobNm', width: 220 },
   { title: 'Group', dataIndex: 'btchGroup', width: 120 },
-  { title: 'Description', dataIndex: 'jobExpln', ellipsis: true },
+  // Width bounds the cell so the ellipsis works inside the max-content scroll table.
+  { title: 'Description', dataIndex: 'jobExpln', width: 320, ellipsis: true },
   { title: 'Cron', dataIndex: 'cronExpression', width: 150, render: (value?: string) => value || '-' },
   {
     title: 'Last Run',
@@ -163,7 +164,7 @@ export default function BatchManagement() {
 
       {editTarget && (
         <BatchJobModal
-          key={editTarget === 'new' ? 'new' : editTarget.btchJobNm}
+          key={editTarget === 'new' ? 'edit:new' : `edit:${editTarget.btchJobNm}`}
           job={editTarget === 'new' ? undefined : editTarget}
           canWrite={canWrite}
           onClose={() => setEditTarget(null)}
@@ -171,7 +172,7 @@ export default function BatchManagement() {
         />
       )}
       {historyJob && (
-        <BatchHistoryModal key={historyJob} jobName={historyJob} allowRerun={canWrite} onClose={() => setHistoryJob(null)} />
+        <BatchHistoryModal key={`history:${historyJob}`} jobName={historyJob} allowRerun={canWrite} onClose={() => setHistoryJob(null)} />
       )}
     </SysPage>
   );
