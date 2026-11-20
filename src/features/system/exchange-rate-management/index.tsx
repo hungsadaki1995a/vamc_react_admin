@@ -11,16 +11,43 @@ import { EXCHANGE_RATE_MESSAGES, formatRate, formatRunBy, formatSchedule } from 
 import { useExchangeRateStatus, useSyncExchangeRates } from './use-exchange-rates';
 import styles from './exchange-rate-management.module.scss';
 
+/** Client-side compare for the frame's sort arrows; empty values ("-") sort as the lowest. */
+function byNumber<T>(pick: (row: T) => number | null | undefined) {
+  return (a: T, b: T) => {
+    const x = pick(a) ?? null;
+    const y = pick(b) ?? null;
+    if (x === null || y === null) return (x === null ? 0 : 1) - (y === null ? 0 : 1);
+    return x - y;
+  };
+}
+
+function byText<T>(pick: (row: T) => string | null | undefined) {
+  return (a: T, b: T) => (pick(a) ?? '').localeCompare(pick(b) ?? '');
+}
+
 const RATE_COLUMNS: TableColumnsType<ExchangeRateItem> = [
-  { title: 'Currency', dataIndex: 'currencyCode', align: 'center' },
-  { title: 'Buy (Cash)', dataIndex: 'cashBuy', align: 'center', render: (value?: number | null) => formatRate(value) },
+  { title: 'Currency', dataIndex: 'currencyCode', align: 'center', sorter: byText((r) => r.currencyCode) },
+  {
+    title: 'Buy (Cash)',
+    dataIndex: 'cashBuy',
+    align: 'center',
+    sorter: byNumber((r) => r.cashBuy),
+    render: (value?: number | null) => formatRate(value),
+  },
   {
     title: 'Buy (Transfer)',
     dataIndex: 'transferBuy',
     align: 'center',
+    sorter: byNumber((r) => r.transferBuy),
     render: (value?: number | null) => formatRate(value),
   },
-  { title: 'Sell', dataIndex: 'sell', align: 'center', render: (value?: number | null) => formatRate(value) },
+  {
+    title: 'Sell',
+    dataIndex: 'sell',
+    align: 'center',
+    sorter: byNumber((r) => r.sell),
+    render: (value?: number | null) => formatRate(value),
+  },
 ];
 
 const RUN_COLUMNS: TableColumnsType<ExchangeRateRun> = [
@@ -28,10 +55,24 @@ const RUN_COLUMNS: TableColumnsType<ExchangeRateRun> = [
     title: 'Run Date/Time',
     dataIndex: 'startedAt',
     align: 'center',
+    // ISO date-time strings sort chronologically as text.
+    sorter: byText((r) => r.startedAt),
     render: (value?: string) => <DateTimeText value={value} />,
   },
-  { title: 'Result', dataIndex: 'result', align: 'center', render: (value?: string) => <ResultBadge value={value} /> },
-  { title: 'Run By', dataIndex: 'runBy', align: 'center', render: (value?: string) => formatRunBy(value) },
+  {
+    title: 'Result',
+    dataIndex: 'result',
+    align: 'center',
+    sorter: byText((r) => r.result),
+    render: (value?: string) => <ResultBadge value={value} />,
+  },
+  {
+    title: 'Run By',
+    dataIndex: 'runBy',
+    align: 'center',
+    sorter: byText((r) => formatRunBy(r.runBy)),
+    render: (value?: string) => formatRunBy(value),
+  },
 ];
 
 /** Exchange Rate Management - List (VPA09010401, menu A06010500), incl. the Sync Failed state. */
