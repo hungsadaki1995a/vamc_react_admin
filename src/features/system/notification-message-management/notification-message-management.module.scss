@@ -1,0 +1,30 @@
+/* Notification Message Management (VPA09050101 / VPA090501P01) — screen-specific layout only. */
+
+.loading {
+  min-height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-secondary, #6f7b95);
+}
+
+.fullWidth {
+  width: 100%;
+}
+
+.variableBar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.legacyNote {
+  margin: 0 0 8px;
+  font-size: 12px;
+  color: var(--color-text-secondary, #6f7b95);
+}
+
+.titleCell {
+  white-space: normal;
+  word-break: break-word;
+}
