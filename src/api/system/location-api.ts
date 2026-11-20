@@ -1,13 +1,15 @@
-import { apiDelete, apiDownload, apiGet, apiPost, apiPut } from '@/api/common/api-utils';
-import type { PageResponse } from '@/api/common/api-utils';
+import { apiDownload, apiGet, apiPost, apiPut } from '@/api/common/api-utils';
+import type { PageQuery, PageResponse } from '@/api/common/api-utils';
+import type { YesNo } from './code-group-api';
 
 // ── Region / Locations (A06030200) ───────────────────────────────────────────
 export interface ProvinceItem {
   mctpvCd: string;
   mctpvNm: string;
-  admdstCd?: string;
+  /** GSO administrative code 0–99. */
+  admdstCd: number;
   sortSeq?: number;
-  useYn: 'Y' | 'N';
+  useYn: YesNo;
   districtCount?: number;
   crtDt?: string;
   crtBy?: string;
@@ -19,21 +21,59 @@ export interface DistrictItem {
   mctpvNm?: string;
   distNm: string;
   sortSeq?: number;
-  useYn: 'Y' | 'N';
+  useYn: YesNo;
+}
+
+export interface ProvinceSearch {
+  mctpvCd?: string;
+  mctpvNm?: string;
+  useYn?: YesNo;
+}
+
+export interface CreateProvinceRequest {
+  mctpvCd: string;
+  mctpvNm: string;
+  admdstCd: number;
+  sortSeq?: number;
+  useYn: YesNo;
+}
+
+export interface UpdateProvinceRequest {
+  mctpvNm: string;
+  sortSeq?: number;
+  useYn: YesNo;
+}
+
+/** One grid row; `isNew=true` makes the server reject an existing code (COD006). */
+export interface SaveDistrictItem {
+  distCd: string;
+  distNm: string;
+  sortSeq?: number;
+  useYn: YesNo;
+  isNew: boolean;
+}
+
+export interface BatchSaveDistrictsRequest {
+  toSave: SaveDistrictItem[];
+  deleteDistCds: string[];
 }
 
 const LOC_BASE = '/api/v1/locations';
-export const getProvinces = (search: { useYn?: 'Y' | 'N'; keyword?: string }, page: number, size: number) =>
-  apiGet<PageResponse<ProvinceItem>>(`${LOC_BASE}/provinces`, { ...search, page, size });
-export const downloadProvincesExcel = (search: { useYn?: 'Y' | 'N'; keyword?: string }) =>
+
+/** Sorted by administrative code on the server. */
+export const getProvinces = (search: ProvinceSearch, page: PageQuery) =>
+  apiGet<PageResponse<ProvinceItem>>(`${LOC_BASE}/provinces`, { ...search, ...page });
+export const downloadProvincesExcel = (search: ProvinceSearch) =>
   apiDownload(`${LOC_BASE}/provinces/excel`, 'provinces.xlsx', search);
-export const createProvince = (req: Partial<ProvinceItem>) => apiPost<ProvinceItem>(`${LOC_BASE}/provinces`, req);
-export const updateProvince = (mctpvCd: string, req: Partial<ProvinceItem>) =>
-  apiPut<ProvinceItem>(`${LOC_BASE}/provinces/${mctpvCd}`, req);
-export const deleteProvince = (mctpvCd: string) => apiDelete<void>(`${LOC_BASE}/provinces/${mctpvCd}`);
+/** Errors: 409 (no code) duplicate province code. */
+export const createProvince = (req: CreateProvinceRequest) => apiPost<ProvinceItem>(`${LOC_BASE}/provinces`, req);
+export const updateProvince = (mctpvCd: string, req: UpdateProvinceRequest) =>
+  apiPut<ProvinceItem>(`${LOC_BASE}/provinces/${encodeURIComponent(mctpvCd)}`, req);
 export const getDistrictsByProvince = (mctpvCd: string) =>
-  apiGet<DistrictItem[]>(`${LOC_BASE}/provinces/${mctpvCd}/districts`);
-export const createDistrict = (req: Partial<DistrictItem>) => apiPost<DistrictItem>(`${LOC_BASE}/districts`, req);
-export const updateDistrict = (distCd: string, req: Partial<DistrictItem>) =>
-  apiPut<DistrictItem>(`${LOC_BASE}/districts/${distCd}`, req);
-export const deleteDistrict = (distCd: string) => apiDelete<void>(`${LOC_BASE}/districts/${distCd}`);
+  apiGet<DistrictItem[]>(`${LOC_BASE}/provinces/${encodeURIComponent(mctpvCd)}/districts`, undefined, []);
+/** Errors: COD006 duplicate (409), 400 code repeated within the batch. */
+export const batchSaveDistricts = (mctpvCd: string, req: BatchSaveDistrictsRequest) =>
+  apiPost<DistrictItem[]>(`${LOC_BASE}/provinces/${encodeURIComponent(mctpvCd)}/districts/batch`, req);
+
+/** Active provinces (administrative unit options of the Finance branch grid). */
+export const getActiveProvinces = () => apiGet<ProvinceItem[]>('/api/common/locations/provinces', undefined, []);
