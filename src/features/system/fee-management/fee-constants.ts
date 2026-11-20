@@ -1,7 +1,6 @@
 import { LEGACY_FEE_CATEGORY } from '@/api/system/fee-api';
 import type { Fee, FeeCategory, FeeCurrency, FeeMethod } from '@/api/system/fee-api';
 import { ALL } from '../_shared/sys-constants';
-import { formatAmount } from '../_shared/system-utils';
 
 // Labels and formatting of Fee Management (v0.8 wording).
 
@@ -44,13 +43,23 @@ export function feeCategoryLabel(fee: Pick<Fee, 'category' | 'categoryNm'>): str
   return isLegacyFee(fee.category) ? `${name} (legacy)` : name;
 }
 
-/** Fee column: amount for Fixed, % for Rate. */
-export function feeValueText(fee: Pick<Fee, 'method' | 'fee' | 'rate'>): string {
-  if (fee.method === 'TRF') return fee.rate === undefined || fee.rate === null ? '-' : `${formatAmount(fee.rate)}%`;
-  return formatAmount(fee.fee);
+/** Design number format: `.` thousands, `,` decimals (e.g. 2.000.000); `-` when empty. */
+export function formatFeeNumber(value?: number | null): string {
+  if (value === undefined || value === null) return '-';
+  return Number(value).toLocaleString('de-DE', { maximumFractionDigits: 2 });
 }
 
-/** InputNumber thousand separators. */
-export const amountFormatter = (value?: number | string) =>
-  value === undefined || value === '' ? '' : `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-export const amountParser = (value?: string) => Number((value ?? '').replace(/,/g, ''));
+/** Fee column: amount for Fixed, % for Rate. */
+export function feeValueText(fee: Pick<Fee, 'method' | 'fee' | 'rate'>): string {
+  if (fee.method === 'TRF') return fee.rate === undefined || fee.rate === null ? '-' : `${formatFeeNumber(fee.rate)}%`;
+  return formatFeeNumber(fee.fee);
+}
+
+/** InputNumber display in the design format (20.000.000). */
+export const amountFormatter = (value?: number | string) => {
+  if (value === undefined || value === '') return '';
+  const [int, dec] = `${value}`.split('.');
+  const grouped = int.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  return dec === undefined ? grouped : `${grouped},${dec}`;
+};
+export const amountParser = (value?: string) => Number((value ?? '').replace(/\./g, '').replace(',', '.'));

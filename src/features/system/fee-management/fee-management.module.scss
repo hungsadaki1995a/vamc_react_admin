@@ -12,6 +12,11 @@
   width: 100%;
 }
 
+/* Amounts are right aligned in the frame. */
+.amountInput :global(.ant-input-number-input) {
+  text-align: right;
+}
+
 .methodSelect {
   flex: 1 1 auto;
   min-width: 0;

@@ -19,9 +19,14 @@ import {
   UseBadge,
 } from '../_shared/sys-list-ui';
 import { ALL, API_DATE_DMY, SYS_DATE_FORMAT, SYS_PAGE_SIZE, USE_YN_FILTER_OPTIONS } from '../_shared/sys-constants';
-import { formatAmount } from '../_shared/system-utils';
 import { usePagedList } from '../_shared/use-paged-list';
-import { FEE_CATEGORY_FILTER_OPTIONS, FEE_METHOD_LABELS, feeCategoryLabel, feeValueText } from './fee-constants';
+import {
+  FEE_CATEGORY_FILTER_OPTIONS,
+  FEE_METHOD_LABELS,
+  feeCategoryLabel,
+  feeValueText,
+  formatFeeNumber,
+} from './fee-constants';
 import FeeModal from './fee-modal';
 import FeeScheduleModal from './fee-schedule-modal';
 import { useDownloadFeeExcel, useFees } from './use-fees';
@@ -48,21 +53,27 @@ function toSearch(filter: FeeFilter): FeeSearch {
   };
 }
 
+// Column order of the v0.8 frame: Fee Code, Use, Type, Order, Item Name, Fee Item Content, Method, Currency, Fee, Minimum Amount, Registered Date.
 const columns: TableColumnsType<Fee> = [
-  { title: 'Use', dataIndex: 'useYn', align: 'center', width: 100, render: (v: YesNo) => <UseBadge value={v} /> },
   { title: 'Fee Code', dataIndex: 'feeId', align: 'center', width: 130 },
-  { title: 'Type', dataIndex: 'category', align: 'center', width: 160, render: (_: string, row) => feeCategoryLabel(row) },
-  { title: 'Order', dataIndex: 'order', align: 'center', width: 70 },
-  { title: 'Item Name', dataIndex: 'name' },
-  { title: 'Fee Item Content', dataIndex: 'description', render: (v?: string) => v || '-' },
+  { title: 'Use', dataIndex: 'useYn', align: 'center', width: 100, render: (v: YesNo) => <UseBadge value={v} /> },
+  { title: 'Type', dataIndex: 'category', width: 170, render: (_: string, row) => feeCategoryLabel(row) },
+  { title: 'Order', dataIndex: 'order', align: 'center', width: 80 },
+  { title: 'Item Name', dataIndex: 'name', width: 220 },
+  {
+    title: 'Fee Item Content',
+    dataIndex: 'description',
+    width: 280,
+    ellipsis: true,
+    render: (v?: string) => v || '-',
+  },
   {
     title: 'Method',
     dataIndex: 'method',
-    align: 'center',
-    width: 90,
+    width: 100,
     render: (v: Fee['method'], row) => FEE_METHOD_LABELS[v] ?? row.methodNm ?? v,
   },
-  { title: 'Currency', dataIndex: 'currency', align: 'center', width: 90 },
+  { title: 'Currency', dataIndex: 'currency', width: 100 },
   {
     title: 'Fee',
     key: 'fee',
@@ -75,7 +86,7 @@ const columns: TableColumnsType<Fee> = [
     dataIndex: 'minAmount',
     align: 'right',
     width: 140,
-    render: (v?: number) => <span className={styles.numberCell}>{formatAmount(v)}</span>,
+    render: (v?: number) => <span className={styles.numberCell}>{formatFeeNumber(v)}</span>,
   },
   { title: 'Registered Date', dataIndex: 'crtDt', align: 'center', width: 160, render: (v?: string) => <DateTimeText value={v} /> },
 ];
@@ -129,18 +140,17 @@ export default function FeeManagement() {
       <SysSearchActions onReset={list.reset} onSearch={() => list.search()} loading={isFetching} />
       <SysSectionHeader
         total={total}
-        actions={
+        actions={<SysExcelButton onClick={() => excel.mutate(search)} loading={excel.isPending} />}
+        primaryActions={
+          // Frame: [Excel Download] | [Fee Schedule] [New]
           <>
             <SysButton onClick={() => setScheduleOpen(true)}>Fee Schedule</SysButton>
-            <SysExcelButton onClick={() => excel.mutate(search)} loading={excel.isPending} />
+            {canWrite && (
+              <SysButton look="navy" onClick={() => setModal({ feeId: null })}>
+                New
+              </SysButton>
+            )}
           </>
-        }
-        primaryActions={
-          canWrite && (
-            <SysButton look="navy" onClick={() => setModal({ feeId: null })}>
-              New
-            </SysButton>
-          )
         }
       />
       <SysTable<Fee>

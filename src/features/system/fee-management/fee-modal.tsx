@@ -91,7 +91,7 @@ export default function FeeModal({ feeId, canWrite, onClose }: FeeModalProps) {
 
   if (!isCreate && !detail) {
     return (
-      <SysFormModal open title="Edit Fee" onCancel={onClose}>
+      <SysFormModal open title="Edit Fee Information" onCancel={onClose}>
         <Spin spinning={isFetching}>
           <div className={styles.loading}>{isError ? 'The fee item could not be loaded.' : null}</div>
         </Spin>
@@ -214,7 +214,7 @@ function FeeForm({ fee, canWrite, onClose }: { fee: Fee | null; canWrite: boolea
   return (
     <SysFormModal
       open
-      title={isCreate ? 'Register Fee' : 'Edit Fee'}
+      title={isCreate ? 'Register Fee Information' : 'Edit Fee Information'}
       submitText={isCreate ? 'Register' : 'Edit'}
       onSubmit={canWrite ? handleSubmit : undefined}
       submitting={saveFee.isPending || changeUse.isPending}
@@ -228,20 +228,14 @@ function FeeForm({ fee, canWrite, onClose }: { fee: Fee | null; canWrite: boolea
       }
       notice={legacy ? FEE_MESSAGES.legacyNotice : undefined}
     >
-      <SysFieldGrid columns={2}>
+      {/* Frame layout: Fee Code | Type | Order / Use | Method | Currency / Fee Amount | Minimum Amount | Item Name / Item Content */}
+      <SysFieldGrid columns={3}>
         <SysField label="Fee Code">
-          <Input value={fee?.feeId ?? ''} placeholder="Generated on save" disabled />
-        </SysField>
-        <SysField label="Use" required error={errors.useYn}>
-          <Radio.Group
-            value={values.useYn}
-            options={USE_YN_RADIO_OPTIONS}
-            disabled={!canWrite}
-            onChange={(e) => patch('useYn', { useYn: e.target.value as YesNo })}
-          />
+          <Input value={fee?.feeId ?? ''} placeholder="Auto-generated" disabled />
         </SysField>
         <SysField label="Type" required error={errors.category}>
           <Select
+            className={styles.fullWidth}
             value={values.category}
             options={categoryOptions}
             disabled={locked}
@@ -259,11 +253,17 @@ function FeeForm({ fee, canWrite, onClose }: { fee: Fee | null; canWrite: boolea
             onChange={(order) => patch('order', { order })}
           />
         </SysField>
-        <SysField label="Item Name" required span="full" error={errors.name}>
-          <Input value={values.name} maxLength={300} disabled={locked} onChange={(e) => patch('name', { name: e.target.value })} />
+        <SysField label="Use" required error={errors.useYn}>
+          <Radio.Group
+            value={values.useYn}
+            options={USE_YN_RADIO_OPTIONS}
+            disabled={!canWrite}
+            onChange={(e) => patch('useYn', { useYn: e.target.value as YesNo })}
+          />
         </SysField>
         <SysField label="Method" required error={errors.method ?? errors.rate}>
           <Select className={styles.methodSelect} value={values.method} options={FEE_METHOD_OPTIONS} disabled={locked} onChange={changeMethod} />
+          {/* Rate % input, enabled for the Rate method (spec: "Rate : % input"). */}
           <InputNumber
             className={styles.rateInput}
             value={values.rate}
@@ -277,6 +277,7 @@ function FeeForm({ fee, canWrite, onClose }: { fee: Fee | null; canWrite: boolea
         </SysField>
         <SysField label="Currency" required error={errors.currency}>
           <Select
+            className={styles.fullWidth}
             value={values.currency}
             options={FEE_CURRENCY_OPTIONS}
             disabled={locked}
@@ -285,9 +286,10 @@ function FeeForm({ fee, canWrite, onClose }: { fee: Fee | null; canWrite: boolea
         </SysField>
         <SysField label="Fee Amount" required={!isRate} error={errors.fee}>
           <InputNumber
-            className={styles.fullWidth}
+            className={`${styles.fullWidth} ${styles.amountInput}`}
             value={values.fee}
             min={0}
+            placeholder="0"
             formatter={amountFormatter}
             parser={amountParser}
             disabled={locked || isRate}
@@ -296,7 +298,7 @@ function FeeForm({ fee, canWrite, onClose }: { fee: Fee | null; canWrite: boolea
         </SysField>
         <SysField label="Minimum Amount" error={errors.minAmount}>
           <InputNumber
-            className={styles.fullWidth}
+            className={`${styles.fullWidth} ${styles.amountInput}`}
             value={values.minAmount}
             min={0}
             formatter={amountFormatter}
@@ -305,9 +307,11 @@ function FeeForm({ fee, canWrite, onClose }: { fee: Fee | null; canWrite: boolea
             onChange={(minAmount) => patch('minAmount', { minAmount })}
           />
         </SysField>
+        <SysField label="Item Name" required error={errors.name}>
+          <Input value={values.name} maxLength={300} disabled={locked} onChange={(e) => patch('name', { name: e.target.value })} />
+        </SysField>
         <SysField label="Item Content" span="full" error={errors.description}>
-          <Input.TextArea
-            rows={3}
+          <Input
             value={values.description}
             maxLength={1000}
             disabled={locked}

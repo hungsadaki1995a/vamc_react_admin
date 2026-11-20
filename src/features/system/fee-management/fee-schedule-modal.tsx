@@ -41,19 +41,26 @@ export default function FeeScheduleModal({ canWrite, onClose }: { canWrite: bool
       <SysFieldGrid columns={1}>
         <SysField label="Effective Date" required>
           <DatePicker
+            className={styles.fullWidth}
             value={values.effectiveDate}
             format={SYS_DATE_FORMAT}
             placeholder="DD-MM-YYYY"
             onChange={(effectiveDate) => patch({ effectiveDate })}
           />
         </SysField>
-        <SysField label="Basis" hint="Basis of the fee decision, e.g. decision number and date.">
-          <Input value={values.basis} maxLength={500} onChange={(e) => patch({ basis: e.target.value })} />
+        <SysField label="Basis">
+          <Input
+            value={values.basis}
+            maxLength={500}
+            placeholder="e.g. decision number and date"
+            onChange={(e) => patch({ basis: e.target.value })}
+          />
         </SysField>
-        <SysField label="Notes" hint="Shown line by line on the user Fee Guide.">
-          <Input.TextArea rows={5} value={values.notes} maxLength={1000} onChange={(e) => patch({ notes: e.target.value })} />
+        <SysField label="Notes">
+          <Input.TextArea rows={8} value={values.notes} maxLength={1000} onChange={(e) => patch({ notes: e.target.value })} />
         </SysField>
-        <SysField label="Fee Schedule File" hint="PDF only. Optional fields left empty are hidden on user screens.">
+        {/* In the spec text (pdf, optional) but not drawn in the frame. */}
+        <SysField label="Fee Schedule File" hint="PDF only.">
           <Upload
             className={styles.upload}
             accept=".pdf,application/pdf"
