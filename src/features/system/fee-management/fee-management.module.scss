@@ -1,0 +1,35 @@
+/* Fee Management (VPA09010301 / P01 / P02) — screen-specific layout only; the v0.8 look comes from _shared/sys-ui.module.scss. */
+
+.loading {
+  min-height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-secondary, #6f7b95);
+}
+
+.fullWidth {
+  width: 100%;
+}
+
+.methodSelect {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.rateInput {
+  flex: 0 0 120px;
+  width: 120px;
+}
+
+.rangePicker {
+  width: 100%;
+}
+
+.numberCell {
+  white-space: nowrap;
+}
+
+.upload {
+  width: 100%;
+}

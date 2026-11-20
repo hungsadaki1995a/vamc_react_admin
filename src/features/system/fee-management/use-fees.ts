@@ -1,6 +1,7 @@
 import { keepPreviousData } from '@tanstack/react-query';
 import { useApiQuery } from '@/hooks/use-api-query';
-import { useApiAction, useApiTask } from '@/hooks/use-api-action';
+import { useApiAction, useApiDownload } from '@/hooks/use-api-action';
+import type { PageQuery, PageResponse } from '@/api/common/api-utils';
 import {
   changeFeeUse,
   createFee,
@@ -10,25 +11,24 @@ import {
   getFees,
   updateFee,
 } from '@/api/system/fee-api';
-import type { Fee, FeeRequest, FeeSearch } from '@/api/system/fee-api';
-import type { PageResponse } from '@/api/common/api-utils';
+import type { Fee, FeeRequest, FeeSearch, YesNo } from '@/api/system/fee-api';
 
-// Data hooks of Fee Management (VPA004101 / VPA0041P01) — the screen never calls the API itself.
+// Data hooks of Fee Management (VPA09010301 / VPA090103P01) — the screen never calls the API itself.
 
 const FEE_KEYS = {
   all: ['system', 'fees'] as const,
-  list: (search: FeeSearch, page: number, size: number) => ['system', 'fees', 'list', search, page, size] as const,
+  list: (search: FeeSearch, query: PageQuery) => ['system', 'fees', 'list', search, query] as const,
   detail: (feeId: string | null) => ['system', 'fees', 'detail', feeId] as const,
 };
 
-/** Paged fee list. */
-export function useFees(search: FeeSearch, page: number, size: number) {
-  return useApiQuery<PageResponse<Fee>>(FEE_KEYS.list(search, page, size), () => getFees(search, page, size), {
+/** Paged fee list (20 rows; the server keeps its own batch / type / order sort). */
+export function useFees(search: FeeSearch, query: PageQuery) {
+  return useApiQuery<PageResponse<Fee>>(FEE_KEYS.list(search, query), () => getFees(search, query), {
     placeholderData: keepPreviousData,
   });
 }
 
-/** One fee item; skipped while `feeId` is null (register mode). */
+/** One fee item for the edit popup; skipped while `feeId` is null (register). */
 export function useFee(feeId: string | null) {
   return useApiQuery<Fee>(FEE_KEYS.detail(feeId), () => getFee(feeId as string), {
     enabled: feeId !== null,
@@ -36,34 +36,33 @@ export function useFee(feeId: string | null) {
   });
 }
 
-export function useDeleteFees() {
-  return useApiAction(deleteFees, { invalidate: [FEE_KEYS.all] });
-}
-
-export function useDownloadFeeExcel() {
-  return useApiTask(downloadFeeExcel);
-}
-
 export interface SaveFeeVariables {
   /** null = register. */
   feeId: string | null;
-  /** Omitted when only the usage flag changes (item in use). */
-  request?: FeeRequest;
-  /** Usage flag to apply after saving; the server always stores new / edited items as N. */
-  useYn?: 'Y' | 'N';
+  request: FeeRequest;
 }
 
-/** Registers / edits a fee item, then applies the usage flag. */
+/** Registers / edits a fee item in one call (Use included). */
 export function useSaveFee() {
-  return useApiTask(
-    async ({ feeId, request, useYn }: SaveFeeVariables) => {
-      let savedId = feeId;
-      if (request) {
-        const saved = feeId === null ? await createFee(request) : await updateFee(feeId, request);
-        savedId = saved.data?.feeId ?? feeId;
-      }
-      if (useYn && savedId) await changeFeeUse([savedId], useYn);
-    },
+  return useApiAction(
+    ({ feeId, request }: SaveFeeVariables) => (feeId === null ? createFee(request) : updateFee(feeId, request)),
     { invalidate: [FEE_KEYS.all] },
   );
+}
+
+/** Use switch of a legacy `MDT` item (PUT rejects that type). */
+export function useChangeFeeUse() {
+  return useApiAction(({ feeId, useYn }: { feeId: string; useYn: YesNo }) => changeFeeUse([feeId], useYn), {
+    invalidate: [FEE_KEYS.all],
+  });
+}
+
+/** Deletes a legacy `MDT` item (not in use, not referenced). */
+export function useDeleteFee() {
+  return useApiAction((feeId: string) => deleteFees([feeId]), { invalidate: [FEE_KEYS.all] });
+}
+
+/** [Excel Download] of the searched list. */
+export function useDownloadFeeExcel() {
+  return useApiDownload((search: FeeSearch) => downloadFeeExcel(search));
 }
