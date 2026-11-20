@@ -1,0 +1,32 @@
+// Screen Management list and popup.
+
+.fullWidth {
+  width: 100%;
+}
+
+.ellipsis {
+  display: inline-block;
+  max-width: 260px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  vertical-align: bottom;
+}
+
+.codeLink {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--color-text-brand, #1764ff);
+  cursor: pointer;
+}
+
+.codeLink:hover {
+  text-decoration: underline;
+}
+
+.filterNote {
+  margin: -4px 0 0;
+  font-size: 12px;
+  color: var(--color-text-secondary, #6f7b95);
+}
