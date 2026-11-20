@@ -25,7 +25,7 @@ dayjs.extend(customParseFormat);
 // Generic Detail / Register / Edit popup of a content board
 // (wireframes VPA0023P01 – VPA0034P01). Which rows appear is decided by the board config.
 
-interface PostModalProps {
+type PostModalProps = {
   config: BoardConfig;
   /** null = register a new post. */
   pstNo: string | null;
@@ -35,9 +35,9 @@ interface PostModalProps {
   legalOptions?: LegalOptions;
   onClose: () => void;
   onSaved: () => void;
-}
+};
 
-interface FormState {
+type FormState = {
   category: string;
   published: YesNo;
   pinned: YesNo;

@@ -102,13 +102,13 @@ export function AttachmentField({ board, fileUnqId, files, disabled, onChange }:
   );
 }
 
-interface ImageFieldProps {
+type ImageFieldProps = {
   /** Uploads the picked image and resolves the new file-group id. */
   upload: (file: File) => Promise<string>;
   fileUnqId?: string;
   disabled?: boolean;
   onChange: (fileUnqId: string | undefined) => void;
-}
+};
 
 /** "Attach image" row with a preview (thumbnail, portrait, logo, banner image). */
 export function ImageField({ upload, fileUnqId, disabled, onChange }: ImageFieldProps) {

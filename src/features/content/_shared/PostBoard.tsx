@@ -34,7 +34,7 @@ const DATE_FORMAT = 'DD/MM/YYYY';
 
 type DateRange = [Dayjs | null, Dayjs | null] | null;
 
-interface FilterState {
+type FilterState = {
   posted: boolean;
   stopped: boolean;
   category: string;
@@ -44,7 +44,7 @@ interface FilterState {
   lawGroup: string;
   lawField: string;
   issuePeriod: DateRange;
-}
+};
 
 const EMPTY_FILTER: FilterState = {
   posted: true,
