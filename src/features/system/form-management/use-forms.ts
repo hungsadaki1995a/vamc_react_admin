@@ -1,56 +1,46 @@
 import { keepPreviousData } from '@tanstack/react-query';
 import { useApiQuery } from '@/hooks/use-api-query';
-import { useApiAction, useApiTask } from '@/hooks/use-api-action';
+import { useApiAction, useApiDownload } from '@/hooks/use-api-action';
+import type { PageQuery, PageResponse } from '@/api/common/api-utils';
 import {
+  FORM_API_AVAILABLE,
   createForm,
-  deleteForms,
-  downloadFormFile,
+  downloadFormExcel,
   getForms,
   updateForm,
-  uploadFormFile,
 } from '@/api/system/form-api';
 import type { FormItem, FormSaveRequest, FormSearch } from '@/api/system/form-api';
-import type { PageResponse } from '@/api/common/api-utils';
 
-// Data hooks of Form Management (VPA004001 / VPA0040P01).
+// Data hooks of Form Management (VPA09010201 / VPA090102P01).
+// The backend has no form API yet: queries stay disabled while FORM_API_AVAILABLE is false.
 
 const FORM_KEYS = {
   all: ['system', 'forms'] as const,
-  list: (search: FormSearch, page: number, size: number) => ['system', 'forms', 'list', search, page, size] as const,
+  list: (search: FormSearch, query: PageQuery) => ['system', 'forms', 'list', search, query] as const,
 };
 
-/** Paged form list. */
-export function useForms(search: FormSearch, page: number, size: number) {
-  return useApiQuery<PageResponse<FormItem>>(FORM_KEYS.list(search, page, size), () => getForms(search, page, size), {
+/** Paged form list (20 rows). */
+export function useForms(search: FormSearch, query: PageQuery) {
+  return useApiQuery<PageResponse<FormItem>>(FORM_KEYS.list(search, query), () => getForms(search, query), {
+    enabled: FORM_API_AVAILABLE,
     placeholderData: keepPreviousData,
-    retry: false,
   });
-}
-
-export function useDeleteForms() {
-  return useApiAction(deleteForms, { invalidate: [FORM_KEYS.all] });
 }
 
 export interface SaveFormVariables {
   isCreate: boolean;
-  /** Form row without the file reference. */
-  request: Omit<FormSaveRequest, 'fileUnqId'>;
-  /** New file to attach; omitted keeps the stored one. */
-  file?: File | null;
+  request: FormSaveRequest;
 }
 
-/** Uploads the file (if any), then registers / edits the form row referencing it. */
+/** Registers or edits a form. */
 export function useSaveForm() {
-  return useApiTask(
-    async ({ isCreate, request, file }: SaveFormVariables) => {
-      const fileUnqId = file ? await uploadFormFile(file) : undefined;
-      const body = { ...request, fileUnqId };
-      return isCreate ? createForm(body) : updateForm(body);
-    },
+  return useApiAction(
+    ({ isCreate, request }: SaveFormVariables) => (isCreate ? createForm(request) : updateForm(request)),
     { invalidate: [FORM_KEYS.all] },
   );
 }
 
-export function useDownloadFormFile() {
-  return useApiTask(downloadFormFile);
+/** [Excel Download] of the searched list. */
+export function useDownloadFormExcel() {
+  return useApiDownload((search: FormSearch) => downloadFormExcel(search));
 }
