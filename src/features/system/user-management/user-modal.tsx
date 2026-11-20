@@ -237,7 +237,7 @@ export default function UserModal({ detail, canWrite, onClose }: UserModalProps)
           />
         </SysField>
         {isEdit && (
-          <SysField label="Password" span="full">
+          <SysField label="Password" span={3}>
             <SysButton disabled={readOnly} loading={resetPassword.isPending} onClick={handleResetPassword}>
               Reset Password
             </SysButton>

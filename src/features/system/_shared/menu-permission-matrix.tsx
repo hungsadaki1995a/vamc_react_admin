@@ -258,7 +258,7 @@ export default function MenuPermissionMatrix({ menuSeCd }: Props) {
       {error && (
         <Alert type="error" showIcon title="The permission matrix could not be loaded." description={error.message} />
       )}
-      <Spin spinning={isFetching} wrapperClassName={styles.spin}>
+      <Spin spinning={isFetching} classNames={{ root: styles.spin }}>
         <div className={styles.tableWrap}>
           <table className={styles.matrix}>
             <thead>

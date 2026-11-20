@@ -106,7 +106,7 @@ export default function MenuSettingsDetail({
         <SysField
           label="Label Key"
           required
-          span="full"
+          span={2}
           error={errors.lblCd}
           hint="Label key from i18n Label Management."
         >
@@ -122,7 +122,7 @@ export default function MenuSettingsDetail({
         {isAdmin ? (
           <SysField
             label="Screen ID"
-            span="full"
+            span={2}
             error={errors.menuUrlAddr}
             hint="Screen registered in Screen Management; leave empty for group menus with only submenus."
           >
@@ -135,7 +135,7 @@ export default function MenuSettingsDetail({
             />
           </SysField>
         ) : (
-          <SysField label="Web Path" span="full" error={errors.menuUrlAddr}>
+          <SysField label="Web Path" span={2} error={errors.menuUrlAddr}>
             <Input
               value={form.menuUrlAddr}
               maxLength={2000}
@@ -149,7 +149,7 @@ export default function MenuSettingsDetail({
           <SysField
             label="Show in Menu"
             required
-            span="full"
+            span={2}
             hint="Not available yet: waits for a database change. Every menu is shown in the LNB for now."
           >
             {/* TODO(schema): MENU_EXPSR_YN — enable and send once the column exists. */}

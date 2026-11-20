@@ -220,7 +220,7 @@ export default function MenuSettingsTree({
           </div>
         )}
       </div>
-      <Spin spinning={loading || moving} wrapperClassName={styles.treeSpin}>
+      <Spin spinning={loading || moving} classNames={{ root: styles.treeSpin }}>
         <div className={styles.treeBody} role="tree">
           {insertAt === -1 && draft && renderDraft(draft)}
           {visible.map((node, index) => (
