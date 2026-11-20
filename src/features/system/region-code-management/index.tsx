@@ -32,10 +32,10 @@ import { useBatchSaveDistricts, useDistricts, useDownloadProvincesExcel, useProv
 // VPA09030201 Region Code Management: provinces / cities (left) + editable district codes (right).
 
 const DISTRICT_COLUMNS: GridColumn[] = [
-  { field: 'distCd', title: 'Code', kind: 'text', required: true, isKey: true, maxLength: 5, width: 110 },
-  { field: 'distNm', title: 'Name', kind: 'text', required: true, maxLength: 40, width: 220 },
-  { field: 'sortSeq', title: 'Order', kind: 'number', min: 0, max: 99999, width: 90 },
   { field: 'useYn', title: 'Use', kind: 'use', required: true, width: 110 },
+  { field: 'distCd', title: 'District Code', kind: 'text', required: true, isKey: true, maxLength: 5, width: 120 },
+  { field: 'distNm', title: 'Code Name', kind: 'text', required: true, maxLength: 40, width: 220 },
+  { field: 'sortSeq', title: 'Order', kind: 'number', min: 0, max: 99999, width: 90 },
 ];
 
 const INITIAL_FILTER: ProvinceSearch = { mctpvCd: '', mctpvNm: '' };
@@ -148,7 +148,7 @@ export default function RegionCodeManagement() {
         left={
           <div className={styles.pane}>
             <SysSectionHeader
-              title="Province / City Code"
+              title="Province / City"
               total={data?.totalElements ?? 0}
               actions={<SysExcelButton loading={excel.isPending} onClick={() => excel.mutate(list.applied)} />}
               primaryActions={
@@ -176,7 +176,7 @@ export default function RegionCodeManagement() {
           <div className={styles.paneDetail}>
             <CodeDetailGrid
               key={`${selected?.mctpvCd ?? ''}-${districtsQuery.dataUpdatedAt}`}
-              title={current ? `[${current.mctpvNm}] District Code` : 'District Code'}
+              title={current ? `Districts in [${current.mctpvNm}]` : 'Districts'}
               disabled={!selected}
               emptyText="Select a province / city."
               canWrite={canWrite}

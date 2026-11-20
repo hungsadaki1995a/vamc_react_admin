@@ -75,13 +75,14 @@ export function ProgramModal({ item, canWrite, onClose }: ProgramModalProps) {
   return (
     <SysFormModal
       open
-      title={isCreate ? 'Register Program' : 'Edit Program'}
+      title={isCreate ? 'Register Program Information' : 'Edit Program Information'}
       submitText={isCreate ? 'Register' : 'Edit'}
       onSubmit={canWrite ? () => void handleSubmit() : undefined}
       submitting={createProgram.isPending || updateProgram.isPending}
       onCancel={onClose}
+      width={1080}
     >
-      <SysFieldGrid columns={2}>
+      <SysFieldGrid columns={3}>
         <SysField label="Program Code" required error={errors.prgrmCd}>
           <Input
             value={values.prgrmCd}
@@ -90,8 +91,13 @@ export function ProgramModal({ item, canWrite, onClose }: ProgramModalProps) {
             onChange={(e) => change('prgrmCd', e.target.value)}
           />
         </SysField>
-        <SysField label="Menu Code" required error={errors.menuCd} hint="e.g. A03010000">
-          <Input value={values.menuCd} maxLength={9} onChange={(e) => change('menuCd', e.target.value)} />
+        <SysField label="Menu Code" required error={errors.menuCd}>
+          <Input
+            value={values.menuCd}
+            maxLength={9}
+            placeholder="e.g. A03010000"
+            onChange={(e) => change('menuCd', e.target.value)}
+          />
         </SysField>
         <SysField label="Type" required error={errors.prgrmSeCd}>
           <Radio.Group
@@ -120,12 +126,7 @@ export function ProgramModal({ item, canWrite, onClose }: ProgramModalProps) {
           />
         </SysField>
         <SysField label="Program Description" span="full" error={errors.prgrmExpln}>
-          <Input.TextArea
-            rows={3}
-            value={values.prgrmExpln}
-            maxLength={4000}
-            onChange={(e) => change('prgrmExpln', e.target.value)}
-          />
+          <Input value={values.prgrmExpln} maxLength={4000} onChange={(e) => change('prgrmExpln', e.target.value)} />
         </SysField>
       </SysFieldGrid>
     </SysFormModal>

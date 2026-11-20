@@ -59,7 +59,7 @@ export function CodeGroupModal({ item, canWrite, onClose }: CodeGroupModalProps)
   return (
     <SysFormModal
       open
-      title={isCreate ? 'Register Code Group' : 'Edit Code Group'}
+      title={isCreate ? 'Register Common Code Group' : 'Edit Common Code Group'}
       submitText={isCreate ? 'Register' : 'Edit'}
       onSubmit={canWrite ? () => void handleSubmit() : undefined}
       submitting={createGroup.isPending || updateGroup.isPending}

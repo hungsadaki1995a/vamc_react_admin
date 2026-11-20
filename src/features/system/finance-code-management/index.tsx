@@ -61,30 +61,30 @@ export default function FinanceCodeManagement() {
   const adminUnitOptions = useAdminUnitOptions();
   const current = data?.content.find((i) => i.fnstCd === selected?.fnstCd) ?? selected;
 
-  // Branch classification and administrative unit are required by the API although the design omits them.
+  // Category Code (FNST_BRNCH_CLSF_CD) and Administrative Code are required by the API: editable selects.
   const branchColumns = useMemo<GridColumn[]>(
     () => [
-      { field: 'fnstBrnchCd', title: 'Code', kind: 'number', required: true, isKey: true, min: 1, max: 99999999, width: 120 },
-      { field: 'fnstBrnchNm', title: 'Branch Name', kind: 'text', required: true, maxLength: 200, width: 200 },
-      { field: 'fnstSlsbrNm', title: 'Sales Branch Name', kind: 'text', maxLength: 200, width: 200 },
-      { field: 'fnstBrnchAddr', title: 'Address', kind: 'text', maxLength: 320, width: 200 },
+      { field: 'useYn', title: 'Use', kind: 'use', required: true, width: 110 },
       {
         field: 'fnstBrnchClsfCd',
-        title: 'Classification',
+        title: 'Category Code',
         kind: 'select',
         required: true,
         options: classificationOptions,
-        width: 160,
+        width: 170,
       },
+      { field: 'fnstBrnchCd', title: 'Branch Code', kind: 'number', required: true, isKey: true, min: 1, max: 99999999, width: 130 },
+      { field: 'fnstBrnchNm', title: 'Branch Name', kind: 'text', required: true, maxLength: 200, width: 200 },
+      { field: 'fnstSlsbrNm', title: 'Office Name', kind: 'text', maxLength: 200, width: 200 },
+      { field: 'fnstBrnchAddr', title: 'Branch Address', kind: 'text', maxLength: 320, width: 200 },
       {
         field: 'admdstCd',
-        title: 'Administrative Unit',
+        title: 'Administrative Code',
         kind: 'select',
         required: true,
         options: adminUnitOptions,
-        width: 180,
+        width: 190,
       },
-      { field: 'useYn', title: 'Use', kind: 'use', required: true, width: 110 },
     ],
     [classificationOptions, adminUnitOptions],
   );
@@ -185,7 +185,7 @@ export default function FinanceCodeManagement() {
         left={
           <div className={styles.pane}>
             <SysSectionHeader
-              title="Institution Code"
+              title="Financial Institutions"
               total={data?.totalElements ?? 0}
               actions={<SysExcelButton loading={excel.isPending} onClick={() => excel.mutate(list.applied)} />}
               primaryActions={
@@ -213,7 +213,7 @@ export default function FinanceCodeManagement() {
           <div className={styles.paneDetail}>
             <CodeDetailGrid
               key={`${selected?.fnstCd ?? ''}-${branchesQuery.dataUpdatedAt}`}
-              title={current ? `[${current.fnstAbbrNm || current.fnstNm}] Branch Code` : 'Branch Code'}
+              title={current ? `Branch Codes in [${current.fnstNm}]` : 'Branch Codes'}
               disabled={!selected}
               emptyText="Select a financial institution."
               canWrite={canWrite}

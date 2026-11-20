@@ -78,7 +78,7 @@ export function InstitutionModal({ item, canWrite, onClose }: InstitutionModalPr
       width={720}
     >
       <SysFieldGrid columns={1}>
-        <SysField label="Institution Code" required error={errors.fnstCd} hint={isCreate ? 'Number 1–999.' : undefined}>
+        <SysField label="Institution Code" required error={errors.fnstCd}>
           <InputNumber
             value={values.fnstCd}
             disabled={!isCreate}

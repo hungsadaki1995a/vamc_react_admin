@@ -81,7 +81,7 @@ export function ProvinceModal({ item, canWrite, onClose }: ProvinceModalProps) {
       width={720}
     >
       <SysFieldGrid columns={1}>
-        <SysField label="Province / City Code" required error={errors.mctpvCd} hint={isCreate ? 'Up to 3 characters.' : undefined}>
+        <SysField label="Province / City Code" required error={errors.mctpvCd}>
           <Input
             value={values.mctpvCd}
             disabled={!isCreate}
@@ -92,7 +92,7 @@ export function ProvinceModal({ item, canWrite, onClose }: ProvinceModalProps) {
         <SysField label="Province / City Name" required error={errors.mctpvNm}>
           <Input value={values.mctpvNm} maxLength={40} onChange={(e) => change('mctpvNm', e.target.value)} />
         </SysField>
-        <SysField label="Administrative Code" required error={errors.admdstCd} hint={isCreate ? 'Number 0–99.' : undefined}>
+        <SysField label="Administrative Code" required error={errors.admdstCd}>
           <InputNumber
             value={values.admdstCd}
             disabled={!isCreate}

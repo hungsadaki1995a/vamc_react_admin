@@ -46,7 +46,7 @@ export default function ScreenManagement() {
       render: (_v, row) => {
         const type = screenTypeOf(row.scrnId);
         if (!type) return EMPTY;
-        return <StatusBadge tone={type === 'W' ? 'blue' : 'navy'}>{type === 'W' ? 'Web' : 'Admin'}</StatusBadge>;
+        return <StatusBadge tone={type === 'W' ? 'blue' : 'gray'}>{type === 'W' ? 'Web' : 'Admin'}</StatusBadge>;
       },
     },
     { title: 'Business', key: 'business', align: 'center', width: 120, render: () => EMPTY },

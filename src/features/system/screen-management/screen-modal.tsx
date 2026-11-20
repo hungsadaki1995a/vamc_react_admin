@@ -111,7 +111,7 @@ export function ScreenModal({ item, canWrite, onClose }: ScreenModalProps) {
       extraActions={
         !isCreate &&
         canWrite && (
-          <SysButton danger loading={deleteScreen.isPending} onClick={handleDelete}>
+          <SysButton look="primary" danger loading={deleteScreen.isPending} onClick={handleDelete}>
             Delete
           </SysButton>
         )
@@ -124,28 +124,29 @@ export function ScreenModal({ item, canWrite, onClose }: ScreenModalProps) {
         <SysField label="Business" required hint={NOT_AVAILABLE_NOTE}>
           <Select className={styles.fullWidth} options={businessOptions} placeholder="Select" disabled />
         </SysField>
-        <SysField label="Screen ID" required error={errors.scrnId} hint={isCreate ? 'e.g. WB_AB_10000' : undefined}>
-          <Input value={values.scrnId} disabled={!isCreate} maxLength={20} onChange={(e) => change('scrnId', e.target.value)} />
+        <SysField label="Screen ID" required error={errors.scrnId}>
+          <Input
+            value={values.scrnId}
+            disabled={!isCreate}
+            maxLength={20}
+            placeholder="e.g. WB_AB_10000"
+            onChange={(e) => change('scrnId', e.target.value)}
+          />
         </SysField>
         <SysField label="Screen Name" required hint={NOT_AVAILABLE_NOTE}>
-          <Input disabled />
-        </SysField>
-        <SysField label="Component Path" required span="full" hint={NOT_AVAILABLE_NOTE}>
-          <Input disabled />
-        </SysField>
-        <SysField label="Label Key" hint={NOT_AVAILABLE_NOTE}>
           <Input disabled />
         </SysField>
         <SysField label="Popup" required hint={NOT_AVAILABLE_NOTE}>
           <Radio.Group options={POPUP_OPTIONS} value="N" disabled />
         </SysField>
-        <SysField label="Remarks" span="full" error={errors.scrnExpln}>
-          <Input.TextArea
-            rows={2}
-            value={values.scrnExpln}
-            maxLength={4000}
-            onChange={(e) => change('scrnExpln', e.target.value)}
-          />
+        <SysField label="Component Path" required hint={NOT_AVAILABLE_NOTE}>
+          <Input disabled />
+        </SysField>
+        <SysField label="Label Key" hint={NOT_AVAILABLE_NOTE}>
+          <Input disabled />
+        </SysField>
+        <SysField label="Remarks" error={errors.scrnExpln}>
+          <Input value={values.scrnExpln} maxLength={4000} onChange={(e) => change('scrnExpln', e.target.value)} />
         </SysField>
       </SysFieldGrid>
 
