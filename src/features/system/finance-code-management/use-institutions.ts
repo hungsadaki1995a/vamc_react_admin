@@ -1,90 +1,84 @@
+import { useMemo } from 'react';
 import { keepPreviousData } from '@tanstack/react-query';
 import { useApiQuery } from '@/hooks/use-api-query';
 import { useApiAction, useApiDownload } from '@/hooks/use-api-action';
 import {
-  createBranch,
+  batchSaveBranches,
   createInstitution,
-  deleteBranch,
-  deleteInstitution,
   downloadInstitutionsExcel,
   getBranchesByInstitution,
   getInstitutions,
-  updateBranch,
   updateInstitution,
 } from '@/api/system/institution-api';
-import type { BranchItem, InstitutionItem } from '@/api/system/institution-api';
-import type { PageResponse } from '@/api/common/api-utils';
+import type {
+  BatchSaveBranchesRequest,
+  BranchItem,
+  InstitutionItem,
+  InstitutionSearch,
+  UpdateInstitutionRequest,
+} from '@/api/system/institution-api';
+import { getActiveProvinces } from '@/api/system/location-api';
+import type { ProvinceItem } from '@/api/system/location-api';
+import type { PageQuery, PageResponse } from '@/api/common/api-utils';
 
 // Data hooks of Finance Code Management (menu A06030300).
 
-export interface InstitutionSearch {
-  useYn?: 'Y' | 'N';
-  keyword?: string;
-}
-
-const INSTITUTION_KEYS = {
-  all: ['system', 'institutions'] as const,
-  institutions: ['system', 'institutions', 'institutions'] as const,
-  list: (search: InstitutionSearch, page: number, size: number) =>
-    ['system', 'institutions', 'institutions', 'list', search, page, size] as const,
+const FINANCE_KEYS = {
+  institutions: ['system', 'institutions'] as const,
+  institutionList: (search: InstitutionSearch, page: PageQuery) => ['system', 'institutions', 'list', search, page] as const,
   branches: ['system', 'institutions', 'branches'] as const,
-  branchList: (fnstCd: string | null) => ['system', 'institutions', 'branches', fnstCd] as const,
+  branchList: (fnstCd: number | null) => ['system', 'institutions', 'branches', fnstCd] as const,
+  provinces: ['system', 'institutions', 'admin-units'] as const,
 };
 
-/** Paged financial institution list. */
-export function useInstitutions(search: InstitutionSearch, page: number, size: number) {
+export function useInstitutions(search: InstitutionSearch, page: PageQuery) {
   return useApiQuery<PageResponse<InstitutionItem>>(
-    INSTITUTION_KEYS.list(search, page, size),
-    () => getInstitutions(search, page, size),
+    FINANCE_KEYS.institutionList(search, page),
+    () => getInstitutions(search, page),
     { placeholderData: keepPreviousData },
   );
 }
 
-/** Branches of one institution; skipped while no institution is selected. */
-export function useBranches(fnstCd: string | null) {
-  return useApiQuery<BranchItem[]>(INSTITUTION_KEYS.branchList(fnstCd), () => getBranchesByInstitution(fnstCd as string), {
-    enabled: !!fnstCd,
+/** Branches of one institution; no focus refetch so unsaved grid edits survive. */
+export function useBranches(fnstCd: number | null) {
+  return useApiQuery<BranchItem[]>(FINANCE_KEYS.branchList(fnstCd), () => getBranchesByInstitution(fnstCd as number), {
+    enabled: fnstCd !== null,
+    refetchOnWindowFocus: false,
   });
+}
+
+/** Administrative unit options (active provinces, value = GSO code). */
+export function useAdminUnitOptions() {
+  const { data = [] } = useApiQuery<ProvinceItem[]>(FINANCE_KEYS.provinces, getActiveProvinces, {
+    staleTime: 5 * 60 * 1000,
+  });
+  return useMemo(
+    () =>
+      [...data]
+        .sort((a, b) => a.admdstCd - b.admdstCd)
+        .map((p) => ({ value: p.admdstCd, label: `${p.admdstCd} ${p.mctpvNm}` })),
+    [data],
+  );
 }
 
 export function useDownloadInstitutionsExcel() {
   return useApiDownload(downloadInstitutionsExcel);
 }
 
-export interface SaveInstitutionVariables {
-  /** null = register. */
-  fnstCd: string | null;
-  request: Partial<InstitutionItem>;
+export function useCreateInstitution() {
+  return useApiAction(createInstitution, { invalidate: [FINANCE_KEYS.institutions] });
 }
 
-/** Registers or edits an institution. */
-export function useSaveInstitution() {
+export function useUpdateInstitution() {
   return useApiAction(
-    ({ fnstCd, request }: SaveInstitutionVariables) =>
-      fnstCd === null ? createInstitution(request) : updateInstitution(fnstCd, request),
-    { invalidate: [INSTITUTION_KEYS.institutions] },
+    ({ fnstCd, request }: { fnstCd: number; request: UpdateInstitutionRequest }) => updateInstitution(fnstCd, request),
+    { invalidate: [FINANCE_KEYS.institutions] },
   );
 }
 
-export function useDeleteInstitution() {
-  return useApiAction(deleteInstitution, { invalidate: [INSTITUTION_KEYS.institutions] });
-}
-
-export interface SaveBranchVariables {
-  /** null = register. */
-  fnstBrnchCd: string | null;
-  request: Partial<BranchItem>;
-}
-
-/** Registers or edits a branch. */
-export function useSaveBranch() {
+export function useBatchSaveBranches() {
   return useApiAction(
-    ({ fnstBrnchCd, request }: SaveBranchVariables) =>
-      fnstBrnchCd === null ? createBranch(request) : updateBranch(fnstBrnchCd, request),
-    { invalidate: [INSTITUTION_KEYS.branches] },
+    ({ fnstCd, request }: { fnstCd: number; request: BatchSaveBranchesRequest }) => batchSaveBranches(fnstCd, request),
+    { invalidate: [FINANCE_KEYS.institutions] },
   );
-}
-
-export function useDeleteBranch() {
-  return useApiAction(deleteBranch, { invalidate: [INSTITUTION_KEYS.branches] });
 }

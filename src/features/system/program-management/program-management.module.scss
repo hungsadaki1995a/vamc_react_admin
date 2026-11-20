@@ -1,0 +1,10 @@
+// Program Management list.
+
+.ellipsis {
+  display: inline-block;
+  max-width: 360px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  vertical-align: bottom;
+}

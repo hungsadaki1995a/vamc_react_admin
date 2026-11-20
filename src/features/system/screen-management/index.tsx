@@ -1,224 +1,145 @@
-import { useState, type CSSProperties } from 'react';
-import { Input, InputNumber, Modal, Radio, Select, Table } from 'antd';
+import { useState } from 'react';
+import { Input, Select } from 'antd';
 import type { TableColumnsType } from 'antd';
-import { useNotify } from '@/hooks/use-notify';
 import { useMenuPermission } from '@/hooks/use-menu-permission';
 import type { ScreenItem, ScreenSearch } from '@/api/system/program-screen-api';
-import { DateTimeCell, FormField, SysPageHeader, SysPagination, UseYnChecks } from '@/features/system/_shared/system-ui';
-import { errorMessage, rowNumber, toUseYnFilter } from '@/features/system/_shared/system-utils';
-import styles from '@/features/system/_shared/system-page.module.scss';
-import { useDeleteScreens, useDownloadScreensExcel, useProgramOptions, useSaveScreen, useScreens } from './use-screens';
+import {
+  StatusBadge,
+  SysButton,
+  SysExcelButton,
+  SysFilterItem,
+  SysFilterPanel,
+  SysPage,
+  SysPager,
+  SysSearchActions,
+  SysSectionHeader,
+  SysTable,
+  SysTitleBar,
+} from '@/features/system/_shared/sys-list-ui';
+import { ALL, SYS_PAGE_SIZE } from '@/features/system/_shared/sys-constants';
+import { usePagedList } from '@/features/system/_shared/use-paged-list';
+import { NOT_AVAILABLE_NOTE, SCREEN_TYPE_FILTER_OPTIONS, screenTypeOf } from './screen-constants';
+import { ScreenModal } from './screen-modal';
+import { useDownloadScreensExcel, useScreens } from './use-screens';
+import styles from './screen-management.module.scss';
 
-const PAGE_SIZE = 15;
+// VPA09040201 Screen Management.
+// Type / Business / Screen Name / Component Path / Label Key / Popup wait for the SCRN_MNG
+// schema change: filters are disabled, columns show "-" (Type is guessed from the ID prefix).
 
-/** Screen Management (VPA005201 / VPA0052P01, menu A06040200). */
+const INITIAL_FILTER: ScreenSearch = { scrnId: '', keyword: '' };
+const EMPTY = '-';
+
 export default function ScreenManagement() {
-  const { toast, dialog } = useNotify();
   const { canWrite } = useMenuPermission();
-
-  const [used, setUsed] = useState(true);
-  const [unused, setUnused] = useState(true);
-  const [prgrmCd, setPrgrmCd] = useState('');
-  const [scrnId, setScrnId] = useState('');
-  const [keyword, setKeyword] = useState('');
-  const [applied, setApplied] = useState<ScreenSearch>({});
-  const [page, setPage] = useState(1);
-  const [filterCollapsed, setFilterCollapsed] = useState(false);
-  const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
+  const list = usePagedList<ScreenSearch>(INITIAL_FILTER);
   const [modalItem, setModalItem] = useState<ScreenItem | null | undefined>(undefined);
-
-  const { data, isFetching } = useScreens(applied, page, PAGE_SIZE);
-  const deleteScreens = useDeleteScreens();
-  const downloadExcel = useDownloadScreensExcel();
-  const rows = data?.content ?? [];
-  const total = data?.totalElements ?? 0;
-
-  // The list itself is refetched by the write hooks.
-  const clearSelection = () => setSelectedKeys([]);
-
-  const handleSearch = () => {
-    setApplied({
-      useYn: toUseYnFilter(used, unused),
-      prgrmCd: prgrmCd.trim() || undefined,
-      scrnId: scrnId.trim() || undefined,
-      keyword: keyword.trim() || undefined,
-    });
-    setPage(1);
-  };
-
-  const handleReset = () => {
-    setUsed(true);
-    setUnused(true);
-    setPrgrmCd('');
-    setScrnId('');
-    setKeyword('');
-    setApplied({});
-    setPage(1);
-  };
-
-  const handleDelete = () => {
-    if (!selectedKeys.length) { toast.warning('Select at least one screen.'); return; }
-    dialog.warning({
-      okCancel: true,
-      content: `Delete ${selectedKeys.length} selected screen(s)?`,
-      onOk: async () => {
-        try {
-          await deleteScreens.mutateAsync(selectedKeys);
-          toast.success('Deleted.');
-          clearSelection();
-        } catch (e) {
-          toast.error(errorMessage(e));
-        }
-      },
-    });
-  };
+  const { data, isFetching } = useScreens(list.applied, list.pageQuery);
+  const excel = useDownloadScreensExcel();
 
   const columns: TableColumnsType<ScreenItem> = [
-    { title: 'No', key: 'no', width: 60, align: 'center', render: (_v, _r, i) => rowNumber(total, page, PAGE_SIZE, i) },
     {
-      title: 'Use',
-      dataIndex: 'useYn',
-      width: 80,
+      title: 'Type',
+      key: 'type',
       align: 'center',
-      render: (v: string) => <span className={v === 'Y' ? styles.useY : styles.useN}>{v === 'Y' ? 'Used' : 'Unused'}</span>,
+      width: 90,
+      render: (_v, row) => {
+        const type = screenTypeOf(row.scrnId);
+        if (!type) return EMPTY;
+        return <StatusBadge tone={type === 'W' ? 'blue' : 'gray'}>{type === 'W' ? 'Web' : 'Admin'}</StatusBadge>;
+      },
     },
-    { title: 'Program Code', dataIndex: 'prgrmCd', width: 140, align: 'center' },
+    { title: 'Business', key: 'business', align: 'center', width: 120, render: () => EMPTY },
     {
       title: 'Screen ID',
       dataIndex: 'scrnId',
-      width: 170,
-      render: (v: string, row) => <a className={styles.cellLink} onClick={() => setModalItem(row)}>{v}</a>,
+      width: 150,
+      render: (value: string, row) => (
+        <button
+          type="button"
+          className={styles.codeLink}
+          onClick={(e) => {
+            e.stopPropagation();
+            setModalItem(row);
+          }}
+        >
+          {value}
+        </button>
+      ),
     },
-    { title: 'Order', dataIndex: 'scrnSeq', width: 70, align: 'center' },
-    { title: 'Program Name', dataIndex: 'prgrmNm', width: 200, render: (v?: string) => v || '-' },
-    { title: 'Description', dataIndex: 'scrnExpln', width: 240, render: (v?: string) => v || '-' },
-    { title: 'Registration Date', dataIndex: 'crtDt', width: 130, align: 'center', render: (v?: string) => <DateTimeCell value={v} /> },
-    { title: 'Registered By', dataIndex: 'crtByNm', width: 120, align: 'center', render: (v?: string) => v || '-' },
+    { title: 'Screen Name', key: 'scrnNm', width: 160, render: () => EMPTY },
+    { title: 'Component Path', key: 'componentPath', width: 180, render: () => EMPTY },
+    { title: 'Label Key', key: 'lblKey', width: 140, render: () => EMPTY },
+    { title: 'Popup', key: 'popup', align: 'center', width: 80, render: () => EMPTY },
+    {
+      title: 'Remarks',
+      dataIndex: 'scrnExpln',
+      render: (v?: string) => <span className={styles.ellipsis}>{v || EMPTY}</span>,
+    },
   ];
 
   return (
-    <div className={styles.container}>
-      <SysPageHeader
-        breadcrumb={['System Operation Management', 'System Management', 'Screen Management']}
+    <SysPage>
+      <SysTitleBar
         title="Screen Management"
-        onReset={handleReset}
-        onSearch={handleSearch}
-        filterCollapsed={filterCollapsed}
-        onToggleFilter={() => setFilterCollapsed((v) => !v)}
+        breadcrumb={['System Operation Management', 'System Management', 'Screen Management']}
       />
+      <SysFilterPanel columns={4}>
+        <SysFilterItem label="Type">
+          <Select options={SCREEN_TYPE_FILTER_OPTIONS} value={ALL} disabled title={NOT_AVAILABLE_NOTE} />
+        </SysFilterItem>
+        <SysFilterItem label="Business">
+          <Select options={[{ value: ALL, label: 'All' }]} value={ALL} disabled title={NOT_AVAILABLE_NOTE} />
+        </SysFilterItem>
+        <SysFilterItem label="Screen ID">
+          <Input
+            value={list.draft.scrnId}
+            allowClear
+            onChange={(e) => list.setDraft({ scrnId: e.target.value })}
+            onPressEnter={() => list.search()}
+          />
+        </SysFilterItem>
+        <SysFilterItem label="Screen Name">
+          {/* TODO(schema): search the screen name column; matches remarks / program name for now. */}
+          <Input
+            value={list.draft.keyword}
+            allowClear
+            onChange={(e) => list.setDraft({ keyword: e.target.value })}
+            onPressEnter={() => list.search()}
+          />
+        </SysFilterItem>
+      </SysFilterPanel>
+      <p className={styles.filterNote}>Type and Business filters: {NOT_AVAILABLE_NOTE}</p>
+      <SysSearchActions onReset={list.reset} onSearch={() => list.search()} loading={isFetching} />
 
-      {!filterCollapsed && (
-        <div className={styles.filterCard}>
-          <div className={styles.filterGroup}>
-            <span className={styles.filterLabel}>Use</span>
-            <UseYnChecks yes={used} no={unused} onChange={(y, n) => { setUsed(y); setUnused(n); }} allLabel="All" yesLabel="Used" noLabel="Unused" />
-          </div>
-          <div className={styles.filterGroup}>
-            <span className={styles.filterLabel}>Program Code</span>
-            <Input className={styles.filterInput} value={prgrmCd} onChange={(e) => setPrgrmCd(e.target.value)} onPressEnter={handleSearch} allowClear />
-          </div>
-          <div className={styles.filterGroup}>
-            <span className={styles.filterLabel}>Screen ID</span>
-            <Input className={styles.filterInput} value={scrnId} onChange={(e) => setScrnId(e.target.value)} onPressEnter={handleSearch} allowClear />
-          </div>
-          <div className={styles.filterGroup}>
-            <span className={styles.filterLabel}>Screen Name / Desc</span>
-            <Input className={styles.filterInput} value={keyword} onChange={(e) => setKeyword(e.target.value)} onPressEnter={handleSearch} allowClear />
-          </div>
-        </div>
-      )}
-
-      <div className={styles.summaryRow}>
-        <span className={styles.totalCount}>Total ({total})</span>
-        <button type="button" className={`${styles.btn} ${styles.btnSmall}`} onClick={() => downloadExcel.mutate(applied)}>Excel Download</button>
-      </div>
-
-      <div className={styles.tableWrapper}>
-        <Table<ScreenItem>
-          rowKey="scrnId"
-          columns={columns}
-          dataSource={rows}
-          loading={isFetching}
-          pagination={false}
-          size="small"
-          scroll={{ x: 'max-content' }}
-          rowSelection={{ selectedRowKeys: selectedKeys, onChange: (k) => setSelectedKeys(k.map(String)) }}
-        />
-      </div>
-
-      <SysPagination page={page} pageSize={PAGE_SIZE} total={total} onChange={setPage} />
-
-      <div className={styles.bottomActions}>
-        <button type="button" className={styles.btnDanger} disabled={!canWrite} onClick={handleDelete}>Delete</button>
-        <button type="button" className={styles.btnDark} disabled={!canWrite} onClick={() => setModalItem(null)}>Add New</button>
-      </div>
+      <SysSectionHeader
+        total={data?.totalElements ?? 0}
+        actions={<SysExcelButton loading={excel.isPending} onClick={() => excel.mutate(list.applied)} />}
+        primaryActions={
+          canWrite && (
+            <SysButton look="navy" onClick={() => setModalItem(null)}>
+              New
+            </SysButton>
+          )
+        }
+      />
+      <SysTable<ScreenItem>
+        rowKey="scrnId"
+        columns={columns}
+        dataSource={data?.content}
+        loading={isFetching}
+        onRowClick={setModalItem}
+      />
+      <SysPager page={list.page} pageSize={SYS_PAGE_SIZE} total={data?.totalElements ?? 0} onChange={list.setPage} />
 
       {modalItem !== undefined && (
-        <ScreenModal item={modalItem} canWrite={canWrite} onClose={() => setModalItem(undefined)} onSaved={clearSelection} />
+        <ScreenModal
+          key={modalItem?.scrnId ?? 'new'}
+          item={modalItem}
+          canWrite={canWrite}
+          onClose={() => setModalItem(undefined)}
+        />
       )}
-    </div>
-  );
-}
-
-function ScreenModal({ item, canWrite, onClose, onSaved }: { item: ScreenItem | null; canWrite: boolean; onClose: () => void; onSaved: () => void }) {
-  const isCreate = item === null;
-  const { toast } = useNotify();
-  const [scrnId, setScrnId] = useState(item?.scrnId ?? '');
-  const [prgrmCd, setPrgrmCd] = useState(item?.prgrmCd ?? '');
-  const [scrnExpln, setScrnExpln] = useState(item?.scrnExpln ?? '');
-  const [scrnSeq, setScrnSeq] = useState<number>(item?.scrnSeq ?? 1);
-  const [useYn, setUseYn] = useState<'Y' | 'N'>(item?.useYn ?? 'Y');
-
-  const { data: programOptions } = useProgramOptions();
-  const saveScreen = useSaveScreen();
-
-  const handleSave = async () => {
-    if (!scrnId.trim() || !prgrmCd.trim()) {
-      toast.warning('Enter Screen ID and Program Code.');
-      return;
-    }
-    try {
-      const req = {
-        scrnId: scrnId.trim(),
-        prgrmCd: prgrmCd.trim(),
-        scrnExpln: scrnExpln.trim() || undefined,
-        scrnSeq,
-        useYn,
-      };
-      await saveScreen.mutateAsync({ scrnId: isCreate ? null : item.scrnId, request: req });
-      toast.success('Saved.');
-      onSaved();
-      onClose();
-    } catch (e) {
-      toast.error(errorMessage(e));
-    }
-  };
-
-  return (
-    <Modal open width={760} centered title={isCreate ? 'Register Screen' : 'Edit Screen'} onCancel={onClose} footer={
-      <div className={styles.modalFooter}>
-        <button type="button" className={styles.btn} onClick={onClose}>Cancel</button>
-        <button type="button" className={styles.btnDark} disabled={!canWrite} onClick={handleSave}>Confirm</button>
-      </div>
-    }>
-      <div className={styles.formGrid} style={{ '--form-cols': 2 } as CSSProperties}>
-        <FormField label="Screen ID" required><Input value={scrnId} disabled={!isCreate} maxLength={20} placeholder="e.g. AD_SYS_040200" onChange={(e) => setScrnId(e.target.value)} /></FormField>
-        <FormField label="Program Code" required>
-          <Select
-            showSearch
-            className={styles.wFull}
-            value={prgrmCd || undefined}
-            placeholder="Select program"
-            onChange={setPrgrmCd}
-            options={(programOptions ?? []).map((p) => ({ value: p.prgrmCd, label: `${p.prgrmCd} (${p.prgrmNm})` }))}
-          />
-        </FormField>
-        <FormField label="Order" required><InputNumber min={0} max={99} value={scrnSeq} onChange={(v) => setScrnSeq(v ?? 1)} /></FormField>
-        <FormField label="Use" required>
-          <Radio.Group value={useYn} onChange={(e) => setUseYn(e.target.value)}><Radio value="Y">Used</Radio><Radio value="N">Unused</Radio></Radio.Group>
-        </FormField>
-        <FormField label="Description" span="full"><Input.TextArea rows={3} value={scrnExpln} maxLength={4000} onChange={(e) => setScrnExpln(e.target.value)} /></FormField>
-      </div>
-    </Modal>
+    </SysPage>
   );
 }
