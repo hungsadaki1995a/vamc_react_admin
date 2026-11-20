@@ -35,6 +35,13 @@ export function formatDuration(ms?: number | null): string {
   return `${pad(Math.floor(total / 3600))}:${pad(Math.floor((total % 3600) / 60))}:${pad(total % 60)}`;
 }
 
+const COUNT_FORMAT = new Intl.NumberFormat('vi-VN');
+
+/** `1.245` as in the design; `-` when unknown. */
+export function formatCount(value?: number | null): string {
+  return value === undefined || value === null ? '-' : COUNT_FORMAT.format(value);
+}
+
 const CRON_FIELD = /^[0-9A-Za-z*?/,\-#]+$/;
 
 /** Spring 6-field cron (sec min hour day month weekday); the server re-checks (BAT004). */

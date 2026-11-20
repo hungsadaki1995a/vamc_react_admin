@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Input, Select } from 'antd';
 import type { TableColumnsType } from 'antd';
-import { SyncOutlined } from '@ant-design/icons';
 import { useNotify } from '@/hooks/use-notify';
 import { useMenuPermission } from '@/hooks/use-menu-permission';
 import type { BatchJobItem, BatchJobSearch } from '@/api/system/batch-api';
@@ -42,10 +41,10 @@ const COLUMNS: TableColumnsType<BatchJobItem> = [
     align: 'center',
     render: (value: boolean) => <UseBadge value={value} />,
   },
-  { title: 'Job Name', dataIndex: 'btchJobNm', width: 220, render: (value: string) => <span className={styles.link}>{value}</span> },
-  { title: 'Group', dataIndex: 'btchGroup', width: 110, align: 'center' },
+  { title: 'Job Name', dataIndex: 'btchJobNm', width: 220 },
+  { title: 'Group', dataIndex: 'btchGroup', width: 120 },
   { title: 'Description', dataIndex: 'jobExpln', ellipsis: true },
-  { title: 'Cron', dataIndex: 'cronExpression', width: 140, align: 'center', render: (value?: string) => value || '-' },
+  { title: 'Cron', dataIndex: 'cronExpression', width: 150, render: (value?: string) => value || '-' },
   {
     title: 'Last Run',
     dataIndex: 'lastExcnAt',
@@ -135,9 +134,12 @@ export default function BatchManagement() {
         actions={
           <>
             {canWrite && (
-              <SysButton icon={<SyncOutlined />} loading={refresh.isPending} onClick={refreshSchedule}>
-                Refresh Schedule
-              </SysButton>
+              <>
+                <SysButton loading={refresh.isPending} onClick={refreshSchedule}>
+                  Refresh Schedule
+                </SysButton>
+                <span className={styles.actionDivider} />
+              </>
             )}
             <SysExcelButton loading={download.isPending} onClick={() => download.mutate(list.applied)} />
           </>

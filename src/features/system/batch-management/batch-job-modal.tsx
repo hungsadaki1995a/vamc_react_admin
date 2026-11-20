@@ -136,8 +136,9 @@ export default function BatchJobModal({ job, canWrite, onClose, onOpenHistory }:
     });
   };
 
+  // [Run Now] [Execution History] sit on the left of the footer, [Cancel] [Edit] on the right.
   const extraActions = isEdit && (
-    <>
+    <span className={styles.footerLeft}>
       {canWrite && (
         // Disabled by the saved Use value, not the edited one.
         <SysButton disabled={!job.scheduleVtlzYn} loading={execute.isPending} onClick={runNow}>
@@ -145,7 +146,7 @@ export default function BatchJobModal({ job, canWrite, onClose, onOpenHistory }:
         </SysButton>
       )}
       <SysButton onClick={() => onOpenHistory(job.btchJobNm)}>Execution History</SysButton>
-    </>
+    </span>
   );
 
   return (
@@ -174,7 +175,8 @@ export default function BatchJobModal({ job, canWrite, onClose, onOpenHistory }:
             />
           )}
         </SysField>
-        <SysField label="Group" required error={errors.btchGroup} hint={isEdit ? undefined : 'Filled from the job.'}>
+        <SysField label="Group" required error={errors.btchGroup}>
+          {/* Filled from the selected job (the server rejects a group that differs from the code: BAT008). */}
           <Select
             placeholder="Select"
             value={values.btchGroup || undefined}
@@ -200,7 +202,7 @@ export default function BatchJobModal({ job, canWrite, onClose, onOpenHistory }:
             onChange={(e) => change({ cronExpression: e.target.value })}
           />
         </SysField>
-        <SysField label="Description" span="full">
+        <SysField label="Description">
           <Input
             value={values.jobExpln}
             maxLength={500}
@@ -208,11 +210,10 @@ export default function BatchJobModal({ job, canWrite, onClose, onOpenHistory }:
             onChange={(e) => change({ jobExpln: e.target.value })}
           />
         </SysField>
-        <SysField label="Parameters" span="full" error={errors.jobParameters}>
-          <Input.TextArea
+        <SysField label="Parameters" error={errors.jobParameters}>
+          <Input
             value={values.jobParameters}
-            placeholder='e.g. {"days": 90}'
-            autoSize={{ minRows: 3, maxRows: 8 }}
+            placeholder='JSON format (e.g. {"days":30})'
             disabled={!canWrite}
             onChange={(e) => change({ jobParameters: e.target.value })}
             className={styles.code}

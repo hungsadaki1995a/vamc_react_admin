@@ -1,14 +1,14 @@
 import { useMemo, useState } from 'react';
+import { Button } from 'antd';
 import type { TableColumnsType } from 'antd';
 import { useNotify } from '@/hooks/use-notify';
 import type { BatchHistoryItem } from '@/api/system/batch-api';
 import { SYS_PAGE_SIZE } from '@/features/system/_shared/sys-constants';
 import { SYS_DIALOG_LABELS } from '@/features/system/_shared/sys-messages';
-import { DateTimeText, ResultBadge, SysButton, SysPager, SysTable, UseBadge } from '@/features/system/_shared/sys-list-ui';
-import { SysField, SysFieldGrid, SysFormModal, SysFormSection } from '@/features/system/_shared/sys-form-ui';
-import { rowNumber } from '@/features/system/_shared/system-utils';
+import { DateTimeText, ResultBadge, SysPager, SysTable, UseBadge } from '@/features/system/_shared/sys-list-ui';
+import { SysFormModal } from '@/features/system/_shared/sys-form-ui';
 import { useSysDialogs } from '@/features/system/_shared/use-sys-dialogs';
-import { BATCH_MESSAGES, formatDuration, runErrorMessage, toResult } from './batch-utils';
+import { BATCH_MESSAGES, formatCount, formatDuration, runErrorMessage, toResult } from './batch-utils';
 import { useBatchHistory, useBatchJob, useExecuteBatchJob } from './use-batch-jobs';
 import styles from './batch-management.module.scss';
 
@@ -51,20 +51,19 @@ export default function BatchHistoryModal({ jobName, onClose, allowRerun = false
       title: 'No',
       key: 'no',
       width: 70,
-      align: 'center',
-      render: (_value, _row, index) => rowNumber(total, page, SYS_PAGE_SIZE, index),
+      // Newest first, numbered from 1 as in the design.
+      render: (_value, _row, index) => (page - 1) * SYS_PAGE_SIZE + index + 1,
     },
     {
       title: 'Run At',
       dataIndex: 'bgngDt',
       width: 170,
-      align: 'center',
       render: (value?: string) => <DateTimeText value={value} seconds />,
     },
     {
       title: 'Result',
       dataIndex: 'btchStts',
-      width: 100,
+      width: 90,
       align: 'center',
       render: (value?: string) => <ResultBadge value={toResult(value)} />,
     },
@@ -72,14 +71,12 @@ export default function BatchHistoryModal({ jobName, onClose, allowRerun = false
       title: 'Processed',
       dataIndex: 'tprcsNocs',
       width: 100,
-      align: 'right',
-      render: (value?: number) => (value === undefined || value === null ? '-' : value.toLocaleString('en-US')),
+      render: (value?: number) => formatCount(value),
     },
     {
       title: 'Duration',
       dataIndex: 'prgrsHr',
-      width: 110,
-      align: 'center',
+      width: 120,
       render: (value?: number) => formatDuration(value),
     },
     {
@@ -88,44 +85,50 @@ export default function BatchHistoryModal({ jobName, onClose, allowRerun = false
       render: (value: string | undefined, row) =>
         row.btchStts === 'FAILED' && value ? <span className={styles.errorText}>{value}</span> : '-',
     },
-    ...(allowRerun
-      ? [
-          {
-            title: 'Rerun',
-            key: 'rerun',
-            width: 90,
-            align: 'center' as const,
-            render: (_value: unknown, row: BatchHistoryItem) =>
-              row.btchStts === 'FAILED' ? (
-                <SysButton size="small" loading={execute.isPending} onClick={rerun}>
-                  Rerun
-                </SysButton>
-              ) : null,
-          },
-        ]
-      : []),
+    {
+      title: 'Rerun',
+      key: 'rerun',
+      width: 90,
+      render: (_value, row) =>
+        // Rerun needs Batch write permission; from Exchange Rate the column shows '-'.
+        allowRerun && row.btchStts === 'FAILED' ? (
+          <Button type="link" size="small" className={styles.linkButton} disabled={execute.isPending} onClick={rerun}>
+            Rerun
+          </Button>
+        ) : (
+          '-'
+        ),
+    },
   ];
 
   return (
     <SysFormModal open title="Batch Execution History" onCancel={onClose} width={1080}>
-      <SysFormSection title="Job Information">
-        <SysFieldGrid columns={2}>
-          <SysField label="Job Name">{jobName}</SysField>
-          <SysField label="Group">{job?.btchGroup ?? '-'}</SysField>
-          <SysField label="Cron">{job?.cronExpression || '-'}</SysField>
-          <SysField label="Use">{job ? <UseBadge value={job.scheduleVtlzYn} /> : '-'}</SysField>
-        </SysFieldGrid>
-      </SysFormSection>
-      <SysFormSection title="Execution History">
-        <SysTable<BatchHistoryItem>
-          rowKey="btchHstryId"
-          columns={columns}
-          dataSource={data?.content}
-          loading={isFetching && !data}
-          className={styles.historyTable}
-        />
-        <SysPager page={page} pageSize={SYS_PAGE_SIZE} total={total} onChange={setPage} />
-      </SysFormSection>
+      <div className={styles.jobInfo}>
+        <span className={styles.jobInfoItem}>
+          <span className={styles.jobInfoLabel}>Job Name</span>
+          {jobName}
+        </span>
+        <span className={styles.jobInfoItem}>
+          <span className={styles.jobInfoLabel}>Group</span>
+          {job?.btchGroup ?? '-'}
+        </span>
+        <span className={styles.jobInfoItem}>
+          <span className={styles.jobInfoLabel}>Cron</span>
+          {job?.cronExpression || '-'}
+        </span>
+        <span className={styles.jobInfoItem}>
+          <span className={styles.jobInfoLabel}>Use</span>
+          {job ? <UseBadge value={job.scheduleVtlzYn} /> : '-'}
+        </span>
+      </div>
+      <SysTable<BatchHistoryItem>
+        rowKey="btchHstryId"
+        columns={columns}
+        dataSource={data?.content}
+        loading={isFetching && !data}
+        className={styles.historyTable}
+      />
+      <SysPager page={page} pageSize={SYS_PAGE_SIZE} total={total} onChange={setPage} />
     </SysFormModal>
   );
 }
