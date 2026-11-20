@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
-import { Checkbox, Input, Select, Upload } from 'antd';
+import { Checkbox, Input, Select, Tooltip, Upload } from 'antd';
 import type { TableColumnsType } from 'antd';
-import { ReloadOutlined, UploadOutlined } from '@ant-design/icons';
+import { UploadOutlined } from '@ant-design/icons';
 import { useNotify } from '@/hooks/use-notify';
 import { useMenuPermission } from '@/hooks/use-menu-permission';
 import type { LabelKey, LabelListItem, LabelSearch } from '@/api/system/label-management-api';
@@ -9,7 +9,6 @@ import { SYS_PAGE_SIZE } from '@/features/system/_shared/sys-constants';
 import { SYS_DIALOG_LABELS } from '@/features/system/_shared/sys-messages';
 import {
   DateTimeText,
-  StatusBadge,
   SysButton,
   SysExcelButton,
   SysFilterItem,
@@ -162,8 +161,7 @@ export default function LabelManagement() {
     {
       title: 'Type',
       key: 'sysSeCd',
-      width: 80,
-      align: 'center',
+      width: 70,
       // TODO(schema): SYS_SE_CD pending; the API omits it.
       render: (_value, row) => (row.sysSeCd === 'W' ? 'Web' : row.sysSeCd === 'A' ? 'Admin' : '-'),
     },
@@ -171,7 +169,6 @@ export default function LabelManagement() {
       title: 'Scope',
       dataIndex: 'scopeCd',
       width: 100,
-      align: 'center',
       render: (value: string) => (value === 'C' ? 'Common' : 'Business'),
     },
     {
@@ -194,19 +191,17 @@ export default function LabelManagement() {
     {
       title: 'Translation',
       dataIndex: 'missingCnt',
-      width: 120,
-      align: 'center',
+      width: 110,
       render: (value: number) =>
-        value > 0 ? <StatusBadge tone="red">Missing {value}</StatusBadge> : <StatusBadge tone="green">Complete</StatusBadge>,
+        value > 0 ? <span className={styles.missing}>Missing {value}</span> : 'Complete',
     },
     {
       title: 'Modified Date',
       dataIndex: 'mdfcnDt',
       width: 150,
-      align: 'center',
       render: (value?: string) => <DateTimeText value={value} />,
     },
-    { title: 'Modified By', dataIndex: 'mdfcnBy', width: 120, align: 'center' },
+    { title: 'Modified By', dataIndex: 'mdfcnBy', width: 120 },
   ];
 
   const total = data?.totalElements ?? 0;
@@ -218,10 +213,14 @@ export default function LabelManagement() {
         title="i18n Label Management"
         breadcrumb={['System Operation Management', 'System Management', 'i18n Label Management']}
       />
-      <SysFilterPanel columns={2}>
+      <SysFilterPanel columns={4}>
         <SysFilterItem label="Type">
-          <Select options={TYPE_FILTER_OPTIONS} value={list.draft.sysSeCd} disabled />
-          <span className={styles.filterNote}>{LABEL_MESSAGES.typeNotAvailable}</span>
+          {/* TODO(schema): SYS_SE_CD pending — disabled, never sent. */}
+          <Tooltip title={LABEL_MESSAGES.typeNotAvailable}>
+            <span className={styles.typeFilter}>
+              <Select options={TYPE_FILTER_OPTIONS} value={list.draft.sysSeCd} disabled className={styles.fullWidth} />
+            </span>
+          </Tooltip>
         </SysFilterItem>
         <SysFilterItem label="Label Key">
           <Input
@@ -254,18 +253,21 @@ export default function LabelManagement() {
       />
 
       <SysSplit
-        ratio="3fr 2fr"
+        ratio="7fr 4fr"
         left={
           <>
             <SysSectionHeader
+              // The design titles the list with the Type filter value ("All | Total n").
+              title="All"
               total={total}
               actions={
                 <>
                   {canWrite && (
                     <>
-                      <SysButton icon={<ReloadOutlined />} loading={reloadCache.isPending} onClick={refreshCache}>
+                      <SysButton loading={reloadCache.isPending} onClick={refreshCache}>
                         Refresh Cache
                       </SysButton>
+                      <span className={styles.actionDivider} />
                       <Upload
                         accept=".xlsx"
                         showUploadList={false}

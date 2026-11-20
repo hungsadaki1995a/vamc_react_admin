@@ -10,11 +10,29 @@ $danger: var(--color-text-negative, #e62e44);
   width: 100%;
 }
 
-.filterNote {
-  flex: 0 0 auto;
-  font-size: 12px;
-  color: $text-sub;
-  white-space: nowrap;
+.typeFilter {
+  display: flex;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+/* Divider between [Refresh Cache] and the Excel buttons (design groups). */
+.actionDivider {
+  width: 1px;
+  height: 24px;
+  margin: 0 6px;
+  background: var(--color-border-primary, #d1d1e0);
+}
+
+/* Edit popup: [Delete] pinned left. */
+.footerLeft {
+  display: flex;
+  gap: 6px;
+  margin-right: auto;
+}
+
+.missing {
+  color: $danger;
 }
 
 /* Label Key cell: opens the edit popup. */
@@ -39,14 +57,21 @@ $danger: var(--color-text-negative, #e62e44);
 /* ── Text by Language ───────────────────────────────────────────────────── */
 .panelTitle {
   display: inline-flex;
-  align-items: baseline;
+  align-items: center;
   gap: 8px;
   min-width: 0;
 }
 
+.titleDivider {
+  align-self: center;
+  width: 1px;
+  height: 14px;
+  background: var(--color-border-primary, #d1d1e0);
+}
+
 .panelKey {
   overflow: hidden;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 400;
   color: $text-sub;
   text-overflow: ellipsis;
@@ -57,11 +82,6 @@ $danger: var(--color-text-negative, #e62e44);
   display: flex;
   flex-direction: column;
   gap: 8px;
-}
-
-.requiredMark {
-  margin-left: 2px;
-  color: $danger;
 }
 
 .textCell {
@@ -91,7 +111,7 @@ $danger: var(--color-text-negative, #e62e44);
 }
 
 .editingRow > td {
-  background: #fffbe6 !important;
+  background: #eaf6ff !important;
 }
 
 .panelError {

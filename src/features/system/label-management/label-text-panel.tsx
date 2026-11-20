@@ -97,14 +97,8 @@ export default function LabelTextPanel({
     {
       title: 'Language',
       dataIndex: 'langNm',
-      width: 140,
-      align: 'center',
-      render: (value: string, row) => (
-        <span>
-          {value}
-          {row.langCd === DEFAULT_LANG_CD && <span className={styles.requiredMark}>*</span>}
-        </span>
-      ),
+      width: '45%',
+      render: (value: string, row) => (row.langCd === DEFAULT_LANG_CD ? `${value} (default)` : value),
     },
     {
       title: 'Text',
@@ -139,7 +133,12 @@ export default function LabelTextPanel({
         title={
           <span className={styles.panelTitle}>
             Text by Language
-            {selected && <span className={styles.panelKey}>{selected.lblCd}</span>}
+            {selected && (
+              <>
+                <span className={styles.titleDivider} />
+                <span className={styles.panelKey}>{selected.lblCd}</span>
+              </>
+            )}
           </span>
         }
         primaryActions={

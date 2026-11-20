@@ -166,7 +166,7 @@ export default function LabelModal({ label, canWrite, onClose, onSaved, onDelete
   return (
     <SysFormModal
       open
-      title={isEdit ? 'Edit Label' : 'Register Label'}
+      title={isEdit ? 'Edit i18n Label' : 'Register i18n Label'}
       submitText={isEdit ? 'Edit' : 'Register'}
       onSubmit={canWrite ? (isEdit ? edit : register) : undefined}
       submitting={createLabel.isPending || updateLabel.isPending}
@@ -174,9 +174,12 @@ export default function LabelModal({ label, canWrite, onClose, onSaved, onDelete
       extraActions={
         isEdit &&
         canWrite && (
-          <SysButton danger loading={deleteLabel.isPending} onClick={remove}>
-            Delete
-          </SysButton>
+          // [Delete] sits on the left of the footer (solid red), [Cancel] [Edit] on the right.
+          <span className={styles.footerLeft}>
+            <SysButton look="primary" danger loading={deleteLabel.isPending} onClick={remove}>
+              Delete
+            </SysButton>
+          </span>
         )
       }
     >
@@ -193,7 +196,7 @@ export default function LabelModal({ label, canWrite, onClose, onSaved, onDelete
             onChange={(e) => changeScope(e.target.value as Scope)}
           />
         </SysField>
-        <SysField label="Screen ID" required error={errors.scrnId}>
+        <SysField label="Screen ID" required span="full" error={errors.scrnId}>
           <Input
             value={values.scrnId}
             maxLength={20}
@@ -221,15 +224,14 @@ export default function LabelModal({ label, canWrite, onClose, onSaved, onDelete
             onChange={(e) => change({ code: e.target.value })}
           />
         </SysField>
-        <SysField label="Label Key" hint={isEdit ? undefined : 'Generated on [Register].'}>
+        <SysField label="Label Key" span="full">
           <Input value={labelKey} placeholder="[Screen ID].[Label Type]_[Label Code]" disabled />
         </SysField>
         <SysField label="Description" span="full">
           <Input.TextArea
             value={values.lblExpln}
             maxLength={4000}
-            autoSize={{ minRows: 3, maxRows: 6 }}
-            placeholder="Admin memo, not shown on user screens"
+            autoSize={{ minRows: 5, maxRows: 8 }}
             disabled={!canWrite}
             onChange={(e) => change({ lblExpln: e.target.value })}
           />
