@@ -1,0 +1,111 @@
+/* Exchange Rate Management (VPA09010401): Sync Status card, rates + recent runs side by side. */
+
+$border: var(--color-border-secondary, #e2e5eb);
+$panel-bg: var(--color-bg-secondary, #f6f6f9);
+$text: var(--color-text-primary, #3a404a);
+$text-sub: var(--color-text-secondary, #6f7b95);
+
+.syncPanel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 14px 16px 16px;
+  border: 1px solid $border;
+  border-radius: 4px;
+  background: $panel-bg;
+}
+
+.syncHeader,
+.blockHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 32px;
+}
+
+.blockTitle {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: $text;
+}
+
+.syncCard {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  padding: 16px 0;
+  border-radius: 4px;
+  background: var(--color-bg-primary, #ffffff);
+}
+
+.syncItem {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+  padding: 0 20px;
+}
+
+.syncItem + .syncItem {
+  border-left: 1px solid $border;
+}
+
+.syncLabel {
+  font-size: 13px;
+  color: $text-sub;
+}
+
+.syncValue {
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 28px;
+  color: $text;
+}
+
+.syncBadge {
+  display: flex;
+  align-items: center;
+  min-height: 28px;
+}
+
+.syncText {
+  font-size: 14px;
+  line-height: 28px;
+  color: $text;
+}
+
+.failedNote {
+  margin: 0;
+  font-size: 13px;
+  color: var(--color-text-negative, #e62e44);
+}
+
+.columns {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  gap: 24px;
+  align-items: start;
+}
+
+.block {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+@media (max-width: 1100px) {
+  .syncCard {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    row-gap: 16px;
+  }
+
+  .syncItem:nth-child(3) {
+    border-left: none;
+  }
+
+  .columns {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
