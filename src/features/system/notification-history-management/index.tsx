@@ -69,41 +69,42 @@ function toSearch(filter: HistoryFilter): NotificationHistorySearch {
   };
 }
 
-const columns: TableColumnsType<NotificationHistoryItem> = [
-  { title: 'No', dataIndex: 'no', align: 'center', width: 70 },
-  // Code / Service wait for the LOG_NOTI_SNDNG schema change.
-  { title: 'Code', key: 'code', align: 'center', width: 100, render: () => '-' },
-  {
-    title: 'Channel',
-    dataIndex: 'notiMediaSe',
-    key: 'notiMediaSe',
-    align: 'center',
-    width: 120,
-    sorter: true,
-    render: (v: NotiChannel) => NOTI_CHANNEL_LABELS[v] ?? v,
-  },
-  { title: 'Service', key: 'service', align: 'center', width: 120, render: () => '-' },
-  { title: 'Title', dataIndex: 'notiTtl', key: 'notiTtl', sorter: true },
-  { title: 'Recipient', dataIndex: 'notiRcvrId', align: 'center', width: 160, render: (v?: string) => v || '-' },
-  {
-    title: 'Send Result',
-    dataIndex: 'sndngScsYn',
-    key: 'sndngScsYn',
-    align: 'center',
-    width: 120,
-    sorter: true,
-    render: (v: YesNo) => <ResultBadge value={v} />,
-  },
-  {
-    title: 'Sent At',
-    dataIndex: 'notiSndngDt',
-    key: 'notiSndngDt',
-    align: 'center',
-    width: 180,
-    sorter: true,
-    render: (v?: string) => <DateTimeText value={v} seconds />,
-  },
-];
+/** Frame column order and alignment; No counts from 1 on the newest row of each page. */
+function buildColumns(page: number): TableColumnsType<NotificationHistoryItem> {
+  return [
+    { title: 'No', key: 'no', width: 70, render: (_: unknown, __, index) => (page - 1) * SYS_PAGE_SIZE + index + 1 },
+    // Code / Service wait for the LOG_NOTI_SNDNG schema change.
+    { title: 'Code', key: 'code', align: 'center', width: 130, render: () => '-' },
+    {
+      title: 'Channel',
+      dataIndex: 'notiMediaSe',
+      key: 'notiMediaSe',
+      width: 120,
+      sorter: true,
+      render: (v: NotiChannel) => NOTI_CHANNEL_LABELS[v] ?? v,
+    },
+    { title: 'Service', key: 'service', width: 160, render: () => '-' },
+    { title: 'Title', dataIndex: 'notiTtl', key: 'notiTtl', sorter: true },
+    { title: 'Recipient', dataIndex: 'notiRcvrId', width: 200, render: (v?: string) => v || '-' },
+    {
+      title: 'Send Result',
+      dataIndex: 'sndngScsYn',
+      key: 'sndngScsYn',
+      align: 'center',
+      width: 120,
+      sorter: true,
+      render: (v: YesNo) => <ResultBadge value={v} />,
+    },
+    {
+      title: 'Sent At',
+      dataIndex: 'notiSndngDt',
+      key: 'notiSndngDt',
+      width: 180,
+      sorter: true,
+      render: (v?: string) => <DateTimeText value={v} seconds />,
+    },
+  ];
+}
 
 export default function NotificationHistoryManagement() {
   const { alert } = useSysDialogs();
@@ -158,23 +159,21 @@ export default function NotificationHistoryManagement() {
             onChange={(period) => setDraftPeriod(period)}
           />
         </SysFilterItem>
-        <SysFilterItem label="Search" span={2}>
-          <div className={styles.searchGroup}>
-            <Select
-              className={styles.searchType}
-              value={list.draft.searchType}
-              options={SEARCH_TYPE_OPTIONS}
-              onChange={(searchType) => list.setDraft({ searchType })}
-            />
-            <Input
-              value={list.draft.keyword}
-              placeholder="Content"
-              allowClear
-              maxLength={100}
-              onChange={(e) => list.setDraft({ keyword: e.target.value })}
-              onPressEnter={handleSearch}
-            />
-          </div>
+        <SysFilterItem label="Search">
+          <Select
+            value={list.draft.searchType}
+            options={SEARCH_TYPE_OPTIONS}
+            onChange={(searchType) => list.setDraft({ searchType })}
+          />
+        </SysFilterItem>
+        <SysFilterItem label="Content">
+          <Input
+            value={list.draft.keyword}
+            allowClear
+            maxLength={100}
+            onChange={(e) => list.setDraft({ keyword: e.target.value })}
+            onPressEnter={handleSearch}
+          />
         </SysFilterItem>
       </SysFilterPanel>
       <SysSearchActions onReset={handleReset} onSearch={handleSearch} loading={isFetching} />
@@ -185,7 +184,7 @@ export default function NotificationHistoryManagement() {
       />
       <SysTable<NotificationHistoryItem>
         rowKey="logId"
-        columns={columns}
+        columns={buildColumns(list.page)}
         dataSource={data?.content ?? []}
         loading={isFetching}
         onRowClick={(row) => setDetailId(row.logId)}

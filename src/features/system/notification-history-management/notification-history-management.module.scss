@@ -4,30 +4,31 @@
   width: 100%;
 }
 
-.searchGroup {
-  display: flex;
-  gap: 8px;
+/* Grey read-only boxes of the detail popup. */
+.readOnly {
+  background: var(--color-bg-secondary, #f6f6f9);
+}
+
+.valueBox {
   width: 100%;
-}
-
-.searchType {
-  flex: 0 0 130px;
-  width: 130px;
-}
-
-.preText {
+  padding: 8px 11px;
+  border: 1px solid var(--color-border-secondary, #e2e5eb);
+  border-radius: 6px;
+  background: var(--color-bg-secondary, #f6f6f9);
   white-space: pre-wrap;
   word-break: break-word;
+  line-height: 1.6;
+}
+
+.failText {
+  color: var(--color-text-negative, #e62e44);
 }
 
 /* Long content scrolls inside the area. */
 .contentBox {
-  width: 100%;
+  min-height: 120px;
   max-height: 320px;
   overflow-y: auto;
-  white-space: pre-wrap;
-  word-break: break-word;
-  line-height: 1.6;
 }
 
 .errorText {
