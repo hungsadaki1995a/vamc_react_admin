@@ -1,95 +1,71 @@
 import { keepPreviousData } from '@tanstack/react-query';
 import { useApiQuery } from '@/hooks/use-api-query';
-import { useApiAction, useApiTask } from '@/hooks/use-api-action';
+import { useApiAction, useApiDownload } from '@/hooks/use-api-action';
 import {
   createEmployee,
   deleteEmployee,
+  downloadEmployeesExcel,
   getEmployee,
   getEmployees,
   resetEmployeePassword,
   updateEmployee,
 } from '@/api/system/employee-api';
 import type {
-  CreateEmployeeRequest,
   Employee,
   EmployeeDetail,
   EmployeeSearch,
   UpdateEmployeeRequest,
 } from '@/api/system/employee-api';
-import type { PageResponse } from '@/api/common/api-utils';
+import type { PageQuery, PageResponse } from '@/api/common/api-utils';
 
-// Data hooks of User Management (VPA004501 / VPA0045P01).
+// Data hooks of User Management (VPA09020201 / VPA090202P01).
 
 const EMPLOYEE_KEYS = {
   all: ['system', 'employees'] as const,
-  list: (search: EmployeeSearch, page: number, size: number) =>
-    ['system', 'employees', 'list', search, page, size] as const,
+  list: (search: EmployeeSearch, query: PageQuery) => ['system', 'employees', 'list', search, query] as const,
   detail: (empNo: string | null) => ['system', 'employees', 'detail', empNo] as const,
 };
 
-/** Paged employee list (masked rows). */
-export function useEmployees(search: EmployeeSearch, page: number, size: number) {
-  return useApiQuery<PageResponse<Employee>>(
-    EMPLOYEE_KEYS.list(search, page, size),
-    () => getEmployees(search, page, size),
-    { placeholderData: keepPreviousData },
-  );
+/** Paged employee list (20 rows). */
+export function useEmployees(search: EmployeeSearch, query: PageQuery) {
+  return useApiQuery<PageResponse<Employee>>(EMPLOYEE_KEYS.list(search, query), () => getEmployees(search, query), {
+    placeholderData: keepPreviousData,
+  });
 }
 
-/** Unmasked employee detail; skipped while `empNo` is null (register mode). */
+/** Employee detail for the edit popup; skipped while `empNo` is null. */
 export function useEmployee(empNo: string | null) {
   return useApiQuery<EmployeeDetail>(EMPLOYEE_KEYS.detail(empNo), () => getEmployee(empNo as string), {
     enabled: empNo !== null,
     gcTime: 0,
+    retry: false,
   });
 }
 
-export interface DeleteEmployeeFailure {
+export function useEmployeesExcel() {
+  return useApiDownload(downloadEmployeesExcel);
+}
+
+export function useCreateEmployee() {
+  return useApiAction(createEmployee, { invalidate: [EMPLOYEE_KEYS.all] });
+}
+
+export interface UpdateEmployeeVariables {
   empNo: string;
-  error: unknown;
+  request: UpdateEmployeeRequest;
 }
 
-/** Deletes employees one by one (the API takes one per call) and resolves the rejected ones. */
-export function useDeleteEmployees() {
-  return useApiTask(
-    async (empNos: string[]) => {
-      const failed: DeleteEmployeeFailure[] = [];
-      for (const empNo of empNos) {
-        try {
-          await deleteEmployee(empNo);
-        } catch (error) {
-          failed.push({ empNo, error });
-        }
-      }
-      return failed;
-    },
-    { invalidate: [EMPLOYEE_KEYS.all] },
-  );
+export function useUpdateEmployee() {
+  return useApiAction(({ empNo, request }: UpdateEmployeeVariables) => updateEmployee(empNo, request), {
+    invalidate: [EMPLOYEE_KEYS.all],
+  });
 }
 
-export type SaveEmployeeVariables =
-  | { empNo: null; request: CreateEmployeeRequest }
-  | { empNo: string; request: UpdateEmployeeRequest };
-
-/** Registers (`empNo` null) or fully overwrites an employee. */
-export function useSaveEmployee() {
-  return useApiAction(
-    (variables: SaveEmployeeVariables) =>
-      variables.empNo === null
-        ? createEmployee(variables.request)
-        : updateEmployee(variables.empNo, variables.request),
-    { invalidate: [EMPLOYEE_KEYS.all] },
-  );
+export function useDeleteEmployee() {
+  return useApiAction(deleteEmployee, { invalidate: [EMPLOYEE_KEYS.all] });
 }
 
-export interface ResetEmployeePasswordVariables {
-  empNo: string;
-  newPassword: string;
-}
-
+/** Mails a new temporary password, unlocks the account and resets P/W Fail. */
 export function useResetEmployeePassword() {
-  return useApiAction(
-    ({ empNo, newPassword }: ResetEmployeePasswordVariables) => resetEmployeePassword(empNo, newPassword),
-    { invalidate: [EMPLOYEE_KEYS.all] },
-  );
+  return useApiAction(resetEmployeePassword, { invalidate: [EMPLOYEE_KEYS.all] });
 }

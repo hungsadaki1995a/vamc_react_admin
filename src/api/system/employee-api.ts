@@ -1,14 +1,17 @@
-import { apiDelete, apiGet, apiPost, apiPut } from '@/api/common/api-utils';
-import type { PageResponse } from '@/api/common/api-utils';
+import { apiDelete, apiDownload, apiGet, apiPost, apiPut } from '@/api/common/api-utils';
+import type { PageQuery, PageResponse } from '@/api/common/api-utils';
 
 // User (employee) Management API — EmployeeController (`/api/v1/employees`).
-// Guard menu A06020200. Screens VPA004501 (list) / VPA0045P01 (popup); the lookup
-// endpoint also serves the "Select Person in Charge" popup (VPA0046P01).
+// Screens VPA09020201 (list) / VPA090202P01 (popup); the lookup endpoint also serves
+// the Staff Search popup of User Group Management (VPA09020301).
 
-/** COM_CD EMP_STTS_CD — H employed, L leave / locked, R retired, S suspended. */
+/** COM_CD EMP_STTS_CD — H employed, L on leave, S suspended, R resigned. */
 export type EmpStatus = 'H' | 'L' | 'R' | 'S';
 
-/** List row — e-mail and mobile are masked by the server. */
+/** Login lock state derived by the server from the password fail count. */
+export type AccountStatus = 'ACTIVE' | 'LOCKED';
+
+/** List row. */
 export interface Employee {
   empNo: string;
   empNm: string;
@@ -18,40 +21,62 @@ export interface Employee {
   empSttsCd: EmpStatus;
   jbpsNm?: string;
   pswdFailNmtm?: number;
+  acntSttsCd?: AccountStatus;
+  createdAt?: string;
   updatedAt?: string;
 }
 
-/** Detail — unmasked. Always load this before editing (update is a full overwrite). */
-export interface EmployeeDetail extends Employee {
+/** Detail — always load this before editing (update is a full overwrite). */
+export interface EmployeeDetail {
+  empNo: string;
+  empNm: string;
+  empEmlAddr?: string;
+  empTelno?: string;
+  empMoblTelno?: string;
+  empSttsCd: EmpStatus;
+  jbpsNm?: string;
+  pswdFailNmtm?: number;
   /** ddMMyyyy */
   pswdChgDmy?: string;
   createdAt?: string;
   createdBy?: string;
+  updatedAt?: string;
   updatedBy?: string;
 }
 
 export interface EmployeeSearch {
   /** LIKE %x% */
   empNo?: string;
-  /** Accepted but ignored by the list endpoint (name column is encrypted). */
   empNm?: string;
-  empSttsCd?: EmpStatus;
 }
 
 export interface UpdateEmployeeRequest {
   empNm: string;
   empEmlAddr: string;
+  /** Max 11 chars. */
   empTelno?: string;
-  empMoblTelno?: string;
+  /** Required, `^\+?[0-9][0-9 .-]{7,18}[0-9]$`. */
+  empMoblTelno: string;
   empSttsCd: EmpStatus;
   jbpsNm?: string;
 }
 
+/** No password: the server generates a temporary one and mails it to the user. */
 export interface CreateEmployeeRequest extends UpdateEmployeeRequest {
   /** `^[a-zA-Z0-9_-]{3,10}$` */
   empNo: string;
-  /** 8–50 chars, sent as plain text and hashed by the server. */
-  password: string;
+}
+
+/** Register answer: the employee plus the temporary-password mail result (the password itself is never returned). */
+export interface CreateEmployeeResponse extends EmployeeDetail {
+  mailSent: boolean;
+  mailSentTo?: string;
+}
+
+export interface ResetPasswordResponse {
+  empNo: string;
+  mailSent: boolean;
+  mailSentTo?: string;
 }
 
 export interface EmployeeLookup {
@@ -71,24 +96,29 @@ export interface EmployeeLookupSearch {
 
 const BASE = '/api/v1/employees';
 
-export const getEmployees = (search: EmployeeSearch, page: number, size: number) =>
-  apiGet<PageResponse<Employee>>(BASE, { ...search, page, size });
+export const getEmployees = (search: EmployeeSearch, query: PageQuery) =>
+  apiGet<PageResponse<Employee>>(BASE, { ...search, ...query });
+
+export const downloadEmployeesExcel = (search: EmployeeSearch) =>
+  apiDownload(`${BASE}/excel`, 'employees.xlsx', search);
 
 export const getEmployee = (empNo: string) => apiGet<EmployeeDetail>(`${BASE}/${empNo}`);
 
+/** Errors: EMP_DUPLICATED (emp no.), EMP001 (email), EMP002 (mobile). */
 export const createEmployee = (request: CreateEmployeeRequest) =>
-  apiPost<EmployeeDetail>(BASE, request);
+  apiPost<CreateEmployeeResponse>(BASE, request);
 
+/** Errors: EMP001, EMP002, EMP009, EMP010, CANNOT_DEACTIVATE_SELF. */
 export const updateEmployee = (empNo: string, request: UpdateEmployeeRequest) =>
   apiPut<EmployeeDetail>(`${BASE}/${empNo}`, request);
 
-/** Sets a new password, resets the fail count and clears the login block. */
-export const resetEmployeePassword = (empNo: string, newPassword: string) =>
-  apiPut<void>(`${BASE}/${empNo}/password`, { newPassword });
+/** Issues a new temporary password by mail, unlocks the account and resets the fail count. */
+export const resetEmployeePassword = (empNo: string) =>
+  apiPost<ResetPasswordResponse>(`${BASE}/${empNo}/reset-password`);
 
-/** Hard delete, one employee per call; the caller cannot delete their own account. */
+/** Hard delete. Errors: CANNOT_DELETE_SELF, EMP003 (has references), EMP004 (last admin), EMP009. */
 export const deleteEmployee = (empNo: string) => apiDelete<void>(`${BASE}/${empNo}`);
 
-/** Active (H) employees only. */
-export const lookupEmployees = (search: EmployeeLookupSearch, page: number, size: number) =>
-  apiGet<PageResponse<EmployeeLookup>>(`${BASE}/lookup`, { ...search, page, size });
+/** Employed (H) staff only. */
+export const lookupEmployees = (search: EmployeeLookupSearch, query: PageQuery) =>
+  apiGet<PageResponse<EmployeeLookup>>(`${BASE}/lookup`, { ...search, ...query });
