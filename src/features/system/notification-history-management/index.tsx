@@ -1,112 +1,199 @@
 import { useState } from 'react';
-import { DatePicker, Input, Select, Table } from 'antd';
+import { Alert, DatePicker, Input, Select } from 'antd';
 import type { TableColumnsType } from 'antd';
 import type { Dayjs } from 'dayjs';
-import type { NotificationHistoryItem } from '@/api/system/notification-api';
-import { DateTimeCell, SysPageHeader, SysPagination } from '@/features/system/_shared/system-ui';
-import { rowNumber } from '@/features/system/_shared/system-utils';
-import styles from '@/features/system/_shared/system-page.module.scss';
+import {
+  NOTI_CHANNEL_LABELS,
+  NOTI_HISTORY_MAX_DAYS,
+  NOTIFICATION_ERRORS,
+} from '@/api/system/notification-api';
+import type {
+  NotiChannel,
+  NotiHistorySearchType,
+  NotificationHistoryItem,
+  NotificationHistorySearch,
+  YesNo,
+} from '@/api/system/notification-api';
+import {
+  DateTimeText,
+  ResultBadge,
+  SysExcelButton,
+  SysFilterItem,
+  SysFilterPanel,
+  SysPage,
+  SysPager,
+  SysSearchActions,
+  SysSectionHeader,
+  SysTable,
+  SysTitleBar,
+} from '../_shared/sys-list-ui';
+import { API_DATE_ISO, SYS_DATE_FORMAT, SYS_PAGE_SIZE } from '../_shared/sys-constants';
+import { apiErrorCode, lastDaysRange } from '../_shared/system-utils';
+import { usePagedList } from '../_shared/use-paged-list';
+import { useSysDialogs } from '../_shared/use-sys-dialogs';
+import NotificationHistoryDetailModal from './notification-history-detail-modal';
 import { useDownloadNotificationHistoriesExcel, useNotificationHistories } from './use-notification-histories';
-import type { NotificationHistorySearch } from './use-notification-histories';
+import styles from './notification-history-management.module.scss';
 
-const PAGE_SIZE = 15;
-type DateRange = [Dayjs | null, Dayjs | null] | null;
+// Notification Send History - List (VPA09050201): view only, searched automatically on entry
+// with the last 7 days (the server requires fromDt / toDt and allows at most 92 days).
 
-/** Notification Send History (menu A06060200). */
+interface HistoryFilter {
+  period: [Dayjs, Dayjs];
+  searchType: NotiHistorySearchType;
+  keyword: string;
+}
+
+type DraftPeriod = [Dayjs | null, Dayjs | null] | null;
+
+const SEARCH_TYPE_OPTIONS: { value: NotiHistorySearchType; label: string }[] = [
+  { value: 'TITLE', label: 'Title' },
+  { value: 'RECIPIENT', label: 'Recipient' },
+];
+
+const MESSAGES = {
+  periodRequired: 'Please select the send period.',
+  periodRange: `The send period can span at most ${NOTI_HISTORY_MAX_DAYS} days.`,
+} as const;
+
+function initialFilter(): HistoryFilter {
+  return { period: lastDaysRange(7), searchType: 'TITLE', keyword: '' };
+}
+
+function toSearch(filter: HistoryFilter): NotificationHistorySearch {
+  return {
+    fromDt: filter.period[0].format(API_DATE_ISO),
+    toDt: filter.period[1].format(API_DATE_ISO),
+    searchType: filter.searchType,
+    keyword: filter.keyword.trim(),
+  };
+}
+
+const columns: TableColumnsType<NotificationHistoryItem> = [
+  { title: 'No', dataIndex: 'no', align: 'center', width: 70 },
+  // Code / Service wait for the LOG_NOTI_SNDNG schema change.
+  { title: 'Code', key: 'code', align: 'center', width: 100, render: () => '-' },
+  {
+    title: 'Channel',
+    dataIndex: 'notiMediaSe',
+    key: 'notiMediaSe',
+    align: 'center',
+    width: 120,
+    sorter: true,
+    render: (v: NotiChannel) => NOTI_CHANNEL_LABELS[v] ?? v,
+  },
+  { title: 'Service', key: 'service', align: 'center', width: 120, render: () => '-' },
+  { title: 'Title', dataIndex: 'notiTtl', key: 'notiTtl', sorter: true },
+  { title: 'Recipient', dataIndex: 'notiRcvrId', align: 'center', width: 160, render: (v?: string) => v || '-' },
+  {
+    title: 'Send Result',
+    dataIndex: 'sndngScsYn',
+    key: 'sndngScsYn',
+    align: 'center',
+    width: 120,
+    sorter: true,
+    render: (v: YesNo) => <ResultBadge value={v} />,
+  },
+  {
+    title: 'Sent At',
+    dataIndex: 'notiSndngDt',
+    key: 'notiSndngDt',
+    align: 'center',
+    width: 180,
+    sorter: true,
+    render: (v?: string) => <DateTimeText value={v} seconds />,
+  },
+];
+
 export default function NotificationHistoryManagement() {
-  const [period, setPeriod] = useState<DateRange>(null);
-  const [notiMediaSe, setNotiMediaSe] = useState('');
-  const [sndngScsYn, setSndngScsYn] = useState('');
-  const [keyword, setKeyword] = useState('');
-  const [applied, setApplied] = useState<NotificationHistorySearch>({});
-  const [page, setPage] = useState(1);
-  const [filterCollapsed, setFilterCollapsed] = useState(false);
-
-  const { data, isFetching } = useNotificationHistories(applied, page, PAGE_SIZE);
-  const downloadExcel = useDownloadNotificationHistoriesExcel();
-  const rows = data?.content ?? [];
+  const { alert } = useSysDialogs();
+  const list = usePagedList<HistoryFilter>(initialFilter);
+  // The period picker may be cleared while editing; the applied filter always has both dates.
+  const [draftPeriod, setDraftPeriod] = useState<DraftPeriod>(list.draft.period);
+  const search = toSearch(list.applied);
+  const { data, isFetching, error } = useNotificationHistories(search, list.pageQuery);
+  const excel = useDownloadNotificationHistoriesExcel();
+  const [detailId, setDetailId] = useState<string | null>(null);
   const total = data?.totalElements ?? 0;
 
   const handleSearch = () => {
-    setApplied({
-      fromDt: period?.[0]?.format('YYYY-MM-DD'),
-      toDt: period?.[1]?.format('YYYY-MM-DD'),
-      notiMediaSe: notiMediaSe || undefined,
-      sndngScsYn: sndngScsYn || undefined,
-      keyword: keyword.trim() || undefined,
-    });
-    setPage(1);
+    const [from, to] = draftPeriod ?? [null, null];
+    if (!from || !to) {
+      alert(MESSAGES.periodRequired);
+      return;
+    }
+    if (to.diff(from, 'day') > NOTI_HISTORY_MAX_DAYS) {
+      alert(MESSAGES.periodRange);
+      return;
+    }
+    list.search({ period: [from, to] });
   };
 
   const handleReset = () => {
-    setPeriod(null);
-    setNotiMediaSe('');
-    setSndngScsYn('');
-    setKeyword('');
-    setApplied({});
-    setPage(1);
+    list.reset();
+    setDraftPeriod(initialFilter().period);
   };
 
-  const columns: TableColumnsType<NotificationHistoryItem> = [
-    { title: 'No', key: 'no', width: 60, align: 'center', render: (_v, _r, i) => rowNumber(total, page, PAGE_SIZE, i) },
-    { title: 'Media', dataIndex: 'notiMediaSe', width: 90, align: 'center' },
-    { title: 'Title', dataIndex: 'notiTtl', width: 280 },
-    { title: 'Receiver', dataIndex: 'notiRcvrId', width: 180 },
-    {
-      title: 'Status',
-      dataIndex: 'sndngScsYn',
-      width: 90,
-      align: 'center',
-      render: (v: string) => <span className={v === 'Y' ? styles.useY : styles.useN}>{v === 'Y' ? 'Success' : 'Failed'}</span>,
-    },
-    { title: 'Sent At', dataIndex: 'notiSndngDt', width: 140, align: 'center', render: (v?: string) => <DateTimeCell value={v} /> },
-    { title: 'Fail Reason', dataIndex: 'failRsn', render: (v?: string) => v || '-' },
-  ];
+  const periodError = apiErrorCode(error) === NOTIFICATION_ERRORS.period;
 
   return (
-    <div className={styles.container}>
-      <SysPageHeader
-        breadcrumb={['System Operation Management', 'Notification Management', 'Notification Send History']}
+    <SysPage>
+      <SysTitleBar
         title="Notification Send History"
-        onReset={handleReset}
-        onSearch={handleSearch}
-        filterCollapsed={filterCollapsed}
-        onToggleFilter={() => setFilterCollapsed((v) => !v)}
+        breadcrumb={['System Operation Management', 'Notification Management', 'Notification Send History']}
       />
-
-      {!filterCollapsed && (
-        <div className={styles.filterCard}>
-          <div className={styles.filterGroup}>
-            <span className={styles.filterLabel}>Period</span>
-            <DatePicker.RangePicker format="DD/MM/YYYY" value={period} onChange={(d) => setPeriod(d as DateRange)} className={styles.w240} />
+      <Alert
+        type="info"
+        showIcon
+        title="Sends are not recorded yet"
+        description="The backend does not write the send history yet, so the list stays empty. Code, Service and the recipient address wait for a schema change; Recipient shows the member / employee number."
+      />
+      <SysFilterPanel>
+        <SysFilterItem label="Send Period">
+          <DatePicker.RangePicker
+            className={styles.rangePicker}
+            value={draftPeriod}
+            format={SYS_DATE_FORMAT}
+            placeholder={['DD-MM-YYYY', 'DD-MM-YYYY']}
+            onChange={(period) => setDraftPeriod(period)}
+          />
+        </SysFilterItem>
+        <SysFilterItem label="Search" span={2}>
+          <div className={styles.searchGroup}>
+            <Select
+              className={styles.searchType}
+              value={list.draft.searchType}
+              options={SEARCH_TYPE_OPTIONS}
+              onChange={(searchType) => list.setDraft({ searchType })}
+            />
+            <Input
+              value={list.draft.keyword}
+              placeholder="Content"
+              allowClear
+              maxLength={100}
+              onChange={(e) => list.setDraft({ keyword: e.target.value })}
+              onPressEnter={handleSearch}
+            />
           </div>
-          <div className={styles.filterGroup}>
-            <span className={styles.filterLabel}>Media</span>
-            <Select className={styles.w130} value={notiMediaSe} onChange={setNotiMediaSe} options={[{ value: '', label: 'All' }, { value: 'EMAIL', label: 'EMAIL' }, { value: 'SMS', label: 'SMS' }, { value: 'PUSH', label: 'PUSH' }]} />
-          </div>
-          <div className={styles.filterGroup}>
-            <span className={styles.filterLabel}>Result</span>
-            <Select className={styles.w130} value={sndngScsYn} onChange={setSndngScsYn} options={[{ value: '', label: 'All' }, { value: 'Y', label: 'Success' }, { value: 'N', label: 'Failed' }]} />
-          </div>
-          <div className={styles.filterGroup}>
-            <span className={styles.filterLabel}>Keyword</span>
-            <Input className={styles.filterInput} placeholder="Title or receiver" value={keyword} onChange={(e) => setKeyword(e.target.value)} onPressEnter={handleSearch} allowClear />
-          </div>
-        </div>
-      )}
-
-      <div className={styles.summaryRow}>
-        <span className={styles.totalCount}>Total ({total})</span>
-        <button type="button" className={`${styles.btn} ${styles.btnSmall}`} onClick={() => downloadExcel.mutate(applied)}>
-          Excel Download
-        </button>
-      </div>
-
-      <div className={styles.tableWrapper}>
-        <Table<NotificationHistoryItem> rowKey="logId" columns={columns} dataSource={rows} loading={isFetching} pagination={false} size="small" scroll={{ x: 'max-content' }} />
-      </div>
-
-      <SysPagination page={page} pageSize={PAGE_SIZE} total={total} onChange={setPage} />
-    </div>
+        </SysFilterItem>
+      </SysFilterPanel>
+      <SysSearchActions onReset={handleReset} onSearch={handleSearch} loading={isFetching} />
+      {periodError && <Alert type="error" showIcon title={MESSAGES.periodRange} />}
+      <SysSectionHeader
+        total={total}
+        actions={<SysExcelButton onClick={() => excel.mutate(search)} loading={excel.isPending} />}
+      />
+      <SysTable<NotificationHistoryItem>
+        rowKey="logId"
+        columns={columns}
+        dataSource={data?.content ?? []}
+        loading={isFetching}
+        onRowClick={(row) => setDetailId(row.logId)}
+        sort={list.sort}
+        onSortChange={list.setSort}
+      />
+      <SysPager page={list.page} pageSize={SYS_PAGE_SIZE} total={total} onChange={list.setPage} />
+      {detailId && <NotificationHistoryDetailModal key={detailId} logId={detailId} onClose={() => setDetailId(null)} />}
+    </SysPage>
   );
 }

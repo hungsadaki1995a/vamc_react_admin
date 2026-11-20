@@ -1,0 +1,36 @@
+/* Notification Send History (VPA09050201 / VPA090502P01) — screen-specific layout only. */
+
+.rangePicker {
+  width: 100%;
+}
+
+.searchGroup {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+}
+
+.searchType {
+  flex: 0 0 130px;
+  width: 130px;
+}
+
+.preText {
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* Long content scrolls inside the area. */
+.contentBox {
+  width: 100%;
+  max-height: 320px;
+  overflow-y: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+  line-height: 1.6;
+}
+
+.errorText {
+  margin: 0 0 8px;
+  color: var(--color-text-negative, #e62e44);
+}
