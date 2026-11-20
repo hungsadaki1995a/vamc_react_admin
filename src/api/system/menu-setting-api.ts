@@ -1,8 +1,10 @@
 import { apiDelete, apiGet, apiPatch, apiPost, apiPut } from '@/api/common/api-utils';
 
 // Menu Settings API — MenuSettingController (`/api/v1/menus`).
-// Shared by Platform Menu Management (VPA003901, menuSeCd=W, guard A06010100)
-// and Admin Menu Management (VPA004401, menuSeCd=A, guard A06020100).
+// Shared by Menu Settings (VPA09010101, menuSeCd=W, max 3 depths)
+// and Admin Menu Settings (VPA09020101, menuSeCd=A).
+// Errors: MNU002 duplicate code, MNU006 depth limit, MNU012 label used by another menu,
+// MNU013 sibling list mismatch, MNU014 label key not found, MNU015 too many siblings.
 
 export type MenuSeCd = 'W' | 'A';
 export type YesNo = 'Y' | 'N';
@@ -49,6 +51,7 @@ export interface SaveMenuSettingRequest {
   menuNmEn: string;
   /** 0–99; omitted → appended after the last sibling. */
   menuSeq?: number;
+  /** Web: path under the site root. Admin: screen id opened by the component registry. */
   menuUrlAddr?: string;
   /** Blank → server uses `lbl.menu.{menuCd}`. */
   lblCd?: string;
@@ -57,7 +60,7 @@ export interface SaveMenuSettingRequest {
   useYn?: YesNo;
 }
 
-/** Flat tree ordered by sortPath, including not-in-use menus and the root row. */
+/** Flat tree ordered by sortPath, including Inactive menus and the root row (depth 0). */
 export const getMenuSettings = (params: MenuSettingSearch) =>
   apiGet<MenuSetting[]>('/api/v1/menus', params, []);
 
