@@ -22,6 +22,7 @@ export interface DistrictItem {
   distNm: string;
   sortSeq?: number;
   useYn: YesNo;
+  crtDt?: string;
 }
 
 export interface ProvinceSearch {

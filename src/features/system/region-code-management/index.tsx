@@ -35,7 +35,7 @@ const DISTRICT_COLUMNS: GridColumn[] = [
   { field: 'useYn', title: 'Use', kind: 'use', required: true, width: 110 },
   { field: 'distCd', title: 'District Code', kind: 'text', required: true, isKey: true, maxLength: 5, width: 120 },
   { field: 'distNm', title: 'Code Name', kind: 'text', required: true, maxLength: 40, width: 220 },
-  { field: 'sortSeq', title: 'Order', kind: 'number', min: 0, max: 99999, width: 90 },
+  { field: 'crtDt', title: 'Registered Date', kind: 'date', width: 150 },
 ];
 
 const INITIAL_FILTER: ProvinceSearch = { mctpvCd: '', mctpvNm: '' };
@@ -63,7 +63,8 @@ export default function RegionCodeManagement() {
     () =>
       [...(districtsQuery.data ?? [])]
         .sort((a, b) => a.distCd.localeCompare(b.distCd))
-        .map((d) => ({ distCd: d.distCd, distNm: d.distNm, sortSeq: d.sortSeq ?? null, useYn: d.useYn })),
+        // sortSeq has no column but is sent back so the server keeps the order (it resets a missing one to 1).
+        .map((d) => ({ distCd: d.distCd, distNm: d.distNm, sortSeq: d.sortSeq ?? null, useYn: d.useYn, crtDt: d.crtDt ?? null })),
     [districtsQuery.data],
   );
   const nextOrder = rows.reduce((max, r) => Math.max(max, typeof r.sortSeq === 'number' ? r.sortSeq : 0), 0) + 1;
@@ -183,7 +184,7 @@ export default function RegionCodeManagement() {
               loading={districtsQuery.isFetching}
               columns={DISTRICT_COLUMNS}
               rows={rows}
-              newRowDefaults={{ distCd: '', distNm: '', sortSeq: nextOrder, useYn: 'Y' }}
+              newRowDefaults={{ useYn: 'Y', distCd: '', distNm: '', sortSeq: nextOrder, crtDt: null }}
               saving={saveDistricts.isPending}
               onSave={handleSave}
               isDuplicateError={isDuplicateDistrict}

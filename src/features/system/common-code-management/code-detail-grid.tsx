@@ -7,7 +7,7 @@ import { SysButton, SysEmpty, SysSectionHeader } from '@/features/system/_shared
 import { SYS_MESSAGES } from '@/features/system/_shared/sys-messages';
 import { USE_YN_RADIO_OPTIONS } from '@/features/system/_shared/sys-constants';
 import { useSysDialogs } from '@/features/system/_shared/use-sys-dialogs';
-import { errorMessage } from '@/features/system/_shared/system-utils';
+import { errorMessage, formatSysDateTime } from '@/features/system/_shared/system-utils';
 import styles from './code-detail-grid.module.scss';
 
 // Editable detail grid of the code screens (Common / Region / Finance):
@@ -21,7 +21,8 @@ export type GridRecord = Record<string, GridValue>;
 export interface GridColumn {
   field: string;
   title: string;
-  kind: 'text' | 'number' | 'use' | 'select';
+  /** `date`: read-only server timestamp (e.g. Registered Date), '-' on added rows. */
+  kind: 'text' | 'number' | 'use' | 'select' | 'date';
   required?: boolean;
   /** Key column: locked on saved rows, checked for duplicates. */
   isKey?: boolean;
@@ -210,6 +211,7 @@ export function CodeDetailGrid({
     const value = row.values[column.field];
     const error = cellErrors[row.rowKey]?.[column.field];
     const status = error ? 'error' : undefined;
+    if (column.kind === 'date') return <span className={styles.readonly}>{formatSysDateTime(typeof value === 'string' ? value : null)}</span>;
     const readOnly = !canWrite || (column.isKey && !row.isNew);
     if (readOnly) {
       if (column.kind === 'use') return value === 'Y' ? 'Active' : 'Inactive';
@@ -288,7 +290,7 @@ export function CodeDetailGrid({
       column.title
     ),
     width: column.width,
-    align: column.kind === 'use' || column.kind === 'number' ? 'center' : undefined,
+    align: column.kind === 'use' || column.kind === 'number' || column.kind === 'date' ? 'center' : undefined,
     render: (_v, row) => renderEditor(column, row),
   }));
 
