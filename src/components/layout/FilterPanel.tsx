@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Button, Badge } from 'antd';
 import { SearchOutlined, UndoOutlined, UpOutlined, DownOutlined } from '@ant-design/icons';
 import { useComponentLabel } from '@/hooks/use-component-label';
-import './filter-panel.scss';
+import styles from './filter-panel.module.scss';
 
 type FilterPanelProps = {
   /** Collapsed state (controlled) */
@@ -38,15 +38,15 @@ export default function FilterPanel({
   };
 
   return (
-    <div className={`ds-filter-panel ${collapsed ? 'collapsed' : ''}`}>
-      <div className="ds-filter-header">
-        <div className="ds-filter-header-left">
-          <span className="ds-filter-header-title">{tvt('filterTitle', 'Search Filters')}</span>
+    <div className={`${styles.panel} ds-filter-panel ${collapsed ? styles.collapsed : ''}`}>
+      <div className={styles.header}>
+        <div className={styles.headerLeft}>
+          <span className={styles.headerTitle}>{tvt('filterTitle', 'Search Filters')}</span>
           {collapsed && activeFilterCount > 0 && (
             <Badge count={activeFilterCount} size="small" className="ml-1!" />
           )}
         </div>
-        <div className="ds-filter-header-actions">
+        <div className={styles.headerActions}>
           {onReset && (
             <Button size="middle" icon={<UndoOutlined />} onClick={onReset}>
               {tvb('reset', 'Reset')}
@@ -60,8 +60,8 @@ export default function FilterPanel({
           <Button size="middle" icon={collapsed ? <DownOutlined /> : <UpOutlined />} onClick={toggle} />
         </div>
       </div>
-      <div className="ds-filter-body">
-        <div className="ds-filter-fields">
+      <div className={styles.body}>
+        <div className={styles.fields}>
           {children}
         </div>
       </div>

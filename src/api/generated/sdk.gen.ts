@@ -1414,7 +1414,7 @@ export const updateDraft2 = <ThrowOnError extends boolean = false>(options: Opti
  *
  * **Screens:** VPA001501
  *
- * 수행 1: report PDF and summary (DRFT) once the contract runs and the advance is paid. Consultant or officer. Requires WRITE permission.
+ * Execution 1: report PDF and summary (DRFT) once the contract runs and the advance is paid. Consultant or officer. Requires WRITE permission.
  */
 export const saveReport = <ThrowOnError extends boolean = false>(options: Options<SaveReportData, ThrowOnError>): RequestResult<SaveReportResponses, unknown, ThrowOnError> => (options.client ?? client).put<SaveReportResponses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -1448,7 +1448,7 @@ export const assignConsultant = <ThrowOnError extends boolean = false>(options: 
  *
  * **Screens:** VPA001501
  *
- * 추가 12: whether members see the additional consulting button. Requires READ permission.
+ * Addition 12: whether members see the additional consulting button. Requires READ permission.
  */
 export const getAdditionalConsultingSetting = <ThrowOnError extends boolean = false>(options?: Options<GetAdditionalConsultingSettingData, ThrowOnError>): RequestResult<GetAdditionalConsultingSettingResponses, unknown, ThrowOnError> => (options?.client ?? client).get<GetAdditionalConsultingSettingResponses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -1461,7 +1461,7 @@ export const getAdditionalConsultingSetting = <ThrowOnError extends boolean = fa
  *
  * **Screens:** VPA001501
  *
- * 추가 12: show (Y) or hide (N) the additional consulting button to members. Requires WRITE permission.
+ * Addition 12: show (Y) or hide (N) the additional consulting button to members. Requires WRITE permission.
  */
 export const updateAdditionalConsultingSetting = <ThrowOnError extends boolean = false>(options: Options<UpdateAdditionalConsultingSettingData, ThrowOnError>): RequestResult<UpdateAdditionalConsultingSettingResponses, unknown, ThrowOnError> => (options.client ?? client).put<UpdateAdditionalConsultingSettingResponses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -1734,7 +1734,7 @@ export const checkDocuments = <ThrowOnError extends boolean = false>(options: Op
  *
  * **Screens:** VPA001101, VPA0011P01
  *
- * 취소 1-2: cancels an application that is not approved yet (CNCL) and closes its open approval session. Requires WRITE permission.
+ * Cancellation 1-2: cancels an application that is not approved yet (CNCL) and closes its open approval session. Requires WRITE permission.
  */
 export const cancel = <ThrowOnError extends boolean = false>(options: Options<CancelData, ThrowOnError>): RequestResult<CancelResponses, unknown, ThrowOnError> => (options.client ?? client).post<CancelResponses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -1849,7 +1849,7 @@ export const checkDocuments1 = <ThrowOnError extends boolean = false>(options: O
  *
  * **Screens:** VPA001001, VPA0010P01, VPA0004P01, VPA0004P04
  *
- * 취소 1-2: cancels an application that is not approved yet (CNCL) and closes its open approval session. Requires WRITE permission.
+ * Cancellation 1-2: cancels an application that is not approved yet (CNCL) and closes its open approval session. Requires WRITE permission.
  */
 export const cancel1 = <ThrowOnError extends boolean = false>(options: Options<Cancel1Data, ThrowOnError>): RequestResult<Cancel1Responses, unknown, ThrowOnError> => (options.client ?? client).post<Cancel1Responses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -1964,7 +1964,7 @@ export const checkDocuments2 = <ThrowOnError extends boolean = false>(options: O
  *
  * **Screens:** VPA001201, VPA0012P01
  *
- * 취소 1-2: cancels an application that is not approved yet (CNCL) and closes its open approval session. Requires WRITE permission.
+ * Cancellation 1-2: cancels an application that is not approved yet (CNCL) and closes its open approval session. Requires WRITE permission.
  */
 export const cancel2 = <ThrowOnError extends boolean = false>(options: Options<Cancel2Data, ThrowOnError>): RequestResult<Cancel2Responses, unknown, ThrowOnError> => (options.client ?? client).post<Cancel2Responses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -2580,7 +2580,7 @@ export const requestSignatureApproval1 = <ThrowOnError extends boolean = false>(
  *
  * **Screens:** VPA001301, VPA0013P01, VPA0013P02
  *
- * 만료 2 (after the end date passed without a trade): EXTEND_ANNEX creates an extension annex; NEW_CONTRACT registers the termination (expired) and a new contract draft; NO_EXTEND registers the termination (expired). Requires WRITE permission.
+ * Expiration 2 (after the end date passed without a trade): EXTEND_ANNEX creates an extension annex; NEW_CONTRACT registers the termination (expired) and a new contract draft; NO_EXTEND registers the termination (expired). Requires WRITE permission.
  */
 export const decideRenewal1 = <ThrowOnError extends boolean = false>(options: Options<DecideRenewal1Data, ThrowOnError>): RequestResult<DecideRenewal1Responses, unknown, ThrowOnError> => (options.client ?? client).post<DecideRenewal1Responses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -2699,7 +2699,7 @@ export const requestDraftApproval1 = <ThrowOnError extends boolean = false>(opti
  *
  * **Screens:** VPA001301, VPA0013P01, VPA0013P02
  *
- * 연장 1 - 4: extension annex (new end date) of a purchase brokerage contract in progress; then the shared lifecycle with PROC_PUR_MDT_ANX. Requires WRITE permission.
+ * Extension 1 - 4: extension annex (new end date) of a purchase brokerage contract in progress; then the shared lifecycle with PROC_PUR_MDT_ANX. Requires WRITE permission.
  */
 export const createAnnex1 = <ThrowOnError extends boolean = false>(options: Options<CreateAnnex1Data, ThrowOnError>): RequestResult<CreateAnnex1Responses, unknown, ThrowOnError> => (options.client ?? client).post<CreateAnnex1Responses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -4111,7 +4111,7 @@ export const requestSignatureApproval2 = <ThrowOnError extends boolean = false>(
  *
  * **Screens:** VPA001501
  *
- * 수행 6: APRV -> RDY (not published); the remaining fee is issued and mailed. The report is published when the fee is confirmed (수행 11-1). Requires WRITE permission.
+ * Execution 6: APRV -> RDY (not published); the remaining fee is issued and mailed. The report is published when the fee is confirmed (Execution 11-1). Requires WRITE permission.
  */
 export const completeReport = <ThrowOnError extends boolean = false>(options: Options<CompleteReportData, ThrowOnError>): RequestResult<CompleteReportResponses, unknown, ThrowOnError> => (options.client ?? client).post<CompleteReportResponses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -4124,7 +4124,7 @@ export const completeReport = <ThrowOnError extends boolean = false>(options: Op
  *
  * **Screens:** VPA001501
  *
- * 수행 2: PROC_CNSLT_RPTP; approval -> APRV, rejection -> DRFT. Requires WRITE permission.
+ * Execution 2: PROC_CNSLT_RPTP; approval -> APRV, rejection -> DRFT. Requires WRITE permission.
  */
 export const requestReportApproval = <ThrowOnError extends boolean = false>(options: Options<RequestReportApprovalData, ThrowOnError>): RequestResult<RequestReportApprovalResponses, unknown, ThrowOnError> => (options.client ?? client).post<RequestReportApprovalResponses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -4226,7 +4226,7 @@ export const requestDraftApproval2 = <ThrowOnError extends boolean = false>(opti
  *
  * **Screens:** VPA001501
  *
- * 추가 15: RQST -> RCPT. Consultant or officer. Requires WRITE permission.
+ * Addition 15: RQST -> RCPT. Consultant or officer. Requires WRITE permission.
  */
 export const receiveAdditionalConsultation = <ThrowOnError extends boolean = false>(options: Options<ReceiveAdditionalConsultationData, ThrowOnError>): RequestResult<ReceiveAdditionalConsultationResponses, unknown, ThrowOnError> => (options.client ?? client).post<ReceiveAdditionalConsultationResponses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -4239,7 +4239,7 @@ export const receiveAdditionalConsultation = <ThrowOnError extends boolean = fal
  *
  * **Screens:** VPA001501
  *
- * 추가 21: result recorded and mailed to the member. Requires WRITE permission.
+ * Addition 21: result recorded and mailed to the member. Requires WRITE permission.
  */
 export const completeAdditionalConsultation = <ThrowOnError extends boolean = false>(options: Options<CompleteAdditionalConsultationData, ThrowOnError>): RequestResult<CompleteAdditionalConsultationResponses, unknown, ThrowOnError> => (options.client ?? client).post<CompleteAdditionalConsultationResponses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],

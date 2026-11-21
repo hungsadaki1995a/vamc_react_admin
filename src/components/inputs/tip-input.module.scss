@@ -1,6 +1,6 @@
 /* Standard styling for read-only inputs — consolidated here instead of duplicating inline styles per screen.
    Unlike disabled, text color is kept unchanged because a value exists but cannot be edited. */
-.ds-input-readonly {
+.readonly {
   &,
   &:hover,
   &:focus,

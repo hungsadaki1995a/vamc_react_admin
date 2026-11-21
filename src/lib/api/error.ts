@@ -3,22 +3,22 @@ import type { ApiErrorResponse } from './types';
 import { useLabelStore } from '@/stores/label-store';
 
 const DEFAULT_MESSAGES: Record<number, string> = {
-  400: '잘못된 요청입니다.',
-  401: '인증이 필요합니다.',
-  403: '접근 권한이 없습니다.',
-  404: '요청한 리소스를 찾을 수 없습니다.',
-  408: '요청 시간이 초과되었습니다.',
-  422: '입력 데이터를 확인해 주세요.',
-  429: '요청이 너무 많습니다. 잠시 후 다시 시도해 주세요.',
-  500: '서버 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.',
-  502: '서버에 연결할 수 없습니다.',
-  503: '서비스를 일시적으로 사용할 수 없습니다.',
+  400: 'Bad request.',
+  401: 'Authentication is required.',
+  403: 'You do not have permission to access this resource.',
+  404: 'The requested resource was not found.',
+  408: 'The request timed out.',
+  422: 'Please check your input data.',
+  429: 'Too many requests. Please try again later.',
+  500: 'A server error occurred. Please try again later.',
+  502: 'Unable to connect to the server.',
+  503: 'The service is temporarily unavailable.',
 };
 
-const UNKNOWN_ERROR = '알 수 없는 오류가 발생했습니다.';
+const UNKNOWN_ERROR = 'An unknown error occurred.';
 
 /**
- * Default HTTP status message — label table first, falling back to Korean constants above if unregistered.
+ * Default HTTP status message — label table first, falling back to English constants above if unregistered.
  *
  * <p>Called outside React (axios interceptor), so read via `getState()` instead of a hook.
  * Labels are replaced wholesale on locale change, so reading each time always reflects the current language.</p>

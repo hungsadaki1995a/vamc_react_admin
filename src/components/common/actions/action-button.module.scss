@@ -1,9 +1,9 @@
-.ds-action-button {
-  &.ant-btn {
+.root {
+  &:global(.ant-btn) {
     box-shadow: none;
 
     &:disabled,
-    &.ant-btn-disabled {
+    &:global(.ant-btn-disabled) {
       &,
       &:hover,
       &:focus {
@@ -13,28 +13,28 @@
         box-shadow: none !important;
       }
 
-      .anticon {
+      :global(.anticon) {
         color: #bfbfbf !important;
       }
     }
   }
 
-  &--intent-primary.ant-btn-primary {
+  &.intentPrimary:global(.ant-btn-primary) {
     border-color: #005df9;
     background: #005df9;
     color: #fff;
   }
 
-  &--intent-danger.ant-btn-dangerous:not(.ant-btn-primary) {
+  &.intentDanger:global(.ant-btn-dangerous:not(.ant-btn-primary)) {
     border-color: #ff4d4f;
     color: #ff4d4f;
   }
 
-  &--intent-excel .anticon {
+  &.intentExcel :global(.anticon) {
     color: #1fa463;
   }
 
-  &--excelUpload .anticon {
+  &.excelUpload :global(.anticon) {
     color: currentColor;
   }
 }

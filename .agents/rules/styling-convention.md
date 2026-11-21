@@ -11,9 +11,10 @@ Follow these rules for all styling in this React project to keep component logic
 
 ## 2. Co-located Stylesheet Files
 
-- Place component styles in a co-located stylesheet using `kebab-case` naming:
-  - Prefer **CSS Modules** (`<component-name>.module.css`) for new components and feature pages to keep class names locally scoped and prevent global collisions.
-  - Co-located plain CSS (`<component-name>.css`) is acceptable when matching an existing shared component directory convention, provided class names are prefixed/scoped to the component.
+- Place component and feature styles in a co-located **CSS Module** using `kebab-case` with the `.module.scss` extension (`<component-name>.module.scss`):
+  - **All** component and feature stylesheets must use `.module.scss` (e.g., `action-button-group.module.scss`, `content-tabs.module.scss`) so class names are locally scoped and naming stays consistent across `src/components/` and `src/features/`.
+  - Do **not** create plain `*.scss` or `*.css` files inside `src/components/` or `src/features/`. Global stylesheets without `.module.scss` belong only in `src/styles/` (e.g., `variables.scss`, `global.css`).
+  - When targeting third-party selectors (`antd`, `ag-grid`) inside a `.module.scss` file, scope them under a local module class using `:global(...)`.
 - Keep `@keyframes`, pseudo-classes (`:hover`, `:focus`, `:disabled`), media queries, and state variants in the stylesheet—never in JSX.
 
 ## 3. Design Tokens & Theme Consistency

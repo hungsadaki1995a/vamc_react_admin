@@ -144,10 +144,10 @@ apiClient.interceptors.response.use(
     if (!error.response) {
       // Defer toast render to next microtask — keeps current error-handling chain lean
       if (!config?.skipErrorToast) {
-        // Label first + Korean fallback — outside React so hooks cannot be used; read via getState()
+        // Label first + English fallback — outside React so hooks cannot be used; read via getState()
         // (same pattern as httpMessage in `lib/api/error.ts`).
         queueMicrotask(() => apiNotify.error(
-          useLabelStore.getState().t('MESSAGE.ERROR.TEXT_NETWORK', '네트워크 연결을 확인해 주세요.'),
+          useLabelStore.getState().t('MESSAGE.ERROR.TEXT_NETWORK', 'Please check your network connection.'),
         ));
       }
       return Promise.reject(ApiError.fromAxiosError(error));

@@ -1,4 +1,4 @@
-.ds-page-header {
+.header {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -10,21 +10,21 @@
   position: sticky;
   top: 0;
   z-index: 20;
+}
 
-  &-code {
-    font-size: 13px;
-    color: var(--text-secondary);
-  }
+.code {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
 
-  &-title {
-    font-size: 16px;
-    font-weight: 700;
-    color: var(--text-primary);
-  }
+.title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
 
-  &-right {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
+.right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }

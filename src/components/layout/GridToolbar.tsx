@@ -1,5 +1,5 @@
 import { useTotalCountLabel } from '@/hooks/use-total-count-label';
-import './grid-toolbar.scss';
+import styles from './grid-toolbar.module.scss';
 
 type GridToolbarProps = {
   /**
@@ -28,11 +28,11 @@ export default function GridToolbar({ title, totalCount, countLabel, left, actio
   const [before, after = ''] = template.split('{0}');
 
   return (
-    <div className="ds-grid-toolbar">
-      <div className="ds-grid-toolbar-left">
-        {title !== undefined && <span className="ds-grid-toolbar-title">{title}</span>}
+    <div className={styles.toolbar}>
+      <div className={styles.left}>
+        {title !== undefined && <span className={styles.title}>{title}</span>}
         {totalCount !== undefined && (
-          <span className="ds-grid-toolbar-count">
+          <span className={styles.count}>
             {countLabel !== undefined ? (
               <>{countLabel} <strong>{totalCount.toLocaleString()}</strong></>
             ) : (
@@ -42,7 +42,7 @@ export default function GridToolbar({ title, totalCount, countLabel, left, actio
         )}
         {left}
       </div>
-      <div className="ds-grid-toolbar-right">
+      <div className={styles.right}>
         {actions}
       </div>
     </div>

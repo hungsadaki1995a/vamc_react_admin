@@ -7,8 +7,14 @@ import {
   SearchOutlined,
   UploadOutlined,
 } from '@ant-design/icons';
-import './action-button.scss';
+import styles from './action-button.module.scss';
 import type { ActionButtonAction, ActionButtonIntent, ActionButtonProps } from '@/types/action-button';
+
+const INTENT_CLASSES: Partial<Record<ActionButtonIntent, string>> = {
+  primary: styles.intentPrimary,
+  danger: styles.intentDanger,
+  excel: styles.intentExcel,
+};
 
 type ActionDefaults = {
   intent: ActionButtonIntent;
@@ -48,9 +54,9 @@ export default function ActionButton({
   const resolvedType = type
     ?? (resolvedIntent === 'primary' ? 'primary' : resolvedIntent === 'text' ? 'link' : undefined);
   const rootClassName = [
-    'ds-action-button',
-    `ds-action-button--intent-${resolvedIntent}`,
-    action ? `ds-action-button--${action}` : '',
+    styles.root,
+    INTENT_CLASSES[resolvedIntent],
+    action === 'excelUpload' ? styles.excelUpload : '',
     className,
   ].filter(Boolean).join(' ');
 

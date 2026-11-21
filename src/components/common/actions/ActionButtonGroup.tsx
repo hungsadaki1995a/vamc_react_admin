@@ -8,7 +8,14 @@ import type {
   ActionButtonProps,
 } from '@/types/action-button';
 import ActionButton from './ActionButton';
-import './action-button-group.scss';
+import styles from './action-button-group.module.scss';
+
+const JUSTIFY_CLASSES = {
+  start: styles.justifyStart,
+  center: styles.justifyCenter,
+  end: styles.justifyEnd,
+  between: styles.justifyBetween,
+} as const;
 
 /** Write actions disabled when canWrite=false */
 const WRITE_ACTIONS: ActionButtonAction[] = [
@@ -93,9 +100,8 @@ export default function ActionButtonGroup({
   canWrite,
 }: ActionButtonGroupProps) {
   const rootClassName = [
-    'ds-action-button-group',
-    `ds-action-button-group--justify-${justify}`,
-    preset ? `ds-action-button-group--preset-${preset}` : '',
+    styles.root,
+    JUSTIFY_CLASSES[justify],
     className,
   ].filter(Boolean).join(' ');
 

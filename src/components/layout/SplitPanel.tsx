@@ -1,5 +1,5 @@
 import { useRef, useState, useCallback, useEffect } from 'react';
-import './split-panel.scss';
+import styles from './split-panel.module.scss';
 
 type SplitPanelProps = {
   direction: 'horizontal' | 'vertical';
@@ -101,20 +101,20 @@ export default function SplitPanel({
   return (
     <div
       ref={containerRef}
-      className={`ds-split-panel ${isHorizontal ? 'horizontal' : 'vertical'} ${isDragging ? 'dragging' : ''} ${className ?? ''}`}
+      className={`${styles.panel} ${isHorizontal ? styles.horizontal : styles.vertical} ${isDragging ? styles.dragging : ''} ${className ?? ''}`}
     >
-      <div className="ds-split-primary" style={sizeStyle}>
+      <div className={styles.primary} style={sizeStyle}>
         {children[0]}
       </div>
       {secondaryVisible && (
         <>
           <div
-            className={`ds-split-divider ${isDragging ? 'active' : ''}`}
+            className={`${styles.divider} ${isDragging ? styles.active : ''}`}
             onMouseDown={handleMouseDown}
           >
-            <div className="ds-split-divider-line" />
+            <div className={styles.dividerLine} />
           </div>
-          <div className="ds-split-secondary">
+          <div className={styles.secondary}>
             {children[1]}
           </div>
         </>

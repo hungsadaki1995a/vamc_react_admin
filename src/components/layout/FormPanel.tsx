@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Button } from 'antd';
 import { UpOutlined, DownOutlined } from '@ant-design/icons';
-import './form-panel.scss';
+import styles from './form-panel.module.scss';
 
 type FormPanelProps = {
   /** Panel title (left side of header) */
@@ -43,9 +43,9 @@ export default function FormPanel({
   };
 
   return (
-    <div className="ds-form-panel" data-edit={editMode || undefined}>
-      <div className="ds-form-panel-header">
-        {title && <span className="ds-form-panel-title">{title}</span>}
+    <div className={styles.panel} data-edit={editMode || undefined}>
+      <div className={styles.header}>
+        {title && <span className={styles.title}>{title}</span>}
         <div className="flex items-center gap-1 ml-auto">
           {actions}
           <Button
@@ -56,7 +56,7 @@ export default function FormPanel({
         </div>
       </div>
       {!collapsed && (
-        <div className="ds-form-panel-body">
+        <div className={styles.body}>
           {children}
         </div>
       )}

@@ -27,7 +27,7 @@ import { useLocaleStore } from '@/stores/locale-store';
 import { useComponentLabel } from '@/hooks/use-component-label';
 import { getAgGridLocale } from './ag-grid-locale';
 import { ComcdSelectCellEditor, ComcdSelectCellRenderer } from './CommonCodeSelectCell';
-import './grid-table.scss';
+import styles from './grid-table.module.scss';
 
 export type GridCellAlign = 'left' | 'center' | 'right';
 
@@ -116,9 +116,9 @@ function parseClipboardText(text: string): string[][] {
 // NoRows overlay — defined outside to avoid re-creation on each render
 function NoRowsOverlay({ message }: { message: string }) {
   return (
-    <div className="ds-grid-no-rows">
-      <span className="ds-grid-no-rows-icon">📭</span>
-      <span className="ds-grid-no-rows-text">{message}</span>
+    <div className={styles.noRows}>
+      <span className={styles.noRowsIcon}>📭</span>
+      <span className={styles.noRowsText}>{message}</span>
     </div>
   );
 }
@@ -497,7 +497,7 @@ export default function GridTable<TData = any>({
     <>
     <div
       ref={containerRef}
-      className={`ds-grid-table w-full ${autoHeight ? '' : height === '100%' ? 'flex-1' : 'flex-none'} ${editable ? 'ds-grid-editable' : ''} ${className ?? ''}`}
+      className={`${styles.root} w-full ${autoHeight ? '' : height === '100%' ? 'flex-1' : 'flex-none'} ${editable ? styles.editable : ''} ${className ?? ''}`}
       style={autoHeight ? undefined : { height }}
       tabIndex={-1}
     >

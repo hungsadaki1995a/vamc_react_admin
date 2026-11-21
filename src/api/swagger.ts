@@ -1302,7 +1302,7 @@ export interface paths {
          * Save the consulting report
          * @description **Screens:** VPA001501
          *
-         *     수행 1: report PDF and summary (DRFT) once the contract runs and the advance is paid. Consultant or officer. Requires WRITE permission.
+         *     Execution 1: report PDF and summary (DRFT) once the contract runs and the advance is paid. Consultant or officer. Requires WRITE permission.
          */
         put: operations["saveReport"];
         post?: never;
@@ -1345,14 +1345,14 @@ export interface paths {
          * Get the additional consulting switch
          * @description **Screens:** VPA001501
          *
-         *     추가 12: whether members see the additional consulting button. Requires READ permission.
+         *     Addition 12: whether members see the additional consulting button. Requires READ permission.
          */
         get: operations["getAdditionalConsultingSetting"];
         /**
          * Change the additional consulting switch
          * @description **Screens:** VPA001501
          *
-         *     추가 12: show (Y) or hide (N) the additional consulting button to members. Requires WRITE permission.
+         *     Addition 12: show (Y) or hide (N) the additional consulting button to members. Requires WRITE permission.
          */
         put: operations["updateAdditionalConsultingSetting"];
         post?: never;
@@ -1631,7 +1631,7 @@ export interface paths {
          * Cancel a application
          * @description **Screens:** VPA001101, VPA0011P01
          *
-         *     취소 1-2: cancels an application that is not approved yet (CNCL) and closes its open approval session. Requires WRITE permission.
+         *     Cancellation 1-2: cancels an application that is not approved yet (CNCL) and closes its open approval session. Requires WRITE permission.
          */
         post: operations["cancel"];
         delete?: never;
@@ -1769,7 +1769,7 @@ export interface paths {
          * Cancel a application
          * @description **Screens:** VPA001001, VPA0010P01, VPA0004P01, VPA0004P04
          *
-         *     취소 1-2: cancels an application that is not approved yet (CNCL) and closes its open approval session. Requires WRITE permission.
+         *     Cancellation 1-2: cancels an application that is not approved yet (CNCL) and closes its open approval session. Requires WRITE permission.
          */
         post: operations["cancel_1"];
         delete?: never;
@@ -1907,7 +1907,7 @@ export interface paths {
          * Cancel a application
          * @description **Screens:** VPA001201, VPA0012P01
          *
-         *     취소 1-2: cancels an application that is not approved yet (CNCL) and closes its open approval session. Requires WRITE permission.
+         *     Cancellation 1-2: cancels an application that is not approved yet (CNCL) and closes its open approval session. Requires WRITE permission.
          */
         post: operations["cancel_2"];
         delete?: never;
@@ -2641,7 +2641,7 @@ export interface paths {
          * Decide the renewal of an expiring contract
          * @description **Screens:** VPA001301, VPA0013P01, VPA0013P02
          *
-         *     만료 2 (after the end date passed without a trade): EXTEND_ANNEX creates an extension annex; NEW_CONTRACT registers the termination (expired) and a new contract draft; NO_EXTEND registers the termination (expired). Requires WRITE permission.
+         *     Expiration 2 (after the end date passed without a trade): EXTEND_ANNEX creates an extension annex; NEW_CONTRACT registers the termination (expired) and a new contract draft; NO_EXTEND registers the termination (expired). Requires WRITE permission.
          */
         post: operations["decideRenewal_1"];
         delete?: never;
@@ -2795,7 +2795,7 @@ export interface paths {
          * Create an annex
          * @description **Screens:** VPA001301, VPA0013P01, VPA0013P02
          *
-         *     연장 1 - 4: extension annex (new end date) of a purchase brokerage contract in progress; then the shared lifecycle with PROC_PUR_MDT_ANX. Requires WRITE permission.
+         *     Extension 1 - 4: extension annex (new end date) of a purchase brokerage contract in progress; then the shared lifecycle with PROC_PUR_MDT_ANX. Requires WRITE permission.
          */
         post: operations["createAnnex_1"];
         delete?: never;
@@ -4160,7 +4160,7 @@ export interface paths {
          * Complete the report
          * @description **Screens:** VPA001501
          *
-         *     수행 6: APRV -> RDY (not published); the remaining fee is issued and mailed. The report is published when the fee is confirmed (수행 11-1). Requires WRITE permission.
+         *     Execution 6: APRV -> RDY (not published); the remaining fee is issued and mailed. The report is published when the fee is confirmed (Execution 11-1). Requires WRITE permission.
          */
         post: operations["completeReport"];
         delete?: never;
@@ -4182,7 +4182,7 @@ export interface paths {
          * Request report approval
          * @description **Screens:** VPA001501
          *
-         *     수행 2: PROC_CNSLT_RPTP; approval -> APRV, rejection -> DRFT. Requires WRITE permission.
+         *     Execution 2: PROC_CNSLT_RPTP; approval -> APRV, rejection -> DRFT. Requires WRITE permission.
          */
         post: operations["requestReportApproval"];
         delete?: never;
@@ -4314,7 +4314,7 @@ export interface paths {
          * Receive an additional consultation
          * @description **Screens:** VPA001501
          *
-         *     추가 15: RQST -> RCPT. Consultant or officer. Requires WRITE permission.
+         *     Addition 15: RQST -> RCPT. Consultant or officer. Requires WRITE permission.
          */
         post: operations["receiveAdditionalConsultation"];
         delete?: never;
@@ -4336,7 +4336,7 @@ export interface paths {
          * Complete an additional consultation
          * @description **Screens:** VPA001501
          *
-         *     추가 21: result recorded and mailed to the member. Requires WRITE permission.
+         *     Addition 21: result recorded and mailed to the member. Requires WRITE permission.
          */
         post: operations["completeAdditionalConsultation"];
         delete?: never;

@@ -25,7 +25,7 @@ export async function changePwd(usrId: string, newPswd: string): Promise<ApiResp
   // Unlike login, password change has no plaintext fallback (always encrypted).
   const publicKey = await fetchPublicKey();
   if (!publicKey) {
-    return { success: false, message: '공개키를 가져오지 못해 비밀번호를 변경할 수 없습니다.', data: null };
+    return { success: false, message: 'Unable to change password because the public key could not be retrieved.', data: null };
   }
   const [encUsrId, encChgPasswd] = await Promise.all([
     encryptPassword(publicKey, usrId),

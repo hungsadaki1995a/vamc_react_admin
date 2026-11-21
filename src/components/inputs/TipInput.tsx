@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react';
 import { Input, Tooltip } from 'antd';
 import type { InputProps, InputRef } from 'antd';
-import './tip-input.scss';
+import styles from './tip-input.module.scss';
 
 /**
  * Input with automatic overflow tooltip.
@@ -29,7 +29,7 @@ export default function TipInput({ value, readOnly, className, onMouseEnter, onM
     onMouseLeave?.(e);
   };
 
-  const rootClassName = [className, readOnly ? 'ds-input-readonly' : '']
+  const rootClassName = [className, readOnly ? styles.readonly : '']
     .filter(Boolean).join(' ') || undefined;
 
   return (

@@ -33,25 +33,25 @@ export interface MnuResponse {
 
 // ── Menu name → Ant Design icon name mapping ──────────────────────────────────
 
-// Ordered: first keyword match wins. Covers VAMC NPL Admin domain names in Korean.
+// Ordered: first keyword match wins. Covers VAMC NPL Admin domain names.
 const MENU_ICON_RULES: Array<{ keywords: string[]; icon: string }> = [
-  { keywords: ['회원'],                                                        icon: 'UserOutlined' },
-  { keywords: ['거래', '계약', '신청'],                                        icon: 'FileTextOutlined' },
-  { keywords: ['NPL', 'npl', '채권', '담보', '채무', '채권자'],               icon: 'BankOutlined' },
-  { keywords: ['컨텐츠', '공지', '뉴스', '공고', '문의', 'FAQ', '배너'],      icon: 'ReadOutlined' },
-  { keywords: ['통계'],                                                        icon: 'BarChartOutlined' },
-  { keywords: ['경매', '입찰'],                                                icon: 'ShoppingOutlined' },
-  { keywords: ['시스템', '운영'],                                              icon: 'SettingOutlined' },
-  { keywords: ['대시보드', '홈', '메인'],                                      icon: 'DashboardOutlined' },
-  { keywords: ['사용자', '관리자'],                                             icon: 'TeamOutlined' },
-  { keywords: ['권한', '메뉴'],                                                icon: 'SafetyOutlined' },
-  { keywords: ['코드'],                                                        icon: 'CodeOutlined' },
-  { keywords: ['배치'],                                                        icon: 'ClockCircleOutlined' },
-  { keywords: ['알림'],                                                        icon: 'BellOutlined' },
+  { keywords: ['member'],                                                      icon: 'UserOutlined' },
+  { keywords: ['trade', 'deal', 'contract', 'application', 'request'],         icon: 'FileTextOutlined' },
+  { keywords: ['npl', 'bond', 'loan', 'collateral', 'debtor', 'creditor'],     icon: 'BankOutlined' },
+  { keywords: ['content', 'notice', 'news', 'announcement', 'inquiry', 'faq', 'banner'], icon: 'ReadOutlined' },
+  { keywords: ['statistic', 'stats'],                                          icon: 'BarChartOutlined' },
+  { keywords: ['auction', 'bid'],                                              icon: 'ShoppingOutlined' },
+  { keywords: ['system', 'operation'],                                         icon: 'SettingOutlined' },
+  { keywords: ['dashboard', 'home', 'main'],                                   icon: 'DashboardOutlined' },
+  { keywords: ['user', 'admin'],                                               icon: 'TeamOutlined' },
+  { keywords: ['permission', 'authority', 'role', 'menu'],                     icon: 'SafetyOutlined' },
+  { keywords: ['code'],                                                        icon: 'CodeOutlined' },
+  { keywords: ['batch'],                                                       icon: 'ClockCircleOutlined' },
+  { keywords: ['notification', 'alert'],                                       icon: 'BellOutlined' },
 ];
 
 function resolveMenuIcon(menuNm: string): string {
-  const name = menuNm ?? '';
+  const name = (menuNm ?? '').toLowerCase();
   for (const rule of MENU_ICON_RULES) {
     if (rule.keywords.some((kw) => name.includes(kw))) {
       return rule.icon;
@@ -83,7 +83,7 @@ function buildServerMenuTree(items: MnuResponse[]): MenuItem[] {
     const node = map.get(item.menuCd)!;
     const isRoot = !item.upMenuCd || !map.has(item.upMenuCd);
     if (isRoot) {
-      node.icon = resolveMenuIcon(item.menuNmDisplay.trim());
+      node.icon = resolveMenuIcon(item.menuLblVal?.trim() || item.menuNmDisplay.trim());
       roots.push(node);
     } else {
       const parent = map.get(item.upMenuCd);

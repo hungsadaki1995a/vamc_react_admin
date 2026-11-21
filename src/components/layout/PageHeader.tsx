@@ -6,7 +6,7 @@ import { useScreenLabel } from '@/hooks/use-screen-label';
 import { useComponentLabel } from '@/hooks/use-component-label';
 import { useAllMenus } from '@/hooks/use-all-menus';
 import { findMenuByKey } from '@/utils/menu-utils';
-import './page-header.scss';
+import styles from './page-header.module.scss';
 
 type PageHeaderProps = {
   /** Screen code displayed in brackets. Auto-derived from tab.sceId if omitted. */
@@ -52,7 +52,7 @@ export default function PageHeader({
     ?? '';
 
   return (
-    <div className="ds-page-header">
+    <div className={`${styles.header} ds-page-header`}>
       <Space size={8}>
         <Tooltip title={favorite
           ? tvt('favoriteRemove', 'Remove from Favorites')
@@ -62,12 +62,12 @@ export default function PageHeader({
             : <StarOutlined className="text-[16px] text-[#bbb]! cursor-pointer" onClick={() => setFavorite(true)} />
           }
         </Tooltip>
-        {resolvedCode && <span className="ds-page-header-code">[{resolvedCode}]</span>}
-        <span className="ds-page-header-title">{resolvedTitle}</span>
-        {titleExtra && <span className="ds-page-header-title-extra">{titleExtra}</span>}
+        {resolvedCode && <span className={styles.code}>[{resolvedCode}]</span>}
+        <span className={styles.title}>{resolvedTitle}</span>
+        {titleExtra && <span>{titleExtra}</span>}
       </Space>
       {(children || actions || inlineFilters) && (
-        <div className="ds-page-header-right">
+        <div className={styles.right}>
           {inlineFilters}
           {actions}
           {children}
