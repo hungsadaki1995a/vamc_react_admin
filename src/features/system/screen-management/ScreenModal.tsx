@@ -1,5 +1,8 @@
 import { useState } from 'react';
-import { Input, InputNumber, Radio, Select } from 'antd';
+import AppRadio from '@/components/inputs/AppRadio';
+import AppSelect from '@/components/inputs/AppSelect';
+import Spinbox from '@/components/inputs/Spinbox';
+import TextInput from '@/components/inputs/TextInput';
 import { useNotify } from '@/hooks/use-notify';
 import type { YesNo } from '@/api/system/code-group-api';
 import type { ScreenItem } from '@/api/system/program-screen-api';
@@ -121,13 +124,13 @@ export function ScreenModal({ item, canWrite, onClose }: ScreenModalProps) {
     >
       <SysFieldGrid columns={2}>
         <SysField label="Type" required hint={NOT_AVAILABLE_HINT}>
-          <Radio.Group options={SCREEN_TYPE_OPTIONS} value={screenType} disabled />
+          <AppRadio.Group options={SCREEN_TYPE_OPTIONS} value={screenType} disabled />
         </SysField>
         <SysField label="Business" required hint={NOT_AVAILABLE_HINT}>
-          <Select className={styles.fullWidth} options={businessOptions} placeholder="Select" disabled />
+          <AppSelect className={styles.fullWidth} options={businessOptions} placeholder="Select" disabled />
         </SysField>
         <SysField label="Screen ID" required error={errors.scrnId}>
-          <Input
+          <TextInput
             value={values.scrnId}
             disabled={!isCreate}
             maxLength={20}
@@ -136,37 +139,37 @@ export function ScreenModal({ item, canWrite, onClose }: ScreenModalProps) {
           />
         </SysField>
         <SysField label="Screen Name" required hint={NOT_AVAILABLE_HINT}>
-          <Input disabled />
+          <TextInput disabled />
         </SysField>
         <SysField label="Popup" required hint={NOT_AVAILABLE_HINT}>
-          <Radio.Group options={POPUP_OPTIONS} value="N" disabled />
+          <AppRadio.Group options={POPUP_OPTIONS} value="N" disabled />
         </SysField>
         <SysField label="Component Path" required hint={NOT_AVAILABLE_HINT}>
-          <Input disabled />
+          <TextInput disabled />
         </SysField>
         <SysField label="Label Key" hint={NOT_AVAILABLE_HINT}>
-          <Input disabled />
+          <TextInput disabled />
         </SysField>
         <SysField label="Remarks" error={errors.scrnExpln}>
-          <Input value={values.scrnExpln} maxLength={4000} onChange={(e) => change('scrnExpln', e.target.value)} />
+          <TextInput value={values.scrnExpln} maxLength={4000} onChange={(e) => change('scrnExpln', e.target.value)} />
         </SysField>
       </SysFieldGrid>
 
       <SysFormSection title="Legacy (until schema change)">
         <SysFieldGrid columns={3}>
           <SysField label="Program" required error={errors.prgrmCd}>
-            <Select
+            <AppSelect
               className={styles.fullWidth}
               showSearch
               optionFilterProp="label"
               options={programOptions}
               value={values.prgrmCd || undefined}
               placeholder="Select"
-              onChange={(v: string) => change('prgrmCd', v)}
+              onChange={(v) => change('prgrmCd', String(v ?? ''))}
             />
           </SysField>
           <SysField label="Order" required error={errors.scrnSeq}>
-            <InputNumber
+            <Spinbox
               value={values.scrnSeq}
               min={0}
               max={99}
@@ -175,7 +178,7 @@ export function ScreenModal({ item, canWrite, onClose }: ScreenModalProps) {
             />
           </SysField>
           <SysField label="Use" required error={errors.useYn}>
-            <Radio.Group
+            <AppRadio.Group
               options={USE_YN_RADIO_OPTIONS}
               value={values.useYn}
               onChange={(e) => change('useYn', e.target.value as YesNo)}

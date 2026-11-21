@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { Alert, Button, Spin } from 'antd';
+import { Alert } from 'antd';
 import AuthHeader from '@/components/auth/AuthHeader';
+import ActionButton from '@/components/common/actions/ActionButton';
 import ContentTabs from '@/components/common/content-tabs/ContentTabs';
+import LoadingSpinner from '@/components/common/loading/LoadingSpinner';
 import type { ContentTabItem } from '@/types/content-tabs';
 import { PUBLIC_ROUTES } from '@/app/route-constants';
 import vamcLogoLogin from '@/assets/vamc-logo-login.png';
@@ -42,7 +44,7 @@ export default function FindIdPage() {
     if (confirmQuery.isLoading) {
       return (
         <div className={styles.confirmResult}>
-          <Spin />
+          <LoadingSpinner />
         </div>
       );
     }
@@ -51,14 +53,15 @@ export default function FindIdPage() {
       return (
         <div className={styles.confirmResult}>
           <Alert type="error" showIcon message={confirmQuery.error.userMessage} className="w-full" />
-          <Button
-            type="primary"
+          <ActionButton
+            intent="primary"
+            appearance="filled"
             block
             className={styles.primaryBtn}
             onClick={() => setSearchParams({}, { replace: true })}
           >
             {t('auth.findId.confirm')}
-          </Button>
+          </ActionButton>
         </div>
       );
     }

@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { Tooltip } from 'antd';
+import AppTooltip from '@/components/common/tooltip/AppTooltip';
 import * as Icons from '@ant-design/icons';
 import React from 'react';
 import { CUSTOM_ICON_MAP } from '@/components/icons/CustomIcons';
@@ -180,7 +180,7 @@ export default function IconRail() {
           const isFlyoutActive = flyoutVisible && activeRailKey === item.key;
           const showBadge = badgeKeys.has(item.key);
           return (
-            <Tooltip key={item.key} title={item.label} placement="right" mouseEnterDelay={0.3}>
+            <AppTooltip key={item.key} variant="default" title={item.label} placement="right" mouseEnterDelay={0.3}>
               <div
                 className={`rail-item ${isActive ? 'active' : ''} ${isFlyoutActive ? 'flyout-open' : ''}`}
                 onClick={() => handleRailClick(item)}
@@ -188,7 +188,7 @@ export default function IconRail() {
                 {getIconComponent(item)}
                 {showBadge && <span className="rail-badge" />}
               </div>
-            </Tooltip>
+            </AppTooltip>
           );
         })}
       </div>
@@ -200,17 +200,18 @@ export default function IconRail() {
           const isActive = activeTopKey === bottomRailMenu.key;
           const isFlyoutActive = flyoutVisible && activeRailKey === bottomRailMenu.key;
           return (
-            <Tooltip title={bottomRailMenu.label} placement="right" mouseEnterDelay={0.3}>
+            <AppTooltip variant="default" title={bottomRailMenu.label} placement="right" mouseEnterDelay={0.3}>
               <div
                 className={`rail-bottom-item ${isActive ? 'active' : ''} ${isFlyoutActive ? 'flyout-open' : ''}`}
                 onClick={() => handleRailClick(bottomRailMenu)}
               >
                 <img src={gnbSetting} alt="" aria-hidden="true" className="w-6 h-6 shrink-0" />
               </div>
-            </Tooltip>
+            </AppTooltip>
           );
         })() : (
-          <Tooltip
+          <AppTooltip
+            variant="default"
             title={t('common.settings')}
             placement="right"
             mouseEnterDelay={0.3}
@@ -218,9 +219,10 @@ export default function IconRail() {
             <div className="rail-bottom-item">
               <img src={gnbSetting} alt="" aria-hidden="true" className="w-6 h-6 shrink-0" />
             </div>
-          </Tooltip>
+          </AppTooltip>
         )}
-        <Tooltip
+        <AppTooltip
+          variant="default"
           title={tvb('logout', t('common.signOut'))}
           placement="right"
           mouseEnterDelay={0.3}
@@ -228,7 +230,7 @@ export default function IconRail() {
           <div className="rail-bottom-item" onClick={confirmLogout}>
             <img src={gnbLogout} alt="" aria-hidden="true" className="w-6 h-6 shrink-0" />
           </div>
-        </Tooltip>
+        </AppTooltip>
       </div>
     </div>
   );

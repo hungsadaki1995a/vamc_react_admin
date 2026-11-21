@@ -23,14 +23,19 @@ export type ActionButtonAction =
 export type ActionButtonIntent =
   | 'default'
   | 'primary'
+  | 'secondary'
+  | 'quaternary'
   | 'danger'
   | 'excel'
   | 'text'
   | 'icon';
 
+export type ActionButtonAppearance = 'filled' | 'outlined';
+
 export type ActionButtonProps = ButtonProps & {
   action?: ActionButtonAction;
   intent?: ActionButtonIntent;
+  appearance?: ActionButtonAppearance;
 };
 
 export type ActionButtonGroupPreset =

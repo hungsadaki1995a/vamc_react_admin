@@ -1,0 +1,110 @@
+.root {
+  &:global(.ant-tooltip) {
+    max-width: 320px;
+  }
+}
+
+.coachmarkRoot {
+  :global(.ant-tooltip-container) {
+    background: var(--color-blue-700, #0040c6);
+    border-radius: 8px;
+    padding: 12px;
+    box-shadow: 0 4px 16px rgba(12, 17, 29, 0.18);
+  }
+
+  :global(.ant-tooltip-arrow)::before {
+    background: var(--color-blue-700, #0040c6);
+  }
+}
+
+.informationRoot {
+  :global(.ant-tooltip-container) {
+    background: #ffffff;
+    border: 1px solid var(--color-navy-100, #eaeaf1);
+    border-radius: 8px;
+    padding: 8px 8px 8px 12px;
+    box-shadow: 0 4px 16px rgba(12, 17, 29, 0.18);
+  }
+
+  :global(.ant-tooltip-arrow)::before {
+    background: #ffffff;
+  }
+}
+
+.defaultRoot {
+  :global(.ant-tooltip-container) {
+    background: var(--color-navy-800, #29293d);
+    border-radius: 4px;
+    padding: 6px 10px;
+    font-size: 12px;
+    line-height: 16px;
+  }
+}
+
+.coachmarkBox {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.coachmarkTitle {
+  font-size: 13px;
+  line-height: 18px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: #ffffff;
+}
+
+.coachmarkBody {
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 400;
+  color: #ffffff;
+}
+
+.infoBox {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.infoContent {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.infoTitle {
+  font-size: 13px;
+  line-height: 18px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--color-gray-900, #3a404a);
+}
+
+.infoBody {
+  font-size: 13px;
+  line-height: 18px;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  color: var(--color-gray-900, #3a404a);
+}
+
+.closeBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--color-gray-700, #6f7b95);
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+
+  &:hover {
+    color: var(--color-gray-900, #3a404a);
+  }
+}

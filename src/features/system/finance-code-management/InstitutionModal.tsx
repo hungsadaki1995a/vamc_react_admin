@@ -1,5 +1,7 @@
 import { useState } from 'react';
-import { Input, InputNumber, Radio } from 'antd';
+import AppRadio from '@/components/inputs/AppRadio';
+import Spinbox from '@/components/inputs/Spinbox';
+import TextInput from '@/components/inputs/TextInput';
 import { useNotify } from '@/hooks/use-notify';
 import type { YesNo } from '@/api/system/code-group-api';
 import type { InstitutionItem } from '@/api/system/institution-api';
@@ -79,7 +81,7 @@ export function InstitutionModal({ item, canWrite, onClose }: InstitutionModalPr
     >
       <SysFieldGrid columns={1}>
         <SysField label="Institution Code" required error={errors.fnstCd}>
-          <InputNumber
+          <Spinbox
             value={values.fnstCd}
             disabled={!isCreate}
             min={1}
@@ -89,13 +91,13 @@ export function InstitutionModal({ item, canWrite, onClose }: InstitutionModalPr
           />
         </SysField>
         <SysField label="Institution Name" required error={errors.fnstNm}>
-          <Input value={values.fnstNm} maxLength={200} onChange={(e) => change('fnstNm', e.target.value)} />
+          <TextInput value={values.fnstNm} maxLength={200} onChange={(e) => change('fnstNm', e.target.value)} />
         </SysField>
         <SysField label="Short Name" error={errors.fnstAbbrNm}>
-          <Input value={values.fnstAbbrNm} maxLength={200} onChange={(e) => change('fnstAbbrNm', e.target.value)} />
+          <TextInput value={values.fnstAbbrNm} maxLength={200} onChange={(e) => change('fnstAbbrNm', e.target.value)} />
         </SysField>
         <SysField label="Use" required error={errors.useYn}>
-          <Radio.Group
+          <AppRadio.Group
             options={USE_YN_RADIO_OPTIONS}
             value={values.useYn}
             onChange={(e) => change('useYn', e.target.value as YesNo)}

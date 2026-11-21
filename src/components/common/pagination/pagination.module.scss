@@ -1,0 +1,96 @@
+.root {
+  display: inline-flex;
+  align-items: center;
+  user-select: none;
+}
+
+.numberedMode {
+  gap: 12px;
+}
+
+.fractionMode {
+  gap: 16px;
+}
+
+.navGroup {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.navBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  background: #ffffff;
+  border: 1px solid var(--color-navy-200, #d1d1e0);
+  border-radius: 3px;
+  color: var(--color-gray-700, #6f7b95);
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease;
+
+  &:hover:not(:disabled) {
+    background: var(--color-navy-50, #f6f6f9);
+    border-color: var(--color-gray-400, #c9cfdd);
+    color: var(--color-gray-900, #3a404a);
+  }
+
+  &:disabled {
+    border-color: var(--color-gray-300, #d3d9e3);
+    color: var(--color-gray-400, #c9cfdd);
+    cursor: not-allowed;
+  }
+}
+
+.pageGroup {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pageBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  height: 24px;
+  padding: 0 4px;
+  background: transparent;
+  border: none;
+  border-radius: 5px;
+  font-family: inherit;
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  color: var(--color-gray-900, #3a404a);
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
+
+  &:hover:not(.pageBtnActive) {
+    background: var(--color-navy-50, #f6f6f9);
+  }
+}
+
+.pageBtnActive {
+  background: var(--color-blue-500, #1876ff);
+  color: #ffffff;
+  font-weight: 500;
+}
+
+.fractionText {
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  color: #101828;
+  white-space: nowrap;
+}

@@ -1,0 +1,94 @@
+.root {
+  display: flex;
+  align-items: flex-start;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.step {
+  flex: 1;
+  min-width: 126px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.trackRow {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.line {
+  flex: 1;
+  height: 2px;
+  background: var(--color-navy-200, #d1d1e0);
+}
+
+.lineActive {
+  background: var(--color-blue-500, #1876ff);
+}
+
+.lineHidden {
+  visibility: hidden;
+}
+
+.circle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  border-radius: 999px;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.label {
+  padding: 0 8px;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  text-align: center;
+}
+
+.stepCompleted {
+  .circle {
+    background: var(--color-blue-600, #005be2);
+    color: #ffffff;
+  }
+
+  .label {
+    color: var(--color-navy-700, #3b3b59);
+  }
+}
+
+.stepCurrent {
+  .circle {
+    background: var(--color-blue-600, #005be2);
+    color: #ffffff;
+  }
+
+  .label {
+    color: var(--color-blue-600, #005be2);
+  }
+}
+
+.stepNext {
+  .circle {
+    background: #ffffff;
+    border: 1px solid var(--color-navy-200, #d1d1e0);
+    color: var(--color-gray-700, #6f7b95);
+  }
+
+  .label {
+    color: var(--color-gray-500, #a8b2c8);
+  }
+}

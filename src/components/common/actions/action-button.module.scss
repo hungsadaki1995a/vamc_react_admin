@@ -1,40 +1,306 @@
 .root {
   &:global(.ant-btn) {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    font-family: inherit;
+    letter-spacing: -0.02em;
     box-shadow: none;
+    white-space: nowrap;
+    transition:
+      background-color 0.15s ease,
+      border-color 0.15s ease,
+      color 0.15s ease;
+
+    :global(.anticon) {
+      font-size: 16px;
+      line-height: 1;
+    }
+
+    svg,
+    img {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+    }
+
+    &:disabled,
+    &:global(.ant-btn-disabled) {
+      &,
+      &:hover,
+      &:focus,
+      &:active {
+        border-color: var(--color-gray-300, #d3d9e3) !important;
+        background: var(--color-gray-300, #d3d9e3) !important;
+        color: #ffffff !important;
+        box-shadow: none !important;
+      }
+
+      :global(.anticon) {
+        color: #ffffff !important;
+      }
+    }
+  }
+
+  &.appearanceOutlined:global(.ant-btn) {
+    &:disabled,
+    &:global(.ant-btn-disabled) {
+      &,
+      &:hover,
+      &:focus,
+      &:active {
+        border-color: var(--color-gray-300, #d3d9e3) !important;
+        background: var(--color-gray-300, #d3d9e3) !important;
+        color: var(--color-gray-500, #a8b2c8) !important;
+      }
+
+      :global(.anticon) {
+        color: var(--color-gray-500, #a8b2c8) !important;
+      }
+    }
+  }
+
+  &.sizeDefault:global(.ant-btn) {
+    height: 32px;
+    padding: 0 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    line-height: 16px;
+    font-weight: 600;
+  }
+
+  &.sizeSmall:global(.ant-btn) {
+    height: 24px;
+    padding: 0 8px;
+    border-radius: 3px;
+    font-size: 10px;
+    line-height: 14px;
+    font-weight: 500;
+
+    :global(.anticon) {
+      font-size: 12px;
+    }
+
+    svg,
+    img {
+      width: 12px;
+      height: 12px;
+    }
+  }
+
+  /* Primary */
+  &.intentPrimary.appearanceFilled:global(.ant-btn) {
+    border-color: var(--color-blue-600, #005be2);
+    background: var(--color-blue-600, #005be2);
+    color: #ffffff;
+
+    &:hover:not(:disabled) {
+      border-color: var(--color-blue-700, #0040c6);
+      background: var(--color-blue-700, #0040c6);
+      color: #ffffff;
+    }
+
+    &:active:not(:disabled) {
+      border-color: var(--color-blue-800, #0022aa);
+      background: var(--color-blue-800, #0022aa);
+      color: #ffffff;
+    }
+  }
+
+  &.intentPrimary.appearanceOutlined:global(.ant-btn) {
+    border-color: var(--color-blue-600, #005be2);
+    background: #ffffff;
+    color: var(--color-blue-600, #005be2);
+
+    &:hover:not(:disabled) {
+      border-color: var(--color-blue-700, #0040c6);
+      background: var(--color-gray-100, #e9ecf1);
+      color: var(--color-blue-700, #0040c6);
+    }
+
+    &:active:not(:disabled) {
+      border-color: var(--color-blue-800, #0022aa);
+      background: var(--color-gray-200, #dee2ea);
+      color: var(--color-blue-800, #0022aa);
+    }
+  }
+
+  /* Secondary */
+  &.intentSecondary.appearanceFilled:global(.ant-btn) {
+    border-color: var(--color-navy-600, #505077);
+    background: var(--color-navy-600, #505077);
+    color: #ffffff;
+
+    &:hover:not(:disabled) {
+      border-color: var(--color-navy-700, #3b3b59);
+      background: var(--color-navy-700, #3b3b59);
+      color: #ffffff;
+    }
+
+    &:active:not(:disabled) {
+      border-color: var(--color-navy-800, #29293d);
+      background: var(--color-navy-800, #29293d);
+      color: #ffffff;
+    }
+  }
+
+  &.intentSecondary.appearanceOutlined:global(.ant-btn) {
+    border-color: var(--color-navy-600, #505077);
+    background: #ffffff;
+    color: var(--color-navy-600, #505077);
+
+    &:hover:not(:disabled) {
+      border-color: var(--color-navy-700, #3b3b59);
+      background: var(--color-gray-100, #e9ecf1);
+      color: var(--color-navy-700, #3b3b59);
+    }
+
+    &:active:not(:disabled) {
+      border-color: var(--color-navy-800, #29293d);
+      background: var(--color-gray-200, #dee2ea);
+      color: var(--color-navy-800, #29293d);
+    }
+  }
+
+  /* Quaternary (Default) */
+  &.intentQuaternary.appearanceFilled:global(.ant-btn) {
+    border-color: var(--color-gray-700, #6f7b95);
+    background: var(--color-gray-700, #6f7b95);
+    color: #ffffff;
+
+    &:hover:not(:disabled) {
+      border-color: var(--color-gray-800, #545c6d);
+      background: var(--color-gray-800, #545c6d);
+      color: #ffffff;
+    }
+
+    &:active:not(:disabled) {
+      border-color: var(--color-gray-900, #3a404a);
+      background: var(--color-gray-900, #3a404a);
+      color: #ffffff;
+    }
+  }
+
+  &.intentQuaternary.appearanceOutlined:global(.ant-btn) {
+    border-color: var(--color-gray-300, #d3d9e3);
+    background: #ffffff;
+    color: var(--color-gray-800, #545c6d);
+
+    &:hover:not(:disabled) {
+      border-color: var(--color-gray-300, #d3d9e3);
+      background: var(--color-gray-100, #e9ecf1);
+      color: var(--color-gray-800, #545c6d);
+    }
+
+    &:active:not(:disabled) {
+      border-color: var(--color-gray-300, #d3d9e3);
+      background: var(--color-gray-200, #dee2ea);
+      color: var(--color-gray-900, #3a404a);
+    }
+  }
+
+  /* Danger */
+  &.intentDanger.appearanceOutlined:global(.ant-btn) {
+    border-color: var(--color-red-500, #ff334b);
+    background: #ffffff;
+    color: var(--color-red-500, #ff334b);
+
+    &:hover:not(:disabled) {
+      border-color: var(--color-red-600, #e62e44);
+      background: var(--color-red-50, #fff0f1);
+      color: var(--color-red-600, #e62e44);
+    }
+  }
+
+  &.intentDanger.appearanceFilled:global(.ant-btn) {
+    border-color: var(--color-red-500, #ff334b);
+    background: var(--color-red-500, #ff334b);
+    color: #ffffff;
+
+    &:hover:not(:disabled) {
+      border-color: var(--color-red-600, #e62e44);
+      background: var(--color-red-600, #e62e44);
+      color: #ffffff;
+    }
+  }
+
+  /* Excel */
+  &.intentExcel:global(.ant-btn) {
+    border-color: var(--color-gray-300, #d3d9e3);
+    background: #ffffff;
+    color: var(--color-gray-800, #545c6d);
+
+    &:hover:not(:disabled) {
+      border-color: var(--color-gray-300, #d3d9e3);
+      background: var(--color-gray-100, #e9ecf1);
+      color: var(--color-gray-800, #545c6d);
+    }
+
+    &:active:not(:disabled) {
+      background: var(--color-gray-200, #dee2ea);
+    }
+
+    :global(.anticon) {
+      color: #107c41;
+    }
+  }
+
+  &.excelUpload :global(.anticon) {
+    color: currentColor;
+  }
+
+  /* Button-icon */
+  &.intentIcon:global(.ant-btn) {
+    width: 32px;
+    min-width: 32px;
+    padding: 0;
+    border-color: var(--color-gray-300, #d3d9e3);
+    background: #ffffff;
+    color: var(--color-gray-800, #545c6d);
+
+    &.sizeSmall {
+      width: 24px;
+      min-width: 24px;
+    }
+
+    &:hover:not(:disabled) {
+      border-color: var(--color-gray-300, #d3d9e3);
+      background: var(--color-gray-100, #e9ecf1);
+      color: var(--color-gray-900, #3a404a);
+    }
+
+    &:active:not(:disabled) {
+      background: var(--color-gray-200, #dee2ea);
+    }
+  }
+
+  /* Button-text */
+  &.intentText:global(.ant-btn) {
+    height: auto;
+    padding: 0 4px;
+    border-color: transparent;
+    background: transparent;
+    color: var(--color-gray-700, #6f7b95);
+    font-size: 13px;
+    line-height: 18px;
+    font-weight: 500;
+
+    &:hover:not(:disabled) {
+      border-color: transparent;
+      background: transparent;
+      color: var(--color-gray-900, #3a404a);
+    }
 
     &:disabled,
     &:global(.ant-btn-disabled) {
       &,
       &:hover,
       &:focus {
-        border-color: #d9d9d9 !important;
-        background: #f5f5f5 !important;
-        color: #bfbfbf !important;
-        box-shadow: none !important;
-      }
-
-      :global(.anticon) {
-        color: #bfbfbf !important;
+        border-color: transparent !important;
+        background: transparent !important;
+        color: var(--color-gray-500, #a8b2c8) !important;
       }
     }
-  }
-
-  &.intentPrimary:global(.ant-btn-primary) {
-    border-color: #005df9;
-    background: #005df9;
-    color: #fff;
-  }
-
-  &.intentDanger:global(.ant-btn-dangerous:not(.ant-btn-primary)) {
-    border-color: #ff4d4f;
-    color: #ff4d4f;
-  }
-
-  &.intentExcel :global(.anticon) {
-    color: #1fa463;
-  }
-
-  &.excelUpload :global(.anticon) {
-    color: currentColor;
   }
 }

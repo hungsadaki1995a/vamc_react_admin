@@ -1,5 +1,5 @@
 import { Suspense, useRef, useState, memo } from 'react';
-import { Spin } from 'antd';
+import LoadingSpinner from '@/components/common/loading/LoadingSpinner';
 import { useTabStore } from '@/stores/tab-store';
 import { componentRegistry } from '@/config/component-registry';
 import { TabContext } from '@/contexts/tab-context';
@@ -41,7 +41,7 @@ const TabPanel = memo(function TabPanel({
             <Suspense
               fallback={
                 <div className="text-center p-[60px]">
-                  <Spin size="large" />
+                  <LoadingSpinner size="large" />
                 </div>
               }
             >

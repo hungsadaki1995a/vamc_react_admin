@@ -1,4 +1,5 @@
-import { Input, Spin } from 'antd';
+import LoadingSpinner from '@/components/common/loading/LoadingSpinner';
+import TextInput from '@/components/inputs/TextInput';
 import { NOTI_CHANNEL_LABELS, NOTI_RECIPIENT_LABELS } from '@/api/system/notification-api';
 import { ResultBadge, SysNotAvailable } from '../_shared/SysListUi';
 import { SysField, SysFieldGrid, SysFormModal } from '../_shared/SysFormUi';
@@ -18,7 +19,7 @@ const PENDING_HISTORY_FIELDS_NOTE = (
 
 /** Read-only value box like the frame's grey inputs. */
 function ReadOnly({ value }: { value?: string | null }) {
-  return <Input value={value || '-'} readOnly className={styles.readOnly} />;
+  return <TextInput value={value || '-'} readOnly className={styles.readOnly} />;
 }
 
 export default function NotificationHistoryDetailModal({ logId, onClose }: { logId: string; onClose: () => void }) {
@@ -27,7 +28,7 @@ export default function NotificationHistoryDetailModal({ logId, onClose }: { log
 
   return (
     <SysFormModal width={1200} open title="Notification Send Detail" onCancel={onClose} notice={PENDING_HISTORY_FIELDS_NOTE}>
-      <Spin spinning={isFetching}>
+      <LoadingSpinner spinning={isFetching}>
         {isError && <p className={styles.errorText}>{error.message}</p>}
         <SysFieldGrid columns={3}>
           <SysField label="Sent At">
@@ -64,7 +65,7 @@ export default function NotificationHistoryDetailModal({ logId, onClose }: { log
             <div className={`${styles.valueBox} ${styles.contentBox}`}>{data?.notiCn || '-'}</div>
           </SysField>
         </SysFieldGrid>
-      </Spin>
+      </LoadingSpinner>
     </SysFormModal>
   );
 }

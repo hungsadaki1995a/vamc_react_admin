@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { Input, Select } from 'antd';
 import type { TableColumnsType } from 'antd';
+import AppSelect from '@/components/inputs/AppSelect';
+import TextInput from '@/components/inputs/TextInput';
 import { useMenuPermission } from '@/hooks/use-menu-permission';
 import type { ScreenItem, ScreenSearch } from '@/api/system/program-screen-api';
 import {
@@ -87,13 +88,13 @@ export default function ScreenManagement() {
       />
       <SysFilterPanel columns={4}>
         <SysFilterItem label="Type" hint={<SysNotAvailable variant="inline" />}>
-          <Select options={SCREEN_TYPE_FILTER_OPTIONS} value={ALL} disabled title={NOT_AVAILABLE_REASON} />
+          <AppSelect options={SCREEN_TYPE_FILTER_OPTIONS} value={ALL} disabled title={NOT_AVAILABLE_REASON} />
         </SysFilterItem>
         <SysFilterItem label="Business" hint={<SysNotAvailable variant="inline" />}>
-          <Select options={[{ value: ALL, label: 'All' }]} value={ALL} disabled title={NOT_AVAILABLE_REASON} />
+          <AppSelect options={[{ value: ALL, label: 'All' }]} value={ALL} disabled title={NOT_AVAILABLE_REASON} />
         </SysFilterItem>
         <SysFilterItem label="Screen ID">
-          <Input
+          <TextInput
             value={list.draft.scrnId}
             allowClear
             onChange={(e) => list.setDraft({ scrnId: e.target.value })}
@@ -102,7 +103,7 @@ export default function ScreenManagement() {
         </SysFilterItem>
         <SysFilterItem label="Screen Name">
           {/* TODO(schema): search the screen name column; matches remarks / program name for now. */}
-          <Input
+          <TextInput
             value={list.draft.keyword}
             allowClear
             onChange={(e) => list.setDraft({ keyword: e.target.value })}

@@ -1,7 +1,10 @@
 import { useState } from 'react';
-import { DatePicker, Input, Table } from 'antd';
 import type { TableColumnsType } from 'antd';
 import type { Dayjs } from 'dayjs';
+import ActionButton from '@/components/common/actions/ActionButton';
+import DataTable from '@/components/common/table/DataTable';
+import { AppRangePicker } from '@/components/inputs/AppDatePicker';
+import TextInput from '@/components/inputs/TextInput';
 import { useNotify } from '@/hooks/use-notify';
 import { useMenuPermission } from '@/hooks/use-menu-permission';
 import type { Banner, BannerSearch } from '@/api/contents/banner-api';
@@ -174,7 +177,7 @@ export default function BannerManagement() {
           </div>
           <div className={styles.filterGroup}>
             <span className={styles.filterLabel}>ID/Title</span>
-            <Input
+            <TextInput
               className={styles.filterInput}
               placeholder="Enter Banner ID or Title."
               value={filter.keyword}
@@ -185,7 +188,7 @@ export default function BannerManagement() {
           </div>
           <div className={styles.filterGroup}>
             <span className={styles.filterLabel}>Registration Period</span>
-            <DatePicker.RangePicker
+            <AppRangePicker
               format={DATE_FORMAT}
               placeholder={['dd/mm/yyyy', 'dd/mm/yyyy']}
               value={filter.period}
@@ -200,24 +203,22 @@ export default function BannerManagement() {
         <span className={styles.totalCount}>
           Total ({total}){error && <span className={styles.textDanger}> — {error.message}</span>}
         </span>
-        <button
-          type="button"
-          className={`${styles.btn} ${styles.btnSmall}`}
+        <ActionButton
+          action="excelDownload"
+          size="small"
           disabled={downloadExcel.isPending}
           onClick={handleExcel}
         >
           Excel Download
-        </button>
+        </ActionButton>
       </div>
 
       <div className={styles.tableWrapper}>
-        <Table<Banner>
+        <DataTable<Banner>
           rowKey="bannerId"
           columns={columns}
           dataSource={banners}
           loading={isFetching}
-          pagination={false}
-          size="small"
           scroll={{ x: 'max-content' }}
           rowSelection={{
             selectedRowKeys: selectedKeys,
@@ -229,12 +230,12 @@ export default function BannerManagement() {
       <SysPagination page={page} pageSize={PAGE_SIZE} total={total} onChange={setPage} />
 
       <div className={styles.bottomActions}>
-        <button type="button" className={styles.btn} disabled={!canWrite} onClick={handleDelete}>
+        <ActionButton action="deleteRow" disabled={!canWrite} onClick={handleDelete}>
           Delete
-        </button>
-        <button type="button" className={styles.btnDark} disabled={!canWrite} onClick={() => setModalBannerId(null)}>
+        </ActionButton>
+        <ActionButton intent="secondary" appearance="filled" disabled={!canWrite} onClick={() => setModalBannerId(null)}>
           Add New
-        </button>
+        </ActionButton>
       </div>
 
       {modalBannerId !== undefined && (

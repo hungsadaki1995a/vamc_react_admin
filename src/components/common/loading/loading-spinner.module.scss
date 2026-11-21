@@ -1,0 +1,25 @@
+@keyframes spinner-rotate {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.svg {
+  display: inline-block;
+  animation: spinner-rotate 0.8s linear infinite;
+}
+
+.sizeSmall {
+  width: 20px;
+  height: 20px;
+}
+
+.sizeDefault {
+  width: 32px;
+  height: 32px;
+}
+
+.sizeLarge {
+  width: 48px;
+  height: 48px;
+}

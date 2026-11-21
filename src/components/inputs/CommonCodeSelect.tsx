@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { Select } from 'antd';
+import AppSelect from '@/components/inputs/AppSelect';
 import { useComcdStore } from '@/stores/common-code-store';
 import type { ComcdSelectProps } from '@/types/inputs';
 
@@ -44,5 +44,5 @@ export default function ComcdSelect({ cdDmnId, value, prefixOption, filterFn, ..
     return base;
   }, [codeList, prefixOption, filterFn]);
 
-  return <Select options={options} value={value ?? undefined} {...rest} />;
+  return <AppSelect options={options} value={value ?? undefined} {...rest} />;
 }

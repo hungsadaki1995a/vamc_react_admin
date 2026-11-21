@@ -1,10 +1,14 @@
 import { useState } from 'react';
-import { Modal, Radio, Input, Select, Space, Typography, Tag } from 'antd';
+import { Space, Typography } from 'antd';
+import StatusBadge, { type StatusBadgeColor } from '@/components/common/badge/StatusBadge';
+import Popup from '@/components/common/popup/Popup';
+import AppRadio from '@/components/inputs/AppRadio';
+import AppSelect from '@/components/inputs/AppSelect';
+import TextArea from '@/components/inputs/TextArea';
 import { useNotify } from '@/hooks/use-notify';
 import type { MemberItem, ApprovalStatus } from './member.types';
 
 const { Text } = Typography;
-const { TextArea } = Input;
 
 interface ApprovalStatusModalProps {
   visible: boolean;
@@ -13,11 +17,11 @@ interface ApprovalStatusModalProps {
   onUpdateStatus: (memberId: string, newStatus: ApprovalStatus, assignee: string, note?: string) => void;
 }
 
-const statusOptions: { label: string; value: ApprovalStatus; color: string; desc: string }[] = [
+const statusOptions: { label: string; value: ApprovalStatus; color: StatusBadgeColor; desc: string }[] = [
   { label: 'Not Received', value: 'Not Received', color: 'orange', desc: 'Application not yet submitted/received' },
   { label: 'Requested', value: 'Requested', color: 'blue', desc: 'Application requested and awaiting processing' },
   { label: 'In Progress', value: 'In Progress', color: 'green', desc: 'Application is actively under review' },
-  { label: 'Approved', value: 'Approved', color: 'cyan', desc: 'Application verified and approved' },
+  { label: 'Approved', value: 'Approved', color: 'violet', desc: 'Application verified and approved' },
   { label: 'Rejected', value: 'Rejected', color: 'red', desc: 'Application rejected due to missing/invalid info' },
 ];
 
@@ -60,11 +64,12 @@ export default function ApprovalStatusModal({
   };
 
   return (
-    <Modal
+    <Popup
       open={visible}
       onCancel={onClose}
-      onOk={handleConfirm}
-      okText="Update Status"
+      onConfirm={handleConfirm}
+      confirmText="Update Status"
+      footerAlign="right"
       title="Change Approval Status"
       width={520}
     >
@@ -74,7 +79,7 @@ export default function ApprovalStatusModal({
             Member: <strong>{member.memberName}</strong> ({member.memberCode})
           </Text>
           <Text type="secondary">
-            Current Status: <Tag>{member.approvalStatus}</Tag>
+            Current Status: <StatusBadge>{member.approvalStatus}</StatusBadge>
           </Text>
         </Space>
       </div>
@@ -83,14 +88,14 @@ export default function ApprovalStatusModal({
         <Text strong className="block mb-2!">
           Target Approval Status
         </Text>
-        <Radio.Group
+        <AppRadio.Group
           value={selectedStatus}
           onChange={(e) => setSelectedStatus(e.target.value)}
           className="w-full"
         >
           <Space direction="vertical" orientation="vertical" className="w-full">
             {statusOptions.map((opt) => (
-              <Radio
+              <AppRadio
                 key={opt.value}
                 value={opt.value}
                 className={`flex items-center px-3 py-2 rounded-[6px] border w-full ${
@@ -100,25 +105,25 @@ export default function ApprovalStatusModal({
                 }`}
               >
                 <div className="inline-flex items-center gap-2">
-                  <Tag color={opt.color}>{opt.label}</Tag>
+                  <StatusBadge color={opt.color}>{opt.label}</StatusBadge>
                   <Text type="secondary" className="text-[12px]!">
                     {opt.desc}
                   </Text>
                 </div>
-              </Radio>
+              </AppRadio>
             ))}
           </Space>
-        </Radio.Group>
+        </AppRadio.Group>
       </div>
 
       <div className="mb-4">
         <Text strong className="block mb-1.5!">
           Assignee
         </Text>
-        <Select
+        <AppSelect
           className="w-full"
           value={selectedAssignee}
-          onChange={setSelectedAssignee}
+          onChange={(v) => setSelectedAssignee(String(v))}
           options={assignees.map((a) => ({ label: a, value: a }))}
         />
       </div>
@@ -134,7 +139,7 @@ export default function ApprovalStatusModal({
           onChange={(e) => setNote(e.target.value)}
         />
       </div>
-    </Modal>
+    </Popup>
   );
 }
 

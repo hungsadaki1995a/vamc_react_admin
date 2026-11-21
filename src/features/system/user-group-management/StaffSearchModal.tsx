@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { Input } from 'antd';
 import type { TableColumnsType } from 'antd';
+import TextInput from '@/components/inputs/TextInput';
 import type { EmployeeLookup, EmployeeLookupSearch } from '@/api/system/employee-api';
 import {
   SysFilterItem,
@@ -67,7 +67,7 @@ export default function StaffSearchModal({ roleGroupId, roleId, saving, onClose,
     >
       <SysFilterPanel columns={2}>
         <SysFilterItem label="Employee No.">
-          <Input
+          <TextInput
             value={list.draft.empNo}
             maxLength={10}
             allowClear
@@ -76,7 +76,7 @@ export default function StaffSearchModal({ roleGroupId, roleId, saving, onClose,
           />
         </SysFilterItem>
         <SysFilterItem label="Name">
-          <Input
+          <TextInput
             value={list.draft.empNm}
             maxLength={100}
             allowClear

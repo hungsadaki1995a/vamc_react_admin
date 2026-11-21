@@ -1,6 +1,6 @@
 import { useEffect, useRef, useCallback, useState, useMemo } from 'react';
 import { RightOutlined, FolderOutlined, FileTextOutlined } from '@ant-design/icons';
-import { Tooltip } from 'antd';
+import AppTooltip from '@/components/common/tooltip/AppTooltip';
 import {
   chevronDown,
   chevronUp,
@@ -318,7 +318,7 @@ export default function FlyoutPanel() {
               {activeMenuTree.menuLblVal?.trim() || activeMenuTree.menuNmDisplay?.trim()}
             </span>
             {allExpandableKeys.length > 0 && (
-              <Tooltip title={isAllExpanded ? 'Collapse All' : 'Expand All'} placement="bottom">
+              <AppTooltip variant="default" title={isAllExpanded ? 'Collapse All' : 'Expand All'} placement="bottom">
                 <button type="button" className="lnb-title-toggle" onClick={toggleExpandAll}>
                   <img
                     src={isAllExpanded ? chevronUp : chevronDown}
@@ -327,7 +327,7 @@ export default function FlyoutPanel() {
                     className="lnb-title-arrow"
                   />
                 </button>
-              </Tooltip>
+              </AppTooltip>
             )}
           </div>
           <div className="lnb-menu-list">
@@ -340,11 +340,11 @@ export default function FlyoutPanel() {
           <div className="flyout-logo-header">
             <span className="flyout-logo-text">VAMC NPL ADMIN</span>
             {allExpandableKeys.length > 0 && (
-              <Tooltip title={isAllExpanded ? 'Collapse All' : 'Expand All'} placement="bottom">
+              <AppTooltip variant="default" title={isAllExpanded ? 'Collapse All' : 'Expand All'} placement="bottom">
                 <button className="flyout-expand-all-btn" onClick={toggleExpandAll}>
                   {isAllExpanded ? <CollapseAllIcon /> : <ExpandAllIcon />}
                 </button>
-              </Tooltip>
+              </AppTooltip>
             )}
           </div>
 

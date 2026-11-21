@@ -1,7 +1,9 @@
 import { useMemo, useState } from 'react';
 import type { CSSProperties } from 'react';
-import { Alert, Checkbox, Spin } from 'antd';
+import { Alert } from 'antd';
 import { MinusSquareOutlined, PlusSquareOutlined, ReloadOutlined } from '@ant-design/icons';
+import LoadingSpinner from '@/components/common/loading/LoadingSpinner';
+import AppCheckbox from '@/components/inputs/AppCheckbox';
 import { useNotify } from '@/hooks/use-notify';
 import { useMenuPermission } from '@/hooks/use-menu-permission';
 import { useMenuStore } from '@/stores/menu-store';
@@ -187,7 +189,7 @@ export default function MenuPermissionMatrix({ menuSeCd }: Props) {
     if (column.superAdmin) {
       return (
         <td key={key} className={styles.checkCell}>
-          <Checkbox checked disabled aria-label={`${kind} fixed for Super Admin`} />
+          <AppCheckbox checked disabled aria-label={`${kind} fixed for Super Admin`} />
         </td>
       );
     }
@@ -197,7 +199,7 @@ export default function MenuPermissionMatrix({ menuSeCd }: Props) {
     const edited = !node.children.length && edits.has(cellKey(column, node.menu.menuCd));
     return (
       <td key={key} className={styles.checkCell} data-edited={edited || undefined}>
-        <Checkbox
+        <AppCheckbox
           checked={state.checked}
           indeterminate={state.indeterminate}
           disabled={!canWrite}
@@ -258,7 +260,7 @@ export default function MenuPermissionMatrix({ menuSeCd }: Props) {
       {error && (
         <Alert type="error" showIcon title="The permission matrix could not be loaded." description={error.message} />
       )}
-      <Spin spinning={isFetching} classNames={{ root: styles.spin }}>
+      <LoadingSpinner spinning={isFetching} classNames={{ root: styles.spin }}>
         <div className={styles.tableWrap}>
           <table className={styles.matrix}>
             <thead>
@@ -298,7 +300,7 @@ export default function MenuPermissionMatrix({ menuSeCd }: Props) {
             </tbody>
           </table>
         </div>
-      </Spin>
+      </LoadingSpinner>
     </SysPage>
   );
 }

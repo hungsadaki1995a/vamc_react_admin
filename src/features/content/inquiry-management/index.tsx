@@ -1,19 +1,19 @@
 import { useState } from 'react';
-import { DatePicker, Checkbox, Table } from 'antd';
 import type { TableColumnsType } from 'antd';
 import {
-  SearchOutlined,
   UpOutlined,
   DownOutlined,
 } from '@ant-design/icons';
 import dayjs from 'dayjs';
+import ActionButton from '@/components/common/actions/ActionButton';
+import DataTable from '@/components/common/table/DataTable';
+import AppCheckbox from '@/components/inputs/AppCheckbox';
+import { AppRangePicker } from '@/components/inputs/AppDatePicker';
 import { DateTimeCell, SysPagination } from '@/features/system/_shared/SystemUi';
 import type { InquiryItem } from './inquiry.types';
 import { useInquiries } from './use-inquiries';
 import InquiryDetailModal from './InquiryDetailModal';
 import styles from './inquiry-management.module.scss';
-
-const { RangePicker } = DatePicker;
 
 // Default filter values as required:
 // 1. answerStatus is ALL
@@ -301,20 +301,19 @@ export default function InquiryManagement() {
       <div className={styles.titleRow}>
         <h1 className={styles.pageTitle}>1:1 Inquiry List</h1>
         <div className={styles.headerActions}>
-          <button className={styles.btnReset} onClick={handleReset}>
+          <ActionButton action="reset" className={styles.btnReset} onClick={handleReset}>
             Reset
-          </button>
-          <button className={styles.btnView} onClick={handleView}>
-            <SearchOutlined className={styles.searchIcon} />
+          </ActionButton>
+          <ActionButton action="search" intent="secondary" appearance="filled" className={styles.btnView} onClick={handleView}>
             View
-          </button>
-          <button
+          </ActionButton>
+          <ActionButton
+            intent="icon"
             className={styles.btnCollapse}
+            icon={filterCollapsed ? <DownOutlined /> : <UpOutlined />}
             onClick={() => setFilterCollapsed(!filterCollapsed)}
             title={filterCollapsed ? 'Expand Filters' : 'Collapse Filters'}
-          >
-            {filterCollapsed ? <DownOutlined /> : <UpOutlined />}
-          </button>
+          />
         </div>
       </div>
 
@@ -325,15 +324,15 @@ export default function InquiryManagement() {
           <div className={styles.filterGroup}>
             <span className={styles.filterLabel}>Response Status</span>
             <div className={styles.filterCheckboxes}>
-              <Checkbox checked={responseStatusAll} onChange={handleResponseStatusAllChange}>
+              <AppCheckbox checked={responseStatusAll} onChange={handleResponseStatusAllChange}>
                 All
-              </Checkbox>
-              <Checkbox checked={statusCompleted} onChange={handleStatusCompletedChange}>
+              </AppCheckbox>
+              <AppCheckbox checked={statusCompleted} onChange={handleStatusCompletedChange}>
                 Completed
-              </Checkbox>
-              <Checkbox checked={statusIncomplete} onChange={handleStatusIncompleteChange}>
+              </AppCheckbox>
+              <AppCheckbox checked={statusIncomplete} onChange={handleStatusIncompleteChange}>
                 Incomplete
-              </Checkbox>
+              </AppCheckbox>
             </div>
           </div>
 
@@ -341,22 +340,22 @@ export default function InquiryManagement() {
           <div className={styles.filterGroup}>
             <span className={styles.filterLabel}>Inquiry Type</span>
             <div className={styles.filterCheckboxes}>
-              <Checkbox checked={inquiryTypeAll} onChange={handleInquiryTypeAllChange}>
+              <AppCheckbox checked={inquiryTypeAll} onChange={handleInquiryTypeAllChange}>
                 All
-              </Checkbox>
-              <Checkbox checked={typeConsulting} onChange={handleTypeConsultingChange}>
+              </AppCheckbox>
+              <AppCheckbox checked={typeConsulting} onChange={handleTypeConsultingChange}>
                 Consulting Inquiry
-              </Checkbox>
-              <Checkbox checked={typeGeneral} onChange={handleTypeGeneralChange}>
+              </AppCheckbox>
+              <AppCheckbox checked={typeGeneral} onChange={handleTypeGeneralChange}>
                 General Inquiry
-              </Checkbox>
+              </AppCheckbox>
             </div>
           </div>
 
           {/* Registration Period (3. fromDate 30 days from today, 4. toDay current day) */}
           <div className={styles.filterGroup}>
             <span className={styles.filterLabel}>Registration Period</span>
-            <RangePicker
+            <AppRangePicker
               format="DD/MM/YYYY"
               placeholder={['dd/mm/yyyy', 'dd/mm/yyyy']}
               value={dateRange}
@@ -374,13 +373,11 @@ export default function InquiryManagement() {
 
       {/* ── Data Table ──────────────────────────────────────────────────────── */}
       <div className={styles.tableWrapper}>
-        <Table<InquiryItem>
+        <DataTable<InquiryItem>
           rowKey="id"
           columns={columns}
           dataSource={inquiryItems}
           loading={isLoading || isFetching}
-          pagination={false}
-          size="middle"
           scroll={{ x: 1000 }}
         />
       </div>

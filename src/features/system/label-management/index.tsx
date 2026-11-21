@@ -1,7 +1,10 @@
 import { useMemo, useState } from 'react';
-import { Checkbox, Input, Select, Upload } from 'antd';
+import { Upload } from 'antd';
 import type { TableColumnsType } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
+import AppCheckbox from '@/components/inputs/AppCheckbox';
+import AppSelect from '@/components/inputs/AppSelect';
+import TextInput from '@/components/inputs/TextInput';
 import { useNotify } from '@/hooks/use-notify';
 import { useMenuPermission } from '@/hooks/use-menu-permission';
 import type { LabelKey, LabelListItem, LabelSearch } from '@/api/system/label-management-api';
@@ -217,7 +220,7 @@ export default function LabelManagement() {
       <SysFilterPanel columns={4}>
         <SysFilterItem label="Type" hint={<SysNotAvailable variant="inline" />}>
           {/* TODO(schema): SYS_SE_CD pending — disabled, never sent. */}
-          <Select
+          <AppSelect
             options={TYPE_FILTER_OPTIONS}
             value={list.draft.sysSeCd}
             disabled
@@ -225,7 +228,7 @@ export default function LabelManagement() {
           />
         </SysFilterItem>
         <SysFilterItem label="Label Key">
-          <Input
+          <TextInput
             value={list.draft.lblKey}
             maxLength={100}
             allowClear
@@ -234,7 +237,7 @@ export default function LabelManagement() {
           />
         </SysFilterItem>
         <SysFilterItem label="Text">
-          <Input
+          <TextInput
             value={list.draft.keyword}
             maxLength={100}
             allowClear
@@ -243,9 +246,9 @@ export default function LabelManagement() {
           />
         </SysFilterItem>
         <SysFilterItem label="Translation Status">
-          <Checkbox checked={list.draft.missingOnly} onChange={(e) => list.setDraft({ missingOnly: e.target.checked })}>
+          <AppCheckbox checked={list.draft.missingOnly} onChange={(e) => list.setDraft({ missingOnly: e.target.checked })}>
             Show missing translations only
-          </Checkbox>
+          </AppCheckbox>
         </SysFilterItem>
       </SysFilterPanel>
       <SysSearchActions

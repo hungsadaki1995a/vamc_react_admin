@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
-import { Input, Select } from 'antd';
 import type { TableColumnsType } from 'antd';
+import AppSelect from '@/components/inputs/AppSelect';
+import TextInput from '@/components/inputs/TextInput';
 import { useMenuPermission } from '@/hooks/use-menu-permission';
 import { NOTI_CHANNEL_LABELS, NOTI_RECIPIENT_LABELS } from '@/api/system/notification-api';
 import type {
@@ -111,10 +112,10 @@ export default function NotificationMessageManagement() {
       </SysNotAvailable>
       <SysFilterPanel columns={4}>
         <SysFilterItem label="Use">
-          <Select value={list.draft.useYn} options={USE_YN_FILTER_OPTIONS} onChange={(useYn) => list.setDraft({ useYn })} />
+          <AppSelect<YesNo | ''> value={list.draft.useYn} options={USE_YN_FILTER_OPTIONS} onChange={(useYn) => list.setDraft({ useYn })} />
         </SysFilterItem>
         <SysFilterItem label="Channel">
-          <Select
+          <AppSelect<NotiChannel | ''>
             value={list.draft.channel}
             options={CHANNEL_FILTER_OPTIONS}
             disabled
@@ -122,7 +123,7 @@ export default function NotificationMessageManagement() {
           />
         </SysFilterItem>
         <SysFilterItem label="Recipient Type">
-          <Select
+          <AppSelect<NotiRecipientType | ''>
             value={list.draft.recipientType}
             options={RECIPIENT_TYPE_FILTER_OPTIONS}
             disabled
@@ -130,7 +131,7 @@ export default function NotificationMessageManagement() {
           />
         </SysFilterItem>
         <SysFilterItem label="No.">
-          <Input
+          <TextInput
             value={list.draft.no}
             placeholder="No. or Service Type"
             disabled

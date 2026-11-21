@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useForm, useWatch, Controller } from 'react-hook-form';
-import { Form, Input, Button, App } from 'antd';
+import { Form, App } from 'antd';
+import ActionButton from '@/components/common/actions/ActionButton';
+import TextInput from '@/components/inputs/TextInput';
 import { useLocaleStore } from '@/stores/locale-store';
 import { ApiError } from '@/lib/api/error';
 import { useRequestPasswordResetMutation } from '../hooks/use-find-password';
@@ -72,7 +74,7 @@ export default function EmailVerificationForm() {
                 validateStatus={fieldState.error || errorMsg ? 'error' : ''}
                 help={fieldState.error?.message || errorMsg}
               >
-                <Input
+                <TextInput
                   {...field}
                   id="findPassword_email"
                   type="email"
@@ -90,8 +92,9 @@ export default function EmailVerificationForm() {
         </div>
       </div>
 
-      <Button
-        type="primary"
+      <ActionButton
+        intent="primary"
+        appearance="filled"
         htmlType="submit"
         block
         loading={isPending}
@@ -99,7 +102,7 @@ export default function EmailVerificationForm() {
         className={styles.primaryBtn}
       >
         {t('auth.findPassword.sendEmail')}
-      </Button>
+      </ActionButton>
     </Form>
   );
 }

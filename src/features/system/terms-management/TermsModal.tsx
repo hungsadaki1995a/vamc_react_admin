@@ -1,5 +1,8 @@
 import { useState } from 'react';
-import { DatePicker, Input, Select, Spin } from 'antd';
+import LoadingSpinner from '@/components/common/loading/LoadingSpinner';
+import AppDatePicker from '@/components/inputs/AppDatePicker';
+import AppSelect from '@/components/inputs/AppSelect';
+import TextArea from '@/components/inputs/TextArea';
 import dayjs from 'dayjs';
 import type { Dayjs } from 'dayjs';
 import { useNotify } from '@/hooks/use-notify';
@@ -120,12 +123,12 @@ function TermsFormModal({ detail, canWrite, onClose }: TermsFormModalProps) {
     >
       <SysFieldGrid columns={2}>
         <SysField label="Terms Type" required error={errors.type}>
-          <Select
+          <AppSelect<TermsType>
             className={styles.fullWidth}
             options={TERMS_TYPE_OPTIONS}
             value={values.type}
             disabled={!isCreate}
-            onChange={(v: TermsType) => change('type', v)}
+            onChange={(v) => change('type', v)}
           />
         </SysField>
         <SysField
@@ -134,7 +137,7 @@ function TermsFormModal({ detail, canWrite, onClose }: TermsFormModalProps) {
           error={errors.effectiveDate}
           hint={editable ? 'From tomorrow; one version per date and type.' : undefined}
         >
-          <DatePicker
+          <AppDatePicker
             className={styles.fullWidth}
             format={SYS_DATE_FORMAT}
             value={values.effectiveDate}
@@ -144,7 +147,7 @@ function TermsFormModal({ detail, canWrite, onClose }: TermsFormModalProps) {
           />
         </SysField>
         <SysField label="Content (VN)" required span="full" error={errors.content}>
-          <Input.TextArea
+          <TextArea
             rows={10}
             value={values.content}
             readOnly={!editable}
@@ -157,7 +160,7 @@ function TermsFormModal({ detail, canWrite, onClose }: TermsFormModalProps) {
           error={errors.contentEn}
           hint={editable ? 'If empty, the VN original is shown on the English user screen.' : undefined}
         >
-          <Input.TextArea
+          <TextArea
             rows={10}
             value={values.contentEn}
             readOnly={!editable}
@@ -183,7 +186,7 @@ export function TermsModal({ termsId, canWrite, onClose }: TermsModalProps) {
   if (data) return <TermsFormModal key={data.termsId} detail={data} canWrite={canWrite} onClose={onClose} />;
   return (
     <SysFormModal open title="Terms Detail" onCancel={onClose}>
-      <div className={styles.loading}>{isError ? errorMessage(error) : <Spin />}</div>
+      <div className={styles.loading}>{isError ? errorMessage(error) : <LoadingSpinner />}</div>
     </SysFormModal>
   );
 }

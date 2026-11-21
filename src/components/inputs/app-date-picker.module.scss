@@ -1,0 +1,52 @@
+.root {
+  &:global(.ant-picker) {
+    height: 32px;
+    padding: 0 12px;
+    border: 1px solid var(--color-navy-200, #d1d1e0);
+    border-radius: 4px;
+    background: #ffffff;
+    font-family: inherit;
+    font-size: 12px;
+    line-height: 16px;
+    letter-spacing: -0.02em;
+    box-shadow: none;
+
+    :global(.ant-picker-input > input) {
+      font-size: 12px;
+      line-height: 16px;
+      color: var(--color-gray-800, #545c6d);
+
+      &::placeholder {
+        color: var(--color-gray-500, #a8b2c8);
+      }
+    }
+
+    :global(.ant-picker-suffix) {
+      color: var(--color-gray-700, #6f7b95);
+    }
+
+    &:global(.ant-picker-focused) {
+      border-color: var(--color-blue-500, #1876ff);
+      box-shadow: none;
+    }
+
+    &:global(.ant-picker-status-error) {
+      border-color: var(--color-red-500, #ff334b);
+    }
+
+    &:global(.ant-picker-disabled) {
+      background: var(--color-navy-50, #f6f6f9);
+      border-color: var(--color-navy-200, #d1d1e0);
+
+      :global(.ant-picker-input > input) {
+        color: var(--color-gray-500, #a8b2c8);
+      }
+    }
+  }
+}
+
+.rangeRoot {
+  &:global(.ant-picker-range) {
+    padding: 0 12px;
+  }
+}

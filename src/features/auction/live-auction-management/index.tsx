@@ -1,6 +1,10 @@
 import { useState } from 'react';
-import { Descriptions, Input, Modal, Table } from 'antd';
+import { Descriptions } from 'antd';
 import type { TableColumnsType } from 'antd';
+import ActionButton from '@/components/common/actions/ActionButton';
+import Popup from '@/components/common/popup/Popup';
+import DataTable from '@/components/common/table/DataTable';
+import TextInput from '@/components/inputs/TextInput';
 import { useNotify } from '@/hooks/use-notify';
 import { useMenuPermission } from '@/hooks/use-menu-permission';
 import type { LiveAuctionItem } from '@/api/auction/auction-api';
@@ -74,30 +78,29 @@ export default function LiveAuctionManagement() {
       <div className={styles.filterCard}>
         <div className={styles.filterGroup}>
           <span className={styles.filterLabel}>Keyword</span>
-          <Input className={styles.filterInput} placeholder="Auction no or name" value={keyword} onChange={(e) => setKeyword(e.target.value)} onPressEnter={() => { setApplied({ keyword: keyword.trim() || undefined }); setPage(1); }} allowClear />
+          <TextInput className={styles.filterInput} placeholder="Auction no or name" value={keyword} onChange={(e) => setKeyword(e.target.value)} onPressEnter={() => { setApplied({ keyword: keyword.trim() || undefined }); setPage(1); }} allowClear />
         </div>
       </div>
       <div className={styles.summaryRow}><span className={styles.totalCount}>Total ({total})</span></div>
       <div className={styles.tableWrapper}>
-        <Table<LiveAuctionItem> rowKey="auctnNo" columns={columns} dataSource={rows} loading={isFetching} pagination={false} size="small" scroll={{ x: 'max-content' }} />
+        <DataTable<LiveAuctionItem> rowKey="auctnNo" columns={columns} dataSource={rows} loading={isFetching} scroll={{ x: 'max-content' }} />
       </div>
       <SysPagination page={page} pageSize={PAGE_SIZE} total={total} onChange={setPage} />
 
-      <Modal
+      <Popup
         open={!!detailId}
         width={720}
-        centered
         title={`Live Auction: ${detailId ?? ''}`}
         onCancel={() => setDetailId(null)}
         footer={
           <div className={styles.modalFooter}>
             {canWrite && detail && (
               <>
-                <button type="button" className={styles.btnDark} onClick={() => handleControl(detail.auctnNo, 'start')}>Start</button>
-                <button type="button" className={styles.btnDanger} onClick={() => handleControl(detail.auctnNo, 'close')}>Close</button>
+                <ActionButton intent="secondary" appearance="filled" onClick={() => handleControl(detail.auctnNo, 'start')}>Start</ActionButton>
+                <ActionButton intent="danger" onClick={() => handleControl(detail.auctnNo, 'close')}>Close</ActionButton>
               </>
             )}
-            <button type="button" className={styles.btn} onClick={() => setDetailId(null)}>Close Modal</button>
+            <ActionButton action="close" onClick={() => setDetailId(null)}>Close Modal</ActionButton>
           </div>
         }
       >
@@ -111,7 +114,7 @@ export default function LiveAuctionManagement() {
             <Descriptions.Item label="Winning Amt">{detail.scsbdAmt?.toLocaleString() ?? '-'}</Descriptions.Item>
           </Descriptions>
         )}
-      </Modal>
+      </Popup>
     </div>
   );
 }

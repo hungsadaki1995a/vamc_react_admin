@@ -1,16 +1,24 @@
 import type { ContentTabsProps } from '@/types/content-tabs';
 import styles from './content-tabs.module.scss';
 
-/** Underline content tabs matching the VNPL Admin Design System (contents-tabs_type1). */
+/** Content tabs matching Figma Tab (underline, boxed) & Segmented Control (4042:25788 / 4050:29400). */
 export default function ContentTabs<T extends string = string>({
   items,
   activeKey,
   onChange,
+  variant = 'underline',
   ariaLabel,
   fullWidth = false,
   className,
 }: ContentTabsProps<T>) {
-  const rootClassName = [styles.tabs, className].filter(Boolean).join(' ');
+  const variantClass =
+    variant === 'boxed'
+      ? styles.variantBoxed
+      : variant === 'segmented'
+        ? styles.variantSegmented
+        : styles.variantUnderline;
+
+  const rootClassName = [styles.tabs, variantClass, className].filter(Boolean).join(' ');
 
   return (
     <div className={rootClassName} role="tablist" aria-label={ariaLabel}>
@@ -38,6 +46,7 @@ export default function ContentTabs<T extends string = string>({
           </button>
         );
       })}
+      {variant === 'boxed' && !fullWidth && <div className={styles.boxedFiller} aria-hidden="true" />}
     </div>
   );
 }

@@ -1,6 +1,10 @@
 import { useState, type CSSProperties } from 'react';
-import { Input, Modal, Table } from 'antd';
 import type { TableColumnsType } from 'antd';
+import ActionButton from '@/components/common/actions/ActionButton';
+import Popup from '@/components/common/popup/Popup';
+import DataTable from '@/components/common/table/DataTable';
+import TextArea from '@/components/inputs/TextArea';
+import TextInput from '@/components/inputs/TextInput';
 import { useNotify } from '@/hooks/use-notify';
 import { useMenuPermission } from '@/hooks/use-menu-permission';
 import type { NplLotItem, NplLotSearch } from '@/api/npl/npl-api';
@@ -77,9 +81,9 @@ export default function NplLotManagement() {
       width: 90,
       align: 'center',
       render: (_v, row) => (
-        <button type="button" className={`${styles.btnDanger} ${styles.btnTiny}`} disabled={!canWrite} onClick={() => handleDelete(row.bndLotId)}>
+        <ActionButton size="small" intent="danger" disabled={!canWrite} onClick={() => handleDelete(row.bndLotId)}>
           Delete
-        </button>
+        </ActionButton>
       ),
     },
   ];
@@ -98,24 +102,24 @@ export default function NplLotManagement() {
         <div className={styles.filterCard}>
           <div className={styles.filterGroup}>
             <span className={styles.filterLabel}>LOT ID</span>
-            <Input className={styles.filterInput} placeholder="LOT No" value={bndLotNo} onChange={(e) => setBndLotNo(e.target.value)} onPressEnter={handleSearch} allowClear />
+            <TextInput className={styles.filterInput} placeholder="LOT No" value={bndLotNo} onChange={(e) => setBndLotNo(e.target.value)} onPressEnter={handleSearch} allowClear />
           </div>
           <div className={styles.filterGroup}>
             <span className={styles.filterLabel}>LOT Name</span>
-            <Input className={styles.filterInput} placeholder="LOT Name" value={bndLotNm} onChange={(e) => setBndLotNm(e.target.value)} onPressEnter={handleSearch} allowClear />
+            <TextInput className={styles.filterInput} placeholder="LOT Name" value={bndLotNm} onChange={(e) => setBndLotNm(e.target.value)} onPressEnter={handleSearch} allowClear />
           </div>
         </div>
       )}
       <div className={styles.summaryRow}>
         <span className={styles.totalCount}>Total ({total})</span>
-        <button type="button" className={`${styles.btn} ${styles.btnSmall}`} onClick={() => downloadExcel.mutate(applied)}>Excel Download</button>
+        <ActionButton action="excelDownload" size="small" onClick={() => downloadExcel.mutate(applied)}>Excel Download</ActionButton>
       </div>
       <div className={styles.tableWrapper}>
-        <Table<NplLotItem> rowKey="bndLotId" columns={columns} dataSource={rows} loading={isFetching} pagination={false} size="small" scroll={{ x: 'max-content' }} />
+        <DataTable<NplLotItem> rowKey="bndLotId" columns={columns} dataSource={rows} loading={isFetching} scroll={{ x: 'max-content' }} />
       </div>
       <SysPagination page={page} pageSize={PAGE_SIZE} total={total} onChange={setPage} />
       <div className={styles.bottomActions}>
-        <button type="button" className={styles.btnDark} disabled={!canWrite} onClick={() => setModalItem(null)}>Add New</button>
+        <ActionButton intent="secondary" appearance="filled" disabled={!canWrite} onClick={() => setModalItem(null)}>Add New</ActionButton>
       </div>
 
       {modalItem !== undefined && (
@@ -151,17 +155,17 @@ function LotModal({ item, canWrite, onClose }: { item: NplLotItem | null; canWri
   };
 
   return (
-    <Modal open centered title={isCreate ? 'Register NPL LOT' : 'Edit NPL LOT'} onCancel={onClose} footer={
+    <Popup open title={isCreate ? 'Register NPL LOT' : 'Edit NPL LOT'} onCancel={onClose} footer={
       <div className={styles.modalFooter}>
-        <button type="button" className={styles.btn} onClick={onClose}>Cancel</button>
-        <button type="button" className={styles.btnDark} disabled={!canWrite} onClick={handleSave}>Confirm</button>
+        <ActionButton action="cancel" onClick={onClose}>Cancel</ActionButton>
+        <ActionButton intent="secondary" appearance="filled" disabled={!canWrite} onClick={handleSave}>Confirm</ActionButton>
       </div>
     }>
       <div className={styles.formGrid} style={{ '--form-cols': 2 } as CSSProperties}>
-        <FormField label="LOT No" span="full"><Input value={bndLotNo} disabled={!isCreate} onChange={(e) => setBndLotNo(e.target.value)} /></FormField>
-        <FormField label="LOT Name" required span="full"><Input value={bndLotNm} onChange={(e) => setBndLotNm(e.target.value)} /></FormField>
-        <FormField label="Description" span="full"><Input.TextArea rows={3} value={bndLotExpln} onChange={(e) => setBndLotExpln(e.target.value)} /></FormField>
+        <FormField label="LOT No" span="full"><TextInput value={bndLotNo} disabled={!isCreate} onChange={(e) => setBndLotNo(e.target.value)} /></FormField>
+        <FormField label="LOT Name" required span="full"><TextInput value={bndLotNm} onChange={(e) => setBndLotNm(e.target.value)} /></FormField>
+        <FormField label="Description" span="full"><TextArea rows={3} value={bndLotExpln} onChange={(e) => setBndLotExpln(e.target.value)} /></FormField>
       </div>
-    </Modal>
+    </Popup>
   );
 }

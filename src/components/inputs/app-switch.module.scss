@@ -1,0 +1,30 @@
+.root {
+  &:global(.ant-switch) {
+    min-width: 32px;
+    height: 16px;
+    background: #666699;
+
+    :global(.ant-switch-handle) {
+      top: 2.5px;
+      width: 11px;
+      height: 11px;
+      inset-inline-start: 2.5px;
+    }
+
+    &:global(.ant-switch-checked) {
+      background: var(--color-blue-500, #1876ff);
+
+      :global(.ant-switch-handle) {
+        inset-inline-start: calc(100% - 13.5px);
+      }
+    }
+
+    &:global(.ant-switch-disabled) {
+      background: var(--color-navy-200, #d1d1e0);
+
+      &:global(.ant-switch-checked) {
+        background: #8bbdff;
+      }
+    }
+  }
+}

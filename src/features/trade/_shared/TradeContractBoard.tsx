@@ -1,7 +1,14 @@
 import { useState } from 'react';
-import { DatePicker, Descriptions, Input, Modal, Radio, Select, Table } from 'antd';
+import { Descriptions } from 'antd';
 import type { TableColumnsType } from 'antd';
 import type { Dayjs } from 'dayjs';
+import ActionButton from '@/components/common/actions/ActionButton';
+import Popup from '@/components/common/popup/Popup';
+import DataTable from '@/components/common/table/DataTable';
+import { AppRangePicker } from '@/components/inputs/AppDatePicker';
+import AppRadio from '@/components/inputs/AppRadio';
+import AppSelect from '@/components/inputs/AppSelect';
+import TextInput from '@/components/inputs/TextInput';
 import type { TradeContractItem, TradeContractKind, TradeContractSearch } from '@/api/trade/trade-api';
 import { SysPageHeader, SysPagination } from '@/features/system/_shared/SystemUi';
 import { rowNumber } from '@/features/system/_shared/system-utils';
@@ -84,14 +91,14 @@ export default function TradeContractBoard({ kind, title }: { kind: TradeContrac
         <div className={styles.filterCard}>
           <div className={styles.filterGroup}>
             <span className={styles.filterLabel}>Contract Period</span>
-            <DatePicker.RangePicker format="DD/MM/YYYY" value={period} onChange={(d) => setPeriod(d as DateRange)} className={styles.w240} />
+            <AppRangePicker format="DD/MM/YYYY" value={period} onChange={(d) => setPeriod(d as DateRange)} className={styles.w240} />
           </div>
           <div className={styles.filterGroup}>
             <span className={styles.filterLabel}>Status</span>
-            <Select
+            <AppSelect
               className={styles.w150}
               value={ctrtSttsCd}
-              onChange={setCtrtSttsCd}
+              onChange={(v) => setCtrtSttsCd(String(v ?? ''))}
               options={[
                 { value: '', label: 'All' },
                 { value: 'DRFT', label: 'Draft' },
@@ -102,36 +109,36 @@ export default function TradeContractBoard({ kind, title }: { kind: TradeContrac
           </div>
           <div className={styles.filterGroup}>
             <span className={styles.filterLabel}>LOT Status</span>
-            <Radio.Group value={bndLotYn} onChange={(e) => setBndLotYn(e.target.value)}>
-              <Radio value="">All</Radio>
-              <Radio value="Y">Yes</Radio>
-              <Radio value="N">No</Radio>
-            </Radio.Group>
+            <AppRadio.Group value={bndLotYn} onChange={(e) => setBndLotYn(e.target.value)}>
+              <AppRadio value="">All</AppRadio>
+              <AppRadio value="Y">Yes</AppRadio>
+              <AppRadio value="N">No</AppRadio>
+            </AppRadio.Group>
           </div>
           <div className={styles.filterGroup}>
             <span className={styles.filterLabel}>Member Code</span>
-            <Input className={styles.filterInput} placeholder="Member No" value={mbrNo} onChange={(e) => setMbrNo(e.target.value)} onPressEnter={handleSearch} allowClear />
+            <TextInput className={styles.filterInput} placeholder="Member No" value={mbrNo} onChange={(e) => setMbrNo(e.target.value)} onPressEnter={handleSearch} allowClear />
           </div>
           <div className={styles.filterGroup}>
             <span className={styles.filterLabel}>NPL Code</span>
-            <Input className={styles.filterInput} placeholder="NPL Code" value={bndCd} onChange={(e) => setBndCd(e.target.value)} onPressEnter={handleSearch} allowClear />
+            <TextInput className={styles.filterInput} placeholder="NPL Code" value={bndCd} onChange={(e) => setBndCd(e.target.value)} onPressEnter={handleSearch} allowClear />
           </div>
           <div className={styles.filterGroup}>
             <span className={styles.filterLabel}>Contract ID</span>
-            <Input className={styles.filterInput} placeholder="Contract ID or keyword" value={keyword} onChange={(e) => setKeyword(e.target.value)} onPressEnter={handleSearch} allowClear />
+            <TextInput className={styles.filterInput} placeholder="Contract ID or keyword" value={keyword} onChange={(e) => setKeyword(e.target.value)} onPressEnter={handleSearch} allowClear />
           </div>
         </div>
       )}
       <div className={styles.summaryRow}>
         <span className={styles.totalCount}>Total ({total})</span>
-        <button type="button" className={`${styles.btn} ${styles.btnSmall}`} onClick={() => downloadExcel.mutate({ kind, search: applied })}>Excel Download</button>
+        <ActionButton action="excelDownload" size="small" onClick={() => downloadExcel.mutate({ kind, search: applied })}>Excel Download</ActionButton>
       </div>
       <div className={styles.tableWrapper}>
-        <Table<TradeContractItem> rowKey="srvcCtrtCd" columns={columns} dataSource={rows} loading={isFetching} pagination={false} size="small" scroll={{ x: 'max-content' }} />
+        <DataTable<TradeContractItem> rowKey="srvcCtrtCd" columns={columns} dataSource={rows} loading={isFetching} scroll={{ x: 'max-content' }} />
       </div>
       <SysPagination page={page} pageSize={PAGE_SIZE} total={total} onChange={setPage} />
 
-      <Modal open={!!detailId} width={720} centered title={`${title} — ${detailId ?? ''}`} onCancel={() => setDetailId(null)} footer={<button type="button" className={styles.btn} onClick={() => setDetailId(null)}>Close</button>}>
+      <Popup open={!!detailId} width={720} title={`${title} — ${detailId ?? ''}`} onCancel={() => setDetailId(null)} footer={<ActionButton action="close" onClick={() => setDetailId(null)}>Close</ActionButton>}>
         {detail && (
           <Descriptions bordered size="small" column={2}>
             <Descriptions.Item label="Contract Code">{detail.srvcCtrtCd}</Descriptions.Item>
@@ -142,7 +149,7 @@ export default function TradeContractBoard({ kind, title }: { kind: TradeContrac
             <Descriptions.Item label="End Date">{detail.ctrtEndDmy || '-'}</Descriptions.Item>
           </Descriptions>
         )}
-      </Modal>
+      </Popup>
     </div>
   );
 }

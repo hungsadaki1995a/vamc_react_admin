@@ -2,8 +2,10 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useForm, useWatch, Controller } from 'react-hook-form';
-import { Form, Input, Button, App } from 'antd';
+import { Form, App } from 'antd';
 import { EyeOutlined, EyeInvisibleOutlined } from '@ant-design/icons';
+import ActionButton from '@/components/common/actions/ActionButton';
+import TextInput from '@/components/inputs/TextInput';
 import { PUBLIC_ROUTES } from '@/app/route-constants';
 import { useLocaleStore } from '@/stores/locale-store';
 import { ApiError } from '@/lib/api/error';
@@ -73,7 +75,7 @@ export default function PasswordResetForm({
             <label htmlFor="resetPassword_loginId" className={styles.label}>
               {t('auth.findPassword.loginIdLabel')}
             </label>
-            <Input
+            <TextInput
               id="resetPassword_loginId"
               readOnly
               value={maskedLoginId}
@@ -98,8 +100,9 @@ export default function PasswordResetForm({
             }}
             render={({ field, fieldState }) => (
               <Form.Item validateStatus={fieldState.error ? 'error' : ''} help={fieldState.error?.message}>
-                <Input.Password
+                <TextInput
                   {...field}
+                  variant="password"
                   id="resetPassword_new"
                   placeholder={t('auth.findPassword.newPasswordPlaceholder')}
                   className={styles.input}
@@ -130,8 +133,9 @@ export default function PasswordResetForm({
                 validateStatus={fieldState.error || errorMsg ? 'error' : ''}
                 help={fieldState.error?.message || errorMsg}
               >
-                <Input.Password
+                <TextInput
                   {...field}
+                  variant="password"
                   id="resetPassword_confirm"
                   placeholder={t('auth.findPassword.confirmPasswordPlaceholder')}
                   className={styles.input}
@@ -147,8 +151,9 @@ export default function PasswordResetForm({
         </div>
       </div>
 
-      <Button
-        type="primary"
+      <ActionButton
+        intent="primary"
+        appearance="filled"
         htmlType="submit"
         block
         loading={isPending}
@@ -156,7 +161,7 @@ export default function PasswordResetForm({
         className={styles.primaryBtn}
       >
         {t('auth.findPassword.changePassword')}
-      </Button>
+      </ActionButton>
     </Form>
   );
 }

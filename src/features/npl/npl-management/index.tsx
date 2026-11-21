@@ -1,7 +1,14 @@
 import { useState } from 'react';
-import { DatePicker, Descriptions, Input, Modal, Radio, Select, Table } from 'antd';
+import { Descriptions } from 'antd';
 import type { TableColumnsType } from 'antd';
 import type { Dayjs } from 'dayjs';
+import ActionButton from '@/components/common/actions/ActionButton';
+import Popup from '@/components/common/popup/Popup';
+import DataTable from '@/components/common/table/DataTable';
+import { AppRangePicker } from '@/components/inputs/AppDatePicker';
+import AppRadio from '@/components/inputs/AppRadio';
+import AppSelect from '@/components/inputs/AppSelect';
+import TextInput from '@/components/inputs/TextInput';
 import type { NplItem, NplSearch } from '@/api/npl/npl-api';
 import { SysPageHeader, SysPagination } from '@/features/system/_shared/SystemUi';
 import { rowNumber } from '@/features/system/_shared/system-utils';
@@ -93,14 +100,14 @@ export default function NplManagement() {
         <div className={styles.filterCard}>
           <div className={styles.filterGroup}>
             <span className={styles.filterLabel}>Loan Period</span>
-            <DatePicker.RangePicker format="DD/MM/YYYY" value={period} onChange={(d) => setPeriod(d as DateRange)} className={styles.w240} />
+            <AppRangePicker format="DD/MM/YYYY" value={period} onChange={(d) => setPeriod(d as DateRange)} className={styles.w240} />
           </div>
           <div className={styles.filterGroup}>
             <span className={styles.filterLabel}>Status</span>
-            <Select
+            <AppSelect
               className={styles.w140}
               value={bndSttsCd}
-              onChange={setBndSttsCd}
+              onChange={(v) => setBndSttsCd(String(v ?? ''))}
               options={[
                 { value: '', label: 'All' },
                 { value: '01', label: 'Registered' },
@@ -111,41 +118,41 @@ export default function NplManagement() {
           </div>
           <div className={styles.filterGroup}>
             <span className={styles.filterLabel}>Displayed</span>
-            <Radio.Group value={expsrYn} onChange={(e) => setExpsrYn(e.target.value)}>
-              <Radio value="">All</Radio>
-              <Radio value="Y">Y</Radio>
-              <Radio value="N">N</Radio>
-            </Radio.Group>
+            <AppRadio.Group value={expsrYn} onChange={(e) => setExpsrYn(e.target.value)}>
+              <AppRadio value="">All</AppRadio>
+              <AppRadio value="Y">Y</AppRadio>
+              <AppRadio value="N">N</AppRadio>
+            </AppRadio.Group>
           </div>
           <div className={styles.filterGroup}>
             <span className={styles.filterLabel}>LOT</span>
-            <Radio.Group value={lotYn} onChange={(e) => setLotYn(e.target.value)}>
-              <Radio value="">All</Radio>
-              <Radio value="Y">Y</Radio>
-              <Radio value="N">N</Radio>
-            </Radio.Group>
+            <AppRadio.Group value={lotYn} onChange={(e) => setLotYn(e.target.value)}>
+              <AppRadio value="">All</AppRadio>
+              <AppRadio value="Y">Y</AppRadio>
+              <AppRadio value="N">N</AppRadio>
+            </AppRadio.Group>
           </div>
           <div className={styles.filterGroup}>
             <span className={styles.filterLabel}>NPL Code</span>
-            <Input className={styles.filterInput} placeholder="NPL Code" value={bndCd} onChange={(e) => setBndCd(e.target.value)} onPressEnter={handleSearch} allowClear />
+            <TextInput className={styles.filterInput} placeholder="NPL Code" value={bndCd} onChange={(e) => setBndCd(e.target.value)} onPressEnter={handleSearch} allowClear />
           </div>
           <div className={styles.filterGroup}>
             <span className={styles.filterLabel}>NPL Name</span>
-            <Input className={styles.filterInput} placeholder="NPL Name" value={bndNm} onChange={(e) => setBndNm(e.target.value)} onPressEnter={handleSearch} allowClear />
+            <TextInput className={styles.filterInput} placeholder="NPL Name" value={bndNm} onChange={(e) => setBndNm(e.target.value)} onPressEnter={handleSearch} allowClear />
           </div>
           <div className={styles.filterGroup}>
             <span className={styles.filterLabel}>Debtor Code</span>
-            <Input className={styles.filterInput} placeholder="Debtor Code" value={dbtrCd} onChange={(e) => setDbtrCd(e.target.value)} onPressEnter={handleSearch} allowClear />
+            <TextInput className={styles.filterInput} placeholder="Debtor Code" value={dbtrCd} onChange={(e) => setDbtrCd(e.target.value)} onPressEnter={handleSearch} allowClear />
           </div>
         </div>
       )}
       <div className={styles.summaryRow}><span className={styles.totalCount}>Total ({total})</span></div>
       <div className={styles.tableWrapper}>
-        <Table<NplItem> rowKey="bndCd" columns={columns} dataSource={rows} loading={isFetching} pagination={false} size="small" scroll={{ x: 'max-content' }} />
+        <DataTable<NplItem> rowKey="bndCd" columns={columns} dataSource={rows} loading={isFetching} scroll={{ x: 'max-content' }} />
       </div>
       <SysPagination page={page} pageSize={PAGE_SIZE} total={total} onChange={setPage} />
 
-      <Modal open={!!detailId} width={760} centered title={`NPL Detail: ${detailId ?? ''}`} onCancel={() => setDetailId(null)} footer={<button type="button" className={styles.btn} onClick={() => setDetailId(null)}>Close</button>}>
+      <Popup open={!!detailId} width={760} title={`NPL Detail: ${detailId ?? ''}`} onCancel={() => setDetailId(null)} footer={<ActionButton action="close" onClick={() => setDetailId(null)}>Close</ActionButton>}>
         {detail && (
           <Descriptions bordered size="small" column={2}>
             <Descriptions.Item label="NPL Code">{detail.bndCd}</Descriptions.Item>
@@ -156,7 +163,7 @@ export default function NplManagement() {
             <Descriptions.Item label="Evaluated Amt">{detail.bndEvlAmt?.toLocaleString() ?? '-'}</Descriptions.Item>
           </Descriptions>
         )}
-      </Modal>
+      </Popup>
     </div>
   );
 }

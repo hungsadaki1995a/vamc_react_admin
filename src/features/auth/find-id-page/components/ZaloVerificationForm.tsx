@@ -1,8 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useForm, useWatch, Controller } from 'react-hook-form';
-import { Form, Input, Button, Select, App } from 'antd';
+import { Form, App } from 'antd';
 import { DownOutlined } from '@ant-design/icons';
+import ActionButton from '@/components/common/actions/ActionButton';
+import AppSelect from '@/components/inputs/AppSelect';
+import TextInput from '@/components/inputs/TextInput';
 import { useLocaleStore } from '@/stores/locale-store';
 import { ApiError } from '@/lib/api/error';
 import { useConfirmFindIdMutation, useFindIdMutation } from '../hooks/use-find-id';
@@ -136,7 +139,7 @@ export default function ZaloVerificationForm({ onConfirmSuccess }: FindIdZaloVer
             rules={{ required: t('auth.findId.nameRequired') }}
             render={({ field, fieldState }) => (
               <Form.Item validateStatus={fieldState.error ? 'error' : ''} help={fieldState.error?.message}>
-                <Input
+                <TextInput
                   {...field}
                   id="findId_zalo_name"
                   placeholder={t('auth.findId.namePlaceholder')}
@@ -161,7 +164,7 @@ export default function ZaloVerificationForm({ onConfirmSuccess }: FindIdZaloVer
                 name="countryCode"
                 control={form.control}
                 render={({ field }) => (
-                  <Select
+                  <AppSelect
                     {...field}
                     options={COUNTRY_CODE_OPTIONS}
                     className={styles.countrySelect}
@@ -179,7 +182,7 @@ export default function ZaloVerificationForm({ onConfirmSuccess }: FindIdZaloVer
                       validateStatus={fieldState.error || errorMsg ? 'error' : ''}
                       help={fieldState.error?.message || errorMsg}
                     >
-                      <Input
+                      <TextInput
                         {...field}
                         id="findId_phone"
                         placeholder={t('auth.findId.phonePlaceholder')}
@@ -198,8 +201,9 @@ export default function ZaloVerificationForm({ onConfirmSuccess }: FindIdZaloVer
 
           {codeSent && (
             <>
-              <Button
-                type="default"
+              <ActionButton
+                intent="quaternary"
+                appearance="outlined"
                 block
                 loading={isSendPending}
                 disabled={secondsLeft > 0}
@@ -207,7 +211,7 @@ export default function ZaloVerificationForm({ onConfirmSuccess }: FindIdZaloVer
                 className={secondsLeft > 0 ? styles.sentDisabledBtn : styles.primaryBtn}
               >
                 {t('auth.findId.sendCode')}
-              </Button>
+              </ActionButton>
 
               <div className={styles.codeRow}>
                 <div className={styles.codeInputWrap}>
@@ -220,7 +224,7 @@ export default function ZaloVerificationForm({ onConfirmSuccess }: FindIdZaloVer
                         validateStatus={fieldState.error || codeErrorMsg ? 'error' : ''}
                         help={fieldState.error?.message || codeErrorMsg}
                       >
-                        <Input
+                        <TextInput
                           {...field}
                           id="findId_code"
                           placeholder={t('auth.findId.codePlaceholder')}
@@ -240,14 +244,15 @@ export default function ZaloVerificationForm({ onConfirmSuccess }: FindIdZaloVer
                   <span className={styles.timer}>{formatCountdown(secondsLeft)}</span>
                 </div>
 
-                <Button
-                  type="default"
+                <ActionButton
+                  intent="quaternary"
+                  appearance="outlined"
                   loading={isVerifyPending}
                   onClick={handleVerifyCode}
                   className={styles.verifyBtn}
                 >
                   {t('auth.findId.verify')}
-                </Button>
+                </ActionButton>
               </div>
             </>
           )}
@@ -255,8 +260,9 @@ export default function ZaloVerificationForm({ onConfirmSuccess }: FindIdZaloVer
       </div>
 
       {!codeSent ? (
-        <Button
-          type="primary"
+        <ActionButton
+          intent="primary"
+          appearance="filled"
           block
           loading={isSendPending}
           disabled={isSendDisabled}
@@ -264,11 +270,11 @@ export default function ZaloVerificationForm({ onConfirmSuccess }: FindIdZaloVer
           className={styles.primaryBtn}
         >
           {t('auth.findId.sendCode')}
-        </Button>
+        </ActionButton>
       ) : (
-        <Button type="primary" htmlType="submit" block disabled={!codeVerified} className={styles.primaryBtn}>
+        <ActionButton intent="primary" appearance="filled" htmlType="submit" block disabled={!codeVerified} className={styles.primaryBtn}>
           {t('auth.findId.confirm')}
-        </Button>
+        </ActionButton>
       )}
     </Form>
   );

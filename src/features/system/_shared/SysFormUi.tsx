@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
-import { Button, Modal } from 'antd';
+import ActionButton from '@/components/common/actions/ActionButton';
+import Popup from '@/components/common/popup/Popup';
 import styles from './sys-ui.module.scss';
 
 // Register / edit popup and label-value field grid of the v0.8 design.
@@ -52,37 +53,42 @@ export function SysFormModal({
       {extraActions}
       {onSubmit ? (
         <>
-          <Button color="primary" variant="outlined" onClick={onCancel}>
+          <ActionButton action="cancel" onClick={onCancel}>
             Cancel
-          </Button>
-          <Button type="primary" loading={submitting} disabled={submitDisabled} onClick={onSubmit}>
+          </ActionButton>
+          <ActionButton
+            action="confirm"
+            intent="primary"
+            appearance="filled"
+            loading={submitting}
+            disabled={submitDisabled}
+            onClick={onSubmit}
+          >
             {submitText}
-          </Button>
+          </ActionButton>
         </>
       ) : (
-        <Button type="primary" onClick={onCancel}>
+        <ActionButton intent="primary" appearance="filled" onClick={onCancel}>
           Close
-        </Button>
+        </ActionButton>
       )}
     </div>
   );
 
   return (
-    <Modal
+    <Popup
       open={open}
       title={<span className={styles.modalBarTitle}>{title}</span>}
       onCancel={onCancel}
       footer={footer}
       width={width}
-      centered
-      destroyOnHidden
       mask={{ closable: false }}
       className={styles.modal}
     >
       <h2 className={styles.modalHeading}>{title}</h2>
       {children}
       {notice && <div className={styles.modalNotice}>{notice}</div>}
-    </Modal>
+    </Popup>
   );
 }
 

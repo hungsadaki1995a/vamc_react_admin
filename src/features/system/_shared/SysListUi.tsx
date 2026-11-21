@@ -1,18 +1,16 @@
 import type { CSSProperties, Key, ReactNode } from 'react';
-import { Button, Table } from 'antd';
-import type { ButtonProps, TableColumnsType, TableProps } from 'antd';
+import type { TableColumnsType } from 'antd';
 import type { SortOrder, SorterResult } from 'antd/es/table/interface';
 import {
   ClockCircleOutlined,
-  DoubleLeftOutlined,
-  DoubleRightOutlined,
-  FileExcelFilled,
   HomeOutlined,
-  LeftOutlined,
-  ReloadOutlined,
   RightOutlined,
-  SearchOutlined,
 } from '@ant-design/icons';
+import ActionButton from '@/components/common/actions/ActionButton';
+import CommonStatusBadge, { type StatusBadgeColor } from '@/components/common/badge/StatusBadge';
+import Pagination from '@/components/common/pagination/Pagination';
+import DataTable, { type DataTableProps } from '@/components/common/table/DataTable';
+import type { ActionButtonProps } from '@/types/action-button';
 import type { SortState } from './use-paged-list';
 import { formatSysDateTime } from './system-utils';
 import styles from './sys-ui.module.scss';
@@ -94,12 +92,12 @@ export function SysSearchActions({
 }) {
   return (
     <div className={styles.searchActions}>
-      <Button color="primary" variant="outlined" icon={<ReloadOutlined />} onClick={onReset}>
+      <ActionButton action="reset" intent="primary" appearance="outlined" onClick={onReset}>
         Reset
-      </Button>
-      <Button type="primary" icon={<SearchOutlined />} loading={loading} onClick={onSearch}>
+      </ActionButton>
+      <ActionButton action="search" intent="primary" appearance="filled" loading={loading} onClick={onSearch}>
         Search
-      </Button>
+      </ActionButton>
     </div>
   );
 }
@@ -146,20 +144,25 @@ export function SysButton({
   look = 'default',
   className,
   ...props
-}: Omit<ButtonProps, 'type' | 'variant' | 'color'> & { look?: SysButtonLook }) {
-  const variant = look;
-  if (variant === 'primary') return <Button type="primary" className={className} {...props} />;
-  if (variant === 'outline') return <Button color="primary" variant="outlined" className={className} {...props} />;
-  const cls = variant === 'navy' ? styles.btnNavy : undefined;
-  return <Button className={[cls, className].filter(Boolean).join(' ') || undefined} {...props} />;
+}: Omit<ActionButtonProps, 'type' | 'variant' | 'color'> & { look?: SysButtonLook }) {
+  if (look === 'primary') {
+    return <ActionButton intent="primary" appearance="filled" className={className} {...props} />;
+  }
+  if (look === 'outline') {
+    return <ActionButton intent="primary" appearance="outlined" className={className} {...props} />;
+  }
+  if (look === 'navy') {
+    return <ActionButton intent="secondary" appearance="filled" className={className} {...props} />;
+  }
+  return <ActionButton intent="quaternary" appearance="outlined" className={className} {...props} />;
 }
 
 /** [Excel Download] with the green sheet icon. */
 export function SysExcelButton({ onClick, loading, disabled }: { onClick: () => void; loading?: boolean; disabled?: boolean }) {
   return (
-    <Button icon={<FileExcelFilled className={styles.excelIcon} />} loading={loading} disabled={disabled} onClick={onClick}>
+    <ActionButton action="excelDownload" loading={loading} disabled={disabled} onClick={onClick}>
       Excel Download
-    </Button>
+    </ActionButton>
   );
 }
 
@@ -174,10 +177,14 @@ export type BadgeTone = 'blue' | 'gray' | 'green' | 'red' | 'orange' | 'navy';
 
 /** Small outlined label (Use, Type, Result, Status…). */
 export function StatusBadge({ tone = 'gray', children }: { tone?: BadgeTone; children: ReactNode }) {
+  const mappedColor: StatusBadgeColor = tone === 'navy' ? 'navy' : tone;
   return (
-    <span className={styles.badge} data-tone={tone}>
+    <CommonStatusBadge
+      color={mappedColor}
+      variant={tone === 'navy' ? 'filled' : 'outlined'}
+    >
       {children}
-    </span>
+    </CommonStatusBadge>
   );
 }
 
@@ -204,7 +211,7 @@ export function DateTimeText({
   return <span className={styles.nowrap}>{formatSysDateTime(value, { withSeconds: seconds, dateOnly })}</span>;
 }
 
-type SysTableProps<T> = Omit<TableProps<T>, 'pagination' | 'onChange' | 'columns'> & {
+type SysTableProps<T extends object> = Omit<DataTableProps<T>, 'pagination' | 'onChange' | 'columns'> & {
   columns: TableColumnsType<T>;
   /** Row click (opens the edit popup / selects the master row). */
   onRowClick?: (row: T) => void;
@@ -252,7 +259,7 @@ export function SysTable<T extends object>({
     return { ...column, sortOrder };
   });
 
-  const handleChange: TableProps<T>['onChange'] = (_pagination, _filters, sorter) => {
+  const handleChange: DataTableProps<T>['onChange'] = (_pagination, _filters, sorter) => {
     if (!onSortChange) return;
     const single = (Array.isArray(sorter) ? sorter[0] : sorter) as SorterResult<T> | undefined;
     // Client-sorted column: antd already reordered the rows.
@@ -277,7 +284,7 @@ export function SysTable<T extends object>({
 
   return (
     <div className={wrapperClass}>
-      <Table<T>
+      <DataTable<T>
         size="middle"
         rowKey={rowKey}
         columns={controlledColumns}
@@ -298,8 +305,6 @@ export function SysTable<T extends object>({
   );
 }
 
-const PAGE_BLOCK = 10;
-
 /** Centered pager « ‹ 1 2 … 10 › » in blocks of 10 pages; hidden while there is no data. */
 export function SysPager({
   page,
@@ -313,48 +318,9 @@ export function SysPager({
   onChange: (page: number) => void;
 }) {
   if (total <= 0) return null;
-  const totalPages = Math.max(1, Math.ceil(total / pageSize));
-  const start = Math.floor((page - 1) / PAGE_BLOCK) * PAGE_BLOCK + 1;
-  const end = Math.min(start + PAGE_BLOCK - 1, totalPages);
-  const pages = Array.from({ length: end - start + 1 }, (_, i) => start + i);
-
   return (
     <div className={styles.pager}>
-      <button type="button" className={styles.pagerNav} disabled={page === 1} onClick={() => onChange(1)} aria-label="First page">
-        <DoubleLeftOutlined />
-      </button>
-      <button type="button" className={styles.pagerNav} disabled={page === 1} onClick={() => onChange(page - 1)} aria-label="Previous page">
-        <LeftOutlined />
-      </button>
-      {pages.map((p) => (
-        <button
-          key={p}
-          type="button"
-          className={styles.pagerNumber}
-          data-active={p === page || undefined}
-          onClick={() => onChange(p)}
-        >
-          {p}
-        </button>
-      ))}
-      <button
-        type="button"
-        className={styles.pagerNav}
-        disabled={page === totalPages}
-        onClick={() => onChange(page + 1)}
-        aria-label="Next page"
-      >
-        <RightOutlined />
-      </button>
-      <button
-        type="button"
-        className={styles.pagerNav}
-        disabled={page === totalPages}
-        onClick={() => onChange(totalPages)}
-        aria-label="Last page"
-      >
-        <DoubleRightOutlined />
-      </button>
+      <Pagination page={page} pageSize={pageSize} total={total} onChange={onChange} />
     </div>
   );
 }

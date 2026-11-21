@@ -1,5 +1,9 @@
 import { useState } from 'react';
-import { Input, InputNumber, Radio, Select, Spin } from 'antd';
+import LoadingSpinner from '@/components/common/loading/LoadingSpinner';
+import AppRadio from '@/components/inputs/AppRadio';
+import AppSelect from '@/components/inputs/AppSelect';
+import Spinbox from '@/components/inputs/Spinbox';
+import TextInput from '@/components/inputs/TextInput';
 import { useNotify } from '@/hooks/use-notify';
 import { FEE_ERRORS } from '@/api/system/fee-api';
 import type { Fee, FeeCategory, FeeCurrency, FeeMethod, FeeRequest, YesNo } from '@/api/system/fee-api';
@@ -92,9 +96,9 @@ export default function FeeModal({ feeId, canWrite, onClose }: FeeModalProps) {
   if (!isCreate && !detail) {
     return (
       <SysFormModal width={1200} open title="Edit Fee Information" onCancel={onClose}>
-        <Spin spinning={isFetching}>
+        <LoadingSpinner spinning={isFetching}>
           <div className={styles.loading}>{isError ? 'The fee item could not be loaded.' : null}</div>
-        </Spin>
+        </LoadingSpinner>
       </SysFormModal>
     );
   }
@@ -232,19 +236,19 @@ function FeeForm({ fee, canWrite, onClose }: { fee: Fee | null; canWrite: boolea
       {/* Frame layout: Fee Code | Type | Order / Use | Method | Currency / Fee Amount | Minimum Amount | Item Name / Item Content */}
       <SysFieldGrid columns={3}>
         <SysField label="Fee Code">
-          <Input value={fee?.feeId ?? ''} placeholder="Auto-generated" disabled />
+          <TextInput value={fee?.feeId ?? ''} placeholder="Auto-generated" disabled />
         </SysField>
         <SysField label="Type" required error={errors.category}>
-          <Select
+          <AppSelect
             className={styles.fullWidth}
             value={values.category}
             options={categoryOptions}
             disabled={locked}
-            onChange={(category) => patch('category', { category })}
+            onChange={(category) => patch('category', { category: String(category ?? '') })}
           />
         </SysField>
         <SysField label="Order" required error={errors.order}>
-          <InputNumber
+          <Spinbox
             className={styles.fullWidth}
             value={values.order}
             min={1}
@@ -255,7 +259,7 @@ function FeeForm({ fee, canWrite, onClose }: { fee: Fee | null; canWrite: boolea
           />
         </SysField>
         <SysField label="Use" required error={errors.useYn}>
-          <Radio.Group
+          <AppRadio.Group
             value={values.useYn}
             options={USE_YN_RADIO_OPTIONS}
             disabled={!canWrite}
@@ -263,9 +267,9 @@ function FeeForm({ fee, canWrite, onClose }: { fee: Fee | null; canWrite: boolea
           />
         </SysField>
         <SysField label="Method" required error={errors.method ?? errors.rate}>
-          <Select className={styles.methodSelect} value={values.method} options={FEE_METHOD_OPTIONS} disabled={locked} onChange={changeMethod} />
+          <AppSelect<FeeMethod> className={styles.methodSelect} value={values.method} options={FEE_METHOD_OPTIONS} disabled={locked} onChange={changeMethod} />
           {/* Rate % input, enabled for the Rate method (spec: "Rate : % input"). */}
-          <InputNumber
+          <Spinbox
             className={styles.rateInput}
             value={values.rate}
             min={0}
@@ -277,7 +281,7 @@ function FeeForm({ fee, canWrite, onClose }: { fee: Fee | null; canWrite: boolea
           />
         </SysField>
         <SysField label="Currency" required error={errors.currency}>
-          <Select
+          <AppSelect<FeeCurrency>
             className={styles.fullWidth}
             value={values.currency}
             options={FEE_CURRENCY_OPTIONS}
@@ -286,7 +290,7 @@ function FeeForm({ fee, canWrite, onClose }: { fee: Fee | null; canWrite: boolea
           />
         </SysField>
         <SysField label="Fee Amount" required={!isRate} error={errors.fee}>
-          <InputNumber
+          <Spinbox
             className={`${styles.fullWidth} ${styles.amountInput}`}
             value={values.fee}
             min={0}
@@ -298,7 +302,7 @@ function FeeForm({ fee, canWrite, onClose }: { fee: Fee | null; canWrite: boolea
           />
         </SysField>
         <SysField label="Minimum Amount" error={errors.minAmount}>
-          <InputNumber
+          <Spinbox
             className={`${styles.fullWidth} ${styles.amountInput}`}
             value={values.minAmount}
             min={0}
@@ -309,10 +313,10 @@ function FeeForm({ fee, canWrite, onClose }: { fee: Fee | null; canWrite: boolea
           />
         </SysField>
         <SysField label="Item Name" required error={errors.name}>
-          <Input value={values.name} maxLength={300} disabled={locked} onChange={(e) => patch('name', { name: e.target.value })} />
+          <TextInput value={values.name} maxLength={300} disabled={locked} onChange={(e) => patch('name', { name: e.target.value })} />
         </SysField>
         <SysField label="Item Content" span="full" error={errors.description}>
-          <Input
+          <TextInput
             value={values.description}
             maxLength={1000}
             disabled={locked}

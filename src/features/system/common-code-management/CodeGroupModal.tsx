@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Input, Radio } from 'antd';
+import AppRadio from '@/components/inputs/AppRadio';
+import TextInput from '@/components/inputs/TextInput';
 import { useNotify } from '@/hooks/use-notify';
 import type { CodeGroupItem, YesNo } from '@/api/system/code-group-api';
 import { SysField, SysFieldGrid, SysFormModal } from '@/features/system/_shared/SysFormUi';
@@ -70,7 +71,7 @@ export function CodeGroupModal({ item, canWrite, onClose }: CodeGroupModalProps)
     >
       <SysFieldGrid columns={1}>
         <SysField label="Group Code" required error={errors.groupCd}>
-          <Input
+          <TextInput
             value={values.groupCd}
             disabled={!isCreate}
             maxLength={100}
@@ -78,13 +79,13 @@ export function CodeGroupModal({ item, canWrite, onClose }: CodeGroupModalProps)
           />
         </SysField>
         <SysField label="Group Name" required error={errors.groupNm}>
-          <Input value={values.groupNm} maxLength={100} onChange={(e) => change('groupNm', e.target.value)} />
+          <TextInput value={values.groupNm} maxLength={100} onChange={(e) => change('groupNm', e.target.value)} />
         </SysField>
         <SysField label="Group Description" error={errors.groupExpln}>
-          <Input value={values.groupExpln} maxLength={4000} onChange={(e) => change('groupExpln', e.target.value)} />
+          <TextInput value={values.groupExpln} maxLength={4000} onChange={(e) => change('groupExpln', e.target.value)} />
         </SysField>
         <SysField label="Use" required error={errors.useYn}>
-          <Radio.Group
+          <AppRadio.Group
             options={USE_YN_RADIO_OPTIONS}
             value={values.useYn}
             onChange={(e) => change('useYn', e.target.value as YesNo)}

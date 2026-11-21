@@ -1,7 +1,10 @@
 import { useState } from 'react';
-import { Alert, DatePicker, Input, Select } from 'antd';
+import { Alert } from 'antd';
 import type { TableColumnsType } from 'antd';
 import type { Dayjs } from 'dayjs';
+import { AppRangePicker } from '@/components/inputs/AppDatePicker';
+import AppSelect from '@/components/inputs/AppSelect';
+import TextInput from '@/components/inputs/TextInput';
 import {
   NOTI_CHANNEL_LABELS,
   NOTI_HISTORY_MAX_DAYS,
@@ -150,7 +153,7 @@ export default function NotificationHistoryManagement() {
       </SysNotAvailable>
       <SysFilterPanel>
         <SysFilterItem label="Send Period">
-          <DatePicker.RangePicker
+          <AppRangePicker
             className={styles.rangePicker}
             value={draftPeriod}
             format={SYS_DATE_FORMAT}
@@ -159,14 +162,14 @@ export default function NotificationHistoryManagement() {
           />
         </SysFilterItem>
         <SysFilterItem label="Search">
-          <Select
+          <AppSelect<NotiHistorySearchType>
             value={list.draft.searchType}
             options={SEARCH_TYPE_OPTIONS}
             onChange={(searchType) => list.setDraft({ searchType })}
           />
         </SysFilterItem>
         <SysFilterItem label="Content">
-          <Input
+          <TextInput
             value={list.draft.keyword}
             allowClear
             maxLength={100}

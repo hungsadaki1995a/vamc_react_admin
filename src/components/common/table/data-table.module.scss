@@ -1,0 +1,57 @@
+.root {
+  :global(.ant-table-container) {
+    border: 1px solid var(--color-navy-200, #d1d1e0);
+    border-radius: 4px;
+    overflow: hidden;
+    background: #ffffff;
+  }
+
+  :global(.ant-table-thead > tr > th) {
+    height: 34px;
+    padding: 8px 10px !important;
+    background: var(--color-navy-50, #f6f6f9) !important;
+    border-bottom: 1px solid var(--color-navy-200, #d1d1e0) !important;
+    border-inline-end: 1px solid var(--color-navy-100, #eaeaf1);
+    color: var(--color-gray-700, #6f7b95) !important;
+    font-size: 13px;
+    line-height: 18px;
+    font-weight: 500 !important;
+    letter-spacing: -0.02em;
+
+    &:last-child {
+      border-inline-end: none;
+    }
+
+    &::before {
+      display: none !important;
+    }
+  }
+
+  :global(.ant-table-tbody > tr > td) {
+    height: 38px;
+    padding: 8px 10px !important;
+    border-bottom: 1px solid var(--color-navy-100, #eaeaf1) !important;
+    border-inline-end: 1px solid var(--color-navy-100, #eaeaf1);
+    color: var(--color-gray-900, #3a404a);
+    font-size: 13px;
+    line-height: 18px;
+    font-weight: 400;
+    letter-spacing: -0.02em;
+
+    &:last-child {
+      border-inline-end: none;
+    }
+  }
+
+  :global(.ant-table-tbody > tr:last-child > td) {
+    border-bottom: none !important;
+  }
+
+  :global(.ant-table-tbody > tr.ant-table-row:hover > td) {
+    background: var(--color-navy-50, #f6f6f9) !important;
+  }
+
+  :global(.ant-table-tbody > tr.ant-table-row-selected > td) {
+    background: var(--color-blue-50, #eaf8ff) !important;
+  }
+}

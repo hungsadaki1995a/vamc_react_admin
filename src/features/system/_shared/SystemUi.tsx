@@ -1,14 +1,11 @@
 import type { ReactNode } from 'react';
-import { Checkbox } from 'antd';
 import {
-  DoubleLeftOutlined,
-  DoubleRightOutlined,
   DownOutlined,
-  LeftOutlined,
-  RightOutlined,
-  SearchOutlined,
   UpOutlined,
 } from '@ant-design/icons';
+import ActionButton from '@/components/common/actions/ActionButton';
+import Pagination from '@/components/common/pagination/Pagination';
+import AppCheckbox from '@/components/inputs/AppCheckbox';
 import { splitDateTime } from './system-utils';
 import styles from './system-page.module.scss';
 
@@ -55,20 +52,21 @@ export function SysPageHeader({
         <h1 className={styles.pageTitle}>{title}</h1>
         <div className={styles.headerActions}>
           {onReset && (
-            <button type="button" className={styles.btn} onClick={onReset}>
+            <ActionButton action="reset" onClick={onReset}>
               {resetLabel}
-            </button>
+            </ActionButton>
           )}
           {onSearch && (
-            <button type="button" className={styles.btnDark} onClick={onSearch}>
-              <SearchOutlined className={styles.iconSm} />
+            <ActionButton action="search" intent="secondary" appearance="filled" onClick={onSearch}>
               {searchLabel}
-            </button>
+            </ActionButton>
           )}
           {onToggleFilter && (
-            <button type="button" className={styles.btnCollapse} onClick={onToggleFilter}>
-              {filterCollapsed ? <DownOutlined /> : <UpOutlined />}
-            </button>
+            <ActionButton
+              intent="icon"
+              icon={filterCollapsed ? <DownOutlined /> : <UpOutlined />}
+              onClick={onToggleFilter}
+            />
           )}
         </div>
       </div>
@@ -84,8 +82,6 @@ interface SysPaginationProps {
   hideOnSinglePage?: boolean;
 }
 
-const BLOCK_SIZE = 10;
-
 /** Centered numeric pagination in blocks of 10 pages. */
 export function SysPagination({
   page,
@@ -96,42 +92,10 @@ export function SysPagination({
 }: SysPaginationProps) {
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
   if (hideOnSinglePage && totalPages <= 1) return null;
-  const start = Math.floor((page - 1) / BLOCK_SIZE) * BLOCK_SIZE + 1;
-  const end = Math.min(start + BLOCK_SIZE - 1, totalPages);
-  const pages = Array.from({ length: end - start + 1 }, (_, i) => start + i);
 
   return (
     <div className={styles.paginationContainer}>
-      {start > 1 && (
-        <>
-          <button type="button" className={styles.pageNavBtn} onClick={() => onChange(1)}>
-            <DoubleLeftOutlined />
-          </button>
-          <button type="button" className={styles.pageNavBtn} onClick={() => onChange(start - 1)}>
-            <LeftOutlined />
-          </button>
-        </>
-      )}
-      {pages.map((p) => (
-        <button
-          key={p}
-          type="button"
-          className={p === page ? styles.pageNumberActive : styles.pageNumber}
-          onClick={() => onChange(p)}
-        >
-          {p}
-        </button>
-      ))}
-      {end < totalPages && (
-        <>
-          <button type="button" className={styles.pageNavBtn} onClick={() => onChange(end + 1)}>
-            <RightOutlined />
-          </button>
-          <button type="button" className={styles.pageNavBtn} onClick={() => onChange(totalPages)}>
-            <DoubleRightOutlined />
-          </button>
-        </>
-      )}
+      <Pagination page={page} pageSize={pageSize} total={total} onChange={onChange} />
     </div>
   );
 }
@@ -166,15 +130,15 @@ interface UseYnChecksProps {
 export function UseYnChecks({ yes, no, onChange, allLabel, yesLabel, noLabel }: UseYnChecksProps) {
   return (
     <div className={styles.filterCheckboxes}>
-      <Checkbox checked={yes && no} onChange={(e) => onChange(e.target.checked, e.target.checked)}>
+      <AppCheckbox checked={yes && no} onChange={(e) => onChange(e.target.checked, e.target.checked)}>
         {allLabel}
-      </Checkbox>
-      <Checkbox checked={yes} onChange={(e) => onChange(e.target.checked, no)}>
+      </AppCheckbox>
+      <AppCheckbox checked={yes} onChange={(e) => onChange(e.target.checked, no)}>
         {yesLabel}
-      </Checkbox>
-      <Checkbox checked={no} onChange={(e) => onChange(yes, e.target.checked)}>
+      </AppCheckbox>
+      <AppCheckbox checked={no} onChange={(e) => onChange(yes, e.target.checked)}>
         {noLabel}
-      </Checkbox>
+      </AppCheckbox>
     </div>
   );
 }

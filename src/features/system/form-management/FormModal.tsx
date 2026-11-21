@@ -1,5 +1,7 @@
 import { useState } from 'react';
-import { Input, Radio, Select } from 'antd';
+import AppRadio from '@/components/inputs/AppRadio';
+import AppSelect from '@/components/inputs/AppSelect';
+import TextInput from '@/components/inputs/TextInput';
 import { useNotify } from '@/hooks/use-notify';
 import { FORM_API_AVAILABLE, FORM_ERRORS } from '@/api/system/form-api';
 import type { FormItem, FormLang, FormSaveRequest, YesNo } from '@/api/system/form-api';
@@ -121,7 +123,7 @@ export default function FormModal({ form, canWrite, onClose }: FormModalProps) {
     >
       <SysFieldGrid columns={3}>
         <SysField label="Form No." required error={errors.formNo}>
-          <Input
+          <TextInput
             value={values.formNo}
             placeholder="e.g. 1000"
             maxLength={4}
@@ -131,7 +133,7 @@ export default function FormModal({ form, canWrite, onClose }: FormModalProps) {
           />
         </SysField>
         <SysField label="Language" required error={errors.langCd}>
-          <Select<FormLang>
+          <AppSelect<FormLang>
             value={values.langCd}
             placeholder="Select"
             options={LANG_OPTIONS}
@@ -139,21 +141,21 @@ export default function FormModal({ form, canWrite, onClose }: FormModalProps) {
           />
         </SysField>
         <SysField label="Use" required error={errors.useYn}>
-          <Radio.Group
+          <AppRadio.Group
             value={values.useYn}
             options={USE_YN_RADIO_OPTIONS}
             onChange={(e) => patch('useYn', { useYn: e.target.value as YesNo })}
           />
         </SysField>
         <SysField label="Form Name" required span="full" error={errors.formNm}>
-          <Input
+          <TextInput
             value={values.formNm}
             maxLength={100}
             onChange={(e) => patch('formNm', { formNm: e.target.value })}
           />
         </SysField>
         <SysField label="File URL" required span="full" error={errors.fileUrl}>
-          <Input
+          <TextInput
             value={values.fileUrl}
             placeholder="e.g. https://cdn.vamc.vn/form/1000_en.docx"
             maxLength={2000}

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import type { CSSProperties, DragEvent } from 'react';
-import { Spin } from 'antd';
+import LoadingSpinner from '@/components/common/loading/LoadingSpinner';
 import {
   FileOutlined,
   FolderFilled,
@@ -220,7 +220,7 @@ export default function MenuSettingsTree({
           </div>
         )}
       </div>
-      <Spin spinning={loading || moving} classNames={{ root: styles.treeSpin }}>
+      <LoadingSpinner spinning={loading || moving} classNames={{ root: styles.treeSpin }}>
         <div className={styles.treeBody} role="tree">
           {insertAt === -1 && draft && renderDraft(draft)}
           {visible.map((node, index) => (
@@ -231,7 +231,7 @@ export default function MenuSettingsTree({
           ))}
           {!loading && visible.length === 0 && !draft && <div className={styles.treeEmpty}>No menus.</div>}
         </div>
-      </Spin>
+      </LoadingSpinner>
     </div>
   );
 }

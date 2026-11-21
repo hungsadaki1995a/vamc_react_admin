@@ -1,4 +1,5 @@
-import { Input, Radio } from 'antd';
+import AppRadio from '@/components/inputs/AppRadio';
+import TextInput from '@/components/inputs/TextInput';
 import type { MenuSeCd, YesNo } from '@/api/system/menu-setting-api';
 import { SysButton, SysEmpty, SysNotAvailable } from './SysListUi';
 import { SysField, SysFieldGrid } from './SysFormUi';
@@ -69,7 +70,7 @@ export default function MenuSettingsDetail({
           error={errors.menuCd}
           hint={isNew ? `${menuSeCd} followed by 8 digits, cannot be changed after saving.` : undefined}
         >
-          <Input
+          <TextInput
             value={form.menuCd}
             maxLength={9}
             disabled={!isNew || readOnly}
@@ -78,7 +79,7 @@ export default function MenuSettingsDetail({
           />
         </SysField>
         <SysField label="Use" required error={errors.useYn}>
-          <Radio.Group
+          <AppRadio.Group
             options={USE_YN_RADIO_OPTIONS}
             value={form.useYn}
             disabled={readOnly}
@@ -87,7 +88,7 @@ export default function MenuSettingsDetail({
         </SysField>
 
         <SysField label="Menu Name (VN)" required error={errors.menuNmVn}>
-          <Input
+          <TextInput
             value={form.menuNmVn}
             maxLength={1000}
             disabled={readOnly}
@@ -95,7 +96,7 @@ export default function MenuSettingsDetail({
           />
         </SysField>
         <SysField label="Menu Name (EN)" required error={errors.menuNmEn}>
-          <Input
+          <TextInput
             value={form.menuNmEn}
             maxLength={1000}
             disabled={readOnly}
@@ -110,7 +111,7 @@ export default function MenuSettingsDetail({
           error={errors.lblCd}
           hint="Label key from i18n Label Management."
         >
-          <Input
+          <TextInput
             value={form.lblCd}
             maxLength={100}
             disabled={readOnly}
@@ -126,7 +127,7 @@ export default function MenuSettingsDetail({
             error={errors.menuUrlAddr}
             hint="Screen registered in Screen Management; leave empty for group menus with only submenus."
           >
-            <Input
+            <TextInput
               value={form.menuUrlAddr}
               maxLength={2000}
               disabled={readOnly}
@@ -136,7 +137,7 @@ export default function MenuSettingsDetail({
           </SysField>
         ) : (
           <SysField label="Web Path" span={2} error={errors.menuUrlAddr}>
-            <Input
+            <TextInput
               value={form.menuUrlAddr}
               maxLength={2000}
               disabled={readOnly}
@@ -157,7 +158,7 @@ export default function MenuSettingsDetail({
             }
           >
             {/* TODO(schema): MENU_EXPSR_YN — enable and send once the column exists. */}
-            <Radio.Group options={SHOW_IN_MENU_OPTIONS} value={form.showInMenu} disabled />
+            <AppRadio.Group options={SHOW_IN_MENU_OPTIONS} value={form.showInMenu} disabled />
           </SysField>
         )}
 

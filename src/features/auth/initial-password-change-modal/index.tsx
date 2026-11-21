@@ -1,4 +1,6 @@
-import { Form, Input, Modal, Typography } from 'antd';
+import { Form, Typography } from 'antd';
+import Popup from '@/components/common/popup/Popup';
+import TextInput from '@/components/inputs/TextInput';
 import { useApiMutation } from '@/hooks/use-api-mutation';
 import { changePwd } from '@/api/system/user-password-api';
 
@@ -34,16 +36,15 @@ export default function InitChangePwModal({ open, usrId, onSuccess }: Props) {
   };
 
   return (
-    <Modal
+    <Popup
       title="Password Change Required"
       open={open}
-      onOk={handleOk}
-      okText="Change"
-      footer={(_, { OkBtn }) => <OkBtn />}
+      onConfirm={handleOk}
+      confirmText="Change"
+      confirmLoading={mutation.isPending}
+      hideCancel
       closable={false}
       mask={{ closable: false }}
-      confirmLoading={mutation.isPending}
-      destroyOnHidden
       width={420}
     >
       <Text type="secondary" className="block mb-4!">
@@ -61,7 +62,7 @@ export default function InitChangePwModal({ open, usrId, onSuccess }: Props) {
             },
           ]}
         >
-          <Input.Password autoComplete="new-password" />
+          <TextInput variant="password" autoComplete="new-password" />
         </Form.Item>
         <Form.Item
           label="Confirm Password"
@@ -77,9 +78,9 @@ export default function InitChangePwModal({ open, usrId, onSuccess }: Props) {
             }),
           ]}
         >
-          <Input.Password autoComplete="new-password" />
+          <TextInput variant="password" autoComplete="new-password" />
         </Form.Item>
       </Form>
-    </Modal>
+    </Popup>
   );
 }

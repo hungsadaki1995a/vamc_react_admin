@@ -1,6 +1,11 @@
 import { useState } from 'react';
-import { Descriptions, Input, Modal, Radio, Table } from 'antd';
+import { Descriptions } from 'antd';
 import type { TableColumnsType } from 'antd';
+import ActionButton from '@/components/common/actions/ActionButton';
+import Popup from '@/components/common/popup/Popup';
+import DataTable from '@/components/common/table/DataTable';
+import AppRadio from '@/components/inputs/AppRadio';
+import TextInput from '@/components/inputs/TextInput';
 import type { CollateralAssetItem, CollateralSearch } from '@/api/npl/npl-api';
 import { SysPageHeader, SysPagination } from '@/features/system/_shared/SystemUi';
 import { rowNumber } from '@/features/system/_shared/system-utils';
@@ -81,40 +86,40 @@ export default function CollateralAssetManagement() {
         <div className={styles.filterCard}>
           <div className={styles.filterGroup}>
             <span className={styles.filterLabel}>Displayed</span>
-            <Radio.Group value={expsrYn} onChange={(e) => setExpsrYn(e.target.value)}>
-              <Radio value="">All</Radio>
-              <Radio value="Y">Y</Radio>
-              <Radio value="N">N</Radio>
-            </Radio.Group>
+            <AppRadio.Group value={expsrYn} onChange={(e) => setExpsrYn(e.target.value)}>
+              <AppRadio value="">All</AppRadio>
+              <AppRadio value="Y">Y</AppRadio>
+              <AppRadio value="N">N</AppRadio>
+            </AppRadio.Group>
           </div>
           <div className={styles.filterGroup}>
             <span className={styles.filterLabel}>Notarized</span>
-            <Radio.Group value={notarYn} onChange={(e) => setNotarYn(e.target.value)}>
-              <Radio value="">All</Radio>
-              <Radio value="Y">Y</Radio>
-              <Radio value="N">N</Radio>
-            </Radio.Group>
+            <AppRadio.Group value={notarYn} onChange={(e) => setNotarYn(e.target.value)}>
+              <AppRadio value="">All</AppRadio>
+              <AppRadio value="Y">Y</AppRadio>
+              <AppRadio value="N">N</AppRadio>
+            </AppRadio.Group>
           </div>
           <div className={styles.filterGroup}>
             <span className={styles.filterLabel}>Asset Code</span>
-            <Input className={styles.filterInput} placeholder="Asset Code" value={cltrAstCd} onChange={(e) => setCltrAstCd(e.target.value)} onPressEnter={handleSearch} allowClear />
+            <TextInput className={styles.filterInput} placeholder="Asset Code" value={cltrAstCd} onChange={(e) => setCltrAstCd(e.target.value)} onPressEnter={handleSearch} allowClear />
           </div>
           <div className={styles.filterGroup}>
             <span className={styles.filterLabel}>Asset Name</span>
-            <Input className={styles.filterInput} placeholder="Asset Name" value={cltrAstNm} onChange={(e) => setCltrAstNm(e.target.value)} onPressEnter={handleSearch} allowClear />
+            <TextInput className={styles.filterInput} placeholder="Asset Name" value={cltrAstNm} onChange={(e) => setCltrAstNm(e.target.value)} onPressEnter={handleSearch} allowClear />
           </div>
         </div>
       )}
       <div className={styles.summaryRow}>
         <span className={styles.totalCount}>Total ({total})</span>
-        <button type="button" className={`${styles.btn} ${styles.btnSmall}`} onClick={() => downloadExcel.mutate(applied)}>Excel Download</button>
+        <ActionButton action="excelDownload" size="small" onClick={() => downloadExcel.mutate(applied)}>Excel Download</ActionButton>
       </div>
       <div className={styles.tableWrapper}>
-        <Table<CollateralAssetItem> rowKey="cltrAstCd" columns={columns} dataSource={rows} loading={isFetching} pagination={false} size="small" scroll={{ x: 'max-content' }} />
+        <DataTable<CollateralAssetItem> rowKey="cltrAstCd" columns={columns} dataSource={rows} loading={isFetching} scroll={{ x: 'max-content' }} />
       </div>
       <SysPagination page={page} pageSize={PAGE_SIZE} total={total} onChange={setPage} />
 
-      <Modal open={!!detailId} width={760} centered title={`Collateral Asset: ${detailId ?? ''}`} onCancel={() => setDetailId(null)} footer={<button type="button" className={styles.btn} onClick={() => setDetailId(null)}>Close</button>}>
+      <Popup open={!!detailId} width={760} title={`Collateral Asset: ${detailId ?? ''}`} onCancel={() => setDetailId(null)} footer={<ActionButton action="close" onClick={() => setDetailId(null)}>Close</ActionButton>}>
         {detail && (
           <Descriptions bordered size="small" column={2}>
             <Descriptions.Item label="Asset Code">{String(detail.cltrAstCd ?? '-')}</Descriptions.Item>
@@ -125,7 +130,7 @@ export default function CollateralAssetManagement() {
             <Descriptions.Item label="Contract Date">{String(detail.ctrtDmy ?? '-')}</Descriptions.Item>
           </Descriptions>
         )}
-      </Modal>
+      </Popup>
     </div>
   );
 }

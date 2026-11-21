@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { Input, Select } from 'antd';
 import type { TableColumnsType } from 'antd';
+import AppSelect from '@/components/inputs/AppSelect';
+import TextInput from '@/components/inputs/TextInput';
 import { useMenuPermission } from '@/hooks/use-menu-permission';
 import type { ProgramItem, ProgramSearch } from '@/api/system/program-screen-api';
 import {
@@ -56,17 +57,17 @@ export default function ProgramManagement() {
       />
       <SysFilterPanel columns={4}>
         <SysFilterItem label="Use">
-          <Select options={USE_YN_FILTER_OPTIONS} value={list.draft.useYn} onChange={(useYn) => list.setDraft({ useYn })} />
+          <AppSelect options={USE_YN_FILTER_OPTIONS} value={list.draft.useYn} onChange={(useYn) => list.setDraft({ useYn: (useYn ?? '') as ProgramSearch['useYn'] })} />
         </SysFilterItem>
         <SysFilterItem label="Type">
-          <Select
+          <AppSelect
             options={PROGRAM_TYPE_FILTER_OPTIONS}
             value={list.draft.prgrmSeCd}
-            onChange={(prgrmSeCd) => list.setDraft({ prgrmSeCd })}
+            onChange={(prgrmSeCd) => list.setDraft({ prgrmSeCd: (prgrmSeCd ?? '') as ProgramSearch['prgrmSeCd'] })}
           />
         </SysFilterItem>
         <SysFilterItem label="Program Code">
-          <Input
+          <TextInput
             value={list.draft.prgrmCd}
             allowClear
             onChange={(e) => list.setDraft({ prgrmCd: e.target.value })}
@@ -74,7 +75,7 @@ export default function ProgramManagement() {
           />
         </SysFilterItem>
         <SysFilterItem label="Program Name">
-          <Input
+          <TextInput
             value={list.draft.prgrmNm}
             allowClear
             onChange={(e) => list.setDraft({ prgrmNm: e.target.value })}

@@ -1,7 +1,14 @@
 import { useState } from 'react';
-import { DatePicker, Descriptions, Input, Modal, Radio, Select, Table } from 'antd';
+import { Descriptions } from 'antd';
 import type { TableColumnsType } from 'antd';
 import type { Dayjs } from 'dayjs';
+import ActionButton from '@/components/common/actions/ActionButton';
+import Popup from '@/components/common/popup/Popup';
+import DataTable from '@/components/common/table/DataTable';
+import { AppRangePicker } from '@/components/inputs/AppDatePicker';
+import AppRadio from '@/components/inputs/AppRadio';
+import AppSelect from '@/components/inputs/AppSelect';
+import TextInput from '@/components/inputs/TextInput';
 import { useNotify } from '@/hooks/use-notify';
 import { useMenuPermission } from '@/hooks/use-menu-permission';
 import type { TradeAppKind, TradeApplicationItem, TradeApplicationSearch } from '@/api/trade/trade-api';
@@ -104,14 +111,14 @@ export default function TradeApplicationBoard({ kind, title }: { kind: TradeAppK
         <div className={styles.filterCard}>
           <div className={styles.filterGroup}>
             <span className={styles.filterLabel}>Application Period</span>
-            <DatePicker.RangePicker format="DD/MM/YYYY" value={period} onChange={(d) => setPeriod(d as DateRange)} className={styles.w240} />
+            <AppRangePicker format="DD/MM/YYYY" value={period} onChange={(d) => setPeriod(d as DateRange)} className={styles.w240} />
           </div>
           <div className={styles.filterGroup}>
             <span className={styles.filterLabel}>Status</span>
-            <Select
+            <AppSelect
               className={styles.w150}
               value={sttsCd}
-              onChange={setSttsCd}
+              onChange={(v) => setSttsCd(String(v ?? ''))}
               options={[
                 { value: '', label: 'All' },
                 { value: 'RCPT', label: 'Submitted' },
@@ -125,47 +132,46 @@ export default function TradeApplicationBoard({ kind, title }: { kind: TradeAppK
           </div>
           <div className={styles.filterGroup}>
             <span className={styles.filterLabel}>LOT Status</span>
-            <Radio.Group value={bndLotYn} onChange={(e) => setBndLotYn(e.target.value)}>
-              <Radio value="">All</Radio>
-              <Radio value="Y">Yes</Radio>
-              <Radio value="N">No</Radio>
-            </Radio.Group>
+            <AppRadio.Group value={bndLotYn} onChange={(e) => setBndLotYn(e.target.value)}>
+              <AppRadio value="">All</AppRadio>
+              <AppRadio value="Y">Yes</AppRadio>
+              <AppRadio value="N">No</AppRadio>
+            </AppRadio.Group>
           </div>
           <div className={styles.filterGroup}>
             <span className={styles.filterLabel}>Member Code</span>
-            <Input className={styles.filterInput} placeholder="Member No" value={mbrNo} onChange={(e) => setMbrNo(e.target.value)} onPressEnter={handleSearch} allowClear />
+            <TextInput className={styles.filterInput} placeholder="Member No" value={mbrNo} onChange={(e) => setMbrNo(e.target.value)} onPressEnter={handleSearch} allowClear />
           </div>
           <div className={styles.filterGroup}>
             <span className={styles.filterLabel}>NPL Code</span>
-            <Input className={styles.filterInput} placeholder="NPL Code" value={bndCd} onChange={(e) => setBndCd(e.target.value)} onPressEnter={handleSearch} allowClear />
+            <TextInput className={styles.filterInput} placeholder="NPL Code" value={bndCd} onChange={(e) => setBndCd(e.target.value)} onPressEnter={handleSearch} allowClear />
           </div>
           <div className={styles.filterGroup}>
             <span className={styles.filterLabel}>Keyword</span>
-            <Input className={styles.filterInput} placeholder="Application ID, name..." value={keyword} onChange={(e) => setKeyword(e.target.value)} onPressEnter={handleSearch} allowClear />
+            <TextInput className={styles.filterInput} placeholder="Application ID, name..." value={keyword} onChange={(e) => setKeyword(e.target.value)} onPressEnter={handleSearch} allowClear />
           </div>
         </div>
       )}
       <div className={styles.summaryRow}>
         <span className={styles.totalCount}>Total ({total})</span>
-        <button type="button" className={`${styles.btn} ${styles.btnSmall}`} onClick={() => downloadExcel.mutate({ kind, search: applied })}>Excel Download</button>
+        <ActionButton action="excelDownload" size="small" onClick={() => downloadExcel.mutate({ kind, search: applied })}>Excel Download</ActionButton>
       </div>
       <div className={styles.tableWrapper}>
-        <Table<TradeApplicationItem> rowKey="srvcAplyId" columns={columns} dataSource={rows} loading={isFetching} pagination={false} size="small" scroll={{ x: 'max-content' }} />
+        <DataTable<TradeApplicationItem> rowKey="srvcAplyId" columns={columns} dataSource={rows} loading={isFetching} scroll={{ x: 'max-content' }} />
       </div>
       <SysPagination page={page} pageSize={PAGE_SIZE} total={total} onChange={setPage} />
 
-      <Modal
+      <Popup
         open={!!detailId}
         width={720}
-        centered
         title={`${title} — ${detailId ?? ''}`}
         onCancel={() => setDetailId(null)}
         footer={
           <div className={styles.modalFooter}>
             {canWrite && detail?.srvcPrcsSttsCd === 'RCPT' && (
-              <button type="button" className={styles.btnDark} onClick={() => void handleReceipt(detail.srvcAplyId)}>Receipt</button>
+              <ActionButton intent="secondary" appearance="filled" onClick={() => void handleReceipt(detail.srvcAplyId)}>Receipt</ActionButton>
             )}
-            <button type="button" className={styles.btn} onClick={() => setDetailId(null)}>Close</button>
+            <ActionButton action="close" onClick={() => setDetailId(null)}>Close</ActionButton>
           </div>
         }
       >
@@ -179,7 +185,7 @@ export default function TradeApplicationBoard({ kind, title }: { kind: TradeAppK
             <Descriptions.Item label="Application Date">{detail.srvcAplyDmy || '-'}</Descriptions.Item>
           </Descriptions>
         )}
-      </Modal>
+      </Popup>
     </div>
   );
 }

@@ -1,6 +1,11 @@
 import { useState } from 'react';
 import type { CSSProperties } from 'react';
-import { Input, InputNumber, Modal, Radio, Spin } from 'antd';
+import ActionButton from '@/components/common/actions/ActionButton';
+import LoadingSpinner from '@/components/common/loading/LoadingSpinner';
+import Popup from '@/components/common/popup/Popup';
+import AppRadio from '@/components/inputs/AppRadio';
+import Spinbox from '@/components/inputs/Spinbox';
+import TextInput from '@/components/inputs/TextInput';
 import { useNotify } from '@/hooks/use-notify';
 import type { Banner, BannerRequest } from '@/api/contents/banner-api';
 import { FormField } from '@/features/system/_shared/SystemUi';
@@ -104,10 +109,9 @@ export default function BannerModal({ bannerId, canWrite, onClose, onSaved }: Ba
   };
 
   return (
-    <Modal
+    <Popup
       open
       width={860}
-      centered
       title={
         <span>
           Check/Modify Banner
@@ -118,24 +122,24 @@ export default function BannerModal({ bannerId, canWrite, onClose, onSaved }: Ba
       maskClosable={false}
       footer={
         <div className={styles.modalFooter}>
-          <button type="button" className={styles.btn} onClick={onClose}>
+          <ActionButton action="cancel" onClick={onClose}>
             Cancel
-          </button>
-          <button
-            type="button"
-            className={styles.btnDark}
+          </ActionButton>
+          <ActionButton
+            intent="secondary"
+            appearance="filled"
             disabled={!canWrite || saveBanner.isPending || isFetching}
             onClick={handleConfirm}
           >
             Confirm
-          </button>
+          </ActionButton>
         </div>
       }
     >
-      <Spin spinning={isFetching}>
+      <LoadingSpinner spinning={isFetching}>
         <div className={styles.formGrid} style={{ '--form-cols': 3 } as CSSProperties}>
           <FormField label="In Use">
-            <Radio.Group
+            <AppRadio.Group
               value={form.useYn}
               disabled={!canWrite}
               onChange={(e) => patch({ useYn: e.target.value as 'Y' | 'N' })}
@@ -146,7 +150,7 @@ export default function BannerModal({ bannerId, canWrite, onClose, onSaved }: Ba
             />
           </FormField>
           <FormField label="Order" required>
-            <InputNumber
+            <Spinbox
               value={form.order}
               min={1}
               max={999}
@@ -156,7 +160,7 @@ export default function BannerModal({ bannerId, canWrite, onClose, onSaved }: Ba
             />
           </FormField>
           <FormField label="Banner Position" required>
-            <Input
+            <TextInput
               placeholder="e.g. MAIN_TOP"
               value={form.positionId}
               maxLength={100}
@@ -166,7 +170,7 @@ export default function BannerModal({ bannerId, canWrite, onClose, onSaved }: Ba
           </FormField>
 
           <FormField label="Banner Title" required span="full">
-            <Input
+            <TextInput
               value={form.title}
               maxLength={256}
               disabled={fieldsDisabled}
@@ -174,7 +178,7 @@ export default function BannerModal({ bannerId, canWrite, onClose, onSaved }: Ba
             />
           </FormField>
           <FormField label="Banner Link URL" span="full">
-            <Input
+            <TextInput
               placeholder="https://… (leave blank if no link)"
               value={form.linkUrl}
               maxLength={2000}
@@ -191,7 +195,7 @@ export default function BannerModal({ bannerId, canWrite, onClose, onSaved }: Ba
             />
           </FormField>
         </div>
-      </Spin>
-    </Modal>
+      </LoadingSpinner>
+    </Popup>
   );
 }

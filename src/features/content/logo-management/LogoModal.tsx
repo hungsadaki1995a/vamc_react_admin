@@ -1,6 +1,11 @@
 import { useState } from 'react';
 import type { CSSProperties } from 'react';
-import { Input, Modal, Radio, Spin } from 'antd';
+import ActionButton from '@/components/common/actions/ActionButton';
+import LoadingSpinner from '@/components/common/loading/LoadingSpinner';
+import Popup from '@/components/common/popup/Popup';
+import AppRadio from '@/components/inputs/AppRadio';
+import TextArea from '@/components/inputs/TextArea';
+import TextInput from '@/components/inputs/TextInput';
 import { useNotify } from '@/hooks/use-notify';
 import type { LogoRequest } from '@/api/contents/site-display-api';
 import type { PostDetail } from '@/api/contents/post-api';
@@ -107,48 +112,47 @@ export default function LogoModal({ logoId, canWrite, onClose, onSaved }: LogoMo
   };
 
   return (
-    <Modal
+    <Popup
       open
       width={860}
-      centered
       title={<span>{isCreate ? 'Register Logo' : 'Check/Modify Logo'}</span>}
       onCancel={onClose}
       maskClosable={false}
       footer={
         <div className={styles.modalFooter}>
-          <button type="button" className={styles.btn} onClick={onClose}>
+          <ActionButton action="cancel" onClick={onClose}>
             Cancel
-          </button>
-          <button
-            type="button"
-            className={styles.btnDark}
+          </ActionButton>
+          <ActionButton
+            intent="secondary"
+            appearance="filled"
             disabled={!canWrite || saveLogo.isPending || isFetching}
             onClick={handleConfirm}
           >
             Confirm
-          </button>
+          </ActionButton>
         </div>
       }
     >
-      <Spin spinning={isFetching}>
+      <LoadingSpinner spinning={isFetching}>
         <div className={styles.formGrid} style={{ '--form-cols': 2 } as CSSProperties}>
           {!isCreate && detail && (
             <FormField label="Logo ID" span="full">
-              <Input value={detail.pstNo} disabled />
+              <TextInput value={detail.pstNo} disabled />
             </FormField>
           )}
           <FormField label="Usage Status" required>
-            <Radio.Group
+            <AppRadio.Group
               value={form.useYn}
               disabled={!canWrite}
               onChange={(e) => patch({ useYn: e.target.value as 'Y' | 'N' })}
             >
-              <Radio value="Y">Used</Radio>
-              <Radio value="N">Unused</Radio>
-            </Radio.Group>
+              <AppRadio value="Y">Used</AppRadio>
+              <AppRadio value="N">Unused</AppRadio>
+            </AppRadio.Group>
           </FormField>
           <FormField label="Position" required>
-            <Input
+            <TextInput
               value={form.positionId}
               disabled={!canWrite}
               placeholder="e.g. HEADER, FOOTER, FAVICON"
@@ -157,7 +161,7 @@ export default function LogoModal({ logoId, canWrite, onClose, onSaved }: LogoMo
             />
           </FormField>
           <FormField label="Logo Name (VI)" required span="full">
-            <Input
+            <TextInput
               value={form.title}
               disabled={!canWrite}
               placeholder="Enter logo name in Vietnamese"
@@ -166,7 +170,7 @@ export default function LogoModal({ logoId, canWrite, onClose, onSaved }: LogoMo
             />
           </FormField>
           <FormField label="Logo Name (EN)" span="full">
-            <Input
+            <TextInput
               value={form.titleEn}
               disabled={!canWrite}
               placeholder="Enter logo name in English"
@@ -175,7 +179,7 @@ export default function LogoModal({ logoId, canWrite, onClose, onSaved }: LogoMo
             />
           </FormField>
           <FormField label="Link URL" span="full">
-            <Input
+            <TextInput
               value={form.linkUrl}
               disabled={!canWrite}
               placeholder="e.g. / or https://vamc.vn"
@@ -192,7 +196,7 @@ export default function LogoModal({ logoId, canWrite, onClose, onSaved }: LogoMo
             />
           </FormField>
           <FormField label="Description / Alt (VI)" span="full">
-            <Input.TextArea
+            <TextArea
               rows={2}
               value={form.description}
               disabled={!canWrite}
@@ -201,7 +205,7 @@ export default function LogoModal({ logoId, canWrite, onClose, onSaved }: LogoMo
             />
           </FormField>
           <FormField label="Description / Alt (EN)" span="full">
-            <Input.TextArea
+            <TextArea
               rows={2}
               value={form.descriptionEn}
               disabled={!canWrite}
@@ -210,7 +214,7 @@ export default function LogoModal({ logoId, canWrite, onClose, onSaved }: LogoMo
             />
           </FormField>
         </div>
-      </Spin>
-    </Modal>
+      </LoadingSpinner>
+    </Popup>
   );
 }

@@ -1,0 +1,102 @@
+.root {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 4px;
+  font-size: 10px;
+  line-height: 14px;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.icon {
+  display: inline-flex;
+  align-items: center;
+  font-size: 10px;
+}
+
+.outlined {
+  font-weight: 400;
+  border-width: 1px;
+  border-style: solid;
+
+  &.colorGray {
+    background: var(--color-gray-100, #e9ecf1);
+    border-color: var(--color-gray-300, #d3d9e3);
+    color: var(--color-gray-800, #545c6d);
+  }
+
+  &.colorGreen {
+    background: var(--color-green-50, #edf8f1);
+    border-color: var(--color-green-200, #a1dcba);
+    color: var(--color-green-700, #107037);
+  }
+
+  &.colorOrange {
+    background: var(--color-orange-50, #fff2e6);
+    border-color: var(--color-orange-200, #ffbf7f);
+    color: var(--color-orange-700, #ce4f00);
+  }
+
+  &.colorRed {
+    background: var(--color-red-50, #fff0f1);
+    border-color: var(--color-red-100, #ffdbe0);
+    color: var(--color-red-600, #e62e44);
+  }
+
+  &.colorViolet {
+    background: var(--color-violet-50, #f2edfe);
+    border-color: var(--color-violet-200, #d7c9fd);
+    color: var(--color-violet-500, #794bf8);
+  }
+
+  &.colorBlue {
+    background: var(--color-blue-50, #eaf8ff);
+    border-color: var(--color-blue-200, #b6d8ff);
+    color: var(--color-blue-600, #005be2);
+  }
+
+  &.colorNavy {
+    background: var(--color-navy-50, #f6f6f9);
+    border-color: var(--color-navy-200, #d1d1e0);
+    color: var(--color-navy-700, #3b3b59);
+  }
+}
+
+.filled {
+  font-weight: 500;
+  color: #ffffff;
+  border: 1px solid transparent;
+
+  &.colorGray {
+    background: var(--color-gray-500, #a8b2c8);
+  }
+
+  &.colorGreen {
+    background: var(--color-green-400, #45b675);
+  }
+
+  &.colorOrange {
+    background: var(--color-orange-400, #ff860c);
+  }
+
+  &.colorRed {
+    background: var(--color-red-500, #ff334b);
+  }
+
+  &.colorViolet {
+    background: var(--color-violet-500, #794bf8);
+  }
+
+  &.colorBlue {
+    background: var(--color-blue-500, #1876ff);
+  }
+
+  &.colorNavy {
+    background: var(--color-navy-600, #505077);
+  }
+}

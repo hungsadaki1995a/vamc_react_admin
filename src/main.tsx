@@ -6,7 +6,8 @@ import { client as heyApiClient } from '@/api/generated/client.gen';
 import { apiClient } from '@/lib/api/client';
 import App from '@/app/App';
 import '@/lib/i18n';
-import '@/styles/global.css';
+import '@/styles/tailwind.css';
+import '@/styles/global.scss';
 
 // Bind Hey API generated client to use the project's customized Axios instance and base URL
 const rawBaseUrl = (import.meta.env.VITE_API_BASE_URL as string | undefined) ?? '';

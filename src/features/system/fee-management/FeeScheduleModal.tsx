@@ -1,8 +1,11 @@
 import { useState } from 'react';
-import { DatePicker, Input, Upload } from 'antd';
+import { Upload } from 'antd';
 import type { UploadFile } from 'antd';
 import type { Dayjs } from 'dayjs';
 import { UploadOutlined } from '@ant-design/icons';
+import AppDatePicker from '@/components/inputs/AppDatePicker';
+import TextArea from '@/components/inputs/TextArea';
+import TextInput from '@/components/inputs/TextInput';
 import { FEE_SCHEDULE_API_AVAILABLE } from '@/api/system/fee-api';
 import { SysButton, SysNotAvailable } from '../_shared/SysListUi';
 import { SysField, SysFieldGrid, SysFormModal } from '../_shared/SysFormUi';
@@ -41,7 +44,7 @@ export default function FeeScheduleModal({ canWrite, onClose }: { canWrite: bool
     >
       <SysFieldGrid columns={1}>
         <SysField label="Effective Date" required>
-          <DatePicker
+          <AppDatePicker
             className={styles.fullWidth}
             value={values.effectiveDate}
             format={SYS_DATE_FORMAT}
@@ -50,7 +53,7 @@ export default function FeeScheduleModal({ canWrite, onClose }: { canWrite: bool
           />
         </SysField>
         <SysField label="Basis">
-          <Input
+          <TextInput
             value={values.basis}
             maxLength={500}
             placeholder="e.g. decision number and date"
@@ -58,7 +61,7 @@ export default function FeeScheduleModal({ canWrite, onClose }: { canWrite: bool
           />
         </SysField>
         <SysField label="Notes">
-          <Input.TextArea rows={8} value={values.notes} maxLength={1000} onChange={(e) => patch({ notes: e.target.value })} />
+          <TextArea rows={8} value={values.notes} maxLength={1000} onChange={(e) => patch({ notes: e.target.value })} />
         </SysField>
         {/* In the spec text (pdf, optional) but not drawn in the frame. */}
         <SysField label="Fee Schedule File" hint="PDF only.">

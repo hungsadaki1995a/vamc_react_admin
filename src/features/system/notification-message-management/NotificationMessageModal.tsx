@@ -1,6 +1,10 @@
 import { useRef, useState } from 'react';
 import type { SyntheticEvent } from 'react';
-import { Input, Radio, Select, Spin } from 'antd';
+import LoadingSpinner from '@/components/common/loading/LoadingSpinner';
+import AppRadio from '@/components/inputs/AppRadio';
+import AppSelect from '@/components/inputs/AppSelect';
+import TextArea from '@/components/inputs/TextArea';
+import TextInput from '@/components/inputs/TextInput';
 import { useNotify } from '@/hooks/use-notify';
 import { NOTI_CHANNEL_LABELS, NOTIFICATION_ERRORS } from '@/api/system/notification-api';
 import type {
@@ -95,9 +99,9 @@ export default function NotificationMessageModal({ notiMsgId, canWrite, onClose 
   if (notiMsgId !== null && !detail) {
     return (
       <SysFormModal width={1200} open title="Edit Notification Message" onCancel={onClose}>
-        <Spin spinning={isFetching}>
+        <LoadingSpinner spinning={isFetching}>
           <div className={styles.loading}>{isError ? 'The notification message could not be loaded.' : null}</div>
-        </Spin>
+        </LoadingSpinner>
       </SysFormModal>
     );
   }
@@ -203,14 +207,14 @@ function MessageForm({
       <SysFieldGrid columns={3}>
         {!isCreate && (
           <SysField label="No." hint={NOT_AVAILABLE_HINT}>
-            <Input value="" placeholder="-" disabled />
+            <TextInput value="" placeholder="-" disabled />
           </SysField>
         )}
         <SysField label="Service Type" required span={isCreate ? 2 : 1} hint={NOT_AVAILABLE_HINT}>
-          <Input placeholder="e.g. OTP Verification, Sign Up, Auction" disabled />
+          <TextInput placeholder="e.g. OTP Verification, Sign Up, Auction" disabled />
         </SysField>
         <SysField label="Channel" required error={errors.notiMediaSe}>
-          <Select<NotiChannel>
+          <AppSelect<NotiChannel>
             className={styles.fullWidth}
             value={values.notiMediaSe}
             options={channelOptions}
@@ -219,7 +223,7 @@ function MessageForm({
           />
         </SysField>
         <SysField label="Recipient Type" required error={errors.notiRcvrSeCd}>
-          <Radio.Group
+          <AppRadio.Group
             value={values.notiRcvrSeCd}
             options={RECIPIENT_TYPE_OPTIONS}
             disabled={disabled}
@@ -227,7 +231,7 @@ function MessageForm({
           />
         </SysField>
         <SysField label="Use" required error={errors.useYn}>
-          <Radio.Group
+          <AppRadio.Group
             value={values.useYn}
             options={USE_YN_RADIO_OPTIONS}
             disabled={disabled}
@@ -235,7 +239,7 @@ function MessageForm({
           />
         </SysField>
         <SysField label="Recipient" required={isAdmin} error={errors.roleGroupId}>
-          <Select<string>
+          <AppSelect<string>
             className={styles.fullWidth}
             value={values.roleGroupId}
             placeholder="Select"
@@ -248,7 +252,7 @@ function MessageForm({
           />
         </SysField>
         <SysField label="Title Template" required span="full" error={errors.notiTtl}>
-          <Input
+          <TextInput
             value={values.notiTtl}
             maxLength={256}
             disabled={disabled}
@@ -259,7 +263,7 @@ function MessageForm({
         </SysField>
         <SysField label="Content Template" required span="full" error={errors.notiCn}>
           <div className={styles.contentCell}>
-            <Input.TextArea
+            <TextArea
               value={values.notiCn}
               rows={6}
               placeholder="e.g. New membership request: {mbrName}"
@@ -287,7 +291,7 @@ function MessageForm({
           </div>
         </SysField>
         <SysField label="Remarks" span="full" hint={NOT_AVAILABLE_HINT}>
-          <Input disabled />
+          <TextInput disabled />
         </SysField>
       </SysFieldGrid>
       <SysFormSection title="Legacy (until schema change)">
@@ -296,7 +300,7 @@ function MessageForm({
         </p>
         <SysFieldGrid columns={3}>
           <SysField label="Menu Code" required error={errors.menuCd} hint={item?.menuNm}>
-            <Input
+            <TextInput
               value={values.menuCd}
               maxLength={9}
               placeholder="e.g. A01010000"
@@ -305,7 +309,7 @@ function MessageForm({
             />
           </SysField>
           <SysField label="Processing Type" required error={errors.prcsSttsCd}>
-            <Select<NotiProcessType>
+            <AppSelect<NotiProcessType>
               className={styles.fullWidth}
               value={values.prcsSttsCd}
               placeholder="Select"
@@ -315,7 +319,7 @@ function MessageForm({
             />
           </SysField>
           <SysField label="Language" required error={errors.langCd}>
-            <Select<NotiLang>
+            <AppSelect<NotiLang>
               className={styles.fullWidth}
               value={values.langCd}
               options={LANG_OPTIONS}

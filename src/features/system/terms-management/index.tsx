@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { Select } from 'antd';
 import type { TableColumnsType } from 'antd';
+import AppSelect from '@/components/inputs/AppSelect';
 import { useMenuPermission } from '@/hooks/use-menu-permission';
 import type { TermsPolicyItem, TermsPolicySearch, TermsStatus } from '@/api/system/terms-api';
 import {
@@ -63,10 +63,10 @@ export default function TermsManagement() {
       <SysTitleBar title="Terms Management" breadcrumb={['System Operation Management', 'NPL Platform Management', 'Terms Management']} />
       <SysFilterPanel>
         <SysFilterItem label="Terms Type">
-          <Select options={TERMS_TYPE_FILTER_OPTIONS} value={list.draft.type} onChange={(type) => list.setDraft({ type })} />
+          <AppSelect options={TERMS_TYPE_FILTER_OPTIONS} value={list.draft.type} onChange={(type) => list.setDraft({ type })} />
         </SysFilterItem>
         <SysFilterItem label="Status">
-          <Select
+          <AppSelect
             options={TERMS_STATUS_FILTER_OPTIONS}
             value={list.draft.status}
             onChange={(status) => list.setDraft({ status })}

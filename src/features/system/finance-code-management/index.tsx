@@ -1,6 +1,6 @@
 import { useMemo, useRef, useState } from 'react';
-import { Input } from 'antd';
 import type { TableColumnsType } from 'antd';
+import TextInput from '@/components/inputs/TextInput';
 import { useMenuPermission } from '@/hooks/use-menu-permission';
 import { useCommonCodes } from '@/hooks/use-common-codes';
 import type { InstitutionItem, InstitutionSearch } from '@/api/system/institution-api';
@@ -162,7 +162,7 @@ export default function FinanceCodeManagement() {
       />
       <SysFilterPanel>
         <SysFilterItem label="Institution Code">
-          <Input
+          <TextInput
             value={list.draft.fnstCd}
             allowClear
             onChange={(e) => list.setDraft({ fnstCd: e.target.value })}
@@ -170,7 +170,7 @@ export default function FinanceCodeManagement() {
           />
         </SysFilterItem>
         <SysFilterItem label="Institution Name">
-          <Input
+          <TextInput
             value={list.draft.fnstNm}
             allowClear
             onChange={(e) => list.setDraft({ fnstNm: e.target.value })}

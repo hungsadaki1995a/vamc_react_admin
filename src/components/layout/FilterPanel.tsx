@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { Button, Badge } from 'antd';
-import { SearchOutlined, UndoOutlined, UpOutlined, DownOutlined } from '@ant-design/icons';
+import { UpOutlined, DownOutlined } from '@ant-design/icons';
+import ActionButton from '@/components/common/actions/ActionButton';
+import StatusBadge from '@/components/common/badge/StatusBadge';
 import { useComponentLabel } from '@/hooks/use-component-label';
 import styles from './filter-panel.module.scss';
 
@@ -43,21 +44,27 @@ export default function FilterPanel({
         <div className={styles.headerLeft}>
           <span className={styles.headerTitle}>{tvt('filterTitle', 'Search Filters')}</span>
           {collapsed && activeFilterCount > 0 && (
-            <Badge count={activeFilterCount} size="small" className="ml-1!" />
+            <StatusBadge color="blue" variant="filled">
+              {activeFilterCount}
+            </StatusBadge>
           )}
         </div>
         <div className={styles.headerActions}>
           {onReset && (
-            <Button size="middle" icon={<UndoOutlined />} onClick={onReset}>
+            <ActionButton action="reset" onClick={onReset}>
               {tvb('reset', 'Reset')}
-            </Button>
+            </ActionButton>
           )}
           {onSearch && (
-            <Button size="middle" type="primary" icon={<SearchOutlined />} onClick={onSearch}>
+            <ActionButton action="search" intent="primary" appearance="filled" onClick={onSearch}>
               {tvb('search', 'Search')}
-            </Button>
+            </ActionButton>
           )}
-          <Button size="middle" icon={collapsed ? <DownOutlined /> : <UpOutlined />} onClick={toggle} />
+          <ActionButton
+            intent="icon"
+            icon={collapsed ? <DownOutlined /> : <UpOutlined />}
+            onClick={toggle}
+          />
         </div>
       </div>
       <div className={styles.body}>

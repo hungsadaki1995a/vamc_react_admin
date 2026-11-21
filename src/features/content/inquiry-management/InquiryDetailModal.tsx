@@ -1,5 +1,8 @@
 import { useState } from 'react';
-import { Modal, Spin } from 'antd';
+import ActionButton from '@/components/common/actions/ActionButton';
+import LoadingSpinner from '@/components/common/loading/LoadingSpinner';
+import Popup from '@/components/common/popup/Popup';
+import TextArea from '@/components/inputs/TextArea';
 import dayjs from 'dayjs';
 import { useNotify } from '@/hooks/use-notify';
 import { ApiError } from '@/lib/api/error';
@@ -143,7 +146,7 @@ export default function InquiryDetailModal({
   };
 
   return (
-    <Modal
+    <Popup
       title={
         <div className={styles.modalTitle}>
           {isUnanswered ? 'Reply to 1:1 inquiry' : 'View response information for 1:1 inquiries'}
@@ -152,41 +155,41 @@ export default function InquiryDetailModal({
       open={visible}
       onCancel={onClose}
       width={900}
-      centered
-      destroyOnClose
       footer={
         <div className={styles.footerRow}>
           {isUnanswered ? (
             <div className={styles.footerActions}>
-              <button
-                type="button"
+              <ActionButton
+                action="cancel"
                 className={styles.cancelBtn}
                 onClick={onClose}
                 disabled={isSubmitting}
               >
                 Cancel
-              </button>
-              <button
-                type="button"
+              </ActionButton>
+              <ActionButton
+                intent="primary"
+                appearance="filled"
                 className={styles.sendBtn}
                 onClick={handleSend}
+                loading={isSubmitting}
                 disabled={isSubmitting}
               >
                 {isSubmitting ? 'Sending...' : 'Send'}
-              </button>
+              </ActionButton>
             </div>
           ) : (
             <div className={styles.footerActions}>
-              <button type="button" className={styles.closeBtn} onClick={onClose}>
+              <ActionButton action="close" className={styles.closeBtn} onClick={onClose}>
                 Close
-              </button>
+              </ActionButton>
             </div>
           )}
         </div>
       }
     >
       <div className={styles.modalBody}>
-        <Spin spinning={isLoading} tip="Loading inquiry details...">
+        <LoadingSpinner spinning={isLoading} tip="Loading inquiry details...">
           <table className={styles.tableWrapper}>
             <tbody>
               {/* Row 1: Inquiry Type | Registered Customers | Registration Date */}
@@ -262,7 +265,7 @@ export default function InquiryDetailModal({
                 <td className={styles.dataCell} colSpan={5}>
                   {isUnanswered ? (
                     <div className={styles.replyInputContainer}>
-                      <textarea
+                      <TextArea
                         className={`${styles.replyTextarea} ${
                           errorMsg ? styles.replyTextareaError : ''
                         }`}
@@ -283,8 +286,8 @@ export default function InquiryDetailModal({
               </tr>
             </tbody>
           </table>
-        </Spin>
+        </LoadingSpinner>
       </div>
-    </Modal>
+    </Popup>
   );
 }

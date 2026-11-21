@@ -1,6 +1,6 @@
 import { useMemo, useRef, useState } from 'react';
-import { Input } from 'antd';
 import type { TableColumnsType } from 'antd';
+import TextInput from '@/components/inputs/TextInput';
 import { useMenuPermission } from '@/hooks/use-menu-permission';
 import type { ProvinceItem, ProvinceSearch } from '@/api/system/location-api';
 import {
@@ -126,7 +126,7 @@ export default function RegionCodeManagement() {
       />
       <SysFilterPanel>
         <SysFilterItem label="Province / City Code">
-          <Input
+          <TextInput
             value={list.draft.mctpvCd}
             allowClear
             onChange={(e) => list.setDraft({ mctpvCd: e.target.value })}
@@ -134,7 +134,7 @@ export default function RegionCodeManagement() {
           />
         </SysFilterItem>
         <SysFilterItem label="Province / City Name">
-          <Input
+          <TextInput
             value={list.draft.mctpvNm}
             allowClear
             onChange={(e) => list.setDraft({ mctpvNm: e.target.value })}

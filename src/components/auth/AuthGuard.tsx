@@ -1,6 +1,6 @@
 import { type ReactNode } from 'react';
 import { Navigate } from 'react-router-dom';
-import { Spin } from 'antd';
+import LoadingSpinner from '@/components/common/loading/LoadingSpinner';
 import { useAuthStore } from '@/stores/auth-store';
 
 type AuthGuardProps = {
@@ -14,7 +14,7 @@ export default function AuthGuard({ children }: AuthGuardProps) {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-screen">
-        <Spin size="large" />
+        <LoadingSpinner size="large" />
       </div>
     );
   }

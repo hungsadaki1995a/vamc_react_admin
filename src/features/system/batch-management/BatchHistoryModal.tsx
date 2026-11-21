@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
-import { Button } from 'antd';
 import type { TableColumnsType } from 'antd';
+import ActionButton from '@/components/common/actions/ActionButton';
 import { useNotify } from '@/hooks/use-notify';
 import type { BatchHistoryItem } from '@/api/system/batch-api';
 import { SYS_PAGE_SIZE } from '@/features/system/_shared/sys-constants';
@@ -92,9 +92,9 @@ export default function BatchHistoryModal({ jobName, onClose, allowRerun = false
       render: (_value, row) =>
         // Rerun needs Batch write permission; from Exchange Rate the column shows '-'.
         allowRerun && row.btchStts === 'FAILED' ? (
-          <Button type="link" size="small" className={styles.linkButton} disabled={execute.isPending} onClick={rerun}>
+          <ActionButton intent="text" size="small" className={styles.linkButton} disabled={execute.isPending} onClick={rerun}>
             Rerun
-          </Button>
+          </ActionButton>
         ) : (
           '-'
         ),

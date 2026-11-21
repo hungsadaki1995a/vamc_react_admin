@@ -1,17 +1,15 @@
-import { useEffect, useState } from 'react';
-import {
-  Modal,
-  Form,
-  Input,
-  Select,
-  Radio,
-  DatePicker,
-  Checkbox,
-  Button,
-  Table,
-  Upload,
-  Spin,
-} from 'antd';
+import { useState, useEffect } from 'react';
+import { Form, Upload } from 'antd';
+import ActionButton from '@/components/common/actions/ActionButton';
+import LoadingSpinner from '@/components/common/loading/LoadingSpinner';
+import Popup from '@/components/common/popup/Popup';
+import DataTable from '@/components/common/table/DataTable';
+import AppCheckbox from '@/components/inputs/AppCheckbox';
+import AppDatePicker from '@/components/inputs/AppDatePicker';
+import AppRadio from '@/components/inputs/AppRadio';
+import AppSelect from '@/components/inputs/AppSelect';
+import TextArea from '@/components/inputs/TextArea';
+import TextInput from '@/components/inputs/TextInput';
 import type { FormInstance } from 'antd';
 import {
   UploadOutlined,
@@ -133,7 +131,7 @@ function CascadedAddressRows({ form, prefix, disabled = false, optional = false 
             className={styles.formItemCompact}
             rules={isRequired ? [{ required: true, message: 'E01: Province / City is required' }] : []}
           >
-            <Select
+            <AppSelect
               showSearch
               allowClear
               disabled={disabled}
@@ -157,7 +155,7 @@ function CascadedAddressRows({ form, prefix, disabled = false, optional = false 
             className={styles.formItemCompact}
             rules={isRequired ? [{ required: true, message: 'E01: District is required' }] : []}
           >
-            <Select
+            <AppSelect
               showSearch
               allowClear
               disabled={disabled || !provinceCode}
@@ -182,7 +180,7 @@ function CascadedAddressRows({ form, prefix, disabled = false, optional = false 
             className={styles.formItemCompact}
             rules={isRequired ? [{ required: true, message: 'E01: Detailed Address is required' }] : []}
           >
-            <Input
+            <TextInput
               disabled={disabled}
               placeholder="Ward, street name, house number"
             />
@@ -228,9 +226,9 @@ function AttachmentFieldRow({
                 return false;
               }}
             >
-              <Button size="small" icon={<UploadOutlined />} loading={uploading}>
+              <ActionButton size="small" icon={<UploadOutlined />} loading={uploading}>
                 Upload File
-              </Button>
+              </ActionButton>
             </Upload>
           )}
           {guideText && <span className={styles.uploadGuide}>{guideText}</span>}
@@ -445,7 +443,7 @@ function MemberFormModalContent({
   onClose: () => void;
   onSuccess?: () => void;
 }) {
-  const { toast } = useNotify();
+  const { toast, dialog } = useNotify();
   const [form] = Form.useForm();
   const initial = buildInitialFormState(isEdit, apiDetail, member);
 
@@ -534,7 +532,7 @@ function MemberFormModalContent({
     };
 
     if (isEdit && isOcrTrigger) {
-      Modal.confirm({
+      dialog.confirm({
         title: 'Attach Document (C02)',
         content: 'Attaching a new document in edit mode will add it to this section. Continue?',
         onOk: doUpload,
@@ -547,7 +545,7 @@ function MemberFormModalContent({
   const handleMemberTypeChange = (nextType: MemberType) => {
     const prevType = form.getFieldValue('memberType');
     if (prevType === nextType) return;
-    Modal.confirm({
+    dialog.confirm({
       title: 'Change Member Type (C03)',
       content: 'Changing Member Type will reset identity information and attachments. Continue?',
       onOk: () => {
@@ -573,7 +571,7 @@ function MemberFormModalContent({
   };
 
   const handleIdCardTypeChange = (nextIdType: string) => {
-    Modal.confirm({
+    dialog.confirm({
       title: 'Change ID Card Type (C03)',
       content: 'Changing ID Card Type will reset ID card information and attachments. Continue?',
       onOk: () => {
@@ -641,7 +639,7 @@ function MemberFormModalContent({
   };
 
   const handleTerminatePayment = (rowNo: number) => {
-    Modal.confirm({
+    dialog.confirm({
       title: 'Terminate Membership (C01)',
       content: 'Terminate the current membership period and change grade from Full Member to General Member?',
       onOk: () => {
@@ -846,21 +844,19 @@ function MemberFormModalContent({
 
   return (
     <>
-      <Modal
+      <Popup
         open={visible}
         onCancel={onClose}
         width={1200}
-        title={null}
+        title={isEdit ? "Edit Member" : "Register Member"}
         footer={null}
-        destroyOnClose
-        styles={{ body: { borderRadius: 8 } }}
       >
         <div className={styles.modalContent}>
           <div className={styles.modalHeaderRow}>
             <h1 className={styles.modalTitle}>{isEdit ? 'Edit Member' : 'Register Member'}</h1>
           </div>
 
-          <Spin spinning={isEdit && isLoadingDetail}>
+          <LoadingSpinner spinning={isEdit && isLoadingDetail}>
             <Form
               form={form}
               layout="vertical"
@@ -887,9 +883,9 @@ function MemberFormModalContent({
                         return false;
                       }}
                     >
-                      <Button type="primary" icon={<UploadOutlined />} loading={isUploading}>
+                      <ActionButton type="primary" icon={<UploadOutlined />} loading={isUploading}>
                         Attach Document
-                      </Button>
+                      </ActionButton>
                     </Upload>
                   </div>
                 )}
@@ -911,7 +907,7 @@ function MemberFormModalContent({
                           <td className={styles.labelCell}>SGDN Member Code</td>
                           <td className={styles.valueCell}>
                             <Form.Item name="sgdnMbrCd" className={styles.formItemCompact}>
-                              <Input placeholder="Enter SGDN Member Code" />
+                              <TextInput placeholder="Enter SGDN Member Code" />
                             </Form.Item>
                           </td>
                           <td className={styles.labelCell}>
@@ -932,7 +928,7 @@ function MemberFormModalContent({
                                 className={styles.formItemCompact}
                                 rules={[{ required: true, message: 'E01: Member Type is required' }]}
                               >
-                                <Select
+                                <AppSelect
                                   onChange={(val) => handleMemberTypeChange(val as MemberType)}
                                   options={[
                                     { label: 'Individual', value: 'General' },
@@ -954,7 +950,7 @@ function MemberFormModalContent({
                               className={styles.formItemCompact}
                               rules={[{ required: true, message: 'E01: Member Grade is required' }]}
                             >
-                              <Select
+                              <AppSelect
                                 options={[
                                   { label: 'Temporary Member', value: 'Temporary' },
                                   { label: 'General Member', value: 'General' },
@@ -976,7 +972,7 @@ function MemberFormModalContent({
                                 rules={[{ required: true, message: 'E01: Status is required' }]}
                                 onReset={() => undefined}
                               >
-                                <Select
+                                <AppSelect
                                   onChange={(val) => {
                                     if (val !== 'Rejected') form.setFieldValue('rejectionReason', '');
                                   }}
@@ -1012,7 +1008,7 @@ function MemberFormModalContent({
                               className={styles.formItemCompact}
                               rules={[{ required: true, message: 'E01: Terms Agreement Date is required' }]}
                             >
-                              <DatePicker format="DD-MM-YYYY" className="w-full" />
+                              <AppDatePicker format="DD-MM-YYYY" className="w-full" />
                             </Form.Item>
                           </td>
                           <td className={styles.labelCell}>
@@ -1024,7 +1020,7 @@ function MemberFormModalContent({
                               className={styles.formItemCompact}
                               rules={[{ required: true, message: 'E01: Staff in Charge is required' }]}
                             >
-                              <Input
+                              <TextInput
                                 readOnly
                                 placeholder="Select Staff in Charge"
                                 suffix={
@@ -1049,7 +1045,7 @@ function MemberFormModalContent({
                                 className={styles.formItemCompact}
                                 rules={[{ required: true, message: 'E01: Rejection Reason is required' }]}
                               >
-                                <Input.TextArea
+                                <TextArea
                                   rows={2}
                                   maxLength={500}
                                   showCount
@@ -1086,7 +1082,7 @@ function MemberFormModalContent({
                       <div className={styles.paymentFormBox}>
                         <div>
                           <div className="text-[12px] text-gray-700 mb-1">Type</div>
-                          <Radio.Group
+                          <AppRadio.Group
                             value={payType}
                             onChange={(e) => setPayType(e.target.value)}
                             options={[
@@ -1100,7 +1096,7 @@ function MemberFormModalContent({
                             Membership Period
                           </div>
                           <div className={styles.inlineGroup}>
-                            <DatePicker
+                            <AppDatePicker
                               format="DD-MM-YYYY"
                               value={payStartDate}
                               onChange={setPayStartDate}
@@ -1113,7 +1109,7 @@ function MemberFormModalContent({
                           <div className="text-[12px] text-gray-700 mb-1">
                             Payment Date
                           </div>
-                          <DatePicker
+                          <AppDatePicker
                             format="DD-MM-YYYY"
                             value={payType === 'Exempt' ? null : payDate}
                             disabled={payType === 'Exempt'}
@@ -1121,9 +1117,9 @@ function MemberFormModalContent({
                             className="w-full"
                           />
                         </div>
-                        <Button type="primary" onClick={handleRegisterPayment}>
+                        <ActionButton type="primary" onClick={handleRegisterPayment}>
                           Register Payment
-                        </Button>
+                        </ActionButton>
                       </div>
                     </>
                   )}
@@ -1153,13 +1149,7 @@ function MemberFormModalContent({
                               <td className="text-center">{row.paymentDate}</td>
                               <td className="text-center">
                                 {row.isCurrent && !isLockedReadOnly ? (
-                                  <button
-                                    type="button"
-                                    className={styles.inlineActionBtn}
-                                    onClick={() => handleTerminatePayment(row.no)}
-                                  >
-                                    Terminate
-                                  </button>
+                                  <ActionButton size="small" intent="secondary" onClick={() => handleTerminatePayment(row.no)}>Terminate</ActionButton>
                                 ) : (
                                   '-'
                                 )}
@@ -1200,7 +1190,7 @@ function MemberFormModalContent({
                           <td className={styles.valueCell}>
                             <div className={`${styles.inlineGroup} w-full`}>
                               <Form.Item name="phoneCountry" className={styles.formItemCompact}>
-                                <Select
+                                <AppSelect
                                   className="w-[85px]!"
                                   options={[
                                     { label: '+84', value: '+84' },
@@ -1217,7 +1207,7 @@ function MemberFormModalContent({
                                   { pattern: /^\d{8,15}$/, message: 'E02: Invalid phone number format' },
                                 ]}
                               >
-                                <Input
+                                <TextInput
                                   placeholder="Digits only"
                                   onChange={(e) => {
                                     form.setFieldValue('phone', e.target.value.replace(/\D/g, ''));
@@ -1238,7 +1228,7 @@ function MemberFormModalContent({
                                 { type: 'email', message: 'E02: Invalid email address format' },
                               ]}
                             >
-                              <Input placeholder="example@domain.com" />
+                              <TextInput placeholder="example@domain.com" />
                             </Form.Item>
                           </td>
                         </tr>
@@ -1267,7 +1257,7 @@ function MemberFormModalContent({
                                   <span>Passport</span>
                                 ) : (
                                   <Form.Item name="idCardType" className={styles.formItemCompact}>
-                                    <Radio.Group
+                                    <AppRadio.Group
                                       onChange={(e) => handleIdCardTypeChange(e.target.value)}
                                       options={[
                                         { label: 'CCCD', value: 'CCCD' },
@@ -1289,7 +1279,7 @@ function MemberFormModalContent({
                                   className={styles.formItemCompact}
                                   rules={[{ required: true, message: 'E01: Full Name is required' }]}
                                 >
-                                  <Input placeholder="Full Name" />
+                                  <TextInput placeholder="Full Name" />
                                 </Form.Item>
                               </td>
                               <td className={styles.labelCell}>
@@ -1301,7 +1291,7 @@ function MemberFormModalContent({
                                   className={styles.formItemCompact}
                                   rules={[{ required: true, message: 'E01: Date of Birth is required' }]}
                                 >
-                                  <DatePicker format="DD-MM-YYYY" className="w-full" />
+                                  <AppDatePicker format="DD-MM-YYYY" className="w-full" />
                                 </Form.Item>
                               </td>
                               <td className={styles.labelCell}>
@@ -1313,7 +1303,7 @@ function MemberFormModalContent({
                                   className={styles.formItemCompact}
                                   rules={[{ required: true, message: 'E01: Gender is required' }]}
                                 >
-                                  <Radio.Group
+                                  <AppRadio.Group
                                     options={[
                                       { label: 'Male', value: 'M' },
                                       { label: 'Female', value: 'F' },
@@ -1333,7 +1323,7 @@ function MemberFormModalContent({
                                     className={styles.formItemCompact}
                                     rules={[{ required: true, message: 'E01: Nationality is required' }]}
                                   >
-                                    <Select
+                                    <AppSelect
                                       showSearch
                                       placeholder="Select Nationality"
                                       options={[
@@ -1375,7 +1365,7 @@ function MemberFormModalContent({
                                     },
                                   ]}
                                 >
-                                  <Input placeholder="Enter ID Card Number" />
+                                  <TextInput placeholder="Enter ID Card Number" />
                                 </Form.Item>
                               </td>
                               <td className={styles.labelCell}>
@@ -1387,7 +1377,7 @@ function MemberFormModalContent({
                                   className={styles.formItemCompact}
                                   rules={[{ required: true, message: 'E01: Issuing Authority is required' }]}
                                 >
-                                  <Input placeholder="Issuing Authority" />
+                                  <TextInput placeholder="Issuing Authority" />
                                 </Form.Item>
                               </td>
                             </tr>
@@ -1401,7 +1391,7 @@ function MemberFormModalContent({
                                   className={styles.formItemCompact}
                                   rules={[{ required: true, message: 'E01: Issue Date is required' }]}
                                 >
-                                  <DatePicker format="DD-MM-YYYY" className="w-full" />
+                                  <AppDatePicker format="DD-MM-YYYY" className="w-full" />
                                 </Form.Item>
                               </td>
                               {idCardType !== 'CMND' && (
@@ -1415,7 +1405,7 @@ function MemberFormModalContent({
                                       className={styles.formItemCompact}
                                       rules={[{ required: true, message: 'E01: Expiry Date is required' }]}
                                     >
-                                      <DatePicker format="DD-MM-YYYY" className="w-full" />
+                                      <AppDatePicker format="DD-MM-YYYY" className="w-full" />
                                     </Form.Item>
                                   </td>
                                 </>
@@ -1448,7 +1438,7 @@ function MemberFormModalContent({
                         <>
                           <div className="mb-2">
                             <Form.Item name="foreignerAddressType" className={styles.formItemCompact}>
-                              <Radio.Group
+                              <AppRadio.Group
                                 onChange={() => {
                                   form.setFieldsValue({ resAddr: {}, overseasAddress: '' });
                                 }}
@@ -1490,7 +1480,7 @@ function MemberFormModalContent({
                                           className={styles.formItemCompact}
                                           rules={[{ required: true, message: 'E01: Address is required' }]}
                                         >
-                                          <Input placeholder="Full address (street, city, state, country)" />
+                                          <TextInput placeholder="Full address (street, city, state, country)" />
                                         </Form.Item>
                                       </td>
                                     </tr>
@@ -1540,7 +1530,7 @@ function MemberFormModalContent({
                               valuePropName="checked"
                               className={styles.formItemCompact}
                             >
-                              <Checkbox>Same as Place of Residence</Checkbox>
+                              <AppCheckbox>Same as Place of Residence</AppCheckbox>
                             </Form.Item>
                           </div>
                           <div className={styles.tableContainer}>
@@ -1579,7 +1569,7 @@ function MemberFormModalContent({
                                   className={styles.formItemCompact}
                                   rules={[{ required: true, message: 'E01: Company Name is required' }]}
                                 >
-                                  <Input placeholder="Company Name" />
+                                  <TextInput placeholder="Company Name" />
                                 </Form.Item>
                               </td>
                               <td className={styles.labelCell}>
@@ -1591,7 +1581,7 @@ function MemberFormModalContent({
                                   className={styles.formItemCompact}
                                   rules={[{ required: true, message: 'E01: Charter Capital is required' }]}
                                 >
-                                  <Input
+                                  <TextInput
                                     placeholder="e.g. 10.000.000.000"
                                     suffix="VND"
                                     onChange={(e) => {
@@ -1605,7 +1595,7 @@ function MemberFormModalContent({
                               </td>
                               <td className={styles.valueCell}>
                                 <Form.Item name="legalDocType" className={styles.formItemCompact}>
-                                  <Select
+                                  <AppSelect
                                     options={[
                                       { label: 'Business Registration Certificate', value: 'B' },
                                       { label: 'Investment Registration Certificate', value: 'I' },
@@ -1630,7 +1620,7 @@ function MemberFormModalContent({
                                     },
                                   ]}
                                 >
-                                  <Input placeholder="10 or 13 digits" />
+                                  <TextInput placeholder="10 or 13 digits" />
                                 </Form.Item>
                               </td>
                               <td className={styles.labelCell}>
@@ -1642,7 +1632,7 @@ function MemberFormModalContent({
                                   className={styles.formItemCompact}
                                   rules={[{ required: true, message: 'E01: Issuing Authority is required' }]}
                                 >
-                                  <Input placeholder="Issuing Authority" />
+                                  <TextInput placeholder="Issuing Authority" />
                                 </Form.Item>
                               </td>
                               <td className={styles.labelCell}>
@@ -1654,7 +1644,7 @@ function MemberFormModalContent({
                                   className={styles.formItemCompact}
                                   rules={[{ required: true, message: 'E01: Issue Date is required' }]}
                                 >
-                                  <DatePicker format="DD-MM-YYYY" className="w-full" />
+                                  <AppDatePicker format="DD-MM-YYYY" className="w-full" />
                                 </Form.Item>
                               </td>
                             </tr>
@@ -1669,7 +1659,7 @@ function MemberFormModalContent({
                                     className={styles.formItemCompact}
                                     rules={[{ required: true, message: 'E01: Project Code is required' }]}
                                   >
-                                    <Input placeholder="Enter Project Code" />
+                                    <TextInput placeholder="Enter Project Code" />
                                   </Form.Item>
                                 </td>
                               </tr>
@@ -1717,7 +1707,7 @@ function MemberFormModalContent({
                                   className={styles.formItemCompact}
                                   rules={[{ required: true, message: 'E01: Full Name is required' }]}
                                 >
-                                  <Input placeholder="Full Name" />
+                                  <TextInput placeholder="Full Name" />
                                 </Form.Item>
                               </td>
                               <td className={styles.labelCell}>
@@ -1729,7 +1719,7 @@ function MemberFormModalContent({
                                   className={styles.formItemCompact}
                                   rules={[{ required: true, message: 'E01: Position is required' }]}
                                 >
-                                  <Input placeholder="Position" />
+                                  <TextInput placeholder="Position" />
                                 </Form.Item>
                               </td>
                             </tr>
@@ -1739,7 +1729,7 @@ function MemberFormModalContent({
                               </td>
                               <td className={styles.valueCell}>
                                 <Form.Item name="legalRepIdType" className={styles.formItemCompact}>
-                                  <Select
+                                  <AppSelect
                                     options={[
                                       { label: 'CCCD', value: 'CCCD' },
                                       { label: 'CMND', value: 'CMND' },
@@ -1757,7 +1747,7 @@ function MemberFormModalContent({
                                   className={styles.formItemCompact}
                                   rules={[{ required: true, message: 'E01: ID Card Number is required' }]}
                                 >
-                                  <Input placeholder="ID Card Number" />
+                                  <TextInput placeholder="ID Card Number" />
                                 </Form.Item>
                               </td>
                               <td className={styles.labelCell}>
@@ -1769,7 +1759,7 @@ function MemberFormModalContent({
                                   className={styles.formItemCompact}
                                   rules={[{ required: true, message: 'E01: Issuing Authority is required' }]}
                                 >
-                                  <Input placeholder="Issuing Authority" />
+                                  <TextInput placeholder="Issuing Authority" />
                                 </Form.Item>
                               </td>
                             </tr>
@@ -1783,7 +1773,7 @@ function MemberFormModalContent({
                                   className={styles.formItemCompact}
                                   rules={[{ required: true, message: 'E01: Issue Date is required' }]}
                                 >
-                                  <DatePicker format="DD-MM-YYYY" className="w-full" />
+                                  <AppDatePicker format="DD-MM-YYYY" className="w-full" />
                                 </Form.Item>
                               </td>
                               {legalRepIdType !== 'CMND' && (
@@ -1797,7 +1787,7 @@ function MemberFormModalContent({
                                       className={styles.formItemCompact}
                                       rules={[{ required: true, message: 'E01: Expiry Date is required' }]}
                                     >
-                                      <DatePicker format="DD-MM-YYYY" className="w-full" />
+                                      <AppDatePicker format="DD-MM-YYYY" className="w-full" />
                                     </Form.Item>
                                   </td>
                                 </>
@@ -1835,7 +1825,7 @@ function MemberFormModalContent({
                               <td className={styles.labelCell}>Applied by Legal Representative</td>
                               <td className={styles.valueCell}>
                                 <Form.Item name="selfApplyYn" className={styles.formItemCompact}>
-                                  <Radio.Group
+                                  <AppRadio.Group
                                     onChange={(e) => handleSelfApplyChange(e.target.value)}
                                     options={[
                                       { label: 'Y', value: 'Y' },
@@ -1853,7 +1843,7 @@ function MemberFormModalContent({
                                   className={styles.formItemCompact}
                                   rules={[{ required: true, message: 'E01: Full Name is required' }]}
                                 >
-                                  <Input disabled={selfApplyYn === 'Y'} placeholder="Full Name" />
+                                  <TextInput disabled={selfApplyYn === 'Y'} placeholder="Full Name" />
                                 </Form.Item>
                               </td>
                             </tr>
@@ -1863,7 +1853,7 @@ function MemberFormModalContent({
                               </td>
                               <td className={styles.valueCell}>
                                 <Form.Item name="agentIdType" className={styles.formItemCompact}>
-                                  <Select
+                                  <AppSelect
                                     disabled={selfApplyYn === 'Y'}
                                     options={[
                                       { label: 'CCCD', value: 'CCCD' },
@@ -1882,7 +1872,7 @@ function MemberFormModalContent({
                                   className={styles.formItemCompact}
                                   rules={[{ required: true, message: 'E01: ID Card Number is required' }]}
                                 >
-                                  <Input disabled={selfApplyYn === 'Y'} placeholder="ID Card Number" />
+                                  <TextInput disabled={selfApplyYn === 'Y'} placeholder="ID Card Number" />
                                 </Form.Item>
                               </td>
                               <td className={styles.labelCell}>
@@ -1894,7 +1884,7 @@ function MemberFormModalContent({
                                   className={styles.formItemCompact}
                                   rules={[{ required: true, message: 'E01: Issuing Authority is required' }]}
                                 >
-                                  <Input disabled={selfApplyYn === 'Y'} placeholder="Issuing Authority" />
+                                  <TextInput disabled={selfApplyYn === 'Y'} placeholder="Issuing Authority" />
                                 </Form.Item>
                               </td>
                             </tr>
@@ -1908,7 +1898,7 @@ function MemberFormModalContent({
                                   className={styles.formItemCompact}
                                   rules={[{ required: true, message: 'E01: Issue Date is required' }]}
                                 >
-                                  <DatePicker
+                                  <AppDatePicker
                                     disabled={selfApplyYn === 'Y'}
                                     format="DD-MM-YYYY"
                                     className="w-full"
@@ -1926,7 +1916,7 @@ function MemberFormModalContent({
                                       className={styles.formItemCompact}
                                       rules={[{ required: true, message: 'E01: Expiry Date is required' }]}
                                     >
-                                      <DatePicker
+                                      <AppDatePicker
                                         disabled={selfApplyYn === 'Y'}
                                         format="DD-MM-YYYY"
                                         className="w-full"
@@ -1985,54 +1975,38 @@ function MemberFormModalContent({
                 )}
               </div>
             </Form>
-          </Spin>
+          </LoadingSpinner>
 
           {/* Fixed Bottom Footer */}
           <div className={styles.footerActions}>
             <div className={styles.footerRight}>
-              <button type="button" className={styles.btnCancel} onClick={onClose}>
-                Cancel
-              </button>
+              <ActionButton action="cancel" onClick={onClose}>Cancel</ActionButton>
               {!isLockedReadOnly && (
-                <button
-                  type="button"
-                  className={styles.btnEdit}
-                  disabled={isCreating || isUpdating}
-                  onClick={handleSubmit}
-                >
-                  {isEdit ? 'Save' : 'Register'}
-                </button>
+                <ActionButton intent="primary" appearance="filled" disabled={isCreating || isUpdating} onClick={handleSubmit}>{isEdit ? 'Save' : 'Register'}</ActionButton>
               )}
             </div>
           </div>
         </div>
-      </Modal>
+      </Popup>
 
       {/* Staff Search Modal (VPA020500P01) */}
-      <Modal
+      <Popup
         open={staffPickerOpen}
         title="Staff Search"
         onCancel={() => setStaffPickerOpen(false)}
         footer={null}
         width={600}
-        destroyOnClose
       >
         <div className="flex gap-2 mb-3">
-          <Input
+          <TextInput
             placeholder="Search by staff name"
             value={staffKeyword}
             onChange={(e) => setStaffKeyword(e.target.value)}
             onPressEnter={() => setAppliedStaffKeyword(staffKeyword.trim())}
           />
-          <button
-            type="button"
-            className={`${styles.inlineActionBtn} h-8! px-3!`}
-            onClick={() => setAppliedStaffKeyword(staffKeyword.trim())}
-          >
-            Search
-          </button>
+          <ActionButton action="search" onClick={() => setAppliedStaffKeyword(staffKeyword.trim())}>Search</ActionButton>
         </div>
-        <Table<EmployeeLookup>
+        <DataTable<EmployeeLookup>
           rowKey="empNo"
           size="small"
           loading={isStaffLoading}
@@ -2051,7 +2025,7 @@ function MemberFormModalContent({
             { title: 'Department', dataIndex: 'deptNm' },
           ]}
         />
-      </Modal>
+      </Popup>
     </>
   );
 }

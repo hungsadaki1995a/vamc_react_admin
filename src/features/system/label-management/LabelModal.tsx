@@ -1,5 +1,8 @@
 import { useState } from 'react';
-import { Input, Radio, Select } from 'antd';
+import AppRadio from '@/components/inputs/AppRadio';
+import AppSelect from '@/components/inputs/AppSelect';
+import TextArea from '@/components/inputs/TextArea';
+import TextInput from '@/components/inputs/TextInput';
 import { useNotify } from '@/hooks/use-notify';
 import { useCommonCodes } from '@/hooks/use-common-codes';
 import { COMMON_SCREEN_ID } from '@/api/system/label-management-api';
@@ -183,10 +186,10 @@ export default function LabelModal({ label, canWrite, onClose, onSaved, onDelete
       <SysFieldGrid columns={2}>
         <SysField label="Type" required hint={<SysNotAvailable variant="inline">{LABEL_MESSAGES.typeNotAvailable}</SysNotAvailable>}>
           {/* TODO(schema): SYS_SE_CD column pending; not sent. */}
-          <Radio.Group options={TYPE_OPTIONS} value="W" disabled />
+          <AppRadio.Group options={TYPE_OPTIONS} value="W" disabled />
         </SysField>
         <SysField label="Scope" required>
-          <Radio.Group
+          <AppRadio.Group
             options={SCOPE_OPTIONS}
             value={values.scope}
             disabled={keyFieldsLocked}
@@ -194,7 +197,7 @@ export default function LabelModal({ label, canWrite, onClose, onSaved, onDelete
           />
         </SysField>
         <SysField label="Screen ID" required span="full" error={errors.scrnId}>
-          <Input
+          <TextInput
             value={values.scrnId}
             maxLength={20}
             placeholder="e.g. WB_AB_10004"
@@ -203,17 +206,17 @@ export default function LabelModal({ label, canWrite, onClose, onSaved, onDelete
           />
         </SysField>
         <SysField label="Label Type" required error={errors.lblSeCd}>
-          <Select
+          <AppSelect
             placeholder="Select"
             value={values.lblSeCd || undefined}
             options={labelTypes}
             disabled={keyFieldsLocked}
-            onChange={(lblSeCd: string) => change({ lblSeCd })}
+            onChange={(lblSeCd) => change({ lblSeCd: String(lblSeCd ?? '') })}
             className={styles.fullWidth}
           />
         </SysField>
         <SysField label="Label Code" required error={errors.code}>
-          <Input
+          <TextInput
             value={values.code}
             maxLength={LABEL_KEY_MAX}
             placeholder="e.g. download"
@@ -222,10 +225,10 @@ export default function LabelModal({ label, canWrite, onClose, onSaved, onDelete
           />
         </SysField>
         <SysField label="Label Key" span="full">
-          <Input value={labelKey} placeholder="[Screen ID].[Label Type]_[Label Code]" disabled />
+          <TextInput value={labelKey} placeholder="[Screen ID].[Label Type]_[Label Code]" disabled />
         </SysField>
         <SysField label="Description" span="full">
-          <Input.TextArea
+          <TextArea
             value={values.lblExpln}
             maxLength={4000}
             autoSize={{ minRows: 5, maxRows: 8 }}

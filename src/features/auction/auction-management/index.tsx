@@ -1,7 +1,13 @@
 import { useState } from 'react';
-import { DatePicker, Descriptions, Input, Modal, Select, Table } from 'antd';
+import { Descriptions } from 'antd';
 import type { TableColumnsType } from 'antd';
 import type { Dayjs } from 'dayjs';
+import ActionButton from '@/components/common/actions/ActionButton';
+import Popup from '@/components/common/popup/Popup';
+import DataTable from '@/components/common/table/DataTable';
+import { AppRangePicker } from '@/components/inputs/AppDatePicker';
+import AppSelect from '@/components/inputs/AppSelect';
+import TextInput from '@/components/inputs/TextInput';
 import { useNotify } from '@/hooks/use-notify';
 import { useMenuPermission } from '@/hooks/use-menu-permission';
 import type { AuctionItem, AuctionSearch } from '@/api/auction/auction-api';
@@ -105,14 +111,14 @@ export default function AuctionManagement() {
         <div className={styles.filterCard}>
           <div className={styles.filterGroup}>
             <span className={styles.filterLabel}>Auction Period</span>
-            <DatePicker.RangePicker format="DD/MM/YYYY" value={period} onChange={(d) => setPeriod(d as DateRange)} className={styles.w240} />
+            <AppRangePicker format="DD/MM/YYYY" value={period} onChange={(d) => setPeriod(d as DateRange)} className={styles.w240} />
           </div>
           <div className={styles.filterGroup}>
             <span className={styles.filterLabel}>Status</span>
-            <Select
+            <AppSelect
               className={styles.w140}
               value={auctnSttsCd}
-              onChange={setAuctnSttsCd}
+              onChange={(v) => setAuctnSttsCd(String(v ?? ''))}
               options={[
                 { value: '', label: 'All' },
                 { value: 'RD', label: 'Ready' },
@@ -126,10 +132,10 @@ export default function AuctionManagement() {
           </div>
           <div className={styles.filterGroup}>
             <span className={styles.filterLabel}>Approval Status</span>
-            <Select
+            <AppSelect
               className={styles.w140}
               value={pbancSttsCd}
-              onChange={setPbancSttsCd}
+              onChange={(v) => setPbancSttsCd(String(v ?? ''))}
               options={[
                 { value: '', label: 'All' },
                 { value: 'NA', label: 'Not Requested' },
@@ -141,10 +147,10 @@ export default function AuctionManagement() {
           </div>
           <div className={styles.filterGroup}>
             <span className={styles.filterLabel}>Method</span>
-            <Select
+            <AppSelect
               className={styles.w140}
               value={auctnType}
-              onChange={setAuctnType}
+              onChange={(v) => setAuctnType(String(v ?? ''))}
               options={[
                 { value: '', label: 'All' },
                 { value: 'GN', label: 'General' },
@@ -155,23 +161,23 @@ export default function AuctionManagement() {
           </div>
           <div className={styles.filterGroup}>
             <span className={styles.filterLabel}>Search Term</span>
-            <Input className={styles.filterInput} placeholder="Auction no or name" value={keyword} onChange={(e) => setKeyword(e.target.value)} onPressEnter={handleSearch} allowClear />
+            <TextInput className={styles.filterInput} placeholder="Auction no or name" value={keyword} onChange={(e) => setKeyword(e.target.value)} onPressEnter={handleSearch} allowClear />
           </div>
         </div>
       )}
       <div className={styles.summaryRow}>
         <span className={styles.totalCount}>Total ({total})</span>
-        <button type="button" className={`${styles.btn} ${styles.btnSmall}`} onClick={() => downloadExcel.mutate(applied)}>Excel Download</button>
+        <ActionButton action="excelDownload" size="small" onClick={() => downloadExcel.mutate(applied)}>Excel Download</ActionButton>
       </div>
       <div className={styles.tableWrapper}>
-        <Table<AuctionItem> rowKey="auctnNo" columns={columns} dataSource={rows} loading={isFetching} pagination={false} size="small" scroll={{ x: 'max-content' }} rowSelection={{ selectedRowKeys: selectedKeys, onChange: (k) => setSelectedKeys(k.map(String)) }} />
+        <DataTable<AuctionItem> rowKey="auctnNo" columns={columns} dataSource={rows} loading={isFetching} scroll={{ x: 'max-content' }} rowSelection={{ selectedRowKeys: selectedKeys, onChange: (k) => setSelectedKeys(k.map(String)) }} />
       </div>
       <SysPagination page={page} pageSize={PAGE_SIZE} total={total} onChange={setPage} />
       <div className={styles.bottomActions}>
-        <button type="button" className={styles.btnDanger} disabled={!canWrite} onClick={handleDelete}>Delete</button>
+        <ActionButton action="deleteRow" disabled={!canWrite} onClick={handleDelete}>Delete</ActionButton>
       </div>
 
-      <Modal open={!!detailId} width={720} centered title={`Auction: ${detailId ?? ''}`} onCancel={() => setDetailId(null)} footer={<button type="button" className={styles.btn} onClick={() => setDetailId(null)}>Close</button>}>
+      <Popup open={!!detailId} width={720} title={`Auction: ${detailId ?? ''}`} onCancel={() => setDetailId(null)} footer={<ActionButton action="close" onClick={() => setDetailId(null)}>Close</ActionButton>}>
         {detail && (
           <Descriptions bordered size="small" column={2}>
             <Descriptions.Item label="Auction No">{detail.auctnNo}</Descriptions.Item>
@@ -181,7 +187,7 @@ export default function AuctionManagement() {
             <Descriptions.Item label="Collateral">{detail.cltrAstNm || detail.cltrAstCd || '-'}</Descriptions.Item>
           </Descriptions>
         )}
-      </Modal>
+      </Popup>
     </div>
   );
 }

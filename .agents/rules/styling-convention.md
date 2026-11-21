@@ -13,13 +13,13 @@ Follow these rules for all styling in this React project to keep component logic
 
 - Place component and feature styles in a co-located **CSS Module** using `kebab-case` with the `.module.scss` extension (`<component-name>.module.scss`):
   - **All** component and feature stylesheets must use `.module.scss` (e.g., `action-button-group.module.scss`, `content-tabs.module.scss`) so class names are locally scoped and naming stays consistent across `src/components/` and `src/features/`.
-  - Do **not** create plain `*.scss` or `*.css` files inside `src/components/` or `src/features/`. Global stylesheets without `.module.scss` belong only in `src/styles/` (e.g., `variables.scss`, `global.css`).
+  - Do **not** create plain `*.scss` or `*.css` files inside `src/components/` or `src/features/`. Global stylesheets without `.module.scss` belong only in `src/styles/` (e.g., `variables.scss`, `global.scss`, `date-picker.scss`; Tailwind v4 entry/token files `tailwind.css`, `colors.css`, `semantic-colors.css`, `typography.css` stay `.css` for `@tailwindcss/vite`).
   - When targeting third-party selectors (`antd`, `ag-grid`) inside a `.module.scss` file, scope them under a local module class using `:global(...)`.
 - Keep `@keyframes`, pseudo-classes (`:hover`, `:focus`, `:disabled`), media queries, and state variants in the stylesheet—never in JSX.
 
 ## 3. Design Tokens & Theme Consistency
 
-- Reuse CSS custom properties from `src/styles/` (`variables.css`, `colors.css`, `semantic-colors.css`, `typography.css`) instead of hardcoding hex colors, font sizes, radii, or spacing values.
+- Reuse CSS custom properties from `src/styles/` (`variables.scss`, `colors.css`, `semantic-colors.css`, `typography.css`) instead of hardcoding hex colors, font sizes, radii, or spacing values.
 - When styling Ant Design (`antd`) overrides, scope them under a component/module class rather than global element selectors.
 
 ## 4. Conditional & State Styling

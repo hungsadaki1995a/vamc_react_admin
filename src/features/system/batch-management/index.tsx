@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { Input, Select } from 'antd';
 import type { TableColumnsType } from 'antd';
+import AppSelect from '@/components/inputs/AppSelect';
+import TextInput from '@/components/inputs/TextInput';
 import { useNotify } from '@/hooks/use-notify';
 import { useMenuPermission } from '@/hooks/use-menu-permission';
 import type { BatchJobItem, BatchJobSearch } from '@/api/system/batch-api';
@@ -104,14 +105,14 @@ export default function BatchManagement() {
       <SysTitleBar title="Batch Management" breadcrumb={BATCH_BREADCRUMB} />
       <SysFilterPanel>
         <SysFilterItem label="Use">
-          <Select
+          <AppSelect
             options={USE_YN_FILTER_OPTIONS}
             value={list.draft.useYn}
-            onChange={(useYn) => list.setDraft({ useYn })}
+            onChange={(useYn) => list.setDraft({ useYn: (useYn ?? '') as BatchJobSearch['useYn'] })}
           />
         </SysFilterItem>
         <SysFilterItem label="Group">
-          <Input
+          <TextInput
             value={list.draft.btchGroup}
             maxLength={50}
             allowClear
@@ -120,7 +121,7 @@ export default function BatchManagement() {
           />
         </SysFilterItem>
         <SysFilterItem label="Job Name">
-          <Input
+          <TextInput
             value={list.draft.btchJobNm}
             maxLength={100}
             allowClear

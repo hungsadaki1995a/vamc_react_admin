@@ -1,7 +1,9 @@
 import { useState } from 'react';
-import { DatePicker, Input, Select } from 'antd';
 import type { TableColumnsType } from 'antd';
 import type { Dayjs } from 'dayjs';
+import { AppRangePicker } from '@/components/inputs/AppDatePicker';
+import AppSelect from '@/components/inputs/AppSelect';
+import TextInput from '@/components/inputs/TextInput';
 import { useMenuPermission } from '@/hooks/use-menu-permission';
 import type { Fee, FeeCategory, FeeSearch, YesNo } from '@/api/system/fee-api';
 import {
@@ -109,17 +111,17 @@ export default function FeeManagement() {
       <SysTitleBar title="Fee Management" breadcrumb={['System Operation Management', 'NPL Platform Management', 'Fee Management']} />
       <SysFilterPanel columns={4}>
         <SysFilterItem label="Use">
-          <Select value={list.draft.useYn} options={USE_YN_FILTER_OPTIONS} onChange={(useYn) => list.setDraft({ useYn })} />
+          <AppSelect value={list.draft.useYn} options={USE_YN_FILTER_OPTIONS} onChange={(useYn) => list.setDraft({ useYn: String(useYn ?? '') as YesNo | '' })} />
         </SysFilterItem>
         <SysFilterItem label="Type">
-          <Select
+          <AppSelect
             value={list.draft.category}
             options={FEE_CATEGORY_FILTER_OPTIONS}
-            onChange={(category) => list.setDraft({ category })}
+            onChange={(category) => list.setDraft({ category: String(category ?? '') as FeeCategory | '' })}
           />
         </SysFilterItem>
         <SysFilterItem label="Registration Period">
-          <DatePicker.RangePicker
+          <AppRangePicker
             className={styles.rangePicker}
             value={list.draft.period}
             format={SYS_DATE_FORMAT}
@@ -129,7 +131,7 @@ export default function FeeManagement() {
           />
         </SysFilterItem>
         <SysFilterItem label="Item/Content">
-          <Input
+          <TextInput
             value={list.draft.keyword}
             allowClear
             onChange={(e) => list.setDraft({ keyword: e.target.value })}

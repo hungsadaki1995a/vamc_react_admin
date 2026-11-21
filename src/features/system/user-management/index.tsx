@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { Alert, Input } from 'antd';
+import { Alert } from 'antd';
 import type { TableColumnsType } from 'antd';
+import TextInput from '@/components/inputs/TextInput';
 import { useMenuPermission } from '@/hooks/use-menu-permission';
 import type { Employee, EmployeeSearch } from '@/api/system/employee-api';
 import {
@@ -102,7 +103,7 @@ export default function UserManagement() {
 
       <SysFilterPanel columns={2}>
         <SysFilterItem label="Employee No.">
-          <Input
+          <TextInput
             value={list.draft.empNo}
             maxLength={10}
             allowClear
@@ -111,7 +112,7 @@ export default function UserManagement() {
           />
         </SysFilterItem>
         <SysFilterItem label="Staff Name">
-          <Input
+          <TextInput
             value={list.draft.empNm}
             maxLength={100}
             allowClear

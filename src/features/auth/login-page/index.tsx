@@ -2,8 +2,10 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useForm, useWatch, Controller } from 'react-hook-form';
-import { Form, Input, Button } from 'antd';
+import { Form } from 'antd';
 import { EyeOutlined, EyeInvisibleOutlined } from '@ant-design/icons';
+import ActionButton from '@/components/common/actions/ActionButton';
+import TextInput from '@/components/inputs/TextInput';
 import AuthHeader from '@/components/auth/AuthHeader';
 import { login } from '@/api/generated/sdk.gen';
 import { fetchPublicKey } from '@/api/common/auth-api';
@@ -149,7 +151,7 @@ export default function LoginPage() {
                 }}
                 render={({ field, fieldState }) => (
                   <Form.Item validateStatus={fieldState.error ? 'error' : ''} help={fieldState.error?.message}>
-                    <Input
+                    <TextInput
                       {...field}
                       id="login_loginId"
                       placeholder={t('auth.login.loginIdPlaceholder')}
@@ -177,8 +179,9 @@ export default function LoginPage() {
                     validateStatus={fieldState.error || errorMsg ? 'error' : ''}
                     help={fieldState.error?.message || errorMsg}
                   >
-                    <Input.Password
+                    <TextInput
                       {...field}
+                      variant="password"
                       id="login_password"
                       placeholder={t('auth.login.passwordPlaceholder')}
                       className={styles.passwordInput}
@@ -195,8 +198,9 @@ export default function LoginPage() {
           </div>
 
           <Form.Item>
-            <Button
-              type="primary"
+            <ActionButton
+              intent="primary"
+              appearance="filled"
               htmlType="submit"
               block
               loading={loading}
@@ -204,7 +208,7 @@ export default function LoginPage() {
               className={styles.submitBtn}
             >
               {t('auth.login.submit')}
-            </Button>
+            </ActionButton>
           </Form.Item>
         </Form>
 

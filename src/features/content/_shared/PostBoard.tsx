@@ -1,7 +1,11 @@
 import { useMemo, useState } from 'react';
-import { DatePicker, Input, Select, Table } from 'antd';
 import type { TableColumnsType } from 'antd';
 import { PaperClipOutlined } from '@ant-design/icons';
+import ActionButton from '@/components/common/actions/ActionButton';
+import DataTable from '@/components/common/table/DataTable';
+import { AppRangePicker } from '@/components/inputs/AppDatePicker';
+import AppSelect from '@/components/inputs/AppSelect';
+import TextInput from '@/components/inputs/TextInput';
 import dayjs from 'dayjs';
 import type { Dayjs } from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
@@ -301,10 +305,10 @@ export default function PostBoard({ config }: { config: BoardConfig }) {
   ) => (
     <div className={styles.filterGroup}>
       <span className={styles.filterLabel}>{label}</span>
-      <Select
+      <AppSelect
         className={styles.w180}
         value={filter[key]}
-        onChange={(value) => setFilter((f) => ({ ...f, [key]: value }))}
+        onChange={(value) => setFilter((f) => ({ ...f, [key]: String(value ?? '') }))}
         options={withAll((options ?? []).map((o) => ({ value: o.code, label: o.name })))}
       />
     </div>
@@ -337,10 +341,10 @@ export default function PostBoard({ config }: { config: BoardConfig }) {
           {hasCategoryFilter && (
             <div className={styles.filterGroup}>
               <span className={styles.filterLabel}>{categoryLabel}</span>
-              <Select
+              <AppSelect
                 className={styles.w220}
                 value={filter.category}
-                onChange={(value) => setFilter((f) => ({ ...f, category: value }))}
+                onChange={(value) => setFilter((f) => ({ ...f, category: String(value ?? '') }))}
                 options={sectionOnly ? categoryOptions : withAll(categoryOptions)}
               />
             </div>
@@ -349,7 +353,7 @@ export default function PostBoard({ config }: { config: BoardConfig }) {
           {config.legal && legalSelect('Field', 'lawField', legalOptions?.fields)}
           <div className={styles.filterGroup}>
             <span className={styles.filterLabel}>Registration Period</span>
-            <DatePicker.RangePicker
+            <AppRangePicker
               format={DATE_FORMAT}
               placeholder={['dd/mm/yyyy', 'dd/mm/yyyy']}
               value={filter.period}
@@ -360,7 +364,7 @@ export default function PostBoard({ config }: { config: BoardConfig }) {
           {config.legal && (
             <div className={styles.filterGroup}>
               <span className={styles.filterLabel}>Issue Date</span>
-              <DatePicker.RangePicker
+              <AppRangePicker
                 format={DATE_FORMAT}
                 placeholder={['dd/mm/yyyy', 'dd/mm/yyyy']}
                 value={filter.issuePeriod}
@@ -371,7 +375,7 @@ export default function PostBoard({ config }: { config: BoardConfig }) {
           )}
           <div className={styles.filterGroup}>
             <span className={styles.filterLabel}>{config.legal ? 'Search Term' : 'ID/Title'}</span>
-            <Input
+            <TextInput
               className={styles.filterInput}
               placeholder={config.legal ? 'Enter number/symbol or title' : 'Enter ID or title'}
               value={filter.keyword}
@@ -389,37 +393,35 @@ export default function PostBoard({ config }: { config: BoardConfig }) {
         </span>
         <div className={styles.actions}>
           {config.excel && (
-            <button type="button" className={`${styles.btn} ${styles.btnSmall}`} disabled={busy} onClick={handleExcel}>
+            <ActionButton action="excelDownload" size="small" disabled={busy} onClick={handleExcel}>
               Excel Download
-            </button>
+            </ActionButton>
           )}
-          <button
-            type="button"
-            className={`${styles.btn} ${styles.btnSmall}`}
+          <ActionButton
+            size="small"
             disabled={!canWrite || busy}
             onClick={() => handlePublish('N')}
           >
             Stop posting
-          </button>
-          <button
-            type="button"
-            className={`${styles.btnDark} ${styles.btnSmall}`}
+          </ActionButton>
+          <ActionButton
+            size="small"
+            intent="secondary"
+            appearance="filled"
             disabled={!canWrite || busy}
             onClick={() => handlePublish('Y')}
           >
             Posting
-          </button>
+          </ActionButton>
         </div>
       </div>
 
       <div className={styles.tableWrapper}>
-        <Table<Post>
+        <DataTable<Post>
           rowKey="pstNo"
           columns={columns}
           dataSource={rows}
           loading={isFetching}
-          pagination={false}
-          size="small"
           scroll={{ x: 'max-content' }}
           rowSelection={{
             selectedRowKeys: selectedKeys,
@@ -431,12 +433,12 @@ export default function PostBoard({ config }: { config: BoardConfig }) {
       <SysPagination page={page} pageSize={PAGE_SIZE} total={total} onChange={setPage} />
 
       <div className={styles.bottomActions}>
-        <button type="button" className={styles.btn} disabled={!canWrite || busy} onClick={handleDelete}>
+        <ActionButton action="deleteRow" disabled={!canWrite || busy} onClick={handleDelete}>
           Delete
-        </button>
-        <button type="button" className={styles.btnDark} disabled={!canWrite} onClick={() => setModalPstNo(null)}>
+        </ActionButton>
+        <ActionButton intent="secondary" appearance="filled" disabled={!canWrite} onClick={() => setModalPstNo(null)}>
           Add New
-        </button>
+        </ActionButton>
       </div>
 
       {modalPstNo !== undefined && (

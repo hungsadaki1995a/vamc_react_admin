@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { Input, Select } from 'antd';
 import type { TableColumnsType } from 'antd';
+import AppSelect from '@/components/inputs/AppSelect';
+import TextInput from '@/components/inputs/TextInput';
 import { useMenuPermission } from '@/hooks/use-menu-permission';
 import { FORM_API_AVAILABLE } from '@/api/system/form-api';
 import type { FormItem, FormLang, FormSearch, YesNo } from '@/api/system/form-api';
@@ -94,17 +95,17 @@ export default function FormManagement() {
       )}
       <SysFilterPanel>
         <SysFilterItem label="Use">
-          <Select
+          <AppSelect
             value={list.draft.useYn}
             options={USE_YN_FILTER_OPTIONS}
-            onChange={(useYn) => list.setDraft({ useYn })}
+            onChange={(useYn) => list.setDraft({ useYn: String(useYn ?? '') as YesNo | '' })}
           />
         </SysFilterItem>
         <SysFilterItem label="Language">
-          <Select value={list.draft.langCd} options={LANG_FILTER_OPTIONS} onChange={(langCd) => list.setDraft({ langCd })} />
+          <AppSelect value={list.draft.langCd} options={LANG_FILTER_OPTIONS} onChange={(langCd) => list.setDraft({ langCd: String(langCd ?? '') as FormLang | '' })} />
         </SysFilterItem>
         <SysFilterItem label="Form Name">
-          <Input
+          <TextInput
             value={list.draft.formNm}
             allowClear
             onChange={(e) => list.setDraft({ formNm: e.target.value })}

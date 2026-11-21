@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { Tooltip, Space } from 'antd';
+import { Space } from 'antd';
 import { StarOutlined, StarFilled } from '@ant-design/icons';
+import AppTooltip from '@/components/common/tooltip/AppTooltip';
 import { useTabContext } from '@/contexts/tab-context';
 import { useScreenLabel } from '@/hooks/use-screen-label';
 import { useComponentLabel } from '@/hooks/use-component-label';
@@ -54,14 +55,17 @@ export default function PageHeader({
   return (
     <div className={`${styles.header} ds-page-header`}>
       <Space size={8}>
-        <Tooltip title={favorite
-          ? tvt('favoriteRemove', 'Remove from Favorites')
-          : tvt('favoriteAdd', 'Add to Favorites')}>
+        <AppTooltip
+          variant="default"
+          title={favorite
+            ? tvt('favoriteRemove', 'Remove from Favorites')
+            : tvt('favoriteAdd', 'Add to Favorites')}
+        >
           {favorite
             ? <StarFilled className="text-[16px] text-[#faad14]! cursor-pointer" onClick={() => setFavorite(false)} />
             : <StarOutlined className="text-[16px] text-[#bbb]! cursor-pointer" onClick={() => setFavorite(true)} />
           }
-        </Tooltip>
+        </AppTooltip>
         {resolvedCode && <span className={styles.code}>[{resolvedCode}]</span>}
         <span className={styles.title}>{resolvedTitle}</span>
         {titleExtra && <span>{titleExtra}</span>}

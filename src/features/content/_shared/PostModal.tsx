@@ -1,6 +1,14 @@
 import { useState } from 'react';
 import type { CSSProperties } from 'react';
-import { DatePicker, Input, InputNumber, Modal, Radio, Select, Spin } from 'antd';
+import ActionButton from '@/components/common/actions/ActionButton';
+import LoadingSpinner from '@/components/common/loading/LoadingSpinner';
+import Popup from '@/components/common/popup/Popup';
+import AppDatePicker from '@/components/inputs/AppDatePicker';
+import AppRadio from '@/components/inputs/AppRadio';
+import AppSelect from '@/components/inputs/AppSelect';
+import Spinbox from '@/components/inputs/Spinbox';
+import TextArea from '@/components/inputs/TextArea';
+import TextInput from '@/components/inputs/TextInput';
 import dayjs from 'dayjs';
 import type { Dayjs } from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
@@ -257,23 +265,22 @@ export default function PostModal({
     options: LegalOptions['groups'] | undefined,
   ) => (
     <FormField label={label}>
-      <Select
+      <AppSelect
         className={styles.wFull}
         allowClear
         placeholder={`Select ${label.toLowerCase()}`}
         value={form[key] || undefined}
         disabled={fieldsDisabled}
-        onChange={(value) => patch({ [key]: value ?? '' })}
+        onChange={(value) => patch({ [key]: String(value ?? '') })}
         options={(options ?? []).map((o) => ({ value: o.code, label: o.name }))}
       />
     </FormField>
   );
 
   return (
-    <Modal
+    <Popup
       open
       width={980}
-      centered
       title={
         <span>
           {isCreate ? `Register — ${config.title}` : `Check/Edit — ${config.title}`}
@@ -286,30 +293,30 @@ export default function PostModal({
       maskClosable={false}
       footer={
         <div className={styles.modalFooter}>
-          <button type="button" className={styles.btn} onClick={onClose}>
+          <ActionButton action="cancel" onClick={onClose}>
             Cancel
-          </button>
-          <button
-            type="button"
-            className={styles.btnDark}
+          </ActionButton>
+          <ActionButton
+            intent="secondary"
+            appearance="filled"
             disabled={!canWrite || savePost.isPending || isFetching}
             onClick={handleConfirm}
           >
             Confirm
-          </button>
+          </ActionButton>
         </div>
       }
     >
-      <Spin spinning={isFetching}>
+      <LoadingSpinner spinning={isFetching}>
         <div className={styles.formGrid} style={{ '--form-cols': 3 } as CSSProperties}>
           {/* ── Status area ─────────────────────────────────────────────── */}
           {showCategorySelect && (
             <FormField label={categoryLabel} required>
-              <Select
+              <AppSelect
                 className={styles.wFull}
                 value={form.category || undefined}
                 disabled={categoryDisabled}
-                onChange={(value) => patch({ category: value })}
+                onChange={(value) => patch({ category: String(value ?? '') })}
                 options={categoryOptions}
               />
             </FormField>
@@ -320,7 +327,7 @@ export default function PostModal({
           </FormField>
 
           <FormField label="Publication Status" span={config.pin ? undefined : 'full'}>
-            <Radio.Group
+            <AppRadio.Group
               value={form.published}
               disabled={statusDisabled}
               onChange={(e) => patch({ published: e.target.value as YesNo })}
@@ -333,7 +340,7 @@ export default function PostModal({
           {config.pin && (
             <>
               <FormField label="Top Display">
-                <Radio.Group
+                <AppRadio.Group
                   value={form.pinned}
                   disabled={statusDisabled}
                   onChange={(e) => patch({ pinned: e.target.value as YesNo })}
@@ -341,7 +348,7 @@ export default function PostModal({
                 />
               </FormField>
               <FormField label="Top Display Order">
-                <InputNumber
+                <Spinbox
                   value={form.pinOrder}
                   min={1}
                   max={5}
@@ -360,7 +367,7 @@ export default function PostModal({
               {legalSelect('Field', 'lawField', legalOptions?.fields)}
               {legalSelect('Issuing Authority', 'issuingAuthority', legalOptions?.issuingAuthorities)}
               <FormField label="Number/Sign" required>
-                <Input
+                <TextInput
                   placeholder="Please enter the number/sign."
                   value={form.docNumber}
                   maxLength={50}
@@ -369,7 +376,7 @@ export default function PostModal({
                 />
               </FormField>
               <FormField label="Issue Date" required>
-                <DatePicker
+                <AppDatePicker
                   className={styles.wFull}
                   format={DATE_FORMAT}
                   placeholder="DD/MM/YYYY"
@@ -379,7 +386,7 @@ export default function PostModal({
                 />
               </FormField>
               <FormField label="Signer">
-                <Input
+                <TextInput
                   placeholder="Please enter the signer."
                   value={form.name}
                   maxLength={100}
@@ -393,7 +400,7 @@ export default function PostModal({
           {/* ── Board-specific attributes ───────────────────────────────── */}
           {config.tag && !config.legal && (
             <FormField label={config.tag.label} required={config.tag.required} span={config.person ? undefined : 'full'}>
-              <Input
+              <TextInput
                 value={form.tag}
                 maxLength={config.tag.requestKey === 'sectionKey' ? 50 : 1000}
                 disabled={fieldsDisabled || !tagEditable}
@@ -408,7 +415,7 @@ export default function PostModal({
           {config.person && (
             <>
               <FormField label="Name" span="full">
-                <Input
+                <TextInput
                   value={form.name}
                   maxLength={100}
                   disabled={fieldsDisabled}
@@ -416,7 +423,7 @@ export default function PostModal({
                 />
               </FormField>
               <FormField label="Email">
-                <Input
+                <TextInput
                   value={form.email}
                   maxLength={256}
                   disabled={fieldsDisabled}
@@ -424,7 +431,7 @@ export default function PostModal({
                 />
               </FormField>
               <FormField label="Phone" span="full">
-                <Input
+                <TextInput
                   value={form.phone}
                   maxLength={256}
                   disabled={fieldsDisabled}
@@ -436,7 +443,7 @@ export default function PostModal({
 
           {/* ── Content area ────────────────────────────────────────────── */}
           <FormField label="Title" required span="full">
-            <Input
+            <TextInput
               placeholder="Please enter the title."
               value={form.title}
               maxLength={1000}
@@ -445,7 +452,7 @@ export default function PostModal({
             />
           </FormField>
           <FormField label="Title (EN)" span="full">
-            <Input
+            <TextInput
               value={form.titleEn}
               maxLength={1000}
               disabled={fieldsDisabled}
@@ -454,7 +461,7 @@ export default function PostModal({
           </FormField>
           {(config.summary || config.legal) && (
             <FormField label={config.legal ? 'Description' : 'Summary'} span="full">
-              <Input.TextArea
+              <TextArea
                 rows={2}
                 value={form.summary}
                 disabled={fieldsDisabled}
@@ -492,7 +499,7 @@ export default function PostModal({
             />
           </FormField>
           <FormField label="Content" required={config.contentRequired} span="full">
-            <Input.TextArea
+            <TextArea
               rows={9}
               placeholder="Please enter the content."
               value={form.content}
@@ -501,7 +508,7 @@ export default function PostModal({
             />
           </FormField>
           <FormField label="Content (EN)" span="full">
-            <Input.TextArea
+            <TextArea
               rows={5}
               value={form.contentEn}
               disabled={fieldsDisabled}
@@ -509,7 +516,7 @@ export default function PostModal({
             />
           </FormField>
         </div>
-      </Spin>
-    </Modal>
+      </LoadingSpinner>
+    </Popup>
   );
 }

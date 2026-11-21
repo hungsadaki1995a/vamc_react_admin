@@ -1,6 +1,8 @@
 import { useState } from 'react';
-import { Input, Table } from 'antd';
 import type { TableColumnsType } from 'antd';
+import ActionButton from '@/components/common/actions/ActionButton';
+import DataTable from '@/components/common/table/DataTable';
+import TextInput from '@/components/inputs/TextInput';
 import { useNotify } from '@/hooks/use-notify';
 import { useMenuPermission } from '@/hooks/use-menu-permission';
 import type { AuctionItem, BidderItem } from '@/api/auction/auction-api';
@@ -61,8 +63,8 @@ export default function BidderManagement() {
       align: 'center',
       render: (_v, r) => (
         <div className={`${styles.actions} ${styles.centered}`}>
-          <button type="button" className={`${styles.btnDark} ${styles.btnSmall}`} disabled={!canWrite} onClick={() => void handleAction(r.bdrNo, 'approve')}>Approve</button>
-          <button type="button" className={`${styles.btnDanger} ${styles.btnSmall}`} disabled={!canWrite} onClick={() => void handleAction(r.bdrNo, 'reject')}>Reject</button>
+          <ActionButton size="small" intent="secondary" appearance="filled" disabled={!canWrite} onClick={() => void handleAction(r.bdrNo, 'approve')}>Approve</ActionButton>
+          <ActionButton size="small" intent="danger" disabled={!canWrite} onClick={() => void handleAction(r.bdrNo, 'reject')}>Reject</ActionButton>
         </div>
       ),
     },
@@ -79,7 +81,7 @@ export default function BidderManagement() {
       <div className={styles.filterCard}>
         <div className={styles.filterGroup}>
           <span className={styles.filterLabel}>Auction</span>
-          <Input className={styles.filterInput} placeholder="Auction no or name" value={keyword} onChange={(e) => setKeyword(e.target.value)} onPressEnter={() => { setApplied({ keyword: keyword.trim() || undefined }); setPage(1); }} allowClear />
+          <TextInput className={styles.filterInput} placeholder="Auction no or name" value={keyword} onChange={(e) => setKeyword(e.target.value)} onPressEnter={() => { setApplied({ keyword: keyword.trim() || undefined }); setPage(1); }} allowClear />
         </div>
       </div>
 
@@ -87,13 +89,11 @@ export default function BidderManagement() {
         <div className={styles.card}>
           <span className={styles.cardTitle}>Auctions ({totalAuctions})</span>
           <div className={styles.tableWrapper}>
-            <Table<AuctionItem>
+            <DataTable<AuctionItem>
               rowKey="auctnNo"
               columns={auctColumns}
               dataSource={auctions}
               loading={auctLoading}
-              pagination={false}
-              size="small"
               rowClassName={(r) => (r.auctnNo === selectedAuction ? styles.rowSelected : '')}
               onRow={(r) => ({ onClick: () => { setSelectedAuction(r.auctnNo); setBidderPage(1); } })}
             />
@@ -104,7 +104,7 @@ export default function BidderManagement() {
         <div className={styles.card}>
           <span className={styles.cardTitle}>Bidders {selectedAuction ? `(${selectedAuction})` : ''}</span>
           <div className={styles.tableWrapper}>
-            <Table<BidderItem> rowKey="bdrNo" columns={bidderColumns} dataSource={bidders} loading={bidderLoading} pagination={false} size="small" scroll={{ x: 'max-content' }} />
+            <DataTable<BidderItem> rowKey="bdrNo" columns={bidderColumns} dataSource={bidders} loading={bidderLoading} scroll={{ x: 'max-content' }} />
           </div>
           <SysPagination page={bidderPage} pageSize={PAGE_SIZE} total={totalBidders} onChange={setBidderPage} />
         </div>

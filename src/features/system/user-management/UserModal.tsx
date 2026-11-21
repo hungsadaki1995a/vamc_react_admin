@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Input, Select } from 'antd';
+import AppSelect from '@/components/inputs/AppSelect';
+import TextInput from '@/components/inputs/TextInput';
 import { useNotify } from '@/hooks/use-notify';
 import type { EmpStatus, EmployeeDetail, UpdateEmployeeRequest } from '@/api/system/employee-api';
 import { SysButton } from '../_shared/SysListUi';
@@ -173,11 +174,11 @@ export default function UserModal({ detail, canWrite, onClose }: UserModalProps)
 
   const statusField = (
     <SysField label="Status" required error={errors.empSttsCd}>
-      <Select
+      <AppSelect<EmpStatus>
         options={EMP_STATUS_OPTIONS}
         value={form.empSttsCd || undefined}
         disabled={readOnly}
-        onChange={(empSttsCd: EmpStatus) => change({ empSttsCd })}
+        onChange={(empSttsCd) => change({ empSttsCd })}
       />
     </SysField>
   );
@@ -195,7 +196,7 @@ export default function UserModal({ detail, canWrite, onClose }: UserModalProps)
     >
       <SysFieldGrid columns={3}>
         <SysField label="Employee No." required error={errors.empNo}>
-          <Input
+          <TextInput
             value={form.empNo}
             maxLength={10}
             disabled={isEdit || readOnly}
@@ -204,11 +205,11 @@ export default function UserModal({ detail, canWrite, onClose }: UserModalProps)
           />
         </SysField>
         <SysField label="Name" required error={errors.empNm}>
-          <Input value={form.empNm} maxLength={100} disabled={readOnly} onChange={(e) => change({ empNm: e.target.value })} />
+          <TextInput value={form.empNm} maxLength={100} disabled={readOnly} onChange={(e) => change({ empNm: e.target.value })} />
         </SysField>
         {statusField}
         <SysField label="Email" required error={errors.empEmlAddr}>
-          <Input
+          <TextInput
             type="email"
             value={form.empEmlAddr}
             maxLength={256}
@@ -217,7 +218,7 @@ export default function UserModal({ detail, canWrite, onClose }: UserModalProps)
           />
         </SysField>
         <SysField label="Office Phone" error={errors.empTelno}>
-          <Input
+          <TextInput
             type="tel"
             value={form.empTelno}
             maxLength={11}
@@ -226,7 +227,7 @@ export default function UserModal({ detail, canWrite, onClose }: UserModalProps)
           />
         </SysField>
         <SysField label="Mobile Number" required error={errors.empMoblTelno}>
-          <Input
+          <TextInput
             type="tel"
             value={form.empMoblTelno}
             maxLength={20}

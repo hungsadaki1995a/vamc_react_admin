@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { Alert, Spin } from 'antd';
+import { Alert } from 'antd';
 import AuthHeader from '@/components/auth/AuthHeader';
 import ContentTabs from '@/components/common/content-tabs/ContentTabs';
+import LoadingSpinner from '@/components/common/loading/LoadingSpinner';
 import type { ContentTabItem } from '@/types/content-tabs';
 import type { ZaloVerificationResult } from '@/types/auth';
 import { PUBLIC_ROUTES } from '@/app/route-constants';
@@ -74,7 +75,7 @@ export default function FindPasswordPage() {
 
           {urlToken && verifyQuery.isLoading ? (
             <div className={styles.confirmResult}>
-              <Spin />
+              <LoadingSpinner />
             </div>
           ) : isResetView && activeToken ? (
             <PasswordResetForm

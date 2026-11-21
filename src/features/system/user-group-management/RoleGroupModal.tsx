@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Input, Radio } from 'antd';
+import AppRadio from '@/components/inputs/AppRadio';
+import TextInput from '@/components/inputs/TextInput';
 import { useNotify } from '@/hooks/use-notify';
 import { ROLE_DUPLICATED, ROLE_GROUP_DUPLICATED } from '@/api/system/role-group-api';
 import type { Role, RoleGroup, YesNo } from '@/api/system/role-group-api';
@@ -97,7 +98,7 @@ export default function RoleGroupModal({ target, canWrite, onClose }: RoleGroupM
     >
       <SysFieldGrid columns={1}>
         <SysField label={isGroup ? 'Group ID' : 'Role ID'} required error={errors.id}>
-          <Input
+          <TextInput
             value={form.id}
             maxLength={7}
             disabled={isEdit || !canWrite}
@@ -106,10 +107,10 @@ export default function RoleGroupModal({ target, canWrite, onClose }: RoleGroupM
           />
         </SysField>
         <SysField label={isGroup ? 'Group Name' : 'Role Name'} required error={errors.name}>
-          <Input value={form.name} maxLength={100} disabled={!canWrite} onChange={(e) => change({ name: e.target.value })} />
+          <TextInput value={form.name} maxLength={100} disabled={!canWrite} onChange={(e) => change({ name: e.target.value })} />
         </SysField>
         <SysField label="Use" required error={errors.useYn}>
-          <Radio.Group
+          <AppRadio.Group
             options={USE_YN_RADIO_OPTIONS}
             value={form.useYn}
             disabled={!canWrite}

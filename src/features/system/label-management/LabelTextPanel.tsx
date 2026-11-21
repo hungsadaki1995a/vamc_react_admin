@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { Input } from 'antd';
 import type { TableColumnsType } from 'antd';
+import TextArea from '@/components/inputs/TextArea';
 import { useNotify } from '@/hooks/use-notify';
 import { DEFAULT_LANG_CD } from '@/api/system/label-management-api';
 import type { LabelDetail, LabelKey, LabelLanguage } from '@/api/system/label-management-api';
@@ -105,7 +105,7 @@ export default function LabelTextPanel({
       dataIndex: 'text',
       render: (value: string, row) =>
         canWrite && editingLang === row.langCd ? (
-          <Input.TextArea
+          <TextArea
             autoFocus
             value={value}
             autoSize={{ minRows: 1, maxRows: 6 }}

@@ -1,7 +1,10 @@
 import { useState } from 'react';
-import { DatePicker, Input, Table } from 'antd';
 import type { TableColumnsType } from 'antd';
 import type { Dayjs } from 'dayjs';
+import ActionButton from '@/components/common/actions/ActionButton';
+import DataTable from '@/components/common/table/DataTable';
+import { AppRangePicker } from '@/components/inputs/AppDatePicker';
+import TextInput from '@/components/inputs/TextInput';
 import { useNotify } from '@/hooks/use-notify';
 import { useMenuPermission } from '@/hooks/use-menu-permission';
 import type { SiteDisplaySearch } from '@/api/contents/site-display-api';
@@ -171,7 +174,7 @@ export default function LogoManagement() {
           </div>
           <div className={styles.filterGroup}>
             <span className={styles.filterLabel}>Position</span>
-            <Input
+            <TextInput
               className={styles.filterInput}
               placeholder="HEADER, FOOTER..."
               value={filter.tag}
@@ -182,7 +185,7 @@ export default function LogoManagement() {
           </div>
           <div className={styles.filterGroup}>
             <span className={styles.filterLabel}>Keyword</span>
-            <Input
+            <TextInput
               className={styles.filterInput}
               placeholder="Enter Logo ID or Name."
               value={filter.keyword}
@@ -193,7 +196,7 @@ export default function LogoManagement() {
           </div>
           <div className={styles.filterGroup}>
             <span className={styles.filterLabel}>Registration Period</span>
-            <DatePicker.RangePicker
+            <AppRangePicker
               format={DATE_FORMAT}
               placeholder={['dd/mm/yyyy', 'dd/mm/yyyy']}
               value={filter.period}
@@ -211,13 +214,11 @@ export default function LogoManagement() {
       </div>
 
       <div className={styles.tableWrapper}>
-        <Table<Post>
+        <DataTable<Post>
           rowKey="pstNo"
           columns={columns}
           dataSource={rows}
           loading={isFetching}
-          pagination={false}
-          size="small"
           scroll={{ x: 'max-content' }}
           rowSelection={{
             selectedRowKeys: selectedKeys,
@@ -229,18 +230,18 @@ export default function LogoManagement() {
       <SysPagination page={page} pageSize={PAGE_SIZE} total={total} onChange={setPage} />
 
       <div className={styles.bottomActions}>
-        <button type="button" className={styles.btn} disabled={!canWrite} onClick={() => handleBatchUse('Y')}>
+        <ActionButton disabled={!canWrite} onClick={() => handleBatchUse('Y')}>
           Use
-        </button>
-        <button type="button" className={styles.btn} disabled={!canWrite} onClick={() => handleBatchUse('N')}>
+        </ActionButton>
+        <ActionButton disabled={!canWrite} onClick={() => handleBatchUse('N')}>
           Unuse
-        </button>
-        <button type="button" className={styles.btn} disabled={!canWrite} onClick={handleDelete}>
+        </ActionButton>
+        <ActionButton action="deleteRow" disabled={!canWrite} onClick={handleDelete}>
           Delete
-        </button>
-        <button type="button" className={styles.btnDark} disabled={!canWrite} onClick={() => setModalLogoId(null)}>
+        </ActionButton>
+        <ActionButton intent="secondary" appearance="filled" disabled={!canWrite} onClick={() => setModalLogoId(null)}>
           Add New
-        </button>
+        </ActionButton>
       </div>
 
       {modalLogoId !== undefined && (

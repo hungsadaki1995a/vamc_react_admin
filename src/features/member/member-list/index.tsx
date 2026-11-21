@@ -1,12 +1,10 @@
 import { useState, useMemo } from 'react';
-import {
-  Table,
-  Checkbox,
-  Input,
-  Select,
-  DatePicker,
-  Button,
-} from 'antd';
+import ActionButton from '@/components/common/actions/ActionButton';
+import DataTable from '@/components/common/table/DataTable';
+import AppCheckbox from '@/components/inputs/AppCheckbox';
+import AppDatePicker from '@/components/inputs/AppDatePicker';
+import AppSelect from '@/components/inputs/AppSelect';
+import TextInput from '@/components/inputs/TextInput';
 import { useNotify } from '@/hooks/use-notify';
 import type { TableProps, TableColumnsType } from 'antd';
 import type { SortOrder } from 'antd/es/table/interface';
@@ -647,7 +645,7 @@ export default function MemberList() {
               <span className={styles.filterLabel}>Approval Period</span>
               <div className={styles.filterControl}>
                 <div className={styles.dateRangeGroup}>
-                  <DatePicker
+                  <AppDatePicker
                     className={styles.dateRangeInput}
                     format="DD-MM-YYYY"
                     placeholder="DD-MM-YYYY"
@@ -655,7 +653,7 @@ export default function MemberList() {
                     onChange={(date) => setDateRange([date, dateRange?.[1] ?? null])}
                   />
                   <span className={styles.dateRangeSeparator}>~</span>
-                  <DatePicker
+                  <AppDatePicker
                     className={styles.dateRangeInput}
                     format="DD-MM-YYYY"
                     placeholder="DD-MM-YYYY"
@@ -670,10 +668,10 @@ export default function MemberList() {
               <span className={styles.filterLabel}>Member Grade</span>
               <div className={styles.filterControl}>
                 <div className={styles.filterCheckboxGroup}>
-                  <Checkbox checked={memberGradeAll} onChange={memberGradeHandlers.onAllChange}>
+                  <AppCheckbox checked={memberGradeAll} onChange={memberGradeHandlers.onAllChange}>
                     All
-                  </Checkbox>
-                  <Checkbox.Group
+                  </AppCheckbox>
+                  <AppCheckbox.Group
                     options={MEMBER_GRADE_OPTIONS}
                     value={selectedMemberGrades}
                     onChange={memberGradeHandlers.onGroupChange}
@@ -686,10 +684,10 @@ export default function MemberList() {
               <span className={styles.filterLabel}>Member Type</span>
               <div className={styles.filterControl}>
                 <div className={styles.filterCheckboxGroup}>
-                  <Checkbox checked={memberTypeAll} onChange={memberTypeHandlers.onAllChange}>
+                  <AppCheckbox checked={memberTypeAll} onChange={memberTypeHandlers.onAllChange}>
                     All
-                  </Checkbox>
-                  <Checkbox.Group
+                  </AppCheckbox>
+                  <AppCheckbox.Group
                     options={MEMBER_TYPE_OPTIONS}
                     value={selectedMemberTypes}
                     onChange={memberTypeHandlers.onGroupChange}
@@ -705,13 +703,13 @@ export default function MemberList() {
               <span className={styles.filterLabel}>Search</span>
               <div className={styles.filterControl}>
                 <div className={styles.filterSearchGroup}>
-                  <Select
+                  <AppSelect
                     className={styles.filterSearchSelect}
                     value={searchField}
                     options={SEARCH_FIELD_OPTIONS}
                     onChange={(val) => setSearchField(val)}
                   />
-                  <Input
+                  <TextInput
                     placeholder="Enter keyword"
                     value={searchText}
                     onChange={(e) => setSearchText(e.target.value)}
@@ -726,10 +724,10 @@ export default function MemberList() {
               <span className={styles.filterLabel}>Status</span>
               <div className={styles.filterControl}>
                 <div className={styles.filterCheckboxGroup}>
-                  <Checkbox checked={statusAll} onChange={statusHandlers.onAllChange}>
+                  <AppCheckbox checked={statusAll} onChange={statusHandlers.onAllChange}>
                     All
-                  </Checkbox>
-                  <Checkbox.Group
+                  </AppCheckbox>
+                  <AppCheckbox.Group
                     options={STATUS_OPTIONS}
                     value={selectedStatuses}
                     onChange={statusHandlers.onGroupChange}
@@ -742,10 +740,10 @@ export default function MemberList() {
               <span className={styles.filterLabel}>Membership</span>
               <div className={styles.filterControl}>
                 <div className={styles.filterCheckboxGroup}>
-                  <Checkbox checked={membershipAll} onChange={membershipHandlers.onAllChange}>
+                  <AppCheckbox checked={membershipAll} onChange={membershipHandlers.onAllChange}>
                     All
-                  </Checkbox>
-                  <Checkbox.Group
+                  </AppCheckbox>
+                  <AppCheckbox.Group
                     options={MEMBERSHIP_OPTIONS}
                     value={selectedMemberships}
                     onChange={membershipHandlers.onGroupChange}
@@ -759,17 +757,19 @@ export default function MemberList() {
         {/* Filter Action Buttons */}
         <div className={styles.filterActionRow}>
           <div className={styles.filterActionButtons}>
-            <Button className={styles.btnReset} icon={<ReloadOutlined />} onClick={handleReset}>
+            <ActionButton action="reset" intent="primary" appearance="outlined" className={styles.btnReset} icon={<ReloadOutlined />} onClick={handleReset}>
               Reset
-            </Button>
-            <Button
-              type="primary"
+            </ActionButton>
+            <ActionButton
+              action="search"
+              intent="primary"
+              appearance="filled"
               className={styles.btnSearch}
               icon={<SearchOutlined />}
               onClick={handleSearch}
             >
               Search
-            </Button>
+            </ActionButton>
           </div>
         </div>
       </div>
@@ -785,13 +785,13 @@ export default function MemberList() {
         </div>
 
         <div className={styles.resultsActions}>
-          <Button className={styles.btnExcel} loading={isExporting} onClick={handleExportExcel}>
-            <span className={styles.excelIconWrapper}>X</span>
-            <span>Excel Download</span>
-          </Button>
+          <ActionButton action="excelDownload" className={styles.btnExcel} loading={isExporting} onClick={handleExportExcel}>
+            Excel Download
+          </ActionButton>
           <span className={styles.toolbarActionDivider} />
-          <Button
-            type="primary"
+          <ActionButton
+            intent="primary"
+            appearance="filled"
             className={styles.btnNew}
             onClick={() => {
               setMemberFormMode('register');
@@ -800,23 +800,21 @@ export default function MemberList() {
             }}
           >
             New
-          </Button>
+          </ActionButton>
         </div>
       </div>
 
       {/* ── Main Data Table ─────────────────────────────────────────────────── */}
       <div className={styles.tableCard}>
-        <Table<MemberItem>
+        <DataTable<MemberItem>
           rowKey="id"
           columns={columns}
           dataSource={filteredData}
           loading={isLoading || isFetching}
-          pagination={false}
           sortDirections={['ascend', 'descend']}
           onChange={handleTableChange}
           locale={{ emptyText: 'No members found.' }}
           scroll={{ x: 'max-content', y: 560 }}
-          size="middle"
         />
       </div>
       <SysPagination

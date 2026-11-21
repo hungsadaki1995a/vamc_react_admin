@@ -1,5 +1,7 @@
 import { useState } from 'react';
-import { Input, InputNumber, Radio } from 'antd';
+import AppRadio from '@/components/inputs/AppRadio';
+import Spinbox from '@/components/inputs/Spinbox';
+import TextInput from '@/components/inputs/TextInput';
 import { useNotify } from '@/hooks/use-notify';
 import type { YesNo } from '@/api/system/code-group-api';
 import type { ProgramItem, ProgramType } from '@/api/system/program-screen-api';
@@ -84,7 +86,7 @@ export function ProgramModal({ item, canWrite, onClose }: ProgramModalProps) {
     >
       <SysFieldGrid columns={3}>
         <SysField label="Program Code" required error={errors.prgrmCd}>
-          <Input
+          <TextInput
             value={values.prgrmCd}
             disabled={!isCreate}
             maxLength={12}
@@ -92,7 +94,7 @@ export function ProgramModal({ item, canWrite, onClose }: ProgramModalProps) {
           />
         </SysField>
         <SysField label="Menu Code" required error={errors.menuCd}>
-          <Input
+          <TextInput
             value={values.menuCd}
             maxLength={9}
             placeholder="e.g. A03010000"
@@ -100,14 +102,14 @@ export function ProgramModal({ item, canWrite, onClose }: ProgramModalProps) {
           />
         </SysField>
         <SysField label="Type" required error={errors.prgrmSeCd}>
-          <Radio.Group
+          <AppRadio.Group
             options={PROGRAM_TYPE_OPTIONS}
             value={values.prgrmSeCd}
             onChange={(e) => change('prgrmSeCd', e.target.value as ProgramType)}
           />
         </SysField>
         <SysField label="Order" required error={errors.prgrmSeq}>
-          <InputNumber
+          <Spinbox
             value={values.prgrmSeq}
             min={0}
             max={99}
@@ -116,17 +118,17 @@ export function ProgramModal({ item, canWrite, onClose }: ProgramModalProps) {
           />
         </SysField>
         <SysField label="Program Name" required error={errors.prgrmNm}>
-          <Input value={values.prgrmNm} maxLength={100} onChange={(e) => change('prgrmNm', e.target.value)} />
+          <TextInput value={values.prgrmNm} maxLength={100} onChange={(e) => change('prgrmNm', e.target.value)} />
         </SysField>
         <SysField label="Use" required error={errors.useYn}>
-          <Radio.Group
+          <AppRadio.Group
             options={USE_YN_RADIO_OPTIONS}
             value={values.useYn}
             onChange={(e) => change('useYn', e.target.value as YesNo)}
           />
         </SysField>
         <SysField label="Program Description" span="full" error={errors.prgrmExpln}>
-          <Input value={values.prgrmExpln} maxLength={4000} onChange={(e) => change('prgrmExpln', e.target.value)} />
+          <TextInput value={values.prgrmExpln} maxLength={4000} onChange={(e) => change('prgrmExpln', e.target.value)} />
         </SysField>
       </SysFieldGrid>
     </SysFormModal>

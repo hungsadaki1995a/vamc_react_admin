@@ -1,5 +1,7 @@
 import { useMemo, useState } from 'react';
-import { Input, Radio, Select } from 'antd';
+import AppRadio from '@/components/inputs/AppRadio';
+import AppSelect from '@/components/inputs/AppSelect';
+import TextInput from '@/components/inputs/TextInput';
 import { useNotify } from '@/hooks/use-notify';
 import type { BatchJobItem, BatchJobSaveRequest } from '@/api/system/batch-api';
 import { USE_YN_RADIO_OPTIONS } from '@/features/system/_shared/sys-constants';
@@ -163,21 +165,21 @@ export default function BatchJobModal({ job, canWrite, onClose, onOpenHistory }:
       <SysFieldGrid columns={2}>
         <SysField label="Job Name" required error={errors.btchJobNm}>
           {isEdit ? (
-            <Input value={values.btchJobNm} disabled />
+            <TextInput value={values.btchJobNm} disabled />
           ) : (
-            <Select
+            <AppSelect
               showSearch
               placeholder="Select"
               value={values.btchJobNm || undefined}
               options={jobOptions}
-              onChange={selectJob}
+              onChange={(v) => selectJob(String(v ?? ''))}
               className={styles.fullWidth}
             />
           )}
         </SysField>
         <SysField label="Group" required error={errors.btchGroup}>
           {/* Filled from the selected job (the server rejects a group that differs from the code: BAT008). */}
-          <Select
+          <AppSelect
             placeholder="Select"
             value={values.btchGroup || undefined}
             options={groupOptions}
@@ -186,7 +188,7 @@ export default function BatchJobModal({ job, canWrite, onClose, onOpenHistory }:
           />
         </SysField>
         <SysField label="Use" required>
-          <Radio.Group
+          <AppRadio.Group
             options={USE_YN_RADIO_OPTIONS}
             value={values.useYn}
             disabled={!canWrite}
@@ -194,7 +196,7 @@ export default function BatchJobModal({ job, canWrite, onClose, onOpenHistory }:
           />
         </SysField>
         <SysField label="Cron" required error={errors.cronExpression}>
-          <Input
+          <TextInput
             value={values.cronExpression}
             placeholder="e.g. 0 0 3 * * ?"
             maxLength={100}
@@ -203,7 +205,7 @@ export default function BatchJobModal({ job, canWrite, onClose, onOpenHistory }:
           />
         </SysField>
         <SysField label="Description">
-          <Input
+          <TextInput
             value={values.jobExpln}
             maxLength={500}
             disabled={!canWrite}
@@ -211,7 +213,7 @@ export default function BatchJobModal({ job, canWrite, onClose, onOpenHistory }:
           />
         </SysField>
         <SysField label="Parameters" error={errors.jobParameters}>
-          <Input
+          <TextInput
             value={values.jobParameters}
             placeholder='JSON format (e.g. {"days":30})'
             disabled={!canWrite}

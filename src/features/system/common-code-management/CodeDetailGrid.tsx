@@ -1,7 +1,10 @@
 import { useMemo, useRef, useState } from 'react';
 import type { Key, ReactNode } from 'react';
-import { Input, InputNumber, Select, Table } from 'antd';
 import type { TableColumnsType } from 'antd';
+import DataTable from '@/components/common/table/DataTable';
+import AppSelect from '@/components/inputs/AppSelect';
+import Spinbox from '@/components/inputs/Spinbox';
+import TextInput from '@/components/inputs/TextInput';
 import { useNotify } from '@/hooks/use-notify';
 import { SysButton, SysEmpty, SysSectionHeader } from '@/features/system/_shared/SysListUi';
 import { SYS_MESSAGES } from '@/features/system/_shared/sys-messages';
@@ -222,7 +225,7 @@ export function CodeDetailGrid({
       switch (column.kind) {
         case 'number':
           return (
-            <InputNumber
+            <Spinbox
               size="small"
               className={styles.control}
               status={status}
@@ -235,18 +238,18 @@ export function CodeDetailGrid({
           );
         case 'use':
           return (
-            <Select
+            <AppSelect
               size="small"
               className={styles.control}
               status={status}
               options={USE_YN_RADIO_OPTIONS}
               value={value ?? undefined}
-              onChange={(v) => updateCell(row.rowKey, column.field, v)}
+              onChange={(v) => updateCell(row.rowKey, column.field, (v as GridValue) ?? null)}
             />
           );
         case 'select':
           return (
-            <Select
+            <AppSelect
               size="small"
               showSearch
               optionFilterProp="label"
@@ -255,12 +258,13 @@ export function CodeDetailGrid({
               options={column.options}
               value={value ?? undefined}
               placeholder="Select"
-              onChange={(v) => updateCell(row.rowKey, column.field, v)}
+              onChange={(v) => updateCell(row.rowKey, column.field, (v as GridValue) ?? null)}
             />
           );
         default:
           return (
-            <Input
+            <TextInput
+              variant="grid"
               size="small"
               className={styles.control}
               status={status}
@@ -335,13 +339,12 @@ export function CodeDetailGrid({
       {header}
       {gridError && <div className={styles.gridError}>{gridError}</div>}
       <div className={styles.gridWrap}>
-        <Table<GridRow>
+        <DataTable<GridRow>
           size="small"
           rowKey="rowKey"
           columns={tableColumns}
           dataSource={gridRows}
           loading={loading}
-          pagination={false}
           scroll={{ x: 'max-content' }}
           rowClassName={(row) => (row.isNew ? styles.newRow : '')}
           rowSelection={

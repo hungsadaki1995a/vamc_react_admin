@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { Button } from 'antd';
 import { UpOutlined, DownOutlined } from '@ant-design/icons';
+import ActionButton from '@/components/common/actions/ActionButton';
 import styles from './form-panel.module.scss';
 
 type FormPanelProps = {
@@ -48,8 +48,8 @@ export default function FormPanel({
         {title && <span className={styles.title}>{title}</span>}
         <div className="flex items-center gap-1 ml-auto">
           {actions}
-          <Button
-            size="middle"
+          <ActionButton
+            intent="icon"
             icon={collapsed ? <DownOutlined /> : <UpOutlined />}
             onClick={handleToggle}
           />

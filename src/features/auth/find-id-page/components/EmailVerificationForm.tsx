@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useForm, useWatch, Controller } from 'react-hook-form';
-import { Form, Input, Button, App } from 'antd';
+import { Form, App } from 'antd';
+import ActionButton from '@/components/common/actions/ActionButton';
+import TextInput from '@/components/inputs/TextInput';
 import { useLocaleStore } from '@/stores/locale-store';
 import { useFindIdMutation } from '../hooks/use-find-id';
 import styles from '../index.module.scss';
@@ -68,7 +70,7 @@ export default function EmailVerificationForm() {
             rules={{ required: t('auth.findId.nameRequired') }}
             render={({ field, fieldState }) => (
               <Form.Item validateStatus={fieldState.error ? 'error' : ''} help={fieldState.error?.message}>
-                <Input
+                <TextInput
                   {...field}
                   id="findId_email_name"
                   placeholder={t('auth.findId.namePlaceholder')}
@@ -99,7 +101,7 @@ export default function EmailVerificationForm() {
                 validateStatus={fieldState.error || errorMsg ? 'error' : ''}
                 help={fieldState.error?.message || errorMsg}
               >
-                <Input
+                <TextInput
                   {...field}
                   id="findId_email"
                   type="email"
@@ -116,8 +118,9 @@ export default function EmailVerificationForm() {
         </div>
       </div>
 
-      <Button
-        type="primary"
+      <ActionButton
+        intent="primary"
+        appearance="filled"
         htmlType="submit"
         block
         loading={isPending}
@@ -125,7 +128,7 @@ export default function EmailVerificationForm() {
         className={styles.primaryBtn}
       >
         {t('auth.findId.sendEmail')}
-      </Button>
+      </ActionButton>
     </Form>
   );
 }

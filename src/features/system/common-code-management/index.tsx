@@ -1,6 +1,6 @@
 import { useMemo, useRef, useState } from 'react';
-import { Input } from 'antd';
 import type { TableColumnsType } from 'antd';
+import TextInput from '@/components/inputs/TextInput';
 import { useMenuPermission } from '@/hooks/use-menu-permission';
 import type { CodeGroupItem, CodeGroupSearch } from '@/api/system/code-group-api';
 import {
@@ -135,7 +135,7 @@ export default function CommonCodeManagement() {
       />
       <SysFilterPanel>
         <SysFilterItem label="Group Code">
-          <Input
+          <TextInput
             value={list.draft.groupCd}
             allowClear
             onChange={(e) => list.setDraft({ groupCd: e.target.value })}
@@ -143,7 +143,7 @@ export default function CommonCodeManagement() {
           />
         </SysFilterItem>
         <SysFilterItem label="Group Name">
-          <Input
+          <TextInput
             value={list.draft.groupNm}
             allowClear
             onChange={(e) => list.setDraft({ groupNm: e.target.value })}

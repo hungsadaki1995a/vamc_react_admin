@@ -1,5 +1,6 @@
 import { useRef } from 'react';
 import { DeleteOutlined, DownloadOutlined } from '@ant-design/icons';
+import ActionButton from '@/components/common/actions/ActionButton';
 import { useNotify } from '@/hooks/use-notify';
 import type { ContentFile, FileBoard } from '@/api/contents/post-api';
 import { errorMessage } from '@/features/system/_shared/system-utils';
@@ -74,14 +75,13 @@ export function AttachmentField({ board, fileUnqId, files, disabled, onChange }:
     <div className={styles.stack}>
       <div className={styles.inline}>
         <input ref={input} type="file" multiple hidden onChange={(e) => handlePick(e.target.files)} />
-        <button
-          type="button"
-          className={`${styles.btn} ${styles.btnSmall}`}
+        <ActionButton
+          size="small"
           disabled={disabled || busy}
           onClick={() => input.current?.click()}
         >
           {busy ? 'Uploading…' : 'Attach files'}
-        </button>
+        </ActionButton>
         <span className={styles.textMuted}>
           {files.length} / {MAX_FILES}
         </span>
@@ -135,14 +135,13 @@ export function ImageField({ upload, fileUnqId, disabled, onChange }: ImageField
     <div className={styles.stack}>
       <div className={styles.inline}>
         <input ref={input} type="file" accept="image/*" hidden onChange={(e) => handlePick(e.target.files)} />
-        <button
-          type="button"
-          className={`${styles.btn} ${styles.btnSmall}`}
+        <ActionButton
+          size="small"
           disabled={disabled || busy}
           onClick={() => input.current?.click()}
         >
           {busy ? 'Uploading…' : 'Attach image'}
-        </button>
+        </ActionButton>
         {fileUnqId && !disabled && (
           <a className={styles.textDanger} onClick={() => onChange(undefined)}>
             <DeleteOutlined /> Remove

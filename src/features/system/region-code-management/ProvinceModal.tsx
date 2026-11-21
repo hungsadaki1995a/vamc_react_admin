@@ -1,5 +1,7 @@
 import { useState } from 'react';
-import { Input, InputNumber, Radio } from 'antd';
+import AppRadio from '@/components/inputs/AppRadio';
+import Spinbox from '@/components/inputs/Spinbox';
+import TextInput from '@/components/inputs/TextInput';
 import { useNotify } from '@/hooks/use-notify';
 import type { YesNo } from '@/api/system/code-group-api';
 import type { ProvinceItem } from '@/api/system/location-api';
@@ -82,7 +84,7 @@ export function ProvinceModal({ item, canWrite, onClose }: ProvinceModalProps) {
     >
       <SysFieldGrid columns={1}>
         <SysField label="Province / City Code" required error={errors.mctpvCd}>
-          <Input
+          <TextInput
             value={values.mctpvCd}
             disabled={!isCreate}
             maxLength={3}
@@ -90,10 +92,10 @@ export function ProvinceModal({ item, canWrite, onClose }: ProvinceModalProps) {
           />
         </SysField>
         <SysField label="Province / City Name" required error={errors.mctpvNm}>
-          <Input value={values.mctpvNm} maxLength={40} onChange={(e) => change('mctpvNm', e.target.value)} />
+          <TextInput value={values.mctpvNm} maxLength={40} onChange={(e) => change('mctpvNm', e.target.value)} />
         </SysField>
         <SysField label="Administrative Code" required error={errors.admdstCd}>
-          <InputNumber
+          <Spinbox
             value={values.admdstCd}
             disabled={!isCreate}
             min={0}
@@ -103,7 +105,7 @@ export function ProvinceModal({ item, canWrite, onClose }: ProvinceModalProps) {
           />
         </SysField>
         <SysField label="Use" required error={errors.useYn}>
-          <Radio.Group
+          <AppRadio.Group
             options={USE_YN_RADIO_OPTIONS}
             value={values.useYn}
             onChange={(e) => change('useYn', e.target.value as YesNo)}

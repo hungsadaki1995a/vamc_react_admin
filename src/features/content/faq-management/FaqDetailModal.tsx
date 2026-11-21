@@ -1,5 +1,11 @@
 import { useState } from 'react';
-import { Modal, Spin, Radio, Select } from 'antd';
+import ActionButton from '@/components/common/actions/ActionButton';
+import LoadingSpinner from '@/components/common/loading/LoadingSpinner';
+import Popup from '@/components/common/popup/Popup';
+import AppRadio from '@/components/inputs/AppRadio';
+import AppSelect from '@/components/inputs/AppSelect';
+import TextArea from '@/components/inputs/TextArea';
+import TextInput from '@/components/inputs/TextInput';
 import dayjs from 'dayjs';
 import { useNotify } from '@/hooks/use-notify';
 import type { FaqItem } from './faq.types';
@@ -129,7 +135,7 @@ export default function FaqDetailModal({
   };
 
   return (
-    <Modal
+    <Popup
       title={
         <div className={styles.modalTitle}>
           {isCreate ? 'Register FAQ' : 'FAQ Detail'}
@@ -138,33 +144,33 @@ export default function FaqDetailModal({
       open={visible}
       onCancel={onClose}
       width={900}
-      centered
-      destroyOnClose
       footer={
         <div className={styles.footerRow}>
           <div className={styles.footerActions}>
-            <button
-              type="button"
+            <ActionButton
+              action="cancel"
               className={styles.cancelBtn}
               onClick={onClose}
               disabled={isSubmitting}
             >
               Cancel
-            </button>
-            <button
-              type="button"
+            </ActionButton>
+            <ActionButton
+              intent="primary"
+              appearance="filled"
               className={styles.saveBtn}
               onClick={handleSave}
+              loading={isSubmitting}
               disabled={isSubmitting}
             >
               {isSubmitting ? 'Saving...' : 'Save'}
-            </button>
+            </ActionButton>
           </div>
         </div>
       }
     >
       <div className={styles.modalBody}>
-        <Spin spinning={isLoading} tip="Loading FAQ details...">
+        <LoadingSpinner spinning={isLoading} tip="Loading FAQ details...">
           <table className={styles.tableWrapper}>
             <tbody>
               <tr>
@@ -172,9 +178,9 @@ export default function FaqDetailModal({
                   Category
                 </th>
                 <td className={`${styles.dataCell} ${styles.valueCol}`}>
-                  <Select
+                  <AppSelect
                     value={category}
-                    onChange={(val) => setCategory(val)}
+                    onChange={(val) => setCategory(String(val))}
                     className={styles.categorySelect}
                     options={categoryOptions}
                   />
@@ -183,13 +189,13 @@ export default function FaqDetailModal({
                   Posting Status
                 </th>
                 <td className={`${styles.dataCell} ${styles.valueCol}`}>
-                  <Radio.Group
+                  <AppRadio.Group
                     value={published}
                     onChange={(e) => setPublished(e.target.value)}
                   >
-                    <Radio value="Y">Posted</Radio>
-                    <Radio value="N">Not Posted</Radio>
-                  </Radio.Group>
+                    <AppRadio value="Y">Posted</AppRadio>
+                    <AppRadio value="N">Not Posted</AppRadio>
+                  </AppRadio.Group>
                 </td>
               </tr>
 
@@ -217,8 +223,7 @@ export default function FaqDetailModal({
               <tr>
                 <th className={styles.headerCell}>Question</th>
                 <td className={styles.dataCell} colSpan={3}>
-                  <input
-                    type="text"
+                  <TextInput
                     className={styles.inputField}
                     placeholder="Enter the FAQ question"
                     disabled={contentLocked}
@@ -231,7 +236,7 @@ export default function FaqDetailModal({
               <tr>
                 <th className={styles.headerCell}>Answer</th>
                 <td className={styles.dataCell} colSpan={3}>
-                  <textarea
+                  <TextArea
                     className={styles.textareaField}
                     placeholder="Enter the FAQ answer"
                     disabled={contentLocked}
@@ -245,8 +250,7 @@ export default function FaqDetailModal({
               <tr>
                 <th className={styles.headerCell}>Question (EN)</th>
                 <td className={styles.dataCell} colSpan={3}>
-                  <input
-                    type="text"
+                  <TextInput
                     className={styles.inputField}
                     placeholder="Enter the English FAQ question (optional)"
                     disabled={contentLocked}
@@ -259,7 +263,7 @@ export default function FaqDetailModal({
               <tr>
                 <th className={styles.headerCell}>Answer (EN)</th>
                 <td className={styles.dataCell} colSpan={3}>
-                  <textarea
+                  <TextArea
                     className={styles.textareaField}
                     placeholder="Enter the English FAQ answer (optional)"
                     disabled={contentLocked}
@@ -271,9 +275,9 @@ export default function FaqDetailModal({
               </tr>
             </tbody>
           </table>
-        </Spin>
+        </LoadingSpinner>
       </div>
-    </Modal>
+    </Popup>
   );
 }
 

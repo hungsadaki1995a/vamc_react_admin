@@ -2,26 +2,27 @@
   width: 100%;
   min-height: 0;
 
-  /* ── outer wrapper: rounded + shadow ── */
+  /* ── outer wrapper: rounded + border matching Figma Table (4133:6096) ── */
   :global(.ag-root-wrapper) {
-    border: 1px solid var(--border-color, #e0e0e0);
-    border-radius: 6px;
+    border: 1px solid var(--color-navy-200, #d1d1e0);
+    border-radius: 4px;
     overflow: hidden;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-    /* ── dark mode correction ── */
-    --ag-border-color: var(--border-color, #e0e0e0);
+    background: #ffffff;
+    --ag-border-color: var(--color-navy-100, #eaeaf1);
   }
 
   /* ── header ── */
   :global(.ag-header) {
-    border-bottom: 2px solid var(--border-color, #e0e0e0);
+    border-bottom: 1px solid var(--color-navy-200, #d1d1e0);
+    background: var(--color-navy-50, #f6f6f9);
   }
 
   :global(.ag-header-cell-text) {
-    font-weight: 600;
-    letter-spacing: 0.01em;
-    color: var(--text-secondary, #595959);
-    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    color: var(--color-gray-700, #6f7b95);
+    font-size: 13px;
+    line-height: 18px;
   }
 
   /* ── rows ── */
@@ -31,8 +32,8 @@
 
   /* ── pagination panel ── */
   :global(.ag-paging-panel) {
-    border-top: 1px solid var(--border-color, #e0e0e0);
-    background: var(--content-header-bg, #fafafa);
+    border-top: 1px solid var(--color-navy-200, #d1d1e0);
+    background: var(--color-navy-50, #f6f6f9);
     font-size: 12px;
     min-height: 40px;
   }
@@ -45,11 +46,11 @@
   /* Hide focus outline but preserve right border (column separator) */
   :global(.ag-cell-focus:not(.ag-cell-range-selected)) {
     border-color: transparent !important;
-    border-right-color: var(--ag-cell-horizontal-border, var(--border-color, #e0e0e0)) !important;
+    border-right-color: var(--ag-cell-horizontal-border, var(--color-navy-100, #eaeaf1)) !important;
   }
 
   &.editable :global(.ag-cell-focus:not(.ag-cell-range-selected)) {
-    border-color: #1677ff !important;
+    border-color: var(--color-blue-500, #1876ff) !important;
   }
 
   /* ── cell editor: antd Select fills cell exactly ── */

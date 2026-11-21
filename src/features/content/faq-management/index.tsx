@@ -1,12 +1,15 @@
 import { useState } from 'react';
-import { DatePicker, Checkbox, Table, Select } from 'antd';
 import type { TableColumnsType } from 'antd';
 import {
-  SearchOutlined,
   UpOutlined,
   DownOutlined,
 } from '@ant-design/icons';
 import dayjs from 'dayjs';
+import ActionButton from '@/components/common/actions/ActionButton';
+import DataTable from '@/components/common/table/DataTable';
+import AppCheckbox from '@/components/inputs/AppCheckbox';
+import { AppRangePicker } from '@/components/inputs/AppDatePicker';
+import AppSelect from '@/components/inputs/AppSelect';
 import { ApiError } from '@/lib/api/error';
 import { useNotify } from '@/hooks/use-notify';
 import { DateTimeCell, SysPagination } from '@/features/system/_shared/SystemUi';
@@ -15,8 +18,6 @@ import { useDeleteFaqs, useFaqs } from './use-faqs';
 import FaqDetailModal from './FaqDetailModal';
 import { useFaqCategories } from './use-faq-categories';
 import styles from './faq-management.module.scss';
-
-const { RangePicker } = DatePicker;
 
 // "All" sends no category; the options come from COM_CD FAQ_CTGRY_CD.
 const CATEGORY_ALL = 'ALL';
@@ -267,20 +268,19 @@ export default function FaqManagement() {
       <div className={styles.titleRow}>
         <h1 className={styles.pageTitle}>FAQ Management</h1>
         <div className={styles.headerActions}>
-          <button className={styles.btnReset} onClick={handleReset}>
+          <ActionButton action="reset" className={styles.btnReset} onClick={handleReset}>
             Reset
-          </button>
-          <button className={styles.btnView} onClick={handleView}>
-            <SearchOutlined className={styles.searchIcon} />
+          </ActionButton>
+          <ActionButton action="search" intent="secondary" appearance="filled" className={styles.btnView} onClick={handleView}>
             View
-          </button>
-          <button
+          </ActionButton>
+          <ActionButton
+            intent="icon"
             className={styles.btnCollapse}
+            icon={filterCollapsed ? <DownOutlined /> : <UpOutlined />}
             onClick={() => setFilterCollapsed(!filterCollapsed)}
             title={filterCollapsed ? 'Expand Filters' : 'Collapse Filters'}
-          >
-            {filterCollapsed ? <DownOutlined /> : <UpOutlined />}
-          </button>
+          />
         </div>
       </div>
 
@@ -290,23 +290,23 @@ export default function FaqManagement() {
           <div className={styles.filterGroup}>
             <span className={styles.filterLabel}>Status</span>
             <div className={styles.filterCheckboxes}>
-              <Checkbox checked={statusAll} onChange={handleStatusAllChange}>
+              <AppCheckbox checked={statusAll} onChange={handleStatusAllChange}>
                 All
-              </Checkbox>
-              <Checkbox checked={statusPost} onChange={handleStatusPostChange}>
+              </AppCheckbox>
+              <AppCheckbox checked={statusPost} onChange={handleStatusPostChange}>
                 Post
-              </Checkbox>
-              <Checkbox checked={statusStop} onChange={handleStatusStopChange}>
+              </AppCheckbox>
+              <AppCheckbox checked={statusStop} onChange={handleStatusStopChange}>
                 Stop Posting
-              </Checkbox>
+              </AppCheckbox>
             </div>
           </div>
 
           <div className={styles.filterGroup}>
             <span className={styles.filterLabel}>Category</span>
-            <Select
+            <AppSelect
               value={category}
-              onChange={(val) => setCategory(val)}
+              onChange={(val) => setCategory(String(val))}
               className={styles.categorySelect}
               options={categoryOptions}
             />
@@ -314,7 +314,7 @@ export default function FaqManagement() {
 
           <div className={styles.filterGroup}>
             <span className={styles.filterLabel}>Registration Period</span>
-            <RangePicker
+            <AppRangePicker
               format="DD/MM/YYYY"
               placeholder={['dd/mm/yyyy', 'dd/mm/yyyy']}
               value={dateRange}
@@ -334,7 +334,7 @@ export default function FaqManagement() {
 
       {/* ── Data Table ──────────────────────────────────────────────────────── */}
       <div className={styles.tableWrapper}>
-        <Table<FaqItem>
+        <DataTable<FaqItem>
           rowKey={(record) => record.pstNo || record.id}
           rowSelection={{
             selectedRowKeys,
@@ -343,8 +343,6 @@ export default function FaqManagement() {
           columns={columns}
           dataSource={faqItems}
           loading={isLoading || isFetching}
-          pagination={false}
-          size="middle"
           scroll={{ x: 'max-content', y: 480 }}
         />
       </div>
@@ -356,12 +354,12 @@ export default function FaqManagement() {
 
       {/* ── Bottom actions: Delete | Add New ────────────────────────────────── */}
       <div className={styles.bottomActions}>
-        <button type="button" className={styles.btnSecondary} onClick={handleDelete}>
+        <ActionButton action="deleteRow" className={styles.btnSecondary} onClick={handleDelete}>
           Delete
-        </button>
-        <button type="button" className={styles.btnPrimary} onClick={handleOpenCreate}>
+        </ActionButton>
+        <ActionButton intent="primary" appearance="filled" className={styles.btnPrimary} onClick={handleOpenCreate}>
           Add New
-        </button>
+        </ActionButton>
       </div>
 
       {/* ── Detail / Create Modal ───────────────────────────────────────────── */}

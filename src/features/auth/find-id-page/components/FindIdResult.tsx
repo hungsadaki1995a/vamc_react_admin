@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { Button, Input } from 'antd';
+import ActionButton from '@/components/common/actions/ActionButton';
+import TextInput from '@/components/inputs/TextInput';
 import { PUBLIC_ROUTES } from '@/app/route-constants';
 import type { FindIdResultProps } from '@/types/auth';
 import styles from '../index.module.scss';
@@ -16,26 +17,28 @@ export default function FindIdResult({ loginId }: FindIdResultProps) {
         <label htmlFor="findId_result_loginId" className={styles.label}>
           {t('auth.login.loginIdLabel')}
         </label>
-        <Input id="findId_result_loginId" readOnly value={loginId} className={styles.readonlyInput} />
+        <TextInput id="findId_result_loginId" readOnly value={loginId} className={styles.readonlyInput} />
       </div>
 
       <div className={styles.buttonGroup}>
-        <Button
-          type="primary"
+        <ActionButton
+          intent="primary"
+          appearance="filled"
           block
           className={styles.primaryBtn}
           onClick={() => navigate(PUBLIC_ROUTES.LOGIN, { replace: true })}
         >
           {t('auth.findId.backToLogin')}
-        </Button>
-        <Button
-          type="default"
+        </ActionButton>
+        <ActionButton
+          intent="quaternary"
+          appearance="outlined"
           block
           className={styles.secondaryBtn}
           onClick={() => navigate(PUBLIC_ROUTES.FIND_PASSWORD)}
         >
           {t('auth.login.findPassword')}
-        </Button>
+        </ActionButton>
       </div>
     </div>
   );

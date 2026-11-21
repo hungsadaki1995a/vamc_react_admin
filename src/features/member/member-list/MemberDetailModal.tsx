@@ -1,7 +1,12 @@
 import { useState } from 'react';
-import { Modal, Input, Table, Spin } from 'antd';
 import { PaperClipOutlined, SearchOutlined } from '@ant-design/icons';
 import { useQuery } from '@tanstack/react-query';
+import ActionButton from '@/components/common/actions/ActionButton';
+import LoadingSpinner from '@/components/common/loading/LoadingSpinner';
+import Popup from '@/components/common/popup/Popup';
+import DataTable from '@/components/common/table/DataTable';
+import TextArea from '@/components/inputs/TextArea';
+import TextInput from '@/components/inputs/TextInput';
 import dayjs from 'dayjs';
 import { useNotify } from '@/hooks/use-notify';
 import { lookupEmployees } from '@/api/system/employee-api';
@@ -362,27 +367,25 @@ export default function MemberDetailModal({
 
   return (
     <>
-      <Modal
+      <Popup
         open={visible}
         onCancel={onClose}
         width={1200}
-        title={null}
+        title="Member Details"
         footer={null}
-        destroyOnClose
-        styles={{ body: { borderRadius: 8 } }}
       >
         <div className={styles.modalContent}>
           {/* Header */}
           <div className={styles.modalHeaderRow}>
             <h1 className={styles.modalTitle}>Member Details</h1>
             {canRestore && (
-              <button type="button" className={styles.btnRestore} onClick={handleOpenRestore}>
+              <ActionButton size="small" intent="secondary" appearance="filled" className={styles.btnRestore} onClick={handleOpenRestore}>
                 Restore
-              </button>
+              </ActionButton>
             )}
           </div>
 
-          <Spin spinning={isLoading}>
+          <LoadingSpinner spinning={isLoading}>
             <div className={styles.modalBodyScroll}>
               {/* ── 1. Basic Information ────────────────────────────────────── */}
               <div className={styles.section}>
@@ -839,47 +842,48 @@ export default function MemberDetailModal({
                 </>
               )}
             </div>
-          </Spin>
+          </LoadingSpinner>
 
           {/* Fixed Bottom Footer */}
           <div className={styles.footerActions}>
             {!isDeleted && (
-              <button type="button" className={styles.btnDelete} onClick={handleOpenDelete}>
+              <ActionButton action="deleteRow" className={styles.btnDelete} onClick={handleOpenDelete}>
                 Delete
-              </button>
+              </ActionButton>
             )}
             <div className={styles.footerRight}>
-              <button type="button" className={styles.btnCancel} onClick={onClose}>
+              <ActionButton action="cancel" className={styles.btnCancel} onClick={onClose}>
                 Cancel
-              </button>
+              </ActionButton>
               {!isDeleted && (
-                <button
-                  type="button"
+                <ActionButton
+                  intent="primary"
+                  appearance="filled"
                   className={styles.btnEdit}
                   onClick={() => onEdit?.(member)}
                 >
                   Edit
-                </button>
+                </ActionButton>
               )}
             </div>
           </div>
         </div>
-      </Modal>
+      </Popup>
 
       {/* Deletion Request Popup (C04) */}
-      <Modal
+      <Popup
         open={deleteModalOpen}
         title="Request Deletion"
         onCancel={() => setDeleteModalOpen(false)}
-        onOk={handleSubmitDelete}
-        okText="Request Deletion"
+        onConfirm={handleSubmitDelete}
+        confirmText="Request Deletion"
         confirmLoading={isDeleting}
-        destroyOnClose
+        footerAlign="right"
       >
         <div className="flex flex-col gap-3">
           <div>
             <div className="mb-1 font-medium">Deletion Reason *</div>
-            <Input.TextArea
+            <TextArea
               rows={3}
               maxLength={500}
               showCount
@@ -890,7 +894,7 @@ export default function MemberDetailModal({
           </div>
           <div>
             <div className="mb-1 font-medium">Approver *</div>
-            <Input
+            <TextInput
               readOnly
               placeholder="Select approver"
               value={selectedApprover ? `${selectedApprover.empNm} (${selectedApprover.empNo})` : ''}
@@ -904,21 +908,21 @@ export default function MemberDetailModal({
             />
           </div>
         </div>
-      </Modal>
+      </Popup>
 
       {/* Restoration Request Popup (C05) */}
-      <Modal
+      <Popup
         open={restoreModalOpen}
         title="Request Restoration"
         onCancel={() => setRestoreModalOpen(false)}
-        onOk={handleSubmitRestore}
-        okText="Request Restoration"
+        onConfirm={handleSubmitRestore}
+        confirmText="Request Restoration"
         confirmLoading={isRestoring}
-        destroyOnClose
+        footerAlign="right"
       >
         <div>
           <div className="mb-1 font-medium">Approver *</div>
-          <Input
+          <TextInput
             readOnly
             placeholder="Select approver"
             value={selectedApprover ? `${selectedApprover.empNm} (${selectedApprover.empNo})` : ''}
@@ -931,37 +935,35 @@ export default function MemberDetailModal({
             onClick={() => setStaffPickerOpen(true)}
           />
         </div>
-      </Modal>
+      </Popup>
 
       {/* Staff Search Modal (VPA020500P01) */}
-      <Modal
+      <Popup
         open={staffPickerOpen}
         title="Staff Search"
         onCancel={() => setStaffPickerOpen(false)}
         footer={null}
         width={600}
-        destroyOnClose
       >
         <div className="flex gap-2 mb-3">
-          <Input
+          <TextInput
             placeholder="Search by staff name"
             value={staffKeyword}
             onChange={(e) => setStaffKeyword(e.target.value)}
             onPressEnter={() => setAppliedStaffKeyword(staffKeyword.trim())}
           />
-          <button
-            type="button"
-            className={`${styles.inlineActionBtn} h-8! px-3!`}
+          <ActionButton
+            action="search"
+            intent="primary"
+            appearance="filled"
             onClick={() => setAppliedStaffKeyword(staffKeyword.trim())}
           >
             Search
-          </button>
+          </ActionButton>
         </div>
-        <Table<EmployeeLookup>
+        <DataTable<EmployeeLookup>
           rowKey="empNo"
-          size="small"
           loading={isStaffLoading}
-          pagination={false}
           dataSource={staffData?.data?.content ?? []}
           onRow={(record) => ({
             onClick: () => {
@@ -976,7 +978,7 @@ export default function MemberDetailModal({
             { title: 'Department', dataIndex: 'deptNm' },
           ]}
         />
-      </Modal>
+      </Popup>
     </>
   );
 }

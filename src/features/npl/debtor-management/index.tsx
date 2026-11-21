@@ -1,7 +1,13 @@
 import { useState } from 'react';
-import { DatePicker, Descriptions, Input, Modal, Radio, Table } from 'antd';
+import { Descriptions } from 'antd';
 import type { TableColumnsType } from 'antd';
 import type { Dayjs } from 'dayjs';
+import ActionButton from '@/components/common/actions/ActionButton';
+import Popup from '@/components/common/popup/Popup';
+import DataTable from '@/components/common/table/DataTable';
+import { AppRangePicker } from '@/components/inputs/AppDatePicker';
+import AppRadio from '@/components/inputs/AppRadio';
+import TextInput from '@/components/inputs/TextInput';
 import { useNotify } from '@/hooks/use-notify';
 import { useMenuPermission } from '@/hooks/use-menu-permission';
 import type { DebtorItem, DebtorSearch } from '@/api/npl/npl-api';
@@ -108,51 +114,51 @@ export default function DebtorManagement() {
         <div className={styles.filterCard}>
           <div className={styles.filterGroup}>
             <span className={styles.filterLabel}>Registration Period</span>
-            <DatePicker.RangePicker format="DD/MM/YYYY" value={period} onChange={(d) => setPeriod(d as DateRange)} className={styles.w240} />
+            <AppRangePicker format="DD/MM/YYYY" value={period} onChange={(d) => setPeriod(d as DateRange)} className={styles.w240} />
           </div>
           <div className={styles.filterGroup}>
             <span className={styles.filterLabel}>Type</span>
-            <Radio.Group value={dbtrTypeCd} onChange={(e) => { setDbtrTypeCd(e.target.value); if (e.target.value === 'P') setEntSalsSttsYn(''); }}>
-              <Radio value="">All</Radio>
-              <Radio value="P">Individual</Radio>
-              <Radio value="O">Organization</Radio>
-            </Radio.Group>
+            <AppRadio.Group value={dbtrTypeCd} onChange={(e) => { setDbtrTypeCd(e.target.value); if (e.target.value === 'P') setEntSalsSttsYn(''); }}>
+              <AppRadio value="">All</AppRadio>
+              <AppRadio value="P">Individual</AppRadio>
+              <AppRadio value="O">Organization</AppRadio>
+            </AppRadio.Group>
           </div>
           <div className={styles.filterGroup}>
             <span className={styles.filterLabel}>Business Status</span>
-            <Radio.Group value={entSalsSttsYn} disabled={dbtrTypeCd === 'P'} onChange={(e) => setEntSalsSttsYn(e.target.value)}>
-              <Radio value="">All</Radio>
-              <Radio value="Y">Active</Radio>
-              <Radio value="N">Inactive</Radio>
-            </Radio.Group>
+            <AppRadio.Group value={entSalsSttsYn} disabled={dbtrTypeCd === 'P'} onChange={(e) => setEntSalsSttsYn(e.target.value)}>
+              <AppRadio value="">All</AppRadio>
+              <AppRadio value="Y">Active</AppRadio>
+              <AppRadio value="N">Inactive</AppRadio>
+            </AppRadio.Group>
           </div>
           <div className={styles.filterGroup}>
             <span className={styles.filterLabel}>Debtor Code</span>
-            <Input className={styles.filterInput} placeholder="Debtor Code" value={dbtrCd} onChange={(e) => setDbtrCd(e.target.value)} onPressEnter={handleSearch} allowClear />
+            <TextInput className={styles.filterInput} placeholder="Debtor Code" value={dbtrCd} onChange={(e) => setDbtrCd(e.target.value)} onPressEnter={handleSearch} allowClear />
           </div>
           <div className={styles.filterGroup}>
             <span className={styles.filterLabel}>Debtor Name</span>
-            <Input className={styles.filterInput} placeholder="Debtor Name" value={dbtrNm} onChange={(e) => setDbtrNm(e.target.value)} onPressEnter={handleSearch} allowClear />
+            <TextInput className={styles.filterInput} placeholder="Debtor Name" value={dbtrNm} onChange={(e) => setDbtrNm(e.target.value)} onPressEnter={handleSearch} allowClear />
           </div>
           <div className={styles.filterGroup}>
             <span className={styles.filterLabel}>CIC Code</span>
-            <Input className={styles.filterInput} placeholder="CIC Code" value={cicCd} onChange={(e) => setCicCd(e.target.value)} onPressEnter={handleSearch} allowClear />
+            <TextInput className={styles.filterInput} placeholder="CIC Code" value={cicCd} onChange={(e) => setCicCd(e.target.value)} onPressEnter={handleSearch} allowClear />
           </div>
         </div>
       )}
       <div className={styles.summaryRow}>
         <span className={styles.totalCount}>Total ({total})</span>
-        <button type="button" className={`${styles.btn} ${styles.btnSmall}`} onClick={() => downloadExcel.mutate(applied)}>Excel Download</button>
+        <ActionButton action="excelDownload" size="small" onClick={() => downloadExcel.mutate(applied)}>Excel Download</ActionButton>
       </div>
       <div className={styles.tableWrapper}>
-        <Table<DebtorItem> rowKey="dbtrCd" columns={columns} dataSource={rows} loading={isFetching} pagination={false} size="small" scroll={{ x: 'max-content' }} rowSelection={{ selectedRowKeys: selectedKeys, onChange: (k) => setSelectedKeys(k.map(String)) }} />
+        <DataTable<DebtorItem> rowKey="dbtrCd" columns={columns} dataSource={rows} loading={isFetching} scroll={{ x: 'max-content' }} rowSelection={{ selectedRowKeys: selectedKeys, onChange: (k) => setSelectedKeys(k.map(String)) }} />
       </div>
       <SysPagination page={page} pageSize={PAGE_SIZE} total={total} onChange={setPage} />
       <div className={styles.bottomActions}>
-        <button type="button" className={styles.btnDanger} disabled={!canWrite} onClick={handleDelete}>Delete</button>
+        <ActionButton action="deleteRow" disabled={!canWrite} onClick={handleDelete}>Delete</ActionButton>
       </div>
 
-      <Modal open={!!detailId} width={720} centered title={`Debtor: ${detailId ?? ''}`} onCancel={() => setDetailId(null)} footer={<button type="button" className={styles.btn} onClick={() => setDetailId(null)}>Close</button>}>
+      <Popup open={!!detailId} width={720} title={`Debtor: ${detailId ?? ''}`} onCancel={() => setDetailId(null)} footer={<ActionButton action="close" onClick={() => setDetailId(null)}>Close</ActionButton>}>
         {detail && (
           <Descriptions bordered size="small" column={2}>
             <Descriptions.Item label="Debtor Code">{String(detail.dbtrCd ?? detailId ?? '-')}</Descriptions.Item>
@@ -161,7 +167,7 @@ export default function DebtorManagement() {
             <Descriptions.Item label="Institution">{String(detail.fnstNm ?? '-')}</Descriptions.Item>
           </Descriptions>
         )}
-      </Modal>
+      </Popup>
     </div>
   );
 }
