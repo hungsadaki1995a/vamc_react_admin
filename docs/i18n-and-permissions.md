@@ -1,218 +1,119 @@
-# VAMC NPL ADMIN — 다국어(i18n) & 권한(Permission)
+# VAMC NPL Admin — Labels / i18n, Permissions, Common Codes
 
-## 다국어 (i18n)
+## 1. Locale
 
-### 아키텍처
+```ts
+import { useLocaleStore } from '@/stores/locale-store';
 
-```
-서버 GET /api/lbl/bulk
-  ← X-Project-Id 헤더 (projectStore.activeProject.id)
-  ← X-Lang 헤더 (localeStore.locale)
-  → Record<string, string>  (labelKey → 번역텍스트)
-  → labelStore.labels 저장
+const locale = useLocaleStore((s) => s.locale);   // 'en' | 'vn' (default 'en')
+useLocaleStore.getState().setLocale('vn');
 ```
 
-라벨은 **앱 마운트** 시와 **프로젝트/언어 변경** 시 `App.tsx`에서 자동 재로드됩니다.
+- Persisted in localStorage **and** cookie `vamc-locale` (`utils/locale-storage.ts`).
+- Every request sends `X-Lang: en|vn` and `Accept-Language` (ISO tag).
+- On change, `useAppSync()` (in `App.tsx`) switches dayjs / `<html lang>` / i18next / antd locale and reloads common codes, menus and labels.
+- The language selector is `components/common/LanguageSelector.tsx`.
+
+There are two text sources:
+
+| Where | Source | API |
+|-------|--------|-----|
+| Admin shell + shared components | DB labels (`LANG_LBL`) via `label-store` | `useScreenLabel`, `useComponentLabel`, `useLabelStore(s => s.t)` |
+| Auth pages (`/login`, `/find-id`, `/find-password`) and a few shell texts (`AppLayout`, `IconRail`) | `src/lib/i18n/locales/{en,vn}.json` | `useTranslation()` from `react-i18next` |
+
+Business screens (`features/system`, `content`, `npl`, …) currently show the English text of the screen design. Keep repeated texts in constants (`features/system/_shared/sys-messages.ts`, `*-constants.ts`).
 
 ---
 
-### localeStore
+## 2. DB labels
 
-```typescript
-import { useLocaleStore } from '@/stores/localeStore';
-
-export type LocaleKey = 'ko' | 'en' | 'vn';
-
-const { locale, setLocale } = useLocaleStore();
-setLocale('en'); // 언어 변경 → App.tsx가 감지하여 라벨 재로드
+```
+GET /api/lbl/bulk   (X-Lang)  →  Record<labelKey, text>  →  label-store.labels
 ```
 
-localStorage 키: `vamc-locale`
+`label-store` caches the map in IndexedDB per locale for 5 minutes (stale-while-revalidate). After editing labels call `useLabelStore.getState().invalidateLabelCache()`.
 
-> 프론트 로케일(`ko`/`en`/`vn`)과 DB 언어코드(`KR`/`EN`/`VN`)는 표기가 다릅니다.
-> 서버 `LangCdResolver`가 `ko → KR`로 보정하고, 지원 목록 밖의 값은 기본 언어로 떨어뜨립니다.
+| Member | Description |
+|--------|-------------|
+| `t(key, defaultText?)` | text → `defaultText` → the key itself |
+| `tmc / tmi / tme(code)` | `MESSAGE.CONFIRM\|INFO\|ERROR.TEXT_<code>` |
+| `loadLabels(force?)` | load (called by `useAppSync`) |
+| `labelsVersion` | counter — use it as a memo dependency |
+
+**Always pass an English `defaultText`** — otherwise a missing label shows the raw key.
+
+### `useScreenLabel(sceId?)` — screen labels
+
+`sceId` comes from the current tab (`TabContext`: `tab.sceId` → `tab.componentKey`); pass it explicitly only outside a tab.
+
+| Function | Key |
+|----------|-----|
+| `tvt(field, fallback)` | `<sceId>.VIEW.TEXT_<field>` — field labels |
+| `tvb(field, fallback)` | `<sceId>.VIEW.BTN_<field>` — buttons |
+| `tvh(field, fallback)` | `<sceId>.VIEW.TITLE_<field>` — titles |
+| `tsg(field, fallback)` | `<sceId>.SCRIPT.GRID_<field>` — grid headers |
+| `tsm(field, fallback)` | `<sceId>.SCRIPT.MSG_<field>` — messages |
+
+### `useComponentLabel()` — shared component labels
+
+Same functions with `sceId = 'COMPONENT'` (`COMPONENT.VIEW.TEXT_filterTitle`, `COMPONENT.VIEW.BTN_search`, …). Used by `FilterPanel`, `GridToolbar`, `PageHeader`, `TabBar`, `TabContextMenu`, `GridTable`. Notification/dialog titles and OK/Cancel in `useNotify` also use `COMPONENT.VIEW.*`.
+
+Interpolate with `formatLabel` (`lib/i18n/format-label.ts`).
+
+### Label key convention
+
+`<SCRN_ID>.<VIEW|SCRIPT>.<TYPE>_<field>` — `LANG_LBL` is identified by `LBL_CD` + `SCRN_ID` + `LBL_SE_CD`. `LBL_CD` must be globally unique: `/api/lbl/bulk` returns a map, so a duplicate silently overwrites another.
 
 ---
 
-### labelStore
-
-```typescript
-import { useLabelStore } from '@/stores/labelStore';
-
-// 컴포넌트 내부
-const t = useLabelStore((s) => s.t);
-return <Button>{t('BTN_SAVE')}</Button>;
-// 키가 없으면 키 자체 반환 ('BTN_SAVE')
-// 빈 문자열 반환 없음
-```
-
-| 메서드 | 설명 |
-|--------|------|
-| `t(key, defaultText?)` | 키로 번역 텍스트 반환. 없으면 `defaultText` → 그것도 없으면 key 자체 |
-| `tmc/tmi/tme(code)` | 전역 메시지 — `MESSAGE.{CONFIRM\|INFO\|ERROR}.TEXT_{code}` |
-| `loadLabels()` | 서버에서 라벨 일괄 로드 (App.tsx에서 자동 호출) |
-| `labelsVersion` | 라벨 갱신 카운터 — `useMemo`/`useCallback` 의존성으로 쓴다 |
-
-> **`defaultText`를 반드시 넘길 것.** DB에 라벨이 없으면 키 문자열이 그대로 화면에 노출됩니다.
-> 화면 단위로는 `useScreenLabel()`의 `tvt`/`tvb`/`tvh`/`tsg`/`tsm`/`tsb`를 씁니다.
-
----
-
-### 라벨 API
+## 3. Menu permissions
 
 ```
-GET /api/lbl/bulk
-  헤더: X-Project-Id, X-Lang
-  인증: 불필요 (permitAll)
-  응답: { status: 200, data: { "BTN_SAVE": "저장", ... } }
+GET /api/common/menus/my  →  menu tree with menuAuthrt  →  menu-store.serverMenus
+useMenuPermission()       →  active tab key  →  serverMenus item  →  permType
 ```
 
-`fetchBulkLabels()` 함수는 `src/api/common/lblBulkApi.ts`에 위치합니다.
+```ts
+import { useMenuPermission } from '@/hooks/use-menu-permission';
 
----
-
-### 라벨 관리 API (다국어 라벨 관리 화면 `SYS050301SC` / 메뉴 `A06040300`)
-
-라벨을 **등록·수정하는** 경로입니다. 위 `/api/lbl/bulk`가 읽기 전용 서빙이라면 이쪽은 관리용입니다.
-
-| 메서드 | 경로 | 설명 | 권한 |
-|--------|------|------|------|
-| GET | `/api/lbl/rows?scrnId=&lblCd=&lblSeCd=` | 라벨-번역 행 목록. 세 조건 모두 선택, `lblCd`는 부분일치 | Bearer |
-| GET | `/api/lbl/languages` | 사용 언어 목록 (`LANG_MNG`) | Bearer |
-| POST | `/api/lbl/batch` | 라벨/번역 배치 upsert | 쓰기(A06040300) |
-| DELETE | `/api/lbl?lblCd=&scrnId=&lblSeCd=` | 라벨 + 그 번역 삭제 | 쓰기(A06040300) |
-| GET/POST | `/api/lbl/excel/{download,template,upload}` | 엑셀 일괄 편집 | 업로드만 쓰기 |
-
-**식별자는 단일 키가 아니라 `LANG_LBL`의 PK 3개(`LBL_CD` + `SCRN_ID` + `LBL_SE_CD`)입니다.**
-`LBL_CD`만으로는 행이 특정되지 않으므로, 삭제·저장 시 항상 3개를 함께 보냅니다.
-
-> ⚠️ `POST /api/lbl/batch`는 항목마다 라벨을 upsert한 뒤 번역을 upsert합니다.
-> 번역만 저장할 때도 **`lblExpln`을 함께 실어야** 합니다 — 비우면 라벨설명이 지워집니다.
-
----
-
-### 라벨 키 규약
-
-`{화면ID}.{섹션}.{구분}_{세부코드}` — `useScreenLabel`이 조립하는 형태와 같습니다.
-
-| 부분 | DB 컬럼 | 값 |
-|------|---------|-----|
-| 전체 키 | `LBL_CD` | `SYS030101SC.VIEW.TEXT_usrId` |
-| 화면ID | `SCRN_ID` | `SYS030101SC` (공통은 `COMMON`) |
-| 섹션 | (키의 2번째 마디) | `VIEW`(화면 템플릿) / `SCRIPT`(이벤트 핸들러) |
-| 구분 | `LBL_SE_CD` | `TEXT` / `BTN` / `TITLE` / `GRID` / `MSG` |
-
-기존 적재분은 다른 규약을 씁니다 — 메뉴 라벨은 `lbl.menu.*`(`SCRN_ID='AD_MN_00000'`, `LBL_SE_CD='MENU'`),
-공통코드 라벨은 `lbl.code.*`(`CM_CD_00000` / `CODE`). 관리 화면은 이 값들도 그대로 다룹니다.
-
-**`LBL_CD`는 전역 유일**이어야 합니다. PK상 `SCRN_ID`가 다르면 같은 `LBL_CD`가 물리적으로 가능하지만,
-`/api/lbl/bulk`는 맵으로 내려주므로 중복이면 뒤 항목이 버려지고 서버 로그에 WARN만 남습니다.
-
----
-
-## 권한 (Permission)
-
-### 아키텍처
-
+const { canRead, canWrite, permType } = useMenuPermission();
 ```
-서버 GET /api/mnu/auth-list
-  ← X-Project-Id 헤더
-  → MnuResponse[] (permType 포함)
-  → menuStore.serverMenus 저장
 
-useMenuPermission()
-  → activeTabKey (tabStore)
-  → findMenuByKey(serverMenus, activeTabKey)
-  → MenuItem.permType
-  → { canRead, canWrite }
+| `permType` (`MENU_ROLE_MPNG.MENU_AUTHRT`) | canRead | canWrite |
+|------------|---------|----------|
+| `'AL'` all | ✅ | ✅ |
+| `'WT'` write (includes read) | ✅ | ✅ |
+| `'RD'` read | ✅ | ❌ |
+| `''` none | ❌ | ❌ |
+
+Static menus from `config/menu-config.ts` are not server-controlled and fall back to `'AL'`. The backend enforces the same rule; the UI only hides/disables.
+
+Usage:
+
+```tsx
+const { canWrite } = useMenuPermission();
+
+{canWrite && <SysButton look="navy" onClick={openRegister}>New</SysButton>}
+<Popup confirmDisabled={!canWrite} … />
+<ActionButtonGroup preset="gridEdit" canWrite={canWrite} />   // disables write actions automatically
 ```
 
 ---
 
-### permType 값
+## 4. Common codes
 
-DB `MENU_ROLE_MPNG.MENU_AUTHRT` 도메인을 그대로 사용한다.
+Two ways, pick by need:
 
-| permType | canRead | canWrite | 설명 |
-|----------|---------|----------|------|
-| `'AL'` | ✅ | ✅ | 전체 (읽기 + 수정) |
-| `'WT'` | ✅ | ✅ | 쓰기 — 쓰기는 읽기를 포함 |
-| `'RD'` | ✅ | ❌ | 읽기만 |
-| `''` | ❌ | ❌ | 접근 불가 (매핑 없음) |
+| Need | Use |
+|------|-----|
+| Options of one `COM_CD` group in a screen | `useCommonCodes(groupCd)` (`hooks/use-common-codes.ts`) → `{ label, value }[]`, cached 5 min by React Query |
+| App-wide code lookup / code name | `common-code-store`: `getOptions(cdDmnId)`, `getCodeName(cdDmnId, cd)` (IndexedDB, 5 min TTL) |
+| Ready-made select | `<ComcdSelect cdDmnId="JBC_CD" />` (`components/inputs`), or `CommonCodeSelectCell` inside `GridTable` |
 
-정적 메뉴(dashboard/dev 도구)는 서버 권한 대상이 아니므로 `'AL'`로 폴백한다.
-백엔드는 `ROLE_ADMIN` 보유 시 매핑과 무관하게 통과시킨다(`PermissionGuard.isAdmin`).
+```tsx
+const categoryOptions = useCommonCodes('FEE_ARTCL_SE_CD');
+<AppSelect options={categoryOptions} value={value} onChange={setValue} />
 
----
-
-### useMenuPermission 훅
-
-```typescript
-import { useMenuPermission } from '@/hooks/useMenuPermission';
-
-function MyPage() {
-  const { canRead, canWrite, permType } = useMenuPermission();
-
-  if (!canRead) return <div>접근 권한이 없습니다.</div>;
-
-  return (
-    <>
-      <GridToolbar
-        totalCount={data.length}
-        actions={
-          canWrite && (
-            <>
-              <Button type="primary" onClick={handleAdd}>등록</Button>
-              <Button danger onClick={handleDelete}>삭제</Button>
-            </>
-          )
-        }
-      />
-    </>
-  );
-}
-```
-
----
-
-### 메뉴 API
-
-```
-GET /api/mnu/auth-list
-  헤더: Authorization (Bearer), X-Project-Id, X-Lang
-  인증: 필요
-  응답: { status: 200, data: MnuResponse[] }
-```
-
-`MnuResponse` 주요 필드:
-
-| 필드 | 타입 | 설명 |
-|------|------|------|
-| `mnuId` | string | 메뉴 ID (tabKey로 사용) |
-| `upMnuId` | string | 부모 메뉴 ID (`ROOT` = 최상위) |
-| `mnuNm` | string | 메뉴명 |
-| `labelNm` | string \| null | i18n 표시명 (없으면 mnuNm 사용) |
-| `sceId` | string \| null | 화면 ID → componentPath 매핑 |
-| `permType` | string \| null | `'M'` / `'S'` / `''` |
-| `mnuXrsYn` | string | 표시 여부 (`'N'`이면 숨김) |
-| `mnuRank` | number | 정렬 순서 |
-
----
-
-### 공통코드 (comcdStore)
-
-```typescript
-import { useComcdStore } from '@/stores/comcdStore';
-
-// 코드명 조회
 const getCodeName = useComcdStore((s) => s.getCodeName);
-const label = getCodeName('TASK_STATUS', 'DONE'); // '완료'
-
-// Select 컴포넌트 (자동 옵션 로드)
-<ComcdSelect cdDmnId="TASK_STATUS" value={status} onChange={setStatus} />
+getCodeName('TASK_STATUS', 'DONE');
 ```
-
-공통코드 API:
-- `GET /api/comcd/all` — 전체 코드 일괄 로드 (인증 불필요)
-- `GET /api/comcd/codes?projId=&cdDmnId=` — 특정 도메인 코드 조회
-- `GET /api/comcd/domains?projId=` — 코드 도메인 목록

@@ -1,199 +1,234 @@
-# VAMC NPL ADMIN — API 연동 가이드
+# VAMC NPL Admin — API Integration
 
-## API 클라이언트 설정
+Layering rule (see `.agents/rules/coding-convention.md`): **screen → data hook (`use-<x>.ts`) → API file (`src/api/<domain>/<resource>-api.ts`) → `apiClient`.** Components never call the API directly.
 
-`apiClient` 하나만 사용 (`src/lib/api/client.ts`):
+## 1. HTTP client (`src/lib/api/client.ts`)
+
+One axios instance, `apiClient`:
 
 ```
-baseURL: VITE_API_BASE_URL  (예: http://localhost:8080)
-timeout: 30,000ms
-withCredentials: true       (RefreshToken 쿠키 전송)
-Content-Type: application/json
+baseURL          VITE_API_BASE_URL (trailing slash removed; empty → relative /api via proxy)
+timeout          30 000 ms
+withCredentials  true   (refresh-token cookie)
+headers          Content-Type / Accept: application/json
 ```
 
-환경 변수 (`.env.local`):
-```
-VITE_API_BASE_URL=http://localhost:8080
-```
+### Request interceptor
+
+| Header | Value | When |
+|--------|-------|------|
+| `Authorization` | `Bearer <accessToken>` | logged in |
+| `X-Project-Id` | `project-store.activeProject.id` | a project is selected |
+| `X-Lang` | `en` / `vn` | always |
+| `Accept-Language` | ISO tag of the locale | always |
+| `X-Menu-Cd` | active tab key, if it is a 9-char menu code | for audit log `MENU_CD` |
+
+Also: removes `Content-Type` for `FormData`, increments `loading-store` (global spinner), and binds the request to the active tab so closing the tab aborts it (except auth/menu/label/code calls).
+
+### Response interceptor
+
+| Case | Behaviour |
+|------|-----------|
+| canceled (tab closed) | rejected silently |
+| no response (network) | toast `MESSAGE.ERROR.TEXT_NETWORK` → reject `ApiError` |
+| 401 on `/api/auth/login` | reject (no refresh) |
+| 401 elsewhere | silent refresh (see §6) |
+| 403 | toast `apiErr.userMessage` → reject |
+| ≥ 500 | toast `apiErr.userMessage` → reject |
+| other 4xx | reject `ApiError` (the screen handles it) |
+
+Pass `{ skipErrorToast: true }` in the axios config to suppress the interceptor toast.
+
+Toasts go through `apiNotify` (`lib/api/api-notify.ts`), wired to antd `message` by `ApiNotifyBridge` in `App.tsx`.
 
 ---
 
-## 요청 인터셉터
+## 2. Response format
 
-모든 요청에 자동 주입:
+The admin backend returns `{ status, message, data }` (no `success`; `data` omitted when null). The frontend type is:
 
-| 헤더 | 값 | 조건 |
-|------|----|----|
-| `Authorization` | `Bearer {accessToken}` | 로그인 상태 |
-| `X-Project-Id` | 활성 프로젝트 ID | 프로젝트 선택 상태 |
-| `X-Lang` | `ko` / `en` / `vi` | 항상 |
-
-FormData 전송 시 `Content-Type` 헤더 자동 제거.
-
----
-
-## 응답 포맷
-
-프론트 타입은 `src/lib/api/types.ts`의 `ApiResponse<T>` 하나뿐입니다.
-
-```typescript
+```ts
+// src/lib/api/types.ts
 interface ApiResponse<T = unknown> {
-  status?: number;   // 서버가 실제로 내려주는 필드 (200 = 성공)
-  success: boolean;  // 서버는 내려주지 않음 — API 함수가 status로부터 채운다
+  status?: number;
+  success: boolean;      // filled by api-utils: status === 200
   message: string;
   data: T | null | undefined;
 }
 ```
 
-`useApiQuery` / `useApiMutation`은 **`success === true`** 로 성공/실패를 판단합니다.
-반면 vamc-npl-backend가 실제로 내려주는 바디는 `{ status, message, data }` 뿐입니다.
-따라서 **API 함수에서 `status → success` 변환이 필수**입니다. 빠뜨리면 `success`가
-`undefined`(falsy)라 정상 응답도 실패로 처리됩니다.
+Paged lists return `PageResponse<T>` (`src/api/common/api-utils.ts`):
 
----
-
-## API 함수 작성
-
-```typescript
-// src/api/task.ts
-import { apiClient } from '@/lib/api/client';
-import type { ApiResponse } from '@/lib/api/types';
-
-// 서버 DTO 와 1:1 대응하는 타입은 이 파일에 코로케이트 (src/api/common/comCdApi.ts 참고)
-export interface Task { taskId: string; taskNm: string; }
-
-// baseURL 이 빈 값이므로 경로에 /api 접두를 반드시 포함한다 (Vite 프록시 → :8080)
-export async function getTask(id: string): Promise<ApiResponse<Task>> {
-  const { data } = await apiClient.get<ApiResponse<Task>>(`/api/task/${id}`);
-  return { success: data.status === 200, message: data.message, data: data.data };
-}
-
-export async function getTaskList(): Promise<ApiResponse<Task[]>> {
-  const { data } = await apiClient.get<ApiResponse<Task[]>>('/api/task/list');
-  return { success: data.status === 200, message: data.message, data: data.data ?? [] };
-}
-
-export async function saveTask(payload: Partial<Task>): Promise<ApiResponse<Task>> {
-  const { data } = await apiClient.post<ApiResponse<Task>>('/api/task', payload);
-  return { success: data.status === 200, message: data.message, data: data.data };
-}
+```ts
+interface PageResponse<T> { content: T[]; page: number /* 1-based */; size: number; totalElements: number; totalPages: number; }
+interface PageQuery { page: number; size: number; sortBy?: string; sortDirection?: 'ASC' | 'DESC'; }
 ```
 
-실제 구현은 `src/api/sys/lblMngApi.ts`(`getLabelRows`), `src/api/common/myMenuApi.ts`(`fetchAuthMenuList`) 참고.
-
-API 호출 코드는 예외 없이 `src/api/{도메인}/{업무}.ts` 에 둡니다 — 화면 폴더에 `api.ts` 를 만들지 않습니다.
-배치 규칙과 파일명 규칙은 루트 `CLAUDE.md` 의 **API 파일 배치** 절을 따릅니다.
-API 파일은 도메인 패키지 아래에 둔다 — `common/`(전역 부트스트랩) · `sys/`(시스템 운영 관리).
-
 ---
 
-## useApiQuery — 데이터 조회
+## 3. Writing an API file
 
-```typescript
-import { useApiQuery } from '@/hooks/useApiQuery';
-import { getTaskList } from '../api/myFeatureApi';
+Use the helpers in `@/api/common/api-utils` — they normalise every body into `ApiResponse<T>`:
 
-function MyList() {
-  const { data: tasks = [], isLoading, error } = useApiQuery(
-    ['tasks'],
-    getTaskList,
-  );
-  return <GridTable rowData={tasks} columnDefs={...} loading={isLoading} />;
-}
+| Helper | Use |
+|--------|-----|
+| `apiGet<T>(url, params?, fallback?)` | GET; params pass through `cleanParams` (drops `''`, `null`, `undefined`) |
+| `apiPost<T>(url, body?)` / `apiPut` / `apiPatch` / `apiDelete` | writes |
+| `apiDownload(url, fileName, params?)` | blob download (Excel, attachment) and save |
+| `cleanParams(obj)` | strip empty filters yourself when needed |
+| `EMPTY_PAGE` | empty `PageResponse` placeholder |
+
+```ts
+// src/api/system/fee-api.ts
+import { apiDelete, apiDownload, apiGet, apiPost, apiPut } from '@/api/common/api-utils';
+import type { PageQuery, PageResponse } from '@/api/common/api-utils';
+
+// Fee Management API — FeeController (`/api/v1/platform/fees`), screens VPA09010301 / VPA090103P01.
+
+export interface Fee { feeId: string; useYn: YesNo; name: string; /* … mirrors the DTO */ }
+export interface FeeSearch { useYn?: YesNo | ''; keyword?: string; /** dd/MM/yyyy */ fromDate?: string; }
+export interface FeeRequest { /* request body */ }
+
+/** Error codes the screen reacts to: FEE001 in use, FEE002 not found, … */
+export const FEE_ERRORS = { inUse: 'FEE001', notFound: 'FEE002' /* … */ } as const;
+
+const BASE = '/api/v1/platform/fees';
+
+export const getFees = (search: FeeSearch, query: PageQuery) =>
+  apiGet<PageResponse<Fee>>(BASE, { ...search, ...query });
+
+export const getFee = (feeId: string) => apiGet<Fee>(`${BASE}/${encodeURIComponent(feeId)}`);
+
+export const createFee = (request: FeeRequest) => apiPost<Fee>(BASE, request);
+
+export const updateFee = (feeId: string, request: FeeRequest) =>
+  apiPut<Fee>(`${BASE}/${encodeURIComponent(feeId)}`, request);
+
+export const deleteFees = (feeIds: string[]) => apiDelete<number>(BASE, { feeIds });
+
+export const downloadFeeExcel = (search: FeeSearch) => apiDownload(`${BASE}/excel`, 'fees.xlsx', search);
 ```
 
-- `success === false` 또는 `data === null` → `ApiError` throw
-- React Query의 `UseQueryOptions`를 세 번째 인수로 전달 가능
+Rules:
+
+- API functions are exported arrow constants that return the helper's promise; path IDs go through `encodeURIComponent`.
+- Server error codes the UI reacts to go in a `<RESOURCE>_ERRORS` constant next to the API.
+- Paths always start with `/api/...` (the base URL may be empty).
+- Types live in the same file and keep the backend field names. Document formats and code values with JSDoc.
+- First line: a comment naming controller / base path / screen IDs.
+- No React, no hooks, no toasts in API files.
+
+### Generated SDK
+
+`pnpm api:generate` writes `src/api/generated/` (`sdk.gen.ts`, `types.gen.ts`) from the backend OpenAPI. Never edit it. If you use it, call it from an `src/api/<domain>/*-api.ts` file (as `contents/faq-api.ts` does) and normalise to `ApiResponse<T>` there; features do not import `@/api/generated` directly. (`features/member/member-list` still does — legacy, do not copy.)
 
 ---
 
-## useApiMutation — 데이터 변경
+## 4. Data hooks
 
-```typescript
-import { useApiMutation } from '@/hooks/useApiMutation';
-import { saveTask } from '../api/myFeatureApi';
+Put them in the feature folder (`features/<domain>/<screen>/use-<x>.ts`) or the domain `_shared/`.
 
-function MyForm() {
-  const { mutate, isPending } = useApiMutation(saveTask, {
-    successMessage: '저장되었습니다.',
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['tasks'] }),
-    onError: (err) => console.error(err.message),
+```ts
+// features/system/fee-management/use-fees.ts
+const FEE_KEYS = {
+  all: ['system', 'fees'] as const,
+  list: (search: FeeSearch, query: PageQuery) => ['system', 'fees', 'list', search, query] as const,
+  detail: (feeId: string | null) => ['system', 'fees', 'detail', feeId] as const,
+};
+
+export function useFees(search: FeeSearch, query: PageQuery) {
+  return useApiQuery<PageResponse<Fee>>(FEE_KEYS.list(search, query), () => getFees(search, query), {
+    placeholderData: keepPreviousData,
   });
+}
 
-  const handleSave = () => mutate(formData);
+export function useFee(feeId: string | null) {
+  return useApiQuery<Fee>(FEE_KEYS.detail(feeId), () => getFee(feeId as string), { enabled: feeId !== null, gcTime: 0 });
+}
+
+export function useSaveFee() {
+  return useApiAction(
+    ({ feeId, request }: SaveFeeVariables) => (feeId === null ? createFee(request) : updateFee(feeId, request)),
+    { invalidate: [FEE_KEYS.all] },
+  );
+}
+
+export function useDownloadFeeExcel() {
+  return useApiDownload((search: FeeSearch) => downloadFeeExcel(search));
 }
 ```
 
-- `successMessage` 전달 시 성공 토스트 자동 표시 (`App.useApp().message`)
-- `success === false` → `ApiError` throw → `onError` 호출
+| Hook (`src/hooks/`) | Resolves | Use for |
+|---------------------|----------|---------|
+| `useApiQuery<T>(key, fn, options?)` | `T` (`data` unwrapped); throws `ApiError` when `success` is false or `data` is null | reads |
+| `useApiAction(fn, { invalidate })` | the whole `ApiResponse<T>` (so the server `message` is available); rejects `ApiError`; invalidates keys on success | writes |
+| `useApiTask(fn, { invalidate })` | whatever `fn` returns | uploads / calls without `ApiResponse` |
+| `useApiDownload(fn)` | `void`; shows an error toast itself | file downloads |
+| `useApiMutation(fn, { successMessage })` | `T` | legacy — prefer `useApiAction` |
+
+React Query defaults (`lib/api/query-client.ts`): `staleTime` 0 in dev / 5 min in prod, 1 retry except 401/403/404, no refetch on window focus.
 
 ---
 
-## 에러 처리
+## 5. Using it in a screen
 
-인터셉터가 HTTP 상태 코드별로 자동 처리:
+```tsx
+const list = usePagedList<FeeFilter>(INITIAL_FILTER);
+const { data, isFetching } = useFees(toSearch(list.applied), list.pageQuery);
 
-| 상태 | 동작 |
-|------|------|
-| 401 | Silent Refresh 시도 → 실패 시 로그아웃 + `/login` 리디렉션 |
-| 403 | '접근 권한이 없습니다.' 토스트 |
-| 500+ | '서버 오류가 발생했습니다.' 토스트 |
-| 네트워크 오류 | '네트워크 연결을 확인해 주세요.' 토스트 |
+const saveFee = useSaveFee();
+const { toast } = useNotify();
+const { applyApiError } = useFieldErrors<FieldKey>();
 
-토스트 알림은 `ApiNotifyBridge` 컴포넌트 (App.tsx에 마운트)를 통해 Ant Design `message` API로 표시.
-
----
-
-## Silent Refresh (자동 토큰 갱신)
-
-```
-요청 → 401 응답
-  → isRefreshing 중이면 큐에 추가
-  → POST /api/auth/refresh
-  → 새 AccessToken 메모리 저장
-  → 큐에 쌓인 실패 요청 재시도
-  → 재시도도 401이면 → logout() + /login
-```
-
-RefreshToken은 httpOnly 쿠키 `refresh_token`으로 관리 (JS에서 접근 불가).
-
----
-
-## 인증 API 엔드포인트
-
-| 메서드 | 경로 | 설명 | 인증 |
-|--------|------|------|------|
-| POST | `/api/auth/login` | 로그인 | 불필요 |
-| POST | `/api/auth/refresh` | 토큰 갱신 | 쿠키(자동) |
-| POST | `/api/auth/logout` | 로그아웃 | Bearer |
-| GET | `/api/mnu/auth-list` | 메뉴+권한 목록 | Bearer + X-Project-Id |
-| GET | `/api/lbl/bulk` | 다국어 라벨 | 불필요 |
-| GET | `/api/comcd/all` | 공통코드 전체 | 불필요 |
-
-### 로그인 응답
-
-```typescript
-interface LoginResponse {
-  accessToken: string;
-  refreshToken: string;
-  tokenType: string;    // 'Bearer'
-  expiresIn: number;    // 초 단위
+async function handleSave() {
+  try {
+    await saveFee.mutateAsync({ feeId, request });
+    toast.success(SYS_MESSAGES.registered);
+    onClose();
+  } catch (error) {
+    if (!applyApiError(error, { FEE001: ['name', SYS_MESSAGES.duplicate('item name')] })) {
+      toast.error(errorMessage(error));
+    }
+  }
 }
 ```
 
+### `ApiError` (`lib/api/error.ts`)
+
+| Member | Meaning |
+|--------|---------|
+| `code`, `errorCode`, `errorArgs` | server error code (e.g. `FEE004`) and label arguments |
+| `validation` | 400 field messages (`field → message`) |
+| `statusCode` | HTTP status |
+| `userMessage` | message to show (server message → label `MESSAGE.ERROR.TEXT_HTTP<status>` → English default) |
+| `isUnauthorized` / `isForbidden` / `isNotFound` / `isServerError` | status helpers |
+| `ApiError.from(e)` / `ApiError.fromAxiosError(e)` | normalise anything into `ApiError` |
+
 ---
 
-## authStore 상태
+## 6. Silent refresh
 
-| 필드 | 저장 위치 | 설명 |
-|------|---------|------|
-| `accessToken` | 메모리 (persist 없음) | Bearer 토큰 |
-| `refreshToken` | 메모리 | httpOnly 쿠키 보완용 |
-| `user` | localStorage | 사용자 정보 (UserInfo) |
-| `roles` | localStorage | 역할 목록 |
-
-```typescript
-import { useAuthStore } from '@/stores/authStore';
-
-const { user, isAuthenticated } = useAuthStore();
 ```
+request → 401
+  → already refreshing? queue it
+  → POST /api/auth/refresh (refresh token cookie)
+  → store the new access token (auth-store + utils/token-storage)
+  → replay the queue
+  → refresh fails or retried call is 401 again → clear tokens, logout, redirect /login
+```
+
+---
+
+## 7. Global endpoints (`src/api/common/`)
+
+| Method | Path | File | Notes |
+|--------|------|------|-------|
+| GET | `/api/auth/public-key` | `auth-api.ts` | RSA key for password encryption |
+| POST | `/api/auth/login` | `auth-api.ts` | returns access token |
+| POST | `/api/auth/refresh` | `auth-api.ts` / client | cookie |
+| POST | `/api/auth/logout` | `auth-api.ts` | |
+| GET | `/api/common/menus/my` | `my-menu-api.ts` | menu tree + `menuAuthrt` of the user |
+| GET | `/api/lbl/bulk` | `label-bulk-api.ts` | label map for `X-Lang` |
+| GET | `/api/lbl/languages` | `label-bulk-api.ts` | languages in use |
+| GET | `/api/common/codes/{groupCd}` | `common-code-api.ts` | codes of one group (`useCommonCodes`) |
+| GET | `/api/comcd/codes`, `/api/comcd/domains` | `code-domain-api.ts` | code domains (`common-code-store`) |

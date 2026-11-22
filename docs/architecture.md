@@ -1,180 +1,183 @@
-# VAMC NPL ADMIN — 시스템 아키텍처
+# VAMC NPL Admin — Architecture
 
-## 기술 스택
+Coding rules live in `.agents/rules/` (`coding-convention.md`, `naming-convention.md`, `styling-convention.md`). This document describes how the app is put together.
 
-| 영역 | 라이브러리 | 버전 |
-|------|-----------|------|
-| UI 프레임워크 | React | 19 |
-| 언어 | TypeScript | 5.9 |
-| 빌드 | Vite | 7 |
-| UI 컴포넌트 | Ant Design | 6.3 |
-| 상태 관리 | Zustand | 5 |
-| 서버 상태 | TanStack React Query | 5 |
-| HTTP | Axios | 1.13 |
-| 라우팅 | React Router | 7 |
-| 그리드 테이블 | AG Grid Community | 35 |
-| 간트 차트 | 자체 구현 (`components/gantt-sheet`) | — |
-| 리치 텍스트 | TipTap | 3.20 |
-| 스프레드시트 | Univer | 0.15 |
-| xlsx 읽기/쓰기 | SheetJS (`xlsx`) | 0.20.3 (CDN tarball URL 설치) |
-| 코드 에디터 | Monaco Editor | 4.7 |
-| 차트 | Chart.js | 4.5 |
+## Tech stack
 
----
+| Area | Library | Version (package.json) |
+|------|---------|------------------------|
+| UI | React | 19.2 |
+| Language | TypeScript (strict) | 5.9 |
+| Build | Vite + `@vitejs/plugin-react` | 7.3 |
+| UI kit | Ant Design | 6.3 |
+| Client state | Zustand | 5 |
+| Server state | TanStack React Query | 5 |
+| HTTP | Axios | 1.18 |
+| Routing | React Router | 7 |
+| Grid (editable / large) | AG Grid Community + `ag-grid-react` | 35 |
+| Styling | SCSS Modules + Tailwind CSS v4 (`@tailwindcss/vite`) | 4.3 |
+| i18n | DB labels (`label-store`) + `react-i18next` for auth pages | i18next 27 |
+| Dates | dayjs | 1.11 |
+| API client generation | `@hey-api/openapi-ts` → `src/api/generated` | 0.99 |
+| Package manager | pnpm (pinned by `packageManager`) | 11 |
 
-## 레이아웃 구조
-
-```
-┌──────┬──────────────────────────────────────────────┐
-│      │  ContentHeader                               │
-│ Icon │  (Breadcrumb + 프로젝트 선택 + 테마 토글)    │
-│ Rail ├──────────────────────────────────────────────┤
-│(56px)│  TabBar  (◀ 탭목록 ▶  ≡)                    │
-│      ├──────────────────────────────────────────────┤
-│      │  TabContent                                  │
-│      │  (열린 탭 전체 마운트, display:none 토글)     │
-└──────┴──────────────────────────────────────────────┘
-  + FlyoutPanel (280px, 아이콘 레일 위 오버레이)
-```
-
-### 핵심 원칙: Tab-driven SPA
-
-- **React Router** 는 `/app/:tabKey?` 경로 히스토리 동기화 전용
-- **tabStore** 가 실제 콘텐츠 제어
-- 열린 탭은 모두 동시 마운트 → `display: block/none` 토글로 상태 보존 (폼 입력, 스크롤 등 유지)
+`xlsx`, `@tiptap/*`, `chart.js`, `@monaco-editor/react` are still in `package.json` but are not imported anywhere in `src/` today.
 
 ---
 
-## 데이터 흐름
+## Layout
 
 ```
-IconRail 클릭
-  → menuStore.toggleFlyout()
-  → FlyoutPanel 표시
-
-FlyoutPanel 리프 메뉴 클릭
-  → tabStore.openTab(menuItem)
-  → menuStore.closeFlyout()
-  → router.navigate(`/app/${tabKey}`)
-
-브라우저 뒤로/앞으로
-  → popstate 감지
-  → tabStore.setActiveTab(tabKey from URL)
-  → IconRail activeKey 동기화 (useTabRouteSync)
+┌──────────────────────────────────────────────────────────┐
+│ Header  (logo, language selector, user, logout)          │
+├──────┬───────────────────────────────────────────────────┤
+│ Icon │ TabBar   (open tabs, context menu)                │
+│ Rail ├───────────────────────────────────────────────────┤
+│      │ TabContent                                         │
+│      │ (all open tabs stay mounted, hidden with display)  │
+└──────┴───────────────────────────────────────────────────┘
+  + FlyoutPanel (menu tree next to the rail) + sidebar toggle
 ```
+
+`src/app/AppLayout.tsx` renders `Header`, `IconRail`, `FlyoutPanel`, `TabBar`, `TabContent`.
+
+### Tab-driven SPA
+
+- `tab-store` owns the content: which tabs are open (max 20) and which one is active. Tabs are persisted (`vamc-tabs`).
+- Every open tab stays mounted; switching only toggles visibility, so form input and scroll position survive.
+- React Router keeps the URL in sync only. `src/app/route-constants.ts` maps fixed paths to menu codes (`ROUTE_MENU_CODES`); `useTabRouteSync()` syncs URL ↔ active tab and handles back/forward.
+- Closing a tab aborts that tab's in-flight requests (`lib/api/tab-request-registry.ts`).
 
 ---
 
-## 상태 관리 (Zustand Stores)
-
-| 스토어 | 역할 | persist |
-|--------|------|---------|
-| `authStore` | 인증 (accessToken 메모리, user 정보) | 부분 (user, roles) |
-| `tabStore` | 탭 목록, 활성 탭 | ✅ (localStorage) |
-| `menuStore` | 레일/플라이아웃 상태, 서버 메뉴 | ❌ |
-| `projectStore` | 활성 프로젝트, 내 프로젝트 목록 | ✅ |
-| `themeStore` | 라이트/다크 모드 | ✅ |
-| `localeStore` | 언어 설정 (ko/en/vi) | ✅ |
-| `labelStore` | i18n 라벨 캐시 | ❌ |
-| `comcdStore` | 공통코드 캐시 | ❌ |
-| `settingsStore` | 홈 메뉴 키 등 개인 설정 | ✅ |
-
----
-
-## 컴포넌트 레지스트리 자동 발견
-
-```tsx
-// src/config/componentRegistry.tsx
-import.meta.glob('../features/*/*/index.tsx')   // 업무 화면
-import.meta.glob('../dev/pages/*/index.tsx')    // 데모/가이드/샘플 (DEV_TOOLS_ENABLED 일 때만)
-```
-
-- `src/features/{도메인}/{화면ID}/index.tsx` 의 **폴더명**이 곧 `componentPath`
-  (= `MENU_MNG.MENU_URL_ADDR` = 탭의 `componentKey` = 라벨 키의 `sceId`)
-- 글롭이 2단계 고정이라 **팝업을 부모 화면의 자식 폴더**에 두면 레지스트리에 등록되지 않는다
-- 수동 등록 불필요. `overrides` 맵은 예외 수단 — 원칙은 DB 의 URL 을 폴더명에 맞추는 것이다
-
----
-
-## 인증 흐름
+## Boot and data flow
 
 ```
-POST /auth/login
-  → AccessToken (응답 body, Bearer)
-  → RefreshToken (httpOnly 쿠키 refresh_token)
+main.tsx → <QueryClientProvider> → App.tsx
+  App
+    useRestoreSession()      restore token / user from storage
+    useAppSync()             on locale change: dayjs + <html lang> + i18next,
+                             reload common codes, menus (if logged in), labels
+    <ConfigProvider theme={APP_THEME} locale={antLocale}>
+      <AntApp>
+        GlobalLoadingSpinner   driven by loading-store (request counter)
+        ApiNotifyBridge        wires axios interceptor toasts to antd message
+        AppRoutes              /login, /find-id, /find-password, private routes → AuthGuard → AppLayout
+```
 
-자동 갱신 (Silent Refresh)
-  → 401 응답 감지
-  → 큐에 실패 요청 저장
-  → POST /auth/refresh
-  → 새 AccessToken 메모리 저장
-  → 큐 재시도
+Menu click flow:
 
-로그아웃
-  → POST /auth/logout
-  → 메모리 토큰 삭제
-  → 탭 초기화 → 로그인 페이지
+```
+IconRail click        → menuStore.toggleFlyout(railKey)
+Flyout leaf click     → tabStore.openTab(menuItem) → URL updated by useTabRouteSync
+TabContent            → componentRegistry[tab.componentKey] (lazy) inside <TabContext>
 ```
 
 ---
 
-## 폴더 구조
+## Stores (Zustand, `src/stores/`)
+
+| Store | Role | Persisted (key) |
+|-------|------|-----------------|
+| `auth-store` | access token, `isAuthenticated`, user, roles | ✅ `vamc-auth` (token also in localStorage/cookie via `utils/token-storage.ts`) |
+| `tab-store` | open tabs, active tab | ✅ `vamc-tabs` |
+| `menu-store` | rail/flyout state, server menu tree, `serverMenus` | ✅ `vamc-menu-trees` (partial) |
+| `project-store` | active project (sent as `X-Project-Id`) | ✅ `vamc-project` |
+| `locale-store` | `'en' \| 'vn'` (default `en`) | ✅ `vamc-locale` (localStorage + cookie) |
+| `label-store` | DB label map + `t()` | IndexedDB cache, 5 min TTL |
+| `common-code-store` | all common codes + `getOptions` / `getCodeName` | IndexedDB cache, 5 min TTL |
+| `settings-store` | personal settings (home menu key) | ✅ `vamc-settings` |
+| `loading-store` | global request counter for the spinner | ❌ |
+
+Stores hold app-wide client state only. Business data from the server goes through React Query hooks, not stores.
+
+---
+
+## Screen registry
+
+`src/config/component-registry.tsx`:
+
+```ts
+import.meta.glob('../features/*/*/index.tsx')
+```
+
+- `src/features/<domain>/<screen>/index.tsx` is registered under the folder name and its variants (`fee-management`, `FeeManagement`, `FEE-MANAGEMENT`, `FEEMANAGEMENT`).
+- The tab's `componentKey` comes from the menu (`menuUrlAddr` / `resolveMenuComponent` in `config/menu-component-fallback.ts`).
+- The glob is fixed at depth 2, so modals and sub-components in the screen folder are never registered.
+- `overrides` maps server screen IDs (`SYS020103SC`, …) to folders when the DB menu URL cannot match the folder name.
+
+---
+
+## Authentication
+
+```
+GET  /api/auth/public-key   RSA public key; the password is encrypted client-side (lib/crypto.ts)
+POST /api/auth/login        → accessToken (body) + refresh token (httpOnly cookie)
+401 on any call             → queue requests → POST /api/auth/refresh → retry queue
+refresh fails               → clear tokens, auth-store.logout(), redirect to /login
+POST /api/auth/logout       → useLogout() also clears tabs and menus
+```
+
+Details: `docs/api-integration.md`.
+
+---
+
+## Folder structure
 
 ```
 src/
-├── components/          # 공유 컴포넌트
-│   ├── auth/            # AuthGuard
-│   ├── common/          # CodeSnippet, PlaceholderPage
-│   ├── editors/         # RichTextEditor, CodeEditor, SpreadSheet
-│   ├── gantt-sheet/     # GanttSheet — 간트(자체 구현, 외부 라이브러리 없음)
-│   ├── grid/            # GridTable, GridPanel, cellEditors/*
-│   ├── icons/           # CustomIcons
-│   ├── inputs/          # ComcdSelect, SearchSelectField
-│   ├── layout/          # ContentHeader, FilterPanel, GridToolbar, FormPanel, ...
-│   └── tabs/            # TabBar, TabContent, TabContextMenu
-├── config/
-│   ├── menuConfig.ts    # 메뉴 트리 (하드코딩 + 서버 동적 로드)
-│   └── componentRegistry.tsx
-├── api/                 # 서버 API 호출 — 도메인 패키지로 구분
-│   ├── common/          # code.ts, menu.ts, lbl.ts — 전역 부트스트랩
-│   └── sys/             # usr.ts, org.ts, sce.ts, proj.ts — 시스템 운영 관리
-├── features/            # 업무 화면 (도메인 / 화면ID)
-│   ├── admin/
-│   ├── auth/
-│   ├── cco/
-│   └── dashboard/
-├── dev/pages/           # 개발도구·가이드·데모 (운영 번들 제외)
-├── hooks/               # useApiQuery, useApiMutation, useMenuPermission, ...
-├── lib/api/             # Axios 클라이언트, 인터셉터, 타입
-├── mock/                # 로컬 목데이터
-├── stores/              # Zustand 스토어 9개
-├── styles/              # global.css, variables.css
-└── types/               # MenuItem, Tab, 공통 타입
+├── app/            App, AppLayout, AppRoutes, route-constants
+├── api/            HTTP layer — one file per resource
+│   ├── common/     api-utils (helpers), auth, menus, labels, common codes
+│   ├── system/     System Operation Management (fee, form, batch, label, menu, role, …)
+│   ├── contents/   Content Management (post, faq, inquiry, banner, site display)
+│   ├── npl/ trade/ auction/
+│   ├── generated/  OpenAPI SDK — generated, never edited
+│   └── swagger.ts  OpenAPI types (openapi-typescript)
+├── assets/images/  SVG/PNG icons by group
+├── components/     shared UI
+│   ├── auth/       AuthGuard, AuthHeader
+│   ├── common/     ActionButton, Popup, DataTable, Pagination, StatusBadge, … (barrel index.ts)
+│   ├── grid/       GridTable, GridPanel (AG Grid)
+│   ├── icons/      CustomIcons
+│   ├── inputs/     AppSelect, TextInput, AppDatePicker, … (barrel index.ts)
+│   ├── layout/     Header, IconRail, FlyoutPanel, FilterPanel, FormPanel, GridToolbar, PageHeader, SplitPanel
+│   └── tabs/       TabBar, TabContent, TabContextMenu
+├── config/         component-registry, menu-config, menu-component-fallback, theme-config
+├── contexts/       tab-context (current tab for useScreenLabel)
+├── features/       business screens: <domain>/<screen>/index.tsx (+ _shared/ per domain)
+│   ├── auth/ member/ npl/ trade/ auction/ content/ system/ dashboard/
+├── hooks/          use-api-query, use-api-action, use-notify, use-menu-permission, use-screen-label, …
+├── lib/
+│   ├── api/        axios client + interceptors, ApiError, queryClient, apiNotify, types
+│   ├── cache/      IndexedDB cache (labels, codes)
+│   └── i18n/       i18next setup + locales/{en,vn}.json
+├── stores/         Zustand stores
+├── styles/         global.scss, variables.scss, date-picker.scss, tailwind.css, colors.css, semantic-colors.css, typography.css
+├── types/          shared types (menu, tab, grid, inputs, component props)
+└── utils/          jwt, token/locale storage, menu utils
 ```
 
 ---
 
-## 빌드 / 실행
+## Build and run
 
 ```bash
-corepack enable        # pnpm 을 쓴다. package.json 의 packageManager 가 버전을 고정한다
+corepack enable          # pnpm version comes from package.json "packageManager"
 pnpm install
-pnpm dev          # Vite 개발 서버 (포트 3000, strictPort)
-pnpm build        # tsc -b && vite build → dist/
-pnpm lint         # ESLint
-npx tsc -b           # 타입 체크만 (⚠️ --noEmit 은 no-op — tsconfig.json 이 솔루션 파일이다)
+pnpm dev                 # Vite dev server on :3000 (strictPort — fails if 3000 is taken)
+pnpm build               # tsc -b && vite build → dist/
+pnpm lint                # ESLint (src/api/generated is ignored)
+npx tsc -b               # type check only (--noEmit is a no-op: tsconfig.json is a solution file)
+pnpm api:generate        # regenerate src/api/generated + src/api/swagger.ts from the backend OpenAPI
 ```
 
-**환경 변수** — `cp .env.example .env.local` 후 값을 확인한다.
+Environment — `cp .env.example .env.local`:
+
 ```
-VITE_API_BASE_URL=http://localhost:8080
-VITE_ENABLE_DEV_TOOLS=false
+VITE_API_BASE_URL=                       # empty → relative /api through the Vite proxy (nginx in production)
+VITE_API_PROXY_TARGET=http://localhost:7200   # proxy target when the base URL is empty (default 127.0.0.1:8080)
+VITE_SWAGGER_URL=http://localhost:8080/v3/api-docs
 ```
 
-> 포트는 `vite.config.ts`에 `strictPort: true`로 고정돼 있어, 3000이 사용 중이면
-> 다른 포트로 넘어가지 않고 **기동이 실패한다.**
->
-> `VITE_API_BASE_URL`을 **빈 값**으로 두면 상대경로 `/api`로 호출하고, Vite dev 프록시가
-> `http://127.0.0.1:8080`(사용자/관리자 백엔드)으로 전달한다. 배포에서는 nginx가 프록시한다.
->
-> ⚠️ 백엔드(`vamc-npl-admin-backend`)를 `local` 프로파일로 함께 띄워야 로그인이 된다.
+The admin backend (`vamc-npl-admin-backend`) must be running for login to work. Production serves `dist/` with nginx (`nginx.conf`, `Dockerfile`), which also proxies `/api/`.
