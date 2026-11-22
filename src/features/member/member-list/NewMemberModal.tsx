@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Form, Upload } from 'antd';
 import ActionButton from '@/components/common/actions/ActionButton';
 import LoadingSpinner from '@/components/common/loading/LoadingSpinner';
@@ -36,8 +36,11 @@ import {
   useUpdateMember,
   useActiveProvinces,
   useActiveDistricts,
-  useUploadMemberFile,
+  useUploadMemberDocument,
+  useRemoveMemberDocument,
+  useOpenAttachment,
 } from './use-members';
+import type { MemberDocumentSlot, MemberDocumentType } from './use-members';
 import styles from './member-detail-modal.module.scss';
 
 export interface MemberFormModalProps {
@@ -49,9 +52,45 @@ export interface MemberFormModalProps {
 }
 
 interface UploadedFileItem {
+  /** Group id of a stored attachment, or the file id of an upload of this session. */
   fileUnqId: string;
   fileNm: string;
   url?: string;
+  /** Set for a file uploaded in this session: the slot it was stored in. */
+  slot?: MemberDocumentSlot;
+}
+
+type DocumentSection = 'id' | 'corp' | 'agent' | 'poa';
+
+/** BIZ_LICENSE and POA take several files; the ID slots take one each. */
+const MAX_FILES_PER_MULTI_SLOT = 5;
+
+/**
+ * Slot of the next upload of a section, or null when the section is full.
+ * An ID document is either a passport (one file) or a card with a front and a back.
+ */
+function nextDocumentSlot(section: DocumentSection, files: UploadedFileItem[], passport: boolean): MemberDocumentSlot | null {
+  const used = files.map((f) => f.slot);
+  if (section === 'corp' || section === 'poa') {
+    const slot: MemberDocumentSlot = section === 'corp' ? 'BIZ_LICENSE' : 'POA';
+    return used.filter((u) => u === slot).length < MAX_FILES_PER_MULTI_SLOT ? slot : null;
+  }
+  const [front, back, pass]: MemberDocumentSlot[] =
+    section === 'id' ? ['ID_FRONT', 'ID_BACK', 'PASSPORT'] : ['AUTH_REP_ID_FRONT', 'AUTH_REP_ID_BACK', 'AUTH_REP_PASSPORT'];
+  if (passport) return pass;
+  if (!used.includes(front)) return front;
+  if (!used.includes(back)) return back;
+  return null;
+}
+
+/** Attachments of the request: only files uploaded in this session, a card side sent as FRONT / BACK. */
+function toDocumentAttachments(files: UploadedFileItem[]): { fileId: string; side?: string }[] {
+  return files
+    .filter((f) => f.slot)
+    .map((f) => ({
+      fileId: f.fileUnqId,
+      ...(f.slot?.endsWith('_FRONT') ? { side: 'FRONT' } : f.slot?.endsWith('_BACK') ? { side: 'BACK' } : {}),
+    }));
 }
 
 interface PaymentHistoryRow {
@@ -199,6 +238,7 @@ interface AttachmentFieldRowProps {
   uploading?: boolean;
   onUpload: (file: File) => void;
   onRemove: (idx: number) => void;
+  onOpen: (url: string) => void;
 }
 
 function AttachmentFieldRow({
@@ -209,6 +249,7 @@ function AttachmentFieldRow({
   uploading = false,
   onUpload,
   onRemove,
+  onOpen,
 }: AttachmentFieldRowProps) {
   return (
     <tr>
@@ -242,7 +283,7 @@ function AttachmentFieldRow({
                   className={styles.attachmentItem}
                   onClick={(e) => {
                     e.preventDefault();
-                    if (f.url) window.open(f.url, '_blank', 'noopener,noreferrer');
+                    if (f.url) onOpen(f.url);
                   }}
                 >
                   <PaperClipOutlined />
@@ -449,7 +490,11 @@ function MemberFormModalContent({
 
   const { mutateAsync: createMemberMutate, isPending: isCreating } = useCreateMember();
   const { mutateAsync: updateMemberMutate, isPending: isUpdating } = useUpdateMember();
-  const { mutateAsync: uploadFileMutate, isPending: isUploading } = useUploadMemberFile();
+  const { mutateAsync: uploadDocumentMutate, isPending: isUploading } = useUploadMemberDocument();
+  const { mutate: removeDocumentMutate } = useRemoveMemberDocument();
+  const { mutate: openAttachmentMutate } = useOpenAttachment();
+  // Upload session of this popup (one per member type); its id goes with create / update
+  const documentSession = useRef<{ id: string; type: MemberDocumentType } | null>(null);
 
   // Form watches
   const memberType = (Form.useWatch('memberType', form) as MemberType | undefined) || 'General';
@@ -501,27 +546,70 @@ function MemberFormModalContent({
     }
   }, [sameAsResidence, resAddrWatch, form]);
 
-  const validateAndUpload = async (
-    file: File,
-    setter: React.Dispatch<React.SetStateAction<UploadedFileItem[]>>,
-    isOcrTrigger = false,
-  ) => {
+  const sectionFiles: Record<DocumentSection, [UploadedFileItem[], React.Dispatch<React.SetStateAction<UploadedFileItem[]>>]> = {
+    id: [idFiles, setIdFiles],
+    corp: [corpFiles, setCorpFiles],
+    agent: [agentFiles, setAgentFiles],
+    poa: [poaFiles, setPoaFiles],
+  };
+
+  const currentTypeCd = (): MemberDocumentType => (isOrganization ? 'O' : isForeigner ? 'F' : 'P');
+
+  /** Drops the upload session (member type changed, popup closed without saving). */
+  const cancelDocumentSession = () => {
+    const session = documentSession.current;
+    documentSession.current = null;
+    if (session) removeDocumentMutate({ sessionId: session.id });
+  };
+
+  /** Closing without saving leaves no upload session behind. */
+  const handleClose = () => {
+    cancelDocumentSession();
+    onClose();
+  };
+
+  const handleOpenAttachment = (url: string) => {
+    openAttachmentMutate(url, { onError: () => toast.error('Failed to open the file.') });
+  };
+
+  const handleRemoveFile = (section: DocumentSection, idx: number) => {
+    const [files, setter] = sectionFiles[section];
+    const target = files[idx];
+    const session = documentSession.current;
+    if (target?.slot && session) removeDocumentMutate({ sessionId: session.id, fileId: target.fileUnqId });
+    setter((prev) => prev.filter((_, i) => i !== idx));
+  };
+
+  const validateAndUpload = async (file: File, section: DocumentSection, isOcrTrigger = false) => {
     const ext = file.name.split('.').pop()?.toLowerCase() || '';
     if (!ALLOWED_EXTENSIONS.includes(ext) || file.size > MAX_FILE_BYTES) {
       toast.error('E04: Only JPG, PNG, or PDF files up to 10MB are allowed.');
       return;
     }
 
+    const [files, setter] = sectionFiles[section];
+    const passport = section === 'id' ? isForeigner || idCardType === 'PSPT' : agentIdType === 'PSPT';
+    // Stored files of an edited member are replaced by the first new upload, so only new files count
+    const slot = nextDocumentSlot(section, files.filter((f) => f.slot), passport);
+    if (!slot) {
+      toast.error('E04: This section already has all its files. Remove one before uploading another.');
+      return;
+    }
+
     const doUpload = async () => {
       try {
-        const uploaded = await uploadFileMutate(file);
+        const typeCd = currentTypeCd();
+        if (documentSession.current && documentSession.current.type !== typeCd) cancelDocumentSession();
+        const { regSessionId, uploaded } = await uploadDocumentMutate({
+          sessionId: documentSession.current?.id,
+          mbrTypeCd: typeCd,
+          slot,
+          file,
+        });
+        documentSession.current = { id: regSessionId, type: typeCd };
         setter((prev) => [
-          ...prev,
-          {
-            fileUnqId: uploaded?.fileName || `${Date.now()}`,
-            fileNm: uploaded?.fileName || file.name,
-            url: uploaded?.fileDownloadUri,
-          },
+          ...prev.filter((f) => f.slot && f.fileUnqId !== uploaded.replacedFileId),
+          { fileUnqId: uploaded.fileId, fileNm: file.name, slot },
         ]);
         if (isOcrTrigger) {
           toast.info('E05: AI OCR auto-fill is unavailable. Please enter or verify fields manually.');
@@ -531,10 +619,10 @@ function MemberFormModalContent({
       }
     };
 
-    if (isEdit && isOcrTrigger) {
+    if (isEdit && files.some((f) => !f.slot)) {
       dialog.confirm({
         title: 'Attach Document (C02)',
-        content: 'Attaching a new document in edit mode will add it to this section. Continue?',
+        content: 'The new document replaces the documents currently stored for this section. Continue?',
         onOk: doUpload,
       });
     } else {
@@ -566,6 +654,7 @@ function MemberFormModalContent({
         setCorpFiles([]);
         setAgentFiles([]);
         setPoaFiles([]);
+        cancelDocumentSession();
       },
     });
   };
@@ -665,6 +754,7 @@ function MemberFormModalContent({
       if (!isEdit) {
         const payload: CreateMemberRequest = {
           mbrTypeCd: typeCd,
+          regSessionId: documentSession.current?.id,
           lgnId: values.phone,
           intlTelnoNtnNo: values.phoneCountry || '+84',
           mbrTelno: values.phone,
@@ -679,9 +769,6 @@ function MemberFormModalContent({
                 mctpvCd: values.corpAddr?.mctpvCd,
                 distCd: values.corpAddr?.distCd,
                 mbrDaddr1: values.corpAddr?.daddr,
-                file1UnqId: corpFiles[0]?.fileUnqId,
-                file2UnqId: agentFiles[0]?.fileUnqId,
-                dlgtAtchFileId: poaFiles[0]?.fileUnqId,
                 organization: {
                   organizationName: values.companyName,
                   registeredCapital: parseCapitalNumber(values.charterCapital),
@@ -697,7 +784,9 @@ function MemberFormModalContent({
                     registrationNumber: values.projectCode,
                     registrationPlace: values.corpIssuingAuthority,
                     issueDate: values.corpIssueDate?.format('YYYY-MM-DD'),
+                    attachments: toDocumentAttachments(corpFiles),
                   },
+                  authorizationDocument: { attachments: toDocumentAttachments(poaFiles) },
                   legalRepresentative: {
                     fullName: values.legalRepName,
                     position: values.legalRepPosition,
@@ -723,6 +812,7 @@ function MemberFormModalContent({
                       issuePlace: values.agentIssuingAuthority,
                       issueDate: values.agentIssueDate?.format('YYYY-MM-DD'),
                       expiryDate: values.agentExpiryDate?.format('YYYY-MM-DD'),
+                      attachments: toDocumentAttachments(agentFiles),
                     },
                   },
                 },
@@ -739,8 +829,6 @@ function MemberFormModalContent({
                   foreignerAddressType === 'OVERSEAS'
                     ? values.overseasAddress
                     : values.resAddr?.daddr || values.origAddr?.daddr,
-                file1UnqId: idFiles[0]?.fileUnqId,
-                file2UnqId: idFiles[1]?.fileUnqId,
                 individual: {
                   fullName: values.fullName,
                   dateOfBirth: values.dateOfBirth?.format('YYYY-MM-DD'),
@@ -752,14 +840,21 @@ function MemberFormModalContent({
                     issuePlace: values.issuingAuthority,
                     issueDate: values.issueDate?.format('YYYY-MM-DD'),
                     expiryDate: values.expiryDate?.format('YYYY-MM-DD'),
+                    attachments: toDocumentAttachments(idFiles),
                   },
                 },
               }),
         };
         await createMemberMutate(payload);
+        documentSession.current = null;
         toast.success(`Member ${values.fullName || values.companyName} registered successfully.`);
       } else if (member) {
-        const payload: UpdateMemberRequest = {
+        // Files uploaded in this popup replace the stored document; they are sent with the session.
+        // `regSessionId` is not in the generated types yet (regenerate with `pnpm api:generate`).
+        const hasNewFiles = [idFiles, corpFiles, agentFiles, poaFiles].some((list) => list.some((f) => f.slot));
+        const storedId = (list: UploadedFileItem[], idx = 0) => (list[idx]?.slot ? undefined : list[idx]?.fileUnqId);
+        const payload: UpdateMemberRequest & { regSessionId?: string } = {
+          regSessionId: hasNewFiles ? documentSession.current?.id : undefined,
           mbrNm: isOrganization ? values.companyName : values.fullName,
           intlTelnoNtnNo: values.phoneCountry || '+84',
           mbrTelno: values.phone,
@@ -795,9 +890,25 @@ function MemberFormModalContent({
                 dlgtMctpvCd: values.agentAddr?.mctpvCd,
                 dlgtDistCd: values.agentAddr?.distCd,
                 dlgtDaddr: values.agentAddr?.daddr,
-                evdncAtchFile: corpFiles[0]?.fileUnqId,
-                dlgtEvdncAtchFile: agentFiles[0]?.fileUnqId,
-                dlgtAtchFileId: poaFiles[0]?.fileUnqId,
+                evdncAtchFile: storedId(corpFiles),
+                dlgtEvdncAtchFile: storedId(agentFiles),
+                dlgtAtchFileId: storedId(poaFiles),
+                ...(hasNewFiles
+                  ? {
+                      organization: {
+                        registrationDocument: { attachments: toDocumentAttachments(corpFiles) },
+                        authorizationDocument: { attachments: toDocumentAttachments(poaFiles) },
+                        representativeMode: values.selfApplyYn === 'Y' ? 'LEGAL_REP' : 'AUTHORIZED',
+                        authorizedRepresentative: {
+                          fullName: values.agentName,
+                          identityDocument: {
+                            documentType: values.agentIdType,
+                            attachments: toDocumentAttachments(agentFiles),
+                          },
+                        },
+                      },
+                    }
+                  : {}),
               }
             : {
                 brdt: values.dateOfBirth?.format('DDMMYYYY'),
@@ -819,11 +930,22 @@ function MemberFormModalContent({
                 prmntMctpvCd: values.origAddr?.mctpvCd,
                 prmntDistCd: values.origAddr?.distCd,
                 prmntDaddr: values.origAddr?.daddr,
-                file1UnqId: idFiles[0]?.fileUnqId,
-                file2UnqId: idFiles[1]?.fileUnqId,
+                file1UnqId: storedId(idFiles, 0),
+                file2UnqId: storedId(idFiles, 1),
+                ...(hasNewFiles
+                  ? {
+                      individual: {
+                        identityDocument: {
+                          documentType: values.idCardType,
+                          attachments: toDocumentAttachments(idFiles),
+                        },
+                      },
+                    }
+                  : {}),
               }),
         };
         await updateMemberMutate({ mbrNo: member.memberCode, body: payload });
+        documentSession.current = null;
         toast.success('Member information updated.');
       }
 
@@ -846,7 +968,7 @@ function MemberFormModalContent({
     <>
       <Popup
         open={visible}
-        onCancel={onClose}
+        onCancel={handleClose}
         width={1200}
         title={isEdit ? "Edit Member" : "Register Member"}
         footer={null}
@@ -879,7 +1001,7 @@ function MemberFormModalContent({
                       showUploadList={false}
                       accept=".jpg,.jpeg,.png,.pdf"
                       beforeUpload={(file) => {
-                        validateAndUpload(file, isOrganization ? setCorpFiles : setIdFiles, true);
+                        validateAndUpload(file, isOrganization ? 'corp' : 'id', true);
                         return false;
                       }}
                     >
@@ -1420,8 +1542,9 @@ function MemberFormModalContent({
                               }
                               disabled={isLockedReadOnly}
                               uploading={isUploading}
-                              onUpload={(f) => validateAndUpload(f, setIdFiles, true)}
-                              onRemove={(idx) => setIdFiles((p) => p.filter((_, i) => i !== idx))}
+                              onUpload={(f) => validateAndUpload(f, 'id', true)}
+                              onRemove={(idx) => handleRemoveFile('id', idx)}
+                              onOpen={handleOpenAttachment}
                             />
                           </tbody>
                         </table>
@@ -1681,8 +1804,9 @@ function MemberFormModalContent({
                               files={corpFiles}
                               disabled={isLockedReadOnly}
                               uploading={isUploading}
-                              onUpload={(f) => validateAndUpload(f, setCorpFiles, true)}
-                              onRemove={(idx) => setCorpFiles((p) => p.filter((_, i) => i !== idx))}
+                              onUpload={(f) => validateAndUpload(f, 'corp', true)}
+                              onRemove={(idx) => handleRemoveFile('corp', idx)}
+                              onOpen={handleOpenAttachment}
                             />
                           </tbody>
                         </table>
@@ -1943,8 +2067,9 @@ function MemberFormModalContent({
                               files={agentFiles}
                               disabled={isLockedReadOnly}
                               uploading={isUploading}
-                              onUpload={(f) => validateAndUpload(f, setAgentFiles)}
-                              onRemove={(idx) => setAgentFiles((p) => p.filter((_, i) => i !== idx))}
+                              onUpload={(f) => validateAndUpload(f, 'agent')}
+                              onRemove={(idx) => handleRemoveFile('agent', idx)}
+                              onOpen={handleOpenAttachment}
                             />
                           </tbody>
                         </table>
@@ -1964,8 +2089,9 @@ function MemberFormModalContent({
                               required
                               disabled={isLockedReadOnly}
                               uploading={isUploading}
-                              onUpload={(f) => validateAndUpload(f, setPoaFiles)}
-                              onRemove={(idx) => setPoaFiles((p) => p.filter((_, i) => i !== idx))}
+                              onUpload={(f) => validateAndUpload(f, 'poa')}
+                              onRemove={(idx) => handleRemoveFile('poa', idx)}
+                              onOpen={handleOpenAttachment}
                             />
                           </tbody>
                         </table>
@@ -1980,7 +2106,7 @@ function MemberFormModalContent({
           {/* Fixed Bottom Footer */}
           <div className={styles.footerActions}>
             <div className={styles.footerRight}>
-              <ActionButton action="cancel" onClick={onClose}>Cancel</ActionButton>
+              <ActionButton action="cancel" onClick={handleClose}>Cancel</ActionButton>
               {!isLockedReadOnly && (
                 <ActionButton intent="primary" appearance="filled" disabled={isCreating || isUpdating} onClick={handleSubmit}>{isEdit ? 'Save' : 'Register'}</ActionButton>
               )}

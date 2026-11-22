@@ -13,7 +13,6 @@ import {
   requestRestoration,
   getActiveProvinces,
   getActiveDistrictsByProvince,
-  uploadFile,
   excel,
 } from '@/api/generated/sdk.gen';
 import type {
@@ -25,6 +24,14 @@ import type {
   UpdateMemberRequest,
   ExcelData,
 } from '@/api/generated/types.gen';
+import { openAttachment } from '@/api/common/attachment-api';
+import {
+  cancelMemberDocumentSession,
+  openMemberDocumentSession,
+  removeMemberDocument,
+  uploadMemberDocument,
+} from '@/api/member/member-document-api';
+import type { MemberDocumentSlot, MemberDocumentType } from '@/api/member/member-document-api';
 import type {
   MemberItem,
   MemberClassification,
@@ -587,14 +594,39 @@ export function useActiveDistricts(mctpvCd?: string) {
 }
 
 /**
- * Custom hook to upload a single file (`/api/files/upload`)
+ * Uploads one ID document of a paper sign-up into its slot. Opens the upload session of the member
+ * type first when `sessionId` is not given; resolves the session id together with the stored file.
  */
-export function useUploadMemberFile() {
+export function useUploadMemberDocument() {
   return useMutation({
-    mutationFn: async (file: File) => {
-      const res = await uploadFile({ body: { file }, throwOnError: true });
-      return res.data;
+    mutationFn: async ({ sessionId, mbrTypeCd, slot, file }: UploadMemberDocumentVariables) => {
+      const regSessionId = sessionId ?? (await openMemberDocumentSession(mbrTypeCd)).regSessionId;
+      const uploaded = await uploadMemberDocument(regSessionId, slot, file);
+      return { regSessionId, uploaded };
     },
   });
 }
 
+export interface UploadMemberDocumentVariables {
+  /** Open session; omitted for the first file. */
+  sessionId?: string;
+  mbrTypeCd: MemberDocumentType;
+  slot: MemberDocumentSlot;
+  file: File;
+}
+
+/** Removes one uploaded document from the session, or cancels the whole session (`fileId` omitted). */
+export function useRemoveMemberDocument() {
+  return useMutation({
+    mutationFn: async ({ sessionId, fileId }: { sessionId: string; fileId?: string }) => {
+      await (fileId ? removeMemberDocument(sessionId, fileId) : cancelMemberDocumentSession(sessionId));
+    },
+  });
+}
+
+/** Opens a `previewUrl` / `downloadUrl` in a new tab through the authenticated client. */
+export function useOpenAttachment() {
+  return useMutation({ mutationFn: openAttachment });
+}
+
+export type { MemberDocumentSlot, MemberDocumentType } from '@/api/member/member-document-api';

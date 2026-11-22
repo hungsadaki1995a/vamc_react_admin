@@ -75,6 +75,7 @@ Use the helpers in `@/api/common/api-utils` — they normalise every body into `
 | `apiGet<T>(url, params?, fallback?)` | GET; params pass through `cleanParams` (drops `''`, `null`, `undefined`) |
 | `apiPost<T>(url, body?)` / `apiPut` / `apiPatch` / `apiDelete` | writes |
 | `apiDownload(url, fileName, params?)` | blob download (Excel, attachment) and save |
+| `openAttachment(url)` (`@/api/common/attachment-api`) | opens a backend `previewUrl` / `downloadUrl` in a new tab through the authenticated client. Never `window.open(url)` or `<a href>` an attachment URL: the attachment API needs the bearer token (401). Use the URLs the backend returns instead of building `/api/v1/attachments/...` by hand |
 | `cleanParams(obj)` | strip empty filters yourself when needed |
 | `EMPTY_PAGE` | empty `PageResponse` placeholder |
 

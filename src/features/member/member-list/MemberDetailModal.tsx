@@ -20,6 +20,7 @@ import {
   useResendTempPassword,
   useRequestMemberDeletion,
   useRequestMemberRestoration,
+  useOpenAttachment,
 } from './use-members';
 import styles from './member-detail-modal.module.scss';
 
@@ -171,6 +172,7 @@ export default function MemberDetailModal({
 
   const { data: apiDetail, isLoading } = useMemberDetail(member?.memberCode, visible);
   const { mutate: unlockMember, isPending: isUnlocking } = useUnlockMember();
+  const { mutate: openAttachment } = useOpenAttachment();
   const { mutate: resendPassword, isPending: isResending } = useResendTempPassword();
   const { mutate: submitDeletion, isPending: isDeleting } = useRequestMemberDeletion();
   const { mutate: submitRestoration, isPending: isRestoring } = useRequestMemberRestoration();
@@ -280,7 +282,8 @@ export default function MemberDetailModal({
   const handlePreviewFile = (file: MemberAttachmentDto) => {
     const url = file.previewUrl || file.downloadUrl;
     if (url) {
-      window.open(url, '_blank', 'noopener,noreferrer');
+      // The attachment API needs the bearer token: a plain window.open(url) is answered 401
+      openAttachment(url, { onError: () => toast.error(`Failed to open ${file.fileNm || 'file'}.`) });
     } else {
       toast.info(`Preview unavailable for ${file.fileNm || 'file'}`);
     }
