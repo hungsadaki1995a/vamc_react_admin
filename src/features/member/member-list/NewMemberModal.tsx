@@ -1,9 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Form, Upload } from 'antd';
 import ActionButton from '@/components/common/actions/ActionButton';
 import LoadingSpinner from '@/components/common/loading/LoadingSpinner';
 import Popup from '@/components/common/popup/Popup';
-import DataTable from '@/components/common/table/DataTable';
 import AppCheckbox from '@/components/inputs/AppCheckbox';
 import AppDatePicker from '@/components/inputs/AppDatePicker';
 import AppRadio from '@/components/inputs/AppRadio';
@@ -13,15 +12,20 @@ import TextInput from '@/components/inputs/TextInput';
 import type { FormInstance } from 'antd';
 import {
   UploadOutlined,
-  SearchOutlined,
   DeleteOutlined,
   PaperClipOutlined,
 } from '@ant-design/icons';
-import { useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
+import { MEMBER_FEE_ERRORS } from '@/api/member/member-fee-api';
+import { apiErrorCode, errorMessage } from '@/features/system/_shared/system-utils';
+import { buildFeeHistoryRows, nextPeriodStart } from './member-fee-history';
+import { useMemberFeePayments, useRegisterMembershipPayment } from './use-member-fee';
+
+/** E06 of the member management system messages. */
+const E06_PERIOD_OVERLAP = 'E06: This overlaps an existing membership period. Please check the start date.';
 import { useNotify } from '@/hooks/use-notify';
-import { lookupEmployees } from '@/api/system/employee-api';
-import type { EmployeeLookup } from '@/api/system/employee-api';
+import { MEMBER_JOIN_OFFICER_STEP } from '@/api/member/member-approval-api';
+import { useAssignMemberOfficer, useMemberApprovalCandidates } from './use-member-approval';
 import type {
   CreateMemberRequest,
   UpdateMemberRequest,
@@ -36,8 +40,11 @@ import {
   useUpdateMember,
   useActiveProvinces,
   useActiveDistricts,
-  useUploadMemberFile,
+  useUploadMemberDocument,
+  useRemoveMemberDocument,
+  useOpenAttachment,
 } from './use-members';
+import type { MemberDocumentSlot, MemberDocumentType } from './use-members';
 import styles from './member-detail-modal.module.scss';
 
 export interface MemberFormModalProps {
@@ -49,18 +56,45 @@ export interface MemberFormModalProps {
 }
 
 interface UploadedFileItem {
+  /** Group id of a stored attachment, or the file id of an upload of this session. */
   fileUnqId: string;
   fileNm: string;
   url?: string;
+  /** Set for a file uploaded in this session: the slot it was stored in. */
+  slot?: MemberDocumentSlot;
 }
 
-interface PaymentHistoryRow {
-  no: number;
-  type: 'Paid' | 'Exempt' | 'Terminated';
-  startDate: string;
-  endDate: string;
-  paymentDate: string;
-  isCurrent: boolean;
+type DocumentSection = 'id' | 'corp' | 'agent' | 'poa';
+
+/** BIZ_LICENSE and POA take several files; the ID slots take one each. */
+const MAX_FILES_PER_MULTI_SLOT = 5;
+
+/**
+ * Slot of the next upload of a section, or null when the section is full.
+ * An ID document is either a passport (one file) or a card with a front and a back.
+ */
+function nextDocumentSlot(section: DocumentSection, files: UploadedFileItem[], passport: boolean): MemberDocumentSlot | null {
+  const used = files.map((f) => f.slot);
+  if (section === 'corp' || section === 'poa') {
+    const slot: MemberDocumentSlot = section === 'corp' ? 'BIZ_LICENSE' : 'POA';
+    return used.filter((u) => u === slot).length < MAX_FILES_PER_MULTI_SLOT ? slot : null;
+  }
+  const [front, back, pass]: MemberDocumentSlot[] =
+    section === 'id' ? ['ID_FRONT', 'ID_BACK', 'PASSPORT'] : ['AUTH_REP_ID_FRONT', 'AUTH_REP_ID_BACK', 'AUTH_REP_PASSPORT'];
+  if (passport) return pass;
+  if (!used.includes(front)) return front;
+  if (!used.includes(back)) return back;
+  return null;
+}
+
+/** Attachments of the request: only files uploaded in this session, a card side sent as FRONT / BACK. */
+function toDocumentAttachments(files: UploadedFileItem[]): { fileId: string; side?: string }[] {
+  return files
+    .filter((f) => f.slot)
+    .map((f) => ({
+      fileId: f.fileUnqId,
+      ...(f.slot?.endsWith('_FRONT') ? { side: 'FRONT' } : f.slot?.endsWith('_BACK') ? { side: 'BACK' } : {}),
+    }));
 }
 
 const MAX_FILE_BYTES = 10 * 1024 * 1024;
@@ -199,6 +233,7 @@ interface AttachmentFieldRowProps {
   uploading?: boolean;
   onUpload: (file: File) => void;
   onRemove: (idx: number) => void;
+  onOpen: (url: string) => void;
 }
 
 function AttachmentFieldRow({
@@ -209,6 +244,7 @@ function AttachmentFieldRow({
   uploading = false,
   onUpload,
   onRemove,
+  onOpen,
 }: AttachmentFieldRowProps) {
   return (
     <tr>
@@ -242,7 +278,7 @@ function AttachmentFieldRow({
                   className={styles.attachmentItem}
                   onClick={(e) => {
                     e.preventDefault();
-                    if (f.url) window.open(f.url, '_blank', 'noopener,noreferrer');
+                    if (f.url) onOpen(f.url);
                   }}
                 >
                   <PaperClipOutlined />
@@ -263,6 +299,15 @@ function AttachmentFieldRow({
       </td>
     </tr>
   );
+}
+
+/** Stable empty list while the officer candidates load. */
+const NO_OFFICERS: never[] = [];
+
+/** "Name (EMP0000001)"; empty when no officer is assigned. */
+function formatOfficer(name?: string, empNo?: string) {
+  if (!empNo) return '';
+  return name ? `${name} (${empNo})` : empNo;
 }
 
 function buildInitialFormState(
@@ -290,8 +335,6 @@ function buildInitialFormState(
       corpFiles: [] as UploadedFileItem[],
       agentFiles: [] as UploadedFileItem[],
       poaFiles: [] as UploadedFileItem[],
-      paymentHistory: [] as PaymentHistoryRow[],
-      payStartDate: dayjs(),
     };
   }
 
@@ -312,23 +355,6 @@ function buildInitialFormState(
     !apiDetail.currentAddress?.mctpvCd &&
     Boolean(apiDetail.permanentAddress?.daddr);
 
-  const hasPaid = apiDetail.basic?.mbrshpPayYn === 'Y';
-  const hasExempt = apiDetail.basic?.mbrshpFeeExmpYn === 'Y';
-  const pStart = parseDateValue(apiDetail.basic?.mbrshpBgngDt);
-  const pEnd = parseDateValue(apiDetail.basic?.mbrshpEndDt);
-  const paymentHistory: PaymentHistoryRow[] =
-    (hasPaid || hasExempt) && pStart && pEnd
-      ? [
-          {
-            no: 1,
-            type: hasExempt ? 'Exempt' : 'Paid',
-            startDate: pStart.format('DD-MM-YYYY'),
-            endDate: pEnd.format('DD-MM-YYYY'),
-            paymentDate: hasExempt ? '-' : pStart.format('DD-MM-YYYY'),
-            isCurrent: pEnd.isAfter(dayjs().startOf('day')),
-          },
-        ]
-      : [];
 
   return {
     initialValues: {
@@ -337,7 +363,7 @@ function buildInitialFormState(
       memberGrade: mappedGrade,
       status: mappedStatus,
       termsAgreementDate: parseDateValue(apiDetail.basic?.aplyDt || member.applicationDate) || dayjs(),
-      staffInCharge: member.assignee !== '-' ? member.assignee : '',
+      staffInCharge: apiDetail.basic?.officerEmpNo || undefined,
       rejectionReason: apiDetail.basic?.splmntRqstCn || '',
       phoneCountry: apiDetail.account?.intlTelnoNtnNo || '+84',
       phone: (apiDetail.account?.rawTelno || apiDetail.account?.telno || '').replace(/\D/g, ''),
@@ -362,6 +388,7 @@ function buildInitialFormState(
       projectCode: apiDetail.corporate?.orgnzBrno || '',
       corpIssuingAuthority: apiDetail.corporate?.issuInstNm || '',
       corpIssueDate: parseDateValue(apiDetail.corporate?.issuDt),
+      corpEffectiveDate: parseDateValue(apiDetail.corporate?.efctDt),
       corpAddr: apiDetail.corporate?.headOfficeAddress || {},
       legalRepName: apiDetail.legalRepresentative?.fullNm || '',
       legalRepPosition: apiDetail.legalRepresentative?.jbpsNm || '',
@@ -392,8 +419,6 @@ function buildInitialFormState(
     poaFiles: mapAttachmentList(
       apiDetail.files?.filter((f) => (f.docType || '').toUpperCase() === 'POWER_OF_ATTORNEY'),
     ),
-    paymentHistory,
-    payStartDate: pEnd && pEnd.isAfter(dayjs().startOf('day')) ? pEnd.add(1, 'day') : dayjs(),
   };
 }
 
@@ -405,9 +430,11 @@ export default function NewMemberModal({
   onSuccess,
 }: MemberFormModalProps) {
   const isEdit = mode === 'edit' && Boolean(member);
+  // Edit loads the decrypted values: saving masked phone / ID numbers back would corrupt them
   const { data: apiDetail, isLoading: isLoadingDetail } = useMemberDetail(
     member?.memberCode,
     visible && isEdit,
+    true,
   );
 
   if (!visible) return null;
@@ -449,7 +476,11 @@ function MemberFormModalContent({
 
   const { mutateAsync: createMemberMutate, isPending: isCreating } = useCreateMember();
   const { mutateAsync: updateMemberMutate, isPending: isUpdating } = useUpdateMember();
-  const { mutateAsync: uploadFileMutate, isPending: isUploading } = useUploadMemberFile();
+  const { mutateAsync: uploadDocumentMutate, isPending: isUploading } = useUploadMemberDocument();
+  const { mutate: removeDocumentMutate } = useRemoveMemberDocument();
+  const { mutate: openAttachmentMutate } = useOpenAttachment();
+  // Upload session of this popup (one per member type); its id goes with create / update
+  const documentSession = useRef<{ id: string; type: MemberDocumentType } | null>(null);
 
   // Form watches
   const memberType = (Form.useWatch('memberType', form) as MemberType | undefined) || 'General';
@@ -472,24 +503,45 @@ function MemberFormModalContent({
   const [agentFiles, setAgentFiles] = useState<UploadedFileItem[]>(initial.agentFiles);
   const [poaFiles, setPoaFiles] = useState<UploadedFileItem[]>(initial.poaFiles);
 
-  // Staff picker
-  const [staffPickerOpen, setStaffPickerOpen] = useState(false);
-  const [staffKeyword, setStaffKeyword] = useState('');
-  const [appliedStaffKeyword, setAppliedStaffKeyword] = useState('');
+  // Staff in Charge (2026-11-23): chosen here among the sign-up officer candidates, changeable later. With the
+  // member's session the server lists the roles snapshotted for it, the same roles it checks on save.
+  const currentOfficerEmpNo = apiDetail?.basic?.officerEmpNo || undefined;
+  const { data: officerCandidates = NO_OFFICERS, isFetching: isLoadingOfficers } = useMemberApprovalCandidates(
+    visible ? MEMBER_JOIN_OFFICER_STEP : null,
+    apiDetail?.basic?.atrzHstryId ?? null,
+  );
+  const officerOptions = officerCandidates.map((c) => ({
+    value: c.empNo,
+    label: formatOfficer(c.jbpsNm ? `${c.empNm} · ${c.jbpsNm}` : c.empNm, c.empNo),
+  }));
+  // The current officer stays visible even when no longer among the candidates
+  if (currentOfficerEmpNo && !officerOptions.some((o) => o.value === currentOfficerEmpNo)) {
+    officerOptions.unshift({
+      value: currentOfficerEmpNo,
+      label: formatOfficer(apiDetail?.basic?.officerNm, currentOfficerEmpNo),
+    });
+  }
+  const assignOfficer = useAssignMemberOfficer();
 
-  const { data: staffData, isFetching: isStaffLoading } = useQuery({
-    queryKey: ['staffLookupForm', appliedStaffKeyword],
-    queryFn: () => lookupEmployees({ empNm: appliedStaffKeyword || undefined }, { page: 1, size: 10 }),
-    enabled: staffPickerOpen,
-  });
-
-  // Payment Registration state
+  // Membership fee: history from the server (one derived row while it keeps none); Register Payment saves at once
+  const feeMbrNo = isEdit && member ? member.memberCode : null;
+  const { data: feePayments } = useMemberFeePayments(feeMbrNo);
+  const paymentHistory = buildFeeHistoryRows(feePayments, apiDetail?.basic);
+  const registerPayment = useRegisterMembershipPayment(feeMbrNo);
   const [payType, setPayType] = useState<'Paid' | 'Exempt'>('Paid');
-  const [payStartDate, setPayStartDate] = useState<dayjs.Dayjs | null>(initial.payStartDate);
+  const [payStartDate, setPayStartDate] = useState<dayjs.Dayjs | null>(() =>
+    nextPeriodStart(buildFeeHistoryRows(undefined, apiDetail?.basic)),
+  );
   const [payDate, setPayDate] = useState<dayjs.Dayjs | null>(dayjs());
-  const [paymentHistory, setPaymentHistory] = useState<PaymentHistoryRow[]>(initial.paymentHistory);
 
   const isLockedReadOnly = isEdit && statusVal === 'Locked';
+  // Register Payment: active members, and Temporary members in Pending Approval / Supplement Requested (2026-11-23)
+  const serverGrdCd = (apiDetail?.basic?.mbrGrdCd || '').toUpperCase();
+  const serverSttsCd = (apiDetail?.basic?.mbrSttsCd || apiDetail?.mbrSttsCd || '').toUpperCase();
+  const isTemporaryApplicant = serverGrdCd === 'T' && (serverSttsCd === 'P' || serverSttsCd === 'U');
+  const canRegisterPayment = isEdit && !isLockedReadOnly && (serverSttsCd === 'S' || isTemporaryApplicant);
+  // Effective / reissue date: editable only once the backend stores it (schema/44); otherwise it would be dropped
+  const canEditEffectiveDate = isEdit && apiDetail?.corporate?.efctDtEnabled === true;
   const isOrganization = memberType === 'Organization';
   const isForeigner = memberType === 'Foreigner';
 
@@ -501,27 +553,70 @@ function MemberFormModalContent({
     }
   }, [sameAsResidence, resAddrWatch, form]);
 
-  const validateAndUpload = async (
-    file: File,
-    setter: React.Dispatch<React.SetStateAction<UploadedFileItem[]>>,
-    isOcrTrigger = false,
-  ) => {
+  const sectionFiles: Record<DocumentSection, [UploadedFileItem[], React.Dispatch<React.SetStateAction<UploadedFileItem[]>>]> = {
+    id: [idFiles, setIdFiles],
+    corp: [corpFiles, setCorpFiles],
+    agent: [agentFiles, setAgentFiles],
+    poa: [poaFiles, setPoaFiles],
+  };
+
+  const currentTypeCd = (): MemberDocumentType => (isOrganization ? 'O' : isForeigner ? 'F' : 'P');
+
+  /** Drops the upload session (member type changed, popup closed without saving). */
+  const cancelDocumentSession = () => {
+    const session = documentSession.current;
+    documentSession.current = null;
+    if (session) removeDocumentMutate({ sessionId: session.id });
+  };
+
+  /** Closing without saving leaves no upload session behind. */
+  const handleClose = () => {
+    cancelDocumentSession();
+    onClose();
+  };
+
+  const handleOpenAttachment = (url: string) => {
+    openAttachmentMutate(url, { onError: () => toast.error('Failed to open the file.') });
+  };
+
+  const handleRemoveFile = (section: DocumentSection, idx: number) => {
+    const [files, setter] = sectionFiles[section];
+    const target = files[idx];
+    const session = documentSession.current;
+    if (target?.slot && session) removeDocumentMutate({ sessionId: session.id, fileId: target.fileUnqId });
+    setter((prev) => prev.filter((_, i) => i !== idx));
+  };
+
+  const validateAndUpload = async (file: File, section: DocumentSection, isOcrTrigger = false) => {
     const ext = file.name.split('.').pop()?.toLowerCase() || '';
     if (!ALLOWED_EXTENSIONS.includes(ext) || file.size > MAX_FILE_BYTES) {
       toast.error('E04: Only JPG, PNG, or PDF files up to 10MB are allowed.');
       return;
     }
 
+    const [files, setter] = sectionFiles[section];
+    const passport = section === 'id' ? isForeigner || idCardType === 'PSPT' : agentIdType === 'PSPT';
+    // Stored files of an edited member are replaced by the first new upload, so only new files count
+    const slot = nextDocumentSlot(section, files.filter((f) => f.slot), passport);
+    if (!slot) {
+      toast.error('E04: This section already has all its files. Remove one before uploading another.');
+      return;
+    }
+
     const doUpload = async () => {
       try {
-        const uploaded = await uploadFileMutate(file);
+        const typeCd = currentTypeCd();
+        if (documentSession.current && documentSession.current.type !== typeCd) cancelDocumentSession();
+        const { regSessionId, uploaded } = await uploadDocumentMutate({
+          sessionId: documentSession.current?.id,
+          mbrTypeCd: typeCd,
+          slot,
+          file,
+        });
+        documentSession.current = { id: regSessionId, type: typeCd };
         setter((prev) => [
-          ...prev,
-          {
-            fileUnqId: uploaded?.fileName || `${Date.now()}`,
-            fileNm: uploaded?.fileName || file.name,
-            url: uploaded?.fileDownloadUri,
-          },
+          ...prev.filter((f) => f.slot && f.fileUnqId !== uploaded.replacedFileId),
+          { fileUnqId: uploaded.fileId, fileNm: file.name, slot },
         ]);
         if (isOcrTrigger) {
           toast.info('E05: AI OCR auto-fill is unavailable. Please enter or verify fields manually.');
@@ -531,10 +626,10 @@ function MemberFormModalContent({
       }
     };
 
-    if (isEdit && isOcrTrigger) {
+    if (isEdit && files.some((f) => !f.slot)) {
       dialog.confirm({
         title: 'Attach Document (C02)',
-        content: 'Attaching a new document in edit mode will add it to this section. Continue?',
+        content: 'The new document replaces the documents currently stored for this section. Continue?',
         onOk: doUpload,
       });
     } else {
@@ -566,6 +661,7 @@ function MemberFormModalContent({
         setCorpFiles([]);
         setAgentFiles([]);
         setPoaFiles([]);
+        cancelDocumentSession();
       },
     });
   };
@@ -602,7 +698,8 @@ function MemberFormModalContent({
     }
   };
 
-  const handleRegisterPayment = () => {
+  const handleRegisterPayment = async () => {
+    if (!feeMbrNo) return;
     if (!payStartDate) {
       toast.error('E01: Please select Membership Period start date.');
       return;
@@ -613,42 +710,34 @@ function MemberFormModalContent({
     }
     const endD = payStartDate.add(1, 'year').subtract(1, 'day');
     const overlaps = paymentHistory.some((row) => {
-      if (row.type === 'Terminated') return false;
-      const rStart = parseDateValue(row.startDate);
-      const rEnd = parseDateValue(row.endDate);
-      if (!rStart || !rEnd) return false;
+      const rStart = dayjs(row.startDate, 'DD-MM-YYYY', true);
+      const rEnd = dayjs(row.endDate, 'DD-MM-YYYY', true);
+      if (!rStart.isValid() || !rEnd.isValid()) return false;
       return !endD.isBefore(rStart, 'day') && !payStartDate.isAfter(rEnd, 'day');
     });
     if (overlaps) {
-      toast.error('E06: Membership period overlaps with an existing period.');
+      toast.error(E06_PERIOD_OVERLAP);
       return;
     }
-
-    const nextRow: PaymentHistoryRow = {
-      no: paymentHistory.length + 1,
-      type: payType,
-      startDate: payStartDate.format('DD-MM-YYYY'),
-      endDate: endD.format('DD-MM-YYYY'),
-      paymentDate: payType === 'Exempt' ? '-' : payDate!.format('DD-MM-YYYY'),
-      isCurrent: true,
-    };
-    setPaymentHistory((prev) => [nextRow, ...prev.map((r) => ({ ...r, isCurrent: false }))]);
-    form.setFieldValue('memberGrade', 'Full');
-    setPayStartDate(endD.add(1, 'day'));
-    setPayDate(dayjs());
-  };
-
-  const handleTerminatePayment = (rowNo: number) => {
-    dialog.confirm({
-      title: 'Terminate Membership (C01)',
-      content: 'Terminate the current membership period and change grade from Full Member to General Member?',
-      onOk: () => {
-        setPaymentHistory((prev) =>
-          prev.map((r) => (r.no === rowNo ? { ...r, type: 'Terminated', isCurrent: false } : r)),
-        );
-        form.setFieldValue('memberGrade', 'General');
-      },
-    });
+    try {
+      await registerPayment.mutateAsync({
+        payType: payType === 'Exempt' ? 'EXEMPT' : 'PAID',
+        periodStartDate: payStartDate.format('YYYY-MM-DD'),
+        paymentDate: payType === 'Exempt' ? undefined : payDate!.format('YYYY-MM-DD'),
+      });
+      if (isTemporaryApplicant) {
+        // A Temporary member stays T and becomes Full once its documents pass
+        toast.success('Membership payment registered. The member becomes a Full Member once the documents pass.');
+      } else {
+        toast.success('Membership payment registered.');
+        form.setFieldValue('memberGrade', 'Full');
+      }
+      setPayStartDate(endD.add(1, 'day'));
+      setPayDate(dayjs());
+    } catch (err) {
+      // The server checks the overlap too (MBR016), e.g. when the history was changed in another tab
+      toast.error(apiErrorCode(err) === MEMBER_FEE_ERRORS.periodOverlap ? E06_PERIOD_OVERLAP : errorMessage(err));
+    }
   };
 
   const handleSubmit = async () => {
@@ -665,6 +754,7 @@ function MemberFormModalContent({
       if (!isEdit) {
         const payload: CreateMemberRequest = {
           mbrTypeCd: typeCd,
+          regSessionId: documentSession.current?.id,
           lgnId: values.phone,
           intlTelnoNtnNo: values.phoneCountry || '+84',
           mbrTelno: values.phone,
@@ -679,9 +769,6 @@ function MemberFormModalContent({
                 mctpvCd: values.corpAddr?.mctpvCd,
                 distCd: values.corpAddr?.distCd,
                 mbrDaddr1: values.corpAddr?.daddr,
-                file1UnqId: corpFiles[0]?.fileUnqId,
-                file2UnqId: agentFiles[0]?.fileUnqId,
-                dlgtAtchFileId: poaFiles[0]?.fileUnqId,
                 organization: {
                   organizationName: values.companyName,
                   registeredCapital: parseCapitalNumber(values.charterCapital),
@@ -697,7 +784,9 @@ function MemberFormModalContent({
                     registrationNumber: values.projectCode,
                     registrationPlace: values.corpIssuingAuthority,
                     issueDate: values.corpIssueDate?.format('YYYY-MM-DD'),
+                    attachments: toDocumentAttachments(corpFiles),
                   },
+                  authorizationDocument: { attachments: toDocumentAttachments(poaFiles) },
                   legalRepresentative: {
                     fullName: values.legalRepName,
                     position: values.legalRepPosition,
@@ -723,6 +812,7 @@ function MemberFormModalContent({
                       issuePlace: values.agentIssuingAuthority,
                       issueDate: values.agentIssueDate?.format('YYYY-MM-DD'),
                       expiryDate: values.agentExpiryDate?.format('YYYY-MM-DD'),
+                      attachments: toDocumentAttachments(agentFiles),
                     },
                   },
                 },
@@ -739,8 +829,6 @@ function MemberFormModalContent({
                   foreignerAddressType === 'OVERSEAS'
                     ? values.overseasAddress
                     : values.resAddr?.daddr || values.origAddr?.daddr,
-                file1UnqId: idFiles[0]?.fileUnqId,
-                file2UnqId: idFiles[1]?.fileUnqId,
                 individual: {
                   fullName: values.fullName,
                   dateOfBirth: values.dateOfBirth?.format('YYYY-MM-DD'),
@@ -752,14 +840,23 @@ function MemberFormModalContent({
                     issuePlace: values.issuingAuthority,
                     issueDate: values.issueDate?.format('YYYY-MM-DD'),
                     expiryDate: values.expiryDate?.format('YYYY-MM-DD'),
+                    attachments: toDocumentAttachments(idFiles),
                   },
                 },
               }),
         };
-        await createMemberMutate(payload);
+        const created = await createMemberMutate(payload);
+        documentSession.current = null;
         toast.success(`Member ${values.fullName || values.companyName} registered successfully.`);
+        // Not received yet: the server receives the application and hands it to the officer at once
+        if (created?.mbrNo && values.staffInCharge) await saveOfficer(created.mbrNo, values.staffInCharge);
       } else if (member) {
-        const payload: UpdateMemberRequest = {
+        // Files uploaded in this popup replace the stored document; they are sent with the session.
+        // `regSessionId` is not in the generated types yet (regenerate with `pnpm api:generate`).
+        const hasNewFiles = [idFiles, corpFiles, agentFiles, poaFiles].some((list) => list.some((f) => f.slot));
+        const storedId = (list: UploadedFileItem[], idx = 0) => (list[idx]?.slot ? undefined : list[idx]?.fileUnqId);
+        const payload: UpdateMemberRequest & { regSessionId?: string } = {
+          regSessionId: hasNewFiles ? documentSession.current?.id : undefined,
           mbrNm: isOrganization ? values.companyName : values.fullName,
           intlTelnoNtnNo: values.phoneCountry || '+84',
           mbrTelno: values.phone,
@@ -774,6 +871,10 @@ function MemberFormModalContent({
                 orgnzBrno: values.projectCode,
                 lglDcmntIssuInstNm: values.corpIssuingAuthority,
                 lglDcmntIssuDmy: values.corpIssueDate?.format('DDMMYYYY'),
+                // Empty string clears the stored date; sent only where the column exists (schema/44)
+                ...(canEditEffectiveDate
+                  ? { lglDcmntEfctDmy: values.corpEffectiveDate?.format('DDMMYYYY') ?? '' }
+                  : {}),
                 mctpvCd: values.corpAddr?.mctpvCd,
                 distCd: values.corpAddr?.distCd,
                 mbrDaddr1: values.corpAddr?.daddr,
@@ -795,9 +896,25 @@ function MemberFormModalContent({
                 dlgtMctpvCd: values.agentAddr?.mctpvCd,
                 dlgtDistCd: values.agentAddr?.distCd,
                 dlgtDaddr: values.agentAddr?.daddr,
-                evdncAtchFile: corpFiles[0]?.fileUnqId,
-                dlgtEvdncAtchFile: agentFiles[0]?.fileUnqId,
-                dlgtAtchFileId: poaFiles[0]?.fileUnqId,
+                evdncAtchFile: storedId(corpFiles),
+                dlgtEvdncAtchFile: storedId(agentFiles),
+                dlgtAtchFileId: storedId(poaFiles),
+                ...(hasNewFiles
+                  ? {
+                      organization: {
+                        registrationDocument: { attachments: toDocumentAttachments(corpFiles) },
+                        authorizationDocument: { attachments: toDocumentAttachments(poaFiles) },
+                        representativeMode: values.selfApplyYn === 'Y' ? 'LEGAL_REP' : 'AUTHORIZED',
+                        authorizedRepresentative: {
+                          fullName: values.agentName,
+                          identityDocument: {
+                            documentType: values.agentIdType,
+                            attachments: toDocumentAttachments(agentFiles),
+                          },
+                        },
+                      },
+                    }
+                  : {}),
               }
             : {
                 brdt: values.dateOfBirth?.format('DDMMYYYY'),
@@ -819,12 +936,27 @@ function MemberFormModalContent({
                 prmntMctpvCd: values.origAddr?.mctpvCd,
                 prmntDistCd: values.origAddr?.distCd,
                 prmntDaddr: values.origAddr?.daddr,
-                file1UnqId: idFiles[0]?.fileUnqId,
-                file2UnqId: idFiles[1]?.fileUnqId,
+                file1UnqId: storedId(idFiles, 0),
+                file2UnqId: storedId(idFiles, 1),
+                ...(hasNewFiles
+                  ? {
+                      individual: {
+                        identityDocument: {
+                          documentType: values.idCardType,
+                          attachments: toDocumentAttachments(idFiles),
+                        },
+                      },
+                    }
+                  : {}),
               }),
         };
         await updateMemberMutate({ mbrNo: member.memberCode, body: payload });
+        documentSession.current = null;
         toast.success('Member information updated.');
+        // Changed only after the member update succeeded; the new officer gets an e-mail
+        if (values.staffInCharge && values.staffInCharge !== currentOfficerEmpNo) {
+          await saveOfficer(member.memberCode, values.staffInCharge);
+        }
       }
 
       onSuccess?.();
@@ -834,19 +966,31 @@ function MemberFormModalContent({
         const firstField = (err as { errorFields: { name: (string | number)[] }[] }).errorFields[0];
         if (firstField) form.scrollToField(firstField.name);
       } else {
-        toast.error('Failed to save member information.');
+        toast.error(errorMessage(err, 'Failed to save member information.'));
       }
     }
   };
 
+  /** The member itself is saved already: a refused officer change is reported, not thrown. */
+  const saveOfficer = async (mbrNo: string, assigneeEmpNo: string) => {
+    try {
+      await assignOfficer.mutateAsync({ mbrNo, assigneeEmpNo });
+      toast.success('The Staff in Charge was changed.');
+    } catch (err) {
+      toast.error(`The Staff in Charge could not be changed: ${errorMessage(err)}`);
+    }
+  };
+
   const deadlineInfo = formatDeadline(member?.paymentDeadline || apiDetail?.basic?.mbrshpPayDueDt);
+  // Payment deadline (decided 2026-11-23): sign-up / re-application + 15 days, applications in Pending Approval only
+  const hasPaymentDeadline = serverGrdCd === 'T' && serverSttsCd === 'P' && deadlineInfo.text !== '-';
   const computedPayEndDate = payStartDate ? payStartDate.add(1, 'year').subtract(1, 'day').format('DD-MM-YYYY') : '-';
 
   return (
     <>
       <Popup
         open={visible}
-        onCancel={onClose}
+        onCancel={handleClose}
         width={1200}
         title={isEdit ? "Edit Member" : "Register Member"}
         footer={null}
@@ -879,7 +1023,7 @@ function MemberFormModalContent({
                       showUploadList={false}
                       accept=".jpg,.jpeg,.png,.pdf"
                       beforeUpload={(file) => {
-                        validateAndUpload(file, isOrganization ? setCorpFiles : setIdFiles, true);
+                        validateAndUpload(file, isOrganization ? 'corp' : 'id', true);
                         return false;
                       }}
                     >
@@ -1012,24 +1156,21 @@ function MemberFormModalContent({
                             </Form.Item>
                           </td>
                           <td className={styles.labelCell}>
-                            Staff in Charge<span className={styles.requiredMark}>*</span>
+                            Staff in Charge{!isEdit && <span className={styles.requiredMark}>*</span>}
                           </td>
                           <td className={styles.valueCell}>
+                            {/* Saved through the assignee API after the member itself (officer gets an e-mail) */}
                             <Form.Item
                               name="staffInCharge"
                               className={styles.formItemCompact}
-                              rules={[{ required: true, message: 'E01: Staff in Charge is required' }]}
+                              rules={isEdit ? [] : [{ required: true, message: 'E01: Staff in Charge is required' }]}
                             >
-                              <TextInput
-                                readOnly
-                                placeholder="Select Staff in Charge"
-                                suffix={
-                                  <SearchOutlined
-                                    className="cursor-pointer text-blue-600!"
-                                    onClick={() => !isLockedReadOnly && setStaffPickerOpen(true)}
-                                  />
-                                }
-                                onClick={() => !isLockedReadOnly && setStaffPickerOpen(true)}
+                              <AppSelect<string>
+                                showSearch
+                                optionFilterProp="label"
+                                placeholder={isEdit ? 'Not assigned yet' : 'Select Staff in Charge'}
+                                loading={isLoadingOfficers}
+                                options={officerOptions}
                               />
                             </Form.Item>
                           </td>
@@ -1067,7 +1208,7 @@ function MemberFormModalContent({
                     <span className={styles.sectionTitle}>Membership Information</span>
                   </div>
 
-                  {isEdit && memberGrade === 'Temporary' && statusVal === 'Pending Approval' && (
+                  {isEdit && hasPaymentDeadline && (
                     <div className="mb-2 text-[13px]">
                       <strong>Payment Deadline: </strong>
                       <span className={deadlineInfo.isDanger ? styles.deadlineDanger : undefined}>
@@ -1076,7 +1217,15 @@ function MemberFormModalContent({
                     </div>
                   )}
 
-                  {!isLockedReadOnly && (
+                  {!isEdit && (
+                    <div className={styles.emptyHistory}>Payments can be registered after the member is registered.</div>
+                  )}
+                  {isEdit && !isLockedReadOnly && !canRegisterPayment && (
+                    <div className={styles.emptyHistory}>
+                      Payments can be registered for active members and for Temporary members in Pending Approval.
+                    </div>
+                  )}
+                  {canRegisterPayment && (
                     <>
                       <div className={styles.subSectionTitle}>Register Payment</div>
                       <div className={styles.paymentFormBox}>
@@ -1117,7 +1266,11 @@ function MemberFormModalContent({
                             className="w-full"
                           />
                         </div>
-                        <ActionButton type="primary" onClick={handleRegisterPayment}>
+                        <ActionButton
+                          type="primary"
+                          disabled={registerPayment.isPending}
+                          onClick={() => void handleRegisterPayment()}
+                        >
                           Register Payment
                         </ActionButton>
                       </div>
@@ -1134,7 +1287,6 @@ function MemberFormModalContent({
                             <th className="w-[140px]">Type</th>
                             <th>Membership Period</th>
                             <th className="w-[140px]">Payment Date</th>
-                            <th className="w-[120px]">Actions</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -1147,13 +1299,6 @@ function MemberFormModalContent({
                                 {row.isCurrent && <span className={styles.currentBadge}>Current</span>}
                               </td>
                               <td className="text-center">{row.paymentDate}</td>
-                              <td className="text-center">
-                                {row.isCurrent && !isLockedReadOnly ? (
-                                  <ActionButton size="small" intent="secondary" onClick={() => handleTerminatePayment(row.no)}>Terminate</ActionButton>
-                                ) : (
-                                  '-'
-                                )}
-                              </td>
                             </tr>
                           ))}
                         </tbody>
@@ -1420,8 +1565,9 @@ function MemberFormModalContent({
                               }
                               disabled={isLockedReadOnly}
                               uploading={isUploading}
-                              onUpload={(f) => validateAndUpload(f, setIdFiles, true)}
-                              onRemove={(idx) => setIdFiles((p) => p.filter((_, i) => i !== idx))}
+                              onUpload={(f) => validateAndUpload(f, 'id', true)}
+                              onRemove={(idx) => handleRemoveFile('id', idx)}
+                              onOpen={handleOpenAttachment}
                             />
                           </tbody>
                         </table>
@@ -1648,6 +1794,16 @@ function MemberFormModalContent({
                                 </Form.Item>
                               </td>
                             </tr>
+                            {canEditEffectiveDate && (
+                              <tr>
+                                <td className={styles.labelCell}>Effective / Reissue Date</td>
+                                <td className={styles.valueCell} colSpan={5}>
+                                  <Form.Item name="corpEffectiveDate" className={styles.formItemCompact}>
+                                    <AppDatePicker format="DD-MM-YYYY" className="w-full" />
+                                  </Form.Item>
+                                </td>
+                              </tr>
+                            )}
                             {legalDocType === 'I' && (
                               <tr>
                                 <td className={styles.labelCell}>
@@ -1681,8 +1837,9 @@ function MemberFormModalContent({
                               files={corpFiles}
                               disabled={isLockedReadOnly}
                               uploading={isUploading}
-                              onUpload={(f) => validateAndUpload(f, setCorpFiles, true)}
-                              onRemove={(idx) => setCorpFiles((p) => p.filter((_, i) => i !== idx))}
+                              onUpload={(f) => validateAndUpload(f, 'corp', true)}
+                              onRemove={(idx) => handleRemoveFile('corp', idx)}
+                              onOpen={handleOpenAttachment}
                             />
                           </tbody>
                         </table>
@@ -1943,8 +2100,9 @@ function MemberFormModalContent({
                               files={agentFiles}
                               disabled={isLockedReadOnly}
                               uploading={isUploading}
-                              onUpload={(f) => validateAndUpload(f, setAgentFiles)}
-                              onRemove={(idx) => setAgentFiles((p) => p.filter((_, i) => i !== idx))}
+                              onUpload={(f) => validateAndUpload(f, 'agent')}
+                              onRemove={(idx) => handleRemoveFile('agent', idx)}
+                              onOpen={handleOpenAttachment}
                             />
                           </tbody>
                         </table>
@@ -1964,8 +2122,9 @@ function MemberFormModalContent({
                               required
                               disabled={isLockedReadOnly}
                               uploading={isUploading}
-                              onUpload={(f) => validateAndUpload(f, setPoaFiles)}
-                              onRemove={(idx) => setPoaFiles((p) => p.filter((_, i) => i !== idx))}
+                              onUpload={(f) => validateAndUpload(f, 'poa')}
+                              onRemove={(idx) => handleRemoveFile('poa', idx)}
+                              onOpen={handleOpenAttachment}
                             />
                           </tbody>
                         </table>
@@ -1980,51 +2139,13 @@ function MemberFormModalContent({
           {/* Fixed Bottom Footer */}
           <div className={styles.footerActions}>
             <div className={styles.footerRight}>
-              <ActionButton action="cancel" onClick={onClose}>Cancel</ActionButton>
+              <ActionButton action="cancel" onClick={handleClose}>Cancel</ActionButton>
               {!isLockedReadOnly && (
-                <ActionButton intent="primary" appearance="filled" disabled={isCreating || isUpdating} onClick={handleSubmit}>{isEdit ? 'Save' : 'Register'}</ActionButton>
+                <ActionButton intent="primary" appearance="filled" disabled={isCreating || isUpdating || assignOfficer.isPending} onClick={handleSubmit}>{isEdit ? 'Save' : 'Register'}</ActionButton>
               )}
             </div>
           </div>
         </div>
-      </Popup>
-
-      {/* Staff Search Modal (VPA020500P01) */}
-      <Popup
-        open={staffPickerOpen}
-        title="Staff Search"
-        onCancel={() => setStaffPickerOpen(false)}
-        footer={null}
-        width={600}
-      >
-        <div className="flex gap-2 mb-3">
-          <TextInput
-            placeholder="Search by staff name"
-            value={staffKeyword}
-            onChange={(e) => setStaffKeyword(e.target.value)}
-            onPressEnter={() => setAppliedStaffKeyword(staffKeyword.trim())}
-          />
-          <ActionButton action="search" onClick={() => setAppliedStaffKeyword(staffKeyword.trim())}>Search</ActionButton>
-        </div>
-        <DataTable<EmployeeLookup>
-          rowKey="empNo"
-          size="small"
-          loading={isStaffLoading}
-          pagination={false}
-          dataSource={staffData?.data?.content ?? []}
-          onRow={(record) => ({
-            onClick: () => {
-              form.setFieldValue('staffInCharge', `${record.empNm} (${record.empNo})`);
-              setStaffPickerOpen(false);
-            },
-            className: 'cursor-pointer',
-          })}
-          columns={[
-            { title: 'Employee No', dataIndex: 'empNo', width: 130 },
-            { title: 'Name', dataIndex: 'empNm' },
-            { title: 'Department', dataIndex: 'deptNm' },
-          ]}
-        />
       </Popup>
     </>
   );

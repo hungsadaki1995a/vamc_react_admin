@@ -37,7 +37,6 @@ export const PROCESS_TYPE_OPTIONS: { value: NotiProcessType; label: string }[] =
 export const LANG_OPTIONS: { value: NotiLang; label: string }[] = [
   { value: 'VN', label: 'VN' },
   { value: 'EN', label: 'EN' },
-  { value: 'KR', label: 'KR' },
 ];
 
 export const MENU_CODE_PATTERN = /^A\d{8}$/;

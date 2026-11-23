@@ -1,26 +1,34 @@
 import { useState } from 'react';
-import { PaperClipOutlined, SearchOutlined } from '@ant-design/icons';
-import { useQuery } from '@tanstack/react-query';
+import { PaperClipOutlined } from '@ant-design/icons';
 import ActionButton from '@/components/common/actions/ActionButton';
+import AppTooltip from '@/components/common/tooltip/AppTooltip';
 import LoadingSpinner from '@/components/common/loading/LoadingSpinner';
 import Popup from '@/components/common/popup/Popup';
-import DataTable from '@/components/common/table/DataTable';
 import TextArea from '@/components/inputs/TextArea';
-import TextInput from '@/components/inputs/TextInput';
 import dayjs from 'dayjs';
 import { useNotify } from '@/hooks/use-notify';
-import { lookupEmployees } from '@/api/system/employee-api';
-import type { EmployeeLookup } from '@/api/system/employee-api';
-import type { MemberAddressDto, MemberAttachmentDto } from '@/api/generated/types.gen';
+import { errorMessage } from '@/features/system/_shared/system-utils';
+import { buildFeeHistoryRows } from './member-fee-history';
+import { useMemberFeePayments } from './use-member-fee';
+import type { MemberAddressDto, MemberAttachmentDto, PendingRequest } from '@/api/generated/types.gen';
+import type { ApprovalCandidate } from '@/api/member/member-approval-api';
+import { DELETION_BLOCK_REASONS } from '@/api/member/member-deletion-api';
 
 import type { MemberItem, MemberStatus } from './member.types';
 import {
   useMemberDetail,
   useUnlockMember,
   useResendTempPassword,
+  useOpenAttachment,
+} from './use-members';
+import AppSelect from '@/components/inputs/AppSelect';
+import {
+  useDecideMemberRequest,
+  useDeletionApprovers,
   useRequestMemberDeletion,
   useRequestMemberRestoration,
-} from './use-members';
+  useRestorationApprovers,
+} from './use-member-deletion';
 import styles from './member-detail-modal.module.scss';
 
 interface MemberDetailModalProps {
@@ -49,6 +57,64 @@ function formatDeadline(val?: string): { text: string; isDanger: boolean } {
   const diffDays = target.startOf('day').diff(dayjs().startOf('day'), 'day');
   const label = diffDays >= 0 ? `D-${diffDays}` : `D+${Math.abs(diffDays)}`;
   return { text: `${formatted} (${label})`, isDanger: diffDays <= 3 };
+}
+
+function approverOptions(approvers: ApprovalCandidate[]) {
+  return approvers.map((a) => ({
+    value: a.empNo,
+    label: `${a.empNm} (${a.empNo})${a.roleNm ? ` · ${a.roleNm}` : ''}`,
+  }));
+}
+
+/** Pending deletion / restoration request; its approver approves or rejects it here (no approval inbox screen). */
+function PendingRequestPanel({
+  title,
+  request,
+  canDecide,
+  approveText,
+  deciding,
+  onDecide,
+}: {
+  title: string;
+  request: PendingRequest;
+  canDecide: boolean;
+  approveText: string;
+  deciding: boolean;
+  onDecide: (approve: boolean, text: string) => Promise<boolean>;
+}) {
+  const [text, setText] = useState('');
+  const decide = async (approve: boolean) => {
+    if (await onDecide(approve, text.trim())) setText('');
+  };
+  return (
+    <div className={styles.restorePanel}>
+      <div>
+        <strong>{title}</strong>
+        {` by ${request.requesterNm || request.requesterEmpNo || '-'}`}
+        {request.requestedAt ? ` on ${dayjs(request.requestedAt).format('DD-MM-YYYY HH:mm')}` : ''}
+        {` · approver ${request.approverNm || request.approverEmpNo || '-'}`}
+      </div>
+      {canDecide && (
+        <div className={styles.restoreDecision}>
+          <TextArea
+            rows={2}
+            maxLength={500}
+            placeholder="Comment (required to reject)"
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+          />
+          <div className={styles.restoreDecisionButtons}>
+            <ActionButton action="cancel" disabled={deciding} onClick={() => void decide(false)}>
+              Reject
+            </ActionButton>
+            <ActionButton intent="primary" appearance="filled" disabled={deciding} onClick={() => void decide(true)}>
+              {approveText}
+            </ActionButton>
+          </div>
+        </div>
+      )}
+    </div>
+  );
 }
 
 function getStatusClass(status: MemberStatus): string {
@@ -162,24 +228,25 @@ export default function MemberDetailModal({
 
   // Sub-modals state
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
-  const [restoreModalOpen, setRestoreModalOpen] = useState(false);
-  const [staffPickerOpen, setStaffPickerOpen] = useState(false);
-  const [staffKeyword, setStaffKeyword] = useState('');
-  const [appliedStaffKeyword, setAppliedStaffKeyword] = useState('');
   const [deleteReason, setDeleteReason] = useState('');
-  const [selectedApprover, setSelectedApprover] = useState<EmployeeLookup | null>(null);
+  const [deleteApprover, setDeleteApprover] = useState<string | undefined>();
 
   const { data: apiDetail, isLoading } = useMemberDetail(member?.memberCode, visible);
   const { mutate: unlockMember, isPending: isUnlocking } = useUnlockMember();
+  const { mutate: openAttachment } = useOpenAttachment();
   const { mutate: resendPassword, isPending: isResending } = useResendTempPassword();
-  const { mutate: submitDeletion, isPending: isDeleting } = useRequestMemberDeletion();
-  const { mutate: submitRestoration, isPending: isRestoring } = useRequestMemberRestoration();
-
-  const { data: staffData, isFetching: isStaffLoading } = useQuery({
-    queryKey: ['staffLookup', appliedStaffKeyword],
-    queryFn: () => lookupEmployees({ empNm: appliedStaffKeyword || undefined }, { page: 1, size: 10 }),
-    enabled: staffPickerOpen,
-  });
+  // Decided 2026-11-23: the Staff in Charge requests the deletion, the chosen approver decides
+  const deletion = useRequestMemberDeletion();
+  const { data: deleteApprovers = [], isFetching: isLoadingDeleteApprovers } = useDeletionApprovers(deleteModalOpen);
+  // Decided 2026-11-23: restore within one year of the deletion, through the chosen approver (C05)
+  const [restoreModalOpen, setRestoreModalOpen] = useState(false);
+  const [restoreApprover, setRestoreApprover] = useState<string | undefined>();
+  const restoration = useRequestMemberRestoration();
+  const { data: restoreApprovers = [], isFetching: isLoadingApprovers } = useRestorationApprovers(restoreModalOpen);
+  // The approver decides a pending deletion / restoration here: there is no separate approval inbox screen
+  const decideRequest = useDecideMemberRequest();
+  // Every payment, newest first (Q-M7); one row from the current period while the server keeps no history
+  const { data: feePayments } = useMemberFeePayments(visible && member ? member.memberCode : null);
 
   if (!member) return null;
 
@@ -212,9 +279,16 @@ export default function MemberDetailModal({
         ? 'Locked'
         : member.status || 'Active';
   const isDeleted = statusValue === 'Deleted';
+  // Restore: until the retention end (deleted + 1 year), unless a request already waits for approval
+  const retentionEnd = apiDetail?.deletion?.rtnEndDt || member.retentionEndDate;
+  const withinRetention = !!retentionEnd && !dayjs(retentionEnd).isBefore(dayjs().startOf('day'), 'day');
+  const restoreState: 'restorable' | 'pending' | 'expired' = apiDetail?.deletion?.restorable
+    ? 'restorable'
+    : withinRetention
+      ? 'pending'
+      : 'expired';
   const isLocked = statusValue === 'Locked';
   const isRejected = statusValue === 'Rejected';
-  const isPendingApproval = statusValue === 'Pending Approval';
 
   const signUpChannel = member.signUpChannel || '-';
   const isOffline = signUpChannel === 'Offline';
@@ -223,33 +297,13 @@ export default function MemberDetailModal({
     ? '-'
     : formatDateHyphen(apiDetail?.basic?.aprvDt || member.approvalDate);
   const termsAgreementDate = formatDateHyphen(apiDetail?.basic?.aplyDt || member.applicationDate);
-  const staffInCharge = member.assignee || '-';
+  const staffInCharge = apiDetail?.basic?.officerNm || member.assignee || '-';
   const rejectionReason = apiDetail?.basic?.splmntRqstCn || '-';
   const paymentDeadline = formatDeadline(member.paymentDeadline || apiDetail?.basic?.mbrshpPayDueDt);
+  // Payment deadline (decided 2026-11-23): sign-up / re-application + 15 days, applications in Pending Approval only
+  const hasPaymentDeadline = isTemporary && statusValue === 'Pending Approval' && paymentDeadline.text !== '-';
 
-  // Membership Payment History (derived from basic if active/exempt period exists)
-  const hasPaid = apiDetail?.basic?.mbrshpPayYn === 'Y';
-  const hasExempt = apiDetail?.basic?.mbrshpFeeExmpYn === 'Y';
-  const periodStart = formatDateHyphen(apiDetail?.basic?.mbrshpBgngDt);
-  const periodEnd = formatDateHyphen(apiDetail?.basic?.mbrshpEndDt);
-  const isPeriodValid =
-    apiDetail?.basic?.mbrshpEndDt &&
-    dayjs(apiDetail.basic.mbrshpEndDt, ['DD/MM/YYYY', 'DD-MM-YYYY', 'YYYY-MM-DD']).isAfter(
-      dayjs().startOf('day'),
-    );
-
-  const paymentHistoryRows =
-    (hasPaid || hasExempt) && periodStart !== '-' && periodEnd !== '-'
-      ? [
-          {
-            no: 1,
-            type: hasExempt ? 'Exempt' : 'Paid',
-            period: `${periodStart} ~ ${periodEnd}`,
-            isCurrent: Boolean(isPeriodValid),
-            paymentDate: hasExempt ? '-' : periodStart,
-          },
-        ]
-      : [];
+  const paymentHistoryRows = buildFeeHistoryRows(feePayments, apiDetail?.basic);
 
   // Account Info
   const loginId = apiDetail?.account?.lgnId || member.loginId || '-';
@@ -275,12 +329,12 @@ export default function MemberDetailModal({
     (f) => (f.docType || '').toUpperCase() === 'POWER_OF_ATTORNEY',
   );
 
-  const canRestore = isDeleted && apiDetail?.deletion?.restorable !== false;
 
   const handlePreviewFile = (file: MemberAttachmentDto) => {
     const url = file.previewUrl || file.downloadUrl;
     if (url) {
-      window.open(url, '_blank', 'noopener,noreferrer');
+      // The attachment API needs the bearer token: a plain window.open(url) is answered 401
+      openAttachment(url, { onError: () => toast.error(`Failed to open ${file.fileNm || 'file'}.`) });
     } else {
       toast.info(`Preview unavailable for ${file.fileNm || 'file'}`);
     }
@@ -311,55 +365,85 @@ export default function MemberDetailModal({
 
   const handleOpenDelete = () => {
     setDeleteReason('');
-    setSelectedApprover(null);
+    setDeleteApprover(undefined);
     setDeleteModalOpen(true);
   };
 
-  const handleOpenRestore = () => {
-    setSelectedApprover(null);
-    setRestoreModalOpen(true);
-  };
-
-  const handleSubmitDelete = () => {
+  const handleSubmitDelete = async () => {
     if (!deleteReason.trim()) {
       toast.error('Please enter a deletion reason.');
       return;
     }
-    if (!selectedApprover) {
+    if (!deleteApprover) {
       toast.error('Please select an approver.');
       return;
     }
-    submitDeletion(
-      { mbrNo, reason: deleteReason.trim(), approverEmpNo: selectedApprover.empNo },
-      {
-        onSuccess: () => {
-          toast.success('Deletion request submitted.');
-          setDeleteModalOpen(false);
-        },
-        onError: () => {
-          toast.error('Cannot request deletion (E09: application, contract, or bid in progress).');
-        },
-      },
-    );
+    try {
+      await deletion.mutateAsync({ mbrNo, reason: deleteReason.trim(), approverEmpNo: deleteApprover });
+      toast.success('The deletion request was sent to the approver.');
+      setDeleteModalOpen(false);
+    } catch (error) {
+      // MBR017 / MBR018 / E09 / request pending (409), MBR014 (not the officer in charge): the server says which
+      toast.error(errorMessage(error));
+    }
   };
 
-  const handleSubmitRestore = () => {
-    if (!selectedApprover) {
+  const handleOpenRestore = () => {
+    setRestoreApprover(undefined);
+    setRestoreModalOpen(true);
+  };
+
+  const handleSubmitRestore = async () => {
+    if (!restoreApprover) {
       toast.error('Please select an approver.');
       return;
     }
-    submitRestoration(
-      { mbrNo, approverEmpNo: selectedApprover.empNo },
-      {
-        onSuccess: () => {
-          toast.success('Restoration request submitted.');
-          setRestoreModalOpen(false);
-        },
-        onError: () => {
-          toast.error('Failed to submit restoration request.');
-        },
-      },
-    );
+    try {
+      await restoration.mutateAsync({ mbrNo, approverEmpNo: restoreApprover });
+      toast.success('The restoration request was sent to the approver.');
+      setRestoreModalOpen(false);
+    } catch (error) {
+      // Past one year, request already open, contact or Login ID (MBR019) reused, MBR014: the server says which
+      toast.error(errorMessage(error));
+    }
+  };
+
+  const pendingRestoration = apiDetail?.deletion?.pendingRestoration ?? null;
+  const canDecideRestoration = !!pendingRestoration && apiDetail?.deletion?.canDecideRestoration === true;
+  const deletionRequest = isDeleted ? null : apiDetail?.deletionRequest ?? null;
+  const canDecideDeletion = !!deletionRequest && apiDetail?.canDecideDeletion === true;
+  // Until the detail loads the server has not said whether the member is deletable
+  const deletable = apiDetail?.deletable === true;
+  const deleteBlockedReason = deletable
+    ? undefined
+    : !apiDetail
+      ? 'Loading member details'
+      : (apiDetail.deletionBlockCd && DELETION_BLOCK_REASONS[apiDetail.deletionBlockCd]) ||
+        'This member cannot be deleted';
+
+  /** Returns true once decided; the popup then closes so the refreshed list shows the new status. */
+  const handleDecide = async (
+    request: PendingRequest,
+    approve: boolean,
+    text: string,
+    done: { approved: string; rejected: string },
+  ): Promise<boolean> => {
+    if (!request.atrzHstryId) return false;
+    if (!approve && !text) {
+      toast.error('Please enter the rejection reason.');
+      return false;
+    }
+    try {
+      await decideRequest.mutateAsync({ atrzHstryId: request.atrzHstryId, approve, text });
+      toast.success(approve ? done.approved : done.rejected);
+      // The popup shows the list row it was opened with: close it so the refreshed list shows the new status
+      onClose();
+      return true;
+    } catch (error) {
+      // e.g. past one year of the deletion the restoration is refused and nothing changes
+      toast.error(errorMessage(error));
+      return false;
+    }
   };
 
   const sectionAccountNum = 3;
@@ -378,12 +462,51 @@ export default function MemberDetailModal({
           {/* Header */}
           <div className={styles.modalHeaderRow}>
             <h1 className={styles.modalTitle}>Member Details</h1>
-            {canRestore && (
-              <ActionButton size="small" intent="secondary" appearance="filled" className={styles.btnRestore} onClick={handleOpenRestore}>
+            {isDeleted && restoreState === 'restorable' && (
+              <ActionButton intent="secondary" appearance="filled" onClick={handleOpenRestore}>
                 Restore
               </ActionButton>
             )}
+            {isDeleted && restoreState !== 'restorable' && (
+              <span className={styles.restoreHint}>
+                {restoreState === 'pending'
+                  ? 'A restoration request is waiting for approval.'
+                  : 'More than one year has passed since the deletion: the member can no longer be restored.'}
+              </span>
+            )}
           </div>
+
+          {isDeleted && pendingRestoration && (
+            <PendingRequestPanel
+              title="Restoration requested"
+              request={pendingRestoration}
+              canDecide={canDecideRestoration}
+              approveText="Approve Restoration"
+              deciding={decideRequest.isPending}
+              onDecide={(approve, text) =>
+                handleDecide(pendingRestoration, approve, text, {
+                  approved: 'The member was restored.',
+                  rejected: 'The restoration request was rejected.',
+                })
+              }
+            />
+          )}
+
+          {deletionRequest && (
+            <PendingRequestPanel
+              title="Deletion requested"
+              request={deletionRequest}
+              canDecide={canDecideDeletion}
+              approveText="Approve Deletion"
+              deciding={decideRequest.isPending}
+              onDecide={(approve, text) =>
+                handleDecide(deletionRequest, approve, text, {
+                  approved: 'The member was deleted.',
+                  rejected: 'The deletion request was rejected.',
+                })
+              }
+            />
+          )}
 
           <LoadingSpinner spinning={isLoading}>
             <div className={styles.modalBodyScroll}>
@@ -444,7 +567,7 @@ export default function MemberDetailModal({
                           </td>
                         </tr>
                       )}
-                      {isPendingApproval && isTemporary && (
+                      {hasPaymentDeadline && (
                         <tr>
                           <td className={styles.labelCell}>Payment Deadline</td>
                           <td className={styles.valueCell} colSpan={5}>
@@ -465,6 +588,7 @@ export default function MemberDetailModal({
                             <td className={styles.valueCell}>
                               {formatDateHyphen(apiDetail?.deletion?.rtnEndDt || member.retentionEndDate)}
                             </td>
+                            {/* Deletions since 2026-11-22 have no approver; the requester is the deleting officer */}
                             <td className={styles.labelCell}>Requester / Approver</td>
                             <td className={styles.valueCell}>
                               {`${apiDetail?.deletion?.requesterNm || '-'} / ${apiDetail?.deletion?.approverNm || '-'}`}
@@ -507,7 +631,7 @@ export default function MemberDetailModal({
                             <td className="text-center">{row.no}</td>
                             <td className="text-center">{row.type}</td>
                             <td className="text-center">
-                              <span>{row.period}</span>
+                              <span>{`${row.startDate} ~ ${row.endDate}`}</span>
                               {row.isCurrent && <span className={styles.currentBadge}>Current</span>}
                             </td>
                             <td className="text-center">{row.paymentDate}</td>
@@ -847,9 +971,19 @@ export default function MemberDetailModal({
           {/* Fixed Bottom Footer */}
           <div className={styles.footerActions}>
             {!isDeleted && (
-              <ActionButton action="deleteRow" className={styles.btnDelete} onClick={handleOpenDelete}>
-                Delete
-              </ActionButton>
+              <AppTooltip variant="default" description={deleteBlockedReason}>
+                {/* A disabled button fires no mouse events: the wrapper keeps the tooltip working */}
+                <span className={styles.deleteTrigger}>
+                  <ActionButton
+                    action="deleteRow"
+                    className={styles.btnDelete}
+                    disabled={!deletable}
+                    onClick={handleOpenDelete}
+                  >
+                    Delete
+                  </ActionButton>
+                </span>
+              </AppTooltip>
             )}
             <div className={styles.footerRight}>
               <ActionButton action="cancel" className={styles.btnCancel} onClick={onClose}>
@@ -870,14 +1004,15 @@ export default function MemberDetailModal({
         </div>
       </Popup>
 
-      {/* Deletion Request Popup (C04) */}
+      {/* Deletion Request Popup (C04): the chosen approver deletes; soft delete, the data is kept for reporting */}
       <Popup
         open={deleteModalOpen}
-        title="Request Deletion"
+        title="Request Member Deletion"
         onCancel={() => setDeleteModalOpen(false)}
         onConfirm={handleSubmitDelete}
         confirmText="Request Deletion"
-        confirmLoading={isDeleting}
+        confirmLoading={deletion.isPending}
+        confirmDanger
         footerAlign="right"
       >
         <div className="flex flex-col gap-3">
@@ -894,90 +1029,49 @@ export default function MemberDetailModal({
           </div>
           <div>
             <div className="mb-1 font-medium">Approver *</div>
-            <TextInput
-              readOnly
-              placeholder="Select approver"
-              value={selectedApprover ? `${selectedApprover.empNm} (${selectedApprover.empNo})` : ''}
-              suffix={
-                <SearchOutlined
-                  className="cursor-pointer text-blue-600!"
-                  onClick={() => setStaffPickerOpen(true)}
-                />
-              }
-              onClick={() => setStaffPickerOpen(true)}
+            <AppSelect<string>
+              className="w-full"
+              placeholder="Select an approver"
+              loading={isLoadingDeleteApprovers}
+              value={deleteApprover}
+              onChange={setDeleteApprover}
+              options={approverOptions(deleteApprovers)}
             />
+          </div>
+          <div className={styles.deleteNotice}>
+            Once the approver approves, the member is deleted and can no longer log in. Within one year it can be
+            restored through an approver; after that it cannot be restored. The data is kept for reporting.
           </div>
         </div>
       </Popup>
 
-      {/* Restoration Request Popup (C05) */}
+      {/* Restoration Request Popup (C05): approved by the chosen approver, within one year of the deletion */}
       <Popup
         open={restoreModalOpen}
-        title="Request Restoration"
+        title="Request Member Restoration"
         onCancel={() => setRestoreModalOpen(false)}
         onConfirm={handleSubmitRestore}
         confirmText="Request Restoration"
-        confirmLoading={isRestoring}
+        confirmLoading={restoration.isPending}
         footerAlign="right"
       >
-        <div>
-          <div className="mb-1 font-medium">Approver *</div>
-          <TextInput
-            readOnly
-            placeholder="Select approver"
-            value={selectedApprover ? `${selectedApprover.empNm} (${selectedApprover.empNo})` : ''}
-            suffix={
-              <SearchOutlined
-                className="cursor-pointer text-blue-600!"
-                onClick={() => setStaffPickerOpen(true)}
-              />
-            }
-            onClick={() => setStaffPickerOpen(true)}
-          />
+        <div className="flex flex-col gap-3">
+          <div className={styles.deleteNotice}>
+            Once approved, the member account returns to the previous status and the member can log in again.
+            Restorable until {formatDateHyphen(apiDetail?.deletion?.rtnEndDt || member.retentionEndDate)}.
+          </div>
+          <div>
+            <div className="mb-1 font-medium">Approver *</div>
+            <AppSelect<string>
+              className="w-full"
+              placeholder="Select an approver"
+              loading={isLoadingApprovers}
+              value={restoreApprover}
+              onChange={setRestoreApprover}
+              options={approverOptions(restoreApprovers)}
+            />
+          </div>
         </div>
-      </Popup>
-
-      {/* Staff Search Modal (VPA020500P01) */}
-      <Popup
-        open={staffPickerOpen}
-        title="Staff Search"
-        onCancel={() => setStaffPickerOpen(false)}
-        footer={null}
-        width={600}
-      >
-        <div className="flex gap-2 mb-3">
-          <TextInput
-            placeholder="Search by staff name"
-            value={staffKeyword}
-            onChange={(e) => setStaffKeyword(e.target.value)}
-            onPressEnter={() => setAppliedStaffKeyword(staffKeyword.trim())}
-          />
-          <ActionButton
-            action="search"
-            intent="primary"
-            appearance="filled"
-            onClick={() => setAppliedStaffKeyword(staffKeyword.trim())}
-          >
-            Search
-          </ActionButton>
-        </div>
-        <DataTable<EmployeeLookup>
-          rowKey="empNo"
-          loading={isStaffLoading}
-          dataSource={staffData?.data?.content ?? []}
-          onRow={(record) => ({
-            onClick: () => {
-              setSelectedApprover(record);
-              setStaffPickerOpen(false);
-            },
-            className: 'cursor-pointer',
-          })}
-          columns={[
-            { title: 'Employee No', dataIndex: 'empNo', width: 130 },
-            { title: 'Name', dataIndex: 'empNm' },
-            { title: 'Department', dataIndex: 'deptNm' },
-          ]}
-        />
       </Popup>
     </>
   );

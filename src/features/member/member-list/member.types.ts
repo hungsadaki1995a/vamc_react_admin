@@ -62,6 +62,7 @@ export type MemberItem = {
   membership?: MembershipType | '-';
   membershipExpiryDate?: string;
   approvalDate: string;
+  /** Payment deadline of an application in Pending Approval (sign-up / re-application + 15 days). */
   paymentDeadline?: string;
   deletedDate?: string;
   retentionEndDate?: string;

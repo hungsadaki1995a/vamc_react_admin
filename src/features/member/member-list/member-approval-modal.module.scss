@@ -1,0 +1,101 @@
+// Member sign-up approval popup (ADF1234 P08–P12).
+
+.summary {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 16px;
+  padding: 12px 16px;
+  border-radius: 8px;
+  background: var(--color-bg-subtle, #f8fafc);
+}
+
+.summaryRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--color-text-secondary, #64748b);
+}
+
+.memberName {
+  color: var(--color-text-primary, #1f2937);
+  font-weight: 600;
+}
+
+.steps {
+  margin: 0 0 16px;
+  padding: 0;
+  list-style: none;
+  border: 1px solid var(--color-border, #e2e8f0);
+  border-radius: 8px;
+}
+
+.step {
+  display: grid;
+  grid-template-columns: 110px 1fr auto;
+  gap: 8px;
+  align-items: center;
+  padding: 8px 12px;
+  font-size: 12px;
+
+  & + & {
+    border-top: 1px solid var(--color-border, #e2e8f0);
+  }
+}
+
+.stepName {
+  font-weight: 600;
+}
+
+.stepActor {
+  color: var(--color-text-secondary, #64748b);
+}
+
+.stepComment {
+  grid-column: 2 / -1;
+  color: var(--color-text-secondary, #64748b);
+  white-space: pre-line;
+}
+
+.field {
+  margin-bottom: 14px;
+}
+
+.label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+
+.required::after {
+  content: ' *';
+  color: var(--color-danger, #dc2626);
+}
+
+.control {
+  width: 100%;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 16px;
+}
+
+.error {
+  margin-top: 4px;
+  font-size: 12px;
+  color: var(--color-danger, #dc2626);
+}
+
+.notice {
+  padding: 12px 0 4px;
+  color: var(--color-text-secondary, #64748b);
+}
+
+.loading {
+  min-height: 120px;
+  padding: 24px 0;
+  text-align: center;
+  color: var(--color-text-secondary, #64748b);
+}

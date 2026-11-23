@@ -204,22 +204,6 @@
   }
 }
 
-.btnRestore {
-  height: 30px;
-  padding: 0 12px;
-  font-size: 12px;
-  font-weight: 600;
-  color: #005be2;
-  background-color: #ffffff;
-  border: 1px solid #005be2;
-  border-radius: 4px;
-  cursor: pointer;
-
-  &:hover {
-    background-color: #f0f6ff;
-  }
-}
-
 .deadlineDanger {
   color: #d92d20;
   font-weight: 600;
@@ -328,6 +312,18 @@
   &:hover {
     background-color: #e0243b;
   }
+
+  &:disabled,
+  &:disabled:hover {
+    background-color: #ffb3bc;
+    color: #ffffff;
+    cursor: not-allowed;
+  }
+}
+
+// Hover target of the Delete tooltip (a disabled button fires no mouse events)
+.deleteTrigger {
+  display: inline-flex;
 }
 
 .btnCancel {
@@ -425,4 +421,40 @@
 .uploadGuide {
   font-size: 12px;
   color: #6f7b95;
+}
+
+.deleteNotice {
+  color: var(--color-text-secondary, #6f7b95);
+  font-size: 13px;
+}
+
+// Deleted member: why there is no Restore button (pending request or retention ended)
+.restoreHint {
+  font-size: 13px;
+  color: #6f7b95;
+}
+
+// Pending restoration request; the approver decides it here
+.restorePanel {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0 0 16px;
+  padding: 12px 14px;
+  border: 1px solid #f0c36d;
+  border-radius: 6px;
+  background: #fffaf0;
+  font-size: 13px;
+}
+
+.restoreDecision {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.restoreDecisionButtons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
 }

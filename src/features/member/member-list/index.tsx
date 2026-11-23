@@ -1,10 +1,12 @@
 import { useState, useMemo } from 'react';
 import ActionButton from '@/components/common/actions/ActionButton';
+import AppTooltip from '@/components/common/tooltip/AppTooltip';
 import DataTable from '@/components/common/table/DataTable';
 import AppCheckbox from '@/components/inputs/AppCheckbox';
 import AppDatePicker from '@/components/inputs/AppDatePicker';
 import AppSelect from '@/components/inputs/AppSelect';
 import TextInput from '@/components/inputs/TextInput';
+import { useMenuPermission } from '@/hooks/use-menu-permission';
 import { useNotify } from '@/hooks/use-notify';
 import type { TableProps, TableColumnsType } from 'antd';
 import type { SortOrder } from 'antd/es/table/interface';
@@ -29,7 +31,7 @@ import type {
 import { useMembers, useExportMembers } from './use-members';
 import { SysPagination } from '@/features/system/_shared/SystemUi';
 import MemberDetailModal from './MemberDetailModal';
-import ApprovalStatusModal from './ApprovalStatusModal';
+import MemberApprovalModal from './MemberApprovalModal';
 import NewMemberModal from './NewMemberModal';
 import styles from './member-list.module.scss';
 
@@ -98,14 +100,11 @@ function formatDisplayDate(val?: string): string {
   return d.isValid() ? d.format('DD-MM-YYYY') : val;
 }
 
-function formatPaymentDeadline(
-  val?: string,
-  grade?: MemberGrade,
-  status?: MemberStatus,
-): { text: string; isDanger: boolean } {
-  if (grade !== 'Temporary' || status !== 'Pending Approval') {
-    return { text: '-', isDanger: false };
-  }
+/**
+ * Payment deadline (decided 2026-11-23): sign-up / re-application + 15 days. The server sends it only for
+ * applications in Pending Approval; general members have no deadline.
+ */
+function formatPaymentDeadline(val?: string): { text: string; isDanger: boolean } {
   const formatted = formatDisplayDate(val);
   if (formatted === '-') return { text: '-', isDanger: false };
 
@@ -120,6 +119,7 @@ function formatPaymentDeadline(
 
 export default function MemberList() {
   const { toast } = useNotify();
+  const { canWrite } = useMenuPermission();
   // ── Pagination & Sort State ────────────────────────────────────────────────
   const [page, setPage] = useState(1);
   const [pageSize] = useState(20);
@@ -564,19 +564,19 @@ export default function MemberList() {
             ),
           },
           {
-            title: 'Payment Deadline',
+            title: (
+              <AppTooltip description="Deadline of an application in Pending Approval: sign-up or re-application date + 15 days. General members have none.">
+                <span>Payment Deadline</span>
+              </AppTooltip>
+            ),
             dataIndex: 'paymentDeadline',
             key: 'payDdlnDt',
             width: 170,
             align: 'center' as const,
             sorter: true,
             sortOrder: getSortOrder('payDdlnDt'),
-            render: (val?: string, record?: MemberItem) => {
-              const { text, isDanger } = formatPaymentDeadline(
-                val,
-                record ? deriveMemberGrade(record) : undefined,
-                record ? deriveMemberStatus(record) : undefined,
-              );
+            render: (val?: string) => {
+              const { text, isDanger } = formatPaymentDeadline(val);
               return <span className={isDanger ? styles.paymentDeadlineDanger : undefined}>{text}</span>;
             },
           },
@@ -840,11 +840,11 @@ export default function MemberList() {
         }}
       />
 
-      <ApprovalStatusModal
-        visible={approvalModalVisible}
-        member={approvalMember}
+      <MemberApprovalModal
+        mbrNo={approvalModalVisible && approvalMember ? approvalMember.memberCode : null}
+        memberName={approvalMember?.memberName}
+        canWrite={canWrite}
         onClose={() => setApprovalModalVisible(false)}
-        onUpdateStatus={handleUpdateApprovalStatus}
       />
 
       <NewMemberModal

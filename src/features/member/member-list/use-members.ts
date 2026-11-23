@@ -9,11 +9,8 @@ import {
   updateMember,
   unlock,
   resendTemporaryPassword,
-  requestDeletion,
-  requestRestoration,
   getActiveProvinces,
   getActiveDistrictsByProvince,
-  uploadFile,
   excel,
 } from '@/api/generated/sdk.gen';
 import type {
@@ -25,6 +22,14 @@ import type {
   UpdateMemberRequest,
   ExcelData,
 } from '@/api/generated/types.gen';
+import { openAttachment } from '@/api/common/attachment-api';
+import {
+  cancelMemberDocumentSession,
+  openMemberDocumentSession,
+  removeMemberDocument,
+  uploadMemberDocument,
+} from '@/api/member/member-document-api';
+import type { MemberDocumentSlot, MemberDocumentType } from '@/api/member/member-document-api';
 import type {
   MemberItem,
   MemberClassification,
@@ -321,7 +326,9 @@ function buildMemberFilterParams(params: UseMembersParams): NonNullable<ExcelDat
 /**
  * Builds GetMembersData query parameters from UI filter state
  */
-export function buildMemberQueryParams(params: UseMembersParams): NonNullable<GetMembersData['query']> {
+export function buildMemberQueryParams(
+  params: UseMembersParams,
+): NonNullable<GetMembersData['query']> {
   return {
     page: params.page ?? 1,
     size: params.pageSize ?? 20,
@@ -426,15 +433,18 @@ export function useExportMembers() {
 }
 
 /**
- * Custom hook to fetch complete member details using `getMember` API
+ * Custom hook to fetch complete member details using `getMember` API.
+ * `unmask` returns the decrypted phone, e-mail and ID numbers (`raw*` fields) for the edit popup;
+ * the server allows it only for employees with write permission on the member menus.
  */
-export function useMemberDetail(mbrNo?: string, enabled = true) {
+export function useMemberDetail(mbrNo?: string, enabled = true, unmask = false) {
   return useQuery<MemberDetailResponse | null>({
-    queryKey: ['memberDetail', mbrNo],
+    queryKey: ['memberDetail', mbrNo, unmask],
     queryFn: async () => {
       if (!mbrNo) return null;
       const res = await getMember({
         path: { mbrNo },
+        query: unmask ? { unmask: true } : undefined,
         throwOnError: true,
       });
       return res.data?.data ?? null;
@@ -468,56 +478,6 @@ export function useResendTempPassword() {
     mutationFn: async (mbrNo: string) => {
       const res = await resendTemporaryPassword({ path: { mbrNo }, throwOnError: true });
       return res.data;
-    },
-  });
-}
-
-/**
- * Custom hook to request member deletion (`POST /api/v1/members/{mbrNo}/deletion-request`)
- */
-export function useRequestMemberDeletion() {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: async ({
-      mbrNo,
-      reason,
-      approverEmpNo,
-    }: {
-      mbrNo: string;
-      reason: string;
-      approverEmpNo: string;
-    }) => {
-      const res = await requestDeletion({
-        path: { mbrNo },
-        body: { reason, approverEmpNo },
-        throwOnError: true,
-      });
-      return res.data;
-    },
-    onSuccess: (_data, { mbrNo }) => {
-      queryClient.invalidateQueries({ queryKey: ['members'] });
-      queryClient.invalidateQueries({ queryKey: ['memberDetail', mbrNo] });
-    },
-  });
-}
-
-/**
- * Custom hook to request member restoration (`POST /api/v1/members/{mbrNo}/restoration-request`)
- */
-export function useRequestMemberRestoration() {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: async ({ mbrNo, approverEmpNo }: { mbrNo: string; approverEmpNo: string }) => {
-      const res = await requestRestoration({
-        path: { mbrNo },
-        body: { approverEmpNo },
-        throwOnError: true,
-      });
-      return res.data;
-    },
-    onSuccess: (_data, { mbrNo }) => {
-      queryClient.invalidateQueries({ queryKey: ['members'] });
-      queryClient.invalidateQueries({ queryKey: ['memberDetail', mbrNo] });
     },
   });
 }
@@ -587,14 +547,39 @@ export function useActiveDistricts(mctpvCd?: string) {
 }
 
 /**
- * Custom hook to upload a single file (`/api/files/upload`)
+ * Uploads one ID document of a paper sign-up into its slot. Opens the upload session of the member
+ * type first when `sessionId` is not given; resolves the session id together with the stored file.
  */
-export function useUploadMemberFile() {
+export function useUploadMemberDocument() {
   return useMutation({
-    mutationFn: async (file: File) => {
-      const res = await uploadFile({ body: { file }, throwOnError: true });
-      return res.data;
+    mutationFn: async ({ sessionId, mbrTypeCd, slot, file }: UploadMemberDocumentVariables) => {
+      const regSessionId = sessionId ?? (await openMemberDocumentSession(mbrTypeCd)).regSessionId;
+      const uploaded = await uploadMemberDocument(regSessionId, slot, file);
+      return { regSessionId, uploaded };
     },
   });
 }
 
+export interface UploadMemberDocumentVariables {
+  /** Open session; omitted for the first file. */
+  sessionId?: string;
+  mbrTypeCd: MemberDocumentType;
+  slot: MemberDocumentSlot;
+  file: File;
+}
+
+/** Removes one uploaded document from the session, or cancels the whole session (`fileId` omitted). */
+export function useRemoveMemberDocument() {
+  return useMutation({
+    mutationFn: async ({ sessionId, fileId }: { sessionId: string; fileId?: string }) => {
+      await (fileId ? removeMemberDocument(sessionId, fileId) : cancelMemberDocumentSession(sessionId));
+    },
+  });
+}
+
+/** Opens a `previewUrl` / `downloadUrl` in a new tab through the authenticated client. */
+export function useOpenAttachment() {
+  return useMutation({ mutationFn: openAttachment });
+}
+
+export type { MemberDocumentSlot, MemberDocumentType } from '@/api/member/member-document-api';
