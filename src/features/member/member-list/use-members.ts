@@ -9,8 +9,6 @@ import {
   updateMember,
   unlock,
   resendTemporaryPassword,
-  requestDeletion,
-  requestRestoration,
   getActiveProvinces,
   getActiveDistrictsByProvince,
   excel,
@@ -32,6 +30,7 @@ import {
   uploadMemberDocument,
 } from '@/api/member/member-document-api';
 import type { MemberDocumentSlot, MemberDocumentType } from '@/api/member/member-document-api';
+import type { DeletionAlert, MemberDeletionFields, MemberDeletionFilter } from '@/api/member/member-deletion-api';
 import type {
   MemberItem,
   MemberClassification,
@@ -59,6 +58,8 @@ export interface UseMembersParams {
   selectedStatuses?: MemberStatus[];
   membershipAll?: boolean;
   selectedMemberships?: MembershipType[];
+  /** Flag of an unrenewed membership (empty = no filter). */
+  deletionAlerts?: DeletionAlert[];
   searchField?: MemberSearchField;
   searchText?: string;
   dateRange?: [dayjs.Dayjs | null, dayjs.Dayjs | null] | null;
@@ -247,6 +248,8 @@ export function mapMemberResponseToItem(res: MemberResponse, index: number): Mem
     approvalDate: memberGrade === 'Temporary' ? '-' : formatDate(res.aprvDt),
     paymentDeadline: formatDate(res.payDdlnDt),
     deletedDate: formatDate(res.delDt),
+    deletionDueDate: formatDate((res as MemberResponse & MemberDeletionFields).deletionDueDt),
+    deletionAlert: (res as MemberResponse & MemberDeletionFields).deletionAlert,
     retentionEndDate: formatDate(res.rtnEndDt),
     phone: res.telno || '-',
     email: res.emlAddr || '-',
@@ -257,8 +260,8 @@ export function mapMemberResponseToItem(res: MemberResponse, index: number): Mem
 /**
  * Builds shared filter/sort query parameters from UI filter state
  */
-function buildMemberFilterParams(params: UseMembersParams): NonNullable<ExcelData['query']> {
-  const query: NonNullable<ExcelData['query']> = {};
+function buildMemberFilterParams(params: UseMembersParams): NonNullable<ExcelData['query']> & MemberDeletionFilter {
+  const query: NonNullable<ExcelData['query']> & MemberDeletionFilter = {};
 
   // Member Grade filter
   if (params.selectedMemberGrades && params.selectedMemberGrades.length > 0) {
@@ -308,6 +311,11 @@ function buildMemberFilterParams(params: UseMembersParams): NonNullable<ExcelDat
     query.mbrshpPayCds = params.selectedMemberships.map((m) => payMap[m]);
   }
 
+  // Deletion flag of an unrenewed membership (2026-11-22)
+  if (params.deletionAlerts && params.deletionAlerts.length > 0) {
+    query.deletionAlerts = params.deletionAlerts;
+  }
+
   // Search field + text
   if (params.searchText?.trim()) {
     query.searchField = params.searchField || 'MBR_NO';
@@ -328,7 +336,9 @@ function buildMemberFilterParams(params: UseMembersParams): NonNullable<ExcelDat
 /**
  * Builds GetMembersData query parameters from UI filter state
  */
-export function buildMemberQueryParams(params: UseMembersParams): NonNullable<GetMembersData['query']> {
+export function buildMemberQueryParams(
+  params: UseMembersParams,
+): NonNullable<GetMembersData['query']> & MemberDeletionFilter {
   return {
     page: params.page ?? 1,
     size: params.pageSize ?? 20,
@@ -433,15 +443,18 @@ export function useExportMembers() {
 }
 
 /**
- * Custom hook to fetch complete member details using `getMember` API
+ * Custom hook to fetch complete member details using `getMember` API.
+ * `unmask` returns the decrypted phone, e-mail and ID numbers (`raw*` fields) for the edit popup;
+ * the server allows it only for employees with write permission on the member menus.
  */
-export function useMemberDetail(mbrNo?: string, enabled = true) {
+export function useMemberDetail(mbrNo?: string, enabled = true, unmask = false) {
   return useQuery<MemberDetailResponse | null>({
-    queryKey: ['memberDetail', mbrNo],
+    queryKey: ['memberDetail', mbrNo, unmask],
     queryFn: async () => {
       if (!mbrNo) return null;
       const res = await getMember({
         path: { mbrNo },
+        query: unmask ? { unmask: true } : undefined,
         throwOnError: true,
       });
       return res.data?.data ?? null;
@@ -475,56 +488,6 @@ export function useResendTempPassword() {
     mutationFn: async (mbrNo: string) => {
       const res = await resendTemporaryPassword({ path: { mbrNo }, throwOnError: true });
       return res.data;
-    },
-  });
-}
-
-/**
- * Custom hook to request member deletion (`POST /api/v1/members/{mbrNo}/deletion-request`)
- */
-export function useRequestMemberDeletion() {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: async ({
-      mbrNo,
-      reason,
-      approverEmpNo,
-    }: {
-      mbrNo: string;
-      reason: string;
-      approverEmpNo: string;
-    }) => {
-      const res = await requestDeletion({
-        path: { mbrNo },
-        body: { reason, approverEmpNo },
-        throwOnError: true,
-      });
-      return res.data;
-    },
-    onSuccess: (_data, { mbrNo }) => {
-      queryClient.invalidateQueries({ queryKey: ['members'] });
-      queryClient.invalidateQueries({ queryKey: ['memberDetail', mbrNo] });
-    },
-  });
-}
-
-/**
- * Custom hook to request member restoration (`POST /api/v1/members/{mbrNo}/restoration-request`)
- */
-export function useRequestMemberRestoration() {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: async ({ mbrNo, approverEmpNo }: { mbrNo: string; approverEmpNo: string }) => {
-      const res = await requestRestoration({
-        path: { mbrNo },
-        body: { approverEmpNo },
-        throwOnError: true,
-      });
-      return res.data;
-    },
-    onSuccess: (_data, { mbrNo }) => {
-      queryClient.invalidateQueries({ queryKey: ['members'] });
-      queryClient.invalidateQueries({ queryKey: ['memberDetail', mbrNo] });
     },
   });
 }

@@ -208,7 +208,7 @@ export type TradeApplicationDetailResponse = {
      */
     tkcgEmpNm?: string;
     /**
-     * Current approval session
+     * Current approval session ID. Send it to GET /api/v1/approvals/{atrzHstryId} for the steps; null while no session exists / Mã phiên duyệt, dùng với GET /api/v1/approvals/{atrzHstryId}
      */
     atrzHstryId?: string;
     /**
@@ -303,6 +303,10 @@ export type TradeFileDto = {
      * Download URL
      */
     downloadUrl?: string;
+    /**
+     * In-browser preview URL (PDF and images)
+     */
+    previewUrl?: string;
 };
 
 /**
@@ -468,7 +472,7 @@ export type UpdateTradeContractRequest = {
      */
     feeClclnMthCd?: string;
     /**
-     * Fee schedule item (SRVC_FEE_MNG.FEE_MNG_ID); defaults to the first brokerage item
+     * Fee schedule item (SRVC_FEE_MNG.FEE_MNG_ID); defaults to the first item in use of the trade kind (sale DMDT, purchase PMDT, consulting CNSLT)
      */
     feeMngId?: string;
     /**
@@ -634,7 +638,7 @@ export type TradeContractDetailResponse = {
      */
     feeRcptCmptnYn?: string;
     /**
-     * Current approval session
+     * Current approval session ID. Send it to GET /api/v1/approvals/{atrzHstryId} for the steps; null while no session exists / Mã phiên duyệt, dùng với GET /api/v1/approvals/{atrzHstryId}
      */
     atrzHstryId?: string;
     /**
@@ -1201,7 +1205,7 @@ export type ProgramResponse = {
 
 export type FeeRequest = {
     /**
-     * Fee category (FEE_ARTCL_SE_CD: ANFE annual fee, CNSLT consulting, MDT brokerage) / Loại phí
+     * Fee category (FEE_ARTCL_SE_CD: ANFE membership fee, PMDT purchase brokerage, DMDT sale brokerage, CNSLT consulting) / Loại phí
      */
     category: string;
     /**
@@ -1240,6 +1244,10 @@ export type FeeRequest = {
      * Note / Ghi chú
      */
     note?: string;
+    /**
+     * In use (Y/N); create defaults to Y, update keeps the current value / Đang sử dụng
+     */
+    useYn?: string;
 };
 
 export type ApiResponseFeeResponse = {
@@ -1318,7 +1326,7 @@ export type FeeResponse = {
      */
     note?: string;
     /**
-     * Editable (only when not in use) / Có thể sửa (chỉ khi không sử dụng)
+     * Editable; always true / Luôn có thể sửa
      */
     editable?: boolean;
     /**
@@ -1595,9 +1603,9 @@ export type SaveMenuSettingRequest = {
      */
     menuNmEn: string;
     /**
-     * Display order among siblings / Thứ tự hiển thị
+     * Display order among siblings; optional (create: appended last, update: kept) / Thứ tự hiển thị
      */
-    menuSeq: number;
+    menuSeq?: number;
     /**
      * Menu URL / Đường dẫn menu
      */
@@ -1611,7 +1619,7 @@ export type SaveMenuSettingRequest = {
      */
     menuExpln?: string;
     /**
-     * In use (Y/N, default N) / Đang sử dụng
+     * In use (Y/N, default Y) / Đang sử dụng
      */
     useYn?: string;
 };
@@ -1880,6 +1888,10 @@ export type UpdateMemberRequest = {
      */
     prmntDaddr?: string;
     /**
+     * Document upload session (POST /api/v1/member-document-sessions); needed only when a document is replaced / Phiên tải lên giấy tờ, chỉ cần khi thay giấy tờ
+     */
+    regSessionId?: string;
+    /**
      * Evidence 1 file unique ID (front ID or passport)
      */
     file1UnqId?: string;
@@ -1959,6 +1971,10 @@ export type UpdateMemberRequest = {
      * Legal document issue date
      */
     lglDcmntIssuDmy?: string;
+    /**
+     * Legal document effective / reissue date (ddMMyyyy; saved once schema/44 is applied) / Ngày hiệu lực / cấp lại
+     */
+    lglDcmntEfctDmy?: string;
     /**
      * Registered charter capital
      */
@@ -2146,7 +2162,7 @@ export type MemberAttachmentDto = {
      */
     fileSeq?: number;
     /**
-     * Document type code (ID_CARD_FRONT, ID_CARD_BACK, PASSPORT, BUSINESS_LICENSE, LEGAL_REP_ID, AGENT_ID, POWER_OF_ATTORNEY, OTHER)
+     * Document type code (ID_CARD_FRONT, ID_CARD_BACK, PASSPORT, BUSINESS_LICENSE, LEGAL_REP_ID, AGENT_ID, POWER_OF_ATTORNEY, DOCUMENT_SCAN, OTHER)
      */
     docType?: string;
     /**
@@ -2268,7 +2284,7 @@ export type MemberBasicDto = {
      */
     mbrshpEndDt?: string;
     /**
-     * Active Approval Session ID
+     * Current approval session ID. Send it to GET /api/v1/approvals/{atrzHstryId} for the steps; null while no session exists / Mã phiên duyệt, dùng với GET /api/v1/approvals/{atrzHstryId}
      */
     atrzHstryId?: string;
     /**
@@ -2279,6 +2295,14 @@ export type MemberBasicDto = {
      * Available action in popup
      */
     availableAction?: string;
+    /**
+     * Officer in charge (responsible employee of the latest sign-up session) / Cán bộ phụ trách
+     */
+    officerEmpNo?: string;
+    /**
+     * Officer in charge name / Tên cán bộ phụ trách
+     */
+    officerNm?: string;
 };
 
 /**
@@ -2318,6 +2342,14 @@ export type MemberCorporateDto = {
      */
     issuDt?: string;
     /**
+     * Effective / reissue date (DD/MM/YYYY); null until schema/44 is applied / Ngày hiệu lực / cấp lại
+     */
+    efctDt?: string;
+    /**
+     * Whether the effective / reissue date can be stored (schema/44 applied); hide the field when false / Đã có cột lưu ngày hiệu lực
+     */
+    efctDtEnabled?: boolean;
+    /**
      * Charter Capital Amount
      */
     chrtrCptlAmt?: number;
@@ -2341,7 +2373,7 @@ export type MemberDeletionDto = {
      */
     delDt?: string;
     /**
-     * Retention end date = deleted date + 1 year; restorable until then / Ngày hết hạn lưu giữ
+     * Retention end date = deleted date + 1 year / Ngày hết hạn lưu giữ
      */
     rtnEndDt?: string;
     /**
@@ -2365,9 +2397,17 @@ export type MemberDeletionDto = {
      */
     approverNm?: string;
     /**
-     * True while the member can still be restored / Còn khôi phục được
+     * Restore can be requested: within one year of the deletion (retention end date) and no restoration request open / Có thể yêu cầu khôi phục: trong 1 năm kể từ ngày xoá và chưa có yêu cầu đang chờ
      */
     restorable?: boolean;
+    /**
+     * Restoration request waiting for approval, null when none / Yêu cầu khôi phục đang chờ duyệt
+     */
+    pendingRestoration?: PendingRestoration;
+    /**
+     * The signed-in employee is the approver of the pending restoration / Người đang xem là người duyệt
+     */
+    canDecideRestoration?: boolean;
 };
 
 /**
@@ -2596,6 +2636,36 @@ export type MemberRepresentativeDto = {
     files?: Array<MemberAttachmentDto>;
 };
 
+/**
+ * Pending restoration request / Yêu cầu khôi phục đang chờ
+ */
+export type PendingRestoration = {
+    /**
+     * Approval session ID / Mã phiên duyệt
+     */
+    atrzHstryId?: string;
+    /**
+     * Requested at / Thời điểm trình
+     */
+    requestedAt?: string;
+    /**
+     * Requester employee number / Người trình
+     */
+    requesterEmpNo?: string;
+    /**
+     * Requester name, partially masked / Tên người trình
+     */
+    requesterNm?: string;
+    /**
+     * Approver employee number / Người duyệt
+     */
+    approverEmpNo?: string;
+    /**
+     * Approver name, partially masked / Tên người duyệt
+     */
+    approverNm?: string;
+};
+
 export type ApiResponseMembershipStatusResponse = {
     status?: number;
     message?: string;
@@ -2633,9 +2703,9 @@ export type MembershipStatusResponse = {
     mbrshpPayDueDt?: string;
 };
 
-export type ReceiveMemberApprovalRequest = {
+export type AssignMemberOfficerRequest = {
     /**
-     * Employee number of the assignee (processing step)
+     * Employee number of the officer in charge (processing role) / Mã nhân viên cán bộ phụ trách
      */
     assigneeEmpNo: string;
 };
@@ -2679,9 +2749,9 @@ export type UpdateProvinceRequest = {
      */
     mctpvNm: string;
     /**
-     * Sort Order / Thứ tự sắp xếp
+     * Sort Order (optional, unchanged if omitted) / Thứ tự sắp xếp (tùy chọn)
      */
-    sortSeq: number;
+    sortSeq?: number;
     /**
      * Use status (Y: Active, N: Inactive) / Trạng thái sử dụng (Y: Hoạt động, N: Không hoạt động)
      */
@@ -3098,7 +3168,7 @@ export type UpdateEmpRequest = {
     /**
      * Mobile phone number / Số điện thoại di động
      */
-    empMoblTelno?: string;
+    empMoblTelno: string;
     /**
      * Employee status code (H, L, R, S) / Mã trạng thái nhân viên (H, L, R, S)
      */
@@ -3183,29 +3253,21 @@ export type UpdateEmpStatusRequest = {
     empSttsCd: string;
 };
 
-/**
- * Change Employee Password Request / Yêu cầu Đổi hoặc Đặt lại Mật khẩu Nhân viên
- */
-export type ChangeEmpPasswordRequest = {
-    /**
-     * New password (min 8 chars) / Mật khẩu mới (tối thiểu 8 ký tự)
-     */
-    newPassword: string;
-};
-
 export type UpdateTermsPolicyRequest = {
     /**
-     * Version label, unique per kind / Phiên bản, duy nhất theo loại
+     * Ignored; regenerated from the effective date / Bỏ qua, tự sinh từ ngày hiệu lực
+     *
+     * @deprecated
      */
-    version: string;
+    version?: string;
     /**
      * Effective date (yyyy-MM-dd) / Ngày hiệu lực
      */
     effectiveDate: string;
     /**
-     * Title (Vietnamese) / Tiêu đề (tiếng Việt)
+     * Title (Vietnamese), empty keeps the stored value / Tiêu đề (tiếng Việt), trống giữ giá trị cũ
      */
-    title: string;
+    title?: string;
     /**
      * Title (English), omitted keeps the stored value / Tiêu đề (tiếng Anh), bỏ trống giữ giá trị cũ
      */
@@ -3215,7 +3277,7 @@ export type UpdateTermsPolicyRequest = {
      */
     content: string;
     /**
-     * Content HTML (English), omitted keeps the stored value / Nội dung HTML (tiếng Anh), bỏ trống giữ giá trị cũ
+     * Content HTML (English), null keeps the stored value, blank removes it / Nội dung HTML (tiếng Anh), null giữ giá trị cũ, rỗng xoá
      */
     contentEn?: string;
 };
@@ -3252,15 +3314,29 @@ export type TermsPolicyDetailResponse = {
      */
     titleEn?: string;
     /**
-     * Published (Y/N) / Đã công bố
+     * Deprecated, always Y for new rows / Đã công bố
+     *
+     * @deprecated
      */
     published?: string;
+    /**
+     * Status by date: SCHEDULED, IN_EFFECT or PREVIOUS / Trạng thái theo ngày
+     */
+    status?: string;
+    /**
+     * Has English content / Có nội dung tiếng Anh
+     */
+    hasEn?: boolean;
+    /**
+     * Available languages: VN, EN / Ngôn ngữ có sẵn
+     */
+    languages?: Array<string>;
     /**
      * Version currently in force for its kind / Phiên bản hiện hành
      */
     current?: boolean;
     /**
-     * Editable (false once the effective date is reached) / Có thể sửa
+     * Editable (true only while scheduled) / Có thể sửa
      */
     editable?: boolean;
     /**
@@ -3444,6 +3520,10 @@ export type ContentFileResponse = {
      * Download URL / Đường dẫn tải xuống
      */
     downloadUrl?: string;
+    /**
+     * In-browser preview URL (PDF and images) / Đường dẫn xem trực tiếp
+     */
+    previewUrl?: string;
 };
 
 export type PostDetailResponse = {
@@ -3842,7 +3922,7 @@ export type InquiryDetailResponse = {
      */
     answerStatus?: string;
     /**
-     * Inquiry type code / Mã loại câu hỏi
+     * Inquiry type code (INQRY_SE_CD: GEN, BND, TRN, CNS, ERR) / Mã loại câu hỏi
      */
     category?: string;
     /**
@@ -4016,10 +4096,6 @@ export type BannerResponse = {
      */
     imageFileId?: string;
     /**
-     * Image preview URL / Đường dẫn xem ảnh
-     */
-    imagePreviewUrl?: string;
-    /**
      * Editable (only when not in use) / Có thể sửa (chỉ khi không sử dụng)
      */
     editable?: boolean;
@@ -4043,6 +4119,10 @@ export type BannerResponse = {
      * Modifier / Người sửa
      */
     mdfcnBy?: string;
+    /**
+     * Image preview URL / Đường dẫn xem ảnh
+     */
+    imagePreviewUrl?: string;
 };
 
 export type AboutSectionRequest = {
@@ -4422,7 +4502,7 @@ export type AuctionResponse = {
      */
     itrpRsn?: string;
     /**
-     * Approval session ID
+     * Publication approval session ID. Send it to GET /api/v1/approvals/{atrzHstryId} for the steps; null while no session exists / Mã phiên duyệt, dùng với GET /api/v1/approvals/{atrzHstryId}
      */
     atrzHstryId?: string;
     /**
@@ -4463,50 +4543,136 @@ export type AuctionResponse = {
     mdfcnByNm?: string;
 };
 
-/**
- * Menu Registration & Modification Request / Yêu cầu Đăng ký & Cập nhật Menu
- */
-export type MenuSaveRequest = {
+export type ApprovalProcessStepRequest = {
     /**
-     * Menu code (9 chars, business PK; 1st char W: User Web / A: Admin Web, followed by 2-digit depth segments; immutable after creation) / Mã menu (9 ký tự, khóa chính nghiệp vụ; ký tự đầu W: Web người dùng / A: Web quản trị, tiếp theo là các cặp 2 số theo cấp độ sâu; không thể sửa sau khi tạo)
+     * Step number (1..99) / Số thứ tự bước
      */
-    menuCd: string;
+    stpNo: number;
     /**
-     * Parent menu code (9 chars; for root menu, points to itself; for child menus, points to direct parent menuCd) / Mã menu cấp trên/cấp cha (9 ký tự; đối với menu gốc, trỏ đến chính mã hiện tại; đối với menu con, trỏ đến mã menu cha trực tiếp)
+     * Step name (e.g. RCPT, PRCS, 1ST_ATRZ) / Tên bước duyệt
      */
-    upMenuCd: string;
+    stpNm: string;
     /**
-     * Menu category classification code (W: User Web, A: Admin Web; default: A) / Mã phân loại menu (W: Web người dùng, A: Web quản trị; mặc định: A)
+     * Role group ID / Mã nhóm vai trò
      */
-    menuSeCd?: string;
+    roleGroupId: string;
     /**
-     * Multilingual label code mapped to LANG_LBL (defaults to lbl.menu.{menuCd} if omitted) / Mã nhãn đa ngôn ngữ liên kết bảng LANG_LBL (mặc định tự sinh lbl.menu.{menuCd} nếu để trống)
+     * Role ID / Mã vai trò
      */
-    lblCd?: string;
+    roleId: string;
     /**
-     * Frontend screen URL route address or program screen ID / Địa chỉ đường dẫn URL màn hình giao diện hoặc mã màn hình chương trình (ví dụ: /admin/users, SYS030101SC)
+     * Step number to return to on rejection (optional) / Bước quay lại khi từ chối (tùy chọn)
      */
-    menuUrlAddr?: string;
+    rjctStpNo?: number;
+};
+
+export type UpdateApprovalProcessRequest = {
     /**
-     * Base menu name / description (used as default title and fallback display name) / Tên menu gốc / mô tả mặc định (dùng làm tên hiển thị mặc định và dự phòng)
+     * Process name (max 36 chars) / Tên quy trình (tối đa 36 ký tự)
      */
-    menuExpln: string;
+    atrzProcNm: string;
     /**
-     * Display sort sequence order within same parent menu (integer >= 0, e.g. 10, 20) / Thứ tự sắp xếp hiển thị trong cùng menu cấp cha (số nguyên >= 0, ví dụ: 10, 20)
+     * Use flag (Y or N) / Trạng thái sử dụng (Y/N)
      */
-    menuSeq?: number;
+    useYn: string;
     /**
-     * Usage status flag (Y: Active / In use, N: Inactive / Disabled; default: Y) / Trạng thái sử dụng (Y: Đang sử dụng / Kích hoạt, N: Không sử dụng / Vô hiệu hóa; mặc định: Y)
+     * Ordered list of approval steps (stpNo = 1, 2, ...) / Danh sách các bước phê duyệt
+     */
+    steps: Array<ApprovalProcessStepRequest>;
+};
+
+export type ApiResponseApprovalProcessDetailResponse = {
+    status?: number;
+    message?: string;
+    data?: ApprovalProcessDetailResponse;
+};
+
+export type ApprovalProcessDetailResponse = {
+    /**
+     * Process UUID / Mã UUID quy trình
+     */
+    atrzProcId?: string;
+    /**
+     * Process code / Mã quy trình
+     */
+    atrzProcCd?: string;
+    /**
+     * Process name / Tên quy trình
+     */
+    atrzProcNm?: string;
+    /**
+     * Use flag (Y/N) / Trạng thái sử dụng
      */
     useYn?: string;
     /**
-     * Target translation language code (KR: Korean, EN: English, VN: Vietnamese) / Mã ngôn ngữ dịch đích (KR: Tiếng Hàn, EN: Tiếng Anh, VN: Tiếng Việt)
+     * Created date / Ngày tạo
      */
-    langCd?: string;
+    crtDt?: string;
     /**
-     * Translated menu name in target language (saved/updated to LANG_LBL_TRSL) / Tên menu đã dịch theo ngôn ngữ đích chỉ định (lưu/cập nhật vào bảng LANG_LBL_TRSL)
+     * Created by / Người tạo
      */
-    menuLblVal?: string;
+    crtBy?: string;
+    /**
+     * Modified date / Ngày cập nhật
+     */
+    mdfcnDt?: string;
+    /**
+     * Modified by / Người cập nhật
+     */
+    mdfcnBy?: string;
+    /**
+     * Ordered steps / Danh sách bước duyệt
+     */
+    steps?: Array<ApprovalProcessStepResponse>;
+};
+
+export type ApprovalProcessStepResponse = {
+    /**
+     * Step UUID / Mã UUID bước
+     */
+    atrzStpId?: string;
+    /**
+     * Step number / Số thứ tự bước
+     */
+    stpNo?: number;
+    /**
+     * Step name / Tên bước
+     */
+    stpNm?: string;
+    /**
+     * Role group ID / Mã nhóm vai trò
+     */
+    roleGroupId?: string;
+    /**
+     * Role group name / Tên nhóm vai trò
+     */
+    roleGroupNm?: string;
+    /**
+     * Role ID / Mã vai trò
+     */
+    roleId?: string;
+    /**
+     * Role name / Tên vai trò
+     */
+    roleNm?: string;
+    /**
+     * Step number on rejection / Bước quay lại khi từ chối
+     */
+    rjctStpNo?: number;
+};
+
+/**
+ * Change Own Password Request / Yêu cầu tự đổi mật khẩu
+ */
+export type ChangeOwnPasswordRequest = {
+    /**
+     * Current password: RSA-OAEP Base64 like login, or plain when RSA is optional / Mật khẩu hiện tại
+     */
+    currentPassword: string;
+    /**
+     * New password: RSA-OAEP Base64 like login, or plain when RSA is optional / Mật khẩu mới
+     */
+    newPassword: string;
 };
 
 /**
@@ -4520,19 +4686,19 @@ export type BatchJobConfigRequest = {
     /**
      * Batch group / Nhóm batch
      */
-    btchGroup?: string;
+    btchGroup: string;
     /**
      * Job description / Mô tả công việc
      */
     jobExpln?: string;
     /**
-     * Cron expression (manual execution only if null) / Biểu thức Cron (thực thi thủ công nếu null)
+     * 6-field Cron expression / Biểu thức Cron 6 trường
      */
-    cronExpression?: string;
+    cronExpression: string;
     /**
-     * Schedule enabled status (0/1) / Trạng thái kích hoạt lịch chạy (0/1)
+     * Schedule enabled status (true = Active) / Trạng thái kích hoạt lịch chạy
      */
-    scheduleVtlzYn?: boolean;
+    scheduleVtlzYn: boolean;
     /**
      * JSON format parameters / Tham số định dạng JSON
      */
@@ -4597,6 +4763,10 @@ export type BatchJobConfigResponse = {
      * Modifier / Người cập nhật
      */
     mdfcnBy?: string;
+    /**
+     * Latest run status: RUNNING, COMPLETED, FAILED; null if never run / Trạng thái lần chạy gần nhất
+     */
+    lastBtchStts?: string;
 };
 
 /**
@@ -4604,13 +4774,13 @@ export type BatchJobConfigResponse = {
  */
 export type ScheduleUpdateRequest = {
     /**
-     * Cron expression (manual execution only if null) / Biểu thức Cron (thực thi thủ công nếu null)
+     * 6-field Cron expression / Biểu thức Cron 6 trường
      */
-    cronExpression?: string;
+    cronExpression: string;
     /**
-     * Schedule enabled status (0/1) / Trạng thái kích hoạt lịch chạy (0/1)
+     * Schedule enabled status (true = Active) / Trạng thái kích hoạt lịch chạy
      */
-    scheduleVtlzYn?: boolean;
+    scheduleVtlzYn: boolean;
 };
 
 export type ApiResponseContentFileGroupResponse = {
@@ -4912,6 +5082,123 @@ export type RecordDeliveryRequest = {
     dlvrCn?: string;
 };
 
+export type ApiResponseExchangeRateStatusResponse = {
+    status?: number;
+    message?: string;
+    data?: ExchangeRateStatusResponse;
+};
+
+export type ExchangeRateResponse = {
+    /**
+     * Currency code / Mã tiền tệ
+     */
+    currencyCode?: string;
+    /**
+     * Currency name / Tên tiền tệ
+     */
+    currencyName?: string;
+    /**
+     * Cash buying rate, omitted when not quoted / Tỷ giá mua tiền mặt
+     */
+    cashBuy?: number;
+    /**
+     * Transfer buying rate, omitted when not quoted / Tỷ giá mua chuyển khoản
+     */
+    transferBuy?: number;
+    /**
+     * Selling rate, omitted when not quoted / Tỷ giá bán
+     */
+    sell?: number;
+    /**
+     * Shown on the user web (Y/N) / Hiển thị trên web người dùng
+     */
+    displayed?: string;
+    /**
+     * In use (Y/N) / Đang sử dụng
+     */
+    inUse?: string;
+    /**
+     * Reference date/time of the source / Thời điểm tham chiếu của nguồn
+     */
+    referenceDateTime?: string;
+    /**
+     * Last modified at / Thời điểm cập nhật cuối
+     */
+    lastModifiedAt?: string;
+};
+
+/**
+ * Exchange rate sync status / Trạng thái đồng bộ tỷ giá
+ */
+export type ExchangeRateStatusResponse = {
+    /**
+     * Rate source / Nguồn tỷ giá
+     */
+    source?: string;
+    /**
+     * Base date/time of the displayed rates / Thời điểm cơ sở của tỷ giá
+     */
+    baseDateTime?: string;
+    /**
+     * Latest run, null if never run / Lần chạy gần nhất
+     */
+    lastRun?: RunItem;
+    /**
+     * Schedule of the automatic run / Lịch chạy tự động
+     */
+    schedule?: Schedule;
+    /**
+     * Whether the caller may run Sync Now / Người dùng có quyền Sync Now
+     */
+    canSync?: boolean;
+    /**
+     * Rates shown to users (displayed and in use) / Tỷ giá đang hiển thị
+     */
+    rates?: Array<ExchangeRateResponse>;
+    /**
+     * Up to 5 latest runs, newest first / Tối đa 5 lần chạy gần nhất
+     */
+    recentRuns?: Array<RunItem>;
+};
+
+export type RunItem = {
+    /**
+     * Start time / Thời điểm bắt đầu
+     */
+    startedAt?: string;
+    /**
+     * End time, null while running / Thời điểm kết thúc
+     */
+    finishedAt?: string;
+    /**
+     * SUCCESS, FAILED or RUNNING
+     */
+    result?: string;
+    /**
+     * SCHEDULED or MANUAL
+     */
+    triggerType?: string;
+    /**
+     * AUTO for scheduled runs, otherwise the executor / AUTO hoặc người chạy
+     */
+    runBy?: string;
+};
+
+export type Schedule = {
+    /**
+     * Spring cron expression
+     */
+    cron?: string;
+    /**
+     * Time zone of the cron
+     */
+    zone?: string;
+    /**
+     * Whether the scheduled run is enabled / Lịch chạy có bật
+     */
+    enabled?: boolean;
+};
+
 /**
  * Login account credentials
  */
@@ -4941,7 +5228,7 @@ export type CreateMemberRequest = {
      */
     mbrTypeCd: string;
     /**
-     * Registration upload session ID (optional in admin channel)
+     * Document upload session (POST /api/v1/member-document-sessions), required: the documents of the request must be uploaded in it / Phiên tải lên giấy tờ, bắt buộc
      */
     regSessionId?: string;
     /**
@@ -5157,7 +5444,7 @@ export type MemberDeletionRequestResponse = {
      */
     mbrNo?: string;
     /**
-     * Request type: DELETE or RESTORE
+     * Request type: DELETE
      */
     requestType?: string;
     /**
@@ -5198,6 +5485,31 @@ export type PasswordSetupLinkResponse = {
     devToken?: string;
 };
 
+/**
+ * Membership period registered by the officer / Đăng ký kỳ hội viên
+ */
+export type RegisterMembershipPaymentRequest = {
+    /**
+     * PAID (fee received) or EXEMPT (period without fee) / Đã nộp hoặc miễn phí
+     */
+    payType: string;
+    /**
+     * Period start; must be after the end of the period still valid (E06) / Ngày bắt đầu kỳ
+     */
+    periodStartDate: string;
+    /**
+     * Payment date, required for PAID, ignored for EXEMPT / Ngày nộp phí (bắt buộc khi PAID)
+     */
+    paymentDate?: string;
+    exempt?: boolean;
+};
+
+export type ApiResponseMemberDeletionDto = {
+    status?: number;
+    message?: string;
+    data?: MemberDeletionDto;
+};
+
 export type CheckMemberDocumentsRequest = {
     /**
      * Documents complete ('Y': complete, 'N': incomplete -> supplement request)
@@ -5219,16 +5531,27 @@ export type MemberDeletionRequest = {
      */
     reason: string;
     /**
-     * Approver employee number (VPA020500P01) / Mã nhân viên người duyệt
+     * Ignored: no approval step / Không dùng: không còn bước duyệt
+     *
+     * @deprecated
      */
-    approverEmpNo: string;
+    approverEmpNo?: string;
+};
+
+export type ReceiveMemberApprovalRequest = {
+    /**
+     * Ignored: assign the officer in charge after the document check / Không dùng: giao cán bộ phụ trách sau khi kiểm hồ sơ
+     *
+     * @deprecated
+     */
+    assigneeEmpNo?: string;
 };
 
 export type RequestMemberApprovalRequest = {
     /**
-     * Approver employee number (1st Approval step)
+     * Approver employee number. Leave empty: sign-up has no approval step. Required only for an application received with the former 3-step process / Mã nhân viên phê duyệt. Để trống: đăng ký hội viên không có bước phê duyệt. Chỉ bắt buộc với hồ sơ đã tiếp nhận theo quy trình 3 bước cũ
      */
-    approverEmpNo: string;
+    approverEmpNo?: string;
     /**
      * SGDN member code issued by the SGDN internal system
      */
@@ -5315,6 +5638,91 @@ export type BatchCreateMembersResponse = {
     members?: Array<CreatedMemberDto>;
 };
 
+export type OpenMemberDocumentSessionRequest = {
+    /**
+     * Member type: P Individual, F Foreigner, O Organization / Loại hội viên
+     */
+    mbrTypeCd: string;
+};
+
+export type ApiResponseMemberDocumentSessionResponse = {
+    status?: number;
+    message?: string;
+    data?: MemberDocumentSessionResponse;
+};
+
+/**
+ * Member document upload session / Phiên tải lên giấy tờ hội viên
+ */
+export type MemberDocumentSessionResponse = {
+    /**
+     * Session id; send it as regSessionId when saving the member / Mã phiên, gửi lại ở regSessionId khi lưu hội viên
+     */
+    regSessionId?: string;
+    /**
+     * Member type / Loại hội viên: P, F, O
+     */
+    mbrTypeCd?: string;
+    /**
+     * Expiry when idle; extended by every upload / Thời điểm hết hạn khi không thao tác
+     */
+    expiresAt?: string;
+    /**
+     * Document slots of the member type / Các ô giấy tờ của loại hội viên
+     */
+    slots?: Array<SlotInfo>;
+};
+
+/**
+ * Document slot / Ô giấy tờ
+ */
+export type SlotInfo = {
+    /**
+     * Slot name / Tên ô
+     */
+    slot?: string;
+    /**
+     * Maximum number of files; 1 = a new upload replaces the file / Số tệp tối đa
+     */
+    maxFiles?: number;
+};
+
+export type ApiResponseMemberDocumentUploadResponse = {
+    status?: number;
+    message?: string;
+    data?: MemberDocumentUploadResponse;
+};
+
+/**
+ * Uploaded member document / Giấy tờ hội viên đã tải lên
+ */
+export type MemberDocumentUploadResponse = {
+    /**
+     * File id to reference in the member request / Mã tệp dùng trong yêu cầu lưu hội viên
+     */
+    fileId?: string;
+    /**
+     * Slot / Ô giấy tờ
+     */
+    slot?: string;
+    /**
+     * Content type / Kiểu nội dung
+     */
+    contentType?: string;
+    /**
+     * Size in bytes / Dung lượng (byte)
+     */
+    fileSize?: number;
+    /**
+     * File replaced in a single-file slot / Tệp bị thay thế ở ô một tệp
+     */
+    replacedFileId?: string;
+    /**
+     * New session expiry / Thời điểm hết hạn mới của phiên
+     */
+    sessionExpiresAt?: string;
+};
+
 export type CreateProvinceRequest = {
     /**
      * Province/City Code (3 characters, uppercase) / Mã Tỉnh/Thành phố (3 ký tự in hoa)
@@ -5329,9 +5737,9 @@ export type CreateProvinceRequest = {
      */
     admdstCd: number;
     /**
-     * Sort Order / Thứ tự sắp xếp
+     * Sort Order (optional, defaults to the administrative code) / Thứ tự sắp xếp (tùy chọn)
      */
-    sortSeq: number;
+    sortSeq?: number;
     /**
      * Use status (Y: Active, N: Inactive) / Trạng thái sử dụng (Y: Hoạt động, N: Không hoạt động)
      */
@@ -5366,6 +5774,10 @@ export type SaveDistrictItemRequest = {
      * Use status (Y/N) / Trạng thái sử dụng (Y/N)
      */
     useYn: string;
+    /**
+     * True: new row (409 if code exists), false: existing row (404 if missing), omitted: upsert for legacy clients; send true for new rows
+     */
+    isNew?: boolean;
 };
 
 export type ApiResponseListDistrictResponse = {
@@ -5541,6 +5953,31 @@ export type LiveAuctionSummaryResponse = {
     newBids?: Array<BidResponse>;
 };
 
+export type ApiResponseExcelParseResult = {
+    status?: number;
+    message?: string;
+    data?: ExcelParseResult;
+};
+
+export type ExcelParseResult = {
+    success?: boolean;
+    totalRows?: number;
+    failRows?: number;
+    errors?: Array<ExcelRowError>;
+    data?: Array<{
+        [key: string]: string;
+    }>;
+    rowNums?: Array<number>;
+};
+
+export type ExcelRowError = {
+    row?: number;
+    col?: string;
+    header?: string;
+    value?: string;
+    message?: string;
+};
+
 export type ApiResponseLabelCacheReloadResponse = {
     status?: number;
     message?: string;
@@ -5617,6 +6054,10 @@ export type SaveBranchItemRequest = {
      * Use status (Y/N) / Trạng thái sử dụng (Y/N)
      */
     useYn: string;
+    /**
+     * True: new row (409 if code exists), false: existing row (404 if missing), omitted: upsert for legacy clients; send true for new rows
+     */
+    isNew?: boolean;
 };
 
 export type ApiResponseListBranchResponse = {
@@ -5683,13 +6124,9 @@ export type CreateEmpRequest = {
     /**
      * Mobile phone number / Số điện thoại di động
      */
-    empMoblTelno?: string;
+    empMoblTelno: string;
     /**
-     * Initial login password (min 8 chars) / Mật khẩu khởi tạo (tối thiểu 8 ký tự)
-     */
-    password: string;
-    /**
-     * Employee status code (H: Active, L: Leave/Locked, R: Retired, S: Suspended) / Mã trạng thái nhân viên (H: Đang làm việc, L: Nghỉ phép/Khóa, R: Nghỉ việc, S: Đình chỉ)
+     * Employee status code (H: Active, L: On Leave, R: Retired, S: Suspended) / Mã trạng thái nhân viên (H: Đang làm việc, L: Nghỉ phép, R: Nghỉ việc, S: Đình chỉ)
      */
     empSttsCd: string;
     /**
@@ -5698,23 +6135,121 @@ export type CreateEmpRequest = {
     jbpsNm?: string;
 };
 
+export type ApiResponseEmpCreateResponse = {
+    status?: number;
+    message?: string;
+    data?: EmpCreateResponse;
+};
+
+/**
+ * Create Employee Response / Phản hồi tạo nhân viên
+ */
+export type EmpCreateResponse = {
+    /**
+     * Employee number / login ID / Mã nhân viên / ID đăng nhập
+     */
+    empNo?: string;
+    /**
+     * Employee full name / Họ và tên nhân viên
+     */
+    empNm?: string;
+    /**
+     * Full email address / Địa chỉ email đầy đủ
+     */
+    empEmlAddr?: string;
+    /**
+     * Office landline phone number / Số điện thoại bàn văn phòng
+     */
+    empTelno?: string;
+    /**
+     * Mobile phone number / Số điện thoại di động
+     */
+    empMoblTelno?: string;
+    /**
+     * Last password change date (DDMMYYYY) / Ngày đổi mật khẩu gần nhất (DDMMYYYY)
+     */
+    pswdChgDmy?: string;
+    /**
+     * Password failure attempt count / Số lần đăng nhập sai mật khẩu
+     */
+    pswdFailNmtm?: number;
+    /**
+     * Employee status code (H: Active, L: Leave, R: Retired, S: Suspended) / Mã trạng thái nhân viên
+     */
+    empSttsCd?: string;
+    /**
+     * Job position name / Chức danh vị trí công việc
+     */
+    jbpsNm?: string;
+    /**
+     * Creation date / Thời điểm tạo
+     */
+    createdAt?: string;
+    /**
+     * Created by user ID / Người tạo
+     */
+    createdBy?: string;
+    /**
+     * Last modification date / Thời điểm cập nhật cuối
+     */
+    updatedAt?: string;
+    /**
+     * Last modified by user ID / Người cập nhật cuối
+     */
+    updatedBy?: string;
+    /**
+     * Whether the temporary password e-mail was sent; false when sending failed or e-mail delivery is disabled / Email mật khẩu tạm đã được gửi hay chưa; false khi gửi lỗi hoặc hệ thống chưa bật gửi email
+     */
+    mailSent?: boolean;
+    /**
+     * Masked e-mail the password was sent to / Email đã che nơi gửi mật khẩu
+     */
+    mailSentTo?: string;
+};
+
+export type ApiResponseEmpPasswordResetResponse = {
+    status?: number;
+    message?: string;
+    data?: EmpPasswordResetResponse;
+};
+
+/**
+ * Reset Password Response / Phản hồi cấp lại mật khẩu
+ */
+export type EmpPasswordResetResponse = {
+    /**
+     * Employee number / Mã nhân viên
+     */
+    empNo?: string;
+    /**
+     * Whether the temporary password e-mail was sent; false when sending failed or e-mail delivery is disabled / Email mật khẩu tạm đã được gửi hay chưa; false khi gửi lỗi hoặc hệ thống chưa bật gửi email
+     */
+    mailSent?: boolean;
+    /**
+     * Masked e-mail the password was sent to / Email đã che nơi gửi mật khẩu
+     */
+    mailSentTo?: string;
+};
+
 export type CreateTermsPolicyRequest = {
     /**
      * Kind: TRMS (terms of use) or PRVC (privacy policy) / Loại văn bản
      */
     type: string;
     /**
-     * Version label, unique per kind / Phiên bản, duy nhất theo loại
+     * Ignored; generated from the effective date / Bỏ qua, tự sinh từ ngày hiệu lực
+     *
+     * @deprecated
      */
-    version: string;
+    version?: string;
     /**
      * Effective date (yyyy-MM-dd) / Ngày hiệu lực
      */
     effectiveDate: string;
     /**
-     * Title (Vietnamese) / Tiêu đề (tiếng Việt)
+     * Title (Vietnamese), empty = default by kind / Tiêu đề (tiếng Việt), trống = mặc định theo loại
      */
-    title: string;
+    title?: string;
     /**
      * Title (English) / Tiêu đề (tiếng Anh)
      */
@@ -5728,7 +6263,9 @@ export type CreateTermsPolicyRequest = {
      */
     contentEn?: string;
     /**
-     * Publish on creation (Y/N, default N) / Công bố ngay (mặc định N)
+     * Ignored; new rows are always published / Bỏ qua, luôn công bố
+     *
+     * @deprecated
      */
     published?: string;
 };
@@ -5978,6 +6515,10 @@ export type SaveCodeItemRequest = {
      * Multilingual Label Code (optional, auto-generated if omitted) / Mã nhãn đa ngôn ngữ (tùy chọn)
      */
     lblCd?: string;
+    /**
+     * True: new row (409 if code exists), false: existing row (404 if missing), omitted: upsert for legacy clients; send true for new rows
+     */
+    isNew?: boolean;
 };
 
 export type ApiResponseListCodeResponse = {
@@ -6248,29 +6789,23 @@ export type ApproveApprovalRequest = {
     cmntCn?: string;
 };
 
-export type ApiResponseExcelParseResult = {
-    status?: number;
-    message?: string;
-    data?: ExcelParseResult;
-};
-
-export type ExcelParseResult = {
-    success?: boolean;
-    totalRows?: number;
-    failRows?: number;
-    errors?: Array<ExcelRowError>;
-    data?: Array<{
-        [key: string]: string;
-    }>;
-    rowNums?: Array<number>;
-};
-
-export type ExcelRowError = {
-    row?: number;
-    col?: string;
-    header?: string;
-    value?: string;
-    message?: string;
+export type CreateApprovalProcessRequest = {
+    /**
+     * Unique process code (uppercase, digits, underscore, max 30 chars) / Mã quy trình (chữ hoa, số, gạch dưới)
+     */
+    atrzProcCd: string;
+    /**
+     * Process name (max 36 chars) / Tên quy trình (tối đa 36 ký tự)
+     */
+    atrzProcNm: string;
+    /**
+     * Use flag (Y or N, defaults to Y) / Trạng thái sử dụng (Y/N, mặc định Y)
+     */
+    useYn?: string;
+    /**
+     * Ordered list of approval steps (stpNo = 1, 2, ...) / Danh sách các bước phê duyệt
+     */
+    steps: Array<ApprovalProcessStepRequest>;
 };
 
 export type LblSaveItem = {
@@ -6413,13 +6948,25 @@ export type EmpPasswordResetRequest = {
 };
 
 /**
- * Employee password reset token check / Kiểm tra token đặt lại mật khẩu nhân viên
+ * Employee password reset verification / Xác minh đặt lại mật khẩu nhân viên
  */
 export type EmpPasswordResetVerifyRequest = {
     /**
-     * Token from the reset mail link / Token trong liên kết đặt lại mật khẩu
+     * Channel used in step 1; EMAIL when omitted / Kênh đã dùng ở bước 1; mặc định EMAIL
      */
-    token: string;
+    channel?: 'EMAIL' | 'ZALO';
+    /**
+     * EMAIL: token from the reset mail link / EMAIL: token trong liên kết đặt lại mật khẩu
+     */
+    token?: string;
+    /**
+     * ZALO: requestId returned by POST /api/auth/password-reset/request / ZALO: requestId trả về ở bước 1
+     */
+    requestId?: string;
+    /**
+     * ZALO: 6-digit code / ZALO: mã 6 số
+     */
+    code?: string;
 };
 
 export type ApiResponseEmpPasswordResetTokenResponse = {
@@ -6433,13 +6980,17 @@ export type ApiResponseEmpPasswordResetTokenResponse = {
  */
 export type EmpPasswordResetTokenResponse = {
     /**
-     * Channel the link was sent through / Kênh đã gửi liên kết
+     * Channel that was verified: EMAIL or ZALO / Kênh đã xác minh
      */
     channel?: string;
     /**
-     * Masked employee number (login ID) / Mã nhân viên (ID đăng nhập) đã che
+     * Employee number (login ID), not masked / Mã nhân viên (ID đăng nhập), không che
      */
     loginId?: string;
+    /**
+     * ZALO only: one-time reset token for POST /api/auth/password-reset / Chỉ với ZALO: token dùng một lần để gọi POST /api/auth/password-reset
+     */
+    token?: string;
 };
 
 /**
@@ -6447,7 +6998,7 @@ export type EmpPasswordResetTokenResponse = {
  */
 export type EmpPasswordResetLinkRequest = {
     /**
-     * Verification channel (EMAIL; ZALO is not supported yet) / Kênh xác minh (EMAIL; chưa hỗ trợ ZALO)
+     * Verification channel: EMAIL mails a reset link, ZALO issues a 6-digit code / Kênh xác minh: EMAIL gửi liên kết, ZALO cấp mã 6 số
      */
     channel: 'EMAIL' | 'ZALO';
     /**
@@ -6455,9 +7006,9 @@ export type EmpPasswordResetLinkRequest = {
      */
     email?: string;
     /**
-     * Registered phone (required for PHONE) / Số điện thoại đã đăng ký (bắt buộc với PHONE)
+     * Registered mobile (required for ZALO) / Số di động đã đăng ký (bắt buộc với ZALO)
      */
-    phone: string;
+    phone?: string;
     /**
      * Page of the admin web that opens the reset link (optional; must be an allowed CORS origin) / Trang admin mở liên kết đặt lại (tùy chọn; phải thuộc origin CORS được phép)
      */
@@ -6582,10 +7133,68 @@ export type EmpFindIdResultResponse = {
     loginId?: string;
 };
 
-export type ApiResponseObject = {
+export type ApiResponseBatchJobHistoryResponse = {
     status?: number;
     message?: string;
-    data?: unknown;
+    data?: BatchJobHistoryResponse;
+};
+
+/**
+ * Batch job execution history response / Phản hồi lịch sử thực thi batch job
+ */
+export type BatchJobHistoryResponse = {
+    /**
+     * Batch history ID / Mã lịch sử batch
+     */
+    btchHstryId?: number;
+    /**
+     * Batch job name / Tên batch job
+     */
+    btchJobNm?: string;
+    /**
+     * Batch group / Nhóm batch
+     */
+    btchGroup?: string;
+    /**
+     * Batch status (RUNNING/COMPLETED/FAILED) / Trạng thái batch (RUNNING/COMPLETED/FAILED)
+     */
+    btchStts?: string;
+    /**
+     * Start timestamp / Thời điểm bắt đầu
+     */
+    bgngDt?: string;
+    /**
+     * End timestamp / Thời điểm kết thúc
+     */
+    endDt?: string;
+    /**
+     * Duration in milliseconds / Thời gian thực thi (ms)
+     */
+    prgrsHr?: number;
+    /**
+     * Total processed count / Tổng số lượng xử lý
+     */
+    tprcsNocs?: number;
+    /**
+     * Success count / Số lượng thành công
+     */
+    scsNocs?: number;
+    /**
+     * Failure count / Số lượng thất bại
+     */
+    failNocs?: number;
+    /**
+     * Error message / Thông báo lỗi
+     */
+    errMsg?: string;
+    /**
+     * Executor / Người thực thi
+     */
+    excnBy?: string;
+    /**
+     * Trigger type (SCHEDULED/MANUAL) / Loại kích hoạt (SCHEDULED/MANUAL)
+     */
+    trgrType?: string;
 };
 
 export type FeeIdsRequest = {
@@ -6676,6 +7285,94 @@ export type NotificationUseRequest = {
     useYn: string;
 };
 
+export type MoveMenuRequest = {
+    /**
+     * Target parent menu code / Mã menu cha đích
+     */
+    upMenuCd: string;
+    /**
+     * Full new order of the target parent's children, including the moved menu / Thứ tự mới của các menu con
+     */
+    siblingOrder: Array<string>;
+};
+
+export type ApiResponseListMenuSettingResponse = {
+    status?: number;
+    message?: string;
+    data?: Array<MenuSettingResponse>;
+};
+
+export type MenuSettingResponse = {
+    /**
+     * Menu code / Mã menu
+     */
+    menuCd?: string;
+    /**
+     * Parent menu code / Mã menu cha
+     */
+    upMenuCd?: string;
+    /**
+     * Menu type (W/A) / Loại menu
+     */
+    menuSeCd?: string;
+    /**
+     * Display order / Thứ tự
+     */
+    menuSeq?: number;
+    /**
+     * Depth (0 = root) / Cấp
+     */
+    menuDpth?: number;
+    /**
+     * In use (Y/N) / Đang sử dụng
+     */
+    useYn?: string;
+    /**
+     * Vietnamese name / Tên tiếng Việt
+     */
+    menuNmVn?: string;
+    /**
+     * English name / Tên tiếng Anh
+     */
+    menuNmEn?: string;
+    /**
+     * Menu URL / Đường dẫn
+     */
+    menuUrlAddr?: string;
+    /**
+     * Label code / Mã nhãn
+     */
+    lblCd?: string;
+    /**
+     * Description / Mô tả
+     */
+    menuExpln?: string;
+    /**
+     * Tree sort path / Đường dẫn sắp xếp
+     */
+    sortPath?: string;
+    /**
+     * Number of child menus (detail only) / Số menu con
+     */
+    childCount?: number;
+    /**
+     * Created at / Ngày tạo
+     */
+    crtDt?: string;
+    /**
+     * Created by / Người tạo
+     */
+    crtBy?: string;
+    /**
+     * Modified at / Ngày sửa
+     */
+    mdfcnDt?: string;
+    /**
+     * Modified by / Người sửa
+     */
+    mdfcnBy?: string;
+};
+
 export type TermsPolicyIdsRequest = {
     /**
      * Document IDs selected in the grid / Mã văn bản được chọn
@@ -6755,6 +7452,13 @@ export type BannerIdsRequest = {
      * Use flag for PATCH /use (Y/N) / Trạng thái sử dụng
      */
     useYn?: string;
+};
+
+export type UpdateApprovalProcessStatusRequest = {
+    /**
+     * Use flag (Y or N) / Trạng thái sử dụng (Y/N)
+     */
+    useYn: string;
 };
 
 /**
@@ -7458,7 +8162,7 @@ export type FeeSearchRequest = {
      */
     useYn?: string;
     /**
-     * Fee category (ANFE, CNSLT, MDT) / Loại phí
+     * Fee category (ANFE, PMDT, DMDT, CNSLT) / Loại phí
      */
     category?: string;
     /**
@@ -7470,7 +8174,7 @@ export type FeeSearchRequest = {
      */
     toDate?: string;
     /**
-     * Keyword on fee ID, item name or description / Từ khóa theo mã, tên hoặc mô tả
+     * Keyword on item name or content / Từ khóa theo tên hoặc nội dung
      */
     keyword?: string;
 };
@@ -8215,37 +8919,38 @@ export type MenuSettingSearchRequest = {
     useYn?: string;
 };
 
-export type ApiResponseListMenuSettingResponse = {
+export type ApiResponseMenuSettingResponse = {
     status?: number;
     message?: string;
-    data?: Array<MenuSettingResponse>;
+    data?: MenuSettingResponse;
 };
 
-export type MenuSettingResponse = {
+export type MenuOptionSearchRequest = {
+    /**
+     * Menu type (W web, A admin, empty = both) / Loại menu
+     */
+    menuSeCd?: string;
+    /**
+     * In use filter (Y/N, empty = all) / Lọc trạng thái sử dụng
+     */
+    useYn?: string;
+};
+
+export type ApiResponseListMenuOptionResponse = {
+    status?: number;
+    message?: string;
+    data?: Array<MenuOptionResponse>;
+};
+
+export type MenuOptionResponse = {
     /**
      * Menu code / Mã menu
      */
     menuCd?: string;
     /**
-     * Parent menu code / Mã menu cha
-     */
-    upMenuCd?: string;
-    /**
      * Menu type (W/A) / Loại menu
      */
     menuSeCd?: string;
-    /**
-     * Display order / Thứ tự
-     */
-    menuSeq?: number;
-    /**
-     * Depth (0 = root) / Cấp
-     */
-    menuDpth?: number;
-    /**
-     * In use (Y/N) / Đang sử dụng
-     */
-    useYn?: string;
     /**
      * Vietnamese name / Tên tiếng Việt
      */
@@ -8255,47 +8960,9 @@ export type MenuSettingResponse = {
      */
     menuNmEn?: string;
     /**
-     * Menu URL / Đường dẫn
+     * In use (Y/N) / Đang sử dụng
      */
-    menuUrlAddr?: string;
-    /**
-     * Label code / Mã nhãn
-     */
-    lblCd?: string;
-    /**
-     * Description / Mô tả
-     */
-    menuExpln?: string;
-    /**
-     * Tree sort path / Đường dẫn sắp xếp
-     */
-    sortPath?: string;
-    /**
-     * Number of child menus (detail only) / Số menu con
-     */
-    childCount?: number;
-    /**
-     * Created at / Ngày tạo
-     */
-    crtDt?: string;
-    /**
-     * Created by / Người tạo
-     */
-    crtBy?: string;
-    /**
-     * Modified at / Ngày sửa
-     */
-    mdfcnDt?: string;
-    /**
-     * Modified by / Người sửa
-     */
-    mdfcnBy?: string;
-};
-
-export type ApiResponseMenuSettingResponse = {
-    status?: number;
-    message?: string;
-    data?: MenuSettingResponse;
+    useYn?: string;
 };
 
 export type ApiResponseMenuPermissionMatrixResponse = {
@@ -8448,7 +9115,7 @@ export type MemberResponse = {
      */
     mbrClsCd?: string;
     /**
-     * Approval session ID
+     * Approval session ID. Send it to GET /api/v1/approvals/{atrzHstryId} for the steps; null while no session exists / Mã phiên duyệt, dùng với GET /api/v1/approvals/{atrzHstryId}
      */
     atrzHstryId?: string;
     /**
@@ -8516,7 +9183,7 @@ export type MemberResponse = {
      */
     mbrshpExprDt?: string;
     /**
-     * Payment deadline: application (or re-application) date + 15 days, Temporary Members pending approval only / Hạn nộp: ngày đăng ký (hoặc đăng ký lại) + 15 ngày, chỉ hội viên tạm chờ duyệt
+     * First membership fee deadline (decided 2026-11-23): sign-up completion date + 15 days, general members who have not paid yet; past it the job member-first-fee-cancel deletes the member / Hạn nộp phí lần đầu: ngày hoàn tất + 15 ngày, hội viên thường chưa nộp
      */
     payDdlnDt?: string;
     /**
@@ -8527,6 +9194,14 @@ export type MemberResponse = {
      * Retention end date = deleted date + 1 year / Ngày hết hạn lưu giữ
      */
     rtnEndDt?: string;
+    /**
+     * Deletion due date for an unrenewed membership: membership expiry + 1 year; null when not concerned / Hạn chuyển sang đã xoá: ngày hết hạn hội viên + 1 năm; null nếu không áp dụng
+     */
+    deletionDueDt?: string;
+    /**
+     * Deletion flag: WARNING (due within 15 days), DUE (the officer in charge may set the member deleted), null otherwise / Cờ cảnh báo: WARNING (còn 15 ngày), DUE (cán bộ phụ trách chuyển sang đã xoá)
+     */
+    deletionAlert?: 'WARNING' | 'DUE';
     /**
      * Available user action for popup (RECEIVE, REQUEST, DECIDE, VIEW)
      */
@@ -8561,6 +9236,46 @@ export type PageResponseMemberResponse = {
      * Total number of pages / Tổng số trang
      */
     totalPages?: number;
+};
+
+export type ApiResponseListMemberFeePaymentResponse = {
+    status?: number;
+    message?: string;
+    data?: Array<MemberFeePaymentResponse>;
+};
+
+/**
+ * Membership fee payment / Lần nộp phí hội viên
+ */
+export type MemberFeePaymentResponse = {
+    /**
+     * Payment type: JOIN (at sign-up completion), FRST (first fee or new period), RNWL (renewal), EXMP (exempt period), MIGR (last payment before the history existed) / Loại nộp
+     */
+    paySeCd?: string;
+    /**
+     * Payment confirmation date / Ngày xác nhận nộp
+     */
+    payDt?: string;
+    /**
+     * Membership period start covered / Bắt đầu kỳ hội viên
+     */
+    periodBgngDt?: string;
+    /**
+     * Membership period end covered / Kết thúc kỳ hội viên
+     */
+    periodEndDt?: string;
+    /**
+     * Confirming employee number / Mã nhân viên xác nhận
+     */
+    cnfmEmpNo?: string;
+    /**
+     * Confirming employee name, partially masked / Tên nhân viên xác nhận (che một phần)
+     */
+    cnfmEmpNm?: string;
+    /**
+     * Recorded at / Thời điểm ghi
+     */
+    crtDt?: string;
 };
 
 export type ApiResponseMemberApprovalContextResponse = {
@@ -9102,6 +9817,108 @@ export type LanguageResponse = {
     sortSeq?: number;
 };
 
+export type LabelSearchRequest = {
+    /**
+     * Type: W (web) / A (admin). No label is classified until the column exists, so a value returns an empty page. / Loại
+     */
+    sysSeCd?: string;
+    /**
+     * Label key (contains) / Khoá nhãn
+     */
+    lblKey?: string;
+    /**
+     * Keyword in description or any active-language text (contains) / Từ khoá
+     */
+    keyword?: string;
+    /**
+     * Only labels missing text in at least one active language / Chỉ nhãn thiếu bản dịch
+     */
+    missingOnly?: boolean;
+};
+
+export type ApiResponsePageResponseLabelListResponse = {
+    status?: number;
+    message?: string;
+    data?: PageResponseLabelListResponse;
+};
+
+export type LabelListResponse = {
+    /**
+     * Type: W (web) / A (admin); null until the column exists / Loại
+     */
+    sysSeCd?: string;
+    /**
+     * Scope: C (common, screen ID COM) / B (screen specific) / Phạm vi
+     */
+    scopeCd?: string;
+    /**
+     * Label key shown in the list (the stored label code) / Khoá nhãn
+     */
+    lblKey?: string;
+    /**
+     * Screen ID / Mã màn hình
+     */
+    scrnId?: string;
+    /**
+     * Label category / Phân loại
+     */
+    lblSeCd?: string;
+    /**
+     * Label code / Mã nhãn
+     */
+    lblCd?: string;
+    /**
+     * Description / Mô tả
+     */
+    lblExpln?: string;
+    /**
+     * In use (Y/N) / Sử dụng
+     */
+    useYn?: string;
+    /**
+     * Number of active languages without text; 0 means complete / Số ngôn ngữ thiếu
+     */
+    missingCnt?: number;
+    /**
+     * Last modified time, created time if never modified / Ngày sửa
+     */
+    mdfcnDt?: string;
+    /**
+     * Last modified by, creator if never modified / Người sửa
+     */
+    mdfcnBy?: string;
+    /**
+     * Text for every active language, null text if missing / Bản dịch
+     */
+    translations?: Array<LabelTranslationResponse>;
+};
+
+/**
+ * Paginated Response / Phản hồi phân trang
+ */
+export type PageResponseLabelListResponse = {
+    /**
+     * Data list / Danh sách dữ liệu
+     */
+    content?: Array<LabelListResponse>;
+    /**
+     * Current page number (1-based) / Số trang hiện tại
+     */
+    page?: number;
+    /**
+     * Page size / Số lượng bản ghi mỗi trang
+     */
+    size?: number;
+    /**
+     * Total number of records / Tổng số bản ghi
+     */
+    totalElements?: number;
+    /**
+     * Total number of pages / Tổng số trang
+     */
+    totalPages?: number;
+};
+
 export type InstitutionSearchRequest = {
     /**
      * Use status filter (Y/N, empty = all) / Bộ lọc trạng thái
@@ -9276,6 +10093,14 @@ export type EmpResponse = {
      * Password failure attempt count / Số lần đăng nhập sai mật khẩu
      */
     pswdFailNmtm?: number;
+    /**
+     * Account status derived from failed password attempts (ACTIVE, LOCKED) / Trạng thái tài khoản (ACTIVE, LOCKED)
+     */
+    acntSttsCd?: string;
+    /**
+     * Registered date / Ngày đăng ký
+     */
+    createdAt?: string;
     /**
      * Last modification date / Thời điểm cập nhật cuối
      */
@@ -9791,11 +10616,19 @@ export type TermsPolicySearchRequest = {
      */
     type?: string;
     /**
-     * Published filter (Y/N, empty = all) / Lọc trạng thái công bố
+     * Status filter: SCHEDULED, IN_EFFECT or PREVIOUS (empty = all) / Lọc trạng thái theo ngày
+     */
+    status?: string;
+    /**
+     * Deprecated, published filter (Y/N, empty = all) / Lọc trạng thái công bố
+     *
+     * @deprecated
      */
     published?: string;
     /**
-     * Keyword on version or title / Từ khóa theo phiên bản hoặc tiêu đề
+     * Deprecated, keyword on version or title / Từ khóa theo phiên bản hoặc tiêu đề
+     *
+     * @deprecated
      */
     keyword?: string;
 };
@@ -9858,15 +10691,29 @@ export type TermsPolicyResponse = {
      */
     titleEn?: string;
     /**
-     * Published (Y/N) / Đã công bố
+     * Deprecated, always Y for new rows / Đã công bố
+     *
+     * @deprecated
      */
     published?: string;
+    /**
+     * Status by date: SCHEDULED, IN_EFFECT or PREVIOUS / Trạng thái theo ngày
+     */
+    status?: string;
+    /**
+     * Has English content / Có nội dung tiếng Anh
+     */
+    hasEn?: boolean;
+    /**
+     * Available languages: VN, EN / Ngôn ngữ có sẵn
+     */
+    languages?: Array<string>;
     /**
      * Version currently in force for its kind / Phiên bản hiện hành
      */
     current?: boolean;
     /**
-     * Editable (false once the effective date is reached) / Có thể sửa
+     * Editable (true only while scheduled) / Có thể sửa
      */
     editable?: boolean;
     /**
@@ -10091,45 +10938,6 @@ export type ApiResponseListExchangeRateResponse = {
     data?: Array<ExchangeRateResponse>;
 };
 
-export type ExchangeRateResponse = {
-    /**
-     * Currency code / Mã tiền tệ
-     */
-    currencyCode?: string;
-    /**
-     * Currency name / Tên tiền tệ
-     */
-    currencyName?: string;
-    /**
-     * Cash buying rate, omitted when not quoted / Tỷ giá mua tiền mặt
-     */
-    cashBuy?: number;
-    /**
-     * Transfer buying rate, omitted when not quoted / Tỷ giá mua chuyển khoản
-     */
-    transferBuy?: number;
-    /**
-     * Selling rate, omitted when not quoted / Tỷ giá bán
-     */
-    sell?: number;
-    /**
-     * Shown on the user web (Y/N) / Hiển thị trên web người dùng
-     */
-    displayed?: string;
-    /**
-     * In use (Y/N) / Đang sử dụng
-     */
-    inUse?: string;
-    /**
-     * Reference date/time of the source / Thời điểm tham chiếu của nguồn
-     */
-    referenceDateTime?: string;
-    /**
-     * Last modified at / Thời điểm cập nhật cuối
-     */
-    lastModifiedAt?: string;
-};
-
 export type ApiResponseMapStringListCodeOptionResponse = {
     status?: number;
     message?: string;
@@ -10155,7 +10963,7 @@ export type InquirySearchRequest = {
      */
     answerStatus?: string;
     /**
-     * Inquiry type (INQRY_SE_CD: CST consulting, ETC others) / Loại câu hỏi
+     * Inquiry type (INQRY_SE_CD: GEN general, BND bond/collateral, TRN transaction procedure, CNS consulting, ERR system error) / Loại câu hỏi
      */
     category?: string;
     /**
@@ -10188,7 +10996,7 @@ export type InquiryResponse = {
      */
     answerStatus?: string;
     /**
-     * Inquiry type code / Mã loại câu hỏi
+     * Inquiry type code (INQRY_SE_CD: GEN, BND, TRN, CNS, ERR) / Mã loại câu hỏi
      */
     category?: string;
     /**
@@ -11123,6 +11931,77 @@ export type ApprovalCandidateResponse = {
     roleNm?: string;
 };
 
+export type ApiResponsePageResponseApprovalProcessResponse = {
+    status?: number;
+    message?: string;
+    data?: PageResponseApprovalProcessResponse;
+};
+
+export type ApprovalProcessResponse = {
+    /**
+     * Process UUID / Mã UUID quy trình
+     */
+    atrzProcId?: string;
+    /**
+     * Process code / Mã quy trình
+     */
+    atrzProcCd?: string;
+    /**
+     * Process name / Tên quy trình
+     */
+    atrzProcNm?: string;
+    /**
+     * Use flag (Y/N) / Trạng thái sử dụng
+     */
+    useYn?: string;
+    /**
+     * Number of configured steps / Số bước cấu hình
+     */
+    stepCount?: number;
+    /**
+     * Created date / Ngày tạo
+     */
+    crtDt?: string;
+    /**
+     * Created by / Người tạo
+     */
+    crtBy?: string;
+    /**
+     * Modified date / Ngày cập nhật
+     */
+    mdfcnDt?: string;
+    /**
+     * Modified by / Người cập nhật
+     */
+    mdfcnBy?: string;
+};
+
+/**
+ * Paginated Response / Phản hồi phân trang
+ */
+export type PageResponseApprovalProcessResponse = {
+    /**
+     * Data list / Danh sách dữ liệu
+     */
+    content?: Array<ApprovalProcessResponse>;
+    /**
+     * Current page number (1-based) / Số trang hiện tại
+     */
+    page?: number;
+    /**
+     * Page size / Số lượng bản ghi mỗi trang
+     */
+    size?: number;
+    /**
+     * Total number of records / Tổng số bản ghi
+     */
+    totalElements?: number;
+    /**
+     * Total number of pages / Tổng số trang
+     */
+    totalPages?: number;
+};
+
 export type ApiResponseListLblSaveItem = {
     status?: number;
     message?: string;
@@ -11306,6 +12185,24 @@ export type ApiResponseMapStringObject = {
     };
 };
 
+/**
+ * Batch job list filter / Bộ lọc danh sách batch job
+ */
+export type BatchJobSearchRequest = {
+    /**
+     * Use flag: Y = Active, N = Inactive / Cờ sử dụng
+     */
+    useYn?: string;
+    /**
+     * Batch group (partial match) / Nhóm batch (khớp một phần)
+     */
+    btchGroup?: string;
+    /**
+     * Job name (partial match) / Tên batch job (khớp một phần)
+     */
+    btchJobNm?: string;
+};
+
 export type ApiResponsePageResponseBatchJobConfigResponse = {
     status?: number;
     message?: string;
@@ -11342,64 +12239,6 @@ export type ApiResponsePageResponseBatchJobHistoryResponse = {
     status?: number;
     message?: string;
     data?: PageResponseBatchJobHistoryResponse;
-};
-
-/**
- * Batch job execution history response / Phản hồi lịch sử thực thi batch job
- */
-export type BatchJobHistoryResponse = {
-    /**
-     * Batch history ID / Mã lịch sử batch
-     */
-    btchHstryId?: number;
-    /**
-     * Batch job name / Tên batch job
-     */
-    btchJobNm?: string;
-    /**
-     * Batch group / Nhóm batch
-     */
-    btchGroup?: string;
-    /**
-     * Batch status (RUNNING/COMPLETED/FAILED) / Trạng thái batch (RUNNING/COMPLETED/FAILED)
-     */
-    btchStts?: string;
-    /**
-     * Start timestamp / Thời điểm bắt đầu
-     */
-    bgngDt?: string;
-    /**
-     * End timestamp / Thời điểm kết thúc
-     */
-    endDt?: string;
-    /**
-     * Duration in milliseconds / Thời gian thực thi (ms)
-     */
-    prgrsHr?: number;
-    /**
-     * Total processed count / Tổng số lượng xử lý
-     */
-    tprcsNocs?: number;
-    /**
-     * Success count / Số lượng thành công
-     */
-    scsNocs?: number;
-    /**
-     * Failure count / Số lượng thất bại
-     */
-    failNocs?: number;
-    /**
-     * Error message / Thông báo lỗi
-     */
-    errMsg?: string;
-    /**
-     * Executor / Người thực thi
-     */
-    excnBy?: string;
-    /**
-     * Trigger type (SCHEDULED/MANUAL) / Loại kích hoạt (SCHEDULED/MANUAL)
-     */
-    trgrType?: string;
 };
 
 /**
@@ -12784,7 +13623,7 @@ export type UnlockResponses = {
 export type UnlockResponse = UnlockResponses[keyof UnlockResponses];
 
 export type ReassignData = {
-    body: ReceiveMemberApprovalRequest;
+    body: AssignMemberOfficerRequest;
     headers?: {
         /**
          * Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi
@@ -12971,6 +13810,31 @@ export type UpdateDistrictResponses = {
 };
 
 export type UpdateDistrictResponse = UpdateDistrictResponses[keyof UpdateDistrictResponses];
+
+export type ListData = {
+    body?: never;
+    headers?: {
+        /**
+         * Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi
+         */
+        'Accept-Language'?: 'vi' | 'en';
+    };
+    path?: never;
+    query: {
+        pageRequest: PageRequest;
+        cond: LabelSearchRequest;
+    };
+    url: '/api/v1/labels';
+};
+
+export type ListResponses = {
+    /**
+     * OK
+     */
+    200: ApiResponsePageResponseLabelListResponse;
+};
+
+export type ListResponse = ListResponses[keyof ListResponses];
 
 export type CreateData = {
     body: LabelSaveRequest;
@@ -13312,33 +14176,6 @@ export type UpdateStatusResponses = {
 };
 
 export type UpdateStatusResponse = UpdateStatusResponses[keyof UpdateStatusResponses];
-
-export type ChangePasswordData = {
-    body: ChangeEmpPasswordRequest;
-    headers?: {
-        /**
-         * Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi
-         */
-        'Accept-Language'?: 'vi' | 'en';
-    };
-    path: {
-        /**
-         * Employee number / Mã nhân viên
-         */
-        empNo: string;
-    };
-    query?: never;
-    url: '/api/v1/employees/{empNo}/password';
-};
-
-export type ChangePasswordResponses = {
-    /**
-     * OK
-     */
-    200: ApiResponseVoid;
-};
-
-export type ChangePasswordResponse = ChangePasswordResponses[keyof ChangePasswordResponses];
 
 export type Detail2Data = {
     body?: never;
@@ -14361,7 +15198,7 @@ export type UpdateAuctionResponses = {
 
 export type UpdateAuctionResponse = UpdateAuctionResponses[keyof UpdateAuctionResponses];
 
-export type DeleteMenu1Data = {
+export type DeleteProcessData = {
     body?: never;
     headers?: {
         /**
@@ -14371,25 +15208,25 @@ export type DeleteMenu1Data = {
     };
     path: {
         /**
-         * Target menu code to delete / Mã menu cần xóa
+         * Process UUID / Mã UUID quy trình
          */
-        menuCd: string;
+        atrzProcId: string;
     };
     query?: never;
-    url: '/api/common/menus/{menuCd}';
+    url: '/api/v1/approval-processes/{atrzProcId}';
 };
 
-export type DeleteMenu1Responses = {
+export type DeleteProcessResponses = {
     /**
      * OK
      */
     200: ApiResponseVoid;
 };
 
-export type DeleteMenu1Response = DeleteMenu1Responses[keyof DeleteMenu1Responses];
+export type DeleteProcessResponse = DeleteProcessResponses[keyof DeleteProcessResponses];
 
-export type UpdateMenu1Data = {
-    body: MenuSaveRequest;
+export type GetProcessData = {
+    body?: never;
     headers?: {
         /**
          * Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi
@@ -14398,22 +15235,71 @@ export type UpdateMenu1Data = {
     };
     path: {
         /**
-         * Target menu code to update / Mã menu cần cập nhật
+         * Process UUID / Mã UUID quy trình
          */
-        menuCd: string;
+        atrzProcId: string;
     };
     query?: never;
-    url: '/api/common/menus/{menuCd}';
+    url: '/api/v1/approval-processes/{atrzProcId}';
 };
 
-export type UpdateMenu1Responses = {
+export type GetProcessResponses = {
+    /**
+     * OK
+     */
+    200: ApiResponseApprovalProcessDetailResponse;
+};
+
+export type GetProcessResponse = GetProcessResponses[keyof GetProcessResponses];
+
+export type UpdateProcessData = {
+    body: UpdateApprovalProcessRequest;
+    headers?: {
+        /**
+         * Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi
+         */
+        'Accept-Language'?: 'vi' | 'en';
+    };
+    path: {
+        /**
+         * Process UUID / Mã UUID quy trình
+         */
+        atrzProcId: string;
+    };
+    query?: never;
+    url: '/api/v1/approval-processes/{atrzProcId}';
+};
+
+export type UpdateProcessResponses = {
+    /**
+     * OK
+     */
+    200: ApiResponseApprovalProcessDetailResponse;
+};
+
+export type UpdateProcessResponse = UpdateProcessResponses[keyof UpdateProcessResponses];
+
+export type ChangeOwnPasswordData = {
+    body: ChangeOwnPasswordRequest;
+    headers?: {
+        /**
+         * Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi
+         */
+        'Accept-Language'?: 'vi' | 'en';
+    };
+    path?: never;
+    query?: never;
+    url: '/api/auth/password';
+};
+
+export type ChangeOwnPasswordResponses = {
     /**
      * OK
      */
     200: ApiResponseVoid;
 };
 
-export type UpdateMenu1Response = UpdateMenu1Responses[keyof UpdateMenu1Responses];
+export type ChangeOwnPasswordResponse = ChangeOwnPasswordResponses[keyof ChangeOwnPasswordResponses];
 
 export type GetJobData = {
     body?: never;
@@ -15095,7 +15981,7 @@ export type DeleteResponses = {
 
 export type DeleteResponse = DeleteResponses[keyof DeleteResponses];
 
-export type ListData = {
+export type List1Data = {
     body?: never;
     headers?: {
         /**
@@ -15111,14 +15997,14 @@ export type ListData = {
     url: '/api/v1/screens';
 };
 
-export type ListResponses = {
+export type List1Responses = {
     /**
      * OK
      */
     200: ApiResponsePageResponseScreenResponse;
 };
 
-export type ListResponse = ListResponses[keyof ListResponses];
+export type List1Response = List1Responses[keyof List1Responses];
 
 export type Create4Data = {
     body: ScreenRequest;
@@ -16281,7 +17167,7 @@ export type Delete1Responses = {
 
 export type Delete1Response = Delete1Responses[keyof Delete1Responses];
 
-export type List1Data = {
+export type List2Data = {
     body?: never;
     headers?: {
         /**
@@ -16297,14 +17183,14 @@ export type List1Data = {
     url: '/api/v1/programs';
 };
 
-export type List1Responses = {
+export type List2Responses = {
     /**
      * OK
      */
     200: ApiResponsePageResponseProgramResponse;
 };
 
-export type List1Response = List1Responses[keyof List1Responses];
+export type List2Response = List2Responses[keyof List2Responses];
 
 export type Create5Data = {
     body: ProgramRequest;
@@ -16396,6 +17282,28 @@ export type CreateFeeResponses = {
 };
 
 export type CreateFeeResponse = CreateFeeResponses[keyof CreateFeeResponses];
+
+export type SyncData = {
+    body?: never;
+    headers?: {
+        /**
+         * Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi
+         */
+        'Accept-Language'?: 'vi' | 'en';
+    };
+    path?: never;
+    query?: never;
+    url: '/api/v1/platform/exchange-rates/sync';
+};
+
+export type SyncResponses = {
+    /**
+     * OK
+     */
+    200: ApiResponseExchangeRateStatusResponse;
+};
+
+export type SyncResponse = SyncResponses[keyof SyncResponses];
 
 export type GetNplLotsData = {
     body?: never;
@@ -16628,9 +17536,9 @@ export type GetMembersData = {
          */
         aprvToDt?: string;
         /**
-         * Field searched by searchText (default MBR_NO) / Trường tìm kiếm (mặc định mã hội viên): MBR_NO member code, SGDN_MBR_NO SGDN member code, LGN_ID login ID, MBR_NM member name, TELNO phone, EML_ADDR email, ORGNZ_NM company name, MST_NO enterprise code
+         * Field searched by searchText (omitted: MBR_NO) / Trường tìm kiếm (không gửi: mã hội viên): ALL or empty = all fields (All option), MBR_NO member code, SGDN_MBR_NO SGDN member code, LGN_ID login ID, MBR_NM member name, TELNO phone, EML_ADDR email, ORGNZ_NM company name, MST_NO enterprise code. Login ID, phone, e-mail and tax number match the whole value only / ALL hoặc rỗng = tìm mọi trường; login, SĐT, email, MST chỉ khớp nguyên giá trị
          */
-        searchField?: 'MBR_NO' | 'SGDN_MBR_NO' | 'LGN_ID' | 'MBR_NM' | 'TELNO' | 'EML_ADDR' | 'ORGNZ_NM' | 'MST_NO';
+        searchField?: 'ALL' | 'MBR_NO' | 'SGDN_MBR_NO' | 'LGN_ID' | 'MBR_NM' | 'TELNO' | 'EML_ADDR' | 'ORGNZ_NM' | 'MST_NO';
         /**
          * Search text, partial match on searchField / Từ khoá, khớp một phần theo searchField
          */
@@ -16651,6 +17559,10 @@ export type GetMembersData = {
          * Membership / Phí hội viên: PAID paid / đã nộp, EXEMPT exempt / miễn phí (both with a currently valid membership period / có kỳ hội viên còn hiệu lực), NONE no currently valid membership period / không có kỳ hội viên còn hiệu lực
          */
         mbrshpPayCds?: Array<'PAID' | 'EXEMPT' | 'NONE'>;
+        /**
+         * Deletion flag for an unrenewed membership (WARNING: due within 15 days, DUE: due) / Cờ chuyển sang đã xoá (WARNING: còn 15 ngày, DUE: đến hạn)
+         */
+        deletionAlerts?: Array<'WARNING' | 'DUE'>;
         /**
          * Legacy account status (ACTIVE, LOCKED) - use sttsCds / Trạng thái tài khoản cũ - dùng sttsCds
          */
@@ -16842,6 +17754,33 @@ export type ResendPasswordSetupLinkResponses = {
 
 export type ResendPasswordSetupLinkResponse = ResendPasswordSetupLinkResponses[keyof ResendPasswordSetupLinkResponses];
 
+export type RegisterMembershipPaymentData = {
+    body: RegisterMembershipPaymentRequest;
+    headers?: {
+        /**
+         * Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi
+         */
+        'Accept-Language'?: 'vi' | 'en';
+    };
+    path: {
+        /**
+         * Member number
+         */
+        mbrNo: string;
+    };
+    query?: never;
+    url: '/api/v1/members/{mbrNo}/membership-fee/payments';
+};
+
+export type RegisterMembershipPaymentResponses = {
+    /**
+     * OK
+     */
+    200: ApiResponseMembershipStatusResponse;
+};
+
+export type RegisterMembershipPaymentResponse = RegisterMembershipPaymentResponses[keyof RegisterMembershipPaymentResponses];
+
 export type ConfirmMembershipFeeData = {
     body?: never;
     headers?: {
@@ -16868,6 +17807,33 @@ export type ConfirmMembershipFeeResponses = {
 };
 
 export type ConfirmMembershipFeeResponse = ConfirmMembershipFeeResponses[keyof ConfirmMembershipFeeResponses];
+
+export type DeleteExpiredMembershipData = {
+    body?: never;
+    headers?: {
+        /**
+         * Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi
+         */
+        'Accept-Language'?: 'vi' | 'en';
+    };
+    path: {
+        /**
+         * Member number
+         */
+        mbrNo: string;
+    };
+    query?: never;
+    url: '/api/v1/members/{mbrNo}/expiry-deletion';
+};
+
+export type DeleteExpiredMembershipResponses = {
+    /**
+     * OK
+     */
+    200: ApiResponseMemberDeletionDto;
+};
+
+export type DeleteExpiredMembershipResponse = DeleteExpiredMembershipResponses[keyof DeleteExpiredMembershipResponses];
 
 export type CheckDocuments3Data = {
     body: CheckMemberDocumentsRequest;
@@ -16930,7 +17896,7 @@ export type UploadDocumentScansResponses = {
 
 export type UploadDocumentScansResponse = UploadDocumentScansResponses[keyof UploadDocumentScansResponses];
 
-export type RequestDeletionData = {
+export type DeleteMemberData = {
     body: MemberDeletionRequest;
     headers?: {
         /**
@@ -16948,17 +17914,44 @@ export type RequestDeletionData = {
     url: '/api/v1/members/{mbrNo}/deletion-request';
 };
 
-export type RequestDeletionResponses = {
+export type DeleteMemberResponses = {
     /**
      * OK
      */
-    200: ApiResponseMemberDeletionRequestResponse;
+    200: ApiResponseMemberDeletionDto;
 };
 
-export type RequestDeletionResponse = RequestDeletionResponses[keyof RequestDeletionResponses];
+export type DeleteMemberResponse = DeleteMemberResponses[keyof DeleteMemberResponses];
+
+export type DeleteMember1Data = {
+    body: MemberDeletionRequest;
+    headers?: {
+        /**
+         * Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi
+         */
+        'Accept-Language'?: 'vi' | 'en';
+    };
+    path: {
+        /**
+         * Member number
+         */
+        mbrNo: string;
+    };
+    query?: never;
+    url: '/api/v1/members/{mbrNo}/deletion';
+};
+
+export type DeleteMember1Responses = {
+    /**
+     * OK
+     */
+    200: ApiResponseMemberDeletionDto;
+};
+
+export type DeleteMember1Response = DeleteMember1Responses[keyof DeleteMember1Responses];
 
 export type Receive3Data = {
-    body: ReceiveMemberApprovalRequest;
+    body?: ReceiveMemberApprovalRequest;
     headers?: {
         /**
          * Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi
@@ -17059,6 +18052,62 @@ export type BatchGenerateResponses = {
 };
 
 export type BatchGenerateResponse = BatchGenerateResponses[keyof BatchGenerateResponses];
+
+export type OpenSessionData = {
+    body: OpenMemberDocumentSessionRequest;
+    headers?: {
+        /**
+         * Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi
+         */
+        'Accept-Language'?: 'vi' | 'en';
+    };
+    path?: never;
+    query?: never;
+    url: '/api/v1/member-document-sessions';
+};
+
+export type OpenSessionResponses = {
+    /**
+     * OK
+     */
+    200: ApiResponseMemberDocumentSessionResponse;
+};
+
+export type OpenSessionResponse = OpenSessionResponses[keyof OpenSessionResponses];
+
+export type Upload1Data = {
+    body?: {
+        file: Blob | File;
+    };
+    headers?: {
+        /**
+         * Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi
+         */
+        'Accept-Language'?: 'vi' | 'en';
+    };
+    path: {
+        /**
+         * Session id
+         */
+        sessionId: string;
+    };
+    query: {
+        /**
+         * Document slot
+         */
+        slot: string;
+    };
+    url: '/api/v1/member-document-sessions/{sessionId}/files';
+};
+
+export type Upload1Responses = {
+    /**
+     * OK
+     */
+    200: ApiResponseMemberDocumentUploadResponse;
+};
+
+export type Upload1Response = Upload1Responses[keyof Upload1Responses];
 
 export type GetProvincesData = {
     body?: never;
@@ -17263,6 +18312,30 @@ export type CloseResponses = {
 };
 
 export type CloseResponse = CloseResponses[keyof CloseResponses];
+
+export type UploadExcelData = {
+    body?: {
+        file: Blob | File;
+    };
+    headers?: {
+        /**
+         * Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi
+         */
+        'Accept-Language'?: 'vi' | 'en';
+    };
+    path?: never;
+    query?: never;
+    url: '/api/v1/labels/excel/upload';
+};
+
+export type UploadExcelResponses = {
+    /**
+     * OK
+     */
+    200: ApiResponseExcelParseResult;
+};
+
+export type UploadExcelResponse = UploadExcelResponses[keyof UploadExcelResponses];
 
 export type ReloadCacheData = {
     body?: never;
@@ -17483,10 +18556,37 @@ export type CreateEmployeeResponses = {
     /**
      * OK
      */
-    200: ApiResponseEmpDetailResponse;
+    200: ApiResponseEmpCreateResponse;
 };
 
 export type CreateEmployeeResponse = CreateEmployeeResponses[keyof CreateEmployeeResponses];
+
+export type ResetEmployeePasswordData = {
+    body?: never;
+    headers?: {
+        /**
+         * Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi
+         */
+        'Accept-Language'?: 'vi' | 'en';
+    };
+    path: {
+        /**
+         * Employee number / Mã nhân viên
+         */
+        empNo: string;
+    };
+    query?: never;
+    url: '/api/v1/employees/{empNo}/reset-password';
+};
+
+export type ResetEmployeePasswordResponses = {
+    /**
+     * OK
+     */
+    200: ApiResponseEmpPasswordResetResponse;
+};
+
+export type ResetEmployeePasswordResponse = ResetEmployeePasswordResponses[keyof ResetEmployeePasswordResponses];
 
 export type Delete2Data = {
     body: TermsPolicyIdsRequest;
@@ -17510,7 +18610,7 @@ export type Delete2Responses = {
 
 export type Delete2Response = Delete2Responses[keyof Delete2Responses];
 
-export type List2Data = {
+export type List3Data = {
     body?: never;
     headers?: {
         /**
@@ -17526,14 +18626,14 @@ export type List2Data = {
     url: '/api/v1/contents/terms-policies';
 };
 
-export type List2Responses = {
+export type List3Responses = {
     /**
      * OK
      */
     200: ApiResponsePageResponseTermsPolicyResponse;
 };
 
-export type List2Response = List2Responses[keyof List2Responses];
+export type List3Response = List3Responses[keyof List3Responses];
 
 export type Create6Data = {
     body: CreateTermsPolicyRequest;
@@ -17579,7 +18679,7 @@ export type Delete3Responses = {
 
 export type Delete3Response = Delete3Responses[keyof Delete3Responses];
 
-export type List3Data = {
+export type List4Data = {
     body?: never;
     headers?: {
         /**
@@ -17595,14 +18695,14 @@ export type List3Data = {
     url: '/api/v1/contents/slogans';
 };
 
-export type List3Responses = {
+export type List4Responses = {
     /**
      * OK
      */
     200: ApiResponsePageResponsePostResponse;
 };
 
-export type List3Response = List3Responses[keyof List3Responses];
+export type List4Response = List4Responses[keyof List4Responses];
 
 export type Create7Data = {
     body: SloganRequest;
@@ -17877,7 +18977,7 @@ export type Delete4Responses = {
 
 export type Delete4Response = Delete4Responses[keyof Delete4Responses];
 
-export type List4Data = {
+export type List5Data = {
     body?: never;
     headers?: {
         /**
@@ -17893,14 +18993,14 @@ export type List4Data = {
     url: '/api/v1/contents/news';
 };
 
-export type List4Responses = {
+export type List5Responses = {
     /**
      * OK
      */
     200: ApiResponsePageResponsePostResponse;
 };
 
-export type List4Response = List4Responses[keyof List4Responses];
+export type List5Response = List5Responses[keyof List5Responses];
 
 export type Create8Data = {
     body: NewsRequest;
@@ -17946,7 +19046,7 @@ export type Delete5Responses = {
 
 export type Delete5Response = Delete5Responses[keyof Delete5Responses];
 
-export type List5Data = {
+export type List6Data = {
     body?: never;
     headers?: {
         /**
@@ -17962,14 +19062,14 @@ export type List5Data = {
     url: '/api/v1/contents/logos';
 };
 
-export type List5Responses = {
+export type List6Responses = {
     /**
      * OK
      */
     200: ApiResponsePageResponsePostResponse;
 };
 
-export type List5Response = List5Responses[keyof List5Responses];
+export type List6Response = List6Responses[keyof List6Responses];
 
 export type Create9Data = {
     body: LogoRequest;
@@ -18039,7 +19139,7 @@ export type Delete6Responses = {
 
 export type Delete6Response = Delete6Responses[keyof Delete6Responses];
 
-export type List6Data = {
+export type List7Data = {
     body?: never;
     headers?: {
         /**
@@ -18055,14 +19155,14 @@ export type List6Data = {
     url: '/api/v1/contents/legal-documents';
 };
 
-export type List6Responses = {
+export type List7Responses = {
     /**
      * OK
      */
     200: ApiResponsePageResponsePostResponse;
 };
 
-export type List6Response = List6Responses[keyof List6Responses];
+export type List7Response = List7Responses[keyof List7Responses];
 
 export type Create10Data = {
     body: LegalDocumentRequest;
@@ -18086,7 +19186,7 @@ export type Create10Responses = {
 
 export type Create10Response = Create10Responses[keyof Create10Responses];
 
-export type Upload1Data = {
+export type Upload2Data = {
     body?: {
         files: Array<Blob | File>;
     };
@@ -18110,14 +19210,14 @@ export type Upload1Data = {
     url: '/api/v1/contents/files';
 };
 
-export type Upload1Responses = {
+export type Upload2Responses = {
     /**
      * OK
      */
     200: ApiResponseContentFileGroupResponse;
 };
 
-export type Upload1Response = Upload1Responses[keyof Upload1Responses];
+export type Upload2Response = Upload2Responses[keyof Upload2Responses];
 
 export type DeleteFaqsData = {
     body: DeletePostsRequest;
@@ -18210,7 +19310,7 @@ export type Delete7Responses = {
 
 export type Delete7Response = Delete7Responses[keyof Delete7Responses];
 
-export type List7Data = {
+export type List8Data = {
     body?: never;
     headers?: {
         /**
@@ -18226,14 +19326,14 @@ export type List7Data = {
     url: '/api/v1/contents/careers';
 };
 
-export type List7Responses = {
+export type List8Responses = {
     /**
      * OK
      */
     200: ApiResponsePageResponsePostResponse;
 };
 
-export type List7Response = List7Responses[keyof List7Responses];
+export type List8Response = List8Responses[keyof List8Responses];
 
 export type Create11Data = {
     body: CareerRequest;
@@ -18279,7 +19379,7 @@ export type Delete8Responses = {
 
 export type Delete8Response = Delete8Responses[keyof Delete8Responses];
 
-export type List8Data = {
+export type List9Data = {
     body?: never;
     headers?: {
         /**
@@ -18295,14 +19395,14 @@ export type List8Data = {
     url: '/api/v1/contents/banners';
 };
 
-export type List8Responses = {
+export type List9Responses = {
     /**
      * OK
      */
     200: ApiResponsePageResponseBannerResponse;
 };
 
-export type List8Response = List8Responses[keyof List8Responses];
+export type List9Response = List9Responses[keyof List9Responses];
 
 export type Create12Data = {
     body: BannerRequest;
@@ -18372,7 +19472,7 @@ export type Delete9Responses = {
 
 export type Delete9Response = Delete9Responses[keyof Delete9Responses];
 
-export type List9Data = {
+export type List10Data = {
     body?: never;
     headers?: {
         /**
@@ -18388,14 +19488,14 @@ export type List9Data = {
     url: '/api/v1/contents/about';
 };
 
-export type List9Responses = {
+export type List10Responses = {
     /**
      * OK
      */
     200: ApiResponsePageResponsePostResponse;
 };
 
-export type List9Response = List9Responses[keyof List9Responses];
+export type List10Response = List10Responses[keyof List10Responses];
 
 export type Create13Data = {
     body: AboutSectionRequest;
@@ -19373,7 +20473,76 @@ export type Approve1Responses = {
 
 export type Approve1Response = Approve1Responses[keyof Approve1Responses];
 
-export type UploadExcelData = {
+export type GetProcessesData = {
+    body?: never;
+    headers?: {
+        /**
+         * Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi
+         */
+        'Accept-Language'?: 'vi' | 'en';
+    };
+    path?: never;
+    query?: {
+        /**
+         * Page number (1-based) / Số trang (bắt đầu từ 1)
+         */
+        page?: number;
+        /**
+         * Page size / Số lượng bản ghi mỗi trang
+         */
+        size?: number;
+        /**
+         * Sort column / Cột cần sắp xếp
+         */
+        sortBy?: string;
+        /**
+         * Sort direction (ASC/DESC) / Hướng sắp xếp (ASC/DESC)
+         */
+        sortDirection?: string;
+        /**
+         * Keyword on process code or process name / Từ khóa theo mã hoặc tên quy trình
+         */
+        keyword?: string;
+        /**
+         * Use status (Y or N) / Trạng thái sử dụng (Y hoặc N)
+         */
+        useYn?: string;
+    };
+    url: '/api/v1/approval-processes';
+};
+
+export type GetProcessesResponses = {
+    /**
+     * OK
+     */
+    200: ApiResponsePageResponseApprovalProcessResponse;
+};
+
+export type GetProcessesResponse = GetProcessesResponses[keyof GetProcessesResponses];
+
+export type CreateProcessData = {
+    body: CreateApprovalProcessRequest;
+    headers?: {
+        /**
+         * Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi
+         */
+        'Accept-Language'?: 'vi' | 'en';
+    };
+    path?: never;
+    query?: never;
+    url: '/api/v1/approval-processes';
+};
+
+export type CreateProcessResponses = {
+    /**
+     * OK
+     */
+    200: ApiResponseApprovalProcessDetailResponse;
+};
+
+export type CreateProcessResponse = CreateProcessResponses[keyof CreateProcessResponses];
+
+export type UploadExcel1Data = {
     body?: {
         file: Blob | File;
     };
@@ -19388,14 +20557,14 @@ export type UploadExcelData = {
     url: '/api/lbl/excel/upload';
 };
 
-export type UploadExcelResponses = {
+export type UploadExcel1Responses = {
     /**
      * OK
      */
     200: ApiResponseExcelParseResult;
 };
 
-export type UploadExcelResponse = UploadExcelResponses[keyof UploadExcelResponses];
+export type UploadExcel1Response = UploadExcel1Responses[keyof UploadExcel1Responses];
 
 export type SaveBatchData = {
     body: Array<LblSaveItem>;
@@ -19518,28 +20687,6 @@ export type UploadMultipleFilesResponses = {
 };
 
 export type UploadMultipleFilesResponse = UploadMultipleFilesResponses[keyof UploadMultipleFilesResponses];
-
-export type CreateMenu1Data = {
-    body: MenuSaveRequest;
-    headers?: {
-        /**
-         * Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi
-         */
-        'Accept-Language'?: 'vi' | 'en';
-    };
-    path?: never;
-    query?: never;
-    url: '/api/common/menus';
-};
-
-export type CreateMenu1Responses = {
-    /**
-     * OK
-     */
-    200: ApiResponseVoid;
-};
-
-export type CreateMenu1Response = CreateMenu1Responses[keyof CreateMenu1Responses];
 
 export type RefreshData = {
     body?: never;
@@ -19750,6 +20897,7 @@ export type GetJobsData = {
     path?: never;
     query: {
         pageRequest: PageRequest;
+        cond: BatchJobSearchRequest;
     };
     url: '/api/admin/batch/jobs';
 };
@@ -19804,7 +20952,7 @@ export type ExecuteJobResponses = {
     /**
      * OK
      */
-    200: ApiResponseObject;
+    200: ApiResponseBatchJobHistoryResponse;
 };
 
 export type ExecuteJobResponse = ExecuteJobResponses[keyof ExecuteJobResponses];
@@ -19911,6 +21059,33 @@ export type UpdateUse1Responses = {
 };
 
 export type UpdateUse1Response = UpdateUse1Responses[keyof UpdateUse1Responses];
+
+export type MoveMenuData = {
+    body: MoveMenuRequest;
+    headers?: {
+        /**
+         * Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi
+         */
+        'Accept-Language'?: 'vi' | 'en';
+    };
+    path: {
+        /**
+         * Menu code / Mã menu
+         */
+        menuCd: string;
+    };
+    query?: never;
+    url: '/api/v1/menus/{menuCd}/move';
+};
+
+export type MoveMenuResponses = {
+    /**
+     * OK
+     */
+    200: ApiResponseListMenuSettingResponse;
+};
+
+export type MoveMenuResponse = MoveMenuResponses[keyof MoveMenuResponses];
 
 export type PublishData = {
     body: TermsPolicyIdsRequest;
@@ -20403,6 +21578,33 @@ export type UpdateCollateralResponses = {
 };
 
 export type UpdateCollateralResponse = UpdateCollateralResponses[keyof UpdateCollateralResponses];
+
+export type UpdateStatus2Data = {
+    body: UpdateApprovalProcessStatusRequest;
+    headers?: {
+        /**
+         * Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi
+         */
+        'Accept-Language'?: 'vi' | 'en';
+    };
+    path: {
+        /**
+         * Process UUID / Mã UUID quy trình
+         */
+        atrzProcId: string;
+    };
+    query?: never;
+    url: '/api/v1/approval-processes/{atrzProcId}/status';
+};
+
+export type UpdateStatus2Responses = {
+    /**
+     * OK
+     */
+    200: ApiResponseVoid;
+};
+
+export type UpdateStatus2Response = UpdateStatus2Responses[keyof UpdateStatus2Responses];
 
 export type GetGroupData = {
     body?: never;
@@ -21249,6 +22451,28 @@ export type ExportFeesResponses = {
     200: unknown;
 };
 
+export type GetStatusData = {
+    body?: never;
+    headers?: {
+        /**
+         * Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi
+         */
+        'Accept-Language'?: 'vi' | 'en';
+    };
+    path?: never;
+    query?: never;
+    url: '/api/v1/platform/exchange-rates/status';
+};
+
+export type GetStatusResponses = {
+    /**
+     * OK
+     */
+    200: ApiResponseExchangeRateStatusResponse;
+};
+
+export type GetStatusResponse = GetStatusResponses[keyof GetStatusResponses];
+
 export type GetNplsData = {
     body?: never;
     headers?: {
@@ -21458,6 +22682,57 @@ export type ExportResponses = {
     200: unknown;
 };
 
+export type GetMenuOptionsData = {
+    body?: never;
+    headers?: {
+        /**
+         * Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi
+         */
+        'Accept-Language'?: 'vi' | 'en';
+    };
+    path?: never;
+    query: {
+        search: MenuOptionSearchRequest;
+    };
+    url: '/api/v1/menus/options';
+};
+
+export type GetMenuOptionsResponses = {
+    /**
+     * OK
+     */
+    200: ApiResponseListMenuOptionResponse;
+};
+
+export type GetMenuOptionsResponse = GetMenuOptionsResponses[keyof GetMenuOptionsResponses];
+
+export type GetFeePaymentsData = {
+    body?: never;
+    headers?: {
+        /**
+         * Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi
+         */
+        'Accept-Language'?: 'vi' | 'en';
+    };
+    path: {
+        /**
+         * Member number
+         */
+        mbrNo: string;
+    };
+    query?: never;
+    url: '/api/v1/members/{mbrNo}/membership-fee/history';
+};
+
+export type GetFeePaymentsResponses = {
+    /**
+     * OK
+     */
+    200: ApiResponseListMemberFeePaymentResponse;
+};
+
+export type GetFeePaymentsResponse = GetFeePaymentsResponses[keyof GetFeePaymentsResponses];
+
 export type GetApplicationHistoryData = {
     body?: never;
     headers?: {
@@ -21504,9 +22779,9 @@ export type ExcelData = {
          */
         aprvToDt?: string;
         /**
-         * Field searched by searchText (default MBR_NO) / Trường tìm kiếm (mặc định mã hội viên): MBR_NO member code, SGDN_MBR_NO SGDN member code, LGN_ID login ID, MBR_NM member name, TELNO phone, EML_ADDR email, ORGNZ_NM company name, MST_NO enterprise code
+         * Field searched by searchText (omitted: MBR_NO) / Trường tìm kiếm (không gửi: mã hội viên): ALL or empty = all fields (All option), MBR_NO member code, SGDN_MBR_NO SGDN member code, LGN_ID login ID, MBR_NM member name, TELNO phone, EML_ADDR email, ORGNZ_NM company name, MST_NO enterprise code. Login ID, phone, e-mail and tax number match the whole value only / ALL hoặc rỗng = tìm mọi trường; login, SĐT, email, MST chỉ khớp nguyên giá trị
          */
-        searchField?: 'MBR_NO' | 'SGDN_MBR_NO' | 'LGN_ID' | 'MBR_NM' | 'TELNO' | 'EML_ADDR' | 'ORGNZ_NM' | 'MST_NO';
+        searchField?: 'ALL' | 'MBR_NO' | 'SGDN_MBR_NO' | 'LGN_ID' | 'MBR_NM' | 'TELNO' | 'EML_ADDR' | 'ORGNZ_NM' | 'MST_NO';
         /**
          * Search text, partial match on searchField / Từ khoá, khớp một phần theo searchField
          */
@@ -21527,6 +22802,10 @@ export type ExcelData = {
          * Membership / Phí hội viên: PAID paid / đã nộp, EXEMPT exempt / miễn phí (both with a currently valid membership period / có kỳ hội viên còn hiệu lực), NONE no currently valid membership period / không có kỳ hội viên còn hiệu lực
          */
         mbrshpPayCds?: Array<'PAID' | 'EXEMPT' | 'NONE'>;
+        /**
+         * Deletion flag for an unrenewed membership (WARNING: due within 15 days, DUE: due) / Cờ chuyển sang đã xoá (WARNING: còn 15 ngày, DUE: đến hạn)
+         */
+        deletionAlerts?: Array<'WARNING' | 'DUE'>;
         /**
          * Legacy account status (ACTIVE, LOCKED) - use sttsCds / Trạng thái tài khoản cũ - dùng sttsCds
          */
@@ -21889,6 +23168,28 @@ export type GetLanguagesResponses = {
 
 export type GetLanguagesResponse = GetLanguagesResponses[keyof GetLanguagesResponses];
 
+export type Excel1Data = {
+    body?: never;
+    headers?: {
+        /**
+         * Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi
+         */
+        'Accept-Language'?: 'vi' | 'en';
+    };
+    path?: never;
+    query: {
+        cond: LabelSearchRequest;
+    };
+    url: '/api/v1/labels/excel';
+};
+
+export type Excel1Responses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};
+
 export type GetDetailData = {
     body?: never;
     headers?: {
@@ -22002,6 +23303,43 @@ export type LookupEmployeesResponses = {
 };
 
 export type LookupEmployeesResponse = LookupEmployeesResponses[keyof LookupEmployeesResponses];
+
+export type ExportEmployeesData = {
+    body?: never;
+    headers?: {
+        /**
+         * Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi
+         */
+        'Accept-Language'?: 'vi' | 'en';
+    };
+    path?: never;
+    query?: {
+        /**
+         * Employee number search keyword / Từ khóa mã nhân viên
+         */
+        empNo?: string;
+        /**
+         * Employee name search keyword, accent-insensitive / Từ khóa tên nhân viên
+         */
+        empNm?: string;
+        /**
+         * Employee status filter (H, L, R, S) / Trạng thái nhân viên
+         */
+        empSttsCd?: string;
+        /**
+         * Position name search keyword / Từ khóa chức vụ
+         */
+        jbpsNm?: string;
+    };
+    url: '/api/v1/employees/excel';
+};
+
+export type ExportEmployeesResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};
 
 export type DeleteDebtorsData = {
     body: DebtorDeleteRequest;
@@ -22170,7 +23508,7 @@ export type Options2Responses = {
 
 export type Options2Response = Options2Responses[keyof Options2Responses];
 
-export type Excel1Data = {
+export type Excel2Data = {
     body?: never;
     headers?: {
         /**
@@ -22186,7 +23524,7 @@ export type Excel1Data = {
     url: '/api/v1/contents/legal-documents/excel';
 };
 
-export type Excel1Responses = {
+export type Excel2Responses = {
     /**
      * OK
      */
@@ -22245,7 +23583,7 @@ export type GetInquiryResponses = {
 
 export type GetInquiryResponse = GetInquiryResponses[keyof GetInquiryResponses];
 
-export type Excel2Data = {
+export type Excel3Data = {
     body?: never;
     headers?: {
         /**
@@ -22260,7 +23598,7 @@ export type Excel2Data = {
     url: '/api/v1/contents/inquiries/excel';
 };
 
-export type Excel2Responses = {
+export type Excel3Responses = {
     /**
      * OK
      */
@@ -22299,29 +23637,6 @@ export type GetGroup1Responses = {
 
 export type GetGroup1Response = GetGroup1Responses[keyof GetGroup1Responses];
 
-export type Excel3Data = {
-    body?: never;
-    headers?: {
-        /**
-         * Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi
-         */
-        'Accept-Language'?: 'vi' | 'en';
-    };
-    path?: never;
-    query: {
-        cond: PostSearchRequest;
-        sortBy?: string;
-    };
-    url: '/api/v1/contents/faqs/excel';
-};
-
-export type Excel3Responses = {
-    /**
-     * OK
-     */
-    200: unknown;
-};
-
 export type Excel4Data = {
     body?: never;
     headers?: {
@@ -22335,7 +23650,7 @@ export type Excel4Data = {
         cond: PostSearchRequest;
         sortBy?: string;
     };
-    url: '/api/v1/contents/careers/excel';
+    url: '/api/v1/contents/faqs/excel';
 };
 
 export type Excel4Responses = {
@@ -22355,12 +23670,35 @@ export type Excel5Data = {
     };
     path?: never;
     query: {
+        cond: PostSearchRequest;
+        sortBy?: string;
+    };
+    url: '/api/v1/contents/careers/excel';
+};
+
+export type Excel5Responses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};
+
+export type Excel6Data = {
+    body?: never;
+    headers?: {
+        /**
+         * Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi
+         */
+        'Accept-Language'?: 'vi' | 'en';
+    };
+    path?: never;
+    query: {
         cond: BannerSearchRequest;
     };
     url: '/api/v1/contents/banners/excel';
 };
 
-export type Excel5Responses = {
+export type Excel6Responses = {
     /**
      * OK
      */
@@ -23035,6 +24373,10 @@ export type GetCandidatesData = {
          * Employee name, partial match, case-insensitive (VPA020500P01) / Tên nhân viên (khớp một phần)
          */
         empNm?: string;
+        /**
+         * Session in progress: candidates from the roles snapshotted when it started, not the current process (which may have been edited since) / Phiên đang xử lý: lấy vai trò theo ảnh chụp của phiên
+         */
+        atrzHstryId?: string;
     };
     url: '/api/v1/approvals/candidates';
 };
@@ -23657,6 +24999,28 @@ export type GetJobHistoryResponses = {
 
 export type GetJobHistoryResponse = GetJobHistoryResponses[keyof GetJobHistoryResponses];
 
+export type ExportJobsData = {
+    body?: never;
+    headers?: {
+        /**
+         * Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi
+         */
+        'Accept-Language'?: 'vi' | 'en';
+    };
+    path?: never;
+    query: {
+        cond: BatchJobSearchRequest;
+    };
+    url: '/api/admin/batch/jobs/excel';
+};
+
+export type ExportJobsResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};
+
 export type GetAllHistoryData = {
     body?: never;
     headers?: {
@@ -23707,7 +25071,7 @@ export type ResetResponses = {
 
 export type ResetResponse = ResetResponses[keyof ResetResponses];
 
-export type GetStatusData = {
+export type GetStatus1Data = {
     body?: never;
     headers?: {
         /**
@@ -23722,14 +25086,14 @@ export type GetStatusData = {
     url: '/api/admin/auth/login-attempts/{loginId}';
 };
 
-export type GetStatusResponses = {
+export type GetStatus1Responses = {
     /**
      * OK
      */
     200: ApiResponseLoginAttemptStatusResponse;
 };
 
-export type GetStatusResponse = GetStatusResponses[keyof GetStatusResponses];
+export type GetStatus1Response = GetStatus1Responses[keyof GetStatus1Responses];
 
 export type Reset1Data = {
     body?: never;
@@ -23755,7 +25119,7 @@ export type Reset1Responses = {
 
 export type Reset1Response = Reset1Responses[keyof Reset1Responses];
 
-export type GetStatus1Data = {
+export type GetStatus2Data = {
     body?: never;
     headers?: {
         /**
@@ -23770,14 +25134,14 @@ export type GetStatus1Data = {
     url: '/api/admin/auth/lockouts/{loginId}';
 };
 
-export type GetStatus1Responses = {
+export type GetStatus2Responses = {
     /**
      * OK
      */
     200: ApiResponseLoginAttemptStatusResponse;
 };
 
-export type GetStatus1Response = GetStatus1Responses[keyof GetStatus1Responses];
+export type GetStatus2Response = GetStatus2Responses[keyof GetStatus2Responses];
 
 export type ResetAllData = {
     body?: never;
@@ -23866,6 +25230,64 @@ export type GetLockedAccounts1Responses = {
 };
 
 export type GetLockedAccounts1Response = GetLockedAccounts1Responses[keyof GetLockedAccounts1Responses];
+
+export type CancelSessionData = {
+    body?: never;
+    headers?: {
+        /**
+         * Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi
+         */
+        'Accept-Language'?: 'vi' | 'en';
+    };
+    path: {
+        /**
+         * Session id
+         */
+        sessionId: string;
+    };
+    query?: never;
+    url: '/api/v1/member-document-sessions/{sessionId}';
+};
+
+export type CancelSessionResponses = {
+    /**
+     * OK
+     */
+    200: ApiResponseVoid;
+};
+
+export type CancelSessionResponse = CancelSessionResponses[keyof CancelSessionResponses];
+
+export type RemoveFileData = {
+    body?: never;
+    headers?: {
+        /**
+         * Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi
+         */
+        'Accept-Language'?: 'vi' | 'en';
+    };
+    path: {
+        /**
+         * Session id
+         */
+        sessionId: string;
+        /**
+         * File id
+         */
+        fileId: string;
+    };
+    query?: never;
+    url: '/api/v1/member-document-sessions/{sessionId}/files/{fileId}';
+};
+
+export type RemoveFileResponses = {
+    /**
+     * OK
+     */
+    200: ApiResponseVoid;
+};
+
+export type RemoveFileResponse = RemoveFileResponses[keyof RemoveFileResponses];
 
 export type Delete11Data = {
     body?: never;

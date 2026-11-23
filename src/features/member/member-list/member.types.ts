@@ -65,6 +65,10 @@ export type MemberItem = {
   paymentDeadline?: string;
   deletedDate?: string;
   retentionEndDate?: string;
+  /** Membership expiry + 1 year, for a general member who did not renew. */
+  deletionDueDate?: string;
+  /** WARNING from 15 days before deletionDueDate, DUE from that date (the officer in charge sets the member deleted). */
+  deletionAlert?: 'WARNING' | 'DUE';
   phone: string;
   email: string;
   accountStatus: AccountStatus;

@@ -427,3 +427,10 @@
   color: #e62e44;
   font-weight: 400;
 }
+
+.deletionCell {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}

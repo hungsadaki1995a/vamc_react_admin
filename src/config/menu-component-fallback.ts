@@ -1,4 +1,5 @@
 // Screen fallback for server menus whose MENU_MNG.MENU_URL_ADDR is still empty.
+// 'ScreenPending' is an empty state for menus that have no screen yet; without an entry a menu does nothing on click.
 //
 // These screens exist in the frontend but their menu rows
 // carry no component path yet, so the menu would render and do nothing on click.
@@ -20,6 +21,12 @@ const MENU_COMPONENT_FALLBACK: Record<string, string> = {
   A03010200: 'CollateralAssetManagement',
   A03010300: 'DebtorManagement',
   A03010400: 'NplLotManagement',
+  A03020000: 'ScreenPending', // CIC Data Management: no backend API yet
+  // Statistics: no screen design and no backend API yet
+  A05010000: 'ScreenPending',
+  A05020000: 'ScreenPending',
+  A05030000: 'ScreenPending',
+  A05040000: 'ScreenPending',
   // Content Management
   A04010000: 'NoticeManagement',
   A04020100: 'NewsManagement',
@@ -46,6 +53,7 @@ const MENU_COMPONENT_FALLBACK: Record<string, string> = {
   A06010300: 'SYS020103SC', // Fee Management
   A06010400: 'SYS020104SC', // Web Menu Permission Management
   A06010500: 'ExchangeRateManagement',
+  A06010600: 'ScreenPending', // Prohibited Words Management: no backend API yet
   A06010700: 'TermsManagement',
   A06020100: 'SYS030101SC', // Admin Menu Management
   A06020200: 'SYS030102SC', // User Management
@@ -58,6 +66,7 @@ const MENU_COMPONENT_FALLBACK: Record<string, string> = {
   A06040200: 'ScreenManagement',
   A06040300: 'LabelManagement', // i18n Label Management (DB path SYS050301SC wins when set)
   A06040400: 'BatchManagement',
+  A06040500: 'ApprovalProcessManagement',
   A06060100: 'NotificationMessageManagement',
   A06060200: 'NotificationHistoryManagement',
   // Auction Management

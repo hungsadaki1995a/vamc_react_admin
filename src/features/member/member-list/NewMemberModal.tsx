@@ -19,6 +19,13 @@ import {
 } from '@ant-design/icons';
 import { useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
+import { MEMBER_FEE_ERRORS } from '@/api/member/member-fee-api';
+import { apiErrorCode, errorMessage } from '@/features/system/_shared/system-utils';
+import { buildFeeHistoryRows, nextPeriodStart } from './member-fee-history';
+import { useMemberFeePayments, useRegisterMembershipPayment } from './use-member-fee';
+
+/** E06 of the member management system messages. */
+const E06_PERIOD_OVERLAP = 'E06: This overlaps an existing membership period. Please check the start date.';
 import { useNotify } from '@/hooks/use-notify';
 import { lookupEmployees } from '@/api/system/employee-api';
 import type { EmployeeLookup } from '@/api/system/employee-api';
@@ -91,15 +98,6 @@ function toDocumentAttachments(files: UploadedFileItem[]): { fileId: string; sid
       fileId: f.fileUnqId,
       ...(f.slot?.endsWith('_FRONT') ? { side: 'FRONT' } : f.slot?.endsWith('_BACK') ? { side: 'BACK' } : {}),
     }));
-}
-
-interface PaymentHistoryRow {
-  no: number;
-  type: 'Paid' | 'Exempt' | 'Terminated';
-  startDate: string;
-  endDate: string;
-  paymentDate: string;
-  isCurrent: boolean;
 }
 
 const MAX_FILE_BYTES = 10 * 1024 * 1024;
@@ -306,6 +304,12 @@ function AttachmentFieldRow({
   );
 }
 
+/** "Name (EMP0000001)" like the staff picker; empty when no officer is assigned. */
+function formatOfficer(name?: string, empNo?: string) {
+  if (!empNo) return '';
+  return name ? `${name} (${empNo})` : empNo;
+}
+
 function buildInitialFormState(
   isEdit: boolean,
   apiDetail: MemberDetailResponse | null | undefined,
@@ -331,8 +335,6 @@ function buildInitialFormState(
       corpFiles: [] as UploadedFileItem[],
       agentFiles: [] as UploadedFileItem[],
       poaFiles: [] as UploadedFileItem[],
-      paymentHistory: [] as PaymentHistoryRow[],
-      payStartDate: dayjs(),
     };
   }
 
@@ -353,23 +355,6 @@ function buildInitialFormState(
     !apiDetail.currentAddress?.mctpvCd &&
     Boolean(apiDetail.permanentAddress?.daddr);
 
-  const hasPaid = apiDetail.basic?.mbrshpPayYn === 'Y';
-  const hasExempt = apiDetail.basic?.mbrshpFeeExmpYn === 'Y';
-  const pStart = parseDateValue(apiDetail.basic?.mbrshpBgngDt);
-  const pEnd = parseDateValue(apiDetail.basic?.mbrshpEndDt);
-  const paymentHistory: PaymentHistoryRow[] =
-    (hasPaid || hasExempt) && pStart && pEnd
-      ? [
-          {
-            no: 1,
-            type: hasExempt ? 'Exempt' : 'Paid',
-            startDate: pStart.format('DD-MM-YYYY'),
-            endDate: pEnd.format('DD-MM-YYYY'),
-            paymentDate: hasExempt ? '-' : pStart.format('DD-MM-YYYY'),
-            isCurrent: pEnd.isAfter(dayjs().startOf('day')),
-          },
-        ]
-      : [];
 
   return {
     initialValues: {
@@ -378,7 +363,7 @@ function buildInitialFormState(
       memberGrade: mappedGrade,
       status: mappedStatus,
       termsAgreementDate: parseDateValue(apiDetail.basic?.aplyDt || member.applicationDate) || dayjs(),
-      staffInCharge: member.assignee !== '-' ? member.assignee : '',
+      staffInCharge: formatOfficer(apiDetail.basic?.officerNm, apiDetail.basic?.officerEmpNo),
       rejectionReason: apiDetail.basic?.splmntRqstCn || '',
       phoneCountry: apiDetail.account?.intlTelnoNtnNo || '+84',
       phone: (apiDetail.account?.rawTelno || apiDetail.account?.telno || '').replace(/\D/g, ''),
@@ -403,6 +388,7 @@ function buildInitialFormState(
       projectCode: apiDetail.corporate?.orgnzBrno || '',
       corpIssuingAuthority: apiDetail.corporate?.issuInstNm || '',
       corpIssueDate: parseDateValue(apiDetail.corporate?.issuDt),
+      corpEffectiveDate: parseDateValue(apiDetail.corporate?.efctDt),
       corpAddr: apiDetail.corporate?.headOfficeAddress || {},
       legalRepName: apiDetail.legalRepresentative?.fullNm || '',
       legalRepPosition: apiDetail.legalRepresentative?.jbpsNm || '',
@@ -433,8 +419,6 @@ function buildInitialFormState(
     poaFiles: mapAttachmentList(
       apiDetail.files?.filter((f) => (f.docType || '').toUpperCase() === 'POWER_OF_ATTORNEY'),
     ),
-    paymentHistory,
-    payStartDate: pEnd && pEnd.isAfter(dayjs().startOf('day')) ? pEnd.add(1, 'day') : dayjs(),
   };
 }
 
@@ -446,9 +430,11 @@ export default function NewMemberModal({
   onSuccess,
 }: MemberFormModalProps) {
   const isEdit = mode === 'edit' && Boolean(member);
+  // Edit loads the decrypted values: saving masked phone / ID numbers back would corrupt them
   const { data: apiDetail, isLoading: isLoadingDetail } = useMemberDetail(
     member?.memberCode,
     visible && isEdit,
+    true,
   );
 
   if (!visible) return null;
@@ -528,13 +514,20 @@ function MemberFormModalContent({
     enabled: staffPickerOpen,
   });
 
-  // Payment Registration state
+  // Membership fee: history from the server (one derived row while it keeps none); Register Payment saves at once
+  const feeMbrNo = isEdit && member ? member.memberCode : null;
+  const { data: feePayments } = useMemberFeePayments(feeMbrNo);
+  const paymentHistory = buildFeeHistoryRows(feePayments, apiDetail?.basic);
+  const registerPayment = useRegisterMembershipPayment(feeMbrNo);
   const [payType, setPayType] = useState<'Paid' | 'Exempt'>('Paid');
-  const [payStartDate, setPayStartDate] = useState<dayjs.Dayjs | null>(initial.payStartDate);
+  const [payStartDate, setPayStartDate] = useState<dayjs.Dayjs | null>(() =>
+    nextPeriodStart(buildFeeHistoryRows(undefined, apiDetail?.basic)),
+  );
   const [payDate, setPayDate] = useState<dayjs.Dayjs | null>(dayjs());
-  const [paymentHistory, setPaymentHistory] = useState<PaymentHistoryRow[]>(initial.paymentHistory);
 
   const isLockedReadOnly = isEdit && statusVal === 'Locked';
+  // Effective / reissue date: editable only once the backend stores it (schema/44); otherwise it would be dropped
+  const canEditEffectiveDate = isEdit && apiDetail?.corporate?.efctDtEnabled === true;
   const isOrganization = memberType === 'Organization';
   const isForeigner = memberType === 'Foreigner';
 
@@ -691,7 +684,8 @@ function MemberFormModalContent({
     }
   };
 
-  const handleRegisterPayment = () => {
+  const handleRegisterPayment = async () => {
+    if (!feeMbrNo) return;
     if (!payStartDate) {
       toast.error('E01: Please select Membership Period start date.');
       return;
@@ -702,42 +696,29 @@ function MemberFormModalContent({
     }
     const endD = payStartDate.add(1, 'year').subtract(1, 'day');
     const overlaps = paymentHistory.some((row) => {
-      if (row.type === 'Terminated') return false;
-      const rStart = parseDateValue(row.startDate);
-      const rEnd = parseDateValue(row.endDate);
-      if (!rStart || !rEnd) return false;
+      const rStart = dayjs(row.startDate, 'DD-MM-YYYY', true);
+      const rEnd = dayjs(row.endDate, 'DD-MM-YYYY', true);
+      if (!rStart.isValid() || !rEnd.isValid()) return false;
       return !endD.isBefore(rStart, 'day') && !payStartDate.isAfter(rEnd, 'day');
     });
     if (overlaps) {
-      toast.error('E06: Membership period overlaps with an existing period.');
+      toast.error(E06_PERIOD_OVERLAP);
       return;
     }
-
-    const nextRow: PaymentHistoryRow = {
-      no: paymentHistory.length + 1,
-      type: payType,
-      startDate: payStartDate.format('DD-MM-YYYY'),
-      endDate: endD.format('DD-MM-YYYY'),
-      paymentDate: payType === 'Exempt' ? '-' : payDate!.format('DD-MM-YYYY'),
-      isCurrent: true,
-    };
-    setPaymentHistory((prev) => [nextRow, ...prev.map((r) => ({ ...r, isCurrent: false }))]);
-    form.setFieldValue('memberGrade', 'Full');
-    setPayStartDate(endD.add(1, 'day'));
-    setPayDate(dayjs());
-  };
-
-  const handleTerminatePayment = (rowNo: number) => {
-    dialog.confirm({
-      title: 'Terminate Membership (C01)',
-      content: 'Terminate the current membership period and change grade from Full Member to General Member?',
-      onOk: () => {
-        setPaymentHistory((prev) =>
-          prev.map((r) => (r.no === rowNo ? { ...r, type: 'Terminated', isCurrent: false } : r)),
-        );
-        form.setFieldValue('memberGrade', 'General');
-      },
-    });
+    try {
+      await registerPayment.mutateAsync({
+        payType: payType === 'Exempt' ? 'EXEMPT' : 'PAID',
+        periodStartDate: payStartDate.format('YYYY-MM-DD'),
+        paymentDate: payType === 'Exempt' ? undefined : payDate!.format('YYYY-MM-DD'),
+      });
+      toast.success('Membership payment registered.');
+      form.setFieldValue('memberGrade', 'Full');
+      setPayStartDate(endD.add(1, 'day'));
+      setPayDate(dayjs());
+    } catch (err) {
+      // The server checks the overlap too (MBR016), e.g. when the history was changed in another tab
+      toast.error(apiErrorCode(err) === MEMBER_FEE_ERRORS.periodOverlap ? E06_PERIOD_OVERLAP : errorMessage(err));
+    }
   };
 
   const handleSubmit = async () => {
@@ -869,6 +850,10 @@ function MemberFormModalContent({
                 orgnzBrno: values.projectCode,
                 lglDcmntIssuInstNm: values.corpIssuingAuthority,
                 lglDcmntIssuDmy: values.corpIssueDate?.format('DDMMYYYY'),
+                // Empty string clears the stored date; sent only where the column exists (schema/44)
+                ...(canEditEffectiveDate
+                  ? { lglDcmntEfctDmy: values.corpEffectiveDate?.format('DDMMYYYY') ?? '' }
+                  : {}),
                 mctpvCd: values.corpAddr?.mctpvCd,
                 distCd: values.corpAddr?.distCd,
                 mbrDaddr1: values.corpAddr?.daddr,
@@ -962,6 +947,12 @@ function MemberFormModalContent({
   };
 
   const deadlineInfo = formatDeadline(member?.paymentDeadline || apiDetail?.basic?.mbrshpPayDueDt);
+  // First fee deadline (decided 2026-11-23): completion + 15 days, general members who have not paid yet
+  const hasFirstFeeDeadline =
+    apiDetail?.basic?.mbrshpPayYn !== 'Y' &&
+    apiDetail?.basic?.mbrshpFeeExmpYn !== 'Y' &&
+    !apiDetail?.basic?.mbrshpEndDt &&
+    deadlineInfo.text !== '-';
   const computedPayEndDate = payStartDate ? payStartDate.add(1, 'year').subtract(1, 'day').format('DD-MM-YYYY') : '-';
 
   return (
@@ -1134,25 +1125,30 @@ function MemberFormModalContent({
                             </Form.Item>
                           </td>
                           <td className={styles.labelCell}>
-                            Staff in Charge<span className={styles.requiredMark}>*</span>
+                            Staff in Charge{!isEdit && <span className={styles.requiredMark}>*</span>}
                           </td>
                           <td className={styles.valueCell}>
+                            {/* The officer in charge is assigned in the sign-up approval, not by this form: read-only on edit */}
                             <Form.Item
                               name="staffInCharge"
                               className={styles.formItemCompact}
-                              rules={[{ required: true, message: 'E01: Staff in Charge is required' }]}
+                              rules={isEdit ? [] : [{ required: true, message: 'E01: Staff in Charge is required' }]}
                             >
-                              <TextInput
-                                readOnly
-                                placeholder="Select Staff in Charge"
-                                suffix={
-                                  <SearchOutlined
-                                    className="cursor-pointer text-blue-600!"
-                                    onClick={() => !isLockedReadOnly && setStaffPickerOpen(true)}
-                                  />
-                                }
-                                onClick={() => !isLockedReadOnly && setStaffPickerOpen(true)}
-                              />
+                              {isEdit ? (
+                                <TextInput readOnly placeholder="Not assigned yet" />
+                              ) : (
+                                <TextInput
+                                  readOnly
+                                  placeholder="Select Staff in Charge"
+                                  suffix={
+                                    <SearchOutlined
+                                      className="cursor-pointer text-blue-600!"
+                                      onClick={() => !isLockedReadOnly && setStaffPickerOpen(true)}
+                                    />
+                                  }
+                                  onClick={() => !isLockedReadOnly && setStaffPickerOpen(true)}
+                                />
+                              )}
                             </Form.Item>
                           </td>
                         </tr>
@@ -1189,7 +1185,7 @@ function MemberFormModalContent({
                     <span className={styles.sectionTitle}>Membership Information</span>
                   </div>
 
-                  {isEdit && memberGrade === 'Temporary' && statusVal === 'Pending Approval' && (
+                  {isEdit && memberGrade === 'General' && hasFirstFeeDeadline && (
                     <div className="mb-2 text-[13px]">
                       <strong>Payment Deadline: </strong>
                       <span className={deadlineInfo.isDanger ? styles.deadlineDanger : undefined}>
@@ -1198,7 +1194,10 @@ function MemberFormModalContent({
                     </div>
                   )}
 
-                  {!isLockedReadOnly && (
+                  {!isEdit && (
+                    <div className={styles.emptyHistory}>Payments can be registered after the member is registered.</div>
+                  )}
+                  {isEdit && !isLockedReadOnly && (
                     <>
                       <div className={styles.subSectionTitle}>Register Payment</div>
                       <div className={styles.paymentFormBox}>
@@ -1239,7 +1238,11 @@ function MemberFormModalContent({
                             className="w-full"
                           />
                         </div>
-                        <ActionButton type="primary" onClick={handleRegisterPayment}>
+                        <ActionButton
+                          type="primary"
+                          disabled={registerPayment.isPending}
+                          onClick={() => void handleRegisterPayment()}
+                        >
                           Register Payment
                         </ActionButton>
                       </div>
@@ -1256,7 +1259,6 @@ function MemberFormModalContent({
                             <th className="w-[140px]">Type</th>
                             <th>Membership Period</th>
                             <th className="w-[140px]">Payment Date</th>
-                            <th className="w-[120px]">Actions</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -1269,13 +1271,6 @@ function MemberFormModalContent({
                                 {row.isCurrent && <span className={styles.currentBadge}>Current</span>}
                               </td>
                               <td className="text-center">{row.paymentDate}</td>
-                              <td className="text-center">
-                                {row.isCurrent && !isLockedReadOnly ? (
-                                  <ActionButton size="small" intent="secondary" onClick={() => handleTerminatePayment(row.no)}>Terminate</ActionButton>
-                                ) : (
-                                  '-'
-                                )}
-                              </td>
                             </tr>
                           ))}
                         </tbody>
@@ -1771,6 +1766,16 @@ function MemberFormModalContent({
                                 </Form.Item>
                               </td>
                             </tr>
+                            {canEditEffectiveDate && (
+                              <tr>
+                                <td className={styles.labelCell}>Effective / Reissue Date</td>
+                                <td className={styles.valueCell} colSpan={5}>
+                                  <Form.Item name="corpEffectiveDate" className={styles.formItemCompact}>
+                                    <AppDatePicker format="DD-MM-YYYY" className="w-full" />
+                                  </Form.Item>
+                                </td>
+                              </tr>
+                            )}
                             {legalDocType === 'I' && (
                               <tr>
                                 <td className={styles.labelCell}>

@@ -1,10 +1,12 @@
 import { useState, useMemo } from 'react';
 import ActionButton from '@/components/common/actions/ActionButton';
+import StatusBadge from '@/components/common/badge/StatusBadge';
 import DataTable from '@/components/common/table/DataTable';
 import AppCheckbox from '@/components/inputs/AppCheckbox';
 import AppDatePicker from '@/components/inputs/AppDatePicker';
 import AppSelect from '@/components/inputs/AppSelect';
 import TextInput from '@/components/inputs/TextInput';
+import { useMenuPermission } from '@/hooks/use-menu-permission';
 import { useNotify } from '@/hooks/use-notify';
 import type { TableProps, TableColumnsType } from 'antd';
 import type { SortOrder } from 'antd/es/table/interface';
@@ -26,10 +28,13 @@ import type {
   ApprovalStatus,
   AccountStatus,
 } from './member.types';
+import type { DeletionAlert } from '@/api/member/member-deletion-api';
+import { errorMessage } from '@/features/system/_shared/system-utils';
 import { useMembers, useExportMembers } from './use-members';
+import { useDeleteExpiredMember } from './use-member-deletion';
 import { SysPagination } from '@/features/system/_shared/SystemUi';
 import MemberDetailModal from './MemberDetailModal';
-import ApprovalStatusModal from './ApprovalStatusModal';
+import MemberApprovalModal from './MemberApprovalModal';
 import NewMemberModal from './NewMemberModal';
 import styles from './member-list.module.scss';
 
@@ -65,6 +70,13 @@ const DEFAULT_MEMBER_TYPES: MemberType[] = MEMBER_TYPE_OPTIONS.map((o) => o.valu
 const DEFAULT_STATUSES: MemberStatus[] = STATUS_OPTIONS.map((o) => o.value);
 const DEFAULT_MEMBERSHIPS: MembershipType[] = MEMBERSHIP_OPTIONS.map((o) => o.value);
 
+/** Unrenewed membership one year after expiry (decided 2026-11-22): flagged 15 days ahead, then due for deletion. */
+const DELETION_ALERT_OPTIONS: { label: string; value: DeletionAlert }[] = [
+  { label: 'Due within 15 days', value: 'WARNING' },
+  { label: 'Due for deletion', value: 'DUE' },
+];
+const NO_DELETION_ALERTS: DeletionAlert[] = [];
+
 const SEARCH_FIELD_OPTIONS: { label: string; value: MemberSearchField }[] = [
   { label: 'Member Code', value: 'MBR_NO' },
   { label: 'SGDN Member Code', value: 'SGDN_MBR_NO' },
@@ -98,14 +110,11 @@ function formatDisplayDate(val?: string): string {
   return d.isValid() ? d.format('DD-MM-YYYY') : val;
 }
 
-function formatPaymentDeadline(
-  val?: string,
-  grade?: MemberGrade,
-  status?: MemberStatus,
-): { text: string; isDanger: boolean } {
-  if (grade !== 'Temporary' || status !== 'Pending Approval') {
-    return { text: '-', isDanger: false };
-  }
+/**
+ * First membership fee deadline (decided 2026-11-23): sign-up completion + 15 days. The server sends it only
+ * for general members who have not paid yet, the members the 15-day job would delete.
+ */
+function formatPaymentDeadline(val?: string): { text: string; isDanger: boolean } {
   const formatted = formatDisplayDate(val);
   if (formatted === '-') return { text: '-', isDanger: false };
 
@@ -119,7 +128,8 @@ function formatPaymentDeadline(
 }
 
 export default function MemberList() {
-  const { toast } = useNotify();
+  const { toast, dialog } = useNotify();
+  const { canWrite } = useMenuPermission();
   // ── Pagination & Sort State ────────────────────────────────────────────────
   const [page, setPage] = useState(1);
   const [pageSize] = useState(20);
@@ -165,6 +175,9 @@ export default function MemberList() {
   const [membershipAll, setMembershipAll] = useState(true);
   const [selectedMemberships, setSelectedMemberships] = useState<MembershipType[]>(DEFAULT_MEMBERSHIPS);
 
+  // Deletion flag (default: no filter)
+  const [selectedDeletionAlerts, setSelectedDeletionAlerts] = useState<DeletionAlert[]>(NO_DELETION_ALERTS);
+
   // Applied Filter Snapshot (triggers actual filter on Search button click)
   const [appliedFilters, setAppliedFilters] = useState({
     dateRange: null as [dayjs.Dayjs | null, dayjs.Dayjs | null] | null,
@@ -178,6 +191,7 @@ export default function MemberList() {
     selectedStatuses: DEFAULT_STATUSES,
     membershipAll: true,
     selectedMemberships: DEFAULT_MEMBERSHIPS,
+    deletionAlerts: NO_DELETION_ALERTS,
   });
 
   // ── API Member Query Hook ──────────────────────────────────────────────────
@@ -196,6 +210,22 @@ export default function MemberList() {
   });
 
   const { mutate: exportMembers, isPending: isExporting } = useExportMembers();
+  const deleteExpired = useDeleteExpiredMember();
+
+  // The officer in charge (or an administrator) sets a member deleted once the flag is DUE; no approval
+  const handleDeleteExpired = (record: MemberItem) => {
+    dialog.confirm({
+      content: `Set ${record.memberCode} to deleted? The membership expired on ${record.membershipExpiryDate} and was not renewed for one year. The member cannot be restored.`,
+      onOk: async () => {
+        try {
+          await deleteExpired.mutateAsync(record.memberCode);
+          toast.success('The member was set to deleted.');
+        } catch (error) {
+          toast.error(errorMessage(error));
+        }
+      },
+    });
+  };
 
   // ── Filter Checkbox Handlers (at least 1 sub-item must stay selected) ──────
   const makeCheckboxHandlers = <T extends string>(
@@ -261,6 +291,7 @@ export default function MemberList() {
       selectedStatuses,
       membershipAll,
       selectedMemberships,
+      deletionAlerts: selectedDeletionAlerts,
     });
   };
 
@@ -276,6 +307,7 @@ export default function MemberList() {
     setSelectedStatuses(DEFAULT_STATUSES);
     setMembershipAll(true);
     setSelectedMemberships(DEFAULT_MEMBERSHIPS);
+    setSelectedDeletionAlerts(NO_DELETION_ALERTS);
     setSortBy(undefined);
     setSortDirection(undefined);
     setPage(1);
@@ -293,6 +325,7 @@ export default function MemberList() {
       selectedStatuses: DEFAULT_STATUSES,
       membershipAll: true,
       selectedMemberships: DEFAULT_MEMBERSHIPS,
+      deletionAlerts: NO_DELETION_ALERTS,
     });
   };
 
@@ -508,6 +541,38 @@ export default function MemberList() {
       sortOrder: getSortOrder('mbrJoinChnlCd'),
       render: (val?: string) => <span>{val || '-'}</span>,
     },
+    {
+      title: 'Deletion Due',
+      dataIndex: 'deletionDueDate',
+      key: 'deletionDueDt',
+      width: 170,
+      align: 'center' as const,
+      render: (val: string | undefined, record: MemberItem) => {
+        if (!record.deletionAlert) return <span>-</span>;
+        return (
+          <div className={styles.deletionCell}>
+            <StatusBadge color={record.deletionAlert === 'DUE' ? 'red' : 'orange'}>
+              {record.deletionAlert === 'DUE' ? 'Due' : 'Within 15 days'}
+            </StatusBadge>
+            <span>{formatDisplayDate(val)}</span>
+            {record.deletionAlert === 'DUE' && canWrite && (
+              <ActionButton
+                size="small"
+                intent="secondary"
+                appearance="outlined"
+                loading={deleteExpired.isPending && deleteExpired.variables === record.memberCode}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  handleDeleteExpired(record);
+                }}
+              >
+                Set Deleted
+              </ActionButton>
+            )}
+          </div>
+        );
+      },
+    },
     ...(showDeletedColumns
       ? [
           {
@@ -571,12 +636,8 @@ export default function MemberList() {
             align: 'center' as const,
             sorter: true,
             sortOrder: getSortOrder('payDdlnDt'),
-            render: (val?: string, record?: MemberItem) => {
-              const { text, isDanger } = formatPaymentDeadline(
-                val,
-                record ? deriveMemberGrade(record) : undefined,
-                record ? deriveMemberStatus(record) : undefined,
-              );
+            render: (val?: string) => {
+              const { text, isDanger } = formatPaymentDeadline(val);
               return <span className={isDanger ? styles.paymentDeadlineDanger : undefined}>{text}</span>;
             },
           },
@@ -751,6 +812,19 @@ export default function MemberList() {
                 </div>
               </div>
             </div>
+
+            <div className={styles.filterField}>
+              <span className={styles.filterLabel}>Deletion Due</span>
+              <div className={styles.filterControl}>
+                <div className={styles.filterCheckboxGroup}>
+                  <AppCheckbox.Group
+                    options={DELETION_ALERT_OPTIONS}
+                    value={selectedDeletionAlerts}
+                    onChange={(values: DeletionAlert[]) => setSelectedDeletionAlerts(values)}
+                  />
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -840,11 +914,11 @@ export default function MemberList() {
         }}
       />
 
-      <ApprovalStatusModal
-        visible={approvalModalVisible}
-        member={approvalMember}
+      <MemberApprovalModal
+        mbrNo={approvalModalVisible && approvalMember ? approvalMember.memberCode : null}
+        memberName={approvalMember?.memberName}
+        canWrite={canWrite}
         onClose={() => setApprovalModalVisible(false)}
-        onUpdateStatus={handleUpdateApprovalStatus}
       />
 
       <NewMemberModal
