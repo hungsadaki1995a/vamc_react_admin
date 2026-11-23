@@ -12,7 +12,7 @@ export type NotiChannel = 'MAIL' | 'ZALO' | 'PUSH';
 export type NotiRecipientType = 'MBR' | 'EMP';
 /** Legacy processing type, still required by the API. */
 export type NotiProcessType = 'RCPT' | 'PRCS' | '1ST_ATRZ' | '2ND_ATRZ' | 'CMPTN';
-export type NotiLang = 'VN' | 'EN' | 'KR';
+export type NotiLang = 'VN' | 'EN';
 
 /** Design labels of the channel / recipient type codes. */
 export const NOTI_CHANNEL_LABELS: Record<NotiChannel, string> = { MAIL: 'EMAIL', ZALO: 'ZALO_ZNS', PUSH: 'PUSH' };

@@ -2403,7 +2403,7 @@ export type MemberDeletionDto = {
     /**
      * Restoration request waiting for approval, null when none / Yêu cầu khôi phục đang chờ duyệt
      */
-    pendingRestoration?: PendingRestoration;
+    pendingRestoration?: PendingRequest;
     /**
      * The signed-in employee is the approver of the pending restoration / Người đang xem là người duyệt
      */
@@ -2523,6 +2523,22 @@ export type MemberDetailResponse = {
      */
     deletion?: MemberDeletionDto;
     /**
+     * Deletion request waiting for approval, null when none / Yêu cầu xoá đang chờ duyệt
+     */
+    deletionRequest?: PendingRequest;
+    /**
+     * The signed-in employee is the approver of the pending deletion / Người đang xem là người duyệt xoá
+     */
+    canDecideDeletion?: boolean;
+    /**
+     * Deletion may be requested now: Pending Approval past the payment deadline, or a Full Member without an application, contract or bid in progress, and no request open / Có thể trình xoá
+     */
+    deletable?: boolean;
+    /**
+     * Why the deletion cannot be requested (error code, e.g. MBR017, MBR018, or E09 transactionInProgress), null when deletable / Lý do không trình xoá được
+     */
+    deletionBlockCd?: string;
+    /**
      * Last modification date
      */
     mdfcnDt?: string;
@@ -2637,9 +2653,9 @@ export type MemberRepresentativeDto = {
 };
 
 /**
- * Pending restoration request / Yêu cầu khôi phục đang chờ
+ * Deletion or restoration request waiting for approval / Yêu cầu xoá hoặc khôi phục đang chờ duyệt
  */
-export type PendingRestoration = {
+export type PendingRequest = {
     /**
      * Approval session ID / Mã phiên duyệt
      */
@@ -5504,12 +5520,6 @@ export type RegisterMembershipPaymentRequest = {
     exempt?: boolean;
 };
 
-export type ApiResponseMemberDeletionDto = {
-    status?: number;
-    message?: string;
-    data?: MemberDeletionDto;
-};
-
 export type CheckMemberDocumentsRequest = {
     /**
      * Documents complete ('Y': complete, 'N': incomplete -> supplement request)
@@ -5531,11 +5541,9 @@ export type MemberDeletionRequest = {
      */
     reason: string;
     /**
-     * Ignored: no approval step / Không dùng: không còn bước duyệt
-     *
-     * @deprecated
+     * Approver employee number (candidates of PROC_MBR_LOSS step 2) / Mã nhân viên người duyệt
      */
-    approverEmpNo?: string;
+    approverEmpNo: string;
 };
 
 export type ReceiveMemberApprovalRequest = {
@@ -9183,7 +9191,7 @@ export type MemberResponse = {
      */
     mbrshpExprDt?: string;
     /**
-     * First membership fee deadline (decided 2026-11-23): sign-up completion date + 15 days, general members who have not paid yet; past it the job member-first-fee-cancel deletes the member / Hạn nộp phí lần đầu: ngày hoàn tất + 15 ngày, hội viên thường chưa nộp
+     * Payment deadline of an application in Pending Approval whose fee is neither paid nor exempt: sign-up or re-application date + 15 days; null otherwise (a General Member has none). Past it the officer in charge may request the deletion / Hạn nộp phí của hồ sơ chờ duyệt: ngày đăng ký hoặc nộp lại + 15 ngày
      */
     payDdlnDt?: string;
     /**
@@ -9194,14 +9202,6 @@ export type MemberResponse = {
      * Retention end date = deleted date + 1 year / Ngày hết hạn lưu giữ
      */
     rtnEndDt?: string;
-    /**
-     * Deletion due date for an unrenewed membership: membership expiry + 1 year; null when not concerned / Hạn chuyển sang đã xoá: ngày hết hạn hội viên + 1 năm; null nếu không áp dụng
-     */
-    deletionDueDt?: string;
-    /**
-     * Deletion flag: WARNING (due within 15 days), DUE (the officer in charge may set the member deleted), null otherwise / Cờ cảnh báo: WARNING (còn 15 ngày), DUE (cán bộ phụ trách chuyển sang đã xoá)
-     */
-    deletionAlert?: 'WARNING' | 'DUE';
     /**
      * Available user action for popup (RECEIVE, REQUEST, DECIDE, VIEW)
      */
@@ -17560,10 +17560,6 @@ export type GetMembersData = {
          */
         mbrshpPayCds?: Array<'PAID' | 'EXEMPT' | 'NONE'>;
         /**
-         * Deletion flag for an unrenewed membership (WARNING: due within 15 days, DUE: due) / Cờ chuyển sang đã xoá (WARNING: còn 15 ngày, DUE: đến hạn)
-         */
-        deletionAlerts?: Array<'WARNING' | 'DUE'>;
-        /**
          * Legacy account status (ACTIVE, LOCKED) - use sttsCds / Trạng thái tài khoản cũ - dùng sttsCds
          */
         acntSttsCds?: Array<'ACTIVE' | 'LOCKED'>;
@@ -17808,33 +17804,6 @@ export type ConfirmMembershipFeeResponses = {
 
 export type ConfirmMembershipFeeResponse = ConfirmMembershipFeeResponses[keyof ConfirmMembershipFeeResponses];
 
-export type DeleteExpiredMembershipData = {
-    body?: never;
-    headers?: {
-        /**
-         * Response language: vi (Vietnamese, default) or en (English) / Ngôn ngữ phản hồi
-         */
-        'Accept-Language'?: 'vi' | 'en';
-    };
-    path: {
-        /**
-         * Member number
-         */
-        mbrNo: string;
-    };
-    query?: never;
-    url: '/api/v1/members/{mbrNo}/expiry-deletion';
-};
-
-export type DeleteExpiredMembershipResponses = {
-    /**
-     * OK
-     */
-    200: ApiResponseMemberDeletionDto;
-};
-
-export type DeleteExpiredMembershipResponse = DeleteExpiredMembershipResponses[keyof DeleteExpiredMembershipResponses];
-
 export type CheckDocuments3Data = {
     body: CheckMemberDocumentsRequest;
     headers?: {
@@ -17896,7 +17865,7 @@ export type UploadDocumentScansResponses = {
 
 export type UploadDocumentScansResponse = UploadDocumentScansResponses[keyof UploadDocumentScansResponses];
 
-export type DeleteMemberData = {
+export type RequestDeletionData = {
     body: MemberDeletionRequest;
     headers?: {
         /**
@@ -17914,16 +17883,16 @@ export type DeleteMemberData = {
     url: '/api/v1/members/{mbrNo}/deletion-request';
 };
 
-export type DeleteMemberResponses = {
+export type RequestDeletionResponses = {
     /**
      * OK
      */
-    200: ApiResponseMemberDeletionDto;
+    200: ApiResponseMemberDeletionRequestResponse;
 };
 
-export type DeleteMemberResponse = DeleteMemberResponses[keyof DeleteMemberResponses];
+export type RequestDeletionResponse = RequestDeletionResponses[keyof RequestDeletionResponses];
 
-export type DeleteMember1Data = {
+export type RequestDeletion1Data = {
     body: MemberDeletionRequest;
     headers?: {
         /**
@@ -17941,14 +17910,14 @@ export type DeleteMember1Data = {
     url: '/api/v1/members/{mbrNo}/deletion';
 };
 
-export type DeleteMember1Responses = {
+export type RequestDeletion1Responses = {
     /**
      * OK
      */
-    200: ApiResponseMemberDeletionDto;
+    200: ApiResponseMemberDeletionRequestResponse;
 };
 
-export type DeleteMember1Response = DeleteMember1Responses[keyof DeleteMember1Responses];
+export type RequestDeletion1Response = RequestDeletion1Responses[keyof RequestDeletion1Responses];
 
 export type Receive3Data = {
     body?: ReceiveMemberApprovalRequest;
@@ -22802,10 +22771,6 @@ export type ExcelData = {
          * Membership / Phí hội viên: PAID paid / đã nộp, EXEMPT exempt / miễn phí (both with a currently valid membership period / có kỳ hội viên còn hiệu lực), NONE no currently valid membership period / không có kỳ hội viên còn hiệu lực
          */
         mbrshpPayCds?: Array<'PAID' | 'EXEMPT' | 'NONE'>;
-        /**
-         * Deletion flag for an unrenewed membership (WARNING: due within 15 days, DUE: due) / Cờ chuyển sang đã xoá (WARNING: còn 15 ngày, DUE: đến hạn)
-         */
-        deletionAlerts?: Array<'WARNING' | 'DUE'>;
         /**
          * Legacy account status (ACTIVE, LOCKED) - use sttsCds / Trạng thái tài khoản cũ - dùng sttsCds
          */

@@ -10,7 +10,8 @@ i18n.use(initReactI18next).init({
     vn: { translation: vn },
   },
   lng: getInitialLocale(),
-  fallbackLng: 'en',
+  // Missing keys fall back to Vietnamese, then English
+  fallbackLng: ['vn', 'en'],
   interpolation: {
     escapeValue: false,
   },

@@ -312,6 +312,18 @@
   &:hover {
     background-color: #e0243b;
   }
+
+  &:disabled,
+  &:disabled:hover {
+    background-color: #ffb3bc;
+    color: #ffffff;
+    cursor: not-allowed;
+  }
+}
+
+// Hover target of the Delete tooltip (a disabled button fires no mouse events)
+.deleteTrigger {
+  display: inline-flex;
 }
 
 .btnCancel {

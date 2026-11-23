@@ -2,7 +2,8 @@ import type { StateStorage } from 'zustand/middleware';
 
 export type LocaleKey = 'en' | 'vn';
 
-export const DEFAULT_LOCALE: LocaleKey = 'en';
+/** Vietnamese by default; only Vietnamese and English are served */
+export const DEFAULT_LOCALE: LocaleKey = 'vn';
 export const SUPPORTED_LOCALES: readonly LocaleKey[] = ['en', 'vn'] as const;
 
 export const LOCALE_STORAGE_KEY = 'vamc-locale';
@@ -29,7 +30,7 @@ export function getLocaleShortLabel(locale: LocaleKey): string {
 
 /**
  * Normalizes any language code or alias (e.g. 'vi', 'vi-VN', 'en-US')
- * into the supported LocaleKey ('en' | 'vn'). Defaults to 'en'.
+ * into the supported LocaleKey ('en' | 'vn'). Defaults to 'vn'.
  */
 export function normalizeLocale(locale: unknown): LocaleKey {
   if (typeof locale !== 'string') return DEFAULT_LOCALE;
@@ -109,7 +110,7 @@ export function syncSystemLocale(locale: LocaleKey): void {
  * Reads initial locale from storage with prioritized fallback:
  * 1. LocalStorage (`vamc-locale`)
  * 2. Cookie (`vamc-locale`)
- * 3. Default (`en`)
+ * 3. Default (`vn`)
  */
 export function getInitialLocale(): LocaleKey {
   if (typeof window === 'undefined') return DEFAULT_LOCALE;
@@ -137,7 +138,7 @@ export function getInitialLocale(): LocaleKey {
     return normalizeLocale(cookieVal);
   }
 
-  // 3. Fallback to default English
+  // 3. Fallback to the default (Vietnamese)
   return DEFAULT_LOCALE;
 }
 

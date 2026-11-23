@@ -92,7 +92,7 @@ export const getMemberApprovalCandidates = (stpNo: number, atrzHstryId?: string 
 /** Step 1: receive the application; the receiver holds step 1. */
 export const receiveMemberApplication = (mbrNo: string) => apiPost<unknown>(`${member(mbrNo)}/approvals/receive`);
 
-/** Step 1: original documents complete. */
+/** Original documents complete; posted by the officer at step 2 it also completes the sign-up (2026-11-23). */
 export const completeMemberDocuments = (mbrNo: string) =>
   apiPost<unknown>(`${member(mbrNo)}/documents`, { documentsComplete: 'Y' });
 
@@ -100,7 +100,11 @@ export const completeMemberDocuments = (mbrNo: string) =>
 export const requestMemberSupplement = (mbrNo: string, supplementNote: string) =>
   apiPost<unknown>(`${member(mbrNo)}/documents`, { documentsComplete: 'N', supplementNote });
 
-/** Step 1 → 2: assign the officer in charge once the documents are complete (also changes the officer at step 2). */
+/**
+ * Set the Staff in Charge (officer of step 2). Works in every state except deleted (2026-11-23): not received
+ * (receives and hands over at once; needs the receipt role), step 1, step 2 (reassign), and after completion or
+ * rejection (changes the officer). The new officer gets an e-mail.
+ */
 export const assignMemberOfficer = (mbrNo: string, assigneeEmpNo: string) =>
   apiPut<unknown>(`${member(mbrNo)}/approvals/assignee`, { assigneeEmpNo });
 

@@ -63,15 +63,12 @@ export function useAssignMemberOfficer() {
 }
 
 /**
- * Step 2 completion. The documents are marked complete first, which is a no-op for a new application (checked at
- * step 1) and still needed for one received before 2026-11-22, whose documents were checked at step 2.
+ * Step 2 completion with the SGDN code and the fee terms. The documents are not posted first: since 2026-11-23 a
+ * documents check by the officer completes the sign-up by itself, so the SGDN step would then find it closed.
  */
 export function useCompleteMemberSignup() {
   return useApiAction(
-    async ({ mbrNo, request }: { mbrNo: string; request: MemberSignupCompletion }) => {
-      const documents = await completeMemberDocuments(mbrNo);
-      return documents.success ? completeMemberSignup(mbrNo, request) : documents;
-    },
+    ({ mbrNo, request }: { mbrNo: string; request: MemberSignupCompletion }) => completeMemberSignup(mbrNo, request),
     { invalidate: AFTER_WRITE },
   );
 }

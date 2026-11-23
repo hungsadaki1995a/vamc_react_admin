@@ -27,12 +27,12 @@ export const useLocaleStore = create<LocaleStore>()(
     }),
     {
       name: 'vamc-locale',
-      version: 1,
+      // Version 2: the default became Vietnamese; stored values are reset once
+      version: 2,
       storage: createJSONStorage(() => dualLocaleStorage),
       migrate: (persistedState: unknown, version: number) => {
-        if (version === 0) {
-          // Version 0 was the legacy configuration where 'ko' was hardcoded as default.
-          // Reset to requested default 'en'.
+        if (version < 2) {
+          // Earlier versions defaulted to Korean (0) or English (1): reset to the Vietnamese default
           return { locale: DEFAULT_LOCALE };
         }
         const state = persistedState as { locale?: unknown };

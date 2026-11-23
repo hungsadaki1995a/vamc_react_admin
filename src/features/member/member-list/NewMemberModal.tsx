@@ -3,7 +3,6 @@ import { Form, Upload } from 'antd';
 import ActionButton from '@/components/common/actions/ActionButton';
 import LoadingSpinner from '@/components/common/loading/LoadingSpinner';
 import Popup from '@/components/common/popup/Popup';
-import DataTable from '@/components/common/table/DataTable';
 import AppCheckbox from '@/components/inputs/AppCheckbox';
 import AppDatePicker from '@/components/inputs/AppDatePicker';
 import AppRadio from '@/components/inputs/AppRadio';
@@ -13,11 +12,9 @@ import TextInput from '@/components/inputs/TextInput';
 import type { FormInstance } from 'antd';
 import {
   UploadOutlined,
-  SearchOutlined,
   DeleteOutlined,
   PaperClipOutlined,
 } from '@ant-design/icons';
-import { useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { MEMBER_FEE_ERRORS } from '@/api/member/member-fee-api';
 import { apiErrorCode, errorMessage } from '@/features/system/_shared/system-utils';
@@ -27,8 +24,8 @@ import { useMemberFeePayments, useRegisterMembershipPayment } from './use-member
 /** E06 of the member management system messages. */
 const E06_PERIOD_OVERLAP = 'E06: This overlaps an existing membership period. Please check the start date.';
 import { useNotify } from '@/hooks/use-notify';
-import { lookupEmployees } from '@/api/system/employee-api';
-import type { EmployeeLookup } from '@/api/system/employee-api';
+import { MEMBER_JOIN_OFFICER_STEP } from '@/api/member/member-approval-api';
+import { useAssignMemberOfficer, useMemberApprovalCandidates } from './use-member-approval';
 import type {
   CreateMemberRequest,
   UpdateMemberRequest,
@@ -304,7 +301,10 @@ function AttachmentFieldRow({
   );
 }
 
-/** "Name (EMP0000001)" like the staff picker; empty when no officer is assigned. */
+/** Stable empty list while the officer candidates load. */
+const NO_OFFICERS: never[] = [];
+
+/** "Name (EMP0000001)"; empty when no officer is assigned. */
 function formatOfficer(name?: string, empNo?: string) {
   if (!empNo) return '';
   return name ? `${name} (${empNo})` : empNo;
@@ -363,7 +363,7 @@ function buildInitialFormState(
       memberGrade: mappedGrade,
       status: mappedStatus,
       termsAgreementDate: parseDateValue(apiDetail.basic?.aplyDt || member.applicationDate) || dayjs(),
-      staffInCharge: formatOfficer(apiDetail.basic?.officerNm, apiDetail.basic?.officerEmpNo),
+      staffInCharge: apiDetail.basic?.officerEmpNo || undefined,
       rejectionReason: apiDetail.basic?.splmntRqstCn || '',
       phoneCountry: apiDetail.account?.intlTelnoNtnNo || '+84',
       phone: (apiDetail.account?.rawTelno || apiDetail.account?.telno || '').replace(/\D/g, ''),
@@ -503,16 +503,25 @@ function MemberFormModalContent({
   const [agentFiles, setAgentFiles] = useState<UploadedFileItem[]>(initial.agentFiles);
   const [poaFiles, setPoaFiles] = useState<UploadedFileItem[]>(initial.poaFiles);
 
-  // Staff picker
-  const [staffPickerOpen, setStaffPickerOpen] = useState(false);
-  const [staffKeyword, setStaffKeyword] = useState('');
-  const [appliedStaffKeyword, setAppliedStaffKeyword] = useState('');
-
-  const { data: staffData, isFetching: isStaffLoading } = useQuery({
-    queryKey: ['staffLookupForm', appliedStaffKeyword],
-    queryFn: () => lookupEmployees({ empNm: appliedStaffKeyword || undefined }, { page: 1, size: 10 }),
-    enabled: staffPickerOpen,
-  });
+  // Staff in Charge (2026-11-23): chosen here among the sign-up officer candidates, changeable later. With the
+  // member's session the server lists the roles snapshotted for it, the same roles it checks on save.
+  const currentOfficerEmpNo = apiDetail?.basic?.officerEmpNo || undefined;
+  const { data: officerCandidates = NO_OFFICERS, isFetching: isLoadingOfficers } = useMemberApprovalCandidates(
+    visible ? MEMBER_JOIN_OFFICER_STEP : null,
+    apiDetail?.basic?.atrzHstryId ?? null,
+  );
+  const officerOptions = officerCandidates.map((c) => ({
+    value: c.empNo,
+    label: formatOfficer(c.jbpsNm ? `${c.empNm} · ${c.jbpsNm}` : c.empNm, c.empNo),
+  }));
+  // The current officer stays visible even when no longer among the candidates
+  if (currentOfficerEmpNo && !officerOptions.some((o) => o.value === currentOfficerEmpNo)) {
+    officerOptions.unshift({
+      value: currentOfficerEmpNo,
+      label: formatOfficer(apiDetail?.basic?.officerNm, currentOfficerEmpNo),
+    });
+  }
+  const assignOfficer = useAssignMemberOfficer();
 
   // Membership fee: history from the server (one derived row while it keeps none); Register Payment saves at once
   const feeMbrNo = isEdit && member ? member.memberCode : null;
@@ -526,6 +535,11 @@ function MemberFormModalContent({
   const [payDate, setPayDate] = useState<dayjs.Dayjs | null>(dayjs());
 
   const isLockedReadOnly = isEdit && statusVal === 'Locked';
+  // Register Payment: active members, and Temporary members in Pending Approval / Supplement Requested (2026-11-23)
+  const serverGrdCd = (apiDetail?.basic?.mbrGrdCd || '').toUpperCase();
+  const serverSttsCd = (apiDetail?.basic?.mbrSttsCd || apiDetail?.mbrSttsCd || '').toUpperCase();
+  const isTemporaryApplicant = serverGrdCd === 'T' && (serverSttsCd === 'P' || serverSttsCd === 'U');
+  const canRegisterPayment = isEdit && !isLockedReadOnly && (serverSttsCd === 'S' || isTemporaryApplicant);
   // Effective / reissue date: editable only once the backend stores it (schema/44); otherwise it would be dropped
   const canEditEffectiveDate = isEdit && apiDetail?.corporate?.efctDtEnabled === true;
   const isOrganization = memberType === 'Organization';
@@ -711,8 +725,13 @@ function MemberFormModalContent({
         periodStartDate: payStartDate.format('YYYY-MM-DD'),
         paymentDate: payType === 'Exempt' ? undefined : payDate!.format('YYYY-MM-DD'),
       });
-      toast.success('Membership payment registered.');
-      form.setFieldValue('memberGrade', 'Full');
+      if (isTemporaryApplicant) {
+        // A Temporary member stays T and becomes Full once its documents pass
+        toast.success('Membership payment registered. The member becomes a Full Member once the documents pass.');
+      } else {
+        toast.success('Membership payment registered.');
+        form.setFieldValue('memberGrade', 'Full');
+      }
       setPayStartDate(endD.add(1, 'day'));
       setPayDate(dayjs());
     } catch (err) {
@@ -826,9 +845,11 @@ function MemberFormModalContent({
                 },
               }),
         };
-        await createMemberMutate(payload);
+        const created = await createMemberMutate(payload);
         documentSession.current = null;
         toast.success(`Member ${values.fullName || values.companyName} registered successfully.`);
+        // Not received yet: the server receives the application and hands it to the officer at once
+        if (created?.mbrNo && values.staffInCharge) await saveOfficer(created.mbrNo, values.staffInCharge);
       } else if (member) {
         // Files uploaded in this popup replace the stored document; they are sent with the session.
         // `regSessionId` is not in the generated types yet (regenerate with `pnpm api:generate`).
@@ -932,6 +953,10 @@ function MemberFormModalContent({
         await updateMemberMutate({ mbrNo: member.memberCode, body: payload });
         documentSession.current = null;
         toast.success('Member information updated.');
+        // Changed only after the member update succeeded; the new officer gets an e-mail
+        if (values.staffInCharge && values.staffInCharge !== currentOfficerEmpNo) {
+          await saveOfficer(member.memberCode, values.staffInCharge);
+        }
       }
 
       onSuccess?.();
@@ -941,18 +966,24 @@ function MemberFormModalContent({
         const firstField = (err as { errorFields: { name: (string | number)[] }[] }).errorFields[0];
         if (firstField) form.scrollToField(firstField.name);
       } else {
-        toast.error('Failed to save member information.');
+        toast.error(errorMessage(err, 'Failed to save member information.'));
       }
     }
   };
 
+  /** The member itself is saved already: a refused officer change is reported, not thrown. */
+  const saveOfficer = async (mbrNo: string, assigneeEmpNo: string) => {
+    try {
+      await assignOfficer.mutateAsync({ mbrNo, assigneeEmpNo });
+      toast.success('The Staff in Charge was changed.');
+    } catch (err) {
+      toast.error(`The Staff in Charge could not be changed: ${errorMessage(err)}`);
+    }
+  };
+
   const deadlineInfo = formatDeadline(member?.paymentDeadline || apiDetail?.basic?.mbrshpPayDueDt);
-  // First fee deadline (decided 2026-11-23): completion + 15 days, general members who have not paid yet
-  const hasFirstFeeDeadline =
-    apiDetail?.basic?.mbrshpPayYn !== 'Y' &&
-    apiDetail?.basic?.mbrshpFeeExmpYn !== 'Y' &&
-    !apiDetail?.basic?.mbrshpEndDt &&
-    deadlineInfo.text !== '-';
+  // Payment deadline (decided 2026-11-23): sign-up / re-application + 15 days, applications in Pending Approval only
+  const hasPaymentDeadline = serverGrdCd === 'T' && serverSttsCd === 'P' && deadlineInfo.text !== '-';
   const computedPayEndDate = payStartDate ? payStartDate.add(1, 'year').subtract(1, 'day').format('DD-MM-YYYY') : '-';
 
   return (
@@ -1128,27 +1159,19 @@ function MemberFormModalContent({
                             Staff in Charge{!isEdit && <span className={styles.requiredMark}>*</span>}
                           </td>
                           <td className={styles.valueCell}>
-                            {/* The officer in charge is assigned in the sign-up approval, not by this form: read-only on edit */}
+                            {/* Saved through the assignee API after the member itself (officer gets an e-mail) */}
                             <Form.Item
                               name="staffInCharge"
                               className={styles.formItemCompact}
                               rules={isEdit ? [] : [{ required: true, message: 'E01: Staff in Charge is required' }]}
                             >
-                              {isEdit ? (
-                                <TextInput readOnly placeholder="Not assigned yet" />
-                              ) : (
-                                <TextInput
-                                  readOnly
-                                  placeholder="Select Staff in Charge"
-                                  suffix={
-                                    <SearchOutlined
-                                      className="cursor-pointer text-blue-600!"
-                                      onClick={() => !isLockedReadOnly && setStaffPickerOpen(true)}
-                                    />
-                                  }
-                                  onClick={() => !isLockedReadOnly && setStaffPickerOpen(true)}
-                                />
-                              )}
+                              <AppSelect<string>
+                                showSearch
+                                optionFilterProp="label"
+                                placeholder={isEdit ? 'Not assigned yet' : 'Select Staff in Charge'}
+                                loading={isLoadingOfficers}
+                                options={officerOptions}
+                              />
                             </Form.Item>
                           </td>
                         </tr>
@@ -1185,7 +1208,7 @@ function MemberFormModalContent({
                     <span className={styles.sectionTitle}>Membership Information</span>
                   </div>
 
-                  {isEdit && memberGrade === 'General' && hasFirstFeeDeadline && (
+                  {isEdit && hasPaymentDeadline && (
                     <div className="mb-2 text-[13px]">
                       <strong>Payment Deadline: </strong>
                       <span className={deadlineInfo.isDanger ? styles.deadlineDanger : undefined}>
@@ -1197,7 +1220,12 @@ function MemberFormModalContent({
                   {!isEdit && (
                     <div className={styles.emptyHistory}>Payments can be registered after the member is registered.</div>
                   )}
-                  {isEdit && !isLockedReadOnly && (
+                  {isEdit && !isLockedReadOnly && !canRegisterPayment && (
+                    <div className={styles.emptyHistory}>
+                      Payments can be registered for active members and for Temporary members in Pending Approval.
+                    </div>
+                  )}
+                  {canRegisterPayment && (
                     <>
                       <div className={styles.subSectionTitle}>Register Payment</div>
                       <div className={styles.paymentFormBox}>
@@ -2113,49 +2141,11 @@ function MemberFormModalContent({
             <div className={styles.footerRight}>
               <ActionButton action="cancel" onClick={handleClose}>Cancel</ActionButton>
               {!isLockedReadOnly && (
-                <ActionButton intent="primary" appearance="filled" disabled={isCreating || isUpdating} onClick={handleSubmit}>{isEdit ? 'Save' : 'Register'}</ActionButton>
+                <ActionButton intent="primary" appearance="filled" disabled={isCreating || isUpdating || assignOfficer.isPending} onClick={handleSubmit}>{isEdit ? 'Save' : 'Register'}</ActionButton>
               )}
             </div>
           </div>
         </div>
-      </Popup>
-
-      {/* Staff Search Modal (VPA020500P01) */}
-      <Popup
-        open={staffPickerOpen}
-        title="Staff Search"
-        onCancel={() => setStaffPickerOpen(false)}
-        footer={null}
-        width={600}
-      >
-        <div className="flex gap-2 mb-3">
-          <TextInput
-            placeholder="Search by staff name"
-            value={staffKeyword}
-            onChange={(e) => setStaffKeyword(e.target.value)}
-            onPressEnter={() => setAppliedStaffKeyword(staffKeyword.trim())}
-          />
-          <ActionButton action="search" onClick={() => setAppliedStaffKeyword(staffKeyword.trim())}>Search</ActionButton>
-        </div>
-        <DataTable<EmployeeLookup>
-          rowKey="empNo"
-          size="small"
-          loading={isStaffLoading}
-          pagination={false}
-          dataSource={staffData?.data?.content ?? []}
-          onRow={(record) => ({
-            onClick: () => {
-              form.setFieldValue('staffInCharge', `${record.empNm} (${record.empNo})`);
-              setStaffPickerOpen(false);
-            },
-            className: 'cursor-pointer',
-          })}
-          columns={[
-            { title: 'Employee No', dataIndex: 'empNo', width: 130 },
-            { title: 'Name', dataIndex: 'empNm' },
-            { title: 'Department', dataIndex: 'deptNm' },
-          ]}
-        />
       </Popup>
     </>
   );
