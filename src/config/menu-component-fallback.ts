@@ -42,10 +42,10 @@ const MENU_COMPONENT_FALLBACK: Record<string, string> = {
   A07050000: 'FaqManagement',
   A07060100: 'BannerManagement',
   A07070000: 'LegalDocumentsManagement',
-  A07100100: 'ScreenPending', // Organization Chart Management (IA v1.03): no screen yet
-  A07100200: 'ScreenPending', // History Management (IA v1.03): no screen yet
-  A07100300: 'ScreenPending', // Directions Management (IA v1.03): no screen yet
-  A07100400: 'ScreenPending', // Overview Management (IA v1.03): no screen yet
+  A07100100: 'OrganizationChartManagement', // Organization Chart Management (IA v1.03)
+  A07100200: 'HistoryManagement', // History Management (IA v1.03)
+  A07100300: 'DirectionsManagement', // Directions Management (IA v1.03)
+  A07100400: 'OverviewManagement', // Overview Management (IA v1.03)
   A07100500: 'LeadershipManagement',
   A07100600: 'PartnersManagement',
   A07080000: 'CareersManagement',

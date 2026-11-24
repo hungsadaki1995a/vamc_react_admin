@@ -1,0 +1,48 @@
+/* Slogan Management (VPA07060301): screen-specific layout on top of system/_shared/sys-ui. */
+
+$text-sub: var(--color-text-tertiary, #6f7b95);
+
+.rangePicker {
+  width: 100%;
+
+  &:global(.ant-picker-range) {
+    padding: 0 8px;
+  }
+
+  :global(.ant-picker-range-separator) {
+    padding: 0 4px;
+    color: $text-sub;
+  }
+}
+
+/* The list frame runs to the page bottom like the design. */
+.listTable {
+  flex: 1 0 auto;
+}
+
+.errorText {
+  font-size: var(--font-size-b2, 12px);
+  font-weight: 400;
+  color: var(--color-text-negative, #e62e44);
+}
+
+/* Textarea with the "n / 100 characters" counter under its right edge (design). */
+.textBox {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+  padding: 2px 0;
+}
+
+.counter {
+  align-self: flex-end;
+  font-size: var(--font-size-b2, 12px);
+  line-height: var(--line-height-b2, 16px);
+  color: $text-sub;
+
+  strong {
+    font-weight: 400;
+    color: var(--color-text-brand, #005be2);
+  }
+}

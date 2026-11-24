@@ -1,28 +1,33 @@
 import { useState } from 'react';
-import type { CSSProperties } from 'react';
-import ActionButton from '@/components/common/actions/ActionButton';
+import { FileImageOutlined } from '@ant-design/icons';
 import LoadingSpinner from '@/components/common/loading/LoadingSpinner';
-import Popup from '@/components/common/popup/Popup';
 import AppRadio from '@/components/inputs/AppRadio';
 import TextArea from '@/components/inputs/TextArea';
 import TextInput from '@/components/inputs/TextInput';
 import { useNotify } from '@/hooks/use-notify';
 import type { LogoRequest } from '@/api/contents/site-display-api';
 import type { PostDetail } from '@/api/contents/post-api';
-import { FormField } from '@/features/system/_shared/SystemUi';
+import { SysField, SysFieldGrid, SysFormModal } from '@/features/system/_shared/SysFormUi';
+import { SysButton } from '@/features/system/_shared/SysListUi';
+import { USE_YN_RADIO_OPTIONS } from '@/features/system/_shared/sys-constants';
+import { SYS_MESSAGES } from '@/features/system/_shared/sys-messages';
+import { useFieldErrors } from '@/features/system/_shared/use-field-errors';
 import { errorMessage } from '@/features/system/_shared/system-utils';
-import styles from '@/features/system/_shared/system-page.module.scss';
-import { ImageField } from '../_shared/PostFiles';
-import { useLogo, useSaveLogo, useUploadLogoImage } from './use-logos';
+import { useAttachmentPreview } from '../_shared/use-content-files';
+import ImageUploadField from '../banner-management/ImageUploadField';
+import { useDeleteLogos, useLogo, useSaveLogo, useUploadLogoImage } from './use-logos';
+import styles from './logo-management.module.scss';
 
-// Logo Management - Detail / Register / Edit popup (menu A07060200).
+// Logo Management - Register / Edit popup (menu A07060200).
+// Design rules kept: Logo File PNG / SVG, max 2MB (E03), "Current Logo" preview, [Delete] | [Cancel] [Register / Edit].
+
+type FieldKey = 'positionId' | 'title' | 'imageFileId' | 'linkUrl';
 
 interface LogoModalProps {
-  /** null = register a new logo. */
+  /** null = register. */
   logoId: string | null;
   canWrite: boolean;
   onClose: () => void;
-  onSaved: () => void;
 }
 
 interface FormState {
@@ -37,7 +42,7 @@ interface FormState {
 }
 
 const NEW_FORM: FormState = {
-  useYn: 'N',
+  useYn: 'Y',
   positionId: 'HEADER',
   title: '',
   titleEn: '',
@@ -45,15 +50,30 @@ const NEW_FORM: FormState = {
   description: '',
   descriptionEn: '',
 };
+
 const URL_PATTERN = /^(https?:\/\/.+|\/.*)/;
+const LOGO_EXTENSIONS = ['png', 'svg'];
+const LOGO_MAX_BYTES = 2 * 1024 * 1024;
 
-export default function LogoModal({ logoId, canWrite, onClose, onSaved }: LogoModalProps) {
+const LOGO_MESSAGES = {
+  /** E03 */
+  invalidImage: 'Only PNG, SVG files of 2MB or less can be uploaded.',
+  invalidUrl: 'The link URL must start with http://, https:// or /.',
+  /** C01 */
+  confirmDelete: 'Are you sure you want to delete?',
+  fileHint: 'PNG, SVG, max 2MB, recommended 300 × 88px.',
+} as const;
+
+const required = (label: string) => `${label} is required.`;
+
+export default function LogoModal({ logoId, canWrite, onClose }: LogoModalProps) {
   const isCreate = logoId === null;
-  const { toast } = useNotify();
-
+  const { toast, dialog } = useNotify();
   const { data: detail, isFetching } = useLogo(logoId);
   const saveLogo = useSaveLogo();
+  const deleteLogos = useDeleteLogos();
   const uploadImage = useUploadLogoImage();
+  const { errors, setError, clearError, clearAll } = useFieldErrors<FieldKey>();
 
   const [form, setForm] = useState<FormState>(NEW_FORM);
 
@@ -72,149 +92,187 @@ export default function LogoModal({ logoId, canWrite, onClose, onSaved }: LogoMo
       imageFileId: detail.thumbnailFileId,
     });
   }
+  const preview = useAttachmentPreview(form.imageFileId);
+  const disabled = !canWrite;
 
-  const patch = (values: Partial<FormState>) => setForm((prev) => ({ ...prev, ...values }));
-
-  const validate = (): string | null => {
-    if (!form.positionId.trim()) return 'Enter the logo position.';
-    if (!form.title.trim()) return 'Enter the logo name (VI).';
-    if (form.linkUrl.trim() && !URL_PATTERN.test(form.linkUrl.trim())) {
-      return 'The link URL must start with http://, https://, or /.';
-    }
-    if (!form.imageFileId) return 'Attach the logo image.';
-    return null;
+  const patch = (key: FieldKey | null, values: Partial<FormState>) => {
+    setForm((prev) => ({ ...prev, ...values }));
+    if (key) clearError(key);
   };
 
-  const handleConfirm = async () => {
-    const invalid = validate();
-    if (invalid) {
-      toast.warning(invalid);
-      return;
+  const validate = (): boolean => {
+    clearAll();
+    let valid = true;
+    if (!form.positionId.trim()) {
+      setError('positionId', required('Position'));
+      valid = false;
     }
+    if (!form.title.trim()) {
+      setError('title', required('Logo Name (VN)'));
+      valid = false;
+    }
+    if (!form.imageFileId) {
+      setError('imageFileId', required('Logo File'));
+      valid = false;
+    }
+    if (form.linkUrl.trim() && !URL_PATTERN.test(form.linkUrl.trim())) {
+      setError('linkUrl', LOGO_MESSAGES.invalidUrl);
+      valid = false;
+    }
+    return valid;
+  };
+
+  const handleSubmit = async () => {
+    if (!validate()) return;
+    const request: LogoRequest = {
+      title: form.title.trim(),
+      titleEn: form.titleEn.trim() || undefined,
+      positionId: form.positionId.trim(),
+      imageFileId: form.imageFileId as string,
+      linkUrl: form.linkUrl.trim() || undefined,
+      description: form.description.trim() || undefined,
+      descriptionEn: form.descriptionEn.trim() || undefined,
+      useYn: form.useYn,
+    };
     try {
-      const request: LogoRequest = {
-        title: form.title.trim(),
-        titleEn: form.titleEn.trim() || undefined,
-        positionId: form.positionId.trim(),
-        imageFileId: form.imageFileId as string,
-        linkUrl: form.linkUrl.trim() || undefined,
-        description: form.description.trim() || undefined,
-        descriptionEn: form.descriptionEn.trim() || undefined,
-        useYn: form.useYn,
-      };
       await saveLogo.mutateAsync({ logoId, request });
-      toast.success('Saved.');
-      onSaved();
+      toast.success(isCreate ? SYS_MESSAGES.registered : SYS_MESSAGES.updated);
       onClose();
     } catch (e) {
       toast.error(errorMessage(e));
     }
   };
 
+  const handleDelete = () => {
+    if (!logoId) return;
+    dialog.confirm({
+      content: LOGO_MESSAGES.confirmDelete,
+      okText: 'Delete',
+      cancelText: 'Cancel',
+      okButtonProps: { danger: true },
+      onOk: async () => {
+        try {
+          await deleteLogos.mutateAsync([logoId]);
+          toast.success(SYS_MESSAGES.deleted);
+          onClose();
+        } catch (e) {
+          toast.error(errorMessage(e));
+        }
+      },
+    });
+  };
+
   return (
-    <Popup
+    <SysFormModal
       open
-      width={860}
-      title={<span>{isCreate ? 'Register Logo' : 'Check/Modify Logo'}</span>}
+      width={1200}
+      title={isCreate ? 'Register Logo' : 'Edit Logo'}
+      submitText={isCreate ? 'Register' : 'Edit'}
+      onSubmit={canWrite ? () => void handleSubmit() : undefined}
+      submitting={saveLogo.isPending}
+      submitDisabled={isFetching || uploadImage.isPending}
       onCancel={onClose}
-      maskClosable={false}
-      footer={
-        <div className={styles.modalFooter}>
-          <ActionButton action="cancel" onClick={onClose}>
-            Cancel
-          </ActionButton>
-          <ActionButton
-            intent="secondary"
-            appearance="filled"
-            disabled={!canWrite || saveLogo.isPending || isFetching}
-            onClick={handleConfirm}
-          >
-            Confirm
-          </ActionButton>
-        </div>
+      notice={LOGO_MESSAGES.fileHint}
+      leftActions={
+        !isCreate &&
+        canWrite && (
+          <SysButton look="danger" loading={deleteLogos.isPending} onClick={handleDelete}>
+            Delete
+          </SysButton>
+        )
       }
     >
       <LoadingSpinner spinning={isFetching}>
-        <div className={styles.formGrid} style={{ '--form-cols': 2 } as CSSProperties}>
-          {!isCreate && detail && (
-            <FormField label="Logo ID" span="full">
-              <TextInput value={detail.pstNo} disabled />
-            </FormField>
-          )}
-          <FormField label="Usage Status" required>
+        <SysFieldGrid columns={2}>
+          <SysField label="Use" required>
             <AppRadio.Group
               value={form.useYn}
-              disabled={!canWrite}
-              onChange={(e) => patch({ useYn: e.target.value as 'Y' | 'N' })}
-            >
-              <AppRadio value="Y">Used</AppRadio>
-              <AppRadio value="N">Unused</AppRadio>
-            </AppRadio.Group>
-          </FormField>
-          <FormField label="Position" required>
+              options={USE_YN_RADIO_OPTIONS}
+              disabled={disabled}
+              onChange={(e) => patch(null, { useYn: e.target.value as 'Y' | 'N' })}
+            />
+          </SysField>
+          <SysField label="Position" required error={errors.positionId}>
             <TextInput
               value={form.positionId}
-              disabled={!canWrite}
               placeholder="e.g. HEADER, FOOTER, FAVICON"
               maxLength={100}
-              onChange={(e) => patch({ positionId: e.target.value })}
+              disabled={disabled}
+              onChange={(e) => patch('positionId', { positionId: e.target.value })}
             />
-          </FormField>
-          <FormField label="Logo Name (VI)" required span="full">
+          </SysField>
+          <SysField label="Logo Name (VN)" required span="full" error={errors.title}>
             <TextInput
               value={form.title}
-              disabled={!canWrite}
-              placeholder="Enter logo name in Vietnamese"
+              placeholder="Enter the logo name."
               maxLength={500}
-              onChange={(e) => patch({ title: e.target.value })}
+              disabled={disabled}
+              onChange={(e) => patch('title', { title: e.target.value })}
             />
-          </FormField>
-          <FormField label="Logo Name (EN)" span="full">
+          </SysField>
+          <SysField label="Logo Name (EN)" span="full">
             <TextInput
               value={form.titleEn}
-              disabled={!canWrite}
-              placeholder="Enter logo name in English"
+              placeholder="Enter the logo name."
               maxLength={500}
-              onChange={(e) => patch({ titleEn: e.target.value })}
+              disabled={disabled}
+              onChange={(e) => patch(null, { titleEn: e.target.value })}
             />
-          </FormField>
-          <FormField label="Link URL" span="full">
+          </SysField>
+          <SysField label="Current Logo" span="full">
+            <div className={styles.preview}>
+              {preview ? (
+                <img src={preview} alt={form.title} className={styles.previewImage} />
+              ) : (
+                <span className={styles.previewEmpty}>
+                  <FileImageOutlined className={styles.previewIcon} />
+                  {form.title || 'No image attached.'}
+                </span>
+              )}
+            </div>
+          </SysField>
+          <SysField label="Logo File" required span="full" error={errors.imageFileId}>
+            <ImageUploadField
+              fileUnqId={form.imageFileId}
+              extensions={LOGO_EXTENSIONS}
+              maxBytes={LOGO_MAX_BYTES}
+              invalidMessage={LOGO_MESSAGES.invalidImage}
+              disabled={disabled}
+              upload={uploadImage.mutateAsync}
+              uploading={uploadImage.isPending}
+              onUploaded={(imageFileId) => patch('imageFileId', { imageFileId })}
+              onError={(message) => setError('imageFileId', message)}
+            />
+          </SysField>
+          <SysField label="Link URL" span="full" error={errors.linkUrl}>
             <TextInput
               value={form.linkUrl}
-              disabled={!canWrite}
               placeholder="e.g. / or https://vamc.vn"
               maxLength={1000}
-              onChange={(e) => patch({ linkUrl: e.target.value })}
+              disabled={disabled}
+              onChange={(e) => patch('linkUrl', { linkUrl: e.target.value })}
             />
-          </FormField>
-          <FormField label="Logo Image" required span="full">
-            <ImageField
-              fileUnqId={form.imageFileId}
-              disabled={!canWrite}
-              upload={uploadImage.mutateAsync}
-              onChange={(fileGroupId) => patch({ imageFileId: fileGroupId })}
-            />
-          </FormField>
-          <FormField label="Description / Alt (VI)" span="full">
+          </SysField>
+          <SysField label="Alt Text (VN)" span="full">
             <TextArea
               rows={2}
               value={form.description}
-              disabled={!canWrite}
               maxLength={2000}
-              onChange={(e) => patch({ description: e.target.value })}
+              disabled={disabled}
+              onChange={(e) => patch(null, { description: e.target.value })}
             />
-          </FormField>
-          <FormField label="Description / Alt (EN)" span="full">
+          </SysField>
+          <SysField label="Alt Text (EN)" span="full">
             <TextArea
               rows={2}
               value={form.descriptionEn}
-              disabled={!canWrite}
               maxLength={2000}
-              onChange={(e) => patch({ descriptionEn: e.target.value })}
+              disabled={disabled}
+              onChange={(e) => patch(null, { descriptionEn: e.target.value })}
             />
-          </FormField>
-        </div>
+          </SysField>
+        </SysFieldGrid>
       </LoadingSpinner>
-    </Popup>
+    </SysFormModal>
   );
 }

@@ -1,257 +1,168 @@
 import { useState } from 'react';
 import type { TableColumnsType } from 'antd';
 import type { Dayjs } from 'dayjs';
-import ActionButton from '@/components/common/actions/ActionButton';
-import DataTable from '@/components/common/table/DataTable';
 import { AppRangePicker } from '@/components/inputs/AppDatePicker';
+import AppSelect from '@/components/inputs/AppSelect';
 import TextInput from '@/components/inputs/TextInput';
-import { useNotify } from '@/hooks/use-notify';
 import { useMenuPermission } from '@/hooks/use-menu-permission';
 import type { SiteDisplaySearch } from '@/api/contents/site-display-api';
 import type { Post } from '@/api/contents/post-api';
-import { DateTimeCell, SysPageHeader, SysPagination, UseYnChecks } from '@/features/system/_shared/SystemUi';
-import { errorMessage, rowNumber, toUseYnFilter } from '@/features/system/_shared/system-utils';
-import styles from '@/features/system/_shared/system-page.module.scss';
+import {
+  DateTimeText,
+  SysButton,
+  SysFilterItem,
+  SysFilterPanel,
+  SysPage,
+  SysPager,
+  SysSearchActions,
+  SysSectionHeader,
+  SysTable,
+  SysTitleBar,
+  UseBadge,
+} from '@/features/system/_shared/SysListUi';
+import {
+  ALL,
+  API_DATE_DMY,
+  SYS_DATE_FORMAT,
+  SYS_PAGE_SIZE,
+  USE_YN_FILTER_OPTIONS,
+} from '@/features/system/_shared/sys-constants';
+import type { YesNo } from '@/features/system/_shared/sys-constants';
+import { usePagedList } from '@/features/system/_shared/use-paged-list';
 import LogoModal from './LogoModal';
-import { useChangeLogoUse, useDeleteLogos, useLogos } from './use-logos';
+import { useLogos } from './use-logos';
+import styles from './logo-management.module.scss';
 
-// Logo Management - List (menu A07060200).
+// Logo Management - List (VPA07060201), menu A07060200.
+// The design is a single "Current Logo" form; the server keeps several logos per position (HEADER, FOOTER…),
+// so the screen stays a list + popup drawn with the v0.8 components.
 
-const PAGE_SIZE = 15;
-const DATE_FORMAT = 'DD/MM/YYYY';
+type Period = [Dayjs | null, Dayjs | null] | null;
 
-type DateRange = [Dayjs | null, Dayjs | null] | null;
-
-interface FilterState {
-  used: boolean;
-  unused: boolean;
+interface LogoFilter {
+  useYn: YesNo | '';
   tag: string;
   keyword: string;
-  period: DateRange;
+  period: Period;
 }
 
-const EMPTY_FILTER: FilterState = { used: true, unused: true, tag: '', keyword: '', period: null };
+const INITIAL_FILTER: LogoFilter = { useYn: ALL, tag: '', keyword: '', period: null };
+
+function toSearch(filter: LogoFilter): SiteDisplaySearch {
+  return {
+    published: filter.useYn || undefined,
+    tag: filter.tag.trim() || undefined,
+    keyword: filter.keyword.trim() || undefined,
+    fromDate: filter.period?.[0]?.format(API_DATE_DMY),
+    toDate: filter.period?.[1]?.format(API_DATE_DMY),
+  };
+}
+
+const columns: TableColumnsType<Post> = [
+  { title: 'Use', dataIndex: 'published', key: 'published', width: 100, align: 'center', render: (v: YesNo) => <UseBadge value={v} /> },
+  { title: 'Position', dataIndex: 'tag', key: 'tag', width: 150, align: 'center', render: (v?: string) => v || '-' },
+  { title: 'Logo Name', dataIndex: 'title', key: 'title', ellipsis: true },
+  {
+    title: 'Registered Date',
+    dataIndex: 'crtDt',
+    key: 'crtDt',
+    width: 150,
+    align: 'center',
+    render: (v?: string) => <DateTimeText value={v} />,
+  },
+  {
+    title: 'Modified Date',
+    dataIndex: 'mdfcnDt',
+    key: 'mdfcnDt',
+    width: 150,
+    align: 'center',
+    render: (v?: string) => <DateTimeText value={v} />,
+  },
+  {
+    title: 'Modified By',
+    dataIndex: 'mdfcnBy',
+    key: 'mdfcnBy',
+    width: 130,
+    render: (v: string | undefined, row) => v || row.crtBy || '-',
+  },
+];
+
+/** Popup state: closed, register (null) or edit (logo id). */
+type ModalState = { logoId: string | null } | null;
 
 export default function LogoManagement() {
-  const { toast, dialog } = useNotify();
   const { canWrite } = useMenuPermission();
-
-  const [filter, setFilter] = useState<FilterState>(EMPTY_FILTER);
-  const [applied, setApplied] = useState<SiteDisplaySearch>({});
-  const [page, setPage] = useState(1);
-  const [filterCollapsed, setFilterCollapsed] = useState(false);
-  const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
-  /** undefined = closed, null = register, string = view/edit that logo. */
-  const [modalLogoId, setModalLogoId] = useState<string | null | undefined>(undefined);
-
-  const { data, isFetching, error } = useLogos(applied, page, PAGE_SIZE);
-  const changeLogoUse = useChangeLogoUse();
-  const deleteLogos = useDeleteLogos();
-  const rows = data?.content ?? [];
+  const list = usePagedList<LogoFilter>(INITIAL_FILTER);
+  const { data, isFetching, error } = useLogos(toSearch(list.applied), list.page, SYS_PAGE_SIZE);
+  const [modal, setModal] = useState<ModalState>(null);
   const total = data?.totalElements ?? 0;
 
-  const handleSearch = () => {
-    setApplied({
-      published: toUseYnFilter(filter.used, filter.unused),
-      tag: filter.tag.trim() || undefined,
-      keyword: filter.keyword.trim() || undefined,
-      fromDate: filter.period?.[0]?.format(DATE_FORMAT),
-      toDate: filter.period?.[1]?.format(DATE_FORMAT),
-    });
-    setPage(1);
-    setSelectedKeys([]);
-  };
-
-  const handleReset = () => {
-    setFilter(EMPTY_FILTER);
-    setApplied({});
-    setPage(1);
-    setSelectedKeys([]);
-  };
-
-  const handleBatchUse = async (useYn: 'Y' | 'N') => {
-    if (selectedKeys.length === 0) {
-      toast.warning('Select at least one logo.');
-      return;
-    }
-    try {
-      const response = await changeLogoUse.mutateAsync({ ids: selectedKeys, useYn });
-      toast.success(response.message || 'Updated.');
-      setSelectedKeys([]);
-    } catch (e) {
-      toast.error(errorMessage(e));
-    }
-  };
-
-  const handleDelete = () => {
-    if (selectedKeys.length === 0) {
-      toast.warning('Select at least one logo to delete.');
-      return;
-    }
-    dialog.warning({
-      okCancel: true,
-      content: `Delete the ${selectedKeys.length} selected logo(s)?`,
-      onOk: async () => {
-        try {
-          const response = await deleteLogos.mutateAsync(selectedKeys);
-          toast.success(response.message || 'Deleted.');
-          setSelectedKeys([]);
-        } catch (e) {
-          toast.error(errorMessage(e));
-        }
-      },
-    });
-  };
-
-  const columns: TableColumnsType<Post> = [
-    {
-      title: 'No',
-      key: 'no',
-      width: 60,
-      align: 'center',
-      render: (_v, _row, index) => rowNumber(total, page, PAGE_SIZE, index),
-    },
-    {
-      title: 'Usage',
-      dataIndex: 'published',
-      width: 90,
-      align: 'center',
-      render: (value: string) =>
-        value === 'Y' ? <span className={styles.useY}>Used</span> : <span className={styles.useN}>Unused</span>,
-    },
-    { title: 'Position', dataIndex: 'tag', width: 130, align: 'center', render: (v?: string) => v || '-' },
-    {
-      title: 'Logo Name',
-      dataIndex: 'title',
-      width: 320,
-      render: (value: string, row) => (
-        <a className={styles.cellLink} onClick={() => setModalLogoId(row.pstNo)}>
-          {value}
-        </a>
-      ),
-    },
-    {
-      title: 'Registration Date',
-      dataIndex: 'crtDt',
-      width: 130,
-      align: 'center',
-      render: (value?: string) => <DateTimeCell value={value} />,
-    },
-    { title: 'Registrant', dataIndex: 'crtBy', width: 120, align: 'center', render: (v?: string) => v || '-' },
-    {
-      title: 'Modification Date',
-      dataIndex: 'mdfcnDt',
-      width: 130,
-      align: 'center',
-      render: (value?: string) => <DateTimeCell value={value} />,
-    },
-    { title: 'Modifier', dataIndex: 'mdfcnBy', width: 120, align: 'center', render: (v?: string) => v || '-' },
-  ];
-
   return (
-    <div className={styles.container}>
-      <SysPageHeader
-        breadcrumb={['Content Management', 'Site Display Management', 'Logo Management']}
-        title="Logo Management"
-        onReset={handleReset}
-        onSearch={handleSearch}
-        filterCollapsed={filterCollapsed}
-        onToggleFilter={() => setFilterCollapsed((v) => !v)}
+    <SysPage>
+      <SysTitleBar title="Logo Management" breadcrumb={['Content Management', 'Site Display Management', 'Logo Management']} />
+      <SysFilterPanel>
+        <SysFilterItem label="Use">
+          <AppSelect
+            value={list.draft.useYn}
+            options={USE_YN_FILTER_OPTIONS}
+            onChange={(useYn) => list.setDraft({ useYn: String(useYn ?? '') as YesNo | '' })}
+          />
+        </SysFilterItem>
+        <SysFilterItem label="Position">
+          <TextInput
+            value={list.draft.tag}
+            placeholder="HEADER, FOOTER…"
+            allowClear
+            onChange={(e) => list.setDraft({ tag: e.target.value })}
+            onPressEnter={() => list.search()}
+          />
+        </SysFilterItem>
+        <SysFilterItem label="Logo Name">
+          <TextInput
+            value={list.draft.keyword}
+            placeholder="Logo ID or name"
+            allowClear
+            onChange={(e) => list.setDraft({ keyword: e.target.value })}
+            onPressEnter={() => list.search()}
+          />
+        </SysFilterItem>
+        <SysFilterItem label="Registered Date">
+          <AppRangePicker
+            className={styles.rangePicker}
+            value={list.draft.period}
+            format={SYS_DATE_FORMAT}
+            separator="~"
+            placeholder={['DD-MM-YYYY', 'DD-MM-YYYY']}
+            onChange={(period) => list.setDraft({ period: period as Period })}
+          />
+        </SysFilterItem>
+      </SysFilterPanel>
+      <SysSearchActions onReset={list.reset} onSearch={() => list.search()} loading={isFetching} />
+      <SysSectionHeader
+        title={error ? <>Search Results <span className={styles.errorText}>{error.message}</span></> : undefined}
+        total={total}
+        primaryActions={
+          canWrite && (
+            <SysButton look="navy" onClick={() => setModal({ logoId: null })}>
+              New
+            </SysButton>
+          )
+        }
       />
-
-      {!filterCollapsed && (
-        <div className={styles.filterCard}>
-          <div className={styles.filterGroup}>
-            <span className={styles.filterLabel}>Usage Status</span>
-            <UseYnChecks
-              yes={filter.used}
-              no={filter.unused}
-              onChange={(used, unused) => setFilter((f) => ({ ...f, used, unused }))}
-              allLabel="All"
-              yesLabel="Used"
-              noLabel="Not Used"
-            />
-          </div>
-          <div className={styles.filterGroup}>
-            <span className={styles.filterLabel}>Position</span>
-            <TextInput
-              className={styles.filterInput}
-              placeholder="HEADER, FOOTER..."
-              value={filter.tag}
-              onChange={(e) => setFilter((f) => ({ ...f, tag: e.target.value }))}
-              onPressEnter={handleSearch}
-              allowClear
-            />
-          </div>
-          <div className={styles.filterGroup}>
-            <span className={styles.filterLabel}>Keyword</span>
-            <TextInput
-              className={styles.filterInput}
-              placeholder="Enter Logo ID or Name."
-              value={filter.keyword}
-              onChange={(e) => setFilter((f) => ({ ...f, keyword: e.target.value }))}
-              onPressEnter={handleSearch}
-              allowClear
-            />
-          </div>
-          <div className={styles.filterGroup}>
-            <span className={styles.filterLabel}>Registration Period</span>
-            <AppRangePicker
-              format={DATE_FORMAT}
-              placeholder={['dd/mm/yyyy', 'dd/mm/yyyy']}
-              value={filter.period}
-              onChange={(dates) => setFilter((f) => ({ ...f, period: dates as DateRange }))}
-              className={styles.w250}
-            />
-          </div>
-        </div>
+      <SysTable<Post>
+        rowKey="pstNo"
+        className={styles.listTable}
+        fill
+        tableLayout="fixed"
+        columns={columns}
+        dataSource={data?.content ?? []}
+        loading={isFetching}
+        onRowClick={(row) => setModal({ logoId: row.pstNo })}
+      />
+      <SysPager page={list.page} pageSize={SYS_PAGE_SIZE} total={total} onChange={list.setPage} />
+      {modal && (
+        <LogoModal key={modal.logoId ?? 'new'} logoId={modal.logoId} canWrite={canWrite} onClose={() => setModal(null)} />
       )}
-
-      <div className={styles.summaryRow}>
-        <span className={styles.totalCount}>
-          Total ({total}){error && <span className={styles.textDanger}> — {error.message}</span>}
-        </span>
-      </div>
-
-      <div className={styles.tableWrapper}>
-        <DataTable<Post>
-          rowKey="pstNo"
-          columns={columns}
-          dataSource={rows}
-          loading={isFetching}
-          scroll={{ x: 'max-content' }}
-          rowSelection={{
-            selectedRowKeys: selectedKeys,
-            onChange: (keys) => setSelectedKeys(keys.map(String)),
-          }}
-        />
-      </div>
-
-      <SysPagination page={page} pageSize={PAGE_SIZE} total={total} onChange={setPage} />
-
-      <div className={styles.bottomActions}>
-        <ActionButton disabled={!canWrite} onClick={() => handleBatchUse('Y')}>
-          Use
-        </ActionButton>
-        <ActionButton disabled={!canWrite} onClick={() => handleBatchUse('N')}>
-          Unuse
-        </ActionButton>
-        <ActionButton action="deleteRow" disabled={!canWrite} onClick={handleDelete}>
-          Delete
-        </ActionButton>
-        <ActionButton intent="secondary" appearance="filled" disabled={!canWrite} onClick={() => setModalLogoId(null)}>
-          Add New
-        </ActionButton>
-      </div>
-
-      {modalLogoId !== undefined && (
-        <LogoModal
-          logoId={modalLogoId}
-          canWrite={canWrite}
-          onClose={() => setModalLogoId(undefined)}
-          onSaved={() => setSelectedKeys([])}
-        />
-      )}
-    </div>
+    </SysPage>
   );
 }

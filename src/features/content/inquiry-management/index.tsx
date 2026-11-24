@@ -1,399 +1,258 @@
 import { useState } from 'react';
 import type { TableColumnsType } from 'antd';
-import {
-  UpOutlined,
-  DownOutlined,
-} from '@ant-design/icons';
-import dayjs from 'dayjs';
-import ActionButton from '@/components/common/actions/ActionButton';
-import DataTable from '@/components/common/table/DataTable';
-import AppCheckbox from '@/components/inputs/AppCheckbox';
+import type { Dayjs } from 'dayjs';
+import { apiDownload } from '@/api/common/api-utils';
+import type { InquirySearchRequest } from '@/api/contents/inquiry-api';
 import { AppRangePicker } from '@/components/inputs/AppDatePicker';
-import { DateTimeCell, SysPagination } from '@/features/system/_shared/SystemUi';
+import AppSelect from '@/components/inputs/AppSelect';
+import TextInput from '@/components/inputs/TextInput';
+import { useApiDownload } from '@/hooks/use-api-action';
+import { useCommonCodes } from '@/hooks/use-common-codes';
+import {
+  DateTimeText,
+  StatusBadge,
+  SysExcelButton,
+  SysFilterItem,
+  SysFilterPanel,
+  SysPage,
+  SysPager,
+  SysSearchActions,
+  SysSectionHeader,
+  SysTable,
+  SysTitleBar,
+} from '@/features/system/_shared/SysListUi';
+import { API_DATE_DMY, SYS_DATE_FORMAT } from '@/features/system/_shared/sys-constants';
+import { usePagedList } from '@/features/system/_shared/use-paged-list';
+import { useSysDialogs } from '@/features/system/_shared/use-sys-dialogs';
 import type { InquiryItem } from './inquiry.types';
-import { useInquiries } from './use-inquiries';
+import { buildInquiryQueryParams, useInquiries } from './use-inquiries';
 import InquiryDetailModal from './InquiryDetailModal';
 import styles from './inquiry-management.module.scss';
 
-// Default filter values as required:
-// 1. answerStatus is ALL
-// 2. category is ALL
-// 3. fromDate: 30 days from today
-// 4. toDay: current day
-// 5. keyword empty
-const getDefaultFromDate = () => dayjs().subtract(30, 'day');
-const getDefaultToDate = () => dayjs();
+// Direct Inquiry Management - List (VPA07040001).
+
+/** Design: 16 rows per page. */
+const PAGE_SIZE = 16;
+const ALL = 'ALL';
+
+const ANSWER_STATUS_OPTIONS = [
+  { value: 'ANSWERED', label: 'Answered' },
+  { value: 'UNANSWERED', label: 'Unanswered' },
+];
+
+const MESSAGES = {
+  /** E02 */
+  periodBoth: 'Please set both the start date and end date.',
+  /** I01 */
+  noPosts: 'There are no posts.',
+  /** I02 */
+  noResults: 'No search results found.',
+} as const;
+
+type Period = [Dayjs | null, Dayjs | null] | null;
+
+interface InquiryFilter {
+  answerStatus: string;
+  category: string;
+  period: Period;
+  keyword: string;
+}
+
+/** Design defaults: Unanswered, all types, no period, empty title. */
+const INITIAL_FILTER: InquiryFilter = { answerStatus: 'UNANSWERED', category: ALL, period: null, keyword: '' };
+
+function toParams(filter: InquiryFilter) {
+  return {
+    answerStatus: filter.answerStatus,
+    category: filter.category,
+    fromDate: filter.period?.[0]?.format(API_DATE_DMY) ?? '',
+    toDate: filter.period?.[1]?.format(API_DATE_DMY) ?? '',
+    keyword: filter.keyword,
+  };
+}
+
+const byText = (pick: (row: InquiryItem) => string | null | undefined) => (a: InquiryItem, b: InquiryItem) =>
+  (pick(a) ?? '').localeCompare(pick(b) ?? '');
+
+function AnswerBadge({ status }: { status?: string }) {
+  return (status ?? '').toUpperCase() === 'ANSWERED' ? (
+    <StatusBadge tone="blue">Answered</StatusBadge>
+  ) : (
+    <StatusBadge tone="red">Unanswered</StatusBadge>
+  );
+}
+
+/** Design column set and alignment; header sorting applies to the loaded page. */
+const COLUMNS: TableColumnsType<InquiryItem> = [
+  {
+    title: 'ID',
+    dataIndex: 'pstNo',
+    key: 'pstNo',
+    width: 90,
+    align: 'center',
+    sorter: byText((row) => row.pstNo),
+    render: (value?: string) => <span className={styles.idLink}>{value ?? '-'}</span>,
+  },
+  {
+    title: 'Answer Status',
+    dataIndex: 'answerStatus',
+    key: 'answerStatus',
+    width: 120,
+    align: 'center',
+    sorter: byText((row) => row.answerStatus),
+    render: (value?: string) => <AnswerBadge status={value} />,
+  },
+  {
+    title: 'Inquiry Type',
+    dataIndex: 'categoryNm',
+    key: 'categoryNm',
+    width: 170,
+    ellipsis: true,
+    sorter: byText((row) => row.categoryNm),
+    render: (value?: string) => value || '-',
+  },
+  {
+    title: 'Title',
+    dataIndex: 'title',
+    key: 'title',
+    ellipsis: true,
+    sorter: byText((row) => row.title),
+  },
+  {
+    title: 'Registered Date',
+    dataIndex: 'crtDt',
+    key: 'crtDt',
+    width: 135,
+    align: 'center',
+    sorter: byText((row) => row.crtDt),
+    render: (value?: string) => <DateTimeText value={value} />,
+  },
+  {
+    title: 'Customer',
+    dataIndex: 'mbrNo',
+    key: 'mbrNo',
+    width: 130,
+    ellipsis: true,
+    sorter: byText((row) => row.mbrNo),
+    // Members show their member ID; non-members show "-".
+    render: (value?: string) => value || '-',
+  },
+  {
+    title: 'Answered Date',
+    dataIndex: 'answeredAt',
+    key: 'answeredAt',
+    width: 135,
+    align: 'center',
+    sorter: byText((row) => row.answeredAt),
+    render: (value?: string | null) => <DateTimeText value={value} />,
+  },
+  {
+    title: 'Answered By',
+    dataIndex: 'ansEmpNm',
+    key: 'ansEmpNm',
+    width: 130,
+    ellipsis: true,
+    sorter: byText((row) => row.ansEmpNm || row.ansEmpNo),
+    render: (_: unknown, row: InquiryItem) => row.ansEmpNm || row.ansEmpNo || '-',
+  },
+];
 
 export default function InquiryManagement() {
-  // ── Filter UI State ────────────────────────────────────────────────────────
-  // 1. answerStatus ALL: All, Completed, Incomplete all checked
-  const [responseStatusAll, setResponseStatusAll] = useState(true);
-  const [statusCompleted, setStatusCompleted] = useState(true);
-  const [statusIncomplete, setStatusIncomplete] = useState(true);
+  const { alert } = useSysDialogs();
+  const list = usePagedList<InquiryFilter>(INITIAL_FILTER, { pageSize: PAGE_SIZE });
+  const typeCodes = useCommonCodes('INQRY_SE_CD');
+  const typeOptions = [{ value: ALL, label: 'All' }, ...typeCodes];
+  const params = toParams(list.applied);
+  const { items, total, isFetching, refetch } = useInquiries({ page: list.page, pageSize: PAGE_SIZE, ...params });
+  const excel = useApiDownload((cond: InquirySearchRequest) =>
+    apiDownload('/api/v1/contents/inquiries/excel', 'inquiries.xlsx', cond),
+  );
+  const [selected, setSelected] = useState<InquiryItem | null>(null);
 
-  // 2. category ALL: All, Consulting, General all checked
-  const [inquiryTypeAll, setInquiryTypeAll] = useState(true);
-  const [typeConsulting, setTypeConsulting] = useState(true);
-  const [typeGeneral, setTypeGeneral] = useState(true);
-
-  // 3 & 4. fromDate: 30 days from today, toDay: current day
-  const [dateRange, setDateRange] = useState<[dayjs.Dayjs | null, dayjs.Dayjs | null] | null>([
-    getDefaultFromDate(),
-    getDefaultToDate(),
-  ]);
-
-  // 5. keyword empty
-  const [keyword] = useState('');
-
-  // Filter Collapse state
-  const [filterCollapsed, setFilterCollapsed] = useState(false);
-
-  // ── Applied Filters (passed to getInquiries API) ───────────────────────────
-  const [appliedFilters, setAppliedFilters] = useState({
-    answerStatus: 'ALL', // 1. answerStatus is ALL
-    category: '',     // 2. category is ALL
-    fromDate: getDefaultFromDate().format('DD/MM/YYYY'), // 3. fromDate: 30 days from today
-    toDate: getDefaultToDate().format('DD/MM/YYYY'),     // 4. toDay: current day
-    keyword: '',      // 5. keyword empty
-  });
-
-  // ── Pagination State ───────────────────────────────────────────────────────
-  const [page, setPage] = useState(1);
-  const pageSize = 15;
-
-  // ── API Query Hook: getInquiries (/api/v1/contents/inquiries) ───────────────
-  const {
-    items: inquiryItems,
-    total,
-    isLoading,
-    isFetching,
-    refetch,
-  } = useInquiries({
-    page,
-    pageSize,
-    answerStatus: appliedFilters.answerStatus,
-    category: appliedFilters.category,
-    fromDate: appliedFilters.fromDate,
-    toDate: appliedFilters.toDate,
-    keyword: appliedFilters.keyword,
-  });
-
-  // ── Detail Modal State ─────────────────────────────────────────────────────
-  const [modalVisible, setModalVisible] = useState(false);
-  const [selectedInquiry, setSelectedInquiry] = useState<InquiryItem | null>(null);
-
-  // ── Response Status Checkbox Handlers ──────────────────────────────────────
-  const handleResponseStatusAllChange = (e: { target: { checked: boolean } }) => {
-    const checked = e.target.checked;
-    setResponseStatusAll(checked);
-    setStatusCompleted(checked);
-    setStatusIncomplete(checked);
-  };
-
-  const handleStatusCompletedChange = (e: { target: { checked: boolean } }) => {
-    const checked = e.target.checked;
-    setStatusCompleted(checked);
-    setResponseStatusAll(checked && statusIncomplete);
-  };
-
-  const handleStatusIncompleteChange = (e: { target: { checked: boolean } }) => {
-    const checked = e.target.checked;
-    setStatusIncomplete(checked);
-    setResponseStatusAll(checked && statusCompleted);
-  };
-
-  // ── Inquiry Type Checkbox Handlers ─────────────────────────────────────────
-  const handleInquiryTypeAllChange = (e: { target: { checked: boolean } }) => {
-    const checked = e.target.checked;
-    setInquiryTypeAll(checked);
-    setTypeConsulting(checked);
-    setTypeGeneral(checked);
-  };
-
-  const handleTypeConsultingChange = (e: { target: { checked: boolean } }) => {
-    const checked = e.target.checked;
-    setTypeConsulting(checked);
-    setInquiryTypeAll(checked && typeGeneral);
-  };
-
-  const handleTypeGeneralChange = (e: { target: { checked: boolean } }) => {
-    const checked = e.target.checked;
-    setTypeGeneral(checked);
-    setInquiryTypeAll(checked && typeConsulting);
-  };
-
-  // ── Action Handlers ────────────────────────────────────────────────────────
-  const handleView = () => {
-    // Determine answerStatus: 'ALL' for All
-    let answerStatus = 'ALL';
-    if (statusCompleted && !statusIncomplete) {
-      answerStatus = 'ANSWERED';
-    } else if (statusIncomplete && !statusCompleted) {
-      answerStatus = 'UNANSWERED';
+  const handleSearch = () => {
+    const [from, to] = list.draft.period ?? [null, null];
+    if (Boolean(from) !== Boolean(to)) {
+      alert(MESSAGES.periodBoth);
+      return;
     }
-
-    // Determine category: 'ALL' for All
-    let category = 'ALL';
-    if (typeConsulting && !typeGeneral) {
-      category = 'CST';
-    } else if (typeGeneral && !typeConsulting) {
-      category = 'GEN';
-    }
-
-    const fromDate = dateRange?.[0] ? dateRange[0].format('DD/MM/YYYY') : '';
-    const toDate = dateRange?.[1] ? dateRange[1].format('DD/MM/YYYY') : '';
-
-    setAppliedFilters({
-      answerStatus,
-      category,
-      fromDate,
-      toDate,
-      keyword: keyword.trim(),
-    });
-    setPage(1);
+    list.search({ keyword: list.draft.keyword.trim(), period: from && to ? [from, to] : null });
   };
 
-  const handleReset = () => {
-    // Reset to requirements:
-    // 1. answerStatus is ALL
-    // 2. category is ALL
-    // 3. fromDate: 30 days from today
-    // 4. toDay: current day
-    // 5. keyword empty
-    setResponseStatusAll(true);
-    setStatusCompleted(true);
-    setStatusIncomplete(true);
-
-    setInquiryTypeAll(true);
-    setTypeConsulting(true);
-    setTypeGeneral(true);
-
-    const defaultFrom = getDefaultFromDate();
-    const defaultTo = getDefaultToDate();
-    setDateRange([defaultFrom, defaultTo]);
-
-    setAppliedFilters({
-      answerStatus: 'ALL',
-      category: 'ALL',
-      fromDate: defaultFrom.format('DD/MM/YYYY'),
-      toDate: defaultTo.format('DD/MM/YYYY'),
-      keyword: '',
-    });
-    setPage(1);
-  };
-
-  const handleOpenDetail = (item: InquiryItem) => {
-    setSelectedInquiry(item);
-    setModalVisible(true);
-  };
-
-  // ── Table Columns ──────────────────────────────────────────────────────────
-  // Required:
-  // 1. No is the order number of rows
-  // 2. Status using field answerStatus
-  // 3. Inquiry Type using field categoryNm
-  // 4. Inquiry Title using field title
-  const columns: TableColumnsType<InquiryItem> = [
-    {
-      title: 'No',
-      key: 'no',
-      width: 70,
-      align: 'center',
-      render: (_value, _record, index) => (page - 1) * pageSize + index + 1,
-    },
-    {
-      title: 'Status',
-      dataIndex: 'answerStatus',
-      key: 'answerStatus',
-      width: 120,
-      align: 'center',
-      render: (answerStatus: string, record: InquiryItem) => {
-        const val = record.answerStatus || answerStatus || 'UNANSWERED';
-        const isUnanswered = val === 'UNANSWERED' || val === 'Unanswered';
-        return (
-          <span className={isUnanswered ? styles.statusUnanswered : styles.statusCompleted}>
-            {val}
-          </span>
-        );
-      },
-    },
-    {
-      title: 'Inquiry Type',
-      dataIndex: 'categoryNm',
-      key: 'categoryNm',
-      width: 140,
-      align: 'center',
-      render: (categoryNm: string, record: InquiryItem) => (
-        <span>{record.categoryNm || categoryNm || record.category || '-'}</span>
-      ),
-    },
-    {
-      title: 'Inquiry Title',
-      dataIndex: 'title',
-      key: 'title',
-      align: 'left',
-      render: (title: string, record: InquiryItem) => (
-        <a
-          className={styles.inquiryTitleLink}
-          onClick={(e) => {
-            e.preventDefault();
-            handleOpenDetail(record);
-          }}
-        >
-          {record.title || title || "The user's inquiry will be displayed."}
-        </a>
-      ),
-    },
-    {
-      title: 'Registration Date',
-      dataIndex: 'crtDt',
-      key: 'crtDt',
-      width: 140,
-      align: 'center',
-      render: (crtDt: string, record: InquiryItem) => (
-        <DateTimeCell value={record.crtDt || record.registrationDate || crtDt} />
-      ),
-    },
-    {
-      title: 'Registered Customer',
-      dataIndex: 'registeredCustomer',
-      key: 'registeredCustomer',
-      width: 150,
-      align: 'center',
-      render: (customer: string, record: InquiryItem) => (
-        <span>{record.inquirerNm || record.mbrNo || record.registeredCustomer || customer || 'Member ID'}</span>
-      ),
-    },
-    {
-      title: 'Response Date',
-      dataIndex: 'answeredAt',
-      key: 'answeredAt',
-      width: 140,
-      align: 'center',
-      render: (answeredAt: string | null, record: InquiryItem) => (
-        <DateTimeCell value={record.answeredAt || record.responseDate || answeredAt} />
-      ),
-    },
-    {
-      title: 'Responder',
-      dataIndex: 'ansEmpNm',
-      key: 'ansEmpNm',
-      width: 130,
-      align: 'center',
-      render: (ansEmpNm: string | null, record: InquiryItem) => (
-        <span>{record.ansEmpNm || record.ansEmpNo || record.responder || ansEmpNm || '-'}</span>
-      ),
-    },
-  ];
+  const filtered =
+    list.applied.answerStatus !== INITIAL_FILTER.answerStatus ||
+    list.applied.category !== ALL ||
+    Boolean(list.applied.period) ||
+    Boolean(list.applied.keyword);
 
   return (
-    <div className={styles.container}>
-      {/* ── Breadcrumb ──────────────────────────────────────────────────────── */}
-      <div className={styles.breadcrumb}>
-        <span className={styles.breadcrumbLink}>Home</span>
-        <span className={styles.breadcrumbSeparator}>&gt;</span>
-        <span className={styles.breadcrumbLink}>Content Management</span>
-        <span className={styles.breadcrumbSeparator}>&gt;</span>
-        <span className={styles.breadcrumbCurrent}>1:1 Inquiry Management</span>
-      </div>
-
-      {/* ── Title & Header Actions ──────────────────────────────────────────── */}
-      <div className={styles.titleRow}>
-        <h1 className={styles.pageTitle}>1:1 Inquiry List</h1>
-        <div className={styles.headerActions}>
-          <ActionButton action="reset" className={styles.btnReset} onClick={handleReset}>
-            Reset
-          </ActionButton>
-          <ActionButton action="search" intent="secondary" appearance="filled" className={styles.btnView} onClick={handleView}>
-            View
-          </ActionButton>
-          <ActionButton
-            intent="icon"
-            className={styles.btnCollapse}
-            icon={filterCollapsed ? <DownOutlined /> : <UpOutlined />}
-            onClick={() => setFilterCollapsed(!filterCollapsed)}
-            title={filterCollapsed ? 'Expand Filters' : 'Collapse Filters'}
+    <SysPage>
+      <SysTitleBar title="Direct Inquiry Management" breadcrumb={['Content Management', 'Direct Inquiry Management']} />
+      <SysFilterPanel>
+        <SysFilterItem label="Answer Status">
+          <AppSelect
+            value={list.draft.answerStatus}
+            options={ANSWER_STATUS_OPTIONS}
+            onChange={(answerStatus) => list.setDraft({ answerStatus: String(answerStatus) })}
           />
-        </div>
-      </div>
-
-      {/* ── Filter Card ─────────────────────────────────────────────────────── */}
-      {!filterCollapsed && (
-        <div className={styles.filterCard}>
-          {/* Response Status (1. answerStatus ALL = All) */}
-          <div className={styles.filterGroup}>
-            <span className={styles.filterLabel}>Response Status</span>
-            <div className={styles.filterCheckboxes}>
-              <AppCheckbox checked={responseStatusAll} onChange={handleResponseStatusAllChange}>
-                All
-              </AppCheckbox>
-              <AppCheckbox checked={statusCompleted} onChange={handleStatusCompletedChange}>
-                Completed
-              </AppCheckbox>
-              <AppCheckbox checked={statusIncomplete} onChange={handleStatusIncompleteChange}>
-                Incomplete
-              </AppCheckbox>
-            </div>
-          </div>
-
-          {/* Inquiry Type (2. category ALL = All) */}
-          <div className={styles.filterGroup}>
-            <span className={styles.filterLabel}>Inquiry Type</span>
-            <div className={styles.filterCheckboxes}>
-              <AppCheckbox checked={inquiryTypeAll} onChange={handleInquiryTypeAllChange}>
-                All
-              </AppCheckbox>
-              <AppCheckbox checked={typeConsulting} onChange={handleTypeConsultingChange}>
-                Consulting Inquiry
-              </AppCheckbox>
-              <AppCheckbox checked={typeGeneral} onChange={handleTypeGeneralChange}>
-                General Inquiry
-              </AppCheckbox>
-            </div>
-          </div>
-
-          {/* Registration Period (3. fromDate 30 days from today, 4. toDay current day) */}
-          <div className={styles.filterGroup}>
-            <span className={styles.filterLabel}>Registration Period</span>
-            <AppRangePicker
-              format="DD/MM/YYYY"
-              placeholder={['dd/mm/yyyy', 'dd/mm/yyyy']}
-              value={dateRange}
-              onChange={(dates) => setDateRange(dates as [dayjs.Dayjs | null, dayjs.Dayjs | null] | null)}
-              className={styles.periodPicker}
-            />
-          </div>
-        </div>
-      )}
-
-      {/* ── Summary Count ───────────────────────────────────────────────────── */}
-      <div className={styles.summaryRow}>
-        <span className={styles.totalCount}>Total ({total})</span>
-      </div>
-
-      {/* ── Data Table ──────────────────────────────────────────────────────── */}
-      <div className={styles.tableWrapper}>
-        <DataTable<InquiryItem>
-          rowKey="id"
-          columns={columns}
-          dataSource={inquiryItems}
-          loading={isLoading || isFetching}
-          scroll={{ x: 1000 }}
-        />
-      </div>
-
-      {/* ── Centered Pagination (Matching Design) ────────────────────────────── */}
-      {total > 0 && (
-        <SysPagination page={page} pageSize={pageSize} total={total} onChange={setPage} />
-      )}
-
-      {/* ── Detail / Reply Modal ────────────────────────────────────────────── */}
+        </SysFilterItem>
+        <SysFilterItem label="Inquiry Type">
+          <AppSelect
+            value={list.draft.category}
+            options={typeOptions}
+            onChange={(category) => list.setDraft({ category: String(category) })}
+          />
+        </SysFilterItem>
+        <SysFilterItem label="Inquiry Period">
+          <AppRangePicker
+            className={styles.period}
+            value={list.draft.period}
+            format={SYS_DATE_FORMAT}
+            separator="~"
+            allowEmpty={[true, true]}
+            inputReadOnly
+            placeholder={['DD-MM-YYYY', 'DD-MM-YYYY']}
+            onChange={(period) => list.setDraft({ period: period as Period })}
+          />
+        </SysFilterItem>
+        <SysFilterItem label="Title">
+          <TextInput
+            value={list.draft.keyword}
+            allowClear
+            maxLength={100}
+            onChange={(e) => list.setDraft({ keyword: e.target.value })}
+            onPressEnter={handleSearch}
+          />
+        </SysFilterItem>
+      </SysFilterPanel>
+      <SysSearchActions onReset={list.reset} onSearch={handleSearch} loading={isFetching} />
+      <SysSectionHeader
+        total={total}
+        actions={
+          <SysExcelButton
+            onClick={() => excel.mutate(buildInquiryQueryParams(params).cond)}
+            loading={excel.isPending}
+            disabled={total === 0}
+          />
+        }
+      />
+      <SysTable<InquiryItem>
+        rowKey="id"
+        className={styles.listTable}
+        fill
+        tableLayout="fixed"
+        columns={COLUMNS}
+        dataSource={items}
+        loading={isFetching}
+        onRowClick={setSelected}
+        locale={{ emptyText: filtered ? MESSAGES.noResults : MESSAGES.noPosts }}
+      />
+      <SysPager page={list.page} pageSize={PAGE_SIZE} total={total} onChange={list.setPage} />
       <InquiryDetailModal
-        visible={modalVisible}
-        inquiry={selectedInquiry}
-        onClose={() => setModalVisible(false)}
+        visible={selected !== null}
+        inquiry={selected}
+        onClose={() => setSelected(null)}
         onRefresh={refetch}
       />
-    </div>
+    </SysPage>
   );
 }

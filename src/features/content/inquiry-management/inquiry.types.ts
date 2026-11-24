@@ -25,17 +25,3 @@ export type InquiryItem = {
   responder: string | null; // Responder Name or null
   responseContent?: string;
 };
-
-export type InquiryFilterState = {
-  responseStatus: {
-    all: boolean;
-    completed: boolean;
-    incomplete: boolean;
-  };
-  inquiryType: {
-    all: boolean;
-    consulting: boolean;
-    general: boolean;
-  };
-  dateRange: [string, string] | null; // ['YYYY-MM-DD', 'YYYY-MM-DD']
-};

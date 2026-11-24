@@ -100,7 +100,7 @@ export function mapFaqResponseToItem(
     title: res.title || '-',
     published: publishedFlag,
     statusLabel: publishedFlag === 'Y' ? 'Posted' : 'Not Posted',
-    displayOrder: res.displayOrder ?? index + 1,
+    displayOrder: res.displayOrder,
     viewCount: res.viewCount ?? 0,
     crtDt: res.crtDt || '-',
     crtBy: res.crtBy,

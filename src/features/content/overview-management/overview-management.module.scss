@@ -1,0 +1,16 @@
+// Overview Management: two full-height editors in the label | value grid, [Save] bottom right.
+
+.form {
+  // Each editor takes about half of the page height, as in the design
+  --rte-min-height: max(300px, calc((100vh - 360px) / 2));
+}
+
+.footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 16px;
+}
+
+.loading {
+  min-height: 200px;
+}

@@ -1,0 +1,40 @@
+// Directions Management: label | value grid with the map preview row, [Save] bottom right.
+
+.mapPreview {
+  flex: 1 1 auto;
+  height: 340px;
+  margin: 4px 0;
+}
+
+.mapFrame {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.mapEmpty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 100%;
+  color: var(--color-text-tertiary, #929fba);
+  font-size: var(--font-size-b1, 13px);
+}
+
+.mapEmptyIcon {
+  font-size: calc(var(--font-size-h1, 20px) * 1.4);
+  color: var(--color-gray-400, #c9cfdd);
+}
+
+.footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 16px;
+}
+
+.loading {
+  min-height: 200px;
+}

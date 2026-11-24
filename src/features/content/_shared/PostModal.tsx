@@ -1,8 +1,7 @@
-import { useState } from 'react';
-import type { CSSProperties } from 'react';
-import ActionButton from '@/components/common/actions/ActionButton';
+import { Fragment, useState } from 'react';
+import type { ReactNode } from 'react';
 import LoadingSpinner from '@/components/common/loading/LoadingSpinner';
-import Popup from '@/components/common/popup/Popup';
+import AppCheckbox from '@/components/inputs/AppCheckbox';
 import AppDatePicker from '@/components/inputs/AppDatePicker';
 import AppRadio from '@/components/inputs/AppRadio';
 import AppSelect from '@/components/inputs/AppSelect';
@@ -14,19 +13,24 @@ import type { Dayjs } from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import { useNotify } from '@/hooks/use-notify';
 import type { ContentFile, LegalOptions, PostDetail, YesNo } from '@/api/contents/post-api';
-import { FormField } from '@/features/system/_shared/SystemUi';
-import { errorMessage, splitDateTime } from '@/features/system/_shared/system-utils';
-import styles from '@/features/system/_shared/system-page.module.scss';
+import { SysButton } from '@/features/system/_shared/SysListUi';
+import { SysField, SysFieldGrid, SysFormModal } from '@/features/system/_shared/SysFormUi';
+import { API_DATE_DMY, SYS_DATE_FORMAT } from '@/features/system/_shared/sys-constants';
+import { errorMessage } from '@/features/system/_shared/system-utils';
+import { useSysDialogs } from '@/features/system/_shared/use-sys-dialogs';
 import type { BoardConfig, CategoryOption } from './board-config';
-import { AttachmentField, ImageField } from './PostFiles';
+import { AttachmentSection, ImageField, ThumbnailField } from './PostFiles';
 import { useUploadContentImage } from './use-content-files';
-import { usePost, useSavePost } from './use-posts';
+import { useDeletePosts, usePost, useSavePost } from './use-posts';
 import type { SavePostVariables } from './use-posts';
+import styles from './post.module.scss';
 
 dayjs.extend(customParseFormat);
 
-// Generic Detail / Register / Edit popup of a content board
-// (wireframes VPA070100P01 – VPA070800P01). Which rows appear is decided by the board config.
+// Register / Edit popup of a content board (v0.8 VPA070100P01 – VPA070800P01):
+// label | field grid (status rows, title, content, Provide English, title / content EN),
+// "Attachments  Total n" block, footer [Delete] … [Cancel] [Register | Edit].
+// Which rows appear is decided by the board config.
 
 interface PostModalProps {
   config: BoardConfig;
@@ -37,7 +41,6 @@ interface PostModalProps {
   categoryLabel: string;
   legalOptions?: LegalOptions;
   onClose: () => void;
-  onSaved: () => void;
 }
 
 interface FormState {
@@ -46,6 +49,7 @@ interface FormState {
   pinned: YesNo;
   pinOrder: number | null;
   title: string;
+  english: boolean;
   titleEn: string;
   content: string;
   contentEn: string;
@@ -66,11 +70,19 @@ interface FormState {
   imageFileId?: string;
 }
 
-const DATE_FORMAT = 'DD/MM/YYYY';
-const YES_NO = [
-  { value: 'Y', label: 'YES' },
-  { value: 'N', label: 'NO' },
+type FieldErrors = Partial<Record<keyof FormState, string>>;
+
+const PUBLISH_OPTIONS = [
+  { value: 'Y', label: 'Published' },
+  { value: 'N', label: 'Unpublished' },
 ];
+const YES_NO = [
+  { value: 'Y', label: 'Y' },
+  { value: 'N', label: 'N' },
+];
+
+/** E01 of the design. */
+const required = (field: string) => `${field} is required.`;
 
 function emptyForm(category: string): FormState {
   return {
@@ -79,6 +91,7 @@ function emptyForm(category: string): FormState {
     pinned: 'N',
     pinOrder: null,
     title: '',
+    english: false,
     titleEn: '',
     content: '',
     contentEn: '',
@@ -103,6 +116,8 @@ function toForm(detail: PostDetail): FormState {
     pinned: detail.pinned === 'Y' ? 'Y' : 'N',
     pinOrder: detail.pinOrder ?? null,
     title: detail.title ?? '',
+    // Design: checked on edit when Title (EN) exists.
+    english: !!detail.titleEn,
     titleEn: detail.titleEn ?? '',
     content: detail.content ?? '',
     contentEn: detail.contentEn ?? '',
@@ -126,11 +141,13 @@ function toForm(detail: PostDetail): FormState {
 /** Request body of create / update — the backend ignores keys a board does not know. */
 function buildBody(config: BoardConfig, form: FormState, isCreate: boolean): Record<string, unknown> {
   const text = (value: string) => value.trim() || undefined;
+  // Unchecked "Provide English" (or a board without it) saves no English text (design C02).
+  const english = config.noEnglish ? true : form.english;
   const body: Record<string, unknown> = {
     title: form.title.trim(),
     content: form.content,
-    titleEn: text(form.titleEn),
-    contentEn: form.contentEn || undefined,
+    titleEn: english ? text(form.titleEn) : undefined,
+    contentEn: english ? form.contentEn || undefined : undefined,
     attachmentFileId: form.attachments.length > 0 ? form.attachmentFileId : undefined,
     published: form.published,
   };
@@ -155,11 +172,39 @@ function buildBody(config: BoardConfig, form: FormState, isCreate: boolean): Rec
     body.field = form.lawField || undefined;
     body.issuingAuthority = form.issuingAuthority || undefined;
     body.docNumber = form.docNumber.trim();
-    body.issueDate = form.issueDate?.format(DATE_FORMAT);
+    body.issueDate = form.issueDate?.format(API_DATE_DMY);
     body.signer = text(form.name);
     body.description = text(form.summary);
   }
   return body;
+}
+
+/** One grid cell; `full` takes a row of its own. */
+interface Cell {
+  key: string;
+  full?: boolean;
+  node: (span: 1 | 'full') => ReactNode;
+}
+
+/** Pairs the half-width cells two per row; a half cell left alone runs to the end of its row. */
+function renderCells(cells: Cell[]): ReactNode[] {
+  const out: ReactNode[] = [];
+  for (let i = 0; i < cells.length; i += 1) {
+    const cell = cells[i];
+    if (cell.full) {
+      out.push(<Fragment key={cell.key}>{cell.node('full')}</Fragment>);
+      continue;
+    }
+    const next = cells[i + 1];
+    if (next && !next.full) {
+      out.push(<Fragment key={cell.key}>{cell.node(1)}</Fragment>);
+      out.push(<Fragment key={next.key}>{next.node(1)}</Fragment>);
+      i += 1;
+    } else {
+      out.push(<Fragment key={cell.key}>{cell.node('full')}</Fragment>);
+    }
+  }
+  return out;
 }
 
 export default function PostModal({
@@ -170,18 +215,20 @@ export default function PostModal({
   categoryLabel,
   legalOptions,
   onClose,
-  onSaved,
 }: PostModalProps) {
   const isCreate = pstNo === null;
   const { toast } = useNotify();
+  const dialogs = useSysDialogs();
   const { category } = config;
 
   const { data: detail, isFetching } = usePost(config, pstNo);
   const savePost = useSavePost(config);
+  const deletePosts = useDeletePosts(config);
   const uploadImage = useUploadContentImage(config.fileBoard);
 
   const defaultCategory = category.kind === 'fixed' ? category.value : (categoryOptions[0]?.value ?? '');
   const [form, setForm] = useState<FormState>(() => emptyForm(defaultCategory));
+  const [errors, setErrors] = useState<FieldErrors>({});
 
   // Fill the form when the detail arrives — adjusted during render, not in an effect.
   const [loadedDetail, setLoadedDetail] = useState<PostDetail | undefined>(undefined);
@@ -197,40 +244,56 @@ export default function PostModal({
     if (isCreate && defaultCategory && !form.category) setForm({ ...form, category: defaultCategory });
   }
 
-  const patch = (values: Partial<FormState>) => setForm((prev) => ({ ...prev, ...values }));
+  /** Updates fields and clears their E01 message. */
+  const patch = (values: Partial<FormState>) => {
+    setForm((prev) => ({ ...prev, ...values }));
+    setErrors((prev) => {
+      const next = { ...prev };
+      (Object.keys(values) as (keyof FormState)[]).forEach((key) => delete next[key]);
+      return next;
+    });
+  };
 
   // Boards locked while published only accept a status change until posting is stopped.
   const contentLocked = !isCreate && detail?.contentEditable === false;
   const statusDisabled = !canWrite;
   const fieldsDisabled = !canWrite || contentLocked;
-  const showCategorySelect = categoryOptions.length > 0 && category.kind !== 'fixed';
+  const showCategorySelect = (categoryOptions.length > 0 || !!config.legal) && category.kind !== 'fixed';
   // The category of a saved post can only change where the board has a status endpoint.
   const categoryDisabled = statusDisabled || (!isCreate && config.statusMode !== 'endpoint' && !config.legal);
   const tagEditable = !!config.tag && (isCreate || !config.tag.createOnly);
+  const showPin = !!config.pin && !config.hidePin;
+  const showEnglish = !config.noEnglish;
+  const titleLabel = config.legal ? 'Document Name' : 'Title';
 
-  const validate = (): string | null => {
-    if (showCategorySelect && !form.category) return `Select the ${categoryLabel.toLowerCase()}.`;
-    if (!form.title.trim()) return 'Enter the title.';
-    if (config.contentRequired && !form.content.trim()) return 'Enter the content.';
-    if (config.pin && form.pinned === 'Y' && !form.pinOrder) return 'Enter the top display order (1–5).';
-    if (config.tag?.required && isCreate && !/^[A-Z][A-Z0-9_]{1,49}$/.test(form.tag.trim())) {
-      return `${config.tag.label} must be uppercase letters, digits or "_" (2–50 characters).`;
+  const validate = (): FieldErrors => {
+    const found: FieldErrors = {};
+    if (showCategorySelect && !form.category) found.category = required(categoryLabel);
+    if (config.tag?.required && isCreate && config.tag.requestKey === 'sectionKey') {
+      if (!/^[A-Z][A-Z0-9_]{1,49}$/.test(form.tag.trim())) {
+        found.tag = `${config.tag.label} must be uppercase letters, digits or "_" (2–50 characters).`;
+      }
+    } else if (config.tag?.required && tagEditable && !form.tag.trim()) {
+      found.tag = required(config.tag.label);
     }
     if (config.legal) {
-      if (!form.docNumber.trim()) return 'Enter the number/symbol.';
-      if (!form.issueDate) return 'Select the issue date.';
+      if (!form.lawGroup) found.lawGroup = required('Group');
+      if (!form.lawField) found.lawField = required('Field');
+      if (!form.issuingAuthority) found.issuingAuthority = required('Issuing Agency');
+      if (!form.docNumber.trim()) found.docNumber = required('Number/Symbol');
+      if (!form.issueDate) found.issueDate = required('Issue Date');
     }
-    return null;
+    if (showPin && form.pinned === 'Y' && !form.pinOrder) found.pinOrder = required('Pin to Top Order');
+    if (!form.title.trim()) found.title = required(titleLabel);
+    if (config.contentRequired && !form.content.trim()) found.content = required('Content');
+    if (showEnglish && form.english) {
+      if (!form.titleEn.trim()) found.titleEn = required('Title (EN)');
+      if (!form.contentEn.trim()) found.contentEn = required('Content (EN)');
+    }
+    return found;
   };
 
-  const handleConfirm = async () => {
-    if (!contentLocked) {
-      const invalid = validate();
-      if (invalid) {
-        toast.warning(invalid);
-        return;
-      }
-    }
+  const save = async () => {
     let variables: SavePostVariables;
     if (isCreate) {
       variables = { pstNo: null, body: buildBody(config, form, true) };
@@ -250,273 +313,401 @@ export default function PostModal({
     }
     try {
       await savePost.mutateAsync(variables);
-      toast.success('Saved.');
-      onSaved();
+      toast.success(isCreate ? 'Registered.' : 'Saved.');
       onClose();
     } catch (e) {
       toast.error(errorMessage(e));
     }
   };
 
-  const registered = splitDateTime(detail?.mdfcnDt ?? detail?.crtDt);
+  const handleSubmit = () => {
+    if (!contentLocked) {
+      const found = validate();
+      setErrors(found);
+      if (Object.keys(found).length > 0) return;
+      // C02: English typed but "Provide English" unchecked.
+      if (showEnglish && !form.english && (form.titleEn.trim() || form.contentEn.trim())) {
+        dialogs.confirm({
+          content: 'English content will not be saved. Do you want to save?',
+          okText: 'Save',
+          onOk: save,
+        });
+        return;
+      }
+    }
+    save();
+  };
+
+  const handleDelete = () => {
+    if (!pstNo) return;
+    dialogs.confirm({
+      content: 'Are you sure you want to delete?',
+      okText: 'Delete',
+      danger: true,
+      onOk: async () => {
+        try {
+          await deletePosts.mutateAsync([pstNo]);
+          toast.success('Deleted.');
+          onClose();
+        } catch (e) {
+          toast.error(errorMessage(e));
+        }
+      },
+    });
+  };
+
   const legalSelect = (
     label: string,
     key: 'lawGroup' | 'lawField' | 'issuingAuthority',
     options: LegalOptions['groups'] | undefined,
-  ) => (
-    <FormField label={label}>
-      <AppSelect
-        className={styles.wFull}
-        allowClear
-        placeholder={`Select ${label.toLowerCase()}`}
-        value={form[key] || undefined}
-        disabled={fieldsDisabled}
-        onChange={(value) => patch({ [key]: String(value ?? '') })}
-        options={(options ?? []).map((o) => ({ value: o.code, label: o.name }))}
-      />
-    </FormField>
-  );
+    placeholder: string,
+  ): Cell => ({
+    key,
+    node: (span) => (
+      <SysField label={label} required span={span} error={errors[key]}>
+        <AppSelect
+          className={styles.fullWidth}
+          placeholder={placeholder}
+          value={form[key] || undefined}
+          disabled={fieldsDisabled}
+          onChange={(value) => patch({ [key]: String(value ?? '') })}
+          options={(options ?? []).map((o) => ({ value: o.code, label: o.name }))}
+        />
+      </SysField>
+    ),
+  });
 
-  return (
-    <Popup
-      open
-      width={980}
-      title={
-        <span>
-          {isCreate ? `Register — ${config.title}` : `Check/Edit — ${config.title}`}
-          {contentLocked && (
-            <span className={styles.formNotice}>※ Can be edited when in [Stop] status.</span>
-          )}
-        </span>
+  // ── Status rows (paired two per row) ─────────────────────────────────────
+  const publishCell: Cell = {
+    key: 'published',
+    node: (span) => (
+      <SysField label="Publish Status" required span={span}>
+        <AppRadio.Group
+          value={form.published}
+          disabled={statusDisabled}
+          onChange={(e) => patch({ published: e.target.value as YesNo })}
+          options={PUBLISH_OPTIONS}
+        />
+      </SysField>
+    ),
+  };
+  const categoryCell: Cell = {
+    key: 'category',
+    node: (span) => (
+      <SysField label={categoryLabel} required span={span} error={errors.category}>
+        <AppSelect
+          className={styles.fullWidth}
+          placeholder={`Select ${categoryLabel.toLowerCase()}`}
+          value={form.category || undefined}
+          disabled={categoryDisabled}
+          onChange={(value) => patch({ category: String(value ?? '') })}
+          options={categoryOptions}
+        />
+      </SysField>
+    ),
+  };
+  const tagCell: Cell = {
+    key: 'tag',
+    node: (span) => (
+      <SysField label={config.tag?.label ?? ''} required={config.tag?.required} span={span} error={errors.tag}>
+        <TextInput
+          placeholder={`Enter the ${config.tag?.label.toLowerCase() ?? ''}`}
+          value={form.tag}
+          maxLength={config.tag?.requestKey === 'sectionKey' ? 50 : config.tag?.requestKey === 'docNumber' ? 50 : 1000}
+          disabled={fieldsDisabled || !tagEditable}
+          onChange={(e) =>
+            patch({
+              tag: config.tag?.requestKey === 'sectionKey' ? e.target.value.toUpperCase() : e.target.value,
+            })
+          }
+        />
+      </SysField>
+    ),
+  };
+  const pinCells: Cell[] = [
+    {
+      key: 'pinned',
+      node: (span) => (
+        <SysField label="Pin to Top" span={span}>
+          <AppSelect
+            className={styles.fullWidth}
+            value={form.pinned}
+            disabled={statusDisabled}
+            // Design: the order starts at 1 (top priority) when a post is pinned.
+            onChange={(value) => {
+              const pinned = value === 'Y' ? 'Y' : 'N';
+              patch({ pinned, pinOrder: pinned === 'Y' ? (form.pinOrder ?? 1) : form.pinOrder });
+            }}
+            options={YES_NO}
+          />
+        </SysField>
+      ),
+    },
+    {
+      key: 'pinOrder',
+      node: (span) => (
+        <SysField label="Pin to Top Order" span={span} error={errors.pinOrder}>
+          <Spinbox
+            className={styles.fullWidth}
+            value={form.pinned === 'Y' ? form.pinOrder : 1}
+            min={1}
+            max={5}
+            precision={0}
+            disabled={statusDisabled || form.pinned !== 'Y'}
+            onChange={(pinOrder) => patch({ pinOrder })}
+          />
+        </SysField>
+      ),
+    },
+  ];
+  const thumbnailCell: Cell = {
+    key: 'thumbnail',
+    node: (span) => (
+      <SysField label="Thumbnail" span={span}>
+        <ThumbnailField
+          board={config.fileBoard}
+          upload={uploadImage.mutateAsync}
+          fileUnqId={form.thumbnailFileId}
+          disabled={fieldsDisabled}
+          onChange={(thumbnailFileId) => patch({ thumbnailFileId })}
+        />
+      </SysField>
+    ),
+  };
+
+  const cells: Cell[] = [];
+  if (config.legal) {
+    cells.push(publishCell, categoryCell);
+    cells.push(legalSelect('Group', 'lawGroup', legalOptions?.groups, 'Select group'));
+    cells.push(legalSelect('Field', 'lawField', legalOptions?.fields, 'Select field'));
+    cells.push(legalSelect('Issuing Agency', 'issuingAuthority', legalOptions?.issuingAuthorities, 'Select issuing agency'));
+    cells.push({
+      key: 'docNumber',
+      node: (span) => (
+        <SysField label="Number/Symbol" required span={span} error={errors.docNumber}>
+          <TextInput
+            placeholder="Enter the number/symbol."
+            value={form.docNumber}
+            maxLength={50}
+            disabled={fieldsDisabled}
+            onChange={(e) => patch({ docNumber: e.target.value })}
+          />
+        </SysField>
+      ),
+    });
+    cells.push({
+      key: 'issueDate',
+      node: (span) => (
+        <SysField label="Issue Date" required span={span} error={errors.issueDate}>
+          <AppDatePicker
+            className={styles.fullWidth}
+            format={SYS_DATE_FORMAT}
+            placeholder="DD-MM-YYYY"
+            value={form.issueDate}
+            disabled={fieldsDisabled}
+            onChange={(issueDate) => patch({ issueDate })}
+          />
+        </SysField>
+      ),
+    });
+    cells.push({
+      key: 'signer',
+      node: (span) => (
+        <SysField label="Signer" span={span}>
+          <TextInput
+            placeholder="Enter the signer."
+            value={form.name}
+            maxLength={100}
+            disabled={fieldsDisabled}
+            onChange={(e) => patch({ name: e.target.value })}
+          />
+        </SysField>
+      ),
+    });
+  } else {
+    // Design order: NPL [Publish | Document No.] [Pin | Order]; Notice [Type | Pin] [Publish | Order];
+    // News [Publish | Thumbnail]; Careers [Publish] [Pin | Order].
+    if (showCategorySelect && showPin) {
+      cells.push(categoryCell, pinCells[0], publishCell, pinCells[1]);
+    } else {
+      cells.push(publishCell);
+      if (showCategorySelect) cells.push(categoryCell);
+      if (config.tag) cells.push(tagCell);
+      if (config.thumbnail) cells.push(thumbnailCell);
+      if (showPin) {
+        // Keep Pin / Order together on one row.
+        if (cells.length % 2 === 1) cells[cells.length - 1] = { ...cells[cells.length - 1], full: true };
+        cells.push(...pinCells);
       }
-      onCancel={onClose}
-      maskClosable={false}
-      footer={
-        <div className={styles.modalFooter}>
-          <ActionButton action="cancel" onClick={onClose}>
-            Cancel
-          </ActionButton>
-          <ActionButton
-            intent="secondary"
-            appearance="filled"
-            disabled={!canWrite || savePost.isPending || isFetching}
-            onClick={handleConfirm}
-          >
-            Confirm
-          </ActionButton>
-        </div>
-      }
-    >
-      <LoadingSpinner spinning={isFetching}>
-        <div className={styles.formGrid} style={{ '--form-cols': 3 } as CSSProperties}>
-          {/* ── Status area ─────────────────────────────────────────────── */}
-          {showCategorySelect && (
-            <FormField label={categoryLabel} required>
-              <AppSelect
-                className={styles.wFull}
-                value={form.category || undefined}
-                disabled={categoryDisabled}
-                onChange={(value) => patch({ category: String(value ?? '') })}
-                options={categoryOptions}
-              />
-            </FormField>
-          )}
-          <FormField label="Creator">{detail?.crtByNm || detail?.crtBy || '-'}</FormField>
-          <FormField label="Registration Date" span={showCategorySelect ? undefined : 'full'}>
-            {registered ? `${registered.date} ${registered.time ?? ''}` : '-'}
-          </FormField>
-
-          <FormField label="Publication Status" span={config.pin ? undefined : 'full'}>
-            <AppRadio.Group
-              value={form.published}
-              disabled={statusDisabled}
-              onChange={(e) => patch({ published: e.target.value as YesNo })}
-              options={[
-                { value: 'Y', label: 'Post' },
-                { value: 'N', label: 'Stop' },
-              ]}
-            />
-          </FormField>
-          {config.pin && (
-            <>
-              <FormField label="Top Display">
-                <AppRadio.Group
-                  value={form.pinned}
-                  disabled={statusDisabled}
-                  onChange={(e) => patch({ pinned: e.target.value as YesNo })}
-                  options={YES_NO}
-                />
-              </FormField>
-              <FormField label="Top Display Order">
-                <Spinbox
-                  value={form.pinOrder}
-                  min={1}
-                  max={5}
-                  precision={0}
-                  disabled={statusDisabled || form.pinned !== 'Y'}
-                  onChange={(pinOrder) => patch({ pinOrder })}
-                />
-              </FormField>
-            </>
-          )}
-
-          {/* ── Legal document attributes ───────────────────────────────── */}
-          {config.legal && (
-            <>
-              {legalSelect('Group', 'lawGroup', legalOptions?.groups)}
-              {legalSelect('Field', 'lawField', legalOptions?.fields)}
-              {legalSelect('Issuing Authority', 'issuingAuthority', legalOptions?.issuingAuthorities)}
-              <FormField label="Number/Sign" required>
-                <TextInput
-                  placeholder="Please enter the number/sign."
-                  value={form.docNumber}
-                  maxLength={50}
-                  disabled={fieldsDisabled}
-                  onChange={(e) => patch({ docNumber: e.target.value })}
-                />
-              </FormField>
-              <FormField label="Issue Date" required>
-                <AppDatePicker
-                  className={styles.wFull}
-                  format={DATE_FORMAT}
-                  placeholder="DD/MM/YYYY"
-                  value={form.issueDate}
-                  disabled={fieldsDisabled}
-                  onChange={(issueDate) => patch({ issueDate })}
-                />
-              </FormField>
-              <FormField label="Signer">
-                <TextInput
-                  placeholder="Please enter the signer."
-                  value={form.name}
-                  maxLength={100}
-                  disabled={fieldsDisabled}
-                  onChange={(e) => patch({ name: e.target.value })}
-                />
-              </FormField>
-            </>
-          )}
-
-          {/* ── Board-specific attributes ───────────────────────────────── */}
-          {config.tag && !config.legal && (
-            <FormField label={config.tag.label} required={config.tag.required} span={config.person ? undefined : 'full'}>
+    }
+    if (showCategorySelect && showPin && config.tag) cells.push(tagCell);
+    if (showCategorySelect && showPin && config.thumbnail) cells.push(thumbnailCell);
+    if (config.person) {
+      (['name', 'email', 'phone'] as const).forEach((key) =>
+        cells.push({
+          key,
+          node: (span) => (
+            <SysField label={key === 'name' ? 'Name' : key === 'email' ? 'Email' : 'Phone'} span={span}>
               <TextInput
-                value={form.tag}
-                maxLength={config.tag.requestKey === 'sectionKey' ? 50 : 1000}
-                disabled={fieldsDisabled || !tagEditable}
-                onChange={(e) =>
-                  patch({
-                    tag: config.tag?.requestKey === 'sectionKey' ? e.target.value.toUpperCase() : e.target.value,
-                  })
-                }
+                value={form[key]}
+                maxLength={key === 'name' ? 100 : 256}
+                disabled={fieldsDisabled}
+                onChange={(e) => patch({ [key]: e.target.value })}
               />
-            </FormField>
-          )}
-          {config.person && (
-            <>
-              <FormField label="Name" span="full">
-                <TextInput
-                  value={form.name}
-                  maxLength={100}
-                  disabled={fieldsDisabled}
-                  onChange={(e) => patch({ name: e.target.value })}
-                />
-              </FormField>
-              <FormField label="Email">
-                <TextInput
-                  value={form.email}
-                  maxLength={256}
-                  disabled={fieldsDisabled}
-                  onChange={(e) => patch({ email: e.target.value })}
-                />
-              </FormField>
-              <FormField label="Phone" span="full">
-                <TextInput
-                  value={form.phone}
-                  maxLength={256}
-                  disabled={fieldsDisabled}
-                  onChange={(e) => patch({ phone: e.target.value })}
-                />
-              </FormField>
-            </>
-          )}
-
-          {/* ── Content area ────────────────────────────────────────────── */}
-          <FormField label="Title" required span="full">
-            <TextInput
-              placeholder="Please enter the title."
-              value={form.title}
-              maxLength={1000}
+            </SysField>
+          ),
+        }),
+      );
+    }
+    if (config.image) {
+      cells.push({
+        key: 'image',
+        full: true,
+        node: (span) => (
+          <SysField label="Image" span={span}>
+            <ImageField
+              upload={uploadImage.mutateAsync}
+              fileUnqId={form.imageFileId}
               disabled={fieldsDisabled}
-              onChange={(e) => patch({ title: e.target.value })}
+              onChange={(imageFileId) => patch({ imageFileId })}
             />
-          </FormField>
-          <FormField label="Title (EN)" span="full">
+          </SysField>
+        ),
+      });
+    }
+  }
+
+  // ── Content rows (one per row) ───────────────────────────────────────────
+  cells.push({
+    key: 'title',
+    full: true,
+    node: (span) => (
+      <SysField label={titleLabel} required span={span} error={errors.title}>
+        <TextInput
+          placeholder={config.legal ? 'Enter the document name.' : 'Enter the title.'}
+          value={form.title}
+          maxLength={1000}
+          disabled={fieldsDisabled}
+          onChange={(e) => patch({ title: e.target.value })}
+        />
+      </SysField>
+    ),
+  });
+  if (config.summary && !config.hideSummary) {
+    cells.push({
+      key: 'summary',
+      full: true,
+      node: (span) => (
+        <SysField label="Summary" span={span}>
+          <TextArea
+            rows={2}
+            value={form.summary}
+            disabled={fieldsDisabled}
+            onChange={(e) => patch({ summary: e.target.value })}
+          />
+        </SysField>
+      ),
+    });
+  }
+  cells.push({
+    key: 'content',
+    full: true,
+    node: (span) => (
+      <SysField label="Content" required={config.contentRequired} span={span} error={errors.content}>
+        <TextArea
+          className={styles.editor}
+          rows={10}
+          placeholder="Enter the content."
+          value={form.content}
+          disabled={fieldsDisabled}
+          onChange={(e) => patch({ content: e.target.value })}
+        />
+      </SysField>
+    ),
+  });
+  if (showEnglish) {
+    const englishDisabled = fieldsDisabled || !form.english;
+    cells.push(
+      {
+        key: 'english',
+        full: true,
+        node: (span) => (
+          <SysField label="Provide English" span={span}>
+            <AppCheckbox
+              checked={form.english}
+              disabled={fieldsDisabled}
+              onChange={(e) => patch({ english: e.target.checked, titleEn: form.titleEn, contentEn: form.contentEn })}
+            >
+              Provide English
+            </AppCheckbox>
+          </SysField>
+        ),
+      },
+      {
+        key: 'titleEn',
+        full: true,
+        node: (span) => (
+          <SysField label="Title (EN)" required={form.english} span={span} error={errors.titleEn}>
             <TextInput
+              placeholder="Enter the title."
               value={form.titleEn}
               maxLength={1000}
-              disabled={fieldsDisabled}
+              disabled={englishDisabled}
               onChange={(e) => patch({ titleEn: e.target.value })}
             />
-          </FormField>
-          {(config.summary || config.legal) && (
-            <FormField label={config.legal ? 'Description' : 'Summary'} span="full">
-              <TextArea
-                rows={2}
-                value={form.summary}
-                disabled={fieldsDisabled}
-                onChange={(e) => patch({ summary: e.target.value })}
-              />
-            </FormField>
-          )}
-          {config.thumbnail && (
-            <FormField label="Thumbnail" span="full">
-              <ImageField
-                upload={uploadImage.mutateAsync}
-                fileUnqId={form.thumbnailFileId}
-                disabled={fieldsDisabled}
-                onChange={(thumbnailFileId) => patch({ thumbnailFileId })}
-              />
-            </FormField>
-          )}
-          {config.image && (
-            <FormField label="Image" span="full">
-              <ImageField
-                upload={uploadImage.mutateAsync}
-                fileUnqId={form.imageFileId}
-                disabled={fieldsDisabled}
-                onChange={(imageFileId) => patch({ imageFileId })}
-              />
-            </FormField>
-          )}
-          <FormField label="Attached Files" span="full">
-            <AttachmentField
-              board={config.fileBoard}
-              fileUnqId={form.attachmentFileId}
-              files={form.attachments}
-              disabled={fieldsDisabled}
-              onChange={(attachmentFileId, attachments) => patch({ attachmentFileId, attachments })}
-            />
-          </FormField>
-          <FormField label="Content" required={config.contentRequired} span="full">
+          </SysField>
+        ),
+      },
+      {
+        key: 'contentEn',
+        full: true,
+        node: (span) => (
+          <SysField label="Content (EN)" required={form.english} span={span} error={errors.contentEn}>
             <TextArea
-              rows={9}
-              placeholder="Please enter the content."
-              value={form.content}
-              disabled={fieldsDisabled}
-              onChange={(e) => patch({ content: e.target.value })}
-            />
-          </FormField>
-          <FormField label="Content (EN)" span="full">
-            <TextArea
-              rows={5}
+              className={styles.editor}
+              rows={10}
+              placeholder="Enter the content."
               value={form.contentEn}
-              disabled={fieldsDisabled}
+              disabled={englishDisabled}
               onChange={(e) => patch({ contentEn: e.target.value })}
             />
-          </FormField>
-        </div>
+          </SysField>
+        ),
+      },
+    );
+  }
+
+  const title = `${isCreate ? 'Register' : 'Edit'} ${config.itemName}`;
+
+  return (
+    <SysFormModal
+      open
+      width={1200}
+      title={title}
+      onCancel={onClose}
+      onSubmit={canWrite ? handleSubmit : undefined}
+      submitText={isCreate ? 'Register' : 'Edit'}
+      submitting={savePost.isPending}
+      submitDisabled={isFetching}
+      leftActions={
+        !isCreate && canWrite ? (
+          <SysButton look="danger" disabled={deletePosts.isPending || isFetching} onClick={handleDelete}>
+            Delete
+          </SysButton>
+        ) : undefined
+      }
+      notice={contentLocked ? '※ Content can be edited after the post is set to Unpublished.' : undefined}
+    >
+      <LoadingSpinner spinning={isFetching}>
+        <SysFieldGrid columns={2}>{renderCells(cells)}</SysFieldGrid>
+        <AttachmentSection
+          board={config.fileBoard}
+          fileUnqId={form.attachmentFileId}
+          files={form.attachments}
+          disabled={fieldsDisabled}
+          onChange={(attachmentFileId, attachments) => patch({ attachmentFileId, attachments })}
+        />
       </LoadingSpinner>
-    </Popup>
+    </SysFormModal>
   );
 }

@@ -1,7 +1,8 @@
 import type { BoardPath, FileBoard } from '@/api/contents/post-api';
 
 // One entry per Content Management menu that is backed by a BBS board.
-// The list screen (post-board.tsx) and the popup (post-modal.tsx) are driven by it.
+// The list screen (PostBoard.tsx) and the popup (PostModal.tsx) are driven by it; columns, filters and
+// popup rows follow the v0.8 design of each menu (VPA0701 – VPA0708).
 
 export type CategoryOption = {
   value: string;
@@ -26,6 +27,8 @@ export type BoardConfig = {
   fileBoard: FileBoard;
   /** Page title; also the last breadcrumb item. */
   title: string;
+  /** Singular noun of the popup title: "Register <itemName>" / "Edit <itemName>". */
+  itemName: string;
   /** Breadcrumb items between "Content Management" and the title. */
   parents?: readonly string[];
   category: CategoryMode;
@@ -38,11 +41,17 @@ export type BoardConfig = {
   statusMode: 'endpoint' | 'body' | 'bulk';
   /** Top display (pinned + order 1–5). */
   pin?: boolean;
+  /** The board stores a pin but the design shows none: hidden, saved values are kept. */
+  hidePin?: boolean;
   /** Thumbnail image (news). */
   thumbnail?: boolean;
   /** Main image (about: portrait / logo). */
   image?: boolean;
   summary?: boolean;
+  /** The board stores a summary but the design shows none: hidden, saved values are kept. */
+  hideSummary?: boolean;
+  /** No "Provide English" / Title (EN) / Content (EN) rows (legal documents). */
+  noEnglish?: boolean;
   /** Free tag column / field with this label (document number, section key, partner type…). */
   tag?: { label: string; requestKey: 'docNumber' | 'tag' | 'sectionKey'; createOnly?: boolean; required?: boolean };
   /** Person fields: name, email, phone (about). */
@@ -64,27 +73,33 @@ const NPL = {
 } as const;
 const ABOUT = { board: 'about', fileBoard: 'ABOUT', parents: ['VAMC Introduction Management'] } as const;
 
-const newsBoard = (id: string, title: string, category: string): BoardConfig => ({
+// News boards: no pin and no summary in the design (VPA070201P01 – VPA070204P01); Disclosure has no thumbnail.
+const newsBoard = (id: string, title: string, itemName: string, category: string, thumbnail = true): BoardConfig => ({
   ...NEWS,
   id,
   title,
+  itemName,
   category: { kind: 'fixed', value: category },
   statusMode: 'endpoint',
   pin: true,
-  thumbnail: true,
+  hidePin: true,
+  thumbnail,
   summary: true,
+  hideSummary: true,
   contentRequired: true,
 });
 
-const nplBoard = (id: string, title: string, category: string): BoardConfig => ({
+const nplBoard = (id: string, title: string, itemName: string, category: string): BoardConfig => ({
   ...NPL,
   id,
   title,
+  itemName,
   category: { kind: 'fixed', value: category },
   statusMode: 'endpoint',
   pin: true,
   summary: true,
-  tag: { label: 'Document Number', requestKey: 'docNumber' },
+  hideSummary: true,
+  tag: { label: 'Document No.', requestKey: 'docNumber', required: true },
   contentRequired: true,
 });
 
@@ -94,31 +109,35 @@ export const BOARDS = {
     id: 'notice',
     board: 'notices',
     fileBoard: 'NOTICE',
-    title: 'Notices Management',
+    title: 'Notice Management',
+    itemName: 'Notice',
     category: { kind: 'codes', groupCd: 'NTC_MTTR_SE_CD', label: 'Notice Type' },
     statusMode: 'endpoint',
     pin: true,
     contentRequired: true,
   },
   /** A07020100 / 0200 / 0300 / 0400 — VPA07020101–2601 + Disclosure */
-  news: newsBoard('news', 'News Management', 'NWS'),
-  media: newsBoard('media', 'Media Management', 'MED'),
-  resources: newsBoard('resources', 'Resources Management', 'RSC'),
-  disclosure: newsBoard('disclosure', 'Disclosure Management', 'DSC'),
+  news: newsBoard('news', 'News Management', 'News', 'NWS'),
+  media: newsBoard('media', 'Media Management', 'Media', 'MED'),
+  resources: newsBoard('resources', 'Resources Management', 'Resource', 'RSC'),
+  disclosure: newsBoard('disclosure', 'Disclosure Management', 'Disclosure', 'DSC', false),
   /** A07030100 / 0200 / 0300 — VPA07030101–2901 */
-  appraisalNotice: nplBoard('appraisal-notice', 'Appraisal Notice Management', 'APPR'),
-  saleNotice: nplBoard('sale-notice', 'Sale Brokerage Notice Management', 'SALE'),
-  auctionNotice: nplBoard('auction-notice', 'Online Auction Notice Management', 'AUCT'),
+  appraisalNotice: nplBoard('appraisal-notice', 'Appraisal Notice Management', 'Appraisal Notice', 'APPR'),
+  saleNotice: nplBoard('sale-notice', 'Sale Brokerage Notice Management', 'Sale Brokerage Notice', 'SALE'),
+  auctionNotice: nplBoard('auction-notice', 'Online Auction Notice Management', 'Online Auction Notice', 'AUCT'),
   /** A07070000 — VPA07070001 / VPA070700P01 */
   legal: {
     id: 'legal',
     board: 'legal-documents',
     fileBoard: 'LEGAL',
     title: 'Legal Documents Management',
+    itemName: 'Legal Document',
     category: { kind: 'none' },
     categoryKey: 'docType',
     statusMode: 'body',
     legal: true,
+    hideSummary: true,
+    noEnglish: true,
     excel: true,
   },
   /** A07080000 — VPA07080001 / VPA070800P01 */
@@ -127,6 +146,7 @@ export const BOARDS = {
     board: 'careers',
     fileBoard: 'CAREER',
     title: 'Careers Management',
+    itemName: 'Career Post',
     category: { kind: 'none' },
     statusMode: 'body',
     pin: true,
@@ -138,6 +158,7 @@ export const BOARDS = {
     ...ABOUT,
     id: 'leadership',
     title: 'Leadership Management',
+    itemName: 'Leader',
     category: {
       kind: 'options',
       label: 'Section',
@@ -159,6 +180,7 @@ export const BOARDS = {
     ...ABOUT,
     id: 'partners',
     title: 'Partners Management',
+    itemName: 'Partner',
     category: { kind: 'fixed', value: 'PRTN' },
     categoryKey: 'section',
     statusMode: 'body',
@@ -171,6 +193,7 @@ export const BOARDS = {
     board: 'service-guides',
     fileBoard: 'SERVICE_GUIDE',
     title: 'Service Guide Management',
+    itemName: 'Service Guide Section',
     category: {
       kind: 'options',
       label: 'Page',
@@ -194,6 +217,7 @@ export const BOARDS = {
     board: 'service-guides',
     fileBoard: 'SERVICE_GUIDE',
     title: 'Auction Guide Management',
+    itemName: 'Auction Guide Section',
     category: { kind: 'fixed', value: 'AUC' },
     categoryKey: 'page',
     statusMode: 'bulk',
