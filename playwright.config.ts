@@ -1,14 +1,15 @@
 import { defineConfig, devices } from '@playwright/test';
 
 // E2E tests run against a dedicated Vite server (E2E_PORT, default 13000) that proxies /api
-// to a test backend (E2E_API_TARGET, default the admin backend on 127.0.0.1:17200), so the
+// to the admin backend (E2E_API_TARGET, default the local backend on 127.0.0.1:7200), so the
 // developer's own `pnpm dev` on :3000 is never touched.
 // Credentials come from E2E_USER / E2E_PASS (see e2e/README.md) — never commit them.
+// Team entry point: `pnpm e2e` (e2e/run.mjs).
 
 const PORT = Number(process.env.E2E_PORT ?? 13000);
-const API_TARGET = process.env.E2E_API_TARGET ?? 'http://127.0.0.1:17200';
+const API_TARGET = process.env.E2E_API_TARGET ?? 'http://127.0.0.1:7200';
 const BASE_URL = `http://localhost:${PORT}`;
-// e2e/run.sh points this at a timestamped folder so earlier reports are kept.
+// e2e/run.mjs points this at a timestamped folder so earlier reports are kept.
 const REPORT_DIR = process.env.E2E_REPORT_DIR ?? 'e2e/.report';
 
 export default defineConfig({
