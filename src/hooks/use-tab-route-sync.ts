@@ -142,13 +142,17 @@ export function useTabRouteSync() {
 
   // Tab → URL: when active tab changes
   useEffect(() => {
-    if (!activeTabKey) return;
+    // Read the store, not the render value: on a direct URL load the URL → Tab effect above has
+    // already activated the URL's tab in this same commit, and the stale (persisted) key would
+    // push the URL back to the previous tab's route.
+    const currentKey = useTabStore.getState().activeTabKey;
+    if (!currentKey) return;
     // Do not touch URL while a tab requested by URL is still being opened.
     if (pendingPathRef.current) return;
 
-    syncRailFromKey(activeTabKey);
+    syncRailFromKey(currentKey);
 
-    const targetPath = getRouteByMenuCode(activeTabKey);
+    const targetPath = getRouteByMenuCode(currentKey);
     if (!targetPath) return;
 
     if (location.pathname !== targetPath) {
