@@ -3,14 +3,13 @@ import AppRadio from '@/components/inputs/AppRadio';
 import AppSelect from '@/components/inputs/AppSelect';
 import TextInput from '@/components/inputs/TextInput';
 import { useNotify } from '@/hooks/use-notify';
-import { FORM_API_AVAILABLE, FORM_ERRORS } from '@/api/system/form-api';
+import { FORM_ERRORS } from '@/api/system/form-api';
 import type { FormItem, FormLang, FormSaveRequest, YesNo } from '@/api/system/form-api';
 import { SysField, SysFieldGrid, SysFormModal } from '../_shared/SysFormUi';
 import { USE_YN_RADIO_OPTIONS } from '../_shared/sys-constants';
 import { SYS_MESSAGES } from '../_shared/sys-messages';
 import { errorMessage } from '../_shared/system-utils';
 import { useFieldErrors } from '../_shared/use-field-errors';
-import { useSysDialogs } from '../_shared/use-sys-dialogs';
 import { useSaveForm } from './use-forms';
 
 // Form Management - Register / Edit popup (VPA090102P01).
@@ -39,7 +38,6 @@ const FORM_MESSAGES = {
   /** E03 */
   invalidUrl: 'Please enter a docx, xlsx or pdf file URL starting with https.',
   formNoDigits: 'Enter a 4-digit number.',
-  notAvailable: 'Saving forms is not available yet: the backend API is waiting for a schema change.',
 } as const;
 
 interface FormModalProps {
@@ -52,7 +50,6 @@ interface FormModalProps {
 export default function FormModal({ form, canWrite, onClose }: FormModalProps) {
   const isCreate = form === null;
   const { toast } = useNotify();
-  const { alert } = useSysDialogs();
   const saveForm = useSaveForm();
   const { errors, setError, clearError, checkRequired, applyApiError } = useFieldErrors<FieldKey>();
 
@@ -85,10 +82,6 @@ export default function FormModal({ form, canWrite, onClose }: FormModalProps) {
 
   const handleSubmit = async () => {
     if (!validate()) return;
-    if (!FORM_API_AVAILABLE) {
-      alert(FORM_MESSAGES.notAvailable);
-      return;
-    }
     const request: FormSaveRequest = {
       formNo: values.formNo.trim(),
       langCd: values.langCd as FormLang,

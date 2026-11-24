@@ -15,7 +15,7 @@ import styles from '@/features/system/_shared/system-page.module.scss';
 import { ImageField } from '../_shared/PostFiles';
 import { useLogo, useSaveLogo, useUploadLogoImage } from './use-logos';
 
-// Logo Management - Detail / Register / Edit popup (menu A04110200).
+// Logo Management - Detail / Register / Edit popup (menu A07060200).
 
 interface LogoModalProps {
   /** null = register a new logo. */

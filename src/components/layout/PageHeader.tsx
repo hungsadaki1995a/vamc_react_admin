@@ -1,3 +1,4 @@
+import { screenIdOfMenu } from '@/config/screen-ids';
 import { useState } from 'react';
 import { Space } from 'antd';
 import { StarOutlined, StarFilled } from '@ant-design/icons';
@@ -42,8 +43,8 @@ export default function PageHeader({
   // so relying on it alone would keep the initial language after switching locales.
   const allMenus = useAllMenus();
 
-  // code: explicit prop > tab.sceId > tab.componentKey
-  const resolvedCode = code ?? ctx?.tab.sceId ?? ctx?.tab.componentKey;
+  // code: explicit prop > IA Screen ID of the menu > tab.sceId > tab.componentKey
+  const resolvedCode = code ?? screenIdOfMenu(ctx?.tab.menuKey) ?? ctx?.tab.sceId ?? ctx?.tab.componentKey;
 
   // title: explicit prop > current locale menu name > t(labelKey) > saved tab.title
   const resolvedTitle = title

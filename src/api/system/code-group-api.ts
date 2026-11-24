@@ -1,7 +1,7 @@
 import { apiDownload, apiGet, apiPost, apiPut } from '@/api/common/api-utils';
 import type { PageQuery, PageResponse } from '@/api/common/api-utils';
 
-// ── Common Code (A06030100) ──────────────────────────────────────────────────
+// ── Common Code (A09030100) ──────────────────────────────────────────────────
 export type YesNo = 'Y' | 'N';
 
 export interface CodeGroupItem {

@@ -14,7 +14,7 @@ import {
 import type { Banner, BannerRequest, BannerSearch } from '@/api/contents/banner-api';
 import type { PageResponse } from '@/api/common/api-utils';
 
-// Data hooks of Banner Management (VPA003201 / VPA0032P01) — the screen never calls the API itself.
+// Data hooks of Banner Management (VPA07060101 / VPA070601P01) — the screen never calls the API itself.
 
 const BANNER_KEYS = {
   all: ['contents', 'banners'] as const,

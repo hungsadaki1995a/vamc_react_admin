@@ -75,7 +75,7 @@ const RUN_COLUMNS: TableColumnsType<ExchangeRateRun> = [
   },
 ];
 
-/** Exchange Rate Management - List (VPA09010401, menu A06010500), incl. the Sync Failed state. */
+/** Exchange Rate Management - List (VPA09010401, menu A09010400), incl. the Sync Failed state. */
 export default function ExchangeRateManagement() {
   const { toast, dialog } = useNotify();
   const { data: status, isFetching } = useExchangeRateStatus();
@@ -151,6 +151,8 @@ export default function ExchangeRateManagement() {
             rowKey="currencyCode"
             columns={RATE_COLUMNS}
             dataSource={status?.rates}
+            className={styles.blockTable}
+            fill
             loading={isFetching && !status}
           />
         </section>
@@ -165,6 +167,8 @@ export default function ExchangeRateManagement() {
             rowKey={(row) => `${row.startedAt ?? ''}-${row.triggerType ?? ''}`}
             columns={RUN_COLUMNS}
             dataSource={status?.recentRuns}
+            className={styles.blockTable}
+            fill
             loading={isFetching && !status}
           />
         </section>

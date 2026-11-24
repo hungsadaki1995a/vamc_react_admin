@@ -19,7 +19,7 @@ import { useAuction, useAuctions, useDeleteAuctions, useDownloadAuctionsExcel } 
 const PAGE_SIZE = 15;
 type DateRange = [Dayjs | null, Dayjs | null] | null;
 
-/** Online Auction Notice Management (menu A07010000). */
+/** Online Auction Notice Management (menu A06010000). */
 export default function AuctionManagement() {
   const { toast, dialog } = useNotify();
   const { canWrite } = useMenuPermission();

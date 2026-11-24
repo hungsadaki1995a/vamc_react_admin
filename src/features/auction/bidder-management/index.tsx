@@ -14,7 +14,7 @@ import type { BidderAuctionSearch } from './use-bidders';
 
 const PAGE_SIZE = 15;
 
-/** Bidder Management (menu A07020000). */
+/** Bidder Management (menu A06020000). */
 export default function BidderManagement() {
   const { toast } = useNotify();
   const { canWrite } = useMenuPermission();

@@ -160,6 +160,7 @@ export default function BatchJobModal({ job, canWrite, onClose, onOpenHistory }:
       submitting={createJob.isPending || updateJob.isPending}
       onCancel={onClose}
       leftActions={leftActions}
+      width={1200}
       notice={BATCH_MESSAGES.notice}
     >
       <SysFieldGrid columns={2}>

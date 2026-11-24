@@ -18,6 +18,8 @@ export interface MenuSetting {
   /** 0 = root */
   menuDpth: number;
   useYn: YesNo;
+  /** Show in Menu: N = hidden in the navigation, still accessible and permission-managed. */
+  menuExpsrYn?: YesNo;
   menuNmVn?: string;
   menuNmEn?: string;
   menuUrlAddr?: string;
@@ -58,6 +60,8 @@ export interface SaveMenuSettingRequest {
   menuExpln?: string;
   /** Blank on create → `N`. */
   useYn?: YesNo;
+  /** Show in Menu (Admin menus). Omitted: create → `Y`, update → unchanged. */
+  menuExpsrYn?: YesNo;
 }
 
 /** Flat tree ordered by sortPath, including Inactive menus and the root row (depth 0). */

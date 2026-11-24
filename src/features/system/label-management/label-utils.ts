@@ -15,7 +15,7 @@ export const LABEL_MESSAGES = {
   invalidScreenId: 'Use letters, numbers and _ only.',
   invalidLabelCode: 'Use letters, numbers, _ . - only.',
   keyTooLong: 'The label key must be 100 characters or less.',
-  typeNotAvailable: 'Waits for a schema change.',
+  screenNotRegistered: 'This Screen ID is not registered in Screen Management.',
   uploadDone: (rows: number) => `Excel uploaded (${rows.toLocaleString('en-US')} rows checked).`,
   uploadFailed: 'Nothing was saved. Fix the rows below and upload again.',
 } as const;
@@ -29,7 +29,7 @@ export function composeLabelKey(scrnId: string, lblSeCd: string, code: string): 
   return `${scrnId}.${lblSeCd}_${code}`;
 }
 
-/** Label Code part of a stored key, or the whole key for labels not made by the composer. */
+/** Label Code part of a stored key, or the whole key for labels not made by the composer (same rule as the API's lblCode). */
 export function labelCodeOf({ scrnId, lblSeCd, lblCd }: LabelKey): string {
   const prefix = `${scrnId}.${lblSeCd}_`;
   return lblCd.startsWith(prefix) ? lblCd.slice(prefix.length) : lblCd;

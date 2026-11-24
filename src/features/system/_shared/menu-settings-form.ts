@@ -11,7 +11,7 @@ export interface MenuForm {
   lblCd: string;
   /** Web Path (W) / Screen ID (A). */
   menuUrlAddr: string;
-  /** Admin "Show in Menu" — TODO(schema): no column yet (MENU_EXPSR_YN), never sent. */
+  /** Admin "Show in Menu" (MENU_EXPSR_YN): N hides it from the LNB, access and permissions stay. */
   showInMenu: YesNo;
 }
 
@@ -32,7 +32,7 @@ export function toMenuForm(menu: MenuSetting): MenuForm {
     menuNmEn: menu.menuNmEn ?? '',
     lblCd: menu.lblCd ?? '',
     menuUrlAddr: menu.menuUrlAddr ?? '',
-    showInMenu: 'Y',
+    showInMenu: menu.menuExpsrYn ?? 'Y',
   };
 }
 

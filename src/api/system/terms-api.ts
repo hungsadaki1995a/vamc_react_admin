@@ -1,7 +1,7 @@
 import { apiDelete, apiGet, apiPost, apiPut } from '@/api/common/api-utils';
 import type { PageQuery, PageResponse } from '@/api/common/api-utils';
 
-// ── Terms & Policies (A06010700) ─────────────────────────────────────────────
+// ── Terms & Policies (A09010700) ─────────────────────────────────────────────
 /** TRMS = Terms of Use, PRVC = Privacy Policy. */
 export type TermsType = 'TRMS' | 'PRVC';
 /** Derived by the server from the effective date. */

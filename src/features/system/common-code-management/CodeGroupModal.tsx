@@ -67,7 +67,7 @@ export function CodeGroupModal({ item, canWrite, onClose }: CodeGroupModalProps)
       onSubmit={canWrite ? () => void handleSubmit() : undefined}
       submitting={createGroup.isPending || updateGroup.isPending}
       onCancel={onClose}
-      width={720}
+      width={480}
     >
       <SysFieldGrid columns={1}>
         <SysField label="Group Code" required error={errors.groupCd}>

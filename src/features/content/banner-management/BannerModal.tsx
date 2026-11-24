@@ -15,7 +15,7 @@ import { ImageField } from '../_shared/PostFiles';
 import { useBanner, useSaveBanner, useUploadBannerImage } from './use-banners';
 import type { SaveBannerVariables } from './use-banners';
 
-// Banner Management - Detail / Register / Edit popup (VPA0032P01).
+// Banner Management - Detail / Register / Edit popup (VPA070601P01).
 // Policy: a banner in use cannot be edited — save it as Unused, then reopen to edit.
 
 interface BannerModalProps {

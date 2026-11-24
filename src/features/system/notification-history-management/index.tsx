@@ -23,7 +23,6 @@ import {
   SysExcelButton,
   SysFilterItem,
   SysFilterPanel,
-  SysNotAvailable,
   SysPage,
   SysPager,
   SysSearchActions,
@@ -34,6 +33,7 @@ import {
 import { API_DATE_ISO, SYS_DATE_FORMAT, SYS_PAGE_SIZE } from '../_shared/sys-constants';
 import { apiErrorCode, lastDaysRange } from '../_shared/system-utils';
 import { usePagedList } from '../_shared/use-paged-list';
+import type { SortState } from '../_shared/use-paged-list';
 import { useSysDialogs } from '../_shared/use-sys-dialogs';
 import NotificationHistoryDetailModal from './NotificationHistoryDetailModal';
 import { useDownloadNotificationHistoriesExcel, useNotificationHistories } from './use-notification-histories';
@@ -58,6 +58,7 @@ const SEARCH_TYPE_OPTIONS: { value: NotiHistorySearchType; label: string }[] = [
 const MESSAGES = {
   periodRequired: 'Please select the send period.',
   periodRange: `The send period can span at most ${NOTI_HISTORY_MAX_DAYS} days.`,
+  recipientUnavailable: 'Recipient search is not configured on the server.',
 } as const;
 
 function initialFilter(): HistoryFilter {
@@ -73,23 +74,54 @@ function toSearch(filter: HistoryFilter): NotificationHistorySearch {
   };
 }
 
-/** Frame column order and alignment; No counts from 1 on the newest row of each page. */
-function buildColumns(page: number): TableColumnsType<NotificationHistoryItem> {
+/**
+ * Frame column order and alignment. No counts from 1 on the newest row; sorting No descending lists the oldest
+ * first and counts down from the total.
+ */
+function buildColumns(page: number, total: number, sort?: SortState): TableColumnsType<NotificationHistoryItem> {
+  const descendingNo = sort?.sortBy === 'no' && sort.sortDirection === 'DESC';
+  const rowNo = (index: number) => {
+    const position = (page - 1) * SYS_PAGE_SIZE + index;
+    return descendingNo ? total - position : position + 1;
+  };
   return [
-    { title: 'No', key: 'no', width: 70, render: (_: unknown, __, index) => (page - 1) * SYS_PAGE_SIZE + index + 1 },
-    // Code / Service wait for the LOG_NOTI_SNDNG schema change.
-    { title: 'Code', key: 'code', align: 'center', width: 130, render: () => '-' },
+    { title: 'No', key: 'no', width: 60, sorter: true, render: (_: unknown, __, index) => rowNo(index) },
+    {
+      title: 'Code',
+      dataIndex: 'notiTmplCd',
+      key: 'notiTmplCd',
+      align: 'center',
+      width: 120,
+      sorter: true,
+      render: (v?: string) => v || '-',
+    },
     {
       title: 'Channel',
       dataIndex: 'notiMediaSe',
       key: 'notiMediaSe',
-      width: 120,
+      width: 100,
       sorter: true,
       render: (v: NotiChannel) => NOTI_CHANNEL_LABELS[v] ?? v,
     },
-    { title: 'Service', key: 'service', width: 160, render: () => '-' },
-    { title: 'Title', dataIndex: 'notiTtl', key: 'notiTtl', sorter: true },
-    { title: 'Recipient', dataIndex: 'notiRcvrId', width: 200, render: (v?: string) => v || '-' },
+    {
+      title: 'Service',
+      dataIndex: 'notiSrvcNm',
+      key: 'notiSrvcNm',
+      width: 160,
+      ellipsis: true,
+      sorter: true,
+      render: (v?: string) => v || '-',
+    },
+    { title: 'Title', dataIndex: 'notiTtl', key: 'notiTtl', sorter: true, ellipsis: true },
+    {
+      title: 'Recipient',
+      dataIndex: 'notiRcvrAddr',
+      key: 'notiRcvrAddr',
+      width: 170,
+      ellipsis: true,
+      sorter: true,
+      render: (v?: string) => v || '-',
+    },
     {
       title: 'Send Result',
       dataIndex: 'sndngScsYn',
@@ -103,7 +135,7 @@ function buildColumns(page: number): TableColumnsType<NotificationHistoryItem> {
       title: 'Sent At',
       dataIndex: 'notiSndngDt',
       key: 'notiSndngDt',
-      width: 180,
+      width: 160,
       sorter: true,
       render: (v?: string) => <DateTimeText value={v} seconds />,
     },
@@ -140,6 +172,7 @@ export default function NotificationHistoryManagement() {
   };
 
   const periodError = apiErrorCode(error) === NOTIFICATION_ERRORS.period;
+  const recipientError = apiErrorCode(error) === NOTIFICATION_ERRORS.recipientSearchUnavailable;
 
   return (
     <SysPage>
@@ -147,16 +180,13 @@ export default function NotificationHistoryManagement() {
         title="Notification Send History"
         breadcrumb={['System Operation Management', 'Notification Management', 'Notification Send History']}
       />
-      <SysNotAvailable title="Sends are not recorded yet">
-        The backend does not write the send history yet, so the list stays empty. Code, Service and the recipient
-        address wait for a schema change; Recipient shows the member / employee number.
-      </SysNotAvailable>
       <SysFilterPanel>
         <SysFilterItem label="Send Period">
           <AppRangePicker
             className={styles.rangePicker}
             value={draftPeriod}
             format={SYS_DATE_FORMAT}
+            separator="~"
             placeholder={['DD-MM-YYYY', 'DD-MM-YYYY']}
             onChange={(period) => setDraftPeriod(period)}
           />
@@ -173,6 +203,7 @@ export default function NotificationHistoryManagement() {
             value={list.draft.keyword}
             allowClear
             maxLength={100}
+            placeholder={list.draft.searchType === 'RECIPIENT' ? 'Full e-mail address or phone number' : undefined}
             onChange={(e) => list.setDraft({ keyword: e.target.value })}
             onPressEnter={handleSearch}
           />
@@ -180,13 +211,16 @@ export default function NotificationHistoryManagement() {
       </SysFilterPanel>
       <SysSearchActions onReset={handleReset} onSearch={handleSearch} loading={isFetching} />
       {periodError && <Alert type="error" showIcon title={MESSAGES.periodRange} />}
+      {recipientError && <Alert type="error" showIcon title={MESSAGES.recipientUnavailable} />}
       <SysSectionHeader
         total={total}
         actions={<SysExcelButton onClick={() => excel.mutate(search)} loading={excel.isPending} />}
       />
       <SysTable<NotificationHistoryItem>
         rowKey="logId"
-        columns={buildColumns(list.page)}
+        className={styles.listTable}
+        fill
+        columns={buildColumns(list.page, total, list.sort)}
         dataSource={data?.content ?? []}
         loading={isFetching}
         onRowClick={(row) => setDetailId(row.logId)}

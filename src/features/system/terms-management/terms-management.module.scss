@@ -11,3 +11,8 @@
   min-height: 160px;
   color: var(--color-text-secondary, #6f7b95);
 }
+
+/* The list frame runs to the page bottom like the design. */
+.listTable {
+  flex: 1 0 auto;
+}

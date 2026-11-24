@@ -10,6 +10,7 @@ import {
 } from '@/assets/images';
 import {
   findMenuTreeByCode,
+  isMenuShown,
   mapMenuTreesToMenuItems,
 } from '@/utils/menu-tree-utils';
 
@@ -249,9 +250,9 @@ export default function FlyoutPanel() {
   };
 
   const renderMenuTreeItems = (items: MenuTreeItem[], depth: number) => {
-    return items.map((item, index) => {
+    return items.filter(isMenuShown).map((item, index) => {
       const code = item.menuCd ?? `${depth}-${index}`;
-      const hasChildren = Boolean(item.children && item.children.length > 0);
+      const hasChildren = Boolean(item.children?.some(isMenuShown));
       const isExpanded = expandedKeys.includes(code);
       const isActive = !hasChildren && activeMenuKey === code;
       const label = item.menuLblVal?.trim() || item.menuNmDisplay?.trim() || '';

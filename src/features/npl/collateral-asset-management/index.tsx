@@ -14,7 +14,7 @@ import { useCollateralAsset, useCollateralAssets, useDownloadCollateralAssetsExc
 
 const PAGE_SIZE = 15;
 
-/** Collateral Asset Management (menu A03010200). */
+/** Collateral Asset Management (menu A04030000). */
 export default function CollateralAssetManagement() {
   const [expsrYn, setExpsrYn] = useState<'' | 'Y' | 'N'>('');
   const [notarYn, setNotarYn] = useState<'' | 'Y' | 'N'>('');

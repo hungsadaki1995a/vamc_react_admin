@@ -8,6 +8,7 @@ import { SYS_DIALOG_LABELS } from '@/features/system/_shared/sys-messages';
 import { DateTimeText, ResultBadge, SysPager, SysTable, UseBadge } from '@/features/system/_shared/SysListUi';
 import { SysFormModal } from '@/features/system/_shared/SysFormUi';
 import { useSysDialogs } from '@/features/system/_shared/use-sys-dialogs';
+import type { SortState } from '@/features/system/_shared/use-paged-list';
 import { BATCH_MESSAGES, formatCount, formatDuration, runErrorMessage, toResult } from './batch-utils';
 import { useBatchHistory, useBatchJob, useExecuteBatchJob } from './use-batch-jobs';
 import styles from './batch-management.module.scss';
@@ -24,7 +25,16 @@ export default function BatchHistoryModal({ jobName, onClose, allowRerun = false
   const { toast } = useNotify();
   const { confirm } = useSysDialogs();
   const [page, setPage] = useState(1);
-  const pageQuery = useMemo(() => ({ page, size: SYS_PAGE_SIZE }), [page]);
+  const [sort, setSortState] = useState<SortState>();
+  const pageQuery = useMemo(
+    () => ({ page, size: SYS_PAGE_SIZE, sortBy: sort?.sortBy, sortDirection: sort?.sortDirection }),
+    [page, sort],
+  );
+  // A sort change returns to page 1.
+  const setSort = (next?: SortState) => {
+    setSortState(next);
+    setPage(1);
+  };
 
   const { data: job } = useBatchJob(jobName);
   const { data, isFetching } = useBatchHistory(jobName, pageQuery);
@@ -51,18 +61,20 @@ export default function BatchHistoryModal({ jobName, onClose, allowRerun = false
       title: 'No',
       key: 'no',
       width: 70,
-      // Newest first, numbered from 1 as in the design.
+      // Row number in the current order (newest first by default), from 1 as in the design.
       render: (_value, _row, index) => (page - 1) * SYS_PAGE_SIZE + index + 1,
     },
     {
       title: 'Run At',
       dataIndex: 'bgngDt',
+      sorter: true,
       width: 170,
       render: (value?: string) => <DateTimeText value={value} seconds />,
     },
     {
       title: 'Result',
       dataIndex: 'btchStts',
+      sorter: true,
       width: 90,
       align: 'center',
       render: (value?: string) => <ResultBadge value={toResult(value)} />,
@@ -70,12 +82,14 @@ export default function BatchHistoryModal({ jobName, onClose, allowRerun = false
     {
       title: 'Processed',
       dataIndex: 'tprcsNocs',
+      sorter: true,
       width: 100,
       render: (value?: number) => formatCount(value),
     },
     {
       title: 'Duration',
       dataIndex: 'prgrsHr',
+      sorter: true,
       width: 120,
       render: (value?: number) => formatDuration(value),
     },
@@ -102,7 +116,7 @@ export default function BatchHistoryModal({ jobName, onClose, allowRerun = false
   ];
 
   return (
-    <SysFormModal open title="Batch Execution History" onCancel={onClose} width={1080}>
+    <SysFormModal open title="Batch Execution History" onCancel={onClose} width={1200}>
       <div className={styles.jobInfo}>
         <span className={styles.jobInfoItem}>
           <span className={styles.jobInfoLabel}>Job Name</span>
@@ -127,6 +141,8 @@ export default function BatchHistoryModal({ jobName, onClose, allowRerun = false
         dataSource={data?.content}
         loading={isFetching && !data}
         className={styles.historyTable}
+        sort={sort}
+        onSortChange={setSort}
       />
       <SysPager page={page} pageSize={SYS_PAGE_SIZE} total={total} onChange={setPage} />
     </SysFormModal>

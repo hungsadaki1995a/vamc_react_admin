@@ -14,7 +14,7 @@ import { errorMessage } from '@/features/system/_shared/system-utils';
 import styles from '@/features/system/_shared/system-page.module.scss';
 import { useSaveSlogan, useSlogan } from './use-slogans';
 
-// Slogan Management - Detail / Register / Edit popup (menu A04110300).
+// Slogan Management - Detail / Register / Edit popup (menu A07060300).
 
 interface SloganModalProps {
   /** null = register a new slogan. */

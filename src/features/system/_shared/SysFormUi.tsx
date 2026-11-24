@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
 import ActionButton from '@/components/common/actions/ActionButton';
 import Popup from '@/components/common/popup/Popup';
 import styles from './sys-ui.module.scss';
@@ -53,7 +53,8 @@ export function SysFormModal({
       {extraActions}
       {onSubmit ? (
         <>
-          <ActionButton action="cancel" onClick={onCancel}>
+          {/* Design: [Cancel] is the outlined blue button next to the filled submit. */}
+          <ActionButton action="cancel" intent="primary" appearance="outlined" onClick={onCancel}>
             Cancel
           </ActionButton>
           <ActionButton
@@ -93,9 +94,22 @@ export function SysFormModal({
 }
 
 /** Bordered label | value grid; `columns` = label-value pairs per row. */
-export function SysFieldGrid({ children, columns = 2 }: { children: ReactNode; columns?: 1 | 2 | 3 }) {
+export function SysFieldGrid({
+  children,
+  columns = 2,
+  labelWidth,
+}: {
+  children: ReactNode;
+  columns?: 1 | 2 | 3;
+  /** Label column width in px when a design label needs more than the default 120px. */
+  labelWidth?: number;
+}) {
   return (
-    <div className={styles.fieldGrid} data-cols={columns}>
+    <div
+      className={styles.fieldGrid}
+      data-cols={columns}
+      style={labelWidth ? ({ '--field-label-width': `${labelWidth}px` } as CSSProperties) : undefined}
+    >
       {children}
     </div>
   );

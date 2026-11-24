@@ -16,7 +16,6 @@ import {
   SysExcelButton,
   SysFilterItem,
   SysFilterPanel,
-  SysNotAvailable,
   SysPage,
   SysPager,
   SysSearchActions,
@@ -29,12 +28,10 @@ import { ALL, SYS_PAGE_SIZE, USE_YN_FILTER_OPTIONS } from '../_shared/sys-consta
 import { usePagedList } from '../_shared/use-paged-list';
 import { CHANNEL_FILTER_OPTIONS, RECIPIENT_TYPE_FILTER_OPTIONS } from './notification-message-constants';
 import NotificationMessageModal from './NotificationMessageModal';
-import { useNotificationMessages, useRecipientGroups } from './use-notification-messages';
+import { useDownloadNotificationMessagesExcel, useNotificationMessages } from './use-notification-messages';
 import styles from './notification-message-management.module.scss';
 
 // Notification Message Management - List (VPA09050101), v0.8 model.
-// Only the Use filter reaches the server for now; Channel / Recipient Type / No. filters, Excel, No. and
-// Service Type wait for the NOTI_MSG_MNG schema change and are shown disabled.
 
 interface MessageFilter {
   useYn: YesNo | '';
@@ -46,8 +43,12 @@ interface MessageFilter {
 const INITIAL_FILTER: MessageFilter = { useYn: ALL, channel: ALL, recipientType: ALL, no: '' };
 
 function toSearch(filter: MessageFilter): NotificationMessageSearch {
-  // TODO(api): send channel / recipient type / No. once the server filters on them.
-  return { useYns: filter.useYn };
+  return {
+    useYns: filter.useYn,
+    notiMediaSe: filter.channel,
+    notiRcvrSeCd: filter.recipientType,
+    keyword: filter.no.trim(),
+  };
 }
 
 /** Popup state: closed, register (null) or edit (template id). */
@@ -58,46 +59,72 @@ export default function NotificationMessageManagement() {
   const list = usePagedList<MessageFilter>(INITIAL_FILTER);
   const search = toSearch(list.applied);
   const { data, isFetching } = useNotificationMessages(search, list.pageQuery);
-  const recipients = useRecipientGroups();
+  const excel = useDownloadNotificationMessagesExcel();
   const [modal, setModal] = useState<ModalState>(null);
   const total = data?.totalElements ?? 0;
 
   const columns = useMemo<TableColumnsType<NotificationMessageItem>>(
     () => [
-      { title: 'Use', dataIndex: 'useYn', align: 'center', width: 100, render: (v: YesNo) => <UseBadge value={v} /> },
-      // No. / Service Type wait for the schema change.
-      { title: 'No.', key: 'no', width: 140, render: () => '-' },
-      { title: 'Service Type', key: 'serviceType', width: 180, render: () => '-' },
+      {
+        title: 'Use',
+        dataIndex: 'useYn',
+        key: 'useYn',
+        align: 'center',
+        width: 80,
+        sorter: true,
+        render: (v: YesNo) => <UseBadge value={v} />,
+      },
+      {
+        title: 'No.',
+        dataIndex: 'notiTmplCd',
+        key: 'notiTmplCd',
+        width: 130,
+        sorter: true,
+        render: (v?: string) => v || '-',
+      },
+      {
+        title: 'Service Type',
+        dataIndex: 'notiSrvcNm',
+        key: 'notiSrvcNm',
+        width: 160,
+        ellipsis: true,
+        sorter: true,
+        render: (v?: string) => v || '-',
+      },
       {
         title: 'Channel',
         dataIndex: 'notiMediaSe',
         key: 'notiMediaSe',
-        width: 120,
+        width: 100,
         sorter: true,
         render: (v: NotiChannel) => NOTI_CHANNEL_LABELS[v] ?? v,
       },
       {
         title: 'Recipient Type',
         dataIndex: 'notiRcvrSeCd',
-        width: 130,
+        key: 'notiRcvrSeCd',
+        width: 120,
+        sorter: true,
         render: (v?: NotiRecipientType) => (v ? NOTI_RECIPIENT_LABELS[v] : '-'),
       },
       {
         title: 'Recipient',
-        dataIndex: 'roleGroupId',
-        width: 180,
-        render: (v: string | undefined, row) =>
-          row.notiRcvrSeCd === 'EMP' && v ? (recipients.nameOf(v) ?? v) : '-',
+        dataIndex: 'roleGroupNm',
+        key: 'roleGroupNm',
+        width: 150,
+        ellipsis: true,
+        sorter: true,
+        render: (v: string | undefined, row) => (row.notiRcvrSeCd === 'EMP' ? (v ?? row.roleGroupId ?? '-') : '-'),
       },
       {
         title: 'Title Template',
         dataIndex: 'notiTtl',
         key: 'notiTtl',
         sorter: true,
-        render: (v: string) => <span className={styles.titleCell}>{v}</span>,
+        ellipsis: true,
       },
     ],
-    [recipients],
+    [],
   );
 
   return (
@@ -106,11 +133,7 @@ export default function NotificationMessageManagement() {
         title="Notification Message Management"
         breadcrumb={['System Operation Management', 'Notification Management', 'Notification Message Management']}
       />
-      <SysNotAvailable title="Partly available">
-        No., Service Type, Remarks, the Channel / Recipient Type / No. filters and Excel Download wait for a schema
-        change. Only the Use filter is applied for now.
-      </SysNotAvailable>
-      <SysFilterPanel columns={4}>
+      <SysFilterPanel>
         <SysFilterItem label="Use">
           <AppSelect<YesNo | ''> value={list.draft.useYn} options={USE_YN_FILTER_OPTIONS} onChange={(useYn) => list.setDraft({ useYn })} />
         </SysFilterItem>
@@ -118,7 +141,6 @@ export default function NotificationMessageManagement() {
           <AppSelect<NotiChannel | ''>
             value={list.draft.channel}
             options={CHANNEL_FILTER_OPTIONS}
-            disabled
             onChange={(channel) => list.setDraft({ channel })}
           />
         </SysFilterItem>
@@ -126,7 +148,6 @@ export default function NotificationMessageManagement() {
           <AppSelect<NotiRecipientType | ''>
             value={list.draft.recipientType}
             options={RECIPIENT_TYPE_FILTER_OPTIONS}
-            disabled
             onChange={(recipientType) => list.setDraft({ recipientType })}
           />
         </SysFilterItem>
@@ -134,16 +155,19 @@ export default function NotificationMessageManagement() {
           <TextInput
             value={list.draft.no}
             placeholder="No. or Service Type"
-            disabled
+            allowClear
+            maxLength={100}
             onChange={(e) => list.setDraft({ no: e.target.value })}
+            onPressEnter={() => list.search()}
           />
         </SysFilterItem>
       </SysFilterPanel>
       <SysSearchActions onReset={list.reset} onSearch={() => list.search()} loading={isFetching} />
       <SysSectionHeader
         total={total}
-        // TODO(api): no Excel endpoint for notification messages yet.
-        actions={<SysExcelButton onClick={() => undefined} disabled />}
+        actions={
+          <SysExcelButton onClick={() => excel.mutate({ search, query: list.pageQuery })} loading={excel.isPending} />
+        }
         primaryActions={
           canWrite && (
             <SysButton look="navy" onClick={() => setModal({ notiMsgId: null })}>
@@ -154,6 +178,8 @@ export default function NotificationMessageManagement() {
       />
       <SysTable<NotificationMessageItem>
         rowKey="notiMsgId"
+        className={styles.listTable}
+        fill
         columns={columns}
         dataSource={data?.content ?? []}
         loading={isFetching}

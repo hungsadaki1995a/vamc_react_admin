@@ -4,15 +4,24 @@
   width: 100%;
 }
 
+/* Table frame runs to the bottom of the page (design), pager below it. */
+.listBody {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+
+  > :first-child {
+    flex: 1 1 auto;
+  }
+}
 
 /* JSON parameters. */
 .code:global(.ant-input) {
   font-family: var(--font-family-mono, ui-monospace, SFMono-Regular, Menlo, monospace);
-  font-size: 12px;
+  font-size: var(--font-size-b2, 12px);
 }
 
 .errorText {
-  color: var(--color-text-negative, #e62e44);
   white-space: pre-wrap;
   word-break: break-word;
 }
@@ -35,22 +44,23 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 8px 40px;
-  margin-bottom: 16px;
-  padding: 14px 20px;
+  gap: 8px 24px;
+  margin-bottom: 20px;
+  padding: 10px 16px;
   border-radius: 4px;
   background: var(--color-bg-secondary, #f6f6f9);
   color: var(--color-text-primary, #3a404a);
+  font-size: var(--font-size-b2, 12px);
 }
 
 .jobInfoItem {
   display: inline-flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
 }
 
 .jobInfoLabel {
-  color: var(--color-text-secondary, #6f7b95);
+  color: var(--color-text-tertiary, #6f7b95);
 }
 
 .linkButton:global(.ant-btn) {

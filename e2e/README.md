@@ -31,7 +31,7 @@ Your `pnpm dev` on port 3000 can stay open: the tests start their own Vite serve
 |---------|--------------|
 | `pnpm e2e` | All scenarios + HTML report |
 | `pnpm e2e e2e/screens/shell.spec.ts` | One spec file |
-| `pnpm e2e -g "A06010300"` | One screen, by menu code (see `support/screens.ts`) |
+| `pnpm e2e -g "A09010300"` | One screen, by menu code (see `support/screens.ts`) |
 | `pnpm e2e -g "Fee Management"` | Tests whose title contains the text |
 | `pnpm e2e --open` | Serve the report in the browser when the run ends |
 | `pnpm e2e --headed` | Watch the browser while it runs (any Playwright option works) |

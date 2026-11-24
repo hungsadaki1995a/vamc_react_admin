@@ -3,8 +3,8 @@ import { apiDelete, apiDownload, apiGet, apiPatch, apiPost, apiPut } from '@/api
 import type { PageResponse } from '@/api/common/api-utils';
 import type { ContentFileGroup } from './post-api';
 
-// Banner Management API — BannerController (`/api/v1/contents/banners`), menu A04060000.
-// Screens VPA003201 (list) / VPA0032P01 (popup).
+// Banner Management API — BannerController (`/api/v1/contents/banners`), menu A07060100.
+// Screens VPA07060101 (list) / VPA070601P01 (popup).
 
 export interface Banner {
   bannerId: string;

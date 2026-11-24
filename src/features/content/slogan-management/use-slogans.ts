@@ -13,7 +13,7 @@ import type { SloganRequest, SiteDisplaySearch } from '@/api/contents/site-displ
 import type { Post, PostDetail } from '@/api/contents/post-api';
 import type { PageResponse } from '@/api/common/api-utils';
 
-// Data hooks of Slogan Management (menu A04110300) — the screen never calls the API itself.
+// Data hooks of Slogan Management (menu A07060300) — the screen never calls the API itself.
 
 const SLOGAN_KEYS = {
   all: ['contents', 'slogans'] as const,

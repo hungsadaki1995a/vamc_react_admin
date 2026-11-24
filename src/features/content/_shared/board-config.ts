@@ -89,7 +89,7 @@ const nplBoard = (id: string, title: string, category: string): BoardConfig => (
 });
 
 export const BOARDS = {
-  /** A04010000 — VPA002301 / VPA0023P01 */
+  /** A07010000 — VPA07010001 / VPA070100P01 */
   notice: {
     id: 'notice',
     board: 'notices',
@@ -100,16 +100,16 @@ export const BOARDS = {
     pin: true,
     contentRequired: true,
   },
-  /** A04020100 / 0200 / 0300 / 0400 — VPA002401–2601 + Disclosure */
+  /** A07020100 / 0200 / 0300 / 0400 — VPA07020101–2601 + Disclosure */
   news: newsBoard('news', 'News Management', 'NWS'),
   media: newsBoard('media', 'Media Management', 'MED'),
   resources: newsBoard('resources', 'Resources Management', 'RSC'),
   disclosure: newsBoard('disclosure', 'Disclosure Management', 'DSC'),
-  /** A04030100 / 0200 / 0300 — VPA002701–2901 */
+  /** A07030100 / 0200 / 0300 — VPA07030101–2901 */
   appraisalNotice: nplBoard('appraisal-notice', 'Appraisal Notice Management', 'APPR'),
   saleNotice: nplBoard('sale-notice', 'Sale Brokerage Notice Management', 'SALE'),
   auctionNotice: nplBoard('auction-notice', 'Online Auction Notice Management', 'AUCT'),
-  /** A04070000 — VPA003301 / VPA0033P01 */
+  /** A07070000 — VPA07070001 / VPA070700P01 */
   legal: {
     id: 'legal',
     board: 'legal-documents',
@@ -121,7 +121,7 @@ export const BOARDS = {
     legal: true,
     excel: true,
   },
-  /** A04090000 — VPA003401 / VPA0034P01 */
+  /** A07080000 — VPA07080001 / VPA070800P01 */
   careers: {
     id: 'careers',
     board: 'careers',
@@ -133,7 +133,7 @@ export const BOARDS = {
     contentRequired: true,
     excel: true,
   },
-  /** A04080100 — leadership sections of the About board */
+  /** A07100500 — leadership sections of the About board */
   leadership: {
     ...ABOUT,
     id: 'leadership',
@@ -154,7 +154,7 @@ export const BOARDS = {
     person: true,
     tag: { label: 'Tag', requestKey: 'tag' },
   },
-  /** A04080200 — partner section of the About board */
+  /** A07100600 — partner section of the About board */
   partners: {
     ...ABOUT,
     id: 'partners',
@@ -165,7 +165,7 @@ export const BOARDS = {
     image: true,
     tag: { label: 'Partner Type', requestKey: 'tag' },
   },
-  /** A04100000 */
+  /** A07110000 */
   serviceGuide: {
     id: 'service-guide',
     board: 'service-guides',
@@ -188,7 +188,7 @@ export const BOARDS = {
     tag: { label: 'Section Key', requestKey: 'sectionKey', createOnly: true, required: true },
     contentRequired: true,
   },
-  /** A04120000 — the AUC page of the service guide board */
+  /** A07090000 — the AUC page of the service guide board */
   auctionGuide: {
     id: 'auction-guide',
     board: 'service-guides',

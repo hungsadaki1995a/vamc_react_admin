@@ -19,7 +19,7 @@ import { useDebtor, useDebtors, useDeleteDebtors, useDownloadDebtorsExcel } from
 const PAGE_SIZE = 15;
 type DateRange = [Dayjs | null, Dayjs | null] | null;
 
-/** Debtor Management (menu A03010300). */
+/** Debtor Management (menu A04040000). */
 export default function DebtorManagement() {
   const { toast, dialog } = useNotify();
   const { canWrite } = useMenuPermission();

@@ -18,7 +18,7 @@ import type {
 } from '@/api/system/location-api';
 import type { PageQuery, PageResponse } from '@/api/common/api-utils';
 
-// Data hooks of Region Code Management (menu A06030200).
+// Data hooks of Region Code Management (menu A09030200).
 
 const REGION_KEYS = {
   provinces: ['system', 'regions', 'provinces'] as const,
@@ -27,7 +27,7 @@ const REGION_KEYS = {
   districtList: (mctpvCd: string | null) => ['system', 'regions', 'districts', mctpvCd] as const,
 };
 
-/** Paged province list, sorted by administrative code on the server. */
+/** Paged province list; default server order is administrative code unless `sortBy` is set. */
 export function useProvinces(search: ProvinceSearch, page: PageQuery) {
   return useApiQuery<PageResponse<ProvinceItem>>(REGION_KEYS.provinceList(search, page), () => getProvinces(search, page), {
     placeholderData: keepPreviousData,

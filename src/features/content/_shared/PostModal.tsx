@@ -26,7 +26,7 @@ import type { SavePostVariables } from './use-posts';
 dayjs.extend(customParseFormat);
 
 // Generic Detail / Register / Edit popup of a content board
-// (wireframes VPA0023P01 – VPA0034P01). Which rows appear is decided by the board config.
+// (wireframes VPA070100P01 – VPA070800P01). Which rows appear is decided by the board config.
 
 interface PostModalProps {
   config: BoardConfig;

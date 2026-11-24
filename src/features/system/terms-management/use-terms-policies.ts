@@ -16,7 +16,7 @@ import type {
 } from '@/api/system/terms-api';
 import type { PageQuery, PageResponse } from '@/api/common/api-utils';
 
-// Data hooks of Terms Management (menu A06010700).
+// Data hooks of Terms Management (menu A09010700).
 
 const TERMS_KEYS = {
   all: ['system', 'terms'] as const,
@@ -24,7 +24,7 @@ const TERMS_KEYS = {
   detail: (termsId: string | null) => ['system', 'terms', 'detail', termsId] as const,
 };
 
-/** Newest effective date first (server order). */
+/** Newest effective date first unless `sortBy` is set. */
 export function useTermsPolicies(search: TermsPolicySearch, page: PageQuery) {
   return useApiQuery<PageResponse<TermsPolicyItem>>(TERMS_KEYS.list(search, page), () => getTermsPolicies(search, page), {
     placeholderData: keepPreviousData,

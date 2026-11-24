@@ -9,79 +9,58 @@ import { useNotify } from '@/hooks/use-notify';
 import { NOTI_CHANNEL_LABELS, NOTIFICATION_ERRORS } from '@/api/system/notification-api';
 import type {
   NotiChannel,
-  NotiLang,
-  NotiProcessType,
   NotiRecipientType,
   NotificationMessageItem,
   NotificationMessageRequest,
   YesNo,
 } from '@/api/system/notification-api';
-import { SysButton, SysNotAvailable } from '../_shared/SysListUi';
-import { SysField, SysFieldGrid, SysFormModal, SysFormSection } from '../_shared/SysFormUi';
+import { SysButton } from '../_shared/SysListUi';
+import { SysField, SysFieldGrid, SysFormModal } from '../_shared/SysFormUi';
 import { USE_YN_RADIO_OPTIONS } from '../_shared/sys-constants';
 import { SYS_MESSAGES } from '../_shared/sys-messages';
 import { errorMessage } from '../_shared/system-utils';
 import { useFieldErrors } from '../_shared/use-field-errors';
+import { CHANNEL_OPTIONS, RECIPIENT_TYPE_OPTIONS } from './notification-message-constants';
 import {
-  CHANNEL_OPTIONS,
-  LANG_OPTIONS,
-  MENU_CODE_PATTERN,
-  NOT_AVAILABLE_REASON,
-  PROCESS_TYPE_OPTIONS,
-  RECIPIENT_TYPE_OPTIONS,
-  TEMPLATE_VARIABLES,
-} from './notification-message-constants';
-import { useNotificationMessage, useRecipientGroups, useSaveNotificationMessage } from './use-notification-messages';
+  useNotificationMessage,
+  useRecipientGroups,
+  useSaveNotificationMessage,
+  useTemplateVariables,
+} from './use-notification-messages';
 import styles from './notification-message-management.module.scss';
 
 // Notification Message Management - Register / Edit popup (VPA090501P01), v0.8 model.
-// No. / Service Type / Remarks have no backend column yet: shown disabled and not sent.
-// Menu Code / Processing Type / Language are still required by the API: kept in a "Legacy" block.
+// No. is assigned by the server on register and read-only on edit; active templates can be edited.
 
-type FieldKey =
-  | 'notiMediaSe'
-  | 'notiRcvrSeCd'
-  | 'useYn'
-  | 'roleGroupId'
-  | 'notiTtl'
-  | 'notiCn'
-  | 'menuCd'
-  | 'prcsSttsCd'
-  | 'langCd';
+type FieldKey = 'notiSrvcNm' | 'notiMediaSe' | 'notiRcvrSeCd' | 'useYn' | 'roleGroupId' | 'notiTtl' | 'notiCn' | 'noteCn';
 
 type TemplateField = 'notiTtl' | 'notiCn';
 
-const NOT_AVAILABLE_HINT = <SysNotAvailable variant="inline">{NOT_AVAILABLE_REASON}</SysNotAvailable>;
-
 interface MessageFormState {
+  notiSrvcNm: string;
   notiMediaSe: NotiChannel;
   notiRcvrSeCd: NotiRecipientType;
   useYn: YesNo;
   roleGroupId: string | undefined;
   notiTtl: string;
   notiCn: string;
-  menuCd: string;
-  prcsSttsCd: NotiProcessType | undefined;
-  langCd: NotiLang;
+  noteCn: string;
 }
 
 const MESSAGES = {
-  menuCode: 'Menu code must be A followed by 8 digits.',
-  duplicate:
-    'Another template in use already has this menu code, processing type, channel, recipient type and language.',
+  roleGroupNotFound: 'The selected user group does not exist or is not in use.',
 } as const;
 
 function toState(item: NotificationMessageItem | null): MessageFormState {
   return {
+    notiSrvcNm: item?.notiSrvcNm ?? '',
     notiMediaSe: item?.notiMediaSe ?? 'MAIL',
     notiRcvrSeCd: item?.notiRcvrSeCd ?? 'MBR',
     useYn: item?.useYn ?? 'Y',
     roleGroupId: item?.roleGroupId || undefined,
     notiTtl: item?.notiTtl ?? '',
     notiCn: item?.notiCn ?? '',
-    menuCd: item?.menuCd ?? '',
-    prcsSttsCd: item?.prcsSttsCd,
-    langCd: item?.langCd ?? 'VN',
+    noteCn: item?.noteCn ?? '',
   };
 }
 
@@ -121,8 +100,9 @@ function MessageForm({
   const isCreate = item === null;
   const { toast } = useNotify();
   const recipients = useRecipientGroups();
+  const variables = useTemplateVariables();
   const saveMessage = useSaveNotificationMessage();
-  const { errors, setError, clearError, checkRequired, applyApiError } = useFieldErrors<FieldKey>();
+  const { errors, clearError, checkRequired, applyApiError } = useFieldErrors<FieldKey>();
   const [values, setValues] = useState<MessageFormState>(() => toState(item));
   // Caret of the last focused template field, for [Insert Variable].
   const caret = useRef<{ field: TemplateField; start: number; end: number }>({ field: 'notiTtl', start: -1, end: -1 });
@@ -157,41 +137,142 @@ function MessageForm({
   };
 
   const validate = (): boolean => {
-    const required: FieldKey[] = ['notiMediaSe', 'notiRcvrSeCd', 'useYn', 'notiTtl', 'notiCn', 'menuCd', 'prcsSttsCd', 'langCd'];
+    const required: FieldKey[] = ['notiSrvcNm', 'notiMediaSe', 'notiRcvrSeCd', 'useYn', 'notiTtl', 'notiCn'];
     if (isAdmin) required.push('roleGroupId');
-    if (!checkRequired(values, required)) return false;
-    if (!MENU_CODE_PATTERN.test(values.menuCd.trim())) {
-      setError('menuCd', MESSAGES.menuCode);
-      return false;
-    }
-    return true;
+    return checkRequired(values, required);
   };
 
   const handleSubmit = async () => {
     if (!validate()) return;
     const request: NotificationMessageRequest = {
       useYn: values.useYn,
-      menuCd: values.menuCd.trim(),
+      notiSrvcNm: values.notiSrvcNm.trim(),
       notiMediaSe: values.notiMediaSe,
-      prcsSttsCd: values.prcsSttsCd as NotiProcessType,
       notiRcvrSeCd: values.notiRcvrSeCd,
       roleGroupId: isAdmin ? values.roleGroupId : undefined,
-      langCd: values.langCd,
       notiTtl: values.notiTtl.trim(),
       notiCn: values.notiCn,
+      noteCn: values.noteCn.trim() || undefined,
     };
     try {
       await saveMessage.mutateAsync({ current: item, request });
       toast.success(isCreate ? SYS_MESSAGES.registered : SYS_MESSAGES.updated);
       onClose();
     } catch (error) {
-      const handled = applyApiError(error, { [NOTIFICATION_ERRORS.duplicate]: ['menuCd', MESSAGES.duplicate] });
+      const handled = applyApiError(error, {
+        [NOTIFICATION_ERRORS.roleGroupNotFound]: ['roleGroupId', MESSAGES.roleGroupNotFound],
+        [NOTIFICATION_ERRORS.unknownVariable]: ['notiCn', errorMessage(error)],
+      });
       if (!handled) toast.error(errorMessage(error));
     }
   };
 
   const channelOptions =
     values.notiMediaSe === 'PUSH' ? [...CHANNEL_OPTIONS, { value: 'PUSH' as const, label: NOTI_CHANNEL_LABELS.PUSH }] : CHANNEL_OPTIONS;
+
+  const headFields = (
+    <>
+      <SysField label="Service Type" required error={errors.notiSrvcNm}>
+        <TextInput
+          value={values.notiSrvcNm}
+          maxLength={100}
+          placeholder="e.g. OTP Verification, Sign Up, Auction"
+          disabled={disabled}
+          onChange={(e) => patch('notiSrvcNm', { notiSrvcNm: e.target.value })}
+        />
+      </SysField>
+      <SysField label="Channel" required error={errors.notiMediaSe}>
+        <AppSelect<NotiChannel>
+          className={styles.fullWidth}
+          value={values.notiMediaSe}
+          options={channelOptions}
+          disabled={disabled}
+          onChange={(notiMediaSe) => patch('notiMediaSe', { notiMediaSe })}
+        />
+      </SysField>
+    </>
+  );
+
+  const restFields = (
+    <>
+      <SysField label="Recipient Type" required error={errors.notiRcvrSeCd}>
+        <AppRadio.Group
+          value={values.notiRcvrSeCd}
+          options={RECIPIENT_TYPE_OPTIONS}
+          disabled={disabled}
+          onChange={(e) => changeRecipientType(e.target.value as NotiRecipientType)}
+        />
+      </SysField>
+      <SysField label="Use" required error={errors.useYn}>
+        <AppRadio.Group
+          value={values.useYn}
+          options={USE_YN_RADIO_OPTIONS}
+          disabled={disabled}
+          onChange={(e) => patch('useYn', { useYn: e.target.value as YesNo })}
+        />
+      </SysField>
+      <SysField label="Recipient" required={isAdmin} error={errors.roleGroupId}>
+        <AppSelect<string>
+          className={styles.fullWidth}
+          value={values.roleGroupId}
+          placeholder="Select"
+          options={recipients.options}
+          loading={recipients.loading}
+          disabled={disabled || !isAdmin}
+          allowClear
+          showSearch={{ optionFilterProp: 'label' }}
+          onChange={(roleGroupId) => patch('roleGroupId', { roleGroupId })}
+        />
+      </SysField>
+      <SysField label="Title Template" required span="full" error={errors.notiTtl}>
+        <TextInput
+          value={values.notiTtl}
+          maxLength={256}
+          disabled={disabled}
+          onChange={(e) => patch('notiTtl', { notiTtl: e.target.value })}
+          onSelect={trackCaret('notiTtl')}
+          onFocus={trackCaret('notiTtl')}
+        />
+      </SysField>
+      <SysField label="Content Template" required span="full" error={errors.notiCn}>
+        <div className={styles.contentCell}>
+          <TextArea
+            value={values.notiCn}
+            rows={4}
+            placeholder="e.g. New membership request: {mbrName}"
+            disabled={disabled}
+            onChange={(e) => patch('notiCn', { notiCn: e.target.value })}
+            onSelect={trackCaret('notiCn')}
+            onFocus={trackCaret('notiCn')}
+          />
+          <div className={styles.variableBar}>
+            <span className={styles.variableLabel}>Insert Variable</span>
+            {variables.map((variable) => (
+              <SysButton
+                key={variable.name}
+                size="small"
+                disabled={disabled}
+                title={variable.secret ? `${variable.description} (masked in the send history)` : variable.description}
+                // Keep the caret in the template field.
+                onMouseDown={(e) => e.preventDefault()}
+                onClick={() => insertVariable(variable.placeholder)}
+              >
+                {variable.placeholder}
+              </SysButton>
+            ))}
+          </div>
+        </div>
+      </SysField>
+      <SysField label="Remarks" span="full" error={errors.noteCn}>
+        <TextInput
+          value={values.noteCn}
+          maxLength={1000}
+          disabled={disabled}
+          onChange={(e) => patch('noteCn', { noteCn: e.target.value })}
+        />
+      </SysField>
+    </>
+  );
 
   return (
     <SysFormModal
@@ -203,132 +284,22 @@ function MessageForm({
       submitting={saveMessage.isPending}
       onCancel={onClose}
     >
-      {/* Frame layout: [No. |] Service Type | Channel / Recipient Type | Use | Recipient / Title / Content + Insert Variable / Remarks */}
-      <SysFieldGrid columns={3}>
-        {!isCreate && (
-          <SysField label="No." hint={NOT_AVAILABLE_HINT}>
-            <TextInput value="" placeholder="-" disabled />
-          </SysField>
-        )}
-        <SysField label="Service Type" required span={isCreate ? 2 : 1} hint={NOT_AVAILABLE_HINT}>
-          <TextInput placeholder="e.g. OTP Verification, Sign Up, Auction" disabled />
-        </SysField>
-        <SysField label="Channel" required error={errors.notiMediaSe}>
-          <AppSelect<NotiChannel>
-            className={styles.fullWidth}
-            value={values.notiMediaSe}
-            options={channelOptions}
-            disabled={disabled}
-            onChange={(notiMediaSe) => patch('notiMediaSe', { notiMediaSe })}
-          />
-        </SysField>
-        <SysField label="Recipient Type" required error={errors.notiRcvrSeCd}>
-          <AppRadio.Group
-            value={values.notiRcvrSeCd}
-            options={RECIPIENT_TYPE_OPTIONS}
-            disabled={disabled}
-            onChange={(e) => changeRecipientType(e.target.value as NotiRecipientType)}
-          />
-        </SysField>
-        <SysField label="Use" required error={errors.useYn}>
-          <AppRadio.Group
-            value={values.useYn}
-            options={USE_YN_RADIO_OPTIONS}
-            disabled={disabled}
-            onChange={(e) => patch('useYn', { useYn: e.target.value as YesNo })}
-          />
-        </SysField>
-        <SysField label="Recipient" required={isAdmin} error={errors.roleGroupId}>
-          <AppSelect<string>
-            className={styles.fullWidth}
-            value={values.roleGroupId}
-            placeholder="Select"
-            options={recipients.options}
-            loading={recipients.loading}
-            disabled={disabled || !isAdmin}
-            allowClear
-            showSearch={{ optionFilterProp: 'label' }}
-            onChange={(roleGroupId) => patch('roleGroupId', { roleGroupId })}
-          />
-        </SysField>
-        <SysField label="Title Template" required span="full" error={errors.notiTtl}>
-          <TextInput
-            value={values.notiTtl}
-            maxLength={256}
-            disabled={disabled}
-            onChange={(e) => patch('notiTtl', { notiTtl: e.target.value })}
-            onSelect={trackCaret('notiTtl')}
-            onFocus={trackCaret('notiTtl')}
-          />
-        </SysField>
-        <SysField label="Content Template" required span="full" error={errors.notiCn}>
-          <div className={styles.contentCell}>
-            <TextArea
-              value={values.notiCn}
-              rows={6}
-              placeholder="e.g. New membership request: {mbrName}"
-              disabled={disabled}
-              onChange={(e) => patch('notiCn', { notiCn: e.target.value })}
-              onSelect={trackCaret('notiCn')}
-              onFocus={trackCaret('notiCn')}
-            />
-            <div className={styles.variableBar}>
-              <span className={styles.variableLabel}>Insert Variable</span>
-              {TEMPLATE_VARIABLES.map((variable) => (
-                <SysButton
-                  key={variable.key}
-                  size="small"
-                  disabled={disabled}
-                  title={variable.label}
-                  // Keep the caret in the template field.
-                  onMouseDown={(e) => e.preventDefault()}
-                  onClick={() => insertVariable(variable.key)}
-                >
-                  {variable.key}
-                </SysButton>
-              ))}
-            </div>
-          </div>
-        </SysField>
-        <SysField label="Remarks" span="full" hint={NOT_AVAILABLE_HINT}>
-          <TextInput disabled />
-        </SysField>
-      </SysFieldGrid>
-      <SysFormSection title="Legacy (until schema change)">
-        <p className={styles.legacyNote}>
-          Still required by the current API to save the template; removed once the v0.8 fields are available.
-        </p>
+      {/* Register: Service Type | Channel in halves, then Recipient Type | Use | Recipient / Title / Content + Insert
+          Variable / Remarks. Edit: No. | Service Type | Channel first, all on the 3-pair grid. */}
+      {isCreate ? (
+        <div className={styles.registerGrid}>
+          <SysFieldGrid columns={2}>{headFields}</SysFieldGrid>
+          <SysFieldGrid columns={3}>{restFields}</SysFieldGrid>
+        </div>
+      ) : (
         <SysFieldGrid columns={3}>
-          <SysField label="Menu Code" required error={errors.menuCd} hint={item?.menuNm}>
-            <TextInput
-              value={values.menuCd}
-              maxLength={9}
-              placeholder="e.g. A01010000"
-              disabled={disabled}
-              onChange={(e) => patch('menuCd', { menuCd: e.target.value.toUpperCase() })}
-            />
+          <SysField label="No.">
+            <TextInput value={item?.notiTmplCd ?? ''} placeholder="-" disabled />
           </SysField>
-          <SysField label="Processing Type" required error={errors.prcsSttsCd}>
-            <AppSelect<NotiProcessType>
-              className={styles.fullWidth}
-              value={values.prcsSttsCd}
-              placeholder="Select"
-              options={PROCESS_TYPE_OPTIONS}
-              disabled={disabled}
-              onChange={(prcsSttsCd) => patch('prcsSttsCd', { prcsSttsCd })}
-            />
-          </SysField>
-          <SysField label="Language" required error={errors.langCd}>
-            <AppSelect<NotiLang>
-              className={styles.fullWidth}
-              value={values.langCd}
-              options={LANG_OPTIONS}
-              disabled={disabled}
-              onChange={(langCd) => patch('langCd', { langCd })}
-            />
-          </SysField>
+          {headFields}
+          {restFields}
         </SysFieldGrid>
-      </SysFormSection>
+      )}
     </SysFormModal>
   );
 }

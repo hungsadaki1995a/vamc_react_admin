@@ -18,6 +18,7 @@ import {
   uploadLabelsExcel,
 } from '@/api/system/label-management-api';
 import type {
+  CreateLabelRequest,
   LabelCacheReloadResult,
   LabelDetail,
   LabelKey,
@@ -27,7 +28,7 @@ import type {
   LabelSearch,
 } from '@/api/system/label-management-api';
 
-// Data hooks of i18n Label Management (menu A06040300).
+// Data hooks of i18n Label Management (menu A09040300).
 
 const LABEL_KEYS = {
   all: ['system', 'labels'] as const,
@@ -92,7 +93,7 @@ function useLabelAction<TData, TVariables = void>(action: (variables: TVariables
   return { run, isPending: mutation.isPending };
 }
 
-export const useCreateLabel = () => useLabelAction((body: LabelSaveRequest) => createLabel(body));
+export const useCreateLabel = () => useLabelAction((body: CreateLabelRequest) => createLabel(body));
 
 /** Description-only edit (popup) or text save (Text by Language). */
 export const useUpdateLabel = () => useLabelAction((body: LabelSaveRequest) => updateLabel(body));

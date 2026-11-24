@@ -1,12 +1,12 @@
 import { useMemo, useRef, useState } from 'react';
-import type { Key, ReactNode } from 'react';
+import type { CSSProperties, Key, ReactNode } from 'react';
 import type { TableColumnsType } from 'antd';
-import DataTable from '@/components/common/table/DataTable';
 import AppSelect from '@/components/inputs/AppSelect';
 import Spinbox from '@/components/inputs/Spinbox';
 import TextInput from '@/components/inputs/TextInput';
 import { useNotify } from '@/hooks/use-notify';
-import { SysButton, SysEmpty, SysSectionHeader } from '@/features/system/_shared/SysListUi';
+import { SysButton, SysSectionHeader, SysTable, UseBadge } from '@/features/system/_shared/SysListUi';
+import type { SortState } from '@/features/system/_shared/use-paged-list';
 import { SYS_MESSAGES } from '@/features/system/_shared/sys-messages';
 import { USE_YN_RADIO_OPTIONS } from '@/features/system/_shared/sys-constants';
 import { useSysDialogs } from '@/features/system/_shared/use-sys-dialogs';
@@ -17,6 +17,8 @@ import styles from './code-detail-grid.module.scss';
 // [Add Row] adds an empty row, [Delete Row] removes checked rows (C02 when none),
 // [Save] sends added + edited rows (isNew flag) and deleted keys in one call.
 // The parent remounts it (`key`) when the server rows change, so state starts from props.
+// Look (frames VPA09030101 / 0201 / 0301): plain-looking cells in the shared list frame, fixed layout
+// with ellipsis, sortable headers. With no master row the empty table frame is shown.
 
 export type GridValue = string | number | null;
 export type GridRecord = Record<string, GridValue>;
@@ -29,7 +31,11 @@ export interface GridColumn {
   required?: boolean;
   /** Key column: locked on saved rows, checked for duplicates. */
   isKey?: boolean;
-  width?: number;
+  width?: number | string;
+  /** Shown as text only (e.g. server-generated Label Key); '-' when empty. */
+  readOnly?: boolean;
+  /** Header sort arrows: reorders the saved rows, added rows stay at the bottom. */
+  sortable?: boolean;
   maxLength?: number;
   min?: number;
   max?: number;
@@ -55,7 +61,7 @@ interface GridRow {
 
 interface CodeDetailGridProps {
   title: ReactNode;
-  /** No master row selected: buttons disabled, empty notice shown. */
+  /** No master row selected: buttons disabled, empty table frame with `emptyText`. */
   disabled: boolean;
   emptyText: string;
   canWrite: boolean;
@@ -70,6 +76,13 @@ interface CodeDetailGridProps {
   isDuplicateError?: (error: unknown) => boolean;
   /** Reports unsaved edits so the parent can guard row changes (C01). */
   onDirtyChange?: (dirty: boolean) => void;
+  /** false: columns keep their pixel widths and the frame scrolls sideways (Finance branches). Default true: fit the panel. */
+  fitWidth?: boolean;
+}
+
+interface GridSort {
+  field: string;
+  order: 'ascend' | 'descend';
 }
 
 type CellErrors = Record<string, Record<string, string>>;
@@ -81,6 +94,14 @@ const normalizeKey = (value: GridValue | undefined) => String(value ?? '').trim(
 
 const trimValues = (values: GridRecord): GridRecord =>
   Object.fromEntries(Object.entries(values).map(([k, v]) => [k, typeof v === 'string' ? v.trim() : v]));
+
+function compareValues(a: GridValue | undefined, b: GridValue | undefined) {
+  const blankA = a === null || a === undefined || a === '';
+  const blankB = b === null || b === undefined || b === '';
+  if (blankA || blankB) return blankA === blankB ? 0 : blankA ? 1 : -1;
+  if (typeof a === 'number' && typeof b === 'number') return a - b;
+  return String(a).localeCompare(String(b), undefined, { numeric: true, sensitivity: 'base' });
+}
 
 function sameValues(a: GridRecord, b: GridRecord, columns: GridColumn[]) {
   return columns.every((c) => (a[c.field] ?? null) === (b[c.field] ?? null));
@@ -99,6 +120,7 @@ export function CodeDetailGrid({
   onSave,
   isDuplicateError,
   onDirtyChange,
+  fitWidth = true,
 }: CodeDetailGridProps) {
   const { toast } = useNotify();
   const { alert } = useSysDialogs();
@@ -112,6 +134,7 @@ export function CodeDetailGrid({
   const [checked, setChecked] = useState<Key[]>([]);
   const [cellErrors, setCellErrors] = useState<CellErrors>({});
   const [gridError, setGridError] = useState<string>();
+  const [sort, setSort] = useState<GridSort>();
   const seq = useRef(0);
 
   const markDirty = () => onDirtyChange?.(true);
@@ -125,6 +148,24 @@ export function CodeDetailGrid({
       return { ...prev, [rowKey]: rowErrors };
     });
     markDirty();
+  };
+
+  /** Saved rows in server order (sort off) or by the clicked column; added rows keep their place at the bottom. */
+  const applySort = (next?: GridSort) => {
+    setSort(next);
+    setGridRows((prev) => {
+      const saved = prev.filter((r) => !r.isNew);
+      const added = prev.filter((r) => r.isNew);
+      const serverOrder = new Map(rows.map((r, i) => [`s-${String(r[keyField])}`, i]));
+      saved.sort((a, b) => {
+        if (next) {
+          const diff = compareValues(a.values[next.field], b.values[next.field]);
+          if (diff !== 0) return next.order === 'ascend' ? diff : -diff;
+        }
+        return (serverOrder.get(a.rowKey) ?? 0) - (serverOrder.get(b.rowKey) ?? 0);
+      });
+      return [...saved, ...added];
+    });
   };
 
   const handleAddRow = () => {
@@ -215,9 +256,10 @@ export function CodeDetailGrid({
     const error = cellErrors[row.rowKey]?.[column.field];
     const status = error ? 'error' : undefined;
     if (column.kind === 'date') return <span className={styles.readonly}>{formatSysDateTime(typeof value === 'string' ? value : null)}</span>;
+    if (column.readOnly) return <span className={styles.readonly}>{isBlank(value) ? '-' : value}</span>;
     const readOnly = !canWrite || (column.isKey && !row.isNew);
     if (readOnly) {
-      if (column.kind === 'use') return value === 'Y' ? 'Active' : 'Inactive';
+      if (column.kind === 'use') return <UseBadge value={value === null ? null : String(value)} />;
       if (column.kind === 'select') return column.options?.find((o) => o.value === value)?.label ?? value ?? '-';
       return <span className={styles.readonly}>{value ?? ''}</span>;
     }
@@ -232,6 +274,7 @@ export function CodeDetailGrid({
               min={column.min}
               max={column.max}
               precision={0}
+              inputVariant="borderless"
               value={typeof value === 'number' ? value : null}
               onChange={(v) => updateCell(row.rowKey, column.field, typeof v === 'number' ? v : null)}
             />
@@ -243,6 +286,9 @@ export function CodeDetailGrid({
               className={styles.control}
               status={status}
               options={USE_YN_RADIO_OPTIONS}
+              variant="borderless"
+              labelRender={({ value: v }) => <UseBadge value={v as string} />}
+              suffixIcon={null}
               value={value ?? undefined}
               onChange={(v) => updateCell(row.rowKey, column.field, (v as GridValue) ?? null)}
             />
@@ -255,6 +301,7 @@ export function CodeDetailGrid({
               optionFilterProp="label"
               className={styles.control}
               status={status}
+              variant="borderless"
               options={column.options}
               value={value ?? undefined}
               placeholder="Select"
@@ -268,6 +315,8 @@ export function CodeDetailGrid({
               size="small"
               className={styles.control}
               status={status}
+              inputVariant="borderless"
+              title={typeof value === 'string' ? value : undefined}
               maxLength={column.maxLength}
               value={value === null || value === undefined ? '' : String(value)}
               onChange={(e) => updateCell(row.rowKey, column.field, e.target.value)}
@@ -285,19 +334,21 @@ export function CodeDetailGrid({
 
   const tableColumns: TableColumnsType<GridRow> = columns.map((column) => ({
     key: column.field,
-    // An element, not a fragment: antd attaches a ref to the header title.
-    title: column.required ? (
-      <span>
-        {column.title}
-        <span className={styles.requiredMark}>*</span>
-      </span>
-    ) : (
-      column.title
-    ),
+    title: column.title,
     width: column.width,
-    align: column.kind === 'use' || column.kind === 'number' || column.kind === 'date' ? 'center' : undefined,
+    ellipsis: true,
+    // SysTable treats `sorter: true` + `key` as a controlled sort (see `sortState`).
+    sorter: column.sortable ? true : undefined,
+    align: column.kind === 'date' ? 'center' : undefined,
     render: (_v, row) => renderEditor(column, row),
   }));
+
+  const sortState: SortState | undefined = sort && { sortBy: sort.field, sortDirection: sort.order === 'ascend' ? 'ASC' : 'DESC' };
+
+  // Fixed pixel widths + checkbox column: the table's minimum width when it does not fit the panel.
+  const minWidth = fitWidth
+    ? undefined
+    : columns.reduce((sum, c) => sum + (typeof c.width === 'number' ? c.width : 120), canWrite ? 40 : 0);
 
   const header = (
     <SysSectionHeader
@@ -325,33 +376,31 @@ export function CodeDetailGrid({
     />
   );
 
-  if (disabled) {
-    return (
-      <>
-        {header}
-        <SysEmpty>{emptyText}</SysEmpty>
-      </>
-    );
-  }
-
   return (
     <>
       {header}
       {gridError && <div className={styles.gridError}>{gridError}</div>}
-      <div className={styles.gridWrap}>
-        <DataTable<GridRow>
-          size="small"
-          rowKey="rowKey"
-          columns={tableColumns}
-          dataSource={gridRows}
-          loading={loading}
-          scroll={{ x: 'max-content' }}
-          rowClassName={(row) => (row.isNew ? styles.newRow : '')}
-          rowSelection={
-            canWrite ? { selectedRowKeys: checked, onChange: (keys) => setChecked(keys), columnWidth: 40 } : undefined
-          }
-        />
-      </div>
+      <SysTable<GridRow>
+        fill
+        className={styles.grid}
+        style={minWidth ? ({ '--grid-min-width': `${minWidth}px` } as CSSProperties) : undefined}
+        rowKey="rowKey"
+        columns={tableColumns}
+        dataSource={disabled ? [] : gridRows}
+        loading={loading}
+        tableLayout="fixed"
+        locale={{ emptyText: <span className={styles.emptyText}>{disabled ? emptyText : ''}</span> }}
+        sort={sortState}
+        onSortChange={(next) =>
+          applySort(next && { field: next.sortBy, order: next.sortDirection === 'ASC' ? 'ascend' : 'descend' })
+        }
+        rowClassName={(row) => (row.isNew ? styles.newRow : '')}
+        rowSelection={
+          canWrite
+            ? { selectedRowKeys: checked, onChange: (keys) => setChecked(keys), columnWidth: 40, getCheckboxProps: () => ({ disabled }) }
+            : undefined
+        }
+      />
     </>
   );
 }

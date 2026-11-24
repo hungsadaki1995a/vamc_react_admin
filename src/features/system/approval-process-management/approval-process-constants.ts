@@ -1,4 +1,4 @@
-// Texts and limits of Approval Process Management (menu A06040500).
+// Texts and limits of Approval Process Management (menu A09040500).
 
 /** Same limits as CreateApprovalProcessRequest / ApprovalProcessStepRequest. */
 export const PROCESS_CODE_PATTERN = /^[A-Z0-9_]+$/;

@@ -1,7 +1,7 @@
 import { apiDelete, apiDownload, apiGet, apiPatch, apiPost, apiPut } from '@/api/common/api-utils';
 import type { PageQuery, PageResponse } from '@/api/common/api-utils';
 
-// Fee Management API — FeeController (`/api/v1/platform/fees`), guard menu A06010300, table SRVC_FEE_MNG.
+// Fee Management API — FeeController (`/api/v1/platform/fees`), guard menu A09010300, table SRVC_FEE_MNG.
 // Screens VPA09010301 (list) / VPA090103P01 (register/edit) / VPA090103P02 (fee schedule).
 
 /** COM_CD FEE_ARTCL_SE_CD accepted on save. */

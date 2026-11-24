@@ -40,7 +40,7 @@ export default function FeeScheduleModal({ canWrite, onClose }: { canWrite: bool
       submitDisabled={!FEE_SCHEDULE_API_AVAILABLE}
       onCancel={onClose}
       notice={FEE_SCHEDULE_API_AVAILABLE ? undefined : NOT_AVAILABLE}
-      width={760}
+      width={700}
     >
       <SysFieldGrid columns={1}>
         <SysField label="Effective Date" required>

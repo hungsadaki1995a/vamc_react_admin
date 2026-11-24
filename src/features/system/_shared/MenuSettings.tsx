@@ -69,11 +69,16 @@ export default function MenuSettings({ menuSeCd }: Props) {
   const [selection, setSelection] = useState<Selection | null>(null);
   const [baseline, setBaseline] = useState<MenuForm>(EMPTY_FORM);
   const [form, setForm] = useState<MenuForm>(EMPTY_FORM);
-  const [collapsed, setCollapsed] = useState<ReadonlySet<string>>(new Set());
+  // Tree starts collapsed with [Expand All] (design); nodes the user opens are kept here.
+  const [expanded, setExpanded] = useState<ReadonlySet<string>>(new Set());
 
   const tree = useMemo(() => buildMenuTree(data ?? []), [data]);
-  const visible = useMemo(() => visibleNodes(tree, collapsed), [tree, collapsed]);
   const expandable = useMemo(() => parentCodes(tree), [tree]);
+  const collapsed = useMemo<ReadonlySet<string>>(
+    () => new Set(expandable.filter((cd) => !expanded.has(cd))),
+    [expandable, expanded],
+  );
+  const visible = useMemo(() => visibleNodes(tree, collapsed), [tree, collapsed]);
   const allExpanded = expandable.every((cd) => !collapsed.has(cd));
 
   const isNew = selection !== null && selection.menuCd === null;
@@ -95,12 +100,7 @@ export default function MenuSettings({ menuSeCd }: Props) {
   const startDraft = (upMenuCd: string) => {
     guardDiscard(dirty, () => {
       load({ menuCd: null, upMenuCd }, emptyMenuForm(suggestMenuCode(menuSeCd, tree, upMenuCd)));
-      setCollapsed((prev) => {
-        if (!prev.has(upMenuCd)) return prev;
-        const next = new Set(prev);
-        next.delete(upMenuCd);
-        return next;
-      });
+      setExpanded((prev) => (prev.has(upMenuCd) ? prev : new Set(prev).add(upMenuCd)));
     });
   };
 
@@ -117,14 +117,14 @@ export default function MenuSettings({ menuSeCd }: Props) {
   };
 
   const toggleNode = (menuCd: string) =>
-    setCollapsed((prev) => {
+    setExpanded((prev) => {
       const next = new Set(prev);
       if (next.has(menuCd)) next.delete(menuCd);
       else next.add(menuCd);
       return next;
     });
 
-  const toggleAll = () => setCollapsed(allExpanded ? new Set(expandable) : new Set());
+  const toggleAll = () => setExpanded(allExpanded ? new Set() : new Set(expandable));
 
   const handleMove = async (menuCd: string, move: MenuMove) => {
     try {
@@ -163,6 +163,8 @@ export default function MenuSettings({ menuSeCd }: Props) {
       lblCd: form.lblCd,
       menuExpln: stored?.menuExpln,
       useYn: form.useYn,
+      // Show in Menu is an Admin-only field; Web menus keep the stored value (server default Y).
+      menuExpsrYn: menuSeCd === 'A' ? form.showInMenu : undefined,
     };
 
     try {
@@ -195,7 +197,7 @@ export default function MenuSettings({ menuSeCd }: Props) {
       <SysTitleBar title={screen.title} breadcrumb={[...screen.breadcrumb]} />
       {error && <Alert type="error" showIcon title="The menu list could not be loaded." description={error.message} />}
       <SysSplit
-        ratio="minmax(360px, 2fr) 3fr"
+        ratio="minmax(340px, 3fr) 7fr"
         left={
           <MenuSettingsTree
             tree={tree}

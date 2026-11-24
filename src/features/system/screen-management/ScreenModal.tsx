@@ -1,31 +1,23 @@
 import { useState } from 'react';
 import AppRadio from '@/components/inputs/AppRadio';
 import AppSelect from '@/components/inputs/AppSelect';
-import Spinbox from '@/components/inputs/Spinbox';
 import TextInput from '@/components/inputs/TextInput';
 import { useNotify } from '@/hooks/use-notify';
 import type { YesNo } from '@/api/system/code-group-api';
-import type { ScreenItem } from '@/api/system/program-screen-api';
-import { SysField, SysFieldGrid, SysFormModal, SysFormSection } from '@/features/system/_shared/SysFormUi';
-import { SysButton, SysNotAvailable } from '@/features/system/_shared/SysListUi';
-import { USE_YN_RADIO_OPTIONS } from '@/features/system/_shared/sys-constants';
+import type { ScreenItem, ScreenRequest, ScreenType } from '@/api/system/program-screen-api';
+import { SysField, SysFieldGrid, SysFormModal } from '@/features/system/_shared/SysFormUi';
+import { SysButton } from '@/features/system/_shared/SysListUi';
 import { SYS_DIALOG_LABELS, SYS_MESSAGES } from '@/features/system/_shared/sys-messages';
 import { useFieldErrors } from '@/features/system/_shared/use-field-errors';
 import { useSysDialogs } from '@/features/system/_shared/use-sys-dialogs';
 import { apiErrorCode, errorMessage } from '@/features/system/_shared/system-utils';
-import { NOT_AVAILABLE_REASON, POPUP_OPTIONS, SCREEN_TYPE_OPTIONS, screenTypeOf } from './screen-constants';
-import type { ScreenType } from './screen-constants';
-import { useBusinessOptions, useCreateScreen, useDeleteScreen, useProgramOptions, useUpdateScreen } from './use-screens';
+import { POPUP_OPTIONS, SCREEN_MESSAGES, SCREEN_TYPE_OPTIONS } from './screen-constants';
+import { useBusinessOptions, useCreateScreen, useDeleteScreen, useUpdateScreen } from './use-screens';
 import styles from './screen-management.module.scss';
 
 // VPA090402P01 Screen Register / Edit.
-// Type, Business, Screen Name, Component Path, Label Key and Popup have no column yet:
-// shown disabled and not sent. The legacy block holds what the API still requires.
-// TODO(schema): SCRN_MNG DDL (ddl-proposals/03-SCRN_MNG.sql).
 
-type Field = 'scrnId' | 'scrnExpln' | 'prgrmCd' | 'scrnSeq' | 'useYn';
-
-const NOT_AVAILABLE_HINT = <SysNotAvailable variant="inline">{NOT_AVAILABLE_REASON}</SysNotAvailable>;
+type Field = 'sysSeCd' | 'menuCd' | 'scrnId' | 'scrnNm' | 'cmpntPathNm' | 'lblCd' | 'popupYn' | 'scrnExpln';
 
 interface ScreenModalProps {
   /** null = register. */
@@ -40,32 +32,44 @@ export function ScreenModal({ item, canWrite, onClose }: ScreenModalProps) {
   const { confirm } = useSysDialogs();
   const { errors, clearError, checkRequired, applyApiError } = useFieldErrors<Field>();
   const [values, setValues] = useState({
+    sysSeCd: (item?.sysSeCd ?? 'W') as ScreenType,
+    menuCd: item?.menuCd ?? '',
     scrnId: item?.scrnId ?? '',
+    scrnNm: item?.scrnNm ?? '',
+    cmpntPathNm: item?.cmpntPathNm ?? '',
+    lblCd: item?.lblCd ?? '',
+    popupYn: (item?.popupYn ?? 'N') as YesNo,
     scrnExpln: item?.scrnExpln ?? '',
-    prgrmCd: item?.prgrmCd ?? '',
-    scrnSeq: (item?.scrnSeq ?? null) as number | null,
-    useYn: (item?.useYn ?? 'Y') as YesNo,
   });
-  const screenType: ScreenType = screenTypeOf(item?.scrnId) ?? 'W';
-  const programOptions = useProgramOptions();
-  const businessOptions = useBusinessOptions(screenType);
+  const businessOptions = useBusinessOptions(values.sysSeCd);
   const createScreen = useCreateScreen();
   const updateScreen = useUpdateScreen();
   const deleteScreen = useDeleteScreen();
+  const readOnly = !canWrite;
 
   const change = <K extends Field>(key: K, value: (typeof values)[K]) => {
     setValues((prev) => ({ ...prev, [key]: value }));
     clearError(key);
   };
 
+  const changeType = (type: ScreenType) => {
+    // Business options belong to one type: clear the business when the type changes.
+    setValues((prev) => ({ ...prev, sysSeCd: type, menuCd: '' }));
+    clearError('sysSeCd');
+    clearError('menuCd');
+  };
+
   const handleSubmit = async () => {
-    if (!checkRequired(values, ['scrnId', 'prgrmCd', 'scrnSeq', 'useYn'])) return;
-    const request = {
+    if (!checkRequired(values, ['sysSeCd', 'menuCd', 'scrnId', 'scrnNm', 'cmpntPathNm', 'popupYn'])) return;
+    const request: ScreenRequest = {
+      sysSeCd: values.sysSeCd,
+      menuCd: values.menuCd,
       scrnId: values.scrnId.trim(),
-      prgrmCd: values.prgrmCd,
+      scrnNm: values.scrnNm.trim(),
+      cmpntPathNm: values.cmpntPathNm.trim(),
+      lblCd: values.lblCd.trim() || undefined,
+      popupYn: values.popupYn,
       scrnExpln: values.scrnExpln.trim() || undefined,
-      scrnSeq: values.scrnSeq as number,
-      useYn: values.useYn,
     };
     try {
       if (isCreate) {
@@ -79,7 +83,8 @@ export function ScreenModal({ item, canWrite, onClose }: ScreenModalProps) {
     } catch (e) {
       const handled = applyApiError(e, {
         SYS409: ['scrnId', SYS_MESSAGES.duplicate('Screen ID')],
-        SYS400: ['prgrmCd', 'This program code does not exist.'],
+        SCR001: ['menuCd', SCREEN_MESSAGES.businessInvalid],
+        SCR002: ['lblCd', SCREEN_MESSAGES.labelKeyNotFound],
       });
       if (!handled) toast.error(errorMessage(e));
     }
@@ -97,9 +102,7 @@ export function ScreenModal({ item, canWrite, onClose }: ScreenModalProps) {
           toast.success(SYS_MESSAGES.deleted);
           onClose();
         } catch (e) {
-          toast.error(
-            apiErrorCode(e) === 'SYS409' ? 'This screen cannot be deleted while labels still use it.' : errorMessage(e),
-          );
+          toast.error(apiErrorCode(e) === 'SYS409' ? SCREEN_MESSAGES.hasLabels : errorMessage(e));
         }
       },
     });
@@ -113,79 +116,88 @@ export function ScreenModal({ item, canWrite, onClose }: ScreenModalProps) {
       onSubmit={canWrite ? () => void handleSubmit() : undefined}
       submitting={createScreen.isPending || updateScreen.isPending}
       onCancel={onClose}
+      width={1200}
       leftActions={
         !isCreate &&
         canWrite && (
-          <SysButton look="primary" danger loading={deleteScreen.isPending} onClick={handleDelete}>
+          <SysButton look="danger" loading={deleteScreen.isPending} onClick={handleDelete}>
             Delete
           </SysButton>
         )
       }
     >
       <SysFieldGrid columns={2}>
-        <SysField label="Type" required hint={NOT_AVAILABLE_HINT}>
-          <AppRadio.Group options={SCREEN_TYPE_OPTIONS} value={screenType} disabled />
+        <SysField label="Type" required error={errors.sysSeCd}>
+          <AppRadio.Group
+            options={SCREEN_TYPE_OPTIONS}
+            value={values.sysSeCd}
+            disabled={readOnly}
+            onChange={(e) => changeType(e.target.value as ScreenType)}
+          />
         </SysField>
-        <SysField label="Business" required hint={NOT_AVAILABLE_HINT}>
-          <AppSelect className={styles.fullWidth} options={businessOptions} placeholder="Select" disabled />
+        <SysField label="Business" required error={errors.menuCd}>
+          <AppSelect
+            className={styles.fullWidth}
+            showSearch
+            optionFilterProp="label"
+            options={businessOptions}
+            value={values.menuCd || undefined}
+            placeholder="Select"
+            disabled={readOnly}
+            onChange={(v) => change('menuCd', String(v ?? ''))}
+          />
         </SysField>
         <SysField label="Screen ID" required error={errors.scrnId}>
           <TextInput
             value={values.scrnId}
-            disabled={!isCreate}
+            disabled={!isCreate || readOnly}
             maxLength={20}
             placeholder="e.g. WB_AB_10000"
             onChange={(e) => change('scrnId', e.target.value)}
           />
         </SysField>
-        <SysField label="Screen Name" required hint={NOT_AVAILABLE_HINT}>
-          <TextInput disabled />
+        <SysField label="Screen Name" required error={errors.scrnNm}>
+          <TextInput
+            value={values.scrnNm}
+            maxLength={200}
+            disabled={readOnly}
+            onChange={(e) => change('scrnNm', e.target.value)}
+          />
         </SysField>
-        <SysField label="Popup" required hint={NOT_AVAILABLE_HINT}>
-          <AppRadio.Group options={POPUP_OPTIONS} value="N" disabled />
+        <SysField label="Popup" required error={errors.popupYn}>
+          <AppRadio.Group
+            options={POPUP_OPTIONS}
+            value={values.popupYn}
+            disabled={readOnly}
+            onChange={(e) => change('popupYn', e.target.value as YesNo)}
+          />
         </SysField>
-        <SysField label="Component Path" required hint={NOT_AVAILABLE_HINT}>
-          <TextInput disabled />
+        <SysField label="Component Path" required error={errors.cmpntPathNm}>
+          <TextInput
+            value={values.cmpntPathNm}
+            maxLength={500}
+            placeholder="e.g. /about/vamc/ceo"
+            disabled={readOnly}
+            onChange={(e) => change('cmpntPathNm', e.target.value)}
+          />
         </SysField>
-        <SysField label="Label Key" hint={NOT_AVAILABLE_HINT}>
-          <TextInput disabled />
+        <SysField label="Label Key" error={errors.lblCd}>
+          <TextInput
+            value={values.lblCd}
+            maxLength={100}
+            disabled={readOnly}
+            onChange={(e) => change('lblCd', e.target.value)}
+          />
         </SysField>
         <SysField label="Remarks" error={errors.scrnExpln}>
-          <TextInput value={values.scrnExpln} maxLength={4000} onChange={(e) => change('scrnExpln', e.target.value)} />
+          <TextInput
+            value={values.scrnExpln}
+            maxLength={4000}
+            disabled={readOnly}
+            onChange={(e) => change('scrnExpln', e.target.value)}
+          />
         </SysField>
       </SysFieldGrid>
-
-      <SysFormSection title="Legacy (until schema change)">
-        <SysFieldGrid columns={3}>
-          <SysField label="Program" required error={errors.prgrmCd}>
-            <AppSelect
-              className={styles.fullWidth}
-              showSearch
-              optionFilterProp="label"
-              options={programOptions}
-              value={values.prgrmCd || undefined}
-              placeholder="Select"
-              onChange={(v) => change('prgrmCd', String(v ?? ''))}
-            />
-          </SysField>
-          <SysField label="Order" required error={errors.scrnSeq}>
-            <Spinbox
-              value={values.scrnSeq}
-              min={0}
-              max={99}
-              precision={0}
-              onChange={(v) => change('scrnSeq', typeof v === 'number' ? v : null)}
-            />
-          </SysField>
-          <SysField label="Use" required error={errors.useYn}>
-            <AppRadio.Group
-              options={USE_YN_RADIO_OPTIONS}
-              value={values.useYn}
-              onChange={(e) => change('useYn', e.target.value as YesNo)}
-            />
-          </SysField>
-        </SysFieldGrid>
-      </SysFormSection>
     </SysFormModal>
   );
 }

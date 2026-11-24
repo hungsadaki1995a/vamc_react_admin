@@ -3,8 +3,8 @@ import { apiDelete, apiGet, apiPatch, apiPost, apiPut } from '@/api/common/api-u
 import type { PageResponse } from '@/api/common/api-utils';
 import type { ContentFileGroup, Post, PostDetail } from './post-api';
 
-// Site Display Management APIs — LogoController (`/api/v1/contents/logos`, menu A04110200)
-// and SloganController (`/api/v1/contents/slogans`, menu A04110300).
+// Site Display Management APIs — LogoController (`/api/v1/contents/logos`, menu A07060200)
+// and SloganController (`/api/v1/contents/slogans`, menu A07060300).
 
 export interface SiteDisplaySearch {
   published?: 'Y' | 'N';

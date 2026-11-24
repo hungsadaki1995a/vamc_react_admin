@@ -16,7 +16,7 @@ import type { LiveAuctionSearch } from './use-live-auctions';
 
 const PAGE_SIZE = 15;
 
-/** Live Online Auction Management (menu A07030000). */
+/** Live Online Auction Management (menu A06030000). */
 export default function LiveAuctionManagement() {
   const { toast, dialog } = useNotify();
   const { canWrite } = useMenuPermission();

@@ -2,9 +2,12 @@ import { apiGet, apiPut } from '@/api/common/api-utils';
 import type { MenuSeCd } from './menu-setting-api';
 
 // Menu Permission matrix API — MenuPermissionController (`/api/v1/menu-permissions`).
-// menuSeCd=W (Web Menu Permission Management VPA09010501, columns = member grades of RG00100)
-// and menuSeCd=A (Menu Permission Management VPA09020401, columns = every admin role).
-// Errors: PRM003 bad menuSeCd, PRM004 Super Admin sent, PRM007 caller edits a role they hold, PRM009 duplicate item.
+// menuSeCd=W (Web Menu Permission Management VPA09010501, columns = member types of RG00200:
+//   Individual, Foreigner, Organization; the logged-out GUEST role has no column)
+// and menuSeCd=A (Menu Permission Management VPA09020401, columns = every admin role; the screen shows Super Admin,
+// Receiver, Staff in Charge and one Approver column for 1STAPPR / 2NDAPPR / CEO).
+// Errors: PRM003 bad menuSeCd, PRM004 Super Admin sent, PRM007 caller edits a role they hold, PRM009 duplicate item,
+// PRM010 role is not a column of this matrix.
 
 export interface MatrixColumn {
   roleGroupId: string;

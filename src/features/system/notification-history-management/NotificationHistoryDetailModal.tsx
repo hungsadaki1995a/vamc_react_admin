@@ -1,7 +1,7 @@
 import LoadingSpinner from '@/components/common/loading/LoadingSpinner';
 import TextInput from '@/components/inputs/TextInput';
 import { NOTI_CHANNEL_LABELS, NOTI_RECIPIENT_LABELS } from '@/api/system/notification-api';
-import { ResultBadge, SysNotAvailable } from '../_shared/SysListUi';
+import { ResultBadge } from '../_shared/SysListUi';
 import { SysField, SysFieldGrid, SysFormModal } from '../_shared/SysFormUi';
 import { formatSysDateTime } from '../_shared/system-utils';
 import { useNotificationHistory } from './use-notification-histories';
@@ -9,13 +9,8 @@ import styles from './notification-history-management.module.scss';
 
 // Notification Send History - Detail popup (VPA090502P01), read only.
 // Frame layout: Sent At | Send Result | Channel / Service | Code | Recipient Type / Recipient /
-// Failure Reason (failed only) / Title / Content.
-
-const PENDING_HISTORY_FIELDS_NOTE = (
-  <SysNotAvailable>
-    Code, Service and the recipient address wait for a schema change; Recipient shows the member / employee number.
-  </SysNotAvailable>
-);
+// Failure Reason (failed only) / Title / Content. Content is stored as sent with codes, temporary passwords and
+// links with tokens masked (******); the recipient address comes masked from the server.
 
 /** Read-only value box like the frame's grey inputs. */
 function ReadOnly({ value }: { value?: string | null }) {
@@ -27,7 +22,7 @@ export default function NotificationHistoryDetailModal({ logId, onClose }: { log
   const failed = data?.sndngScsYn === 'N';
 
   return (
-    <SysFormModal width={1200} open title="Notification Send Detail" onCancel={onClose} notice={PENDING_HISTORY_FIELDS_NOTE}>
+    <SysFormModal width={960} open title="Notification Send Detail" onCancel={onClose}>
       <LoadingSpinner spinning={isFetching}>
         {isError && <p className={styles.errorText}>{error.message}</p>}
         <SysFieldGrid columns={3}>
@@ -41,16 +36,16 @@ export default function NotificationHistoryDetailModal({ logId, onClose }: { log
             <ReadOnly value={data ? (NOTI_CHANNEL_LABELS[data.notiMediaSe] ?? data.notiMediaSe) : undefined} />
           </SysField>
           <SysField label="Service">
-            <ReadOnly />
+            <ReadOnly value={data?.notiSrvcNm} />
           </SysField>
           <SysField label="Code">
-            <ReadOnly />
+            <ReadOnly value={data?.notiTmplCd} />
           </SysField>
           <SysField label="Recipient Type">
             <ReadOnly value={data?.notiRcvrSeCd ? NOTI_RECIPIENT_LABELS[data.notiRcvrSeCd] : undefined} />
           </SysField>
           <SysField label="Recipient" span="full">
-            <ReadOnly value={data?.notiRcvrId} />
+            <ReadOnly value={data?.notiRcvrAddr} />
           </SysField>
           {failed && (
             <SysField label="Failure Reason" span="full">

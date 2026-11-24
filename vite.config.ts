@@ -16,6 +16,8 @@ export default defineConfig(({ mode }) => {
     server: {
       port: 3000,
       strictPort: true,
+      // Playwright writes reports and traces under e2e/; watching them reloads the app mid-test
+      watch: { ignored: ['**/e2e/**'] },
       proxy: {
         '/api': {
           target: proxyTarget,

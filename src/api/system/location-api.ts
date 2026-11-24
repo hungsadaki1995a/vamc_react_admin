@@ -2,7 +2,7 @@ import { apiDownload, apiGet, apiPost, apiPut } from '@/api/common/api-utils';
 import type { PageQuery, PageResponse } from '@/api/common/api-utils';
 import type { YesNo } from './code-group-api';
 
-// ── Region / Locations (A06030200) ───────────────────────────────────────────
+// ── Region / Locations (A09030200) ───────────────────────────────────────────
 export interface ProvinceItem {
   mctpvCd: string;
   mctpvNm: string;

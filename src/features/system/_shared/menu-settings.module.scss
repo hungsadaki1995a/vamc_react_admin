@@ -1,13 +1,21 @@
 /* Menu Settings (VPA09010101 / VPA09020101): tree panel + detail panel. */
 
-$border: var(--color-border-secondary, #e2e5eb);
+$border: var(--color-border-secondary, #eaeaf1);
+$border-strong: var(--color-border-primary, #d1d1e0);
 $label-bg: var(--color-bg-secondary, #f6f6f9);
 $text: var(--color-text-primary, #3a404a);
-$text-sub: var(--color-text-secondary, #6f7b95);
-$text-muted: #a3aab8;
-$brand: var(--color-text-brand, #1764ff);
-$selected-bg: #eef1f6;
-$folder: #5b6178;
+$text-sub: var(--color-text-tertiary, #6f7b95);
+$text-muted: var(--color-text-disabled, #a8b2c8);
+$brand: var(--color-text-brand, #005be2);
+$surface: var(--color-bg-primary, #ffffff);
+$hover-bg: var(--color-bg-primary-hover, #f6f6f9);
+$drop-bg: var(--color-blue-50, #eaf8ff);
+$handle: var(--color-gray-400, #c9cfdd);
+$fs-h1: var(--font-size-h1, 20px);
+$fs-b1: var(--font-size-b1, 13px);
+$fs-b2: var(--font-size-b2, 12px);
+$selected-bg: var(--color-gray-50, #f1f4f8);
+$folder: var(--color-gray-800, #545c6d);
 
 /* ── Tree panel ─────────────────────────────────────────────────────────── */
 .treePanel {
@@ -15,9 +23,10 @@ $folder: #5b6178;
   flex-direction: column;
   min-height: 0;
   height: 100%;
-  border: 1px solid $border;
+  border: 1px solid $border-strong;
   border-radius: 4px;
-  background: #ffffff;
+  background: $surface;
+  letter-spacing: var(--letter-spacing-tight, -0.02em);
 }
 
 .treeToolbar {
@@ -25,7 +34,7 @@ $folder: #5b6178;
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  padding: 12px 16px;
+  padding: 8px 10px;
   border-bottom: 1px solid $border;
   background: $label-bg;
 }
@@ -54,24 +63,24 @@ $folder: #5b6178;
   padding: 24px;
   text-align: center;
   color: $text-sub;
-  font-size: 13px;
+  font-size: $fs-b1;
 }
 
 .treeRow {
   display: flex;
   align-items: center;
   gap: 6px;
-  min-height: 40px;
-  padding: 0 16px;
+  min-height: 36px;
+  padding: 0 12px;
   border-top: 2px solid transparent;
   border-bottom: 2px solid transparent;
-  font-size: 14px;
+  font-size: $fs-b1;
   color: $text;
   cursor: pointer;
   user-select: none;
 
   &:hover {
-    background: #f8f9fb;
+    background: $hover-bg;
   }
 }
 
@@ -100,13 +109,13 @@ $folder: #5b6178;
 }
 
 .treeRow[data-drop='inside'] {
-  background: #e3edff;
+  background: $drop-bg;
   outline: 1px dashed $brand;
   outline-offset: -2px;
 }
 
 .dragHandle {
-  color: #c4c9d4;
+  color: $handle;
   cursor: grab;
 }
 
@@ -118,7 +127,7 @@ $folder: #5b6178;
 /* Indent per level, passed as --level by the row. */
 .treeIndent {
   flex: 0 0 auto;
-  width: calc(var(--level, 0) * 24px);
+  width: calc(var(--level, 0) * 20px);
 }
 
 .treeToggle {
@@ -164,29 +173,39 @@ $folder: #5b6178;
   gap: 16px;
   min-height: 0;
   height: 100%;
-  padding: 24px 28px;
-  border: 1px solid $border;
+  padding: 20px;
+  border: 1px solid $border-strong;
   border-radius: 4px;
-  background: #ffffff;
+  background: $surface;
+  letter-spacing: var(--letter-spacing-tight, -0.02em);
   overflow-y: auto;
+}
+
+/* No menu selected: the panel itself carries the centered hint (no nested frame). */
+.detailPanel[data-empty] {
+  align-items: center;
+  justify-content: center;
+  color: $text-sub;
+  font-size: $fs-b1;
 }
 
 .detailHeader {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px;
 }
 
 .detailTitle {
   margin: 0;
-  font-size: 22px;
+  font-size: $fs-h1;
+  line-height: var(--line-height-h1, 28px);
   font-weight: 700;
   color: $text;
 }
 
 .detailLocation {
   margin: 0;
-  font-size: 14px;
+  font-size: $fs-b2;
   color: $text-sub;
 }
 

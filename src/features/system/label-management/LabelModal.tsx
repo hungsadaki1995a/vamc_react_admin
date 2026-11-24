@@ -5,10 +5,10 @@ import TextArea from '@/components/inputs/TextArea';
 import TextInput from '@/components/inputs/TextInput';
 import { useNotify } from '@/hooks/use-notify';
 import { useCommonCodes } from '@/hooks/use-common-codes';
-import { COMMON_SCREEN_ID } from '@/api/system/label-management-api';
+import { COMMON_SCREEN_ID, RESERVED_LABEL_SCREEN_IDS } from '@/api/system/label-management-api';
 import type { LabelKey, LabelListItem } from '@/api/system/label-management-api';
 import { SYS_DIALOG_LABELS, SYS_MESSAGES } from '@/features/system/_shared/sys-messages';
-import { SysButton, SysNotAvailable } from '@/features/system/_shared/SysListUi';
+import { SysButton } from '@/features/system/_shared/SysListUi';
 import { SysField, SysFieldGrid, SysFormModal } from '@/features/system/_shared/SysFormUi';
 import { errorMessage } from '@/features/system/_shared/system-utils';
 import { useFieldErrors } from '@/features/system/_shared/use-field-errors';
@@ -26,9 +26,11 @@ import { useCreateLabel, useDeleteLabel, useUpdateLabel } from './use-labels';
 import styles from './label-management.module.scss';
 
 type Scope = 'B' | 'C';
+type LabelType = 'W' | 'A';
 type FieldKey = 'scrnId' | 'lblSeCd' | 'code';
 
 interface FormValues {
+  type: LabelType;
   scope: Scope;
   scrnId: string;
   lblSeCd: string;
@@ -57,12 +59,13 @@ interface LabelModalProps {
 }
 
 function toFormValues(label?: LabelListItem): FormValues {
-  if (!label) return { scope: 'B', scrnId: '', lblSeCd: '', code: '', lblExpln: '' };
+  if (!label) return { type: 'W', scope: 'B', scrnId: '', lblSeCd: '', code: '', lblExpln: '' };
   return {
+    type: label.sysSeCd === 'A' ? 'A' : 'W',
     scope: isCommonScreen(label.scrnId) ? 'C' : 'B',
     scrnId: label.scrnId,
     lblSeCd: label.lblSeCd,
-    code: labelCodeOf(label),
+    code: label.lblCode ?? labelCodeOf(label),
     lblExpln: label.lblExpln ?? '',
   };
 }
@@ -114,14 +117,31 @@ export default function LabelModal({ label, canWrite, onClose, onSaved, onDelete
 
   const register = async () => {
     if (!checkRequired(values, ['scrnId', 'lblSeCd', 'code']) || !validateFormat()) return;
-    const key: LabelKey = { scrnId: values.scrnId.trim(), lblSeCd: values.lblSeCd, lblCd: labelKey };
     try {
-      // Key only — texts are entered in Text by Language after registration.
-      await createLabel.run({ ...key, lblExpln: values.lblExpln.trim() || undefined });
+      // Key only — texts are entered in Text by Language after registration. The server builds the key.
+      const response = await createLabel.run({
+        sysSeCd: values.type,
+        scrnId: values.scrnId.trim(),
+        lblSeCd: values.lblSeCd,
+        lblCode: values.code.trim(),
+        lblExpln: values.lblExpln.trim() || undefined,
+      });
+      const saved = response.data;
       toast.success(SYS_MESSAGES.registered);
-      onSaved(key);
+      onSaved(
+        saved
+          ? { scrnId: saved.scrnId, lblSeCd: saved.lblSeCd, lblCd: saved.lblCd }
+          : { scrnId: values.scrnId.trim(), lblSeCd: values.lblSeCd, lblCd: labelKey },
+      );
     } catch (error) {
-      if (applyApiError(error, { LBL004: ['scrnId', LABEL_MESSAGES.menuScreenReserved] })) return;
+      if (
+        applyApiError(error, {
+          LBL004: ['scrnId', LABEL_MESSAGES.menuScreenReserved],
+          LBL012: ['scrnId', LABEL_MESSAGES.screenNotRegistered],
+          LBL013: ['code', LABEL_MESSAGES.keyTooLong],
+        })
+      )
+        return;
       if (applyApiError(error, { LBL002: ['scrnId', LABEL_MESSAGES.duplicate] })) {
         // E02 marks Screen ID, Label Type and Label Code.
         setError('lblSeCd', LABEL_MESSAGES.duplicate);
@@ -174,19 +194,25 @@ export default function LabelModal({ label, canWrite, onClose, onSaved, onDelete
       onSubmit={canWrite ? (isEdit ? edit : register) : undefined}
       submitting={createLabel.isPending || updateLabel.isPending}
       onCancel={onClose}
+      width={800}
       leftActions={
         isEdit &&
-        canWrite && (
-          <SysButton look="primary" danger loading={deleteLabel.isPending} onClick={remove}>
+        canWrite &&
+        !RESERVED_LABEL_SCREEN_IDS.includes(label?.scrnId ?? '') && (
+          <SysButton look="danger" loading={deleteLabel.isPending} onClick={remove}>
             Delete
           </SysButton>
         )
       }
     >
       <SysFieldGrid columns={2}>
-        <SysField label="Type" required hint={<SysNotAvailable variant="inline">{LABEL_MESSAGES.typeNotAvailable}</SysNotAvailable>}>
-          {/* TODO(schema): SYS_SE_CD column pending; not sent. */}
-          <AppRadio.Group options={TYPE_OPTIONS} value="W" disabled />
+        <SysField label="Type" required>
+          <AppRadio.Group
+            options={TYPE_OPTIONS}
+            value={isEdit && !label.sysSeCd ? undefined : values.type}
+            disabled={keyFieldsLocked}
+            onChange={(e) => change({ type: e.target.value as LabelType })}
+          />
         </SysField>
         <SysField label="Scope" required>
           <AppRadio.Group

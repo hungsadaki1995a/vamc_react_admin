@@ -1,7 +1,7 @@
 import { apiDownload, apiGet, apiPost, apiPut } from '@/api/common/api-utils';
 import type { PageQuery, PageResponse } from '@/api/common/api-utils';
 
-// ── Batch Management (A06040400) — base path has no /v1 ──────────────────────
+// ── Batch Management (A09040400) — base path has no /v1 ──────────────────────
 
 /** Run status of BTCH_JOB_EXCN_HSTRY. */
 export type BatchRunStatus = 'RUNNING' | 'COMPLETED' | 'FAILED';

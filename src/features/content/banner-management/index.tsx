@@ -14,7 +14,7 @@ import styles from '@/features/system/_shared/system-page.module.scss';
 import BannerModal from './BannerModal';
 import { useBanners, useDeleteBanners, useDownloadBannerExcel } from './use-banners';
 
-// Banner Management - List (VPA003201), menu A04060000.
+// Banner Management - List (VPA07060101), menu A07060100.
 
 const PAGE_SIZE = 15;
 const DATE_FORMAT = 'DD/MM/YYYY';

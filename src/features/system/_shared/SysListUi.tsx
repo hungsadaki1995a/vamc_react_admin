@@ -1,3 +1,4 @@
+import { useOwnPageTitle } from '@/components/layout/page-header-slot-context';
 import type { CSSProperties, Key, ReactNode } from 'react';
 import type { TableColumnsType } from 'antd';
 import type { SortOrder, SorterResult } from 'antd/es/table/interface';
@@ -33,6 +34,8 @@ interface SysTitleBarProps {
 
 /** Page title on the left, home > … breadcrumb on the right. */
 export function SysTitleBar({ title, breadcrumb }: SysTitleBarProps) {
+  // The page draws its own title and breadcrumb (design): hide the shared tab header row.
+  useOwnPageTitle();
   return (
     <div className={styles.titleBar}>
       <h1 className={styles.title}>{title}</h1>
@@ -49,8 +52,8 @@ export function SysTitleBar({ title, breadcrumb }: SysTitleBarProps) {
   );
 }
 
-/** Gray search-condition box; children are `SysFilterItem`s laid out in `columns` (default 3). */
-export function SysFilterPanel({ children, columns = 3 }: { children: ReactNode; columns?: 2 | 3 | 4 }) {
+/** Gray search-condition box; children are `SysFilterItem`s laid out in `columns` (default 4, as in the design). */
+export function SysFilterPanel({ children, columns = 4 }: { children: ReactNode; columns?: 2 | 3 | 4 }) {
   return (
     <div className={styles.filterPanel} data-cols={columns}>
       {children}
@@ -118,7 +121,9 @@ export function SysSectionHeader({ title = 'Search Results', total, actions, pri
   return (
     <div className={styles.sectionHeader}>
       <div className={styles.sectionTitle}>
-        <span>{title}</span>
+        <span className={styles.sectionTitleText} title={typeof title === 'string' ? title : undefined}>
+          {title}
+        </span>
         {total !== undefined && (
           <span className={styles.sectionTotal}>
             Total <strong>{total.toLocaleString('en-US')}</strong>
@@ -134,17 +139,22 @@ export function SysSectionHeader({ title = 'Search Results', total, actions, pri
   );
 }
 
-type SysButtonLook = 'default' | 'navy' | 'primary' | 'outline';
+type SysButtonLook = 'default' | 'navy' | 'primary' | 'outline' | 'danger';
 
 /**
  * Design buttons (`look`): `navy` = [New] / list [Save], `primary` = popup submit, `outline` = [Cancel] / [Reset],
- * `default` = secondary list actions ([Add Row], [Delete Row], [Fee Schedule]…).
+ * `default` = secondary list actions ([Add Row], [Delete Row], [Fee Schedule]…), `danger` = popup [Delete] (filled red).
  */
 export function SysButton({
   look = 'default',
   className,
+  danger,
   ...props
 }: Omit<ActionButtonProps, 'type' | 'variant' | 'color'> & { look?: SysButtonLook }) {
+  // `danger` on any look renders the filled red button of the design
+  if (look === 'danger' || danger) {
+    return <ActionButton intent="danger" appearance="filled" className={className} {...props} />;
+  }
   if (look === 'primary') {
     return <ActionButton intent="primary" appearance="filled" className={className} {...props} />;
   }
@@ -290,7 +300,8 @@ export function SysTable<T extends object>({
         columns={controlledColumns}
         pagination={false}
         showSorterTooltip={false}
-        scroll={{ x: 'max-content' }}
+        // Fixed layout fits the frame and ellipsizes; auto layout scrolls sideways when the columns are wider
+        scroll={rest.tableLayout === 'fixed' ? undefined : { x: 'max-content' }}
         onChange={handleChange}
         onRow={(row) => ({ onClick: onRowClick ? () => onRowClick(row) : undefined })}
         rowClassName={(row, index, indent) => {

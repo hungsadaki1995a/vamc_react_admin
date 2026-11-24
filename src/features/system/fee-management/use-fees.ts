@@ -21,7 +21,7 @@ const FEE_KEYS = {
   detail: (feeId: string | null) => ['system', 'fees', 'detail', feeId] as const,
 };
 
-/** Paged fee list (20 rows; the server keeps its own batch / type / order sort). */
+/** Paged fee list (20 rows; default server order is batch / type / order unless `sortBy` is set). */
 export function useFees(search: FeeSearch, query: PageQuery) {
   return useApiQuery<PageResponse<Fee>>(FEE_KEYS.list(search, query), () => getFees(search, query), {
     placeholderData: keepPreviousData,

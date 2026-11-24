@@ -226,7 +226,7 @@ function FeeForm({ fee, canWrite, onClose }: { fee: Fee | null; canWrite: boolea
       onCancel={onClose}
       extraActions={
         legacy && canWrite ? (
-          <SysButton danger loading={deleteFee.isPending} onClick={handleDelete}>
+          <SysButton look="danger" loading={deleteFee.isPending} onClick={handleDelete}>
             Delete
           </SysButton>
         ) : undefined

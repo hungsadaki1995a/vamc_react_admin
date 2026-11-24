@@ -14,7 +14,7 @@ import type { LogoRequest, SiteDisplaySearch } from '@/api/contents/site-display
 import type { Post, PostDetail } from '@/api/contents/post-api';
 import type { PageResponse } from '@/api/common/api-utils';
 
-// Data hooks of Logo Management (menu A04110200) — the screen never calls the API itself.
+// Data hooks of Logo Management (menu A07060200) — the screen never calls the API itself.
 
 const LOGO_KEYS = {
   all: ['contents', 'logos'] as const,

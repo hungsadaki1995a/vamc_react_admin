@@ -18,7 +18,7 @@ import { useNpl, useNpls } from './use-npls';
 const PAGE_SIZE = 15;
 type DateRange = [Dayjs | null, Dayjs | null] | null;
 
-/** NPL Management (menu A03010100). */
+/** NPL Management (menu A04020000). */
 export default function NplManagement() {
   const [period, setPeriod] = useState<DateRange>(null);
   const [expsrYn, setExpsrYn] = useState<'' | 'Y' | 'N'>('');

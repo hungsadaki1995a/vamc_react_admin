@@ -3,7 +3,6 @@ import type { TableColumnsType } from 'antd';
 import AppSelect from '@/components/inputs/AppSelect';
 import TextInput from '@/components/inputs/TextInput';
 import { useMenuPermission } from '@/hooks/use-menu-permission';
-import { FORM_API_AVAILABLE } from '@/api/system/form-api';
 import type { FormItem, FormLang, FormSearch, YesNo } from '@/api/system/form-api';
 import {
   DateTimeText,
@@ -11,7 +10,6 @@ import {
   SysExcelButton,
   SysFilterItem,
   SysFilterPanel,
-  SysNotAvailable,
   SysPage,
   SysPager,
   SysSearchActions,
@@ -24,6 +22,7 @@ import { ALL, SYS_PAGE_SIZE, USE_YN_FILTER_OPTIONS } from '../_shared/sys-consta
 import { usePagedList } from '../_shared/use-paged-list';
 import FormModal from './FormModal';
 import { useDownloadFormExcel, useForms } from './use-forms';
+import styles from './form-management.module.scss';
 
 // Form Management - List (VPA09010201).
 
@@ -40,18 +39,19 @@ const LANG_FILTER_OPTIONS: { value: FormLang | ''; label: string }[] = [
 ];
 
 const columns: TableColumnsType<FormItem> = [
-  { title: 'Form No.', dataIndex: 'formNo', key: 'formNo', align: 'center', sorter: true, width: 110 },
-  { title: 'Use', dataIndex: 'useYn', key: 'useYn', align: 'center', sorter: true, width: 100, render: (v: YesNo) => <UseBadge value={v} /> },
+  { title: 'Form No.', dataIndex: 'formNo', key: 'formNo', align: 'center', sorter: true, width: 100 },
+  { title: 'Use', dataIndex: 'useYn', key: 'useYn', align: 'center', sorter: true, width: 90, render: (v: YesNo) => <UseBadge value={v} /> },
   { title: 'Language', dataIndex: 'langCd', key: 'langCd', align: 'center', sorter: true, width: 110 },
-  { title: 'Form Name', dataIndex: 'formNm', key: 'formNm', sorter: true },
-  { title: 'File', dataIndex: 'fileUrl', key: 'fileUrl', sorter: true },
+  // Form Name and File share the rest of the width equally (fixed layout), long values are ellipsized.
+  { title: 'Form Name', dataIndex: 'formNm', key: 'formNm', sorter: true, ellipsis: true },
+  { title: 'File', dataIndex: 'fileUrl', key: 'fileUrl', sorter: true, ellipsis: true, render: (v?: string | null) => v || '-' },
   {
     title: 'Registered Date',
     dataIndex: 'crtDt',
     key: 'crtDt',
     align: 'center',
     sorter: true,
-    width: 160,
+    width: 150,
     render: (v?: string) => <DateTimeText value={v} />,
   },
   {
@@ -60,7 +60,7 @@ const columns: TableColumnsType<FormItem> = [
     key: 'mdfcnDt',
     align: 'center',
     sorter: true,
-    width: 160,
+    width: 150,
     render: (v?: string) => <DateTimeText value={v} />,
   },
 ];
@@ -87,12 +87,6 @@ export default function FormManagement() {
         title="Form Management"
         breadcrumb={['System Operation Management', 'NPL Platform Management', 'Form Management']}
       />
-      {!FORM_API_AVAILABLE && (
-        <SysNotAvailable>
-          The form API is waiting for a schema change (file URL column). The list stays empty and saving is disabled
-          until it is deployed.
-        </SysNotAvailable>
-      )}
       <SysFilterPanel>
         <SysFilterItem label="Use">
           <AppSelect
@@ -102,7 +96,11 @@ export default function FormManagement() {
           />
         </SysFilterItem>
         <SysFilterItem label="Language">
-          <AppSelect value={list.draft.langCd} options={LANG_FILTER_OPTIONS} onChange={(langCd) => list.setDraft({ langCd: String(langCd ?? '') as FormLang | '' })} />
+          <AppSelect
+            value={list.draft.langCd}
+            options={LANG_FILTER_OPTIONS}
+            onChange={(langCd) => list.setDraft({ langCd: String(langCd ?? '') as FormLang | '' })}
+          />
         </SysFilterItem>
         <SysFilterItem label="Form Name">
           <TextInput
@@ -118,9 +116,10 @@ export default function FormManagement() {
         total={total}
         actions={
           <SysExcelButton
-            onClick={() => excel.mutate(search)}
+            onClick={() =>
+              excel.mutate({ search, sort: { sortBy: list.pageQuery.sortBy, sortDirection: list.pageQuery.sortDirection } })
+            }
             loading={excel.isPending}
-            disabled={!FORM_API_AVAILABLE}
           />
         }
         primaryActions={
@@ -133,6 +132,10 @@ export default function FormManagement() {
       />
       <SysTable<FormItem>
         rowKey="formNo"
+        className={styles.listTable}
+        fill
+        tableLayout="fixed"
+        scroll={{ x: 1000 }}
         columns={columns}
         dataSource={data?.content ?? []}
         loading={isFetching}

@@ -22,5 +22,7 @@ export type MenuTreeItem = {
   menuLblVal?: string;
   menuUrlAddr?: string;
   menuAuthrt?: string;
+  /** Show in Menu: 'N' keeps the node for routing and permissions but hides it from the rail/LNB. */
+  menuExpsrYn?: string;
   children?: MenuTreeItem[];
 };

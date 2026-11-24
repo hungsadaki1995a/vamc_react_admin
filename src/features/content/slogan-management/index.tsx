@@ -15,7 +15,7 @@ import styles from '@/features/system/_shared/system-page.module.scss';
 import SloganModal from './SloganModal';
 import { useChangeSloganUse, useDeleteSlogans, useSlogans } from './use-slogans';
 
-// Slogan Management - List (menu A04110300).
+// Slogan Management - List (menu A07060300).
 
 const PAGE_SIZE = 15;
 const DATE_FORMAT = 'DD/MM/YYYY';

@@ -21,7 +21,7 @@ import { getActiveProvinces } from '@/api/system/location-api';
 import type { ProvinceItem } from '@/api/system/location-api';
 import type { PageQuery, PageResponse } from '@/api/common/api-utils';
 
-// Data hooks of Finance Code Management (menu A06030300).
+// Data hooks of Finance Code Management (menu A09030300).
 
 const FINANCE_KEYS = {
   institutions: ['system', 'institutions'] as const,

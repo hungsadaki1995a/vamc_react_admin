@@ -2,7 +2,7 @@ import { apiDelete, apiDownload, apiGet, apiPost, apiPut } from '@/api/common/ap
 import type { PageQuery, PageResponse } from '@/api/common/api-utils';
 import type { YesNo } from './code-group-api';
 
-// ── Program Management (A06040100) ───────────────────────────────────────────
+// ── Program Management (A09040100) ───────────────────────────────────────────
 export type ProgramType = 'PAGE' | 'POPUP';
 
 export interface ProgramItem {
@@ -37,35 +37,52 @@ export interface ProgramRequest {
   useYn: YesNo;
 }
 
-// ── Screen Management (A06040200) ────────────────────────────────────────────
+// ── Screen Management (A09040200) ────────────────────────────────────────────
+/** W = Web, A = Admin (MENU_SE_CD of the Business menu). */
+export type ScreenType = 'W' | 'A';
+
 export interface ScreenItem {
   scrnId: string;
-  prgrmCd: string;
-  prgrmNm?: string;
-  /** Shown as "Remarks" in v0.8. */
+  /** Absent for legacy rows without a Business menu. */
+  sysSeCd?: ScreenType;
+  /** Business: 1Depth menu code. */
+  menuCd?: string;
+  menuNmVn?: string;
+  menuNmEn?: string;
+  scrnNm?: string;
+  cmpntPathNm?: string;
+  /** Label Key. */
+  lblCd?: string;
+  popupYn?: YesNo;
+  /** Remarks. */
   scrnExpln?: string;
-  scrnSeq: number;
-  useYn: YesNo;
+  /** Legacy columns (not on the v0.8 screen). */
+  prgrmCd?: string;
+  scrnSeq?: number;
+  useYn?: YesNo;
   crtDt?: string;
   crtByNm?: string;
 }
 
+/** Empty string = All (dropped from the query). */
 export interface ScreenSearch {
+  sysSeCd?: ScreenType | '';
+  menuCd?: string;
+  /** Partial match. */
   scrnId?: string;
-  /** Matches the description or program name. */
-  keyword?: string;
+  /** Partial match. */
+  scrnNm?: string;
 }
 
-/**
- * Current SCRN_MNG columns. The v0.8 fields (type, business, name, component path,
- * label key, popup) are not stored yet. TODO(schema): SCRN_MNG DDL.
- */
 export interface ScreenRequest {
+  sysSeCd: ScreenType;
+  menuCd: string;
   scrnId: string;
-  prgrmCd: string;
+  scrnNm: string;
+  cmpntPathNm: string;
+  lblCd?: string;
+  popupYn: YesNo;
   scrnExpln?: string;
-  scrnSeq: number;
-  useYn: YesNo;
 }
 
 export interface ProgramOption {
@@ -90,11 +107,12 @@ export const downloadProgramsExcel = (search: ProgramSearch) =>
 
 export const getScreens = (search: ScreenSearch, page: PageQuery) =>
   apiGet<PageResponse<ScreenItem>>(SCRN_BASE, { ...search, ...page });
-/** Errors: SYS409 duplicate screen ID, SYS400 unknown program code. */
+/** Errors: SYS409 duplicate Screen ID, SCR001 Business not a 1Depth menu of the Type, SCR002 unknown Label Key. */
 export const createScreen = (req: ScreenRequest) => apiPost<ScreenItem>(SCRN_BASE, req);
 export const updateScreen = (scrnId: string, req: ScreenRequest) =>
   apiPut<ScreenItem>(`${SCRN_BASE}/${encodeURIComponent(scrnId)}`, req);
 /** Errors: SYS409 when labels still reference the screen. */
 export const deleteScreens = (scrnIds: string[]) => apiDelete<number>(SCRN_BASE, { scrnIds });
-export const downloadScreensExcel = (search: ScreenSearch) =>
-  apiDownload(`${SCRN_BASE}/excel`, 'screens.xlsx', search);
+/** Same filters and sort as the list. */
+export const downloadScreensExcel = (search: ScreenSearch, sort?: Pick<PageQuery, 'sortBy' | 'sortDirection'>) =>
+  apiDownload(`${SCRN_BASE}/excel`, 'screens.xlsx', { ...search, ...sort });

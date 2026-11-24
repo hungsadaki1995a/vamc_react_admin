@@ -162,12 +162,7 @@ export default function UserModal({ detail, canWrite, onClose }: UserModalProps)
   // Design: [Delete] sits on the left of the footer, [Cancel] [Edit] on the right.
   const leftActions =
     isEdit && canWrite ? (
-      <SysButton
-        look="primary"
-        danger
-        loading={deleteEmployee.isPending}
-        onClick={handleDelete}
-      >
+      <SysButton look="danger" loading={deleteEmployee.isPending} onClick={handleDelete}>
         Delete
       </SysButton>
     ) : undefined;
@@ -186,7 +181,7 @@ export default function UserModal({ detail, canWrite, onClose }: UserModalProps)
   return (
     <SysFormModal
       open
-      width={1100}
+      width={1200}
       title={isEdit ? 'Edit User Information' : 'Register User Information'}
       submitText={isEdit ? 'Edit' : 'Register'}
       onSubmit={canWrite ? () => void handleSubmit() : undefined}

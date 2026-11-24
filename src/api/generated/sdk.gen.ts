@@ -21,7 +21,7 @@ export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends 
 /**
  * Get application
  *
- * **Screens:** VPA001101, VPA0011P01
+ * **Screens:** VPA05010201, VPA050102P01
  *
  * Detail with NPLs, scanned documents, approval steps and processing history (VPA0004P04). Requires READ permission.
  */
@@ -34,7 +34,7 @@ export const getApplication = <ThrowOnError extends boolean = false>(options: Op
 /**
  * Edit a application
  *
- * **Screens:** VPA001101, VPA0011P01
+ * **Screens:** VPA05010201, VPA050102P01
  *
  * Contract kind, base contract, currency, desired price and scan, before approval is requested. Requires WRITE permission.
  */
@@ -51,7 +51,7 @@ export const update = <ThrowOnError extends boolean = false>(options: Options<Up
 /**
  * Change the officer in charge
  *
- * **Screens:** VPA001101, VPA0011P01
+ * **Screens:** VPA05010201, VPA050102P01
  *
  * Hands the application (and its contracts) to another employee holding the processing role; an open officer step of the approval session follows. Requires WRITE permission.
  */
@@ -68,7 +68,7 @@ export const reassignOfficer = <ThrowOnError extends boolean = false>(options: O
 /**
  * Get application
  *
- * **Screens:** VPA001001, VPA0010P01, VPA0004P01, VPA0004P04
+ * **Screens:** VPA05010101, VPA050101P01, VPA020500P01, VPA0004P04
  *
  * Detail with NPLs, scanned documents, approval steps and processing history (VPA0004P04). Requires READ permission.
  */
@@ -81,7 +81,7 @@ export const getApplication1 = <ThrowOnError extends boolean = false>(options: O
 /**
  * Edit a application
  *
- * **Screens:** VPA001001, VPA0010P01, VPA0004P01, VPA0004P04
+ * **Screens:** VPA05010101, VPA050101P01, VPA020500P01, VPA0004P04
  *
  * Contract kind, base contract, currency, desired price and scan, before approval is requested. Requires WRITE permission.
  */
@@ -98,7 +98,7 @@ export const update1 = <ThrowOnError extends boolean = false>(options: Options<U
 /**
  * Change the officer in charge
  *
- * **Screens:** VPA001001, VPA0010P01, VPA0004P01, VPA0004P04
+ * **Screens:** VPA05010101, VPA050101P01, VPA020500P01, VPA0004P04
  *
  * Hands the application (and its contracts) to another employee holding the processing role; an open officer step of the approval session follows. Requires WRITE permission.
  */
@@ -115,7 +115,7 @@ export const reassignOfficer1 = <ThrowOnError extends boolean = false>(options: 
 /**
  * Get application
  *
- * **Screens:** VPA001201, VPA0012P01
+ * **Screens:** VPA05010301, VPA050103P01
  *
  * Detail with NPLs, scanned documents, approval steps and processing history (VPA0004P04). Requires READ permission.
  */
@@ -128,7 +128,7 @@ export const getApplication2 = <ThrowOnError extends boolean = false>(options: O
 /**
  * Edit a application
  *
- * **Screens:** VPA001201, VPA0012P01
+ * **Screens:** VPA05010301, VPA050103P01
  *
  * Contract kind, base contract, currency, desired price and scan, before approval is requested. Requires WRITE permission.
  */
@@ -145,7 +145,7 @@ export const update2 = <ThrowOnError extends boolean = false>(options: Options<U
 /**
  * Change the officer in charge
  *
- * **Screens:** VPA001201, VPA0012P01
+ * **Screens:** VPA05010301, VPA050103P01
  *
  * Hands the application (and its contracts) to another employee holding the processing role; an open officer step of the approval session follows. Requires WRITE permission.
  */
@@ -162,7 +162,7 @@ export const reassignOfficer2 = <ThrowOnError extends boolean = false>(options: 
 /**
  * Detail / Chi tiết
  *
- * **Screens:** VPA005201, VPA0052P01
+ * **Screens:** VPA09040201, VPA090402P01
  */
 export const detail = <ThrowOnError extends boolean = false>(options: Options<DetailData, ThrowOnError>): RequestResult<DetailResponses, unknown, ThrowOnError> => (options.client ?? client).get<DetailResponses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -173,7 +173,7 @@ export const detail = <ThrowOnError extends boolean = false>(options: Options<De
 /**
  * Update / Cập nhật
  *
- * **Screens:** VPA005201, VPA0052P01
+ * **Screens:** VPA09040201, VPA090402P01
  */
 export const update3 = <ThrowOnError extends boolean = false>(options: Options<Update3Data, ThrowOnError>): RequestResult<Update3Responses, unknown, ThrowOnError> => (options.client ?? client).put<Update3Responses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -188,7 +188,7 @@ export const update3 = <ThrowOnError extends boolean = false>(options: Options<U
 /**
  * Get contract
  *
- * **Screens:** VPA001401, VPA0014P01, VPA0014P02
+ * **Screens:** VPA05020201, VPA050202P01, VPA050202P02
  *
  * Contract or annex with NPLs, draft / signed documents, fees, annexes and terminations. Requires READ permission.
  */
@@ -201,7 +201,7 @@ export const getContract = <ThrowOnError extends boolean = false>(options: Optio
 /**
  * Edit the contract draft
  *
- * **Screens:** VPA001401, VPA0014P01, VPA0014P02
+ * **Screens:** VPA05020201, VPA050202P01, VPA050202P02
  *
  * Step 13 / annex 2 (PREPR only): period (end defaults to start + 1 year), price, auto-termination clause, fee terms (LUMP, STAG + advance %, AFTR). Requires WRITE permission.
  */
@@ -218,7 +218,7 @@ export const updateDraft = <ThrowOnError extends boolean = false>(options: Optio
 /**
  * Delete role / Xóa vai trò
  *
- * **Screens:** VPA004701
+ * **Screens:** VPA09020401
  *
  * Deletes a role. Fails if any user or menu mappings still reference it. Requires WRITE permission. / Xóa vai trò. Thất bại nếu còn ánh xạ người dùng hoặc menu. Yêu cầu quyền GHI.
  */
@@ -231,7 +231,7 @@ export const deleteRole = <ThrowOnError extends boolean = false>(options: Option
 /**
  * Get role detail / Chi tiết vai trò
  *
- * **Screens:** VPA004701
+ * **Screens:** VPA09020401
  *
  * Returns detail of a single role. / Trả về chi tiết một vai trò.
  */
@@ -244,7 +244,7 @@ export const getRole = <ThrowOnError extends boolean = false>(options: Options<G
 /**
  * Update role / Cập nhật vai trò
  *
- * **Screens:** VPA004701
+ * **Screens:** VPA09020401
  *
  * Updates role name, group, and use status. Requires WRITE permission. / Cập nhật tên, nhóm và trạng thái vai trò. Yêu cầu quyền GHI.
  */
@@ -261,7 +261,7 @@ export const updateRole = <ThrowOnError extends boolean = false>(options: Option
 /**
  * Revoke all menu permissions from role / Thu hồi toàn bộ phân quyền menu của vai trò
  *
- * **Screens:** VPA004701
+ * **Screens:** VPA09020401
  *
  * Removes all menu permission mappings for a role. Requires WRITE permission. / Xóa toàn bộ phân quyền menu của vai trò. Yêu cầu quyền GHI.
  */
@@ -274,7 +274,7 @@ export const revokeAllRoleMenuPermissions = <ThrowOnError extends boolean = fals
 /**
  * Get role menu permissions matrix / Lấy ma trận phân quyền menu của vai trò
  *
- * **Screens:** VPA004701
+ * **Screens:** VPA09020401
  *
  * Returns complete menu tree with assigned permission levels for a given role. / Trả về toàn bộ cây menu kèm mức phân quyền được gán cho vai trò chỉ định.
  */
@@ -287,7 +287,7 @@ export const getRoleMenuPermissions = <ThrowOnError extends boolean = false>(opt
 /**
  * Assign single menu permission to role / Gán phân quyền menu đơn lẻ cho vai trò
  *
- * **Screens:** VPA004701
+ * **Screens:** VPA09020401
  *
  * Assigns or updates a single menu permission. Requires WRITE permission. / Gán hoặc cập nhật phân quyền của một menu cho vai trò. Yêu cầu quyền GHI.
  */
@@ -304,7 +304,7 @@ export const assignRoleMenuPermission = <ThrowOnError extends boolean = false>(o
 /**
  * Batch save role menu permissions / Lưu hàng loạt phân quyền menu cho vai trò
  *
- * **Screens:** VPA004701
+ * **Screens:** VPA09020401
  *
  * Batch updates menu permissions for a role. Items with NONE are revoked. Requires WRITE permission. / Lưu hàng loạt phân quyền menu cho vai trò. Các mục có quyền NONE sẽ bị thu hồi. Yêu cầu quyền GHI.
  */
@@ -321,7 +321,7 @@ export const batchSaveRoleMenuPermissions = <ThrowOnError extends boolean = fals
 /**
  * Delete role group / Xóa nhóm vai trò
  *
- * **Screens:** VPA004601, VPA0046P01
+ * **Screens:** VPA09020301, VPA090203P01
  *
  * Deletes a role group. Fails if the group still has roles. Requires WRITE permission. / Xóa nhóm vai trò. Thất bại nếu nhóm còn vai trò con. Yêu cầu quyền GHI.
  */
@@ -334,7 +334,7 @@ export const deleteRoleGroup = <ThrowOnError extends boolean = false>(options: O
 /**
  * Get role group detail / Chi tiết nhóm vai trò
  *
- * **Screens:** VPA004601, VPA0046P01
+ * **Screens:** VPA09020301, VPA090203P01
  *
  * Returns role group detail with nested role list. / Trả về chi tiết nhóm vai trò kèm danh sách vai trò con.
  */
@@ -347,7 +347,7 @@ export const getRoleGroup = <ThrowOnError extends boolean = false>(options: Opti
 /**
  * Update role group / Cập nhật nhóm vai trò
  *
- * **Screens:** VPA004601, VPA0046P01
+ * **Screens:** VPA09020301, VPA090203P01
  *
  * Updates name and use status of a role group. Requires WRITE permission. / Cập nhật tên và trạng thái sử dụng của nhóm vai trò. Yêu cầu quyền GHI.
  */
@@ -364,7 +364,7 @@ export const updateRoleGroup = <ThrowOnError extends boolean = false>(options: O
 /**
  * Save role assignees / Lưu người phụ trách vai trò
  *
- * **Screens:** VPA004601, VPA0046P01
+ * **Screens:** VPA09020301, VPA090203P01
  *
  * Adds and removes assignees of a role in one call (idempotent). Requires WRITE permission. / Thêm và gỡ người phụ trách của vai trò trong một lần gọi (idempotent). Yêu cầu quyền GHI.
  */
@@ -381,7 +381,7 @@ export const saveAssignees = <ThrowOnError extends boolean = false>(options: Opt
 /**
  * Get contract
  *
- * **Screens:** VPA001301, VPA0013P01, VPA0013P02
+ * **Screens:** VPA05020101, VPA050201P01, VPA050201P02
  *
  * Contract or annex with NPLs, draft / signed documents, fees, annexes and terminations. Requires READ permission.
  */
@@ -394,7 +394,7 @@ export const getContract1 = <ThrowOnError extends boolean = false>(options: Opti
 /**
  * Edit the contract draft
  *
- * **Screens:** VPA001301, VPA0013P01, VPA0013P02
+ * **Screens:** VPA05020101, VPA050201P01, VPA050201P02
  *
  * Step 13 / annex 2 (PREPR only): period (end defaults to start + 1 year), price, auto-termination clause, fee terms (LUMP, STAG + advance %, AFTR). Requires WRITE permission.
  */
@@ -411,7 +411,7 @@ export const updateDraft1 = <ThrowOnError extends boolean = false>(options: Opti
 /**
  * Detail / Chi tiết
  *
- * **Screens:** VPA005101, VPA0051P01
+ * **Screens:** VPA09040101, VPA090401P01
  */
 export const detail1 = <ThrowOnError extends boolean = false>(options: Options<Detail1Data, ThrowOnError>): RequestResult<Detail1Responses, unknown, ThrowOnError> => (options.client ?? client).get<Detail1Responses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -422,7 +422,7 @@ export const detail1 = <ThrowOnError extends boolean = false>(options: Options<D
 /**
  * Update / Cập nhật
  *
- * **Screens:** VPA005101, VPA0051P01
+ * **Screens:** VPA09040101, VPA090401P01
  */
 export const update4 = <ThrowOnError extends boolean = false>(options: Options<Update4Data, ThrowOnError>): RequestResult<Update4Responses, unknown, ThrowOnError> => (options.client ?? client).put<Update4Responses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -437,7 +437,7 @@ export const update4 = <ThrowOnError extends boolean = false>(options: Options<U
 /**
  * Get fee item / Chi tiết mục phí
  *
- * **Screens:** VPA004101, VPA0041P01
+ * **Screens:** VPA09010301, VPA090103P01
  *
  * editable is always true. / editable luôn là true.
  */
@@ -450,7 +450,7 @@ export const getFee = <ThrowOnError extends boolean = false>(options: Options<Ge
 /**
  * Update fee item / Sửa mục phí
  *
- * **Screens:** VPA004101, VPA0041P01
+ * **Screens:** VPA09010301, VPA090103P01
  *
  * Editable while in use; useYn is kept when omitted. / Sửa được khi đang sử dụng.
  */
@@ -467,9 +467,9 @@ export const updateFee = <ThrowOnError extends boolean = false>(options: Options
 /**
  * Delete an NPL LOT
  *
- * **Screens:** VPA001901
+ * **Screens:** VPA04050001
  *
- * Hard delete; 409 while any NPL, service application or change history still references the LOT. Requires WRITE on A03010400.
+ * Hard delete; 409 while any NPL, service application or change history still references the LOT. Requires WRITE on A04050000.
  */
 export const deleteNplLot = <ThrowOnError extends boolean = false>(options: Options<DeleteNplLotData, ThrowOnError>): RequestResult<DeleteNplLotResponses, unknown, ThrowOnError> => (options.client ?? client).delete<DeleteNplLotResponses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -480,9 +480,9 @@ export const deleteNplLot = <ThrowOnError extends boolean = false>(options: Opti
 /**
  * Get NPL LOT
  *
- * **Screens:** VPA001901
+ * **Screens:** VPA04050001
  *
- * Selected LOT information. Requires READ on A03010400.
+ * Selected LOT information. Requires READ on A04050000.
  */
 export const getNplLot = <ThrowOnError extends boolean = false>(options: Options<GetNplLotData, ThrowOnError>): RequestResult<GetNplLotResponses, unknown, ThrowOnError> => (options.client ?? client).get<GetNplLotResponses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -493,9 +493,9 @@ export const getNplLot = <ThrowOnError extends boolean = false>(options: Options
 /**
  * Edit an NPL LOT
  *
- * **Screens:** VPA001901
+ * **Screens:** VPA04050001
  *
- * Changes LOT ID and name. Requires WRITE on A03010400.
+ * Changes LOT ID and name. Requires WRITE on A04050000.
  */
 export const updateNplLot = <ThrowOnError extends boolean = false>(options: Options<UpdateNplLotData, ThrowOnError>): RequestResult<UpdateNplLotResponses, unknown, ThrowOnError> => (options.client ?? client).put<UpdateNplLotResponses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -510,9 +510,9 @@ export const updateNplLot = <ThrowOnError extends boolean = false>(options: Opti
 /**
  * List NPLs of a LOT
  *
- * **Screens:** VPA001901
+ * **Screens:** VPA04050001
  *
- * NPLs currently in the LOT. Requires READ on A03010400.
+ * NPLs currently in the LOT. Requires READ on A04050000.
  */
 export const getLotNpls = <ThrowOnError extends boolean = false>(options: Options<GetLotNplsData, ThrowOnError>): RequestResult<GetLotNplsResponses, unknown, ThrowOnError> => (options.client ?? client).get<GetLotNplsResponses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -523,9 +523,9 @@ export const getLotNpls = <ThrowOnError extends boolean = false>(options: Option
 /**
  * Save NPLs of a LOT
  *
- * **Screens:** VPA001901
+ * **Screens:** VPA04050001
  *
- * Replaces the LOT members with the given list (add and remove in one transaction). 409 when an NPL is in another LOT or is Under Contract/Sale Completed (UC/SD); 400 for unknown NPL codes. Requires WRITE on A03010400.
+ * Replaces the LOT members with the given list (add and remove in one transaction). 409 when an NPL is in another LOT or is Under Contract/Sale Completed (UC/SD); 400 for unknown NPL codes. Requires WRITE on A04050000.
  */
 export const replaceLotNpls = <ThrowOnError extends boolean = false>(options: Options<ReplaceLotNplsData, ThrowOnError>): RequestResult<ReplaceLotNplsResponses, unknown, ThrowOnError> => (options.client ?? client).put<ReplaceLotNplsResponses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -540,7 +540,7 @@ export const replaceLotNpls = <ThrowOnError extends boolean = false>(options: Op
 /**
  * Get notification template / Chi tiết mẫu thông báo
  *
- * **Screens:** VPA005501, VPA0055P01
+ * **Screens:** VPA09050101, VPA090501P01
  *
  * With the content; editable = false while in use. Requires READ permission.
  */
@@ -553,7 +553,7 @@ export const getMessage = <ThrowOnError extends boolean = false>(options: Option
 /**
  * Update notification template / Sửa mẫu thông báo
  *
- * **Screens:** VPA005501, VPA0055P01
+ * **Screens:** VPA09050101, VPA090501P01
  *
  * Only while not in use: 409 (NTF002) otherwise. Requires WRITE permission.
  */
@@ -570,7 +570,7 @@ export const updateMessage = <ThrowOnError extends boolean = false>(options: Opt
 /**
  * Delete menu / Xóa menu
  *
- * **Screens:** VPA004401, VPA0044P01
+ * **Screens:** VPA09020101, VPA090201P01
  *
  * Deletes the menu and its subtree; all must be not in use. Root menus return 409 MNU010. / Xóa menu và cây con, tất cả phải không sử dụng; menu gốc trả 409 MNU010.
  */
@@ -583,7 +583,7 @@ export const deleteMenu = <ThrowOnError extends boolean = false>(options: Option
 /**
  * Get menu / Chi tiết menu
  *
- * **Screens:** VPA004401, VPA0044P01
+ * **Screens:** VPA09020101, VPA090201P01
  *
  * Includes child count. / Kèm số menu con.
  */
@@ -596,7 +596,7 @@ export const getMenu = <ThrowOnError extends boolean = false>(options: Options<G
 /**
  * Update menu / Sửa menu
  *
- * **Screens:** VPA004401, VPA0044P01
+ * **Screens:** VPA09020101, VPA090201P01
  *
  * A menu in use can be edited; an omitted menuSeq is kept. Root menus return 400 MNU004. / Menu đang dùng vẫn sửa được; menu gốc trả 400 MNU004.
  */
@@ -613,7 +613,7 @@ export const updateMenu = <ThrowOnError extends boolean = false>(options: Option
 /**
  * Get menu permission matrix / Ma trận phân quyền menu
  *
- * **Screens:** VPA004701
+ * **Screens:** VPA09020401
  *
  * Roles as columns, menus as rows. Supports menuSeCd=A (Admin) and menuSeCd=W (User Web member grades); other values return 400 PRM003. / Cột là vai trò/hạng thành viên, dòng là menu.
  */
@@ -626,7 +626,7 @@ export const getMatrix = <ThrowOnError extends boolean = false>(options?: Option
 /**
  * Save menu permission matrix / Lưu ma trận phân quyền menu
  *
- * **Screens:** VPA004701
+ * **Screens:** VPA09020401
  *
  * Replaces the permissions of every role sent (supports A and W). ADMIN is fixed (400 PRM004); a caller cannot edit a role they hold (403 PRM007). / Thay toàn bộ quyền của các vai trò gửi lên.
  */
@@ -643,9 +643,9 @@ export const saveMatrix = <ThrowOnError extends boolean = false>(options: Option
 /**
  * Get member details
  *
- * **Screens:** VPA000801, VPA0002P01, VPA0008P01
+ * **Screens:** VPA03010001, VPA030100P02, VPA030100P01
  *
- * Retrieves complete member profile details for popup screens VPA0002P01 and VPA0008P01. Requires READ permission on sign-up (A01010000) or member management (A01020000). unmask=true returns the decrypted phone, e-mail and ID numbers (raw* fields) for the edit popup and needs WRITE on one of those menus (403 otherwise); every read is audited. / unmask=true trả số thật để sửa, cần quyền ghi.
+ * Retrieves complete member profile details for popup screens VPA030100P02 and VPA030100P01. Requires READ permission on sign-up (A03010000) or member management (A03010000). unmask=true returns the decrypted phone, e-mail and ID numbers (raw* fields) for the edit popup and needs WRITE on one of those menus (403 otherwise); every read is audited. / unmask=true trả số thật để sửa, cần quyền ghi.
  */
 export const getMember = <ThrowOnError extends boolean = false>(options: Options<GetMemberData, ThrowOnError>): RequestResult<GetMemberResponses, unknown, ThrowOnError> => (options.client ?? client).get<GetMemberResponses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -656,9 +656,9 @@ export const getMember = <ThrowOnError extends boolean = false>(options: Options
 /**
  * Update member information
  *
- * **Screens:** VPA000801, VPA0002P01, VPA0008P01
+ * **Screens:** VPA03010001, VPA030100P02, VPA030100P01
  *
- * Screens VPA0002P01 and VPA0008P01 Edit button: updates member profile information. Requires WRITE permission on sign-up (A01010000) or member management (A01020000).
+ * Screens VPA030100P02 and VPA030100P01 Edit button: updates member profile information. Requires WRITE permission on sign-up (A03010000) or member management (A03010000).
  */
 export const updateMember = <ThrowOnError extends boolean = false>(options: Options<UpdateMemberData, ThrowOnError>): RequestResult<UpdateMemberResponses, unknown, ThrowOnError> => (options.client ?? client).put<UpdateMemberResponses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -673,9 +673,9 @@ export const updateMember = <ThrowOnError extends boolean = false>(options: Opti
 /**
  * Unlock member account / Mở khoá tài khoản hội viên
  *
- * **Screens:** VPA000801, VPA0002P01, VPA0008P01
+ * **Screens:** VPA03010001, VPA030100P02, VPA030100P01
  *
- * VPA030100P02 [Unlock] (I01): a locked account (status L or 5 failed logins) becomes Active and the failed login count is reset. 409 when the account is not locked. Requires WRITE on menu A01010000. / Tài khoản bị khoá chuyển về Hoạt động, đặt lại số lần đăng nhập sai.
+ * VPA030100P02 [Unlock] (I01): a locked account (status L or 5 failed logins) becomes Active and the failed login count is reset. 409 when the account is not locked. Requires WRITE on menu A03010000. / Tài khoản bị khoá chuyển về Hoạt động, đặt lại số lần đăng nhập sai.
  */
 export const unlock = <ThrowOnError extends boolean = false>(options: Options<UnlockData, ThrowOnError>): RequestResult<UnlockResponses, unknown, ThrowOnError> => (options.client ?? client).put<UnlockResponses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -686,7 +686,7 @@ export const unlock = <ThrowOnError extends boolean = false>(options: Options<Un
 /**
  * Assign the officer in charge / Giao cán bộ phụ trách
  *
- * **Screens:** VPA000801, VPA0002P01, VPA0008P01
+ * **Screens:** VPA03010001, VPA030100P02, VPA030100P01
  *
  * Step 12-1. At step 1 the receiver assigns the officer once the posted documents are complete (409 otherwise; 403 for another employee), which opens step 2 for the officer. While step 2 is open the officer can be changed. The officer must hold the processing role. Requires WRITE permission.
  */
@@ -703,7 +703,7 @@ export const reassign = <ThrowOnError extends boolean = false>(options: Options<
 /**
  * Delete province / Xóa Tỉnh/Thành phố
  *
- * **Screens:** VPA004901, VPA0049P01
+ * **Screens:** VPA09030201, VPA090302P01
  *
  * Deletes a province. Fails if child districts or references exist. Requires WRITE permission. / Xóa Tỉnh/Thành phố. Yêu cầu quyền GHI.
  */
@@ -716,7 +716,7 @@ export const deleteProvince = <ThrowOnError extends boolean = false>(options: Op
 /**
  * Get province detail / Chi tiết Tỉnh/Thành phố
  *
- * **Screens:** VPA004901, VPA0049P01
+ * **Screens:** VPA09030201, VPA090302P01
  *
  * Returns province detail including its district list. / Trả về chi tiết Tỉnh/Thành phố kèm danh sách Quận/Huyện.
  */
@@ -729,7 +729,7 @@ export const getProvinceDetail = <ThrowOnError extends boolean = false>(options:
 /**
  * Update province / Cập nhật Tỉnh/Thành phố
  *
- * **Screens:** VPA004901, VPA0049P01
+ * **Screens:** VPA09030201, VPA090302P01
  *
  * Updates an existing province. Requires WRITE permission. / Cập nhật Tỉnh/Thành phố. Yêu cầu quyền GHI.
  */
@@ -746,7 +746,7 @@ export const updateProvince = <ThrowOnError extends boolean = false>(options: Op
 /**
  * Delete district / Xóa Quận/Huyện
  *
- * **Screens:** VPA004901, VPA0049P01
+ * **Screens:** VPA09030201, VPA090302P01
  *
  * Deletes a district. Fails if member or debtor references exist. Requires WRITE permission. / Xóa Quận/Huyện. Yêu cầu quyền GHI.
  */
@@ -759,7 +759,7 @@ export const deleteDistrict = <ThrowOnError extends boolean = false>(options: Op
 /**
  * Get district detail / Chi tiết Quận/Huyện
  *
- * **Screens:** VPA004901, VPA0049P01
+ * **Screens:** VPA09030201, VPA090302P01
  *
  * Returns detail of a single district. / Trả về chi tiết một Quận/Huyện.
  */
@@ -772,7 +772,7 @@ export const getDistrictDetail = <ThrowOnError extends boolean = false>(options:
 /**
  * Update district / Cập nhật Quận/Huyện
  *
- * **Screens:** VPA004901, VPA0049P01
+ * **Screens:** VPA09030201, VPA090302P01
  *
  * Updates an existing district. Requires WRITE permission. / Cập nhật Quận/Huyện. Yêu cầu quyền GHI.
  */
@@ -789,7 +789,7 @@ export const updateDistrict = <ThrowOnError extends boolean = false>(options: Op
 /**
  * List labels / Danh sách nhãn
  *
- * **Screens:** VPA005301, VPA0053P01
+ * **Screens:** VPA09040301, VPA090403P01
  *
  * Paginated labels with the text of every active language and the missing-language count. / Danh sách phân trang kèm bản dịch.
  */
@@ -802,7 +802,7 @@ export const list = <ThrowOnError extends boolean = false>(options: Options<List
 /**
  * Create label / Tạo nhãn
  *
- * **Screens:** VPA005301, VPA0053P01
+ * **Screens:** VPA09040301, VPA090403P01
  *
  * 409 LBL002 if the key exists; 400 LBL004 for menu labels; 400 LBL005 / LBL006 as on update. / Trùng khoá trả 409.
  */
@@ -819,7 +819,7 @@ export const create = <ThrowOnError extends boolean = false>(options: Options<Cr
 /**
  * Update label / Sửa nhãn
  *
- * **Screens:** VPA005301, VPA0053P01
+ * **Screens:** VPA09040301, VPA090403P01
  *
  * Null fields keep stored values; text is trimmed. 400 LBL005 if the default-language text ends up blank, 400 LBL006 if variables (%1, {0}) differ from it; blank text of another language removes it. / Trường null giữ nguyên.
  */
@@ -836,7 +836,7 @@ export const update5 = <ThrowOnError extends boolean = false>(options: Options<U
 /**
  * Delete financial institution / Xóa Tổ chức tài chính
  *
- * **Screens:** VPA005001, VPA0050P01
+ * **Screens:** VPA09030301, VPA090303P01
  *
  * Deletes a financial institution. Fails if child branches or references exist. Requires WRITE permission. / Xóa tổ chức tài chính. Yêu cầu quyền GHI.
  */
@@ -849,7 +849,7 @@ export const deleteInstitution = <ThrowOnError extends boolean = false>(options:
 /**
  * Get financial institution detail / Chi tiết Tổ chức tài chính
  *
- * **Screens:** VPA005001, VPA0050P01
+ * **Screens:** VPA09030301, VPA090303P01
  *
  * Returns institution detail including its branch list. / Trả về chi tiết tổ chức tài chính kèm danh sách chi nhánh.
  */
@@ -862,7 +862,7 @@ export const getInstitutionDetail = <ThrowOnError extends boolean = false>(optio
 /**
  * Update financial institution / Cập nhật Tổ chức tài chính
  *
- * **Screens:** VPA005001, VPA0050P01
+ * **Screens:** VPA09030301, VPA090303P01
  *
  * Updates an existing financial institution. Requires WRITE permission. / Cập nhật tổ chức tài chính. Yêu cầu quyền GHI.
  */
@@ -879,7 +879,7 @@ export const updateInstitution = <ThrowOnError extends boolean = false>(options:
 /**
  * Delete branch / Xóa Chi nhánh
  *
- * **Screens:** VPA005001, VPA0050P01
+ * **Screens:** VPA09030301, VPA090303P01
  *
  * Deletes a branch. Fails if references exist. Requires WRITE permission. / Xóa chi nhánh. Yêu cầu quyền GHI.
  */
@@ -892,7 +892,7 @@ export const deleteBranch = <ThrowOnError extends boolean = false>(options: Opti
 /**
  * Get branch detail / Chi tiết Chi nhánh
  *
- * **Screens:** VPA005001, VPA0050P01
+ * **Screens:** VPA09030301, VPA090303P01
  *
  * Returns detail of a single branch. / Trả về chi tiết một chi nhánh.
  */
@@ -905,7 +905,7 @@ export const getBranchDetail = <ThrowOnError extends boolean = false>(options: O
 /**
  * Update branch / Cập nhật Chi nhánh
  *
- * **Screens:** VPA005001, VPA0050P01
+ * **Screens:** VPA09030301, VPA090303P01
  *
  * Updates an existing branch. Requires WRITE permission. / Cập nhật chi nhánh. Yêu cầu quyền GHI.
  */
@@ -1105,7 +1105,7 @@ export const updateSection = <ThrowOnError extends boolean = false>(options: Opt
 /**
  * Get NPL announcement detail / Chi tiết thông báo NPL
  *
- * **Screens:** VPA002701, VPA002801, VPA002901, VPA0027P01, VPA0028P01, VPA0029P01
+ * **Screens:** VPA07030101, VPA07030201, VPA07030301, VPA070301P01, VPA070302P01, VPA070303P01
  *
  * tag = document number. contentEditable=false while published. / tag là số văn bản.
  */
@@ -1118,7 +1118,7 @@ export const getAnnouncement = <ThrowOnError extends boolean = false>(options: O
 /**
  * Update NPL announcement content / Sửa nội dung thông báo NPL
  *
- * **Screens:** VPA002701, VPA002801, VPA002901, VPA0027P01, VPA0028P01, VPA0029P01
+ * **Screens:** VPA07030101, VPA07030201, VPA07030301, VPA070301P01, VPA070302P01, VPA070303P01
  *
  * Returns 409 (CNT001) while published. / Trả 409 khi đang đăng.
  */
@@ -1135,7 +1135,7 @@ export const updateAnnouncement = <ThrowOnError extends boolean = false>(options
 /**
  * Get notice detail / Chi tiết thông báo
  *
- * **Screens:** VPA002301, VPA0023P01
+ * **Screens:** VPA07010001, VPA070100P01
  *
  * Notice detail with attachments. contentEditable=false while published. / Chi tiết kèm tệp đính kèm.
  */
@@ -1148,7 +1148,7 @@ export const getNotice = <ThrowOnError extends boolean = false>(options: Options
 /**
  * Update notice content / Sửa nội dung thông báo
  *
- * **Screens:** VPA002301, VPA0023P01
+ * **Screens:** VPA07010001, VPA070100P01
  *
  * Edits title, content and attachments. Returns 409 (CNT001) while published. / Sửa tiêu đề, nội dung, tệp. Trả 409 khi đang đăng.
  */
@@ -1165,7 +1165,7 @@ export const updateNotice = <ThrowOnError extends boolean = false>(options: Opti
 /**
  * Detail / Chi tiết
  *
- * **Screens:** VPA002401, VPA002501, VPA002601, VPA0024P01, VPA0025P01, VPA0026P01
+ * **Screens:** VPA07020101, VPA07020201, VPA07020301, VPA070201P01, VPA070202P01, VPA070203P01
  *
  * Detail with attachments. / Chi tiết kèm tệp đính kèm.
  */
@@ -1178,7 +1178,7 @@ export const detail4 = <ThrowOnError extends boolean = false>(options: Options<D
 /**
  * Edit news content / Sửa nội dung tin
  *
- * **Screens:** VPA002401, VPA002501, VPA002601, VPA0024P01, VPA0025P01, VPA0026P01
+ * **Screens:** VPA07020101, VPA07020201, VPA07020301, VPA070201P01, VPA070202P01, VPA070203P01
  *
  * Returns 409 (CNT001) while published. Category, publication and featured flags are changed with PATCH /{pstNo}/status. / Trả 409 khi đang đăng.
  */
@@ -1217,7 +1217,7 @@ export const update9 = <ThrowOnError extends boolean = false>(options: Options<U
 /**
  * Detail / Chi tiết
  *
- * **Screens:** VPA003301, VPA0033P01
+ * **Screens:** VPA07070001, VPA070700P01
  *
  * Detail with attachments. / Chi tiết kèm tệp đính kèm.
  */
@@ -1230,7 +1230,7 @@ export const detail6 = <ThrowOnError extends boolean = false>(options: Options<D
 /**
  * Edit legal document / Sửa văn bản
  *
- * **Screens:** VPA003301, VPA0033P01
+ * **Screens:** VPA07070001, VPA070700P01
  *
  * Updates content, document type and publication status in one call. / Cập nhật nội dung, loại và trạng thái.
  */
@@ -1247,7 +1247,7 @@ export const update10 = <ThrowOnError extends boolean = false>(options: Options<
 /**
  * Answer inquiry / Trả lời câu hỏi
  *
- * **Screens:** VPA003001, VPA0030P01
+ * **Screens:** VPA07040001, VPA070400P01
  *
  * Stores the answer (shown in My Page) and e-mails the inquirer. Returns 409 (CNT008) if already answered. / Lưu câu trả lời và gửi email; trả 409 nếu đã trả lời.
  */
@@ -1264,7 +1264,7 @@ export const answerInquiry = <ThrowOnError extends boolean = false>(options: Opt
 /**
  * Get FAQ detail / Chi tiết FAQ
  *
- * **Screens:** VPA003101, VPA0031P01
+ * **Screens:** VPA07050001, VPA070500P01
  *
  * title = question, content = answer. / title là câu hỏi, content là câu trả lời.
  */
@@ -1277,7 +1277,7 @@ export const getFaq = <ThrowOnError extends boolean = false>(options: Options<Ge
 /**
  * Update FAQ question/answer / Sửa câu hỏi và câu trả lời
  *
- * **Screens:** VPA003101, VPA0031P01
+ * **Screens:** VPA07050001, VPA070500P01
  *
  * Returns 409 (CNT001) while published. / Trả 409 khi đang đăng.
  */
@@ -1294,7 +1294,7 @@ export const updateFaq = <ThrowOnError extends boolean = false>(options: Options
 /**
  * Detail / Chi tiết
  *
- * **Screens:** VPA003401, VPA0034P01
+ * **Screens:** VPA07080001, VPA070800P01
  *
  * Detail with attachments. / Chi tiết kèm tệp đính kèm.
  */
@@ -1307,7 +1307,7 @@ export const detail7 = <ThrowOnError extends boolean = false>(options: Options<D
 /**
  * Edit career posting / Sửa tin tuyển dụng
  *
- * **Screens:** VPA003401, VPA0034P01
+ * **Screens:** VPA07080001, VPA070800P01
  *
  * Updates content, publication status and pin in one call. / Cập nhật nội dung, trạng thái và ghim.
  */
@@ -1324,7 +1324,7 @@ export const update11 = <ThrowOnError extends boolean = false>(options: Options<
 /**
  * Get banner / Chi tiết banner
  *
- * **Screens:** VPA003201, VPA0032P01
+ * **Screens:** VPA07060101, VPA070601P01
  *
  * editable=false while in use. / editable=false khi đang sử dụng.
  */
@@ -1337,7 +1337,7 @@ export const detail8 = <ThrowOnError extends boolean = false>(options: Options<D
 /**
  * Edit banner / Sửa banner
  *
- * **Screens:** VPA003201, VPA0032P01
+ * **Screens:** VPA07060101, VPA070601P01
  *
  * Returns 409 (BNR001) while in use. / Trả 409 khi đang sử dụng.
  */
@@ -1380,7 +1380,7 @@ export const update13 = <ThrowOnError extends boolean = false>(options: Options<
 /**
  * Get contract
  *
- * **Screens:** VPA001501
+ * **Screens:** VPA05020301
  *
  * Contract or annex with NPLs, draft / signed documents, fees, annexes and terminations. Requires READ permission.
  */
@@ -1393,7 +1393,7 @@ export const getContract2 = <ThrowOnError extends boolean = false>(options: Opti
 /**
  * Edit the contract draft
  *
- * **Screens:** VPA001501
+ * **Screens:** VPA05020301
  *
  * Step 13 / annex 2 (PREPR only): period (end defaults to start + 1 year), price, auto-termination clause, fee terms (LUMP, STAG + advance %, AFTR). Requires WRITE permission.
  */
@@ -1410,7 +1410,7 @@ export const updateDraft2 = <ThrowOnError extends boolean = false>(options: Opti
 /**
  * Save the consulting report
  *
- * **Screens:** VPA001501
+ * **Screens:** VPA05020301
  *
  * 수행 1: report PDF and summary (DRFT) once the contract runs and the advance is paid. Consultant or officer. Requires WRITE permission.
  */
@@ -1427,7 +1427,7 @@ export const saveReport = <ThrowOnError extends boolean = false>(options: Option
 /**
  * Assign the consultant
  *
- * **Screens:** VPA001501
+ * **Screens:** VPA05020301
  *
  * Step 20 (after the draft approval): consultant in charge of the report and additional consultations. Requires WRITE permission.
  */
@@ -1444,7 +1444,7 @@ export const assignConsultant = <ThrowOnError extends boolean = false>(options: 
 /**
  * Get the additional consulting switch
  *
- * **Screens:** VPA001501
+ * **Screens:** VPA05020301
  *
  * 추가 12: whether members see the additional consulting button. Requires READ permission.
  */
@@ -1457,7 +1457,7 @@ export const getAdditionalConsultingSetting = <ThrowOnError extends boolean = fa
 /**
  * Change the additional consulting switch
  *
- * **Screens:** VPA001501
+ * **Screens:** VPA05020301
  *
  * 추가 12: show (Y) or hide (N) the additional consulting button to members. Requires WRITE permission.
  */
@@ -1474,7 +1474,7 @@ export const updateAdditionalConsultingSetting = <ThrowOnError extends boolean =
 /**
  * Delete code group / Xóa nhóm mã
  *
- * **Screens:** VPA004801, VPA0048P01
+ * **Screens:** VPA09030101, VPA090301P01
  *
  * Deletes a code group and its detailed codes. Requires WRITE permission. / Xóa nhóm mã và toàn bộ mã chi tiết. Yêu cầu quyền GHI.
  */
@@ -1487,7 +1487,7 @@ export const deleteGroup = <ThrowOnError extends boolean = false>(options: Optio
 /**
  * Get code group detail / Chi tiết nhóm mã
  *
- * **Screens:** VPA004801, VPA0048P01
+ * **Screens:** VPA09030101, VPA090301P01
  *
  * Returns detail of a single code group. / Trả về thông tin chi tiết một nhóm mã.
  */
@@ -1500,7 +1500,7 @@ export const getGroupDetail = <ThrowOnError extends boolean = false>(options: Op
 /**
  * Update code group / Cập nhật nhóm mã
  *
- * **Screens:** VPA004801, VPA0048P01
+ * **Screens:** VPA09030101, VPA090301P01
  *
  * Updates an existing code group. Requires WRITE permission. / Cập nhật thông tin nhóm mã. Yêu cầu quyền GHI.
  */
@@ -1517,7 +1517,7 @@ export const updateGroup = <ThrowOnError extends boolean = false>(options: Optio
 /**
  * Delete one auction notice / Xoá một thông báo đấu giá
  *
- * **Screens:** VPA002001, VPA0020P01
+ * **Screens:** VPA06010001, VPA060100P01
  *
  * Same rules as the bulk delete. Requires WRITE permission.
  */
@@ -1530,7 +1530,7 @@ export const deleteAuction = <ThrowOnError extends boolean = false>(options: Opt
 /**
  * Get auction notice / Chi tiết thông báo đấu giá
  *
- * **Screens:** VPA002001, VPA0020P01
+ * **Screens:** VPA06010001, VPA060100P01
  *
  * Latest cycle, with editable / deletable flags. Requires READ permission.
  */
@@ -1543,7 +1543,7 @@ export const getAuction = <ThrowOnError extends boolean = false>(options: Option
 /**
  * Update auction notice / Sửa thông báo đấu giá
  *
- * **Screens:** VPA002001, VPA0020P01
+ * **Screens:** VPA06010001, VPA060100P01
  *
  * Only while RD/AN with approval DR/RJ: 409 AUC002 otherwise. Requires WRITE permission.
  */
@@ -1597,7 +1597,7 @@ export const updateProcess = <ThrowOnError extends boolean = false>(options: Opt
 /**
  * Change own password / Tự đổi mật khẩu
  *
- * **Screens:** VPA000701, VPA000101
+ * **Screens:** VPA02110001, VPA01000001
  *
  * Signed-in employee changes the password: current and new password are RSA-OAEP Base64 like login (plain when RSA is optional). 400 EMP005 wrong current, EMP006 same as current, EMP007 policy. / Nhân viên đã đăng nhập tự đổi mật khẩu.
  */
@@ -1614,7 +1614,7 @@ export const changeOwnPassword = <ThrowOnError extends boolean = false>(options:
 /**
  * Get batch job config details / Chi tiết cấu hình batch job
  *
- * **Screens:** VPA005401, VPA0054P01
+ * **Screens:** VPA09040401, VPA090404P01
  */
 export const getJob = <ThrowOnError extends boolean = false>(options: Options<GetJobData, ThrowOnError>): RequestResult<GetJobResponses, unknown, ThrowOnError> => (options.client ?? client).get<GetJobResponses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -1625,7 +1625,7 @@ export const getJob = <ThrowOnError extends boolean = false>(options: Options<Ge
 /**
  * Update batch job config / Cập nhật cấu hình batch job
  *
- * **Screens:** VPA005401, VPA0054P01
+ * **Screens:** VPA09040401, VPA090404P01
  */
 export const updateJob = <ThrowOnError extends boolean = false>(options: Options<UpdateJobData, ThrowOnError>): RequestResult<UpdateJobResponses, unknown, ThrowOnError> => (options.client ?? client).put<UpdateJobResponses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -1640,7 +1640,7 @@ export const updateJob = <ThrowOnError extends boolean = false>(options: Options
 /**
  * Update batch schedule / Cập nhật lịch chạy batch (cron + enabled)
  *
- * **Screens:** VPA005401, VPA0054P01
+ * **Screens:** VPA09040401, VPA090404P01
  */
 export const updateSchedule = <ThrowOnError extends boolean = false>(options: Options<UpdateScheduleData, ThrowOnError>): RequestResult<UpdateScheduleResponses, unknown, ThrowOnError> => (options.client ?? client).put<UpdateScheduleResponses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -1655,7 +1655,7 @@ export const updateSchedule = <ThrowOnError extends boolean = false>(options: Op
 /**
  * Upload trade documents
  *
- * **Screens:** VPA0010P01, VPA0011P01, VPA0012P01, VPA0013P01, VPA0014P01
+ * **Screens:** VPA050101P01, VPA050102P01, VPA050103P01, VPA050201P01, VPA050202P01
  *
  * Creates a new ATCH_FILE group, or appends to fileUnqId. Requires WRITE permission on the contract menu (scope=contract, default) or the application menu (scope=application) of the kind.
  */
@@ -1673,9 +1673,9 @@ export const upload = <ThrowOnError extends boolean = false>(options: Options<Up
 /**
  * Search applications
  *
- * **Screens:** VPA001101, VPA0011P01
+ * **Screens:** VPA05010201, VPA050102P01
  *
- * Paginated list (VPA001101) with the derived approval stage and the action available to the current employee. Drafts are excluded. Requires READ permission.
+ * Paginated list (VPA05010201) with the derived approval stage and the action available to the current employee. Drafts are excluded. Requires READ permission.
  */
 export const getApplications = <ThrowOnError extends boolean = false>(options: Options<GetApplicationsData, ThrowOnError>): RequestResult<GetApplicationsResponses, unknown, ThrowOnError> => (options.client ?? client).get<GetApplicationsResponses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -1686,9 +1686,9 @@ export const getApplications = <ThrowOnError extends boolean = false>(options: O
 /**
  * Register a paper application
  *
- * **Screens:** VPA001101, VPA0011P01
+ * **Screens:** VPA05010201, VPA050102P01
  *
- * Manual registration (VPA0011P01) for an active member and a registered NPL or lot. aplySttsCd PRCS receives it at once for tkcgEmpNo. Requires WRITE permission.
+ * Manual registration (VPA050102P01) for an active member and a registered NPL or lot. aplySttsCd PRCS receives it at once for tkcgEmpNo. Requires WRITE permission.
  */
 export const create1 = <ThrowOnError extends boolean = false>(options: Options<Create1Data, ThrowOnError>): RequestResult<Create1Responses, unknown, ThrowOnError> => (options.client ?? client).post<Create1Responses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -1703,7 +1703,7 @@ export const create1 = <ThrowOnError extends boolean = false>(options: Options<C
 /**
  * Attach scanned documents
  *
- * **Screens:** VPA001101, VPA0011P01
+ * **Screens:** VPA05010201, VPA050102P01
  *
  * Steps 11 / 11-1c: the officer in charge attaches the scan of the posted documents (file group from POST /api/files/upload). Requires WRITE permission.
  */
@@ -1720,7 +1720,7 @@ export const attachScan = <ThrowOnError extends boolean = false>(options: Option
 /**
  * Receive a application
  *
- * **Screens:** VPA001101, VPA0011P01
+ * **Screens:** VPA05010201, VPA050102P01
  *
  * Step 7: RCPT -> PRCS, starts PROC_DSPSL_MDT_RCPT, assigns the officer in charge and mails the applicant the documents to post. Requires WRITE permission.
  */
@@ -1737,7 +1737,7 @@ export const receive = <ThrowOnError extends boolean = false>(options: Options<R
 /**
  * Check documents
  *
- * **Screens:** VPA001101, VPA0011P01
+ * **Screens:** VPA05010201, VPA050102P01
  *
  * Steps 11-1 / 11-1a / 11-2 by the officer in charge: 'Y' -> DCOK (approval can be requested), 'N' -> DCIN with the missing documents. Requires WRITE permission.
  */
@@ -1754,7 +1754,7 @@ export const checkDocuments = <ThrowOnError extends boolean = false>(options: Op
 /**
  * Cancel a application
  *
- * **Screens:** VPA001101, VPA0011P01
+ * **Screens:** VPA05010201, VPA050102P01
  *
  * 취소 1-2: cancels an application that is not approved yet (CNCL) and closes its open approval session. Requires WRITE permission.
  */
@@ -1771,7 +1771,7 @@ export const cancel = <ThrowOnError extends boolean = false>(options: Options<Ca
 /**
  * Request application approval
  *
- * **Screens:** VPA001101, VPA0011P01
+ * **Screens:** VPA05010201, VPA050102P01
  *
  * Step 11-3 by the officer in charge, only with complete documents (DCOK). Approval through POST /api/v1/approvals/{atrzHstryId}/approve creates the contract draft (11-5); a rejection keeps DCOK. Requires WRITE permission.
  */
@@ -1788,9 +1788,9 @@ export const requestApproval = <ThrowOnError extends boolean = false>(options: O
 /**
  * Search applications
  *
- * **Screens:** VPA001001, VPA0010P01, VPA0004P01, VPA0004P04
+ * **Screens:** VPA05010101, VPA050101P01, VPA020500P01, VPA0004P04
  *
- * Paginated list (VPA001101) with the derived approval stage and the action available to the current employee. Drafts are excluded. Requires READ permission.
+ * Paginated list (VPA05010201) with the derived approval stage and the action available to the current employee. Drafts are excluded. Requires READ permission.
  */
 export const getApplications1 = <ThrowOnError extends boolean = false>(options: Options<GetApplications1Data, ThrowOnError>): RequestResult<GetApplications1Responses, unknown, ThrowOnError> => (options.client ?? client).get<GetApplications1Responses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -1801,9 +1801,9 @@ export const getApplications1 = <ThrowOnError extends boolean = false>(options: 
 /**
  * Register a paper application
  *
- * **Screens:** VPA001001, VPA0010P01, VPA0004P01, VPA0004P04
+ * **Screens:** VPA05010101, VPA050101P01, VPA020500P01, VPA0004P04
  *
- * Manual registration (VPA0011P01) for an active member and a registered NPL or lot. aplySttsCd PRCS receives it at once for tkcgEmpNo. Requires WRITE permission.
+ * Manual registration (VPA050102P01) for an active member and a registered NPL or lot. aplySttsCd PRCS receives it at once for tkcgEmpNo. Requires WRITE permission.
  */
 export const create2 = <ThrowOnError extends boolean = false>(options: Options<Create2Data, ThrowOnError>): RequestResult<Create2Responses, unknown, ThrowOnError> => (options.client ?? client).post<Create2Responses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -1818,7 +1818,7 @@ export const create2 = <ThrowOnError extends boolean = false>(options: Options<C
 /**
  * Attach scanned documents
  *
- * **Screens:** VPA001001, VPA0010P01, VPA0004P01, VPA0004P04
+ * **Screens:** VPA05010101, VPA050101P01, VPA020500P01, VPA0004P04
  *
  * Steps 11 / 11-1c: the officer in charge attaches the scan of the posted documents (file group from POST /api/files/upload). Requires WRITE permission.
  */
@@ -1835,7 +1835,7 @@ export const attachScan1 = <ThrowOnError extends boolean = false>(options: Optio
 /**
  * Receive a application
  *
- * **Screens:** VPA001001, VPA0010P01, VPA0004P01, VPA0004P04
+ * **Screens:** VPA05010101, VPA050101P01, VPA020500P01, VPA0004P04
  *
  * Step 7: RCPT -> PRCS, starts PROC_DSPSL_MDT_RCPT, assigns the officer in charge and mails the applicant the documents to post. Requires WRITE permission.
  */
@@ -1852,7 +1852,7 @@ export const receive1 = <ThrowOnError extends boolean = false>(options: Options<
 /**
  * Check documents
  *
- * **Screens:** VPA001001, VPA0010P01, VPA0004P01, VPA0004P04
+ * **Screens:** VPA05010101, VPA050101P01, VPA020500P01, VPA0004P04
  *
  * Steps 11-1 / 11-1a / 11-2 by the officer in charge: 'Y' -> DCOK (approval can be requested), 'N' -> DCIN with the missing documents. Requires WRITE permission.
  */
@@ -1869,7 +1869,7 @@ export const checkDocuments1 = <ThrowOnError extends boolean = false>(options: O
 /**
  * Cancel a application
  *
- * **Screens:** VPA001001, VPA0010P01, VPA0004P01, VPA0004P04
+ * **Screens:** VPA05010101, VPA050101P01, VPA020500P01, VPA0004P04
  *
  * 취소 1-2: cancels an application that is not approved yet (CNCL) and closes its open approval session. Requires WRITE permission.
  */
@@ -1886,7 +1886,7 @@ export const cancel1 = <ThrowOnError extends boolean = false>(options: Options<C
 /**
  * Request application approval
  *
- * **Screens:** VPA001001, VPA0010P01, VPA0004P01, VPA0004P04
+ * **Screens:** VPA05010101, VPA050101P01, VPA020500P01, VPA0004P04
  *
  * Step 11-3 by the officer in charge, only with complete documents (DCOK). Approval through POST /api/v1/approvals/{atrzHstryId}/approve creates the contract draft (11-5); a rejection keeps DCOK. Requires WRITE permission.
  */
@@ -1903,9 +1903,9 @@ export const requestApproval1 = <ThrowOnError extends boolean = false>(options: 
 /**
  * Search applications
  *
- * **Screens:** VPA001201, VPA0012P01
+ * **Screens:** VPA05010301, VPA050103P01
  *
- * Paginated list (VPA001101) with the derived approval stage and the action available to the current employee. Drafts are excluded. Requires READ permission.
+ * Paginated list (VPA05010201) with the derived approval stage and the action available to the current employee. Drafts are excluded. Requires READ permission.
  */
 export const getApplications2 = <ThrowOnError extends boolean = false>(options: Options<GetApplications2Data, ThrowOnError>): RequestResult<GetApplications2Responses, unknown, ThrowOnError> => (options.client ?? client).get<GetApplications2Responses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -1916,9 +1916,9 @@ export const getApplications2 = <ThrowOnError extends boolean = false>(options: 
 /**
  * Register a paper application
  *
- * **Screens:** VPA001201, VPA0012P01
+ * **Screens:** VPA05010301, VPA050103P01
  *
- * Manual registration (VPA0011P01) for an active member and a registered NPL or lot. aplySttsCd PRCS receives it at once for tkcgEmpNo. Requires WRITE permission.
+ * Manual registration (VPA050102P01) for an active member and a registered NPL or lot. aplySttsCd PRCS receives it at once for tkcgEmpNo. Requires WRITE permission.
  */
 export const create3 = <ThrowOnError extends boolean = false>(options: Options<Create3Data, ThrowOnError>): RequestResult<Create3Responses, unknown, ThrowOnError> => (options.client ?? client).post<Create3Responses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -1933,7 +1933,7 @@ export const create3 = <ThrowOnError extends boolean = false>(options: Options<C
 /**
  * Attach scanned documents
  *
- * **Screens:** VPA001201, VPA0012P01
+ * **Screens:** VPA05010301, VPA050103P01
  *
  * Steps 11 / 11-1c: the officer in charge attaches the scan of the posted documents (file group from POST /api/files/upload). Requires WRITE permission.
  */
@@ -1950,7 +1950,7 @@ export const attachScan2 = <ThrowOnError extends boolean = false>(options: Optio
 /**
  * Receive a application
  *
- * **Screens:** VPA001201, VPA0012P01
+ * **Screens:** VPA05010301, VPA050103P01
  *
  * Step 7: RCPT -> PRCS, starts PROC_DSPSL_MDT_RCPT, assigns the officer in charge and mails the applicant the documents to post. Requires WRITE permission.
  */
@@ -1967,7 +1967,7 @@ export const receive2 = <ThrowOnError extends boolean = false>(options: Options<
 /**
  * Check documents
  *
- * **Screens:** VPA001201, VPA0012P01
+ * **Screens:** VPA05010301, VPA050103P01
  *
  * Steps 11-1 / 11-1a / 11-2 by the officer in charge: 'Y' -> DCOK (approval can be requested), 'N' -> DCIN with the missing documents. Requires WRITE permission.
  */
@@ -1984,7 +1984,7 @@ export const checkDocuments2 = <ThrowOnError extends boolean = false>(options: O
 /**
  * Cancel a application
  *
- * **Screens:** VPA001201, VPA0012P01
+ * **Screens:** VPA05010301, VPA050103P01
  *
  * 취소 1-2: cancels an application that is not approved yet (CNCL) and closes its open approval session. Requires WRITE permission.
  */
@@ -2001,7 +2001,7 @@ export const cancel2 = <ThrowOnError extends boolean = false>(options: Options<C
 /**
  * Request application approval
  *
- * **Screens:** VPA001201, VPA0012P01
+ * **Screens:** VPA05010301, VPA050103P01
  *
  * Step 11-3 by the officer in charge, only with complete documents (DCOK). Approval through POST /api/v1/approvals/{atrzHstryId}/approve creates the contract draft (11-5); a rejection keeps DCOK. Requires WRITE permission.
  */
@@ -2018,7 +2018,7 @@ export const requestApproval2 = <ThrowOnError extends boolean = false>(options: 
 /**
  * Delete / Xóa
  *
- * **Screens:** VPA005201, VPA0052P01
+ * **Screens:** VPA09040201, VPA090402P01
  */
 export const delete_ = <ThrowOnError extends boolean = false>(options: Options<DeleteData, ThrowOnError>): RequestResult<DeleteResponses, unknown, ThrowOnError> => (options.client ?? client).delete<DeleteResponses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -2033,7 +2033,7 @@ export const delete_ = <ThrowOnError extends boolean = false>(options: Options<D
 /**
  * List screens / Danh sách màn hình
  *
- * **Screens:** VPA005201, VPA0052P01
+ * **Screens:** VPA09040201, VPA090402P01
  */
 export const list1 = <ThrowOnError extends boolean = false>(options: Options<List1Data, ThrowOnError>): RequestResult<List1Responses, unknown, ThrowOnError> => (options.client ?? client).get<List1Responses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -2044,7 +2044,7 @@ export const list1 = <ThrowOnError extends boolean = false>(options: Options<Lis
 /**
  * Create / Tạo mới
  *
- * **Screens:** VPA005201, VPA0052P01
+ * **Screens:** VPA09040201, VPA090402P01
  */
 export const create4 = <ThrowOnError extends boolean = false>(options: Options<Create4Data, ThrowOnError>): RequestResult<Create4Responses, unknown, ThrowOnError> => (options.client ?? client).post<Create4Responses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -2059,7 +2059,7 @@ export const create4 = <ThrowOnError extends boolean = false>(options: Options<C
 /**
  * Register a termination
  *
- * **Screens:** VPA001401, VPA0014P01, VPA0014P02
+ * **Screens:** VPA05020201, VPA050202P01, VPA050202P02
  *
  * Termination 1: PROGS -> ENDING with the reason and the fee handling. With the auto-termination clause the contract ends at once. Requires WRITE permission.
  */
@@ -2076,7 +2076,7 @@ export const startTermination = <ThrowOnError extends boolean = false>(options: 
 /**
  * Attach the signed settlement minutes
  *
- * **Screens:** VPA001401, VPA0014P01, VPA0014P02
+ * **Screens:** VPA05020201, VPA050202P01, VPA050202P02
  *
  * Termination 17 (SGNCP). Requires WRITE permission.
  */
@@ -2093,7 +2093,7 @@ export const attachTerminationScan = <ThrowOnError extends boolean = false>(opti
 /**
  * Request settlement minutes signature approval
  *
- * **Screens:** VPA001401, VPA0014P01, VPA0014P02
+ * **Screens:** VPA05020201, VPA050202P01, VPA050202P02
  *
  * Termination 15-1 (PROC_DSPSL_MDT_END_SIGN); approval -> SGNCP. Requires WRITE permission.
  */
@@ -2110,7 +2110,7 @@ export const requestTerminationSignature = <ThrowOnError extends boolean = false
 /**
  * Register the settlement minutes for signature
  *
- * **Screens:** VPA001401, VPA0014P01, VPA0014P02
+ * **Screens:** VPA05020201, VPA050202P01, VPA050202P02
  *
  * Termination 9: form 12 draft, DRFAPR -> SGNWT; mails the member. Requires WRITE permission.
  */
@@ -2127,7 +2127,7 @@ export const registerTerminationDraft = <ThrowOnError extends boolean = false>(o
 /**
  * Complete the termination
  *
- * **Screens:** VPA001401, VPA0014P01, VPA0014P02
+ * **Screens:** VPA05020201, VPA050202P01, VPA050202P02
  *
  * Termination 18: contract CMPTN (performed) or CNCLN; unsold NPLs hidden; collected fees refunded (RFPL) or open claims cancelled (CLCN); mails the member. Purchase: 409 when another active purchase contract exists or termination conditions are not met (CNCL only before delivery); 400 on invalid reason. Requires WRITE permission.
  */
@@ -2140,7 +2140,7 @@ export const completeTermination = <ThrowOnError extends boolean = false>(option
 /**
  * Request termination approval
  *
- * **Screens:** VPA001401, VPA0014P01, VPA0014P02
+ * **Screens:** VPA05020201, VPA050202P01, VPA050202P02
  *
  * Termination 2 (PROC_DSPSL_MDT_END); approval -> DRFAPR. Requires WRITE permission.
  */
@@ -2157,7 +2157,7 @@ export const requestTerminationApproval = <ThrowOnError extends boolean = false>
 /**
  * Attach the signed scan
  *
- * **Screens:** VPA001401, VPA0014P01, VPA0014P02
+ * **Screens:** VPA05020201, VPA050202P01, VPA050202P02
  *
  * Step 31 / annex 18 (SGNCP). Requires WRITE permission.
  */
@@ -2174,7 +2174,7 @@ export const attachSignedScan = <ThrowOnError extends boolean = false>(options: 
 /**
  * Request signature approval
  *
- * **Screens:** VPA001401, VPA0014P01, VPA0014P02
+ * **Screens:** VPA05020201, VPA050202P01, VPA050202P02
  *
  * Step 29-1 / annex 16-1: the approver checks the member-signed document and signs for VAMC (PROC_DSPSL_MDT_SIGN); approval -> SGNCP. Requires WRITE permission.
  */
@@ -2191,7 +2191,7 @@ export const requestSignatureApproval = <ThrowOnError extends boolean = false>(o
 /**
  * Record the sale completion
  *
- * **Screens:** VPA001401, VPA0014P01, VPA0014P02
+ * **Screens:** VPA05020201, VPA050202P01, VPA050202P02
  *
  * Step 39: actual price and sale date, NPLs marked sold (SD), remaining fee issued for STAG / AFTR and mailed. Requires WRITE permission.
  */
@@ -2208,7 +2208,7 @@ export const completeTrade = <ThrowOnError extends boolean = false>(options: Opt
 /**
  * Decide the renewal of an expiring contract
  *
- * **Screens:** VPA001401, VPA0014P01, VPA0014P02
+ * **Screens:** VPA05020201, VPA050202P01, VPA050202P02
  *
  * Expiry 2: EXTEND_ANNEX creates an extension annex; NEW_CONTRACT registers the termination (expired) and a new contract draft; NO_EXTEND registers the termination (expired). Requires WRITE permission.
  */
@@ -2225,7 +2225,7 @@ export const decideRenewal = <ThrowOnError extends boolean = false>(options: Opt
 /**
  * Record a fee refund
  *
- * **Screens:** VPA001401, VPA0014P01, VPA0014P02
+ * **Screens:** VPA05020201, VPA050202P01, VPA050202P02
  *
  * Termination 18: refund transferred (RFPL -> RFCP). Requires WRITE permission.
  */
@@ -2242,7 +2242,7 @@ export const refundFee = <ThrowOnError extends boolean = false>(options: Options
 /**
  * Confirm a fee transfer
  *
- * **Screens:** VPA001401, VPA0014P01, VPA0014P02
+ * **Screens:** VPA05020201, VPA050202P01, VPA050202P02
  *
  * Step 37 / annex 24. Requires WRITE permission.
  */
@@ -2259,7 +2259,7 @@ export const confirmFeeReceipt = <ThrowOnError extends boolean = false>(options:
 /**
  * Register the draft for signature
  *
- * **Screens:** VPA001401, VPA0014P01, VPA0014P02
+ * **Screens:** VPA05020201, VPA050202P01, VPA050202P02
  *
  * Step 23 / annex 10: DRFAPR -> SGNWT with the PDF the member prints, signs and posts; mails the member. Requires WRITE permission.
  */
@@ -2276,7 +2276,7 @@ export const registerDraft = <ThrowOnError extends boolean = false>(options: Opt
 /**
  * Conclude the contract
  *
- * **Screens:** VPA001401, VPA0014P01, VPA0014P02
+ * **Screens:** VPA05020201, VPA050202P01, VPA050202P02
  *
  * Step 32 / annex 19: SGNCP with a scan -> PROGS; first installment (LUMP / STAG advance); NPLs published (step 38) for brokerage contracts and base contract annexes; extension / price annexes update the parent. Requires WRITE permission.
  */
@@ -2293,7 +2293,7 @@ export const conclude = <ThrowOnError extends boolean = false>(options: Options<
 /**
  * Request draft approval
  *
- * **Screens:** VPA001401, VPA0014P01, VPA0014P02
+ * **Screens:** VPA05020201, VPA050202P01, VPA050202P02
  *
  * Step 16 / annex 3: PROC_DSPSL_MDT_CTRT (contract) or PROC_DSPSL_MDT_ANX (annex); approval -> DRFAPR. Requires WRITE permission.
  */
@@ -2310,7 +2310,7 @@ export const requestDraftApproval = <ThrowOnError extends boolean = false>(optio
 /**
  * Create an annex
  *
- * **Screens:** VPA001401, VPA0014P01, VPA0014P02
+ * **Screens:** VPA05020201, VPA050202P01, VPA050202P02
  *
  * Annex 2: extension (new end date), price change (new price), after-sale or other annex of a brokerage contract in progress. Requires WRITE permission.
  */
@@ -2327,7 +2327,7 @@ export const createAnnex = <ThrowOnError extends boolean = false>(options: Optio
 /**
  * List roles / Danh sách vai trò
  *
- * **Screens:** VPA004701
+ * **Screens:** VPA09020401
  *
  * Returns paginated roles with optional group, use status, and keyword filters. / Trả về danh sách vai trò phân trang với bộ lọc nhóm, trạng thái và từ khóa tùy chọn.
  */
@@ -2340,7 +2340,7 @@ export const getRoles = <ThrowOnError extends boolean = false>(options: Options<
 /**
  * Create role / Tạo mới vai trò
  *
- * **Screens:** VPA004701
+ * **Screens:** VPA09020401
  *
  * Creates a new role under a role group. Requires WRITE permission. / Tạo mới vai trò trong nhóm vai trò. Yêu cầu quyền GHI.
  */
@@ -2357,7 +2357,7 @@ export const createRole = <ThrowOnError extends boolean = false>(options: Option
 /**
  * Batch save role menu permissions (POST alias) / Lưu hàng loạt phân quyền menu (Bí danh POST)
  *
- * **Screens:** VPA004701
+ * **Screens:** VPA09020401
  *
  * POST alias for batch updating menu permissions. Requires WRITE permission. / Bí danh POST để lưu hàng loạt phân quyền menu. Yêu cầu quyền GHI.
  */
@@ -2374,7 +2374,7 @@ export const batchSaveRoleMenuPermissionsAlias = <ThrowOnError extends boolean =
 /**
  * Revoke role from user / Thu hồi vai trò của người dùng
  *
- * **Screens:** VPA004701
+ * **Screens:** VPA09020401
  *
  * Removes a specific role assignment from a user. Requires WRITE permission. / Xóa gán vai trò cụ thể khỏi người dùng. Yêu cầu quyền GHI.
  */
@@ -2391,7 +2391,7 @@ export const revokeRole = <ThrowOnError extends boolean = false>(options: Option
 /**
  * Get user role assignments / Danh sách vai trò của người dùng
  *
- * **Screens:** VPA004701
+ * **Screens:** VPA09020401
  *
  * Returns all roles assigned to a specific user. / Trả về tất cả vai trò được gán cho người dùng chỉ định.
  */
@@ -2404,7 +2404,7 @@ export const getUserRoles = <ThrowOnError extends boolean = false>(options: Opti
 /**
  * Assign role to user / Gán vai trò cho người dùng
  *
- * **Screens:** VPA004701
+ * **Screens:** VPA09020401
  *
  * Assigns a role to a user. Requires WRITE permission. / Gán vai trò cho người dùng. Yêu cầu quyền GHI.
  */
@@ -2421,7 +2421,7 @@ export const assignRole = <ThrowOnError extends boolean = false>(options: Option
 /**
  * List role groups / Danh sách nhóm vai trò
  *
- * **Screens:** VPA004601, VPA0046P01
+ * **Screens:** VPA09020301, VPA090203P01
  *
  * Returns paginated role groups with optional use status and keyword filters. / Trả về danh sách nhóm vai trò phân trang theo bộ lọc.
  */
@@ -2434,7 +2434,7 @@ export const getRoleGroups = <ThrowOnError extends boolean = false>(options: Opt
 /**
  * Create role group / Tạo mới nhóm vai trò
  *
- * **Screens:** VPA004601, VPA0046P01
+ * **Screens:** VPA09020301, VPA090203P01
  *
  * Creates a new role group. Requires WRITE permission. / Tạo mới một nhóm vai trò. Yêu cầu quyền GHI.
  */
@@ -2451,7 +2451,7 @@ export const createRoleGroup = <ThrowOnError extends boolean = false>(options: O
 /**
  * Record the trade conclusion
  *
- * **Screens:** VPA001301, VPA0013P01, VPA0013P02
+ * **Screens:** VPA05020101, VPA050201P01, VPA050201P02
  *
  * Step 38: purchase contract with the holder signed (date, actual price; see dspslCtrtCd for the linked sale contract), remaining fee issued and mailed. Requires WRITE permission.
  */
@@ -2468,7 +2468,7 @@ export const completeTrade1 = <ThrowOnError extends boolean = false>(options: Op
 /**
  * Register a termination
  *
- * **Screens:** VPA001301, VPA0013P01, VPA0013P02
+ * **Screens:** VPA05020101, VPA050201P01, VPA050201P02
  *
  * Termination 1: PROGS -> ENDING with the reason and the fee handling. With the auto-termination clause the contract ends at once. Requires WRITE permission.
  */
@@ -2485,7 +2485,7 @@ export const startTermination1 = <ThrowOnError extends boolean = false>(options:
 /**
  * Attach the signed settlement minutes
  *
- * **Screens:** VPA001301, VPA0013P01, VPA0013P02
+ * **Screens:** VPA05020101, VPA050201P01, VPA050201P02
  *
  * Termination 17 (SGNCP). Requires WRITE permission.
  */
@@ -2502,7 +2502,7 @@ export const attachTerminationScan1 = <ThrowOnError extends boolean = false>(opt
 /**
  * Request settlement minutes signature approval
  *
- * **Screens:** VPA001301, VPA0013P01, VPA0013P02
+ * **Screens:** VPA05020101, VPA050201P01, VPA050201P02
  *
  * Termination 15-1 (PROC_DSPSL_MDT_END_SIGN); approval -> SGNCP. Requires WRITE permission.
  */
@@ -2519,7 +2519,7 @@ export const requestTerminationSignature1 = <ThrowOnError extends boolean = fals
 /**
  * Register the settlement minutes for signature
  *
- * **Screens:** VPA001301, VPA0013P01, VPA0013P02
+ * **Screens:** VPA05020101, VPA050201P01, VPA050201P02
  *
  * Termination 9: form 12 draft, DRFAPR -> SGNWT; mails the member. Requires WRITE permission.
  */
@@ -2536,7 +2536,7 @@ export const registerTerminationDraft1 = <ThrowOnError extends boolean = false>(
 /**
  * Complete the termination
  *
- * **Screens:** VPA001301, VPA0013P01, VPA0013P02
+ * **Screens:** VPA05020101, VPA050201P01, VPA050201P02
  *
  * Termination 18: contract CMPTN (performed) or CNCLN; unsold NPLs hidden; collected fees refunded (RFPL) or open claims cancelled (CLCN); mails the member. Purchase: 409 when another active purchase contract exists or termination conditions are not met (CNCL only before delivery); 400 on invalid reason. Requires WRITE permission.
  */
@@ -2549,7 +2549,7 @@ export const completeTermination1 = <ThrowOnError extends boolean = false>(optio
 /**
  * Request termination approval
  *
- * **Screens:** VPA001301, VPA0013P01, VPA0013P02
+ * **Screens:** VPA05020101, VPA050201P01, VPA050201P02
  *
  * Termination 2 (PROC_DSPSL_MDT_END); approval -> DRFAPR. Requires WRITE permission.
  */
@@ -2566,7 +2566,7 @@ export const requestTerminationApproval1 = <ThrowOnError extends boolean = false
 /**
  * Attach the signed scan
  *
- * **Screens:** VPA001301, VPA0013P01, VPA0013P02
+ * **Screens:** VPA05020101, VPA050201P01, VPA050201P02
  *
  * Step 31 / annex 18 (SGNCP). Requires WRITE permission.
  */
@@ -2583,7 +2583,7 @@ export const attachSignedScan1 = <ThrowOnError extends boolean = false>(options:
 /**
  * Request signature approval
  *
- * **Screens:** VPA001301, VPA0013P01, VPA0013P02
+ * **Screens:** VPA05020101, VPA050201P01, VPA050201P02
  *
  * Step 29-1 / annex 16-1: the approver checks the member-signed document and signs for VAMC (PROC_DSPSL_MDT_SIGN); approval -> SGNCP. Requires WRITE permission.
  */
@@ -2600,7 +2600,7 @@ export const requestSignatureApproval1 = <ThrowOnError extends boolean = false>(
 /**
  * Decide the renewal of an expiring contract
  *
- * **Screens:** VPA001301, VPA0013P01, VPA0013P02
+ * **Screens:** VPA05020101, VPA050201P01, VPA050201P02
  *
  * 만료 2 (after the end date passed without a trade): EXTEND_ANNEX creates an extension annex; NEW_CONTRACT registers the termination (expired) and a new contract draft; NO_EXTEND registers the termination (expired). Requires WRITE permission.
  */
@@ -2617,7 +2617,7 @@ export const decideRenewal1 = <ThrowOnError extends boolean = false>(options: Op
 /**
  * Record a fee refund
  *
- * **Screens:** VPA001301, VPA0013P01, VPA0013P02
+ * **Screens:** VPA05020101, VPA050201P01, VPA050201P02
  *
  * Termination 18: refund transferred (RFPL -> RFCP). Requires WRITE permission.
  */
@@ -2634,7 +2634,7 @@ export const refundFee1 = <ThrowOnError extends boolean = false>(options: Option
 /**
  * Confirm a fee transfer
  *
- * **Screens:** VPA001301, VPA0013P01, VPA0013P02
+ * **Screens:** VPA05020101, VPA050201P01, VPA050201P02
  *
  * Step 37 / annex 24. Requires WRITE permission.
  */
@@ -2651,7 +2651,7 @@ export const confirmFeeReceipt1 = <ThrowOnError extends boolean = false>(options
 /**
  * Register the draft for signature
  *
- * **Screens:** VPA001301, VPA0013P01, VPA0013P02
+ * **Screens:** VPA05020101, VPA050201P01, VPA050201P02
  *
  * Step 23 / annex 10: DRFAPR -> SGNWT with the PDF the member prints, signs and posts; mails the member. Requires WRITE permission.
  */
@@ -2668,7 +2668,7 @@ export const registerDraft1 = <ThrowOnError extends boolean = false>(options: Op
 /**
  * Record the delivery
  *
- * **Screens:** VPA001301, VPA0013P01, VPA0013P02
+ * **Screens:** VPA05020101, VPA050201P01, VPA050201P02
  *
  * Step 40: handover completed after the trade conclusion. Requires WRITE permission.
  */
@@ -2685,7 +2685,7 @@ export const recordDelivery = <ThrowOnError extends boolean = false>(options: Op
 /**
  * Conclude the contract
  *
- * **Screens:** VPA001301, VPA0013P01, VPA0013P02
+ * **Screens:** VPA05020101, VPA050201P01, VPA050201P02
  *
  * Step 32 / annex 19: SGNCP with a scan -> PROGS; first installment (LUMP / STAG advance); NPLs published (step 38) for brokerage contracts and base contract annexes; extension / price annexes update the parent. Requires WRITE permission.
  */
@@ -2702,7 +2702,7 @@ export const conclude1 = <ThrowOnError extends boolean = false>(options: Options
 /**
  * Request draft approval
  *
- * **Screens:** VPA001301, VPA0013P01, VPA0013P02
+ * **Screens:** VPA05020101, VPA050201P01, VPA050201P02
  *
  * Step 16 / annex 3: PROC_DSPSL_MDT_CTRT (contract) or PROC_DSPSL_MDT_ANX (annex); approval -> DRFAPR. Requires WRITE permission.
  */
@@ -2719,7 +2719,7 @@ export const requestDraftApproval1 = <ThrowOnError extends boolean = false>(opti
 /**
  * Create an annex
  *
- * **Screens:** VPA001301, VPA0013P01, VPA0013P02
+ * **Screens:** VPA05020101, VPA050201P01, VPA050201P02
  *
  * 연장 1 - 4: extension annex (new end date) of a purchase brokerage contract in progress; then the shared lifecycle with PROC_PUR_MDT_ANX. Requires WRITE permission.
  */
@@ -2736,7 +2736,7 @@ export const createAnnex1 = <ThrowOnError extends boolean = false>(options: Opti
 /**
  * Delete / Xóa
  *
- * **Screens:** VPA005101, VPA0051P01
+ * **Screens:** VPA09040101, VPA090401P01
  */
 export const delete1 = <ThrowOnError extends boolean = false>(options: Options<Delete1Data, ThrowOnError>): RequestResult<Delete1Responses, unknown, ThrowOnError> => (options.client ?? client).delete<Delete1Responses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -2751,7 +2751,7 @@ export const delete1 = <ThrowOnError extends boolean = false>(options: Options<D
 /**
  * List programs / Danh sách chương trình
  *
- * **Screens:** VPA005101, VPA0051P01
+ * **Screens:** VPA09040101, VPA090401P01
  */
 export const list2 = <ThrowOnError extends boolean = false>(options: Options<List2Data, ThrowOnError>): RequestResult<List2Responses, unknown, ThrowOnError> => (options.client ?? client).get<List2Responses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -2762,7 +2762,7 @@ export const list2 = <ThrowOnError extends boolean = false>(options: Options<Lis
 /**
  * Create / Tạo mới
  *
- * **Screens:** VPA005101, VPA0051P01
+ * **Screens:** VPA09040101, VPA090401P01
  */
 export const create5 = <ThrowOnError extends boolean = false>(options: Options<Create5Data, ThrowOnError>): RequestResult<Create5Responses, unknown, ThrowOnError> => (options.client ?? client).post<Create5Responses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -2777,7 +2777,7 @@ export const create5 = <ThrowOnError extends boolean = false>(options: Options<C
 /**
  * Delete fee items / Xóa mục phí
  *
- * **Screens:** VPA004101, VPA0041P01
+ * **Screens:** VPA09010301, VPA090103P01
  *
  * Only items not in use (409 FEE001) and not referenced by an application fee group (409 FEE003). / Chỉ mục không sử dụng và chưa được tham chiếu.
  */
@@ -2794,7 +2794,7 @@ export const deleteFees = <ThrowOnError extends boolean = false>(options: Option
 /**
  * List fee items / Danh sách mục phí
  *
- * **Screens:** VPA004101, VPA0041P01
+ * **Screens:** VPA09010301, VPA090103P01
  *
  * Ordered by batch, category (Membership fee, Purchase brokerage, Sale brokerage, Consulting) and display order. / Sắp theo đợt, loại phí và thứ tự.
  */
@@ -2807,7 +2807,7 @@ export const getFees = <ThrowOnError extends boolean = false>(options: Options<G
 /**
  * Register fee item / Đăng ký mục phí
  *
- * **Screens:** VPA004101, VPA0041P01
+ * **Screens:** VPA09010301, VPA090103P01
  *
  * Fee code is generated; the item joins the current batch; useYn defaults to Y. / Mã phí tự sinh, useYn mặc định Y.
  */
@@ -2835,9 +2835,9 @@ export const sync = <ThrowOnError extends boolean = false>(options?: Options<Syn
 /**
  * Search NPL LOTs
  *
- * **Screens:** VPA001901
+ * **Screens:** VPA04050001
  *
- * LOT list with filters, sort and paging. Requires READ on A03010400.
+ * LOT list with filters, sort and paging. Requires READ on A04050000.
  */
 export const getNplLots = <ThrowOnError extends boolean = false>(options: Options<GetNplLotsData, ThrowOnError>): RequestResult<GetNplLotsResponses, unknown, ThrowOnError> => (options.client ?? client).get<GetNplLotsResponses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -2848,9 +2848,9 @@ export const getNplLots = <ThrowOnError extends boolean = false>(options: Option
 /**
  * Register an NPL LOT
  *
- * **Screens:** VPA001901
+ * **Screens:** VPA04050001
  *
- * Creates an empty LOT; LOT ID must be unique (case-insensitive), else 409. Requires WRITE on A03010400.
+ * Creates an empty LOT; LOT ID must be unique (case-insensitive), else 409. Requires WRITE on A04050000.
  */
 export const createNplLot = <ThrowOnError extends boolean = false>(options: Options<CreateNplLotData, ThrowOnError>): RequestResult<CreateNplLotResponses, unknown, ThrowOnError> => (options.client ?? client).post<CreateNplLotResponses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -2865,7 +2865,7 @@ export const createNplLot = <ThrowOnError extends boolean = false>(options: Opti
 /**
  * Delete notification templates / Xoá mẫu thông báo
  *
- * **Screens:** VPA005501, VPA0055P01
+ * **Screens:** VPA09050101, VPA090501P01
  *
  * All or nothing: 404 (NTF001) for an unknown ID, 409 (NTF002) when one is in use. Requires WRITE permission.
  */
@@ -2882,7 +2882,7 @@ export const deleteMessages = <ThrowOnError extends boolean = false>(options: Op
 /**
  * List notification templates / Danh sách mẫu thông báo
  *
- * **Screens:** VPA005501, VPA0055P01
+ * **Screens:** VPA09050101, VPA090501P01
  *
  * Filters: registration period, status (useYns), processing type, title. Sort: menuCd, notiMediaSe, prcsSttsCd, notiTtl, mdfcnDt (default newest registration). Requires READ permission.
  */
@@ -2895,7 +2895,7 @@ export const getMessages = <ThrowOnError extends boolean = false>(options?: Opti
 /**
  * Register notification template / Đăng ký mẫu thông báo
  *
- * **Screens:** VPA005501, VPA0055P01
+ * **Screens:** VPA09050101, VPA090501P01
  *
  * Starts not in use unless useYn = Y. Staff recipients (EMP) need roleGroupId. 409 (NTF003) when another template in use has the same menu, processing type, medium, recipient and language. Requires WRITE permission.
  */
@@ -2912,7 +2912,7 @@ export const createMessage = <ThrowOnError extends boolean = false>(options: Opt
 /**
  * List menus / Danh sách menu
  *
- * **Screens:** VPA004401, VPA0044P01
+ * **Screens:** VPA09020101, VPA090201P01
  *
  * Flat tree of one menu type (W/A) including not-in-use menus, with VN and EN names. / Cây phẳng theo loại menu, gồm menu không sử dụng.
  */
@@ -2925,7 +2925,7 @@ export const getMenus = <ThrowOnError extends boolean = false>(options: Options<
 /**
  * Create menu / Tạo menu
  *
- * **Screens:** VPA004401, VPA0044P01
+ * **Screens:** VPA09020101, VPA090201P01
  *
  * New menus are in use by default; menuSeq is optional (appended last). / Menu mới mặc định đang sử dụng, menuSeq tùy chọn.
  */
@@ -2942,10 +2942,10 @@ export const createMenu = <ThrowOnError extends boolean = false>(options: Option
 /**
  * Search members / Tìm kiếm hội viên
  *
- * **Screens:** VPA000801, VPA0002P01, VPA0008P01
+ * **Screens:** VPA03010001, VPA030100P02, VPA030100P01
  *
- * VPA03010001 member list, paginated. Requires READ on menu A01010000.
- * / Danh sách hội viên có phân trang. Cần quyền xem menu A01010000.
+ * VPA03010001 member list, paginated. Requires READ on menu A03010000.
+ * / Danh sách hội viên có phân trang. Cần quyền xem menu A03010000.
  *
  * Filters (optional; different filters = AND, several values of one list = OR):
  * - aprvFromDt / aprvToDt: approval date (became a General Member); start after end -> 400 (E07)
@@ -2960,7 +2960,7 @@ export const createMenu = <ThrowOnError extends boolean = false>(options: Option
  * Rows depend on the caller (ROLE_ADMIN sees all): an application under review is listed for the
  * employees acting on its approval sessions (receiver, officer in charge, approver), for the employee
  * who registered it and, while not received yet, for the receipt role; members that passed the review
- * need READ on menu A01020000. The same scope applies to the Excel download, the counters and the
+ * need READ on menu A03010000. The same scope applies to the Excel download, the counters and the
  * member detail APIs (403 MBR010 outside the scope).
  * Repeat a list parameter for several values: `?mbrGrdCds=G&mbrGrdCds=F`.
  * / Lặp lại tham số danh sách cho nhiều giá trị; các tham số legacy vẫn được nhận.
@@ -2974,7 +2974,7 @@ export const getMembers = <ThrowOnError extends boolean = false>(options?: Optio
 /**
  * Register member from admin channel
  *
- * **Screens:** VPA000801, VPA0002P01, VPA0008P01
+ * **Screens:** VPA03010001, VPA030100P02, VPA030100P01
  *
  * Screen VPA03010001 'New' -> VPA030100P01: registers a new member from the admin channel. Matches client member registration schema. Requires WRITE permission.
  */
@@ -2991,9 +2991,9 @@ export const createMember = <ThrowOnError extends boolean = false>(options: Opti
 /**
  * Resend temporary password / Gửi lại mật khẩu tạm thời
  *
- * **Screens:** VPA000801, VPA0002P01, VPA0008P01
+ * **Screens:** VPA03010001, VPA030100P02, VPA030100P01
  *
- * VPA030100P02 [Resend Temporary Password] (I02): for a member registered by staff (Offline) who has not set a password yet, creates a new temporary password and e-mails it; the previous temporary password and password setup link stop working. 409 for a web sign-up or once the member has set a password. Requires WRITE on menu A01010000. / Tạo mật khẩu tạm mới và gửi mail; mật khẩu tạm cũ hết hiệu lực.
+ * VPA030100P02 [Resend Temporary Password] (I02): for a member registered by staff (Offline) who has not set a password yet, creates a new temporary password and e-mails it; the previous temporary password and password setup link stop working. 409 for a web sign-up or once the member has set a password. Requires WRITE on menu A03010000. / Tạo mật khẩu tạm mới và gửi mail; mật khẩu tạm cũ hết hiệu lực.
  */
 export const resendTemporaryPassword = <ThrowOnError extends boolean = false>(options: Options<ResendTemporaryPasswordData, ThrowOnError>): RequestResult<ResendTemporaryPasswordResponses, unknown, ThrowOnError> => (options.client ?? client).post<ResendTemporaryPasswordResponses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -3004,9 +3004,9 @@ export const resendTemporaryPassword = <ThrowOnError extends boolean = false>(op
 /**
  * Request document supplement / Yêu cầu bổ sung hồ sơ
  *
- * **Screens:** VPA000801, VPA0002P01, VPA0008P01
+ * **Screens:** VPA03010001, VPA030100P02, VPA030100P01
  *
- * Pending sign-up (status P) -> Supplement Requested (U); the note is mailed to the applicant, who re-applies on the platform. Only the holder of the current step may call it: the receipt role while the sign-up is not received, afterwards the employee assigned to the step the approval session is on (403 otherwise); the open session is closed at that step. 409 when the member is not pending. Requires WRITE on menu A01010000. / Hồ sơ chờ duyệt chuyển sang Yêu cầu bổ sung, gửi mail cho người đăng ký. Chỉ người đang giữ bước hiện tại được gọi; phiên duyệt đang mở được đóng tại bước đó.
+ * Pending sign-up (status P) -> Supplement Requested (U); the note is mailed to the applicant, who re-applies on the platform. Only the holder of the current step may call it: the receipt role while the sign-up is not received, afterwards the employee assigned to the step the approval session is on (403 otherwise); the open session is closed at that step. 409 when the member is not pending. Requires WRITE on menu A03010000. / Hồ sơ chờ duyệt chuyển sang Yêu cầu bổ sung, gửi mail cho người đăng ký. Chỉ người đang giữ bước hiện tại được gọi; phiên duyệt đang mở được đóng tại bước đó.
  */
 export const requestSupplement = <ThrowOnError extends boolean = false>(options: Options<RequestSupplementData, ThrowOnError>): RequestResult<RequestSupplementResponses, unknown, ThrowOnError> => (options.client ?? client).post<RequestSupplementResponses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -3021,9 +3021,9 @@ export const requestSupplement = <ThrowOnError extends boolean = false>(options:
 /**
  * Request member restoration / Yêu cầu khôi phục hội viên
  *
- * **Screens:** VPA000801, VPA0002P01, VPA0008P01
+ * **Screens:** VPA03010001, VPA030100P02, VPA030100P01
  *
- * VPA030100P03 (C05), decided 2026-11-23: the officer in charge of a deleted member (or an administrator) asks the chosen approver to restore it, within one year of the deletion (PROC_MBR_RSTR). The approval puts the member back to the grade and status before deletion; after one year the member can no longer be restored and the data stays for reporting. 409 MBR019 (E10) when the login ID is now used by another account; 409 when not deleted, past the year, a request is open, or the contact e-mail / phone is now used by another member; 403 MBR014 for another employee. Requires WRITE on menu A01020000. / Khôi phục trong 1 năm, qua người duyệt.
+ * VPA030100P03 (C05), decided 2026-11-23: the officer in charge of a deleted member (or an administrator) asks the chosen approver to restore it, within one year of the deletion (PROC_MBR_RSTR). The approval puts the member back to the grade and status before deletion; after one year the member can no longer be restored and the data stays for reporting. 409 MBR019 (E10) when the login ID is now used by another account; 409 when not deleted, past the year, a request is open, or the contact e-mail / phone is now used by another member; 403 MBR014 for another employee. Requires WRITE on menu A03010000. / Khôi phục trong 1 năm, qua người duyệt.
  */
 export const requestRestoration = <ThrowOnError extends boolean = false>(options: Options<RequestRestorationData, ThrowOnError>): RequestResult<RequestRestorationResponses, unknown, ThrowOnError> => (options.client ?? client).post<RequestRestorationResponses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -3038,7 +3038,7 @@ export const requestRestoration = <ThrowOnError extends boolean = false>(options
 /**
  * Re-issue the password setup link
  *
- * **Screens:** VPA000801, VPA0002P01, VPA0008P01
+ * **Screens:** VPA03010001, VPA030100P02, VPA030100P01
  *
  * Manual (paper) sign-up, step 22: issues a new one-time password setup link (valid member.signup.password-setup-days) for an active member registered by staff and mails it; the previous link stops working. Local / dev (member.signup.expose-password-setup-link=true) also return devToken. Requires WRITE permission.
  */
@@ -3051,7 +3051,7 @@ export const resendPasswordSetupLink = <ThrowOnError extends boolean = false>(op
 /**
  * Register membership period / Đăng ký kỳ hội viên
  *
- * **Screens:** VPA000801, VPA0002P01, VPA0008P01
+ * **Screens:** VPA03010001, VPA030100P02, VPA030100P01
  *
  * Register Payment of the member edit popup (VPA030100P01): PAID with a payment date or EXEMPT, from the chosen start date for one year minus one day. 409 MBR016 (E06) when it overlaps the period still valid; 409 when the member is not active or exempt for life. The member becomes a full member. Requires WRITE permission. / Đăng ký kỳ hội viên từ màn sửa.
  */
@@ -3068,7 +3068,7 @@ export const registerMembershipPayment = <ThrowOnError extends boolean = false>(
 /**
  * Confirm membership fee deposit
  *
- * **Screens:** VPA000801, VPA0002P01, VPA0008P01
+ * **Screens:** VPA03010001, VPA030100P02, VPA030100P01
  *
  * Records the membership fee transfer checked by the officer. A general member becomes a full member for one year from today; a full member who received the renewal notice is renewed for one year from the previous period end (the end date cannot be edited). Exempt members have no fee. Requires WRITE permission.
  */
@@ -3081,7 +3081,7 @@ export const confirmMembershipFee = <ThrowOnError extends boolean = false>(optio
 /**
  * Check posted sign-up documents
  *
- * **Screens:** VPA000801, VPA0002P01, VPA0008P01
+ * **Screens:** VPA03010001, VPA030100P02, VPA030100P01
  *
  * Step 1, done by the receiver holding the step (403 otherwise): 'Y' marks the mandatory documents complete (optional scan file group) so the receiver can assign the officer in charge; 'N' closes the session and sends the application back to the applicant (status U) with the supplement note and e-mails them. A session received before 2026-11-22 is checked at step 2 by its officer. Requires WRITE permission.
  */
@@ -3098,7 +3098,7 @@ export const checkDocuments3 = <ThrowOnError extends boolean = false>(options: O
 /**
  * Upload scanned member documents
  *
- * **Screens:** VPA000801, VPA0002P01, VPA0008P01
+ * **Screens:** VPA03010001, VPA030100P02, VPA030100P01
  *
  * Sign-up steps 10-12: the applicant posts the mandatory documents and the receptionist uploads their scans (PDF, JPG, JPEG, PNG, max 10MB each, several files per call). Creates a file group, or appends to fileUnqId. Send the returned fileUnqId as scanFileId to POST /{mbrNo}/documents (documentsComplete = Y) to link it to the member; it is then listed in the member files as DOCUMENT_SCAN. Only for a received application (status P). Requires WRITE permission.
  */
@@ -3116,9 +3116,9 @@ export const uploadDocumentScans = <ThrowOnError extends boolean = false>(option
 /**
  * Request member deletion / Trình xoá hội viên
  *
- * **Screens:** VPA000801, VPA0002P01, VPA0008P01
+ * **Screens:** VPA03010001, VPA030100P02, VPA030100P01
  *
- * VPA030100P03 (C04), customer answer 2026-11-23: the officer in charge of the member (or an administrator) requests the deletion with a reason, the chosen approver (candidates of PROC_MBR_LOSS step 2) approves it with the approval API; the member is then soft-deleted (status Deleted, row kept, restorable within one year). Only applications in Pending Approval past the payment deadline (409 MBR018 before it) and Full Members (409 MBR017 otherwise; a General Member is never deleted) may be requested. 409 when deleted already, a request is open, or an application / contract / bid is in progress (E09); 403 MBR014 for another employee. /deletion is kept as an alias. Requires WRITE on menu A01020000. / Cán bộ phụ trách trình xoá, người duyệt duyệt.
+ * VPA030100P03 (C04), customer answer 2026-11-23: the officer in charge of the member (or an administrator) requests the deletion with a reason, the chosen approver (candidates of PROC_MBR_LOSS step 2) approves it with the approval API; the member is then soft-deleted (status Deleted, row kept, restorable within one year). Only applications in Pending Approval past the payment deadline (409 MBR018 before it) and Full Members (409 MBR017 otherwise; a General Member is never deleted) may be requested. 409 when deleted already, a request is open, or an application / contract / bid is in progress (E09); 403 MBR014 for another employee. /deletion is kept as an alias. Requires WRITE on menu A03010000. / Cán bộ phụ trách trình xoá, người duyệt duyệt.
  */
 export const requestDeletion = <ThrowOnError extends boolean = false>(options: Options<RequestDeletionData, ThrowOnError>): RequestResult<RequestDeletionResponses, unknown, ThrowOnError> => (options.client ?? client).post<RequestDeletionResponses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -3133,9 +3133,9 @@ export const requestDeletion = <ThrowOnError extends boolean = false>(options: O
 /**
  * Request member deletion / Trình xoá hội viên
  *
- * **Screens:** VPA000801, VPA0002P01, VPA0008P01
+ * **Screens:** VPA03010001, VPA030100P02, VPA030100P01
  *
- * VPA030100P03 (C04), customer answer 2026-11-23: the officer in charge of the member (or an administrator) requests the deletion with a reason, the chosen approver (candidates of PROC_MBR_LOSS step 2) approves it with the approval API; the member is then soft-deleted (status Deleted, row kept, restorable within one year). Only applications in Pending Approval past the payment deadline (409 MBR018 before it) and Full Members (409 MBR017 otherwise; a General Member is never deleted) may be requested. 409 when deleted already, a request is open, or an application / contract / bid is in progress (E09); 403 MBR014 for another employee. /deletion is kept as an alias. Requires WRITE on menu A01020000. / Cán bộ phụ trách trình xoá, người duyệt duyệt.
+ * VPA030100P03 (C04), customer answer 2026-11-23: the officer in charge of the member (or an administrator) requests the deletion with a reason, the chosen approver (candidates of PROC_MBR_LOSS step 2) approves it with the approval API; the member is then soft-deleted (status Deleted, row kept, restorable within one year). Only applications in Pending Approval past the payment deadline (409 MBR018 before it) and Full Members (409 MBR017 otherwise; a General Member is never deleted) may be requested. 409 when deleted already, a request is open, or an application / contract / bid is in progress (E09); 403 MBR014 for another employee. /deletion is kept as an alias. Requires WRITE on menu A03010000. / Cán bộ phụ trách trình xoá, người duyệt duyệt.
  */
 export const requestDeletion1 = <ThrowOnError extends boolean = false>(options: Options<RequestDeletion1Data, ThrowOnError>): RequestResult<RequestDeletion1Responses, unknown, ThrowOnError> => (options.client ?? client).post<RequestDeletion1Responses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -3150,7 +3150,7 @@ export const requestDeletion1 = <ThrowOnError extends boolean = false>(options: 
 /**
  * Receive member sign-up / Tiếp nhận hồ sơ
  *
- * **Screens:** VPA000801, VPA0002P01, VPA0008P01
+ * **Screens:** VPA03010001, VPA030100P02, VPA030100P01
  *
  * Step 1 (decided 2026-11-22: receipt and the officer assignment are two steps): opens the sign-up for the receiver, who then checks the posted documents (POST /{mbrNo}/documents) and assigns the officer in charge (PUT /{mbrNo}/approvals/assignee). The body is optional; assigneeEmpNo is ignored. Requires WRITE permission.
  */
@@ -3167,7 +3167,7 @@ export const receive3 = <ThrowOnError extends boolean = false>(options: Options<
 /**
  * Get member approval context
  *
- * **Screens:** VPA000801, VPA0002P01, VPA0008P01
+ * **Screens:** VPA03010001, VPA030100P02, VPA030100P01
  *
  * Looked up by member number: sign-up data of the popups ADF1234_P08..P12 (workflow stage, current actor, application summary) together with the steps of the current approval session. For the session alone use GET /api/v1/approvals/{atrzHstryId}. Requires READ permission.
  */
@@ -3180,7 +3180,7 @@ export const getApprovalContext = <ThrowOnError extends boolean = false>(options
 /**
  * Complete member sign-up / Hoàn tất đăng ký hội viên
  *
- * **Screens:** VPA000801, VPA0002P01, VPA0008P01
+ * **Screens:** VPA03010001, VPA030100P02, VPA030100P01
  *
  * Step 2: the officer in charge enters the SGDN member code and the membership fee terms, which completes the sign-up (no approval step, per the VAMC process definition): the member becomes a general or full member and the result e-mail is sent (stage APPROVED). The documents must have been checked as complete (409 otherwise). An application received while the process still had an approver step keeps it: send approverEmpNo and the session moves to step 3 (stage IN_PROGRESS; 400 MBR011 if missing). Requires WRITE permission.
  */
@@ -3197,7 +3197,7 @@ export const requestApproval3 = <ThrowOnError extends boolean = false>(options: 
 /**
  * Batch generate pending members
  *
- * **Screens:** VPA000801, VPA0002P01, VPA0008P01
+ * **Screens:** VPA03010001, VPA030100P02, VPA030100P01
  *
  * Creates multiple pending member sign-up applications with verification attachments for workflow testing and simulation. Local/dev only (404 when member.batch-generate.enabled=false). Requires WRITE permission.
  */
@@ -3214,9 +3214,9 @@ export const batchGenerate = <ThrowOnError extends boolean = false>(options?: Op
 /**
  * Open member document upload session / Mở phiên tải lên giấy tờ
  *
- * **Screens:** VPA000801, VPA0002P01, VPA0008P01
+ * **Screens:** VPA03010001, VPA030100P02, VPA030100P01
  *
- * Returns the session id and the document slots of the member type (same slots as the user web: ID_FRONT, ID_BACK, PASSPORT, BIZ_LICENSE, AUTH_REP_ID_FRONT, AUTH_REP_ID_BACK, AUTH_REP_PASSPORT, POA). The session belongs to the caller, expires after 30 idle minutes (60 at most). Send regSessionId and the file ids when saving the member. Requires WRITE on A01010000.
+ * Returns the session id and the document slots of the member type (same slots as the user web: ID_FRONT, ID_BACK, PASSPORT, BIZ_LICENSE, AUTH_REP_ID_FRONT, AUTH_REP_ID_BACK, AUTH_REP_PASSPORT, POA). The session belongs to the caller, expires after 30 idle minutes (60 at most). Send regSessionId and the file ids when saving the member. Requires WRITE on A03010000.
  */
 export const openSession = <ThrowOnError extends boolean = false>(options: Options<OpenSessionData, ThrowOnError>): RequestResult<OpenSessionResponses, unknown, ThrowOnError> => (options.client ?? client).post<OpenSessionResponses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -3231,9 +3231,9 @@ export const openSession = <ThrowOnError extends boolean = false>(options: Optio
 /**
  * Upload member document / Tải lên giấy tờ hội viên
  *
- * **Screens:** VPA000801, VPA0002P01, VPA0008P01
+ * **Screens:** VPA03010001, VPA030100P02, VPA030100P01
  *
- * One file per call into a slot: jpg, jpeg, png or pdf, max 10MB, content checked. A single-file slot keeps the newest file (replacedFileId); BIZ_LICENSE and POA take up to 5 files. Requires WRITE on A01010000.
+ * One file per call into a slot: jpg, jpeg, png or pdf, max 10MB, content checked. A single-file slot keeps the newest file (replacedFileId); BIZ_LICENSE and POA take up to 5 files. Requires WRITE on A03010000.
  */
 export const upload1 = <ThrowOnError extends boolean = false>(options: Options<Upload1Data, ThrowOnError>): RequestResult<Upload1Responses, unknown, ThrowOnError> => (options.client ?? client).post<Upload1Responses, unknown, ThrowOnError>({
     ...formDataBodySerializer,
@@ -3249,7 +3249,7 @@ export const upload1 = <ThrowOnError extends boolean = false>(options: Options<U
 /**
  * List provinces / Danh sách Tỉnh/Thành phố
  *
- * **Screens:** VPA004901, VPA0049P01
+ * **Screens:** VPA09030201, VPA090302P01
  *
  * Returns paginated provinces with optional use status and search keyword. / Trả về danh sách Tỉnh/Thành phố phân trang với bộ lọc trạng thái và tìm kiếm.
  */
@@ -3262,7 +3262,7 @@ export const getProvinces = <ThrowOnError extends boolean = false>(options: Opti
 /**
  * Create province / Tạo mới Tỉnh/Thành phố
  *
- * **Screens:** VPA004901, VPA0049P01
+ * **Screens:** VPA09030201, VPA090302P01
  *
  * Creates a new province. Requires WRITE permission. / Tạo mới Tỉnh/Thành phố. Yêu cầu quyền GHI.
  */
@@ -3279,7 +3279,7 @@ export const createProvince = <ThrowOnError extends boolean = false>(options: Op
 /**
  * Batch save / delete districts of a province / Lưu / xóa hàng loạt Quận/Huyện của Tỉnh
  *
- * **Screens:** VPA004901, VPA0049P01
+ * **Screens:** VPA09030201, VPA090302P01
  *
  * Upserts and deletes districts of a province atomically (delete first, then save). Requires WRITE permission. / Thêm, sửa, xóa hàng loạt trong một giao dịch. Yêu cầu quyền GHI.
  */
@@ -3296,7 +3296,7 @@ export const saveDistrictsBatch = <ThrowOnError extends boolean = false>(options
 /**
  * List districts / Danh sách Quận/Huyện
  *
- * **Screens:** VPA004901, VPA0049P01
+ * **Screens:** VPA09030201, VPA090302P01
  *
  * Returns paginated districts with optional province, status, and keyword filters. / Trả về danh sách Quận/Huyện phân trang theo các bộ lọc tùy chọn.
  */
@@ -3309,7 +3309,7 @@ export const getDistricts = <ThrowOnError extends boolean = false>(options: Opti
 /**
  * Create district / Tạo mới Quận/Huyện
  *
- * **Screens:** VPA004901, VPA0049P01
+ * **Screens:** VPA09030201, VPA090302P01
  *
  * Creates a new district under a province. Requires WRITE permission. / Tạo mới Quận/Huyện trong Tỉnh/Thành phố. Yêu cầu quyền GHI.
  */
@@ -3326,7 +3326,7 @@ export const createDistrict = <ThrowOnError extends boolean = false>(options: Op
 /**
  * Suspend and repost / Tạm dừng và đăng lại
  *
- * **Screens:** VPA002201, VPA0022P01
+ * **Screens:** VPA06030001, VPA060300P01
  *
  * AN/IP/PS: the cycle is cancelled (CN) with the reason, its valid bids are cancelled and a new cycle starts as AN (optionally with a new schedule). Bidders keep their qualification. Requires WRITE permission.
  */
@@ -3343,7 +3343,7 @@ export const suspendRepost = <ThrowOnError extends boolean = false>(options: Opt
 /**
  * Start auction / Bắt đầu đấu giá
  *
- * **Screens:** VPA002201, VPA0022P01
+ * **Screens:** VPA06030001, VPA060300P01
  *
  * AN -> IP once the scheduled start is reached and a bidder is qualified (409 AUC008). Requires WRITE permission.
  */
@@ -3356,7 +3356,7 @@ export const start = <ThrowOnError extends boolean = false>(options: Options<Sta
 /**
  * Close and confirm winner / Kết thúc và xác nhận người trúng
  *
- * **Screens:** VPA002201, VPA0022P01
+ * **Screens:** VPA06030001, VPA060300P01
  *
  * IP -> AW (highest valid bid, earliest on a tie; award recorded) or FL (no bid) once the scheduled end is reached (409 AUC009). Cannot be undone. Requires WRITE permission.
  */
@@ -3369,7 +3369,7 @@ export const close = <ThrowOnError extends boolean = false>(options: Options<Clo
 /**
  * Excel upload / Tải lên Excel
  *
- * **Screens:** VPA005301, VPA0053P01
+ * **Screens:** VPA09040301, VPA090403P01
  *
  * Edits the text of existing labels from the downloaded layout; columns are matched by header in any order; a header or row error (unknown label, LBL005/LBL006 on changed rows) rejects the whole file with success=false. 400 LBL007 over 10,000 rows, LBL008 over 5 MB. / Sửa bản dịch hàng loạt, có lỗi thì không lưu.
  */
@@ -3387,7 +3387,7 @@ export const uploadExcel = <ThrowOnError extends boolean = false>(options?: Opti
 /**
  * Reload label cache / Nạp lại cache
  *
- * **Screens:** VPA005301, VPA0053P01
+ * **Screens:** VPA09040301, VPA090403P01
  *
  * Clears admin label caches only; the client app expires its own. / Chỉ xoá cache admin.
  */
@@ -3400,7 +3400,7 @@ export const reloadCache = <ThrowOnError extends boolean = false>(options?: Opti
 /**
  * List financial institutions / Danh sách Tổ chức tài chính
  *
- * **Screens:** VPA005001, VPA0050P01
+ * **Screens:** VPA09030301, VPA090303P01
  *
  * Returns paginated financial institutions with optional filters. / Trả về danh sách tổ chức tài chính phân trang theo bộ lọc.
  */
@@ -3413,7 +3413,7 @@ export const getInstitutions = <ThrowOnError extends boolean = false>(options: O
 /**
  * Create financial institution / Tạo mới Tổ chức tài chính
  *
- * **Screens:** VPA005001, VPA0050P01
+ * **Screens:** VPA09030301, VPA090303P01
  *
  * Creates a new financial institution. Requires WRITE permission. / Tạo mới tổ chức tài chính. Yêu cầu quyền GHI.
  */
@@ -3430,7 +3430,7 @@ export const createInstitution = <ThrowOnError extends boolean = false>(options:
 /**
  * Batch save / delete branches of an institution / Lưu / xóa hàng loạt Chi nhánh của Tổ chức
  *
- * **Screens:** VPA005001, VPA0050P01
+ * **Screens:** VPA09030301, VPA090303P01
  *
  * Upserts and deletes branches of an institution atomically (delete first, then save). Requires WRITE permission. / Thêm, sửa, xóa hàng loạt trong một giao dịch. Yêu cầu quyền GHI.
  */
@@ -3447,7 +3447,7 @@ export const saveBranchesBatch = <ThrowOnError extends boolean = false>(options:
 /**
  * List branches / Danh sách Chi nhánh
  *
- * **Screens:** VPA005001, VPA0050P01
+ * **Screens:** VPA09030301, VPA090303P01
  *
  * Returns paginated branches with optional filters. / Trả về danh sách chi nhánh phân trang theo các bộ lọc tùy chọn.
  */
@@ -3460,7 +3460,7 @@ export const getBranches = <ThrowOnError extends boolean = false>(options: Optio
 /**
  * Create branch / Tạo mới Chi nhánh
  *
- * **Screens:** VPA005001, VPA0050P01
+ * **Screens:** VPA09030301, VPA090303P01
  *
  * Creates a new branch. Requires WRITE permission. / Tạo mới chi nhánh. Yêu cầu quyền GHI.
  */
@@ -3651,7 +3651,7 @@ export const createSection = <ThrowOnError extends boolean = false>(options: Opt
  *
  * **Screens:** VPA005701, VPA0057P01
  *
- * Deprecated: use POST /api/v1/platform/exchange-rates/sync. Same guard as that endpoint: system admin (ROLE_ADMIN) only, on top of WRITE on A06010500. Recorded as a MANUAL run; 503 EXR001 when no rate could be received, 409 BAT007 while a sync is already running.
+ * Deprecated: use POST /api/v1/platform/exchange-rates/sync. Same guard as that endpoint: system admin (ROLE_ADMIN) only, on top of WRITE on A09010400. Recorded as a MANUAL run; 503 EXR001 when no rate could be received, 409 BAT007 while a sync is already running.
  *
  * @deprecated
  */
@@ -3664,7 +3664,7 @@ export const syncExchangeRates = <ThrowOnError extends boolean = false>(options?
 /**
  * Delete NPL announcements / Xóa thông báo NPL
  *
- * **Screens:** VPA002701, VPA002801, VPA002901, VPA0027P01, VPA0028P01, VPA0029P01
+ * **Screens:** VPA07030101, VPA07030201, VPA07030301, VPA070301P01, VPA070302P01, VPA070303P01
  *
  * Soft-deletes the selected announcements. / Xóa mềm các thông báo được chọn.
  */
@@ -3681,7 +3681,7 @@ export const deleteAnnouncements = <ThrowOnError extends boolean = false>(option
 /**
  * List NPL announcements / Danh sách thông báo NPL
  *
- * **Screens:** VPA002701, VPA002801, VPA002901, VPA0027P01, VPA0028P01, VPA0029P01
+ * **Screens:** VPA07030101, VPA07030201, VPA07030301, VPA070301P01, VPA070302P01, VPA070303P01
  *
  * Filter by type (APPR, SALE, AUCT); pinnedOnly=true for View Major Notices. Keyword matches number, title or document number. / Lọc theo loại; pinnedOnly=true để xem thông báo chính.
  */
@@ -3694,7 +3694,7 @@ export const getAnnouncements = <ThrowOnError extends boolean = false>(options: 
 /**
  * Create NPL announcement / Tạo thông báo NPL
  *
- * **Screens:** VPA002701, VPA002801, VPA002901, VPA0027P01, VPA0028P01, VPA0029P01
+ * **Screens:** VPA07030101, VPA07030201, VPA07030301, VPA070301P01, VPA070302P01, VPA070303P01
  *
  * Default unpublished. At most 5 announcements can be published with top display. / Mặc định chưa đăng; tối đa 5 bài hiển thị đầu trang.
  */
@@ -3711,7 +3711,7 @@ export const createAnnouncement = <ThrowOnError extends boolean = false>(options
 /**
  * Delete notices / Xóa thông báo
  *
- * **Screens:** VPA002301, VPA0023P01
+ * **Screens:** VPA07010001, VPA070100P01
  *
  * Soft-deletes the selected notices. / Xóa mềm các thông báo được chọn.
  */
@@ -3728,7 +3728,7 @@ export const deleteNotices = <ThrowOnError extends boolean = false>(options: Opt
 /**
  * List notices / Danh sách thông báo
  *
- * **Screens:** VPA002301, VPA0023P01
+ * **Screens:** VPA07010001, VPA070100P01
  *
  * Paginated notices; pinned first, then newest. sortBy: crtDt, title, viewCount. / Danh sách phân trang; bài ghim trước, sau đó mới nhất.
  */
@@ -3741,7 +3741,7 @@ export const getNotices = <ThrowOnError extends boolean = false>(options: Option
 /**
  * Create notice / Tạo thông báo
  *
- * **Screens:** VPA002301, VPA0023P01
+ * **Screens:** VPA07010001, VPA070100P01
  *
  * Creates a notice (default unpublished). At most 5 pinned notices can be published. / Tạo thông báo (mặc định chưa đăng). Tối đa 5 bài ghim đang đăng.
  */
@@ -3758,7 +3758,7 @@ export const createNotice = <ThrowOnError extends boolean = false>(options: Opti
 /**
  * Delete / Xóa
  *
- * **Screens:** VPA002401, VPA002501, VPA002601, VPA0024P01, VPA0025P01, VPA0026P01
+ * **Screens:** VPA07020101, VPA07020201, VPA07020301, VPA070201P01, VPA070202P01, VPA070203P01
  *
  * Soft-deletes the selected posts. / Xóa mềm các bài được chọn.
  */
@@ -3775,7 +3775,7 @@ export const delete4 = <ThrowOnError extends boolean = false>(options: Options<D
 /**
  * List / Danh sách
  *
- * **Screens:** VPA002401, VPA002501, VPA002601, VPA0024P01, VPA0025P01, VPA0026P01
+ * **Screens:** VPA07020101, VPA07020201, VPA07020301, VPA070201P01, VPA070202P01, VPA070203P01
  *
  * Paginated list with the board search conditions. / Danh sách phân trang theo điều kiện tìm kiếm.
  */
@@ -3788,7 +3788,7 @@ export const list5 = <ThrowOnError extends boolean = false>(options: Options<Lis
 /**
  * Register news / Đăng ký tin
  *
- * **Screens:** VPA002401, VPA002501, VPA002601, VPA0024P01, VPA0025P01, VPA0026P01
+ * **Screens:** VPA07020101, VPA07020201, VPA07020301, VPA070201P01, VPA070202P01, VPA070203P01
  *
  * category = NWS, MED or RSC. Default unpublished. / Mặc định chưa đăng.
  */
@@ -3854,7 +3854,7 @@ export const uploadImage = <ThrowOnError extends boolean = false>(options?: Opti
 /**
  * Delete / Xóa
  *
- * **Screens:** VPA003301, VPA0033P01
+ * **Screens:** VPA07070001, VPA070700P01
  *
  * Soft-deletes the selected posts. / Xóa mềm các bài được chọn.
  */
@@ -3871,7 +3871,7 @@ export const delete6 = <ThrowOnError extends boolean = false>(options: Options<D
 /**
  * List / Danh sách
  *
- * **Screens:** VPA003301, VPA0033P01
+ * **Screens:** VPA07070001, VPA070700P01
  *
  * Paginated list with the board search conditions. sortBy: postSn, published, category, docNumber, title, lawGroup, lawField, issuingAuthority, issueDate, attachmentCount, crtBy, mdfcnDt, mdfcnBy, viewCount (ASC/DESC). / Danh sách phân trang theo điều kiện tìm kiếm.
  */
@@ -3884,7 +3884,7 @@ export const list7 = <ThrowOnError extends boolean = false>(options: Options<Lis
 /**
  * Register legal document / Đăng ký văn bản
  *
- * **Screens:** VPA003301, VPA0033P01
+ * **Screens:** VPA07070001, VPA070700P01
  *
  * Default published. Required: type, number/sign, issue date, title. / Mặc định công bố.
  */
@@ -3917,7 +3917,7 @@ export const upload2 = <ThrowOnError extends boolean = false>(options: Options<U
 /**
  * Delete FAQs / Xóa FAQ
  *
- * **Screens:** VPA003101, VPA0031P01
+ * **Screens:** VPA07050001, VPA070500P01
  *
  * Soft-deletes the selected FAQs. / Xóa mềm các FAQ được chọn.
  */
@@ -3934,7 +3934,7 @@ export const deleteFaqs = <ThrowOnError extends boolean = false>(options: Option
 /**
  * List FAQs / Danh sách FAQ
  *
- * **Screens:** VPA003101, VPA0031P01
+ * **Screens:** VPA07050001, VPA070500P01
  *
  * Paginated FAQs. Use sortBy=displayOrder to list in display order per category. / Danh sách phân trang; sortBy=displayOrder để xem theo thứ tự hiển thị.
  */
@@ -3947,7 +3947,7 @@ export const getFaqs = <ThrowOnError extends boolean = false>(options: Options<G
 /**
  * Create FAQ / Tạo FAQ
  *
- * **Screens:** VPA003101, VPA0031P01
+ * **Screens:** VPA07050001, VPA070500P01
  *
  * Creates an FAQ (default unpublished), appended at the end of its category. / Tạo FAQ (mặc định chưa đăng), xếp cuối danh mục.
  */
@@ -3964,7 +3964,7 @@ export const createFaq = <ThrowOnError extends boolean = false>(options: Options
 /**
  * Delete / Xóa
  *
- * **Screens:** VPA003401, VPA0034P01
+ * **Screens:** VPA07080001, VPA070800P01
  *
  * Soft-deletes the selected posts. / Xóa mềm các bài được chọn.
  */
@@ -3981,7 +3981,7 @@ export const delete7 = <ThrowOnError extends boolean = false>(options: Options<D
 /**
  * List / Danh sách
  *
- * **Screens:** VPA003401, VPA0034P01
+ * **Screens:** VPA07080001, VPA070800P01
  *
  * Paginated list with the board search conditions. / Danh sách phân trang theo điều kiện tìm kiếm.
  */
@@ -3994,7 +3994,7 @@ export const list8 = <ThrowOnError extends boolean = false>(options: Options<Lis
 /**
  * Register career posting / Đăng ký tin tuyển dụng
  *
- * **Screens:** VPA003401, VPA0034P01
+ * **Screens:** VPA07080001, VPA070800P01
  *
  * Default published. / Mặc định công bố.
  */
@@ -4011,7 +4011,7 @@ export const create11 = <ThrowOnError extends boolean = false>(options: Options<
 /**
  * Delete banners / Xóa banner
  *
- * **Screens:** VPA003201, VPA0032P01
+ * **Screens:** VPA07060101, VPA070601P01
  *
  * Permanently deletes banners that are not in use; a banner in use returns 409 BNR004. / Chỉ xóa banner không sử dụng.
  */
@@ -4028,7 +4028,7 @@ export const delete8 = <ThrowOnError extends boolean = false>(options: Options<D
 /**
  * List banners / Danh sách banner
  *
- * **Screens:** VPA003201, VPA0032P01
+ * **Screens:** VPA07060101, VPA070601P01
  *
  * Ordered by position and display order. / Sắp theo vị trí và thứ tự.
  */
@@ -4041,7 +4041,7 @@ export const list9 = <ThrowOnError extends boolean = false>(options: Options<Lis
 /**
  * Register banner / Đăng ký banner
  *
- * **Screens:** VPA003201, VPA0032P01
+ * **Screens:** VPA07060101, VPA070601P01
  *
  * Starts not in use. / Mặc định không sử dụng.
  */
@@ -4058,7 +4058,7 @@ export const create12 = <ThrowOnError extends boolean = false>(options: Options<
 /**
  * Upload banner image / Tải ảnh banner
  *
- * **Screens:** VPA003201, VPA0032P01
+ * **Screens:** VPA07060101, VPA070601P01
  *
  * Returns the file group ID to pass as imageFileId. / Trả mã nhóm ảnh dùng cho imageFileId.
  */
@@ -4117,7 +4117,7 @@ export const create13 = <ThrowOnError extends boolean = false>(options: Options<
 /**
  * Register a termination
  *
- * **Screens:** VPA001501
+ * **Screens:** VPA05020301
  *
  * Termination 1: PROGS -> ENDING with the reason and the fee handling. With the auto-termination clause the contract ends at once. Requires WRITE permission.
  */
@@ -4134,7 +4134,7 @@ export const startTermination2 = <ThrowOnError extends boolean = false>(options:
 /**
  * Attach the signed settlement minutes
  *
- * **Screens:** VPA001501
+ * **Screens:** VPA05020301
  *
  * Termination 17 (SGNCP). Requires WRITE permission.
  */
@@ -4151,7 +4151,7 @@ export const attachTerminationScan2 = <ThrowOnError extends boolean = false>(opt
 /**
  * Request settlement minutes signature approval
  *
- * **Screens:** VPA001501
+ * **Screens:** VPA05020301
  *
  * Termination 15-1 (PROC_DSPSL_MDT_END_SIGN); approval -> SGNCP. Requires WRITE permission.
  */
@@ -4168,7 +4168,7 @@ export const requestTerminationSignature2 = <ThrowOnError extends boolean = fals
 /**
  * Register the settlement minutes for signature
  *
- * **Screens:** VPA001501
+ * **Screens:** VPA05020301
  *
  * Termination 9: form 12 draft, DRFAPR -> SGNWT; mails the member. Requires WRITE permission.
  */
@@ -4185,7 +4185,7 @@ export const registerTerminationDraft2 = <ThrowOnError extends boolean = false>(
 /**
  * Complete the termination
  *
- * **Screens:** VPA001501
+ * **Screens:** VPA05020301
  *
  * Termination 18: contract CMPTN (performed) or CNCLN; unsold NPLs hidden; collected fees refunded (RFPL) or open claims cancelled (CLCN); mails the member. Purchase: 409 when another active purchase contract exists or termination conditions are not met (CNCL only before delivery); 400 on invalid reason. Requires WRITE permission.
  */
@@ -4198,7 +4198,7 @@ export const completeTermination2 = <ThrowOnError extends boolean = false>(optio
 /**
  * Request termination approval
  *
- * **Screens:** VPA001501
+ * **Screens:** VPA05020301
  *
  * Termination 2 (PROC_DSPSL_MDT_END); approval -> DRFAPR. Requires WRITE permission.
  */
@@ -4215,7 +4215,7 @@ export const requestTerminationApproval2 = <ThrowOnError extends boolean = false
 /**
  * Attach the signed scan
  *
- * **Screens:** VPA001501
+ * **Screens:** VPA05020301
  *
  * Step 31 / annex 18 (SGNCP). Requires WRITE permission.
  */
@@ -4232,7 +4232,7 @@ export const attachSignedScan2 = <ThrowOnError extends boolean = false>(options:
 /**
  * Request signature approval
  *
- * **Screens:** VPA001501
+ * **Screens:** VPA05020301
  *
  * Step 29-1 / annex 16-1: the approver checks the member-signed document and signs for VAMC (PROC_DSPSL_MDT_SIGN); approval -> SGNCP. Requires WRITE permission.
  */
@@ -4249,7 +4249,7 @@ export const requestSignatureApproval2 = <ThrowOnError extends boolean = false>(
 /**
  * Complete the report
  *
- * **Screens:** VPA001501
+ * **Screens:** VPA05020301
  *
  * 수행 6: APRV -> RDY (not published); the remaining fee is issued and mailed. The report is published when the fee is confirmed (수행 11-1). Requires WRITE permission.
  */
@@ -4262,7 +4262,7 @@ export const completeReport = <ThrowOnError extends boolean = false>(options: Op
 /**
  * Request report approval
  *
- * **Screens:** VPA001501
+ * **Screens:** VPA05020301
  *
  * 수행 2: PROC_CNSLT_RPTP; approval -> APRV, rejection -> DRFT. Requires WRITE permission.
  */
@@ -4279,7 +4279,7 @@ export const requestReportApproval = <ThrowOnError extends boolean = false>(opti
 /**
  * Record a fee refund
  *
- * **Screens:** VPA001501
+ * **Screens:** VPA05020301
  *
  * Termination 18: refund transferred (RFPL -> RFCP). Requires WRITE permission.
  */
@@ -4296,7 +4296,7 @@ export const refundFee2 = <ThrowOnError extends boolean = false>(options: Option
 /**
  * Confirm a fee transfer
  *
- * **Screens:** VPA001501
+ * **Screens:** VPA05020301
  *
  * Step 37 / annex 24. Requires WRITE permission.
  */
@@ -4313,7 +4313,7 @@ export const confirmFeeReceipt2 = <ThrowOnError extends boolean = false>(options
 /**
  * Register the draft for signature
  *
- * **Screens:** VPA001501
+ * **Screens:** VPA05020301
  *
  * Step 23 / annex 10: DRFAPR -> SGNWT with the PDF the member prints, signs and posts; mails the member. Requires WRITE permission.
  */
@@ -4330,7 +4330,7 @@ export const registerDraft2 = <ThrowOnError extends boolean = false>(options: Op
 /**
  * Conclude the contract
  *
- * **Screens:** VPA001501
+ * **Screens:** VPA05020301
  *
  * Step 32 / annex 19: SGNCP with a scan -> PROGS; first installment (LUMP / STAG advance); NPLs published (step 38) for brokerage contracts and base contract annexes; extension / price annexes update the parent. Requires WRITE permission.
  */
@@ -4347,7 +4347,7 @@ export const conclude2 = <ThrowOnError extends boolean = false>(options: Options
 /**
  * Request draft approval
  *
- * **Screens:** VPA001501
+ * **Screens:** VPA05020301
  *
  * Step 16 / annex 3: PROC_DSPSL_MDT_CTRT (contract) or PROC_DSPSL_MDT_ANX (annex); approval -> DRFAPR. Requires WRITE permission.
  */
@@ -4364,7 +4364,7 @@ export const requestDraftApproval2 = <ThrowOnError extends boolean = false>(opti
 /**
  * Receive an additional consultation
  *
- * **Screens:** VPA001501
+ * **Screens:** VPA05020301
  *
  * 추가 15: RQST -> RCPT. Consultant or officer. Requires WRITE permission.
  */
@@ -4377,7 +4377,7 @@ export const receiveAdditionalConsultation = <ThrowOnError extends boolean = fal
 /**
  * Complete an additional consultation
  *
- * **Screens:** VPA001501
+ * **Screens:** VPA05020301
  *
  * 추가 21: result recorded and mailed to the member. Requires WRITE permission.
  */
@@ -4394,7 +4394,7 @@ export const completeAdditionalConsultation = <ThrowOnError extends boolean = fa
 /**
  * List code groups (paginated) / Danh sách nhóm mã (phân trang)
  *
- * **Screens:** VPA004801, VPA0048P01
+ * **Screens:** VPA09030101, VPA090301P01
  *
  * Returns paginated code groups with optional search filters. / Trả về danh sách nhóm mã phân trang theo bộ lọc.
  */
@@ -4407,7 +4407,7 @@ export const getCodeGroups = <ThrowOnError extends boolean = false>(options: Opt
 /**
  * Create code group / Tạo mới nhóm mã
  *
- * **Screens:** VPA004801, VPA0048P01
+ * **Screens:** VPA09030101, VPA090301P01
  *
  * Creates a new code group and synchronizes multilingual label. Requires WRITE permission. / Tạo mới nhóm mã và đồng bộ nhãn đa ngôn ngữ. Yêu cầu quyền GHI.
  */
@@ -4424,7 +4424,7 @@ export const createGroup = <ThrowOnError extends boolean = false>(options: Optio
 /**
  * Batch save / delete codes / Lưu / xóa hàng loạt mã chi tiết
  *
- * **Screens:** VPA004801, VPA0048P01
+ * **Screens:** VPA09030101, VPA090301P01
  *
  * Batch upserts and deletes detailed codes within a group. Requires WRITE permission. / Thêm, sửa, xóa hàng loạt mã chi tiết trong nhóm. Yêu cầu quyền GHI.
  */
@@ -4441,7 +4441,7 @@ export const saveCodesBatch = <ThrowOnError extends boolean = false>(options: Op
 /**
  * Copy code group / Sao chép nhóm mã (Domain Copy)
  *
- * **Screens:** VPA004801, VPA0048P01
+ * **Screens:** VPA09030101, VPA090301P01
  *
  * Duplicates all codes from a source group to a new target group. Requires WRITE permission. / Sao chép toàn bộ mã từ nhóm nguồn sang nhóm đích. Yêu cầu quyền GHI.
  */
@@ -4458,7 +4458,7 @@ export const copyGroup = <ThrowOnError extends boolean = false>(options: Options
 /**
  * Disqualify bidder / Loại người tham gia
  *
- * **Screens:** VPA002101, VPA0021P01
+ * **Screens:** VPA06020001, VPA060200P01
  *
  * AP/AV -> DQ, reason required. Requires WRITE permission.
  */
@@ -4475,7 +4475,7 @@ export const reject = <ThrowOnError extends boolean = false>(options: Options<Re
 /**
  * Confirm document receipt / Xác nhận nhận hồ sơ
  *
- * **Screens:** VPA002101, VPA0021P01
+ * **Screens:** VPA06020001, VPA060200P01
  *
  * NR -> RC while applied and the auction is AN. Requires WRITE permission.
  */
@@ -4488,7 +4488,7 @@ export const confirmReceipt = <ThrowOnError extends boolean = false>(options: Op
 /**
  * Cancel document receipt / Huỷ nhận hồ sơ
  *
- * **Screens:** VPA002101, VPA0021P01
+ * **Screens:** VPA06020001, VPA060200P01
  *
  * RC -> NR while applied. Requires WRITE permission.
  */
@@ -4501,7 +4501,7 @@ export const cancelReceipt = <ThrowOnError extends boolean = false>(options: Opt
 /**
  * Refund deposit / Hoàn tiền cọc
  *
- * **Screens:** VPA002101, VPA0021P01
+ * **Screens:** VPA06020001, VPA060200P01
  *
  * PA -> RF. Requires WRITE permission.
  */
@@ -4518,7 +4518,7 @@ export const refund = <ThrowOnError extends boolean = false>(options: Options<Re
 /**
  * Forfeit deposit / Tịch thu tiền cọc
  *
- * **Screens:** VPA002101, VPA0021P01
+ * **Screens:** VPA06020001, VPA060200P01
  *
  * PA -> FF, reason required. Requires WRITE permission.
  */
@@ -4535,7 +4535,7 @@ export const forfeit = <ThrowOnError extends boolean = false>(options: Options<F
 /**
  * Confirm deposit / Xác nhận tiền cọc
  *
- * **Screens:** VPA002101, VPA0021P01
+ * **Screens:** VPA06020001, VPA060200P01
  *
  * UN -> PA; grnteAmt defaults to minimum bid price x deposit rate. Requires WRITE permission.
  */
@@ -4552,7 +4552,7 @@ export const confirmDeposit = <ThrowOnError extends boolean = false>(options: Op
 /**
  * Qualify bidder / Cấp tư cách
  *
- * **Screens:** VPA002101, VPA0021P01
+ * **Screens:** VPA06020001, VPA060200P01
  *
  * AP -> AV; documents received and deposit paid (409 BDR004 otherwise). Requires WRITE permission.
  */
@@ -4565,7 +4565,7 @@ export const approve = <ThrowOnError extends boolean = false>(options: Options<A
 /**
  * Delete auction notices / Xoá thông báo đấu giá
  *
- * **Screens:** VPA002001, VPA0020P01
+ * **Screens:** VPA06010001, VPA060100P01
  *
  * All or nothing; only RD with approval DR/RJ and no bidder (409 AUC003). Requires WRITE permission.
  */
@@ -4582,9 +4582,9 @@ export const deleteAuctions = <ThrowOnError extends boolean = false>(options: Op
 /**
  * List auction notices / Danh sách thông báo đấu giá
  *
- * **Screens:** VPA002001, VPA0020P01
+ * **Screens:** VPA06010001, VPA060100P01
  *
- * Latest cycle of each auction. Filters: auction start period, status, approval status, method, number or name. approvalActions: REQUEST (DR/RJ), APPROVE / REJECT (open step assigned to me). Requires READ permission (A07010000).
+ * Latest cycle of each auction. Filters: auction start period, status, approval status, method, number or name. approvalActions: REQUEST (DR/RJ), APPROVE / REJECT (open step assigned to me). Requires READ permission (A06010000).
  */
 export const getAuctions = <ThrowOnError extends boolean = false>(options?: Options<GetAuctionsData, ThrowOnError>): RequestResult<GetAuctionsResponses, unknown, ThrowOnError> => (options?.client ?? client).get<GetAuctionsResponses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -4595,7 +4595,7 @@ export const getAuctions = <ThrowOnError extends boolean = false>(options?: Opti
 /**
  * Register auction notice / Đăng ký thông báo đấu giá
  *
- * **Screens:** VPA002001, VPA0020P01
+ * **Screens:** VPA06010001, VPA060100P01
  *
  * Number AUC-YYYY-NNNNN, status RD, approval DR. 400 AUC004 unknown NPL, AUC005 collateral not linked to the NPL; 409 AUC006 the NPL already has an open auction. Requires WRITE permission.
  */
@@ -4612,7 +4612,7 @@ export const createAuction = <ThrowOnError extends boolean = false>(options: Opt
 /**
  * Get publication approval session (alias) / Phiên duyệt công bố (bí danh)
  *
- * **Screens:** VPA002001, VPA0020P01
+ * **Screens:** VPA06010001, VPA060100P01
  *
  * Alias of GET /api/v1/approvals/{atrzHstryId}, looked up by auction number; same response. Prefer the common API with atrzHstryId of the auction notice response. Null data before the first request. Requires READ permission.
  *
@@ -4627,7 +4627,7 @@ export const getApproval = <ThrowOnError extends boolean = false>(options: Optio
 /**
  * Request publication approval / Yêu cầu phê duyệt công bố
  *
- * **Screens:** VPA002001, VPA0020P01
+ * **Screens:** VPA06010001, VPA060100P01
  *
  * RD with approval DR/RJ -> RQ (PROC_AUCTN_PBANC, the approver decides with /approvals/{id}/approve|reject; approval publishes the notice: AN). 409 AUC007 in another state. Requires WRITE permission.
  */
@@ -4644,7 +4644,7 @@ export const requestApproval4 = <ThrowOnError extends boolean = false>(options: 
 /**
  * Reject current step (approver decision)
  *
- * **Screens:** VPA0003P01, VPA0003P02, VPA0003P03, VPA0003P04
+ * **Screens:** VPA020100P01, VPA020200P01, VPA020300P01, VPA0003P04
  *
  * Approver rejects the session with a mandatory reason. Closes the session and updates target domain state (A-04, ADF1234_P11). Requires WRITE permission.
  */
@@ -4661,7 +4661,7 @@ export const reject1 = <ThrowOnError extends boolean = false>(options: Options<R
 /**
  * Approve current step (approver decision)
  *
- * **Screens:** VPA0003P01, VPA0003P02, VPA0003P03, VPA0003P04
+ * **Screens:** VPA020100P01, VPA020200P01, VPA020300P01, VPA0003P04
  *
  * Approver approves the current step. Completes the session if final and executes target domain side-effects (A-03, ADF1234_P10). Requires WRITE permission.
  */
@@ -4704,7 +4704,7 @@ export const createProcess = <ThrowOnError extends boolean = false>(options: Opt
 /**
  * Upload labels Excel / Tải lên file Excel nhãn
  *
- * **Screens:** VPA005301, VPA0053P01
+ * **Screens:** VPA09040301, VPA090403P01
  *
  * Deprecated: use POST /api/v1/labels/excel/upload. Parses Excel file and batch saves labels / Phân tích file Excel và lưu hàng loạt nhãn
  *
@@ -4723,7 +4723,7 @@ export const uploadExcel1 = <ThrowOnError extends boolean = false>(options?: Opt
 /**
  * Batch save labels / translations / Lưu hàng loạt nhãn / bản dịch
  *
- * **Screens:** VPA005301, VPA0053P01
+ * **Screens:** VPA09040301, VPA090403P01
  *
  * Deprecated: use POST / PUT /api/v1/labels, which validate the text. Upserts labels and translations (requires write permission) / Thêm/sửa hàng loạt nhãn và bản dịch
  *
@@ -4790,7 +4790,7 @@ export const uploadMultipleFiles = <ThrowOnError extends boolean = false>(option
 /**
  * Token Refresh
  *
- * **Screens:** VPA000701, VPA000101
+ * **Screens:** VPA02110001, VPA01000001
  *
  * Issues new Access/Refresh tokens via HttpOnly cookie (refresh_token). (Token Rotation applied)
  */
@@ -4803,7 +4803,7 @@ export const refresh = <ThrowOnError extends boolean = false>(options?: Options<
 /**
  * Reset password (employee) / Đặt lại mật khẩu (nhân viên)
  *
- * **Screens:** VPA000701, VPA000101
+ * **Screens:** VPA02110001, VPA01000001
  *
  * Sets the new password (8-72 characters with letters, digits and special characters) with the one-time token of the reset mail, resets the login failure count and lockout, and signs the employee out of every session. Invalid, used or expired link: 400 RCV003. Same as the current password: 400 RCV011.
  *
@@ -4822,7 +4822,7 @@ export const resetPassword = <ThrowOnError extends boolean = false>(options: Opt
 /**
  * Verify password reset (employee) / Xác minh đặt lại mật khẩu
  *
- * **Screens:** VPA000701, VPA000101
+ * **Screens:** VPA02110001, VPA01000001
  *
  * Called by the reset page before POST /api/auth/password-reset; returns the channel and the employee number (not masked).
  *
@@ -4844,7 +4844,7 @@ export const verifyResetToken = <ThrowOnError extends boolean = false>(options: 
 /**
  * Request password reset (employee) / Yêu cầu đặt lại mật khẩu
  *
- * **Screens:** VPA000701, VPA000101
+ * **Screens:** VPA02110001, VPA01000001
  *
  * Step 1.
  *
@@ -4868,7 +4868,7 @@ export const requestPasswordReset = <ThrowOnError extends boolean = false>(optio
 /**
  * Logout
  *
- * **Screens:** VPA000701, VPA000101
+ * **Screens:** VPA02110001, VPA01000001
  *
  * Invalidates access token and clears refresh token cookie.
  */
@@ -4881,7 +4881,7 @@ export const logout = <ThrowOnError extends boolean = false>(options?: Options<L
 /**
  * User Login
  *
- * **Screens:** VPA000701, VPA000101
+ * **Screens:** VPA02110001, VPA01000001
  *
  * Authenticates user and issues JWT token. Refresh Token is issued as HttpOnly cookie (refresh_token).
  */
@@ -4898,7 +4898,7 @@ export const login = <ThrowOnError extends boolean = false>(options: Options<Log
 /**
  * Find ID (employee) / Tìm mã đăng nhập (nhân viên)
  *
- * **Screens:** VPA000701, VPA000101
+ * **Screens:** VPA02110001, VPA01000001
  *
  * Step 1. Full name is required and must match the employee (ignoring case and accents). Only active employees (EMP_STTS_CD = H).
  *
@@ -4922,7 +4922,7 @@ export const findId = <ThrowOnError extends boolean = false>(options: Options<Fi
 /**
  * Confirm find ID (employee) / Xác nhận tìm mã đăng nhập
  *
- * **Screens:** VPA000701, VPA000101
+ * **Screens:** VPA02110001, VPA01000001
  *
  * Step 2; returns the masked employee number.
  *
@@ -4944,7 +4944,7 @@ export const confirmFindId = <ThrowOnError extends boolean = false>(options: Opt
 /**
  * Force refresh all schedules / Làm mới toàn bộ lịch chạy batch
  *
- * **Screens:** VPA005401, VPA0054P01
+ * **Screens:** VPA09040401, VPA090404P01
  */
 export const refreshSchedules = <ThrowOnError extends boolean = false>(options?: Options<RefreshSchedulesData, ThrowOnError>): RequestResult<RefreshSchedulesResponses, unknown, ThrowOnError> => (options?.client ?? client).post<RefreshSchedulesResponses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -4955,7 +4955,7 @@ export const refreshSchedules = <ThrowOnError extends boolean = false>(options?:
 /**
  * Get batch job configs / Danh sách cấu hình batch job
  *
- * **Screens:** VPA005401, VPA0054P01
+ * **Screens:** VPA09040401, VPA090404P01
  */
 export const getJobs = <ThrowOnError extends boolean = false>(options: Options<GetJobsData, ThrowOnError>): RequestResult<GetJobsResponses, unknown, ThrowOnError> => (options.client ?? client).get<GetJobsResponses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -4966,7 +4966,7 @@ export const getJobs = <ThrowOnError extends boolean = false>(options: Options<G
 /**
  * Create batch job config / Đăng ký cấu hình batch job mới
  *
- * **Screens:** VPA005401, VPA0054P01
+ * **Screens:** VPA09040401, VPA090404P01
  */
 export const createJob = <ThrowOnError extends boolean = false>(options: Options<CreateJobData, ThrowOnError>): RequestResult<CreateJobResponses, unknown, ThrowOnError> => (options.client ?? client).post<CreateJobResponses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -4981,7 +4981,7 @@ export const createJob = <ThrowOnError extends boolean = false>(options: Options
 /**
  * Run batch job now / Chạy ngay batch job
  *
- * **Screens:** VPA005401, VPA0054P01
+ * **Screens:** VPA09040401, VPA090404P01
  *
  * Starts an Active job in the background and returns its RUNNING history row. 409 if inactive or already running.
  */
@@ -4994,7 +4994,7 @@ export const executeJob = <ThrowOnError extends boolean = false>(options: Option
 /**
  * Switch fee items in use / Bật tắt sử dụng mục phí
  *
- * **Screens:** VPA004101, VPA0041P01
+ * **Screens:** VPA09010301, VPA090103P01
  *
  * useYn is required. / Bắt buộc useYn.
  */
@@ -5011,9 +5011,9 @@ export const updateUse = <ThrowOnError extends boolean = false>(options: Options
 /**
  * Change NPL home posting / Đổi cờ đăng trang chủ của NPL
  *
- * **Screens:** VPA001601, VPA001701, VPA0016P01, VPA0017P01
+ * **Screens:** VPA04020001, VPA04030001, VPA040200P01, VPA040300P01
  *
- * Sets Main Posting (MSCRN_PSTG_YN) and/or Recommended (RCMDTN_YN); a flag left out is kept. The user web home lists an NPL only when it is also displayed (EXPSR_YN, changed by PATCH /npls/{bndCd}/disclosure): see onHome. Requires WRITE permission on NPL management (A03010100).
+ * Sets Main Posting (MSCRN_PSTG_YN) and/or Recommended (RCMDTN_YN); a flag left out is kept. The user web home lists an NPL only when it is also displayed (EXPSR_YN, changed by PATCH /npls/{bndCd}/disclosure): see onHome. Requires WRITE permission on NPL management (A04020000).
  */
 export const updateNpl = <ThrowOnError extends boolean = false>(options: Options<UpdateNplData, ThrowOnError>): RequestResult<UpdateNplResponses, unknown, ThrowOnError> => (options.client ?? client).patch<UpdateNplResponses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -5028,7 +5028,7 @@ export const updateNpl = <ThrowOnError extends boolean = false>(options: Options
 /**
  * Change the NPL disclosure
  *
- * **Screens:** VPA001601
+ * **Screens:** VPA04020001
  *
  * Shows / hides an NPL and its collaterals on the platform and optionally sets the NPL status (SA, UC, SD), with a reason. The contract flow publishes at conclusion and marks sold at the sale completion. Requires WRITE permission.
  */
@@ -5045,7 +5045,7 @@ export const updateDisclosure = <ThrowOnError extends boolean = false>(options: 
 /**
  * Switch notification template use / Bật tắt mẫu thông báo
  *
- * **Screens:** VPA005501, VPA0055P01
+ * **Screens:** VPA09050101, VPA090501P01
  *
  * N unlocks editing; Y applies it (409 NTF003 on a duplicate in use). Requires WRITE permission.
  */
@@ -5062,7 +5062,7 @@ export const updateUse1 = <ThrowOnError extends boolean = false>(options: Option
 /**
  * Move menu / Di chuyển menu
  *
- * **Screens:** VPA004401, VPA0044P01
+ * **Screens:** VPA09020101, VPA090201P01
  *
  * Drag and drop: sets the parent and the full sibling order, returns the refreshed list. Root menus return 400 MNU004. / Kéo thả: đổi menu cha và thứ tự, trả danh sách mới; menu gốc trả 400 MNU004.
  */
@@ -5145,7 +5145,7 @@ export const publishSections = <ThrowOnError extends boolean = false>(options: O
 /**
  * Update NPL announcement status / Cập nhật trạng thái thông báo NPL
  *
- * **Screens:** VPA002701, VPA002801, VPA002901, VPA0027P01, VPA0028P01, VPA0029P01
+ * **Screens:** VPA07030101, VPA07030201, VPA07030301, VPA070301P01, VPA070302P01, VPA070303P01
  *
  * Type, published flag and top display (editable while published). / Loại, trạng thái đăng, hiển thị đầu trang.
  */
@@ -5162,7 +5162,7 @@ export const updateAnnouncementStatus = <ThrowOnError extends boolean = false>(o
 /**
  * Bulk post / stop posting NPL announcements / Đăng hoặc dừng đăng hàng loạt
  *
- * **Screens:** VPA002701, VPA002801, VPA002901, VPA0027P01, VPA0028P01, VPA0029P01
+ * **Screens:** VPA07030101, VPA07030201, VPA07030301, VPA070301P01, VPA070302P01, VPA070303P01
  *
  * Returns the number of updated announcements. / Trả về số bài được cập nhật.
  */
@@ -5179,7 +5179,7 @@ export const publishAnnouncements = <ThrowOnError extends boolean = false>(optio
 /**
  * Update notice status / Cập nhật trạng thái thông báo
  *
- * **Screens:** VPA002301, VPA0023P01
+ * **Screens:** VPA07010001, VPA070100P01
  *
  * Notice type, published flag and pin settings (editable while published). / Loại, trạng thái đăng, ghim (sửa được khi đang đăng).
  */
@@ -5196,7 +5196,7 @@ export const updateNoticeStatus = <ThrowOnError extends boolean = false>(options
 /**
  * Bulk post / stop posting notices / Đăng hoặc dừng đăng hàng loạt
  *
- * **Screens:** VPA002301, VPA0023P01
+ * **Screens:** VPA07010001, VPA070100P01
  *
  * Returns the number of updated notices. / Trả về số bài được cập nhật.
  */
@@ -5213,7 +5213,7 @@ export const publishNotices = <ThrowOnError extends boolean = false>(options: Op
 /**
  * Update news status / Cập nhật trạng thái tin
  *
- * **Screens:** VPA002401, VPA002501, VPA002601, VPA0024P01, VPA0025P01, VPA0026P01
+ * **Screens:** VPA07020101, VPA07020201, VPA07020301, VPA070201P01, VPA070202P01, VPA070203P01
  *
  * Category, published flag and featured (pinned) settings. / Danh mục, trạng thái đăng, bài nổi bật.
  */
@@ -5230,7 +5230,7 @@ export const updateStatus1 = <ThrowOnError extends boolean = false>(options: Opt
 /**
  * Bulk publish / unpublish / Đăng hoặc dừng đăng hàng loạt
  *
- * **Screens:** VPA002401, VPA002501, VPA002601, VPA0024P01, VPA0025P01, VPA0026P01
+ * **Screens:** VPA07020101, VPA07020201, VPA07020301, VPA070201P01, VPA070202P01, VPA070203P01
  *
  * Returns the number of updated posts. / Trả về số bài được cập nhật.
  */
@@ -5260,7 +5260,7 @@ export const changeUse1 = <ThrowOnError extends boolean = false>(options: Option
 /**
  * Bulk publish / unpublish / Đăng hoặc dừng đăng hàng loạt
  *
- * **Screens:** VPA003301, VPA0033P01
+ * **Screens:** VPA07070001, VPA070700P01
  *
  * Returns the number of updated posts. / Trả về số bài được cập nhật.
  */
@@ -5277,7 +5277,7 @@ export const publish2 = <ThrowOnError extends boolean = false>(options: Options<
 /**
  * Change inquiry category
  *
- * **Screens:** VPA003001, VPA0030P01
+ * **Screens:** VPA07040001, VPA070400P01
  *
  * Re-classifies the inquiry, e.g. to consulting (CNS) before answering with the consulting application link (consulting flow step 1). Returns 400 (CNT018) for an unknown category.
  */
@@ -5294,7 +5294,7 @@ export const changeCategory = <ThrowOnError extends boolean = false>(options: Op
 /**
  * Update FAQ status / Cập nhật trạng thái FAQ
  *
- * **Screens:** VPA003101, VPA0031P01
+ * **Screens:** VPA07050001, VPA070500P01
  *
  * Category and published flag (pinning is not supported for FAQ). / Danh mục và trạng thái đăng (FAQ không hỗ trợ ghim).
  */
@@ -5311,7 +5311,7 @@ export const updateFaqStatus = <ThrowOnError extends boolean = false>(options: O
 /**
  * Reorder FAQs in a category / Sắp xếp lại FAQ trong danh mục
  *
- * **Screens:** VPA003101, VPA0031P01
+ * **Screens:** VPA07050001, VPA070500P01
  *
  * pstNos must list every FAQ of the category in the desired order. / pstNos phải gồm toàn bộ FAQ của danh mục theo thứ tự mong muốn.
  */
@@ -5328,7 +5328,7 @@ export const reorderFaqs = <ThrowOnError extends boolean = false>(options: Optio
 /**
  * Bulk post / stop posting FAQs / Đăng hoặc dừng đăng hàng loạt
  *
- * **Screens:** VPA003101, VPA0031P01
+ * **Screens:** VPA07050001, VPA070500P01
  *
  * Returns the number of updated FAQs. / Trả về số FAQ được cập nhật.
  */
@@ -5345,7 +5345,7 @@ export const publishFaqs = <ThrowOnError extends boolean = false>(options: Optio
 /**
  * Bulk publish / unpublish / Đăng hoặc dừng đăng hàng loạt
  *
- * **Screens:** VPA003401, VPA0034P01
+ * **Screens:** VPA07080001, VPA070800P01
  *
  * Returns the number of updated posts. / Trả về số bài được cập nhật.
  */
@@ -5362,7 +5362,7 @@ export const publish3 = <ThrowOnError extends boolean = false>(options: Options<
 /**
  * Switch banners in use / Bật tắt sử dụng banner
  *
- * **Screens:** VPA003201, VPA0032P01
+ * **Screens:** VPA07060101, VPA070601P01
  *
  * useYn is required. / Bắt buộc useYn.
  */
@@ -5409,9 +5409,9 @@ export const publish4 = <ThrowOnError extends boolean = false>(options: Options<
 /**
  * Change collateral home posting / Đổi cờ đăng trang chủ của tài sản bảo đảm
  *
- * **Screens:** VPA001601, VPA001701, VPA0016P01, VPA0017P01
+ * **Screens:** VPA04020001, VPA04030001, VPA040200P01, VPA040300P01
  *
- * Sets Main Posting (MSCRN_PSTG_YN) and/or Recommended (RCMDTN_YN); a flag left out is kept. The user web home lists a collateral asset only when it is also displayed (EXPSR_YN): see onHome. Requires WRITE permission on collateral management (A03010200).
+ * Sets Main Posting (MSCRN_PSTG_YN) and/or Recommended (RCMDTN_YN); a flag left out is kept. The user web home lists a collateral asset only when it is also displayed (EXPSR_YN): see onHome. Requires WRITE permission on collateral management (A04030000).
  */
 export const updateCollateral = <ThrowOnError extends boolean = false>(options: Options<UpdateCollateralData, ThrowOnError>): RequestResult<UpdateCollateralResponses, unknown, ThrowOnError> => (options.client ?? client).patch<UpdateCollateralResponses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -5441,7 +5441,7 @@ export const updateStatus2 = <ThrowOnError extends boolean = false>(options: Opt
 /**
  * Get trade document group
  *
- * **Screens:** VPA0010P01, VPA0011P01, VPA0012P01, VPA0013P01, VPA0014P01
+ * **Screens:** VPA050101P01, VPA050102P01, VPA050103P01, VPA050201P01, VPA050202P01
  *
  * Active files of a group. Requires READ permission on the contract or application menu of the kind.
  */
@@ -5454,7 +5454,7 @@ export const getGroup = <ThrowOnError extends boolean = false>(options: Options<
 /**
  * Get processing history
  *
- * **Screens:** VPA001101, VPA0011P01
+ * **Screens:** VPA05010201, VPA050102P01
  *
  * Status changes of the application, oldest first. Requires READ permission.
  */
@@ -5465,9 +5465,9 @@ export const getHistories = <ThrowOnError extends boolean = false>(options: Opti
 });
 
 /**
- * Get applicant member (VPA001001/VPA001101/VPA001201 popup)
+ * Get applicant member (VPA05010101/VPA05010201/VPA05010301 popup)
  *
- * **Screens:** VPA001101, VPA0011P01
+ * **Screens:** VPA05010201, VPA050102P01
  *
  * Member information popup opened from the application list; phone, e-mail and ID numbers are masked, files omitted. Requires READ permission on the application menu.
  */
@@ -5480,9 +5480,9 @@ export const getApplicationMember = <ThrowOnError extends boolean = false>(optio
 /**
  * Export applications to Excel
  *
- * **Screens:** VPA001101, VPA0011P01
+ * **Screens:** VPA05010201, VPA050102P01
  *
- * Excel download (VPA001001) of the list with the same filters, at most 10,000 rows. Requires READ permission.
+ * Excel download (VPA05010101) of the list with the same filters, at most 10,000 rows. Requires READ permission.
  */
 export const exportExcel = <ThrowOnError extends boolean = false>(options: Options<ExportExcelData, ThrowOnError>): RequestResult<ExportExcelResponses, unknown, ThrowOnError> => (options.client ?? client).get<ExportExcelResponses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -5493,7 +5493,7 @@ export const exportExcel = <ThrowOnError extends boolean = false>(options: Optio
 /**
  * Get processing history
  *
- * **Screens:** VPA001001, VPA0010P01, VPA0004P01, VPA0004P04
+ * **Screens:** VPA05010101, VPA050101P01, VPA020500P01, VPA0004P04
  *
  * Status changes of the application, oldest first. Requires READ permission.
  */
@@ -5504,9 +5504,9 @@ export const getHistories1 = <ThrowOnError extends boolean = false>(options: Opt
 });
 
 /**
- * Get applicant member (VPA001001/VPA001101/VPA001201 popup)
+ * Get applicant member (VPA05010101/VPA05010201/VPA05010301 popup)
  *
- * **Screens:** VPA001001, VPA0010P01, VPA0004P01, VPA0004P04
+ * **Screens:** VPA05010101, VPA050101P01, VPA020500P01, VPA0004P04
  *
  * Member information popup opened from the application list; phone, e-mail and ID numbers are masked, files omitted. Requires READ permission on the application menu.
  */
@@ -5519,9 +5519,9 @@ export const getApplicationMember1 = <ThrowOnError extends boolean = false>(opti
 /**
  * Export applications to Excel
  *
- * **Screens:** VPA001001, VPA0010P01, VPA0004P01, VPA0004P04
+ * **Screens:** VPA05010101, VPA050101P01, VPA020500P01, VPA0004P04
  *
- * Excel download (VPA001001) of the list with the same filters, at most 10,000 rows. Requires READ permission.
+ * Excel download (VPA05010101) of the list with the same filters, at most 10,000 rows. Requires READ permission.
  */
 export const exportExcel1 = <ThrowOnError extends boolean = false>(options: Options<ExportExcel1Data, ThrowOnError>): RequestResult<ExportExcel1Responses, unknown, ThrowOnError> => (options.client ?? client).get<ExportExcel1Responses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -5532,7 +5532,7 @@ export const exportExcel1 = <ThrowOnError extends boolean = false>(options: Opti
 /**
  * Get processing history
  *
- * **Screens:** VPA001201, VPA0012P01
+ * **Screens:** VPA05010301, VPA050103P01
  *
  * Status changes of the application, oldest first. Requires READ permission.
  */
@@ -5543,9 +5543,9 @@ export const getHistories2 = <ThrowOnError extends boolean = false>(options: Opt
 });
 
 /**
- * Get applicant member (VPA001001/VPA001101/VPA001201 popup)
+ * Get applicant member (VPA05010101/VPA05010201/VPA05010301 popup)
  *
- * **Screens:** VPA001201, VPA0012P01
+ * **Screens:** VPA05010301, VPA050103P01
  *
  * Member information popup opened from the application list; phone, e-mail and ID numbers are masked, files omitted. Requires READ permission on the application menu.
  */
@@ -5558,9 +5558,9 @@ export const getApplicationMember2 = <ThrowOnError extends boolean = false>(opti
 /**
  * Export applications to Excel
  *
- * **Screens:** VPA001201, VPA0012P01
+ * **Screens:** VPA05010301, VPA050103P01
  *
- * Excel download (VPA001001) of the list with the same filters, at most 10,000 rows. Requires READ permission.
+ * Excel download (VPA05010101) of the list with the same filters, at most 10,000 rows. Requires READ permission.
  */
 export const exportExcel2 = <ThrowOnError extends boolean = false>(options: Options<ExportExcel2Data, ThrowOnError>): RequestResult<ExportExcel2Responses, unknown, ThrowOnError> => (options.client ?? client).get<ExportExcel2Responses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -5571,7 +5571,7 @@ export const exportExcel2 = <ThrowOnError extends boolean = false>(options: Opti
 /**
  * Screen options / Danh sách chọn màn hình
  *
- * **Screens:** VPA005201, VPA0052P01
+ * **Screens:** VPA09040201, VPA090402P01
  */
 export const options = <ThrowOnError extends boolean = false>(options?: Options<OptionsData, ThrowOnError>): RequestResult<OptionsResponses, unknown, ThrowOnError> => (options?.client ?? client).get<OptionsResponses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -5582,7 +5582,7 @@ export const options = <ThrowOnError extends boolean = false>(options?: Options<
 /**
  * Export Excel / Xuất Excel
  *
- * **Screens:** VPA005201, VPA0052P01
+ * **Screens:** VPA09040201, VPA090402P01
  */
 export const exportExcel3 = <ThrowOnError extends boolean = false>(options: Options<ExportExcel3Data, ThrowOnError>): RequestResult<ExportExcel3Responses, unknown, ThrowOnError> => (options.client ?? client).get<ExportExcel3Responses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -5593,7 +5593,7 @@ export const exportExcel3 = <ThrowOnError extends boolean = false>(options: Opti
 /**
  * Search contracts
  *
- * **Screens:** VPA001401, VPA0014P01, VPA0014P02
+ * **Screens:** VPA05020201, VPA050202P01, VPA050202P02
  *
  * Contracts and annexes with the remaining days (D-xx), fee stage and latest approval. Requires READ permission.
  */
@@ -5604,9 +5604,9 @@ export const getContracts = <ThrowOnError extends boolean = false>(options: Opti
 });
 
 /**
- * Get contract member (VPA001301/VPA001401 popup)
+ * Get contract member (VPA05020101/VPA05020201 popup)
  *
- * **Screens:** VPA001401, VPA0014P01, VPA0014P02
+ * **Screens:** VPA05020201, VPA050202P01, VPA050202P02
  *
  * Member information popup opened from the contract list; phone, e-mail and ID numbers are masked, files omitted. Requires READ permission on the contract menu.
  */
@@ -5619,7 +5619,7 @@ export const getContractMember = <ThrowOnError extends boolean = false>(options:
 /**
  * Get fee installments
  *
- * **Screens:** VPA001401, VPA0014P01, VPA0014P02
+ * **Screens:** VPA05020201, VPA050202P01, VPA050202P02
  *
  * Installments, receipts and refunds. Requires READ permission.
  */
@@ -5632,7 +5632,7 @@ export const getFees1 = <ThrowOnError extends boolean = false>(options: Options<
 /**
  * List approval sessions of the contract
  *
- * **Screens:** VPA001401, VPA0014P01, VPA0014P02
+ * **Screens:** VPA05020201, VPA050202P01, VPA050202P02
  *
  * Every approval session of the contract and of its terminations (draft, signature, annex, termination), newest first. Each row carries atrzHstryId; the steps of one session come from GET /api/v1/approvals/{atrzHstryId}. Requires READ permission.
  */
@@ -5645,9 +5645,9 @@ export const getApprovalHistories = <ThrowOnError extends boolean = false>(optio
 /**
  * Export contracts to Excel
  *
- * **Screens:** VPA001401, VPA0014P01, VPA0014P02
+ * **Screens:** VPA05020201, VPA050202P01, VPA050202P02
  *
- * Excel download (VPA001301) of contracts and annexes with the same filters, at most 10,000 rows. Requires READ permission.
+ * Excel download (VPA05020101) of contracts and annexes with the same filters, at most 10,000 rows. Requires READ permission.
  */
 export const exportExcel4 = <ThrowOnError extends boolean = false>(options: Options<ExportExcel4Data, ThrowOnError>): RequestResult<ExportExcel4Responses, unknown, ThrowOnError> => (options.client ?? client).get<ExportExcel4Responses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -5658,7 +5658,7 @@ export const exportExcel4 = <ThrowOnError extends boolean = false>(options: Opti
 /**
  * Revoke single menu permission from role / Thu hồi phân quyền menu đơn lẻ của vai trò
  *
- * **Screens:** VPA004701
+ * **Screens:** VPA09020401
  *
  * Removes permission mapping for a specific menu and role. Requires WRITE permission. / Xóa ánh xạ phân quyền của một menu cụ thể khỏi vai trò. Yêu cầu quyền GHI.
  */
@@ -5671,7 +5671,7 @@ export const revokeRoleMenuPermission = <ThrowOnError extends boolean = false>(o
 /**
  * Get single menu permission for role / Chi tiết phân quyền menu của vai trò
  *
- * **Screens:** VPA004701
+ * **Screens:** VPA09020401
  *
  * Returns permission level for a specific menu and role. / Trả về mức phân quyền của một menu cụ thể cho vai trò.
  */
@@ -5684,7 +5684,7 @@ export const getRoleMenuPermission = <ThrowOnError extends boolean = false>(opti
 /**
  * Get users assigned to a role / Danh sách người dùng theo vai trò
  *
- * **Screens:** VPA004701
+ * **Screens:** VPA09020401
  *
  * Returns paginated users assigned to a specific role group and/or role ID. / Trả về danh sách người dùng phân trang được gán theo mã nhóm vai trò và/hoặc mã vai trò.
  */
@@ -5697,7 +5697,7 @@ export const getUsersByRole = <ThrowOnError extends boolean = false>(options: Op
 /**
  * Get all users assigned to a role / Danh sách toàn bộ người dùng theo vai trò
  *
- * **Screens:** VPA004701
+ * **Screens:** VPA09020401
  *
  * Returns all users assigned to a specific role group and/or role ID without pagination. / Trả về danh sách tất cả người dùng không phân trang theo mã nhóm vai trò và/hoặc mã vai trò.
  */
@@ -5710,7 +5710,7 @@ export const getAllUsersByRole = <ThrowOnError extends boolean = false>(options?
 /**
  * List all roles / Danh sách tất cả vai trò
  *
- * **Screens:** VPA004701
+ * **Screens:** VPA09020401
  *
  * Returns all roles without pagination for dropdowns. / Trả về toàn bộ vai trò không phân trang cho dropdown.
  */
@@ -5723,7 +5723,7 @@ export const getAllRoles = <ThrowOnError extends boolean = false>(options?: Opti
 /**
  * List all role groups / Danh sách tất cả nhóm vai trò
  *
- * **Screens:** VPA004601, VPA0046P01
+ * **Screens:** VPA09020301, VPA090203P01
  *
  * Returns all role groups without pagination for dropdowns. Requires READ on User Group Management or Notification Message Management. / Trả về toàn bộ nhóm vai trò không phân trang cho dropdown.
  */
@@ -5736,7 +5736,7 @@ export const getAllRoleGroups = <ThrowOnError extends boolean = false>(options?:
 /**
  * Search contracts
  *
- * **Screens:** VPA001301, VPA0013P01, VPA0013P02
+ * **Screens:** VPA05020101, VPA050201P01, VPA050201P02
  *
  * Contracts and annexes with the remaining days (D-xx), fee stage and latest approval. Requires READ permission.
  */
@@ -5747,9 +5747,9 @@ export const getContracts1 = <ThrowOnError extends boolean = false>(options: Opt
 });
 
 /**
- * Get contract member (VPA001301/VPA001401 popup)
+ * Get contract member (VPA05020101/VPA05020201 popup)
  *
- * **Screens:** VPA001301, VPA0013P01, VPA0013P02
+ * **Screens:** VPA05020101, VPA050201P01, VPA050201P02
  *
  * Member information popup opened from the contract list; phone, e-mail and ID numbers are masked, files omitted. Requires READ permission on the contract menu.
  */
@@ -5762,7 +5762,7 @@ export const getContractMember1 = <ThrowOnError extends boolean = false>(options
 /**
  * Get fee installments
  *
- * **Screens:** VPA001301, VPA0013P01, VPA0013P02
+ * **Screens:** VPA05020101, VPA050201P01, VPA050201P02
  *
  * Installments, receipts and refunds. Requires READ permission.
  */
@@ -5775,7 +5775,7 @@ export const getFees2 = <ThrowOnError extends boolean = false>(options: Options<
 /**
  * List approval sessions of the contract
  *
- * **Screens:** VPA001301, VPA0013P01, VPA0013P02
+ * **Screens:** VPA05020101, VPA050201P01, VPA050201P02
  *
  * Every approval session of the contract and of its terminations (draft, signature, annex, termination), newest first. Each row carries atrzHstryId; the steps of one session come from GET /api/v1/approvals/{atrzHstryId}. Requires READ permission.
  */
@@ -5788,9 +5788,9 @@ export const getApprovalHistories1 = <ThrowOnError extends boolean = false>(opti
 /**
  * Export contracts to Excel
  *
- * **Screens:** VPA001301, VPA0013P01, VPA0013P02
+ * **Screens:** VPA05020101, VPA050201P01, VPA050201P02
  *
- * Excel download (VPA001301) of contracts and annexes with the same filters, at most 10,000 rows. Requires READ permission.
+ * Excel download (VPA05020101) of contracts and annexes with the same filters, at most 10,000 rows. Requires READ permission.
  */
 export const exportExcel5 = <ThrowOnError extends boolean = false>(options: Options<ExportExcel5Data, ThrowOnError>): RequestResult<ExportExcel5Responses, unknown, ThrowOnError> => (options.client ?? client).get<ExportExcel5Responses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -5801,7 +5801,7 @@ export const exportExcel5 = <ThrowOnError extends boolean = false>(options: Opti
 /**
  * Program options / Danh sách chọn chương trình
  *
- * **Screens:** VPA005101, VPA0051P01
+ * **Screens:** VPA09040101, VPA090401P01
  */
 export const options1 = <ThrowOnError extends boolean = false>(options?: Options<Options1Data, ThrowOnError>): RequestResult<Options1Responses, unknown, ThrowOnError> => (options?.client ?? client).get<Options1Responses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -5812,7 +5812,7 @@ export const options1 = <ThrowOnError extends boolean = false>(options?: Options
 /**
  * Export Excel / Xuất Excel
  *
- * **Screens:** VPA005101, VPA0051P01
+ * **Screens:** VPA09040101, VPA090401P01
  */
 export const exportExcel6 = <ThrowOnError extends boolean = false>(options: Options<ExportExcel6Data, ThrowOnError>): RequestResult<ExportExcel6Responses, unknown, ThrowOnError> => (options.client ?? client).get<ExportExcel6Responses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -5823,7 +5823,7 @@ export const exportExcel6 = <ThrowOnError extends boolean = false>(options: Opti
 /**
  * Excel download / Tải Excel
  *
- * **Screens:** VPA004101, VPA0041P01
+ * **Screens:** VPA09010301, VPA090103P01
  *
  * Exports the list with the same search conditions and order (max 10,000 rows). / Xuất danh sách theo điều kiện tìm kiếm.
  */
@@ -5847,9 +5847,9 @@ export const getStatus = <ThrowOnError extends boolean = false>(options?: Option
 /**
  * Search NPLs
  *
- * **Screens:** VPA001601, VPA0006P01, VPA0019P01
+ * **Screens:** VPA04020001, VPA040200P02, VPA040500P01
  *
- * NPL list with filters and paging; lotYn=N gives the single-NPL selection popup. Requires READ on the NPL menus (A03010100, A03010400) or on a trade application/contract menu.
+ * NPL list with filters and paging; lotYn=N gives the single-NPL selection popup. Requires READ on the NPL menus (A04020000, A04050000) or on a trade application/contract menu.
  */
 export const getNpls = <ThrowOnError extends boolean = false>(options: Options<GetNplsData, ThrowOnError>): RequestResult<GetNplsResponses, unknown, ThrowOnError> => (options.client ?? client).get<GetNplsResponses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -5860,9 +5860,9 @@ export const getNpls = <ThrowOnError extends boolean = false>(options: Options<G
 /**
  * Get NPL detail
  *
- * **Screens:** VPA001601, VPA0006P01, VPA0019P01
+ * **Screens:** VPA04020001, VPA040200P02, VPA040500P01
  *
- * NPL popup (LOT or single) with evaluation, files, collaterals, creditors and debtors. Debtor personal data is in clear (and the read is audited) only with READ on A03010300, otherwise masked. Same read permission as the list.
+ * NPL popup (LOT or single) with evaluation, files, collaterals, creditors and debtors. Debtor personal data is in clear (and the read is audited) only with READ on A04040000, otherwise masked. Same read permission as the list.
  */
 export const getNpl = <ThrowOnError extends boolean = false>(options: Options<GetNplData, ThrowOnError>): RequestResult<GetNplResponses, unknown, ThrowOnError> => (options.client ?? client).get<GetNplResponses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -5873,9 +5873,9 @@ export const getNpl = <ThrowOnError extends boolean = false>(options: Options<Ge
 /**
  * Export NPL LOTs to Excel
  *
- * **Screens:** VPA001901
+ * **Screens:** VPA04050001
  *
- * Exports the list filters as Excel, at most 10,000 rows. Requires READ on A03010400.
+ * Exports the list filters as Excel, at most 10,000 rows. Requires READ on A04050000.
  */
 export const exportNplLots = <ThrowOnError extends boolean = false>(options: Options<ExportNplLotsData, ThrowOnError>): RequestResult<ExportNplLotsResponses, unknown, ThrowOnError> => (options.client ?? client).get<ExportNplLotsResponses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -5886,9 +5886,9 @@ export const exportNplLots = <ThrowOnError extends boolean = false>(options: Opt
 /**
  * List sent notifications / Danh sách thông báo đã gửi
  *
- * **Screens:** VPA005601
+ * **Screens:** VPA09050201
  *
- * fromDt and toDt are required, at most 92 days apart (400 NTF005). Keyword on TITLE (default), CONTENT or RECIPIENT. Sort: notiSndngDt (default, newest first), notiMediaSe, notiTtl, sndngScsYn. Requires READ permission on Notification History (A06060200).
+ * fromDt and toDt are required, at most 92 days apart (400 NTF005). Keyword on TITLE (default), CONTENT or RECIPIENT. Sort: notiSndngDt (default, newest first), notiMediaSe, notiTtl, sndngScsYn. Requires READ permission on Notification History (A09050200).
  */
 export const getHistories3 = <ThrowOnError extends boolean = false>(options: Options<GetHistories3Data, ThrowOnError>): RequestResult<GetHistories3Responses, unknown, ThrowOnError> => (options.client ?? client).get<GetHistories3Responses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -5899,7 +5899,7 @@ export const getHistories3 = <ThrowOnError extends boolean = false>(options: Opt
 /**
  * Get sent notification / Chi tiết thông báo đã gửi
  *
- * **Screens:** VPA005601
+ * **Screens:** VPA09050201
  *
  * With the content and the failure reason. Requires READ permission.
  */
@@ -5912,7 +5912,7 @@ export const getHistory = <ThrowOnError extends boolean = false>(options: Option
 /**
  * Excel download / Tải Excel
  *
- * **Screens:** VPA005601
+ * **Screens:** VPA09050201
  *
  * Same conditions and order as the list, max 10,000 rows, content not exported. Requires READ permission.
  */
@@ -5925,7 +5925,7 @@ export const export_ = <ThrowOnError extends boolean = false>(options: Options<E
 /**
  * Top-level menu options / Danh sách chọn menu cấp 1
  *
- * **Screens:** VPA004401, VPA0044P01
+ * **Screens:** VPA09020101, VPA090201P01
  *
  * Depth 1 menus of one type, or web then admin when menuSeCd is empty. Requires READ on Web Menu Settings, Admin Menu Settings or Screen Management. / Menu cấp 1 cho dropdown.
  */
@@ -5938,7 +5938,7 @@ export const getMenuOptions = <ThrowOnError extends boolean = false>(options: Op
 /**
  * Membership fee payment history / Lịch sử nộp phí hội viên
  *
- * **Screens:** VPA000801, VPA0002P01, VPA0008P01
+ * **Screens:** VPA03010001, VPA030100P02, VPA030100P01
  *
  * Decided 2026-11-22 (Q-M7): every confirmed membership fee payment, newest first: JOIN (paid at sign-up completion), FRST (first fee or new period), RNWL (renewal), MIGR (last payment before the history existed). Empty until the DA creates MBR_FEE_PAY_HSTRY (schema/42) and member.fee-payment-history.enabled is switched on. Requires READ permission.
  */
@@ -5951,9 +5951,9 @@ export const getFeePayments = <ThrowOnError extends boolean = false>(options: Op
 /**
  * Get sign-up application history / Lịch sử nộp hồ sơ đăng ký
  *
- * **Screens:** VPA000801, VPA0002P01, VPA0008P01
+ * **Screens:** VPA03010001, VPA030100P02, VPA030100P01
  *
- * Review rounds of the sign-up application, oldest first: each approval session with its outcome (IN_PROGRESS, APPROVED, SUPPLEMENT_REQUESTED, REJECTED), the closing employee and the supplement note or rejection reason. Also returns the current round (aplyRndNo, 2+ = re-submitted) and the open supplement note (U) or rejection reason (R). The user web clears both from the member record when the applicant re-applies; this API keeps them visible. A supplement requested before receipt opens no session: it shows only while the status is U. Requires READ permission on sign-up (A01010000) or member management (A01020000).
+ * Review rounds of the sign-up application, oldest first: each approval session with its outcome (IN_PROGRESS, APPROVED, SUPPLEMENT_REQUESTED, REJECTED), the closing employee and the supplement note or rejection reason. Also returns the current round (aplyRndNo, 2+ = re-submitted) and the open supplement note (U) or rejection reason (R). The user web clears both from the member record when the applicant re-applies; this API keeps them visible. A supplement requested before receipt opens no session: it shows only while the status is U. Requires READ permission on sign-up (A03010000) or member management (A03010000).
  */
 export const getApplicationHistory = <ThrowOnError extends boolean = false>(options: Options<GetApplicationHistoryData, ThrowOnError>): RequestResult<GetApplicationHistoryResponses, unknown, ThrowOnError> => (options.client ?? client).get<GetApplicationHistoryResponses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -5964,9 +5964,9 @@ export const getApplicationHistory = <ThrowOnError extends boolean = false>(opti
 /**
  * Excel download of the member list / Tải Excel danh sách hội viên
  *
- * **Screens:** VPA000801, VPA0002P01, VPA0008P01
+ * **Screens:** VPA03010001, VPA030100P02, VPA030100P01
  *
- * VPA03010001 Excel Download: same search conditions and masking as the list (max 10,000 rows); deleted members only when mbrGrdCds contains DELETED. Requires READ on menu A01010000. / Cùng điều kiện tìm kiếm và che dữ liệu như danh sách.
+ * VPA03010001 Excel Download: same search conditions and masking as the list (max 10,000 rows); deleted members only when mbrGrdCds contains DELETED. Requires READ on menu A03010000. / Cùng điều kiện tìm kiếm và che dữ liệu như danh sách.
  */
 export const excel = <ThrowOnError extends boolean = false>(options?: Options<ExcelData, ThrowOnError>): RequestResult<ExcelResponses, unknown, ThrowOnError> => (options?.client ?? client).get<ExcelResponses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -5977,7 +5977,7 @@ export const excel = <ThrowOnError extends boolean = false>(options?: Options<Ex
 /**
  * Get sign-up work counters
  *
- * **Screens:** VPA000801, VPA0002P01, VPA0008P01
+ * **Screens:** VPA03010001, VPA030100P02, VPA030100P01
  *
  * Step 5: counters for the admin header badge - new applications waiting for receipt, supplement requests, applications assigned to me and awaiting my decision. Requires READ permission.
  */
@@ -5990,7 +5990,7 @@ export const getApprovalSummary = <ThrowOnError extends boolean = false>(options
 /**
  * Get districts by province / Danh sách Quận/Huyện theo Tỉnh
  *
- * **Screens:** VPA004901, VPA0049P01
+ * **Screens:** VPA09030201, VPA090302P01
  *
  * Returns all districts belonging to a province. / Trả về danh sách Quận/Huyện trực thuộc một Tỉnh/Thành phố.
  */
@@ -6003,7 +6003,7 @@ export const getDistrictsByProvince = <ThrowOnError extends boolean = false>(opt
 /**
  * Excel download of provinces / Tải Excel Tỉnh/Thành phố
  *
- * **Screens:** VPA004901, VPA0049P01
+ * **Screens:** VPA09030201, VPA090302P01
  *
  * Exports the list with the same search conditions (max 10,000 rows). / Xuất danh sách theo điều kiện tìm kiếm.
  */
@@ -6016,9 +6016,9 @@ export const exportProvinces = <ThrowOnError extends boolean = false>(options: O
 /**
  * Live auction list / Danh sách đấu giá trực tiếp
  *
- * **Screens:** VPA002201, VPA0022P01
+ * **Screens:** VPA06030001, VPA060300P01
  *
- * Same board as the bidder list (default statuses AN, IP, PS, AW, FL, CL, WP, ST, DF). Requires READ permission (A07030000).
+ * Same board as the bidder list (default statuses AN, IP, PS, AW, FL, CL, WP, ST, DF). Requires READ permission (A06030000).
  */
 export const getAuctions1 = <ThrowOnError extends boolean = false>(options?: Options<GetAuctions1Data, ThrowOnError>): RequestResult<GetAuctions1Responses, unknown, ThrowOnError> => (options?.client ?? client).get<GetAuctions1Responses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -6029,7 +6029,7 @@ export const getAuctions1 = <ThrowOnError extends boolean = false>(options?: Opt
 /**
  * Live auction summary / Tóm tắt
  *
- * **Screens:** VPA002201, VPA0022P01
+ * **Screens:** VPA06030001, VPA060300P01
  *
  * Cards, winner (masked) and availableActions. Requires READ permission.
  */
@@ -6042,7 +6042,7 @@ export const getSummary = <ThrowOnError extends boolean = false>(options: Option
 /**
  * Winning bid certificate data / Dữ liệu phiếu xác nhận trúng đấu giá
  *
- * **Screens:** VPA002201, VPA0022P01
+ * **Screens:** VPA06030001, VPA060300P01
  *
  * Awarded auctions only (409 AUC011); carries the winner's full name. Requires READ permission.
  */
@@ -6055,7 +6055,7 @@ export const getCertificate = <ThrowOnError extends boolean = false>(options: Op
 /**
  * Polling snapshot / Ảnh chụp để polling
  *
- * **Screens:** VPA002201, VPA0022P01
+ * **Screens:** VPA06030001, VPA060300P01
  *
  * Summary plus up to 100 valid bids after lastBidNo (oldest first). Poll every 2 s. Requires READ permission.
  */
@@ -6068,7 +6068,7 @@ export const getSnapshot = <ThrowOnError extends boolean = false>(options: Optio
 /**
  * Bids / Lượt đặt giá
  *
- * **Screens:** VPA002201, VPA0022P01
+ * **Screens:** VPA06030001, VPA060300P01
  *
  * Valid bids, newest first; seq = order in time. Requires READ permission.
  */
@@ -6081,7 +6081,7 @@ export const getBids = <ThrowOnError extends boolean = false>(options: Options<G
 /**
  * Auction record data / Dữ liệu biên bản đấu giá
  *
- * **Screens:** VPA002201, VPA0022P01
+ * **Screens:** VPA06030001, VPA060300P01
  *
  * Overview, result summary and every valid bid (bidders masked). Requires READ permission.
  */
@@ -6094,7 +6094,7 @@ export const getRecord = <ThrowOnError extends boolean = false>(options: Options
 /**
  * List languages / Danh sách ngôn ngữ
  *
- * **Screens:** VPA005301, VPA0053P01
+ * **Screens:** VPA09040301, VPA090403P01
  *
  * All languages, including not in use. / Gồm cả ngôn ngữ không sử dụng.
  */
@@ -6107,7 +6107,7 @@ export const getLanguages = <ThrowOnError extends boolean = false>(options?: Opt
 /**
  * Excel download / Tải Excel
  *
- * **Screens:** VPA005301, VPA0053P01
+ * **Screens:** VPA09040301, VPA090403P01
  *
  * Exports the list with the same search conditions, one column per active language (max 10,000 rows); the file is the upload format. / Xuất danh sách theo điều kiện tìm kiếm.
  */
@@ -6120,7 +6120,7 @@ export const excel1 = <ThrowOnError extends boolean = false>(options: Options<Ex
 /**
  * Get label / Chi tiết nhãn
  *
- * **Screens:** VPA005301, VPA0053P01
+ * **Screens:** VPA09040301, VPA090403P01
  *
  * Label with translations for every active language. / Nhãn kèm bản dịch các ngôn ngữ đang dùng.
  */
@@ -6133,7 +6133,7 @@ export const getDetail = <ThrowOnError extends boolean = false>(options: Options
 /**
  * Get branches by institution / Danh sách Chi nhánh theo Tổ chức tài chính
  *
- * **Screens:** VPA005001, VPA0050P01
+ * **Screens:** VPA09030301, VPA090303P01
  *
  * Returns all branches belonging to an institution. / Trả về danh sách chi nhánh trực thuộc một tổ chức tài chính.
  */
@@ -6146,7 +6146,7 @@ export const getBranchesByInstitution = <ThrowOnError extends boolean = false>(o
 /**
  * Excel download of institutions / Tải Excel Tổ chức tài chính
  *
- * **Screens:** VPA005001, VPA0050P01
+ * **Screens:** VPA09030301, VPA090303P01
  *
  * Exports the list with the same search conditions (max 10,000 rows). / Xuất danh sách theo điều kiện tìm kiếm.
  */
@@ -6185,9 +6185,9 @@ export const exportEmployees = <ThrowOnError extends boolean = false>(options?: 
 /**
  * Soft delete debtors
  *
- * **Screens:** VPA001801, VPA0018P01
+ * **Screens:** VPA04040001, VPA040400P01
  *
- * Sets the status to deleted (D). Returns 409 (DBT001) while a debtor is linked to an NPL. Requires WRITE on A03010300.
+ * Sets the status to deleted (D). Returns 409 (DBT001) while a debtor is linked to an NPL. Requires WRITE on A04040000.
  */
 export const deleteDebtors = <ThrowOnError extends boolean = false>(options: Options<DeleteDebtorsData, ThrowOnError>): RequestResult<DeleteDebtorsResponses, unknown, ThrowOnError> => (options.client ?? client).delete<DeleteDebtorsResponses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -6202,9 +6202,9 @@ export const deleteDebtors = <ThrowOnError extends boolean = false>(options: Opt
 /**
  * Search debtors
  *
- * **Screens:** VPA001801, VPA0018P01
+ * **Screens:** VPA04040001, VPA040400P01
  *
- * Debtor list with filters, sort (dbtrCd, dbtrNm, cptl; default newest first) and paging. Personal data in clear, audited. Requires READ on A03010300.
+ * Debtor list with filters, sort (dbtrCd, dbtrNm, cptl; default newest first) and paging. Personal data in clear, audited. Requires READ on A04040000.
  */
 export const getDebtors = <ThrowOnError extends boolean = false>(options: Options<GetDebtorsData, ThrowOnError>): RequestResult<GetDebtorsResponses, unknown, ThrowOnError> => (options.client ?? client).get<GetDebtorsResponses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -6215,9 +6215,9 @@ export const getDebtors = <ThrowOnError extends boolean = false>(options: Option
 /**
  * Get debtor detail
  *
- * **Screens:** VPA001801, VPA0018P01
+ * **Screens:** VPA04040001, VPA040400P01
  *
- * Debtor popup. Personal data in clear and audited with READ on A03010300, masked when the caller only has an NPL read menu.
+ * Debtor popup. Personal data in clear and audited with READ on A04040000, masked when the caller only has an NPL read menu.
  */
 export const getDebtor = <ThrowOnError extends boolean = false>(options: Options<GetDebtorData, ThrowOnError>): RequestResult<GetDebtorResponses, unknown, ThrowOnError> => (options.client ?? client).get<GetDebtorResponses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -6228,9 +6228,9 @@ export const getDebtor = <ThrowOnError extends boolean = false>(options: Options
 /**
  * Export debtors to Excel
  *
- * **Screens:** VPA001801, VPA0018P01
+ * **Screens:** VPA04040001, VPA040400P01
  *
- * Exports the list filters as Excel with personal data in clear, at most 10,000 rows, audited. Requires READ on A03010300.
+ * Exports the list filters as Excel with personal data in clear, at most 10,000 rows, audited. Requires READ on A04040000.
  */
 export const exportDebtors = <ThrowOnError extends boolean = false>(options: Options<ExportDebtorsData, ThrowOnError>): RequestResult<ExportDebtorsResponses, unknown, ThrowOnError> => (options.client ?? client).get<ExportDebtorsResponses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -6241,9 +6241,9 @@ export const exportDebtors = <ThrowOnError extends boolean = false>(options: Opt
 /**
  * Get dashboard counters / Số liệu dashboard
  *
- * **Screens:** VPA000101
+ * **Screens:** VPA01000001
  *
- * Provisional: the VPA000101 widgets are still to be confirmed. Returns the approvals waiting for the signed-in employee, the sign-up work counters (with sign-up menu permission) and the user web home posting counters (with NPL or collateral menu permission); a block without permission is null. Any authenticated employee.
+ * Provisional: the VPA01000001 widgets are still to be confirmed. Returns the approvals waiting for the signed-in employee, the sign-up work counters (with sign-up menu permission) and the user web home posting counters (with NPL or collateral menu permission); a block without permission is null. Any authenticated employee.
  */
 export const getSummary1 = <ThrowOnError extends boolean = false>(options?: Options<GetSummary1Data, ThrowOnError>): RequestResult<GetSummary1Responses, unknown, ThrowOnError> => (options?.client ?? client).get<GetSummary1Responses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -6267,7 +6267,7 @@ export const getExchangeRates = <ThrowOnError extends boolean = false>(options?:
 /**
  * Dropdown options / Danh sách lựa chọn
  *
- * **Screens:** VPA003301, VPA0033P01
+ * **Screens:** VPA07070001, VPA070700P01
  *
  * Document types, groups, fields and issuing authorities. / Loại văn bản, nhóm, lĩnh vực, cơ quan ban hành.
  */
@@ -6280,7 +6280,7 @@ export const options2 = <ThrowOnError extends boolean = false>(options?: Options
 /**
  * Excel download / Tải Excel
  *
- * **Screens:** VPA003301, VPA0033P01
+ * **Screens:** VPA07070001, VPA070700P01
  *
  * Exports the list with the same search conditions (max 10,000 rows). / Xuất danh sách theo điều kiện tìm kiếm.
  */
@@ -6293,7 +6293,7 @@ export const excel2 = <ThrowOnError extends boolean = false>(options: Options<Ex
 /**
  * List inquiries / Danh sách câu hỏi
  *
- * **Screens:** VPA003001, VPA0030P01
+ * **Screens:** VPA07040001, VPA070400P01
  *
  * Default filter: unanswered. Inquirer names are masked. / Mặc định lọc câu hỏi chưa trả lời; tên người hỏi được che.
  */
@@ -6306,7 +6306,7 @@ export const getInquiries = <ThrowOnError extends boolean = false>(options: Opti
 /**
  * Get inquiry detail / Chi tiết câu hỏi
  *
- * **Screens:** VPA003001, VPA0030P01
+ * **Screens:** VPA07040001, VPA070400P01
  *
  * Inquirer name, e-mail and phone are masked. Audited as a personal data read. / Tên, email, SĐT được che; có ghi audit.
  */
@@ -6319,7 +6319,7 @@ export const getInquiry = <ThrowOnError extends boolean = false>(options: Option
 /**
  * Excel download / Tải Excel
  *
- * **Screens:** VPA003001, VPA0030P01
+ * **Screens:** VPA07040001, VPA070400P01
  *
  * Exports the inquiry list with the same search conditions (names masked, max 10,000 rows). / Xuất danh sách câu hỏi (tên đã che).
  */
@@ -6343,7 +6343,7 @@ export const getGroup1 = <ThrowOnError extends boolean = false>(options: Options
 /**
  * Excel download / Tải Excel
  *
- * **Screens:** VPA003101, VPA0031P01
+ * **Screens:** VPA07050001, VPA070500P01
  *
  * Exports the FAQ list with the same search conditions (max 10,000 rows). / Xuất danh sách FAQ theo điều kiện tìm kiếm.
  */
@@ -6356,7 +6356,7 @@ export const excel4 = <ThrowOnError extends boolean = false>(options: Options<Ex
 /**
  * Excel download / Tải Excel
  *
- * **Screens:** VPA003401, VPA0034P01
+ * **Screens:** VPA07080001, VPA070800P01
  *
  * Exports the list with the same search conditions (max 10,000 rows). / Xuất danh sách theo điều kiện tìm kiếm.
  */
@@ -6369,7 +6369,7 @@ export const excel5 = <ThrowOnError extends boolean = false>(options: Options<Ex
 /**
  * Excel download / Tải Excel
  *
- * **Screens:** VPA003201, VPA0032P01
+ * **Screens:** VPA07060101, VPA070601P01
  *
  * Exports the list with the same search conditions (max 10,000 rows). / Xuất danh sách theo điều kiện tìm kiếm.
  */
@@ -6382,7 +6382,7 @@ export const excel6 = <ThrowOnError extends boolean = false>(options: Options<Ex
 /**
  * Search contracts
  *
- * **Screens:** VPA001501
+ * **Screens:** VPA05020301
  *
  * Contracts and annexes with the remaining days (D-xx), fee stage and latest approval. Requires READ permission.
  */
@@ -6393,9 +6393,9 @@ export const getContracts2 = <ThrowOnError extends boolean = false>(options: Opt
 });
 
 /**
- * Get contract member (VPA001301/VPA001401 popup)
+ * Get contract member (VPA05020101/VPA05020201 popup)
  *
- * **Screens:** VPA001501
+ * **Screens:** VPA05020301
  *
  * Member information popup opened from the contract list; phone, e-mail and ID numbers are masked, files omitted. Requires READ permission on the contract menu.
  */
@@ -6408,7 +6408,7 @@ export const getContractMember2 = <ThrowOnError extends boolean = false>(options
 /**
  * Get fee installments
  *
- * **Screens:** VPA001501
+ * **Screens:** VPA05020301
  *
  * Installments, receipts and refunds. Requires READ permission.
  */
@@ -6421,7 +6421,7 @@ export const getFees3 = <ThrowOnError extends boolean = false>(options: Options<
 /**
  * List approval sessions of the contract
  *
- * **Screens:** VPA001501
+ * **Screens:** VPA05020301
  *
  * Every approval session of the contract and of its terminations (draft, signature, annex, termination), newest first. Each row carries atrzHstryId; the steps of one session come from GET /api/v1/approvals/{atrzHstryId}. Requires READ permission.
  */
@@ -6434,9 +6434,9 @@ export const getApprovalHistories2 = <ThrowOnError extends boolean = false>(opti
 /**
  * Export contracts to Excel
  *
- * **Screens:** VPA001501
+ * **Screens:** VPA05020301
  *
- * Excel download (VPA001301) of contracts and annexes with the same filters, at most 10,000 rows. Requires READ permission.
+ * Excel download (VPA05020101) of contracts and annexes with the same filters, at most 10,000 rows. Requires READ permission.
  */
 export const exportExcel7 = <ThrowOnError extends boolean = false>(options: Options<ExportExcel7Data, ThrowOnError>): RequestResult<ExportExcel7Responses, unknown, ThrowOnError> => (options.client ?? client).get<ExportExcel7Responses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -6447,7 +6447,7 @@ export const exportExcel7 = <ThrowOnError extends boolean = false>(options: Opti
 /**
  * List codes by group / Danh sách mã chi tiết theo nhóm
  *
- * **Screens:** VPA004801, VPA0048P01
+ * **Screens:** VPA09030101, VPA090301P01
  *
  * Returns detailed codes within a group for admin grid display. / Trả về danh sách mã chi tiết thuộc một nhóm cho bảng quản trị.
  */
@@ -6460,7 +6460,7 @@ export const getCodesByGroup = <ThrowOnError extends boolean = false>(options: O
 /**
  * Excel download of code groups / Tải Excel nhóm mã
  *
- * **Screens:** VPA004801, VPA0048P01
+ * **Screens:** VPA09030101, VPA090301P01
  *
  * Exports the list with the same search conditions (max 10,000 rows). / Xuất danh sách theo điều kiện tìm kiếm.
  */
@@ -6473,7 +6473,7 @@ export const exportCodeGroups = <ThrowOnError extends boolean = false>(options: 
 /**
  * List all code groups / Danh sách tất cả nhóm mã
  *
- * **Screens:** VPA004801, VPA0048P01
+ * **Screens:** VPA09030101, VPA090301P01
  *
  * Returns all code groups (unpaginated) with optional filters. / Trả về toàn bộ danh sách nhóm mã không phân trang.
  */
@@ -6486,9 +6486,9 @@ export const getAllCodeGroups = <ThrowOnError extends boolean = false>(options?:
 /**
  * Search collateral assets
  *
- * **Screens:** VPA001701, VPA0017P01
+ * **Screens:** VPA04030001, VPA040300P01
  *
- * Collateral asset list with filters, sort (cltrAstCd, cltrAstNm, loanTtmEvlAmt, rcntCltrWrthAmt; default newest first) and paging. Requires READ on A03010200.
+ * Collateral asset list with filters, sort (cltrAstCd, cltrAstNm, loanTtmEvlAmt, rcntCltrWrthAmt; default newest first) and paging. Requires READ on A04030000.
  */
 export const getCollateralAssets = <ThrowOnError extends boolean = false>(options: Options<GetCollateralAssetsData, ThrowOnError>): RequestResult<GetCollateralAssetsResponses, unknown, ThrowOnError> => (options.client ?? client).get<GetCollateralAssetsResponses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -6499,9 +6499,9 @@ export const getCollateralAssets = <ThrowOnError extends boolean = false>(option
 /**
  * Get collateral asset detail
  *
- * **Screens:** VPA001701, VPA0017P01
+ * **Screens:** VPA04030001, VPA040300P01
  *
- * Collateral asset popup with characteristics, linked NPLs and files. Requires READ on A03010200 or on an NPL read menu (NPL, lot, trade application/contract).
+ * Collateral asset popup with characteristics, linked NPLs and files. Requires READ on A04030000 or on an NPL read menu (NPL, lot, trade application/contract).
  */
 export const getCollateralAsset = <ThrowOnError extends boolean = false>(options: Options<GetCollateralAssetData, ThrowOnError>): RequestResult<GetCollateralAssetResponses, unknown, ThrowOnError> => (options.client ?? client).get<GetCollateralAssetResponses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -6512,9 +6512,9 @@ export const getCollateralAsset = <ThrowOnError extends boolean = false>(options
 /**
  * Export collateral assets to Excel
  *
- * **Screens:** VPA001701, VPA0017P01
+ * **Screens:** VPA04030001, VPA040300P01
  *
- * Exports the list filters as Excel, one row per characteristic, at most 10,000 rows. Requires READ on A03010200.
+ * Exports the list filters as Excel, one row per characteristic, at most 10,000 rows. Requires READ on A04030000.
  */
 export const exportCollateralAssets = <ThrowOnError extends boolean = false>(options: Options<ExportCollateralAssetsData, ThrowOnError>): RequestResult<ExportCollateralAssetsResponses, unknown, ThrowOnError> => (options.client ?? client).get<ExportCollateralAssetsResponses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -6525,7 +6525,7 @@ export const exportCollateralAssets = <ThrowOnError extends boolean = false>(opt
 /**
  * Delete bidder / Xoá đơn tham gia
  *
- * **Screens:** VPA002101, VPA0021P01
+ * **Screens:** VPA06020001, VPA060200P01
  *
  * AP or DQ, deposit not held, no bid (409 BDR005). Requires WRITE permission.
  */
@@ -6538,7 +6538,7 @@ export const delete10 = <ThrowOnError extends boolean = false>(options: Options<
 /**
  * Get bidder / Chi tiết người tham gia
  *
- * **Screens:** VPA002101, VPA0021P01
+ * **Screens:** VPA06020001, VPA060200P01
  *
  * Requires READ permission.
  */
@@ -6551,9 +6551,9 @@ export const getBidder = <ThrowOnError extends boolean = false>(options: Options
 /**
  * Auctions for bidder management / Danh sách phiên để quản lý người tham gia
  *
- * **Screens:** VPA002101, VPA0021P01
+ * **Screens:** VPA06020001, VPA060200P01
  *
- * Latest cycle; default statuses AN, IP, PS, AW, FL, CL, WP, ST, DF. Sort: auctnEndDt (default), auctnNo, auctnNm, auctnSttsCd. Requires READ permission (A07020000).
+ * Latest cycle; default statuses AN, IP, PS, AW, FL, CL, WP, ST, DF. Sort: auctnEndDt (default), auctnNo, auctnNm, auctnSttsCd. Requires READ permission (A06020000).
  */
 export const getAuctions2 = <ThrowOnError extends boolean = false>(options?: Options<GetAuctions2Data, ThrowOnError>): RequestResult<GetAuctions2Responses, unknown, ThrowOnError> => (options?.client ?? client).get<GetAuctions2Responses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -6564,7 +6564,7 @@ export const getAuctions2 = <ThrowOnError extends boolean = false>(options?: Opt
 /**
  * Bidders of an auction / Người tham gia của phiên
  *
- * **Screens:** VPA002101, VPA0021P01
+ * **Screens:** VPA06020001, VPA060200P01
  *
  * Name, phone and e-mail masked; availableActions per row. Requires READ permission.
  */
@@ -6577,7 +6577,7 @@ export const getBidders = <ThrowOnError extends boolean = false>(options: Option
 /**
  * Collaterals of an NPL / Tài sản bảo đảm của NPL
  *
- * **Screens:** VPA002001, VPA0020P01
+ * **Screens:** VPA06010001, VPA060100P01
  *
  * Target item lookup of the register popup. Requires READ permission.
  */
@@ -6590,7 +6590,7 @@ export const getCollaterals = <ThrowOnError extends boolean = false>(options: Op
 /**
  * Excel download / Tải Excel
  *
- * **Screens:** VPA002001, VPA0020P01
+ * **Screens:** VPA06010001, VPA060100P01
  *
  * Same conditions and order as the list, max 10,000 rows. Requires READ permission.
  */
@@ -6625,7 +6625,7 @@ export const download = <ThrowOnError extends boolean = false>(options: Options<
 /**
  * Get approval session detail
  *
- * **Screens:** VPA0003P01, VPA0003P02, VPA0003P03, VPA0003P04
+ * **Screens:** VPA020100P01, VPA020200P01, VPA020300P01, VPA0003P04
  *
  * Single source for an approval session: state and the complete steps timeline (A-16, ADF1234_P12). The session id (atrzHstryId) comes from the member, application, contract or auction response. Requires READ permission.
  */
@@ -6638,7 +6638,7 @@ export const getDetail1 = <ThrowOnError extends boolean = false>(options: Option
 /**
  * Get my approval inbox
  *
- * **Screens:** VPA0003P01, VPA0003P02, VPA0003P03, VPA0003P04
+ * **Screens:** VPA020100P01, VPA020200P01, VPA020300P01, VPA0003P04
  *
  * In-progress approval sessions whose current step is assigned to the signed-in employee, newest first, with a navigation hint (processKind, targetScreen, menuCd, tradeKind, srvcAplyId, srvcCtrtCd, ctrtEndId, mbrNo). Any authenticated employee; only their own items are returned.
  */
@@ -6651,7 +6651,7 @@ export const getInbox = <ThrowOnError extends boolean = false>(options: Options<
 /**
  * Get my approval inbox counts
  *
- * **Screens:** VPA0003P01, VPA0003P02, VPA0003P03, VPA0003P04
+ * **Screens:** VPA020100P01, VPA020200P01, VPA020300P01, VPA0003P04
  *
  * Number of sessions waiting for the signed-in employee per process kind (member, sale, purchase, consulting, other). Any authenticated employee.
  */
@@ -6664,7 +6664,7 @@ export const getInboxSummary = <ThrowOnError extends boolean = false>(options?: 
 /**
  * Search step candidate employees
  *
- * **Screens:** VPA0003P01, VPA0003P02, VPA0003P03, VPA0003P04
+ * **Screens:** VPA020100P01, VPA020200P01, VPA020300P01, VPA0003P04
  *
  * Finds eligible active employees holding the required role for an approval step (A-02, ADF1234_P08..P09). Pass atrzHstryId for a session in progress: the roles then come from the session's snapshot, so the list matches the check made on save even when the process was edited mid-session; 404 for an unknown session. Requires READ permission.
  */
@@ -6677,7 +6677,7 @@ export const getCandidates = <ThrowOnError extends boolean = false>(options: Opt
 /**
  * Delete label / Xóa nhãn
  *
- * **Screens:** VPA005301, VPA0053P01
+ * **Screens:** VPA09040301, VPA090403P01
  *
  * Deletes label and all associated translations / Xóa nhãn và toàn bộ bản dịch liên quan
  */
@@ -6690,7 +6690,7 @@ export const deleteLabel = <ThrowOnError extends boolean = false>(options: Optio
 /**
  * Query labels by screen / Truy vấn nhãn theo màn hình
  *
- * **Screens:** VPA005301, VPA0053P01
+ * **Screens:** VPA09040301, VPA090403P01
  *
  * Returns labels/translations by screen ID for admin UI / Trả về danh sách nhãn/bản dịch theo ID màn hình
  */
@@ -6703,7 +6703,7 @@ export const getLabelsByScrn = <ThrowOnError extends boolean = false>(options: O
 /**
  * Query label-translation rows / Truy vấn danh sách dòng nhãn-bản dịch
  *
- * **Screens:** VPA005301, VPA0053P01
+ * **Screens:** VPA09040301, VPA090403P01
  *
  * Returns label-translation rows with optional filters / Trả về danh sách nhãn-bản dịch kèm các bộ lọc tùy chọn
  */
@@ -6716,7 +6716,7 @@ export const getLabelRows = <ThrowOnError extends boolean = false>(options?: Opt
 /**
  * Query active languages / Truy vấn danh sách ngôn ngữ
  *
- * **Screens:** VPA005301, VPA0053P01
+ * **Screens:** VPA09040301, VPA090403P01
  *
  * Returns active languages in sorted order / Trả về danh sách ngôn ngữ hoạt động theo thứ tự
  */
@@ -6729,7 +6729,7 @@ export const getLanguages1 = <ThrowOnError extends boolean = false>(options?: Op
 /**
  * Download labels upload template / Tải template Excel mẫu
  *
- * **Screens:** VPA005301, VPA0053P01
+ * **Screens:** VPA09040301, VPA090403P01
  *
  * Deprecated: use GET /api/v1/labels/excel as the upload layout. Downloads template with required columns / Tải file mẫu với các cột bắt buộc
  *
@@ -6744,7 +6744,7 @@ export const downloadTemplate = <ThrowOnError extends boolean = false>(options?:
 /**
  * Download labels Excel / Tải file Excel danh sách nhãn
  *
- * **Screens:** VPA005301, VPA0053P01
+ * **Screens:** VPA09040301, VPA090403P01
  *
  * Deprecated: use GET /api/v1/labels/excel. Downloads all label-translation rows as Excel / Tải toàn bộ danh sách nhãn-bản dịch dưới dạng file Excel
  *
@@ -6759,7 +6759,7 @@ export const downloadExcel = <ThrowOnError extends boolean = false>(options?: Op
 /**
  * Bulk query all labels / Truy vấn toàn bộ nhãn hàng loạt
  *
- * **Screens:** VPA005301, VPA0053P01
+ * **Screens:** VPA09040301, VPA090403P01
  *
  * Returns {LBL_CD: text} map based on X-Lang header / Trả về map {LBL_CD: text} theo ngôn ngữ trong header X-Lang
  */
@@ -6794,7 +6794,7 @@ export const downloadFile1 = <ThrowOnError extends boolean = false>(options?: Op
 /**
  * Query programs by menu / Truy vấn chương trình theo menu
  *
- * **Screens:** VPA004401, VPA0044P01
+ * **Screens:** VPA09020101, VPA090201P01
  *
  * Retrieves list of programs/screens mapped to a specific menu code. / Trả về danh sách chương trình/màn hình được liên kết với mã menu chỉ định.
  */
@@ -6807,7 +6807,7 @@ export const getProgramsByMenuCd = <ThrowOnError extends boolean = false>(option
 /**
  * Query my permissions list / Truy vấn danh sách quyền cá nhân
  *
- * **Screens:** VPA004401, VPA0044P01
+ * **Screens:** VPA09020101, VPA090201P01
  *
  * Retrieves detailed menu authorization permissions (AL: All, WT: Write, RD: Read-only) based on user's role. / Trả về danh sách quyền hạn chi tiết theo vai trò người dùng (AL: Toàn quyền, WT: Ghi, RD: Chỉ đọc).
  */
@@ -6820,7 +6820,7 @@ export const getMyPermissions = <ThrowOnError extends boolean = false>(options?:
 /**
  * Query my menu tree / Truy vấn cây menu cá nhân
  *
- * **Screens:** VPA004401, VPA0044P01
+ * **Screens:** VPA09020101, VPA090201P01
  *
  * Retrieves hierarchical menu tree according to the authenticated user's role and requested language code. / Trả về cây menu phân cấp theo vai trò của người dùng đã đăng nhập và mã ngôn ngữ yêu cầu.
  */
@@ -6833,7 +6833,7 @@ export const getMyMenus = <ThrowOnError extends boolean = false>(options?: Optio
 /**
  * Query all menus list / Truy vấn danh sách toàn bộ menu
  *
- * **Screens:** VPA004401, VPA0044P01
+ * **Screens:** VPA09020101, VPA090201P01
  *
  * Retrieves full menu list for administrative management with optional search filters. Requires ADMIN role. / Trả về toàn bộ danh sách menu phục vụ quản trị với các bộ lọc tìm kiếm tùy chọn. Yêu cầu vai trò ADMIN.
  */
@@ -6846,7 +6846,7 @@ export const getAllMenus = <ThrowOnError extends boolean = false>(options?: Opti
 /**
  * Get active provinces / Lấy danh sách Tỉnh/Thành phố đang hoạt động
  *
- * **Screens:** VPA004901, VPA0049P01
+ * **Screens:** VPA09030201, VPA090302P01
  *
  * Returns active provinces for dropdown selections (cached). / Trả về danh sách Tỉnh/Thành phố đang hoạt động cho các dropdown chọn lựa (có lưu cache).
  */
@@ -6859,7 +6859,7 @@ export const getActiveProvinces = <ThrowOnError extends boolean = false>(options
 /**
  * Get active districts by province / Lấy danh sách Quận/Huyện theo Tỉnh
  *
- * **Screens:** VPA004901, VPA0049P01
+ * **Screens:** VPA09030201, VPA090302P01
  *
  * Returns active districts of a province for cascaded dropdowns. / Trả về danh sách Quận/Huyện của Tỉnh cho dropdown liên kết.
  */
@@ -6872,7 +6872,7 @@ export const getActiveDistrictsByProvince = <ThrowOnError extends boolean = fals
 /**
  * Get active financial institutions / Lấy danh sách Tổ chức tài chính đang hoạt động
  *
- * **Screens:** VPA005001, VPA0050P01
+ * **Screens:** VPA09030301, VPA090303P01
  *
  * Returns active financial institutions for dropdown selections (cached). / Trả về danh sách tổ chức tài chính đang hoạt động cho dropdown (có lưu cache).
  */
@@ -6885,7 +6885,7 @@ export const getActiveInstitutions = <ThrowOnError extends boolean = false>(opti
 /**
  * Get active branches by institution / Lấy danh sách Chi nhánh theo Tổ chức tài chính
  *
- * **Screens:** VPA005001, VPA0050P01
+ * **Screens:** VPA09030301, VPA090303P01
  *
  * Returns active branches of an institution for cascaded dropdowns. / Trả về danh sách chi nhánh hoạt động theo ngân hàng.
  */
@@ -6898,7 +6898,7 @@ export const getActiveBranchesByInstitution = <ThrowOnError extends boolean = fa
 /**
  * Get multiple groups at once / Lấy danh sách mã cho nhiều nhóm cùng lúc
  *
- * **Screens:** VPA004801, VPA0048P01
+ * **Screens:** VPA09030101, VPA090301P01
  *
  * Returns map of group codes to their respective code lists. / Trả về bản đồ mã nhóm và danh sách mã tương ứng.
  */
@@ -6911,7 +6911,7 @@ export const getCodesByGroups = <ThrowOnError extends boolean = false>(options: 
 /**
  * Get code list by group / Lấy danh sách mã theo nhóm
  *
- * **Screens:** VPA004801, VPA0048P01
+ * **Screens:** VPA09030101, VPA090301P01
  *
  * Returns active common codes for a specific group (cached). / Trả về danh sách mã đang hoạt động theo nhóm (có lưu cache).
  */
@@ -6924,7 +6924,7 @@ export const getCodesByGroup1 = <ThrowOnError extends boolean = false>(options: 
 /**
  * Get single code / Lấy chi tiết một mã
  *
- * **Screens:** VPA004801, VPA0048P01
+ * **Screens:** VPA09030101, VPA090301P01
  *
  * Returns single common code detail. / Trả về chi tiết một mã dùng chung.
  */
@@ -6937,7 +6937,7 @@ export const getCode = <ThrowOnError extends boolean = false>(options: Options<G
 /**
  * Get RSA Public Key for login
  *
- * **Screens:** VPA000701, VPA000101
+ * **Screens:** VPA02110001, VPA01000001
  *
  * Returns RSA-OAEP(SHA-256) public key used for password encryption.
  */
@@ -6950,7 +6950,7 @@ export const getPublicKey = <ThrowOnError extends boolean = false>(options?: Opt
 /**
  * Get authenticated user profile and roles
  *
- * **Screens:** VPA000701, VPA000101
+ * **Screens:** VPA02110001, VPA01000001
  *
  * Returns current authenticated employee profile, assigned roles, and menu trees.
  */
@@ -6963,7 +6963,7 @@ export const getMe = <ThrowOnError extends boolean = false>(options?: Options<Ge
 /**
  * Get @BatchJob registry list / Tra cứu danh sách @BatchJob đã đăng ký trong mã nguồn
  *
- * **Screens:** VPA005401, VPA0054P01
+ * **Screens:** VPA09040401, VPA090404P01
  */
 export const getRegistry = <ThrowOnError extends boolean = false>(options?: Options<GetRegistryData, ThrowOnError>): RequestResult<GetRegistryResponses, unknown, ThrowOnError> => (options?.client ?? client).get<GetRegistryResponses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -6974,7 +6974,7 @@ export const getRegistry = <ThrowOnError extends boolean = false>(options?: Opti
 /**
  * Get execution history by job / Lịch sử thực thi theo từng công việc
  *
- * **Screens:** VPA005401, VPA0054P01
+ * **Screens:** VPA09040401, VPA090404P01
  */
 export const getJobHistory = <ThrowOnError extends boolean = false>(options: Options<GetJobHistoryData, ThrowOnError>): RequestResult<GetJobHistoryResponses, unknown, ThrowOnError> => (options.client ?? client).get<GetJobHistoryResponses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -6985,7 +6985,7 @@ export const getJobHistory = <ThrowOnError extends boolean = false>(options: Opt
 /**
  * Export batch job list to Excel / Xuất Excel danh sách batch job
  *
- * **Screens:** VPA005401, VPA0054P01
+ * **Screens:** VPA09040401, VPA090404P01
  */
 export const exportJobs = <ThrowOnError extends boolean = false>(options: Options<ExportJobsData, ThrowOnError>): RequestResult<ExportJobsResponses, unknown, ThrowOnError> => (options.client ?? client).get<ExportJobsResponses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -6996,7 +6996,7 @@ export const exportJobs = <ThrowOnError extends boolean = false>(options: Option
 /**
  * Get all execution history / Tra cứu toàn bộ lịch sử thực thi (lọc theo tên/trạng thái)
  *
- * **Screens:** VPA005401, VPA0054P01
+ * **Screens:** VPA09040401, VPA090404P01
  */
 export const getAllHistory = <ThrowOnError extends boolean = false>(options: Options<GetAllHistoryData, ThrowOnError>): RequestResult<GetAllHistoryResponses, unknown, ThrowOnError> => (options.client ?? client).get<GetAllHistoryResponses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -7095,9 +7095,9 @@ export const getLockedAccounts1 = <ThrowOnError extends boolean = false>(options
 /**
  * Cancel member document upload session / Huỷ phiên tải lên
  *
- * **Screens:** VPA000801, VPA0002P01, VPA0008P01
+ * **Screens:** VPA03010001, VPA030100P02, VPA030100P01
  *
- * Deletes the session and every file uploaded in it. Requires WRITE on A01010000.
+ * Deletes the session and every file uploaded in it. Requires WRITE on A03010000.
  */
 export const cancelSession = <ThrowOnError extends boolean = false>(options: Options<CancelSessionData, ThrowOnError>): RequestResult<CancelSessionResponses, unknown, ThrowOnError> => (options.client ?? client).delete<CancelSessionResponses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -7108,9 +7108,9 @@ export const cancelSession = <ThrowOnError extends boolean = false>(options: Opt
 /**
  * Remove member document / Xoá giấy tờ đã tải lên
  *
- * **Screens:** VPA000801, VPA0002P01, VPA0008P01
+ * **Screens:** VPA03010001, VPA030100P02, VPA030100P01
  *
- * Deletes a file uploaded in the session. Requires WRITE on A01010000.
+ * Deletes a file uploaded in the session. Requires WRITE on A03010000.
  */
 export const removeFile = <ThrowOnError extends boolean = false>(options: Options<RemoveFileData, ThrowOnError>): RequestResult<RemoveFileResponses, unknown, ThrowOnError> => (options.client ?? client).delete<RemoveFileResponses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],

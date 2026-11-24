@@ -15,7 +15,7 @@ import styles from '@/features/system/_shared/system-page.module.scss';
 import LogoModal from './LogoModal';
 import { useChangeLogoUse, useDeleteLogos, useLogos } from './use-logos';
 
-// Logo Management - List (menu A04110200).
+// Logo Management - List (menu A07060200).
 
 const PAGE_SIZE = 15;
 const DATE_FORMAT = 'DD/MM/YYYY';

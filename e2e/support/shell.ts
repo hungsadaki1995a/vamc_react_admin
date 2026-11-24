@@ -21,9 +21,25 @@ export async function openRailGroup(page: Page, group: string): Promise<void> {
   throw new Error(`Rail group not found: ${group}`);
 }
 
+/** Clicks the rail icon of a top-level menu without submenus (e.g. Admin Home), which opens its tab directly. */
+async function openRailLeaf(page: Page, label: string): Promise<void> {
+  const items = page.locator('.icon-rail .rail-item');
+  const count = await items.count();
+  for (let i = 0; i < count; i += 1) {
+    await items.nth(i).click();
+    await page.waitForTimeout(150);
+    if (((await activeTab(page).innerText().catch(() => '')) ?? '').includes(label)) return;
+  }
+  throw new Error(`Rail menu not found: ${label}`);
+}
+
 /** Expands the flyout folders of `path` and clicks the leaf — the same clicks a user makes. */
 export async function openMenu(page: Page, path: string[]): Promise<void> {
   const [group, ...rest] = path;
+  if (rest.length === 0) {
+    await openRailLeaf(page, group);
+    return;
+  }
   await openRailGroup(page, group);
 
   let scope = page.locator('.flyout-panel.visible .lnb-menu-list');
