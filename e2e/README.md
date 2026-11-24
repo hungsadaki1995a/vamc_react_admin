@@ -15,12 +15,20 @@ The config starts its own Vite server on `E2E_PORT` (default `13000`), so a runn
 ## Run
 
 ```bash
-E2E_USER=... E2E_PASS=... pnpm test:e2e                       # everything
-E2E_USER=... E2E_PASS=... pnpm test:e2e e2e/screens/shell.spec.ts
-E2E_USER=... E2E_PASS=... pnpm test:e2e -g "A06010300"        # one screen (menu code)
-pnpm test:e2e:report                                           # open the HTML report (e2e/.report)
+cp e2e/.env.e2e.example e2e/.env.e2e      # once — fill E2E_USER / E2E_PASS (git-ignored)
+
+pnpm test:e2e:run                          # all scenarios + HTML report
+pnpm test:e2e:run e2e/screens/shell.spec.ts
+pnpm test:e2e:run -g "A06010300" --open    # one screen (menu code), then serve the report
+pnpm test:e2e:report                       # serve the latest report again
 ```
 
+`e2e/run.sh` checks the backend answers, runs Playwright and writes
+`e2e/.report/<yyyymmdd-hhmmss>/index.html` (`e2e/.report/latest` → newest, last 10 runs kept,
+`E2E_KEEP_REPORTS` to change). Exit code = Playwright's, so it can run in CI.
+Use `--open` (or `pnpm test:e2e:report`) rather than opening the file directly: traces need http.
+
+Plain Playwright still works: `E2E_USER=... E2E_PASS=... pnpm test:e2e [args]`.
 Optional: `E2E_API_TARGET=http://127.0.0.1:7200` to test against another backend, `E2E_PORT` to move the Vite port.
 
 ## Layout
@@ -28,6 +36,8 @@ Optional: `E2E_API_TARGET=http://127.0.0.1:7200` to test against another backend
 ```
 playwright.config.ts          projects: setup (login once) → chromium (admin shell), public (login pages)
 e2e/
+  run.sh                      runner: credentials, backend check, timestamped HTML report
+  .env.e2e.example            template for the local credentials file
   auth.setup.ts               logs in through the UI, saves e2e/.auth/admin.json
   auth/login.spec.ts          L-*  public pages, login / logout
   screens/menu-manifest.spec.ts  T-01 manifest vs server menu tree

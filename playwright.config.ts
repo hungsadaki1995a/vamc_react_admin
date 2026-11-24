@@ -8,6 +8,8 @@ import { defineConfig, devices } from '@playwright/test';
 const PORT = Number(process.env.E2E_PORT ?? 13000);
 const API_TARGET = process.env.E2E_API_TARGET ?? 'http://127.0.0.1:17200';
 const BASE_URL = `http://localhost:${PORT}`;
+// e2e/run.sh points this at a timestamped folder so earlier reports are kept.
+const REPORT_DIR = process.env.E2E_REPORT_DIR ?? 'e2e/.report';
 
 export default defineConfig({
   testDir: './e2e',
@@ -17,7 +19,7 @@ export default defineConfig({
   fullyParallel: false,
   workers: 1,
   retries: 0,
-  reporter: [['list'], ['html', { outputFolder: 'e2e/.report', open: 'never' }]],
+  reporter: [['list'], ['html', { outputFolder: REPORT_DIR, open: 'never' }]],
   use: {
     baseURL: BASE_URL,
     viewport: { width: 1600, height: 900 },
