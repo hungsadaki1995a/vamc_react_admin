@@ -48,3 +48,8 @@ package-lock.json
 yarn.lock
 .agents
 admin-system-operation
+# Playwright artefacts (login state contains tokens)
+e2e/.auth/
+e2e/.results/
+e2e/.report/
+playwright-report/

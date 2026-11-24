@@ -10,4 +10,5 @@
 # If adding a new dependency triggers the same error, add true only after verifying
 # that the package genuinely needs to run scripts. If unsure, leave false and test the build.
 allowBuilds:
+  '@parcel/watcher': false
   esbuild: true
