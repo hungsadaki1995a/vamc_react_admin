@@ -14,6 +14,9 @@ export type InquiryItem = {
   title: string;
   content: string;
   mbrNo?: string;
+  /** Masked login ID of General / Full members; absent for non-members and Temporary members. */
+  customerLoginId?: string;
+  attachmentCount?: number;
   inquirerNm?: string;
   registrationDate: string; // format: "DD/MM/YYYY HH:mm:ss"
   crtDt?: string;

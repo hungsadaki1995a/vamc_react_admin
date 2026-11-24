@@ -1,4 +1,7 @@
 import { client } from '@/api/generated/client.gen';
+import type { ContentFile } from './post-api';
+
+export type { ContentFile };
 
 export interface PageRequest {
   page?: number;
@@ -37,7 +40,11 @@ export interface InquiryResponse {
   categoryNm?: string;
   title?: string;
   mbrNo?: string;
+  /** Member login ID (masked) for General / Full members; absent for guests and Temporary members. */
+  customerLoginId?: string;
   inquirerNm?: string;
+  /** Number of attached files. */
+  attachmentCount?: number;
   crtDt?: string;
   ansEmpNo?: string;
   ansEmpNm?: string;
@@ -58,13 +65,8 @@ export interface ApiResponsePageResponseInquiryResponse {
   data?: PageResponseInquiryResponse;
 }
 
-export interface ContentFileResponse {
-  fileUnqId?: string;
-  fileNm?: string;
-  fileSize?: number;
-  fileExtn?: string;
-  fileUrl?: string;
-}
+/** Answer notification channel codes (EMAIL, ZALO). */
+export type NotificationChannel = 'EMAIL' | 'ZALO' | string;
 
 export interface InquiryDetailResponse {
   pstNo?: string;
@@ -74,6 +76,8 @@ export interface InquiryDetailResponse {
   title?: string;
   content?: string;
   mbrNo?: string;
+  /** Member login ID (masked) for General / Full members; absent for guests and Temporary members. */
+  customerLoginId?: string;
   inquirerNm?: string;
   inquirerEmail?: string;
   inquirerPhone?: string;
@@ -82,7 +86,12 @@ export interface InquiryDetailResponse {
   ansEmpNm?: string;
   crtDt?: string;
   answeredAt?: string;
-  attachments?: Array<ContentFileResponse>;
+  /** Answer notification channels: the ones used once answered, else the ones the answer will use. */
+  notificationChannels?: NotificationChannel[];
+  /** True when notificationChannels records a sent answer notification. */
+  notificationSent?: boolean;
+  /** Attachments of the inquiry (ATCH_FILE rows). */
+  attachments?: ContentFile[];
 }
 
 export interface ApiResponseInquiryDetailResponse {
@@ -130,7 +139,7 @@ export const getInquiry = <ThrowOnError extends boolean = false>(options: {
 
 export interface AnswerInquiryRequest {
   /**
-   * Answer text / Nội dung trả lời
+   * Answer (HTML of the rich-text editor) / Nội dung trả lời (HTML)
    */
   answer: string;
 }

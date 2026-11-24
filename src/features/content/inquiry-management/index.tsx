@@ -71,9 +71,6 @@ function toParams(filter: InquiryFilter) {
   };
 }
 
-const byText = (pick: (row: InquiryItem) => string | null | undefined) => (a: InquiryItem, b: InquiryItem) =>
-  (pick(a) ?? '').localeCompare(pick(b) ?? '');
-
 function AnswerBadge({ status }: { status?: string }) {
   return (status ?? '').toUpperCase() === 'ANSWERED' ? (
     <StatusBadge tone="blue">Answered</StatusBadge>
@@ -82,7 +79,10 @@ function AnswerBadge({ status }: { status?: string }) {
   );
 }
 
-/** Design column set and alignment; header sorting applies to the loaded page. */
+/**
+ * Design column set and alignment. Every column sorts on the server (`sorter: true`, key = API sort field);
+ * the encrypted customer login ID is sorted in memory by the API.
+ */
 const COLUMNS: TableColumnsType<InquiryItem> = [
   {
     title: 'ID',
@@ -90,7 +90,7 @@ const COLUMNS: TableColumnsType<InquiryItem> = [
     key: 'pstNo',
     width: 90,
     align: 'center',
-    sorter: byText((row) => row.pstNo),
+    sorter: true,
     render: (value?: string) => <span className={styles.idLink}>{value ?? '-'}</span>,
   },
   {
@@ -99,16 +99,16 @@ const COLUMNS: TableColumnsType<InquiryItem> = [
     key: 'answerStatus',
     width: 120,
     align: 'center',
-    sorter: byText((row) => row.answerStatus),
+    sorter: true,
     render: (value?: string) => <AnswerBadge status={value} />,
   },
   {
     title: 'Inquiry Type',
     dataIndex: 'categoryNm',
-    key: 'categoryNm',
+    key: 'category',
     width: 170,
     ellipsis: true,
-    sorter: byText((row) => row.categoryNm),
+    sorter: true,
     render: (value?: string) => value || '-',
   },
   {
@@ -116,7 +116,16 @@ const COLUMNS: TableColumnsType<InquiryItem> = [
     dataIndex: 'title',
     key: 'title',
     ellipsis: true,
-    sorter: byText((row) => row.title),
+    sorter: true,
+  },
+  {
+    title: 'Attachments',
+    dataIndex: 'attachmentCount',
+    key: 'attachmentCount',
+    width: 120,
+    align: 'center',
+    sorter: true,
+    render: (value?: number) => value ?? 0,
   },
   {
     title: 'Registered Date',
@@ -124,17 +133,17 @@ const COLUMNS: TableColumnsType<InquiryItem> = [
     key: 'crtDt',
     width: 135,
     align: 'center',
-    sorter: byText((row) => row.crtDt),
+    sorter: true,
     render: (value?: string) => <DateTimeText value={value} />,
   },
   {
     title: 'Customer',
-    dataIndex: 'mbrNo',
-    key: 'mbrNo',
-    width: 130,
+    dataIndex: 'customerLoginId',
+    key: 'customer',
+    width: 150,
     ellipsis: true,
-    sorter: byText((row) => row.mbrNo),
-    // Members show their member ID; non-members show "-".
+    sorter: true,
+    // Login ID (masked) of General / Full members; "-" for non-members and Temporary members.
     render: (value?: string) => value || '-',
   },
   {
@@ -143,17 +152,18 @@ const COLUMNS: TableColumnsType<InquiryItem> = [
     key: 'answeredAt',
     width: 135,
     align: 'center',
-    sorter: byText((row) => row.answeredAt),
+    sorter: true,
     render: (value?: string | null) => <DateTimeText value={value} />,
   },
   {
     title: 'Answered By',
-    dataIndex: 'ansEmpNm',
-    key: 'ansEmpNm',
+    dataIndex: 'ansEmpNo',
+    key: 'ansEmpNo',
     width: 130,
     ellipsis: true,
-    sorter: byText((row) => row.ansEmpNm || row.ansEmpNo),
-    render: (_: unknown, row: InquiryItem) => row.ansEmpNm || row.ansEmpNo || '-',
+    sorter: true,
+    // Design: account ID that answered.
+    render: (value?: string | null) => value || '-',
   },
 ];
 
@@ -163,9 +173,19 @@ export default function InquiryManagement() {
   const typeCodes = useCommonCodes('INQRY_SE_CD');
   const typeOptions = [{ value: ALL, label: 'All' }, ...typeCodes];
   const params = toParams(list.applied);
-  const { items, total, isFetching, refetch } = useInquiries({ page: list.page, pageSize: PAGE_SIZE, ...params });
+  const { items, total, isFetching, refetch } = useInquiries({
+    page: list.page,
+    pageSize: PAGE_SIZE,
+    sortBy: list.sort?.sortBy,
+    sortDirection: list.sort?.sortDirection,
+    ...params,
+  });
   const excel = useApiDownload((cond: InquirySearchRequest) =>
-    apiDownload('/api/v1/contents/inquiries/excel', 'inquiries.xlsx', cond),
+    apiDownload('/api/v1/contents/inquiries/excel', 'inquiries.xlsx', {
+      ...cond,
+      sortBy: list.sort?.sortBy,
+      sortDirection: list.sort?.sortDirection,
+    }),
   );
   const [selected, setSelected] = useState<InquiryItem | null>(null);
 
@@ -244,6 +264,8 @@ export default function InquiryManagement() {
         dataSource={items}
         loading={isFetching}
         onRowClick={setSelected}
+        sort={list.sort}
+        onSortChange={list.setSort}
         locale={{ emptyText: filtered ? MESSAGES.noResults : MESSAGES.noPosts }}
       />
       <SysPager page={list.page} pageSize={PAGE_SIZE} total={total} onChange={list.setPage} />

@@ -56,8 +56,20 @@ $lh-b1: var(--line-height-b1, 18px);
   min-height: 160px;
 }
 
-/* Answer editor area (design: about 290px tall). */
-.answerInput:global(.ant-input) {
-  min-height: 280px;
-  resize: vertical;
+/* Answer rich-text editor (design: about 290px tall). */
+.answerEditor {
+  --rte-min-height: 290px;
+
+  width: 100%;
+}
+
+/* A sent answer is editor HTML: keep paragraph spacing compact and images inside the field. */
+.answer {
+  :global(p) {
+    margin: 0;
+  }
+
+  :global(img) {
+    max-width: 100%;
+  }
 }

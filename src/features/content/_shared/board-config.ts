@@ -53,7 +53,14 @@ export type BoardConfig = {
   /** No "Provide English" / Title (EN) / Content (EN) rows (legal documents). */
   noEnglish?: boolean;
   /** Free tag column / field with this label (document number, section key, partner type…). */
-  tag?: { label: string; requestKey: 'docNumber' | 'tag' | 'sectionKey'; createOnly?: boolean; required?: boolean };
+  tag?: {
+    label: string;
+    requestKey: 'docNumber' | 'tag' | 'sectionKey';
+    createOnly?: boolean;
+    required?: boolean;
+    /** Shown before the title (list column) and first in the popup status rows (Notice). */
+    first?: boolean;
+  };
   /** Person fields: name, email, phone (about). */
   person?: boolean;
   /** Legal document fields, filters and columns. */
@@ -63,6 +70,12 @@ export type BoardConfig = {
   contentRequired?: boolean;
   /** GET /excel is available. */
   excel?: boolean;
+  /** Content / Content (EN) use the rich text editor (HTML) — boards with a v0.8 popup design. */
+  richText?: boolean;
+  /** "English" list column (Y / -). */
+  englishColumn?: boolean;
+  /** "Notice Type" filter: Notice = pinned, General = not pinned. */
+  pinnedFilter?: boolean;
 };
 
 const NEWS = { board: 'news', fileBoard: 'NEWS', parents: ['VAMC News Management'] } as const;
@@ -87,6 +100,9 @@ const newsBoard = (id: string, title: string, itemName: string, category: string
   summary: true,
   hideSummary: true,
   contentRequired: true,
+  excel: true,
+  richText: true,
+  englishColumn: true,
 });
 
 const nplBoard = (id: string, title: string, itemName: string, category: string): BoardConfig => ({
@@ -101,6 +117,10 @@ const nplBoard = (id: string, title: string, itemName: string, category: string)
   hideSummary: true,
   tag: { label: 'Document No.', requestKey: 'docNumber', required: true },
   contentRequired: true,
+  excel: true,
+  richText: true,
+  englishColumn: true,
+  pinnedFilter: true,
 });
 
 export const BOARDS = {
@@ -111,10 +131,17 @@ export const BOARDS = {
     fileBoard: 'NOTICE',
     title: 'Notice Management',
     itemName: 'Notice',
-    category: { kind: 'codes', groupCd: 'NTC_MTTR_SE_CD', label: 'Notice Type' },
+    // The v0.8 design has no category (NTC_MTTR_SE_CD): a new notice gets the backend default (SVC),
+    // an edited one keeps its stored value. "Notice Type" is the pinned / general filter.
+    category: { kind: 'none' },
     statusMode: 'endpoint',
     pin: true,
+    tag: { label: 'Document No.', requestKey: 'docNumber', first: true },
     contentRequired: true,
+    excel: true,
+    richText: true,
+    englishColumn: true,
+    pinnedFilter: true,
   },
   /** A07020100 / 0200 / 0300 / 0400 — VPA07020101–2601 + Disclosure */
   news: newsBoard('news', 'News Management', 'News', 'NWS'),
@@ -139,6 +166,7 @@ export const BOARDS = {
     hideSummary: true,
     noEnglish: true,
     excel: true,
+    richText: true,
   },
   /** A07080000 — VPA07080001 / VPA070800P01 */
   careers: {
@@ -152,6 +180,8 @@ export const BOARDS = {
     pin: true,
     contentRequired: true,
     excel: true,
+    richText: true,
+    englishColumn: true,
   },
   /** A07100500 — leadership sections of the About board */
   leadership: {

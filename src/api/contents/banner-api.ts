@@ -1,25 +1,24 @@
 import { apiClient } from '@/lib/api/client';
-import { apiDelete, apiDownload, apiGet, apiPatch, apiPost, apiPut } from '@/api/common/api-utils';
+import { apiDelete, apiGet, apiPost, apiPut } from '@/api/common/api-utils';
 import type { PageResponse } from '@/api/common/api-utils';
 import type { ContentFileGroup } from './post-api';
 
 // Banner Management API — BannerController (`/api/v1/contents/banners`), menu A07060100.
-// Screens VPA07060101 (list) / VPA070601P01 (popup).
+// Screens VPA07060101 (list) / VPA070601P01 (popup). Server rules: max 5 home banners (BNR005), display orders
+// kept 1..n (register / edit move the others, delete closes the gap), every saved banner is shown on the user home.
 
 export interface Banner {
   bannerId: string;
+  /** Always Y for banners saved on this screen. */
   useYn: 'Y' | 'N';
   order: number;
-  /** Free-text position key, e.g. MAIN_TOP. */
+  /** Banner area, MAIN_TOP = user home. */
   positionId: string;
   title: string;
-  linkUrl?: string;
-  /** Y when a link URL is registered. */
-  linked?: 'Y' | 'N';
   imageFileId: string;
+  /** Original image file name, e.g. main_banner_img_290707.png */
+  imageFileName?: string;
   imagePreviewUrl?: string;
-  /** false while the banner is in use. */
-  editable: boolean;
   crtDt?: string;
   crtBy?: string;
   crtByNm?: string;
@@ -28,46 +27,38 @@ export interface Banner {
 }
 
 export interface BannerSearch {
-  useYn?: 'Y' | 'N';
   positionId?: string;
-  /** dd/MM/yyyy */
-  fromDate?: string;
-  toDate?: string;
-  /** Banner ID or title */
-  keyword?: string;
 }
 
 export interface BannerRequest {
+  /** Max 50 characters. */
   title: string;
-  positionId: string;
-  /** 1–999 */
-  order: number;
-  /** Empty or http(s)://… */
-  linkUrl?: string;
+  /** 1 ~ number of banners (+1 on register); omitted = last. */
+  order?: number;
   imageFileId: string;
 }
+
+/** Business error codes of the banner screens. */
+export const BANNER_ERRORS = {
+  /** [New] with 5 banners registered. */
+  limitExceeded: 'BNR005',
+  /** E03 — image not JPG / PNG or over 10MB. */
+  imageInvalid: 'BNR006',
+  /** Display order outside 1 ~ n. */
+  orderOutOfRange: 'BNR007',
+} as const;
 
 const BASE = '/api/v1/contents/banners';
 
 export const getBanners = (search: BannerSearch, page: number, size: number) =>
   apiGet<PageResponse<Banner>>(BASE, { ...search, page, size });
 
-export const getBanner = (bannerId: string) => apiGet<Banner>(`${BASE}/${bannerId}`);
-
-/** New banners always start not in use. */
 export const createBanner = (request: BannerRequest) => apiPost<Banner>(BASE, request);
 
-/** Rejected with 409 BNR001 while the banner is in use. */
 export const updateBanner = (bannerId: string, request: BannerRequest) =>
   apiPut<Banner>(`${BASE}/${bannerId}`, request);
 
-export const changeBannerUse = (bannerIds: string[], useYn: 'Y' | 'N') =>
-  apiPatch<void>(`${BASE}/use`, { bannerIds, useYn });
-
 export const deleteBanners = (bannerIds: string[]) => apiDelete<void>(BASE, { bannerIds });
-
-export const downloadBannerExcel = (search: BannerSearch) =>
-  apiDownload(`${BASE}/excel`, 'banners.xlsx', search);
 
 /** Uploads the banner image (multipart part `files`) → file group id for `imageFileId`. */
 export async function uploadBannerImage(file: File): Promise<string> {

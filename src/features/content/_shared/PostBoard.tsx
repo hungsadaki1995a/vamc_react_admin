@@ -27,6 +27,7 @@ import {
 import { ALL, API_DATE_DMY, SYS_DATE_FORMAT } from '@/features/system/_shared/sys-constants';
 import { errorMessage } from '@/features/system/_shared/system-utils';
 import { useSysDialogs } from '@/features/system/_shared/use-sys-dialogs';
+import type { SortState } from '@/features/system/_shared/use-paged-list';
 import type { BoardConfig, CategoryOption } from './board-config';
 import PostModal from './PostModal';
 import { useDownloadPostExcel, useLegalOptions, usePosts } from './use-posts';
@@ -38,15 +39,19 @@ dayjs.extend(customParseFormat);
 // title bar · filter panel · [Reset][Search] · "Search Results | Total n" [Excel Download][New]
 // · table (row click opens the edit popup) · pager.
 
+/** Title column width below which the list scrolls sideways. */
+const TITLE_MIN_WIDTH = 220;
+
 /** Design: 16 rows per page. */
 const PAGE_SIZE = 16;
 
 type DateRange = [Dayjs | null, Dayjs | null] | null;
-/** The list response also carries the numeric post id shown in the ID column. */
-type PostRow = Post & { postSn?: number };
+type PostRow = Post;
 
 interface FilterState {
   published: YesNo | '';
+  /** "Notice Type": Y = Notice (pinned), N = General. */
+  pinned: YesNo | '';
   category: string;
   period: DateRange;
   keyword: string;
@@ -58,6 +63,7 @@ interface FilterState {
 
 const EMPTY_FILTER: FilterState = {
   published: ALL,
+  pinned: ALL,
   category: ALL,
   period: null,
   keyword: '',
@@ -70,6 +76,12 @@ const PUBLISH_FILTER_OPTIONS = [
   { value: ALL, label: 'All' },
   { value: 'Y', label: 'Published' },
   { value: 'N', label: 'Unpublished' },
+];
+
+const NOTICE_TYPE_OPTIONS = [
+  { value: ALL, label: 'All' },
+  { value: 'Y', label: 'Notice' },
+  { value: 'N', label: 'General' },
 ];
 
 const withAll = (options: CategoryOption[]) => [{ value: ALL, label: 'All' }, ...options];
@@ -115,10 +127,13 @@ export default function PostBoard({ config }: { config: BoardConfig }) {
   const [applied, setApplied] = useState<PostSearch>({ category: scopedCategory('') });
   const [filtered, setFiltered] = useState(false);
   const [page, setPage] = useState(1);
+  /** Header sort (sorter arrows); undefined = the board's default order. */
+  const [sort, setSort] = useState<SortState | undefined>(undefined);
   /** undefined = closed, null = register, string = edit that post. */
   const [modalPstNo, setModalPstNo] = useState<string | null | undefined>(undefined);
 
-  const { data, isFetching } = usePosts(config, applied, page, PAGE_SIZE);
+  const query = useMemo<PostSearch>(() => ({ ...applied, ...sort }), [applied, sort]);
+  const { data, isFetching } = usePosts(config, query, page, PAGE_SIZE);
   const downloadExcel = useDownloadPostExcel(config);
   const rows = (data?.content ?? []) as PostRow[];
   const total = data?.totalElements ?? 0;
@@ -133,6 +148,7 @@ export default function PostBoard({ config }: { config: BoardConfig }) {
     }
     const search: PostSearch = {
       published: filter.published || undefined,
+      pinned: config.pinnedFilter ? filter.pinned || undefined : undefined,
       category: scopedCategory(filter.category),
       fromDate: filter.period?.[0]?.format(API_DATE_DMY),
       toDate: filter.period?.[1]?.format(API_DATE_DMY),
@@ -151,89 +167,156 @@ export default function PostBoard({ config }: { config: BoardConfig }) {
     setFilter(initialFilter);
     setApplied({ category: scopedCategory('') });
     setFiltered(false);
+    setSort(undefined);
     setPage(1);
   };
 
-  const handleExcel = () => downloadExcel.mutate(applied, { onError: (e) => toast.error(errorMessage(e)) });
+  const handleSort = (next?: SortState) => {
+    setSort(next);
+    setPage(1);
+  };
+
+  const handleExcel = () => downloadExcel.mutate(query, { onError: (e) => toast.error(errorMessage(e)) });
 
   // ── Grid ──────────────────────────────────────────────────────────────────
   const categoryName = (row: Post) =>
     categoryOptions.find((o) => o.value === row.category)?.label ?? row.categoryNm ?? row.category ?? '-';
 
-  const idColumn: TableColumnsType<PostRow>[number] = {
+  // Every column with a sort arrow in the design is server-sorted: `key` = backend sortBy whitelist.
+  type Column = TableColumnsType<PostRow>[number];
+  const idColumn: Column = {
     title: 'ID',
-    key: 'id',
-    width: 76,
+    key: 'postSn',
+    sorter: true,
+    width: 64,
     align: 'center',
     render: (_v, row) => <span className={styles.idLink}>{row.postSn ?? row.pstNo}</span>,
   };
-  const statusColumn: TableColumnsType<PostRow>[number] = {
+  const statusColumn: Column = {
     title: 'Publish Status',
+    key: 'published',
     dataIndex: 'published',
-    width: 116,
+    sorter: true,
+    width: 124,
     align: 'center',
     render: (value: string) =>
       value === 'Y' ? <StatusBadge tone="blue">Published</StatusBadge> : <StatusBadge>Unpublished</StatusBadge>,
   };
-  const attachmentsColumn: TableColumnsType<PostRow>[number] = {
-    title: 'Attachments',
-    dataIndex: 'attachmentCount',
-    width: 104,
+  const pinColumn: Column = {
+    title: 'Pin to Top',
+    key: 'pinned',
+    dataIndex: 'pinned',
+    sorter: true,
+    width: 96,
     align: 'center',
-    render: (value?: number) => value ?? 0,
+    render: (value?: string) => (value === 'Y' ? 'Y' : 'N'),
   };
-  const createdColumns: TableColumnsType<PostRow> = [
-    { title: 'Created Date', dataIndex: 'crtDt', width: 140, align: 'center', render: (v?: string) => <DateTimeText value={v} /> },
-    { title: 'Created By', key: 'crtBy', width: 116, ellipsis: true, render: (_v, row) => text(row.crtBy) },
-  ];
-  const modifiedColumns: TableColumnsType<PostRow> = [
-    { title: 'Modified Date', dataIndex: 'mdfcnDt', width: 140, align: 'center', render: (v?: string) => <DateTimeText value={v} /> },
-    { title: 'Modified By', key: 'mdfcnBy', width: 116, ellipsis: true, render: (_v, row) => text(row.mdfcnBy) },
-  ];
-  const viewsColumn: TableColumnsType<PostRow>[number] = {
-    title: 'Views',
-    dataIndex: 'viewCount',
+  const docNumberColumn: Column = {
+    title: config.tag?.label ?? 'Document No.',
+    key: 'docNumber',
+    dataIndex: 'tag',
+    sorter: true,
+    width: 124,
+    align: 'center',
+    ellipsis: true,
+    render: text,
+  };
+  const titleColumn: Column = { title: 'Title', key: 'title', dataIndex: 'title', sorter: true, width: TITLE_MIN_WIDTH, ellipsis: true, render: text };
+  const englishColumn: Column = {
+    title: 'English',
+    key: 'hasEnglish',
+    dataIndex: 'hasEnglish',
+    sorter: true,
     width: 80,
     align: 'center',
+    render: (value?: string) => (value === 'Y' ? 'Y' : '-'),
+  };
+  const attachmentsColumn: Column = {
+    title: 'Attachments',
+    key: 'attachmentCount',
+    dataIndex: 'attachmentCount',
+    sorter: true,
+    width: 124,
+    align: 'center',
     render: (value?: number) => value ?? 0,
   };
+  const crtDtColumn: Column = {
+    title: 'Created Date',
+    key: 'crtDt',
+    dataIndex: 'crtDt',
+    sorter: true,
+    width: 136,
+    align: 'center',
+    render: (v?: string) => <DateTimeText value={v} />,
+  };
+  const crtByColumn: Column = {
+    title: 'Created By',
+    key: 'crtBy',
+    sorter: true,
+    width: 110,
+    ellipsis: true,
+    render: (_v, row) => text(row.crtBy),
+  };
+  const modifiedColumns: TableColumnsType<PostRow> = [
+    {
+      title: 'Modified Date',
+      key: 'mdfcnDt',
+      dataIndex: 'mdfcnDt',
+      sorter: true,
+      width: 136,
+      align: 'center',
+      render: (v?: string) => <DateTimeText value={v} />,
+    },
+    { title: 'Modified By', key: 'mdfcnBy', sorter: true, width: 110, ellipsis: true, render: (_v, row) => text(row.mdfcnBy) },
+  ];
+  const viewsColumn: Column = {
+    title: 'Views',
+    key: 'viewCount',
+    dataIndex: 'viewCount',
+    sorter: true,
+    width: 76,
+    align: 'center',
+    render: (value?: number) => value ?? 0,
+  };
+  const docFirst = config.tag?.requestKey === 'docNumber' && !!config.tag.first;
+  const docAfterTitle = config.tag?.requestKey === 'docNumber' && !config.tag.first;
 
   const columns: TableColumnsType<PostRow> = config.legal
     ? [
         idColumn,
         statusColumn,
-        { title: 'Document Type', key: 'category', width: 140, ellipsis: true, render: (_v, row) => categoryName(row) },
-        { title: 'Number/Symbol', dataIndex: 'docNumber', width: 140, ellipsis: true, render: text },
-        { title: 'Document Name', dataIndex: 'title', width: 260, ellipsis: true, render: text },
-        { title: 'Group', dataIndex: 'lawGroupNm', width: 130, ellipsis: true, render: text },
-        { title: 'Field', dataIndex: 'lawFieldNm', width: 140, ellipsis: true, render: text },
-        { title: 'Issuing Agency', dataIndex: 'issuingAuthorityNm', width: 150, ellipsis: true, render: text },
+        { title: 'Document Type', key: 'category', sorter: true, width: 140, ellipsis: true, render: (_v, row) => categoryName(row) },
+        { title: 'Number/Symbol', key: 'docNumber', dataIndex: 'docNumber', sorter: true, width: 140, ellipsis: true, render: text },
+        { title: 'Document Name', key: 'title', dataIndex: 'title', sorter: true, width: 260, ellipsis: true, render: text },
+        { title: 'Group', key: 'lawGroup', dataIndex: 'lawGroupNm', sorter: true, width: 130, ellipsis: true, render: text },
+        { title: 'Field', key: 'lawField', dataIndex: 'lawFieldNm', sorter: true, width: 140, ellipsis: true, render: text },
+        {
+          title: 'Issuing Agency',
+          key: 'issuingAuthority',
+          dataIndex: 'issuingAuthorityNm',
+          sorter: true,
+          width: 150,
+          ellipsis: true,
+          render: text,
+        },
         {
           title: 'Issue Date',
+          key: 'issueDate',
           dataIndex: 'issueDate',
-          width: 110,
+          sorter: true,
+          width: 116,
           align: 'center',
           render: (v?: string) => (v ? dayjs(v, 'DDMMYYYY').format(SYS_DATE_FORMAT) : '-'),
         },
         attachmentsColumn,
-        createdColumns[1],
+        crtByColumn,
         ...modifiedColumns,
         viewsColumn,
       ]
     : [
         idColumn,
         statusColumn,
-        ...(showPin
-          ? ([
-              {
-                title: 'Pin to Top',
-                dataIndex: 'pinned',
-                width: 96,
-                align: 'center',
-                render: (value?: string) => (value === 'Y' ? 'Y' : 'N'),
-              },
-            ] as TableColumnsType<PostRow>)
-          : []),
+        ...(showPin ? [pinColumn] : []),
         // Boards without a design for these (Leadership, Service Guide…) keep their category / tag column.
         ...(hasCategoryFilter && !showPin
           ? ([
@@ -243,17 +326,19 @@ export default function PostBoard({ config }: { config: BoardConfig }) {
         ...(config.tag && config.tag.requestKey !== 'docNumber'
           ? ([{ title: config.tag.label, dataIndex: 'tag', width: 150, ellipsis: true, render: text }] as TableColumnsType<PostRow>)
           : []),
-        { title: 'Title', dataIndex: 'title', ellipsis: true, render: text },
-        ...(config.tag?.requestKey === 'docNumber'
-          ? ([
-              { title: 'Document No.', dataIndex: 'tag', width: 130, align: 'center', ellipsis: true, render: text },
-            ] as TableColumnsType<PostRow>)
-          : []),
+        // Design order: Notice [Document No. | Title | English]; NPL [Title | English | Document No.].
+        ...(docFirst ? [docNumberColumn] : []),
+        titleColumn,
+        ...(config.englishColumn ? [englishColumn] : []),
+        ...(docAfterTitle ? [docNumberColumn] : []),
         attachmentsColumn,
-        ...createdColumns,
+        crtDtColumn,
+        crtByColumn,
         ...modifiedColumns,
         viewsColumn,
       ];
+
+  const tableWidth = columns.reduce((sum, column) => sum + (typeof column.width === 'number' ? column.width : 0), 0);
 
   const legalSelect = (label: string, key: 'lawGroup' | 'lawField', options: LegalOptions['groups'] | undefined) => (
     <SysFilterItem label={label}>
@@ -288,6 +373,15 @@ export default function PostBoard({ config }: { config: BoardConfig }) {
             onChange={(value) => setDraft({ published: String(value ?? '') as YesNo | '' })}
           />
         </SysFilterItem>
+        {config.pinnedFilter && (
+          <SysFilterItem label="Notice Type">
+            <AppSelect
+              value={filter.pinned}
+              options={NOTICE_TYPE_OPTIONS}
+              onChange={(value) => setDraft({ pinned: String(value ?? '') as YesNo | '' })}
+            />
+          </SysFilterItem>
+        )}
         {hasCategoryFilter && (
           <SysFilterItem label={categoryLabel}>
             <AppSelect
@@ -341,9 +435,12 @@ export default function PostBoard({ config }: { config: BoardConfig }) {
         className={styles.listTable}
         fill
         tableLayout="fixed"
-        // Legal documents scroll sideways like the design; the other boards fit the frame.
-        scroll={config.legal ? { x: 1900 } : undefined}
+        // Legal documents scroll sideways like the design; the other boards scroll only when the frame is
+        // narrower than their columns (the title keeps TITLE_MIN_WIDTH and takes the rest of a wider frame).
+        scroll={{ x: config.legal ? 1900 : tableWidth }}
         columns={columns}
+        sort={sort}
+        onSortChange={handleSort}
         dataSource={rows}
         loading={isFetching}
         locale={{ emptyText: filtered ? 'No search results found.' : 'There are no posts.' }}

@@ -6,8 +6,8 @@ export const BANNER_MAX = 5;
 /** One call loads every banner (the list has no pager). */
 export const BANNER_LIST_SIZE = 50;
 
-/** Position key of the user home banner area; the design has no position field. */
-export const BANNER_DEFAULT_POSITION = 'MAIN_TOP';
+/** Banner area of the user home; the server registers new banners there (the design has no position field). */
+export const BANNER_HOME_POSITION = 'MAIN_TOP';
 
 export const BANNER_TITLE_MAX = 50;
 
@@ -23,5 +23,4 @@ export const BANNER_MESSAGES = {
   /** C01 */
   confirmDelete: 'Are you sure you want to delete?',
   imageHint: 'JPG, PNG, max 10MB, recommended 1920 × 540px. It may be cropped from the center on mobile.',
-  inUse: 'An active banner cannot be edited. Set Use to Inactive and save, then edit it.',
 } as const;

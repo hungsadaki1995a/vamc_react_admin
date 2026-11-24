@@ -1,20 +1,18 @@
 import { useState } from 'react';
 import { FileImageOutlined } from '@ant-design/icons';
-import AppRadio from '@/components/inputs/AppRadio';
 import Spinbox from '@/components/inputs/Spinbox';
 import TextInput from '@/components/inputs/TextInput';
 import { useNotify } from '@/hooks/use-notify';
+import { BANNER_ERRORS } from '@/api/contents/banner-api';
 import type { Banner, BannerRequest } from '@/api/contents/banner-api';
 import { SysField, SysFieldGrid, SysFormModal } from '@/features/system/_shared/SysFormUi';
 import { SysButton } from '@/features/system/_shared/SysListUi';
-import { USE_YN_RADIO_OPTIONS } from '@/features/system/_shared/sys-constants';
 import { SYS_MESSAGES } from '@/features/system/_shared/sys-messages';
 import { useFieldErrors } from '@/features/system/_shared/use-field-errors';
 import { errorMessage } from '@/features/system/_shared/system-utils';
 import { useAttachmentPreview } from '../_shared/use-content-files';
 import ImageUploadField from './ImageUploadField';
 import {
-  BANNER_DEFAULT_POSITION,
   BANNER_IMAGE_EXTENSIONS,
   BANNER_IMAGE_MAX_BYTES,
   BANNER_MESSAGES,
@@ -25,7 +23,8 @@ import styles from './banner-management.module.scss';
 
 // Banner Management - Register / Edit popup (VPA070601P01).
 // Design fields: Banner Title, Banner Image (+ preview), Display Order; footer [Delete] | [Cancel] [Register / Edit].
-// Use stays because the server only shows Active banners and refuses to edit or delete an Active one.
+// Every saved banner is shown on the user home; the server keeps the orders 1..n (moves the others on save,
+// closes the gap on delete) and refuses a 6th banner.
 
 type FieldKey = 'title' | 'imageFileId' | 'order';
 
@@ -44,7 +43,6 @@ interface FormState {
   title: string;
   imageFileId?: string;
   order: number | null;
-  useYn: 'Y' | 'N';
 }
 
 const required = (label: string) => `${label} is required.`;
@@ -55,23 +53,21 @@ export default function BannerModal({ banner, bannerCount, nextOrder, canWrite, 
   const saveBanner = useSaveBanner();
   const deleteBanners = useDeleteBanners();
   const uploadImage = useUploadBannerImage();
-  const { errors, setError, clearError, clearAll } = useFieldErrors<FieldKey>();
+  const { errors, setError, clearError, clearAll, applyApiError } = useFieldErrors<FieldKey>();
 
   const [form, setForm] = useState<FormState>(() => ({
     title: banner?.title ?? '',
     imageFileId: banner?.imageFileId,
     order: banner?.order ?? nextOrder,
-    useYn: banner?.useYn ?? 'Y',
   }));
   const preview = useAttachmentPreview(form.imageFileId);
 
-  const inUse = !isCreate && banner.useYn === 'Y';
-  const fieldsDisabled = !canWrite || inUse;
+  const fieldsDisabled = !canWrite;
   const maxOrder = Math.max(1, isCreate ? bannerCount + 1 : bannerCount);
 
-  const patch = (key: FieldKey | null, values: Partial<FormState>) => {
+  const patch = (key: FieldKey, values: Partial<FormState>) => {
     setForm((prev) => ({ ...prev, ...values }));
-    if (key) clearError(key);
+    clearError(key);
   };
 
   const validate = (): boolean => {
@@ -93,40 +89,26 @@ export default function BannerModal({ banner, bannerCount, nextOrder, canWrite, 
   };
 
   const handleSubmit = async () => {
-    // An Active banner: only Use can change (the server refuses other edits).
-    if (inUse) {
-      if (form.useYn === 'Y') {
-        onClose();
-        return;
-      }
-      try {
-        await saveBanner.mutateAsync({ bannerId: banner.bannerId, useYn: 'N' });
-        toast.success(SYS_MESSAGES.updated);
-        onClose();
-      } catch (e) {
-        toast.error(errorMessage(e));
-      }
-      return;
-    }
     if (!validate()) return;
     const request: BannerRequest = {
       title: form.title.trim(),
-      positionId: banner?.positionId ?? BANNER_DEFAULT_POSITION,
       order: form.order as number,
-      linkUrl: banner?.linkUrl || undefined,
       imageFileId: form.imageFileId as string,
     };
     try {
-      // The server stores a new / edited banner as Inactive; Use is applied afterwards.
-      await saveBanner.mutateAsync({
-        bannerId: banner?.bannerId ?? null,
-        request,
-        useYn: form.useYn === 'Y' ? 'Y' : undefined,
-      });
+      await saveBanner.mutateAsync({ bannerId: banner?.bannerId ?? null, request });
       toast.success(isCreate ? SYS_MESSAGES.registered : SYS_MESSAGES.updated);
       onClose();
     } catch (e) {
-      toast.error(errorMessage(e));
+      const mapped = applyApiError(
+        e,
+        {
+          [BANNER_ERRORS.imageInvalid]: ['imageFileId', BANNER_MESSAGES.invalidImage],
+          [BANNER_ERRORS.orderOutOfRange]: ['order', errorMessage(e)],
+        },
+        { title: 'title', imageFileId: 'imageFileId', order: 'order' },
+      );
+      if (!mapped) toast.error(errorMessage(e));
     }
   };
 
@@ -159,12 +141,7 @@ export default function BannerModal({ banner, bannerCount, nextOrder, canWrite, 
       submitting={saveBanner.isPending}
       submitDisabled={uploadImage.isPending}
       onCancel={onClose}
-      notice={
-        <>
-          <div>{BANNER_MESSAGES.imageHint}</div>
-          {inUse && <div className={styles.inUseNotice}>{BANNER_MESSAGES.inUse}</div>}
-        </>
-      }
+      notice={BANNER_MESSAGES.imageHint}
       leftActions={
         !isCreate &&
         canWrite && (
@@ -187,6 +164,7 @@ export default function BannerModal({ banner, bannerCount, nextOrder, canWrite, 
         <SysField label="Banner Image" required error={errors.imageFileId}>
           <ImageUploadField
             fileUnqId={form.imageFileId}
+            initialFileName={banner?.imageFileName}
             extensions={BANNER_IMAGE_EXTENSIONS}
             maxBytes={BANNER_IMAGE_MAX_BYTES}
             invalidMessage={BANNER_MESSAGES.invalidImage}
@@ -220,14 +198,6 @@ export default function BannerModal({ banner, bannerCount, nextOrder, canWrite, 
               onChange={(order) => patch('order', { order })}
             />
           </div>
-        </SysField>
-        <SysField label="Use" required>
-          <AppRadio.Group
-            value={form.useYn}
-            options={USE_YN_RADIO_OPTIONS}
-            disabled={!canWrite}
-            onChange={(e) => patch(null, { useYn: e.target.value as 'Y' | 'N' })}
-          />
         </SysField>
       </SysFieldGrid>
     </SysFormModal>

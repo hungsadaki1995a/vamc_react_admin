@@ -11,8 +11,10 @@ export type FaqItem = {
   titleEn?: string;    // Question (English)
   contentEn?: string;  // Answer (English)
   published: FaqPublishStatus; // 'Y' | 'N'
-  statusLabel: string; // 'Posted' | 'Not Posted'
+  statusLabel: string; // 'Published' | 'Unpublished'
   displayOrder?: number;
+  /** 'Y' when the English question is provided. */
+  hasEnglish?: string;
   viewCount?: number;
   crtDt?: string;
   crtBy?: string;

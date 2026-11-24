@@ -8,6 +8,7 @@ import AppSelect from '@/components/inputs/AppSelect';
 import Spinbox from '@/components/inputs/Spinbox';
 import TextArea from '@/components/inputs/TextArea';
 import TextInput from '@/components/inputs/TextInput';
+import RichTextEditor from './RichTextEditor';
 import dayjs from 'dayjs';
 import type { Dayjs } from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
@@ -80,6 +81,12 @@ const YES_NO = [
   { value: 'Y', label: 'Y' },
   { value: 'N', label: 'N' },
 ];
+
+/** Content placeholders of the v0.8 popups that differ from "Enter the content.". */
+const CONTENT_PLACEHOLDER: Record<string, string> = {
+  notice: 'Enter the notice content.',
+  news: 'Enter the news content.',
+};
 
 /** E01 of the design. */
 const required = (field: string) => `${field} is required.`;
@@ -226,7 +233,9 @@ export default function PostModal({
   const deletePosts = useDeletePosts(config);
   const uploadImage = useUploadContentImage(config.fileBoard);
 
-  const defaultCategory = category.kind === 'fixed' ? category.value : (categoryOptions[0]?.value ?? '');
+  // Legal documents start on the "Select document type" placeholder (design); other selects on their first option.
+  const defaultCategory =
+    category.kind === 'fixed' ? category.value : config.legal ? '' : (categoryOptions[0]?.value ?? '');
   const [form, setForm] = useState<FormState>(() => emptyForm(defaultCategory));
   const [errors, setErrors] = useState<FieldErrors>({});
 
@@ -411,7 +420,9 @@ export default function PostModal({
     node: (span) => (
       <SysField label={config.tag?.label ?? ''} required={config.tag?.required} span={span} error={errors.tag}>
         <TextInput
-          placeholder={`Enter the ${config.tag?.label.toLowerCase() ?? ''}`}
+          placeholder={
+            config.tag?.requestKey === 'docNumber' ? 'Enter the document number.' : `Enter the ${config.tag?.label.toLowerCase() ?? ''}`
+          }
           value={form.tag}
           maxLength={config.tag?.requestKey === 'sectionKey' ? 50 : config.tag?.requestKey === 'docNumber' ? 50 : 1000}
           disabled={fieldsDisabled || !tagEditable}
@@ -525,9 +536,11 @@ export default function PostModal({
       ),
     });
   } else {
-    // Design order: NPL [Publish | Document No.] [Pin | Order]; Notice [Type | Pin] [Publish | Order];
+    // Design order: NPL [Publish | Document No.] [Pin | Order]; Notice [Document No. | Pin] [Publish | Order];
     // News [Publish | Thumbnail]; Careers [Publish] [Pin | Order].
-    if (showCategorySelect && showPin) {
+    if (config.tag?.first && showPin) {
+      cells.push(tagCell, pinCells[0], publishCell, pinCells[1]);
+    } else if (showCategorySelect && showPin) {
       cells.push(categoryCell, pinCells[0], publishCell, pinCells[1]);
     } else {
       cells.push(publishCell);
@@ -614,14 +627,25 @@ export default function PostModal({
     full: true,
     node: (span) => (
       <SysField label="Content" required={config.contentRequired} span={span} error={errors.content}>
-        <TextArea
-          className={styles.editor}
-          rows={10}
-          placeholder="Enter the content."
-          value={form.content}
-          disabled={fieldsDisabled}
-          onChange={(e) => patch({ content: e.target.value })}
-        />
+        {config.richText ? (
+          <RichTextEditor
+            value={form.content}
+            placeholder={CONTENT_PLACEHOLDER[config.id] ?? 'Enter the content.'}
+            disabled={fieldsDisabled}
+            invalid={!!errors.content}
+            ariaLabel="Content"
+            onChange={(content) => patch({ content })}
+          />
+        ) : (
+          <TextArea
+            className={styles.editor}
+            rows={10}
+            placeholder="Enter the content."
+            value={form.content}
+            disabled={fieldsDisabled}
+            onChange={(e) => patch({ content: e.target.value })}
+          />
+        )}
       </SysField>
     ),
   });
@@ -663,14 +687,25 @@ export default function PostModal({
         full: true,
         node: (span) => (
           <SysField label="Content (EN)" required={form.english} span={span} error={errors.contentEn}>
-            <TextArea
-              className={styles.editor}
-              rows={10}
-              placeholder="Enter the content."
-              value={form.contentEn}
-              disabled={englishDisabled}
-              onChange={(e) => patch({ contentEn: e.target.value })}
-            />
+            {config.richText ? (
+              <RichTextEditor
+                value={form.contentEn}
+                placeholder="Enter the content."
+                disabled={englishDisabled}
+                invalid={!!errors.contentEn}
+                ariaLabel="Content (EN)"
+                onChange={(contentEn) => patch({ contentEn })}
+              />
+            ) : (
+              <TextArea
+                className={styles.editor}
+                rows={10}
+                placeholder="Enter the content."
+                value={form.contentEn}
+                disabled={englishDisabled}
+                onChange={(e) => patch({ contentEn: e.target.value })}
+              />
+            )}
           </SysField>
         ),
       },

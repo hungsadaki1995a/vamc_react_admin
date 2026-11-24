@@ -4,20 +4,22 @@ import AppCheckbox from '@/components/inputs/AppCheckbox';
 import AppRadio from '@/components/inputs/AppRadio';
 import AppSelect from '@/components/inputs/AppSelect';
 import Spinbox from '@/components/inputs/Spinbox';
-import TextArea from '@/components/inputs/TextArea';
 import TextInput from '@/components/inputs/TextInput';
 import { useNotify } from '@/hooks/use-notify';
 import { ApiError } from '@/lib/api/error';
+import RichTextEditor from '@/features/content/_shared/RichTextEditor';
 import { SysButton } from '@/features/system/_shared/SysListUi';
 import { SysField, SysFieldGrid, SysFormModal } from '@/features/system/_shared/SysFormUi';
 import type { FaqItem } from './faq.types';
-import { useFaqDetail, useSaveFaq } from './use-faq-detail';
+import { useFaqDetail, usePublishedFaqCount, useSaveFaq } from './use-faq-detail';
 import { useDeleteFaqs } from './use-faqs';
 import { useFaqCategories } from './use-faq-categories';
 import styles from './faq-detail-modal.module.scss';
 
 // FAQ Management - Register / Edit (VPA070500P01).
 // Register: [Cancel] [Register]; Edit: [Delete] … [Cancel] [Edit]. Category is kept although the design has none.
+// Published FAQs stay editable. Display Order: spin box only (no typing), 1..published FAQs of the category
+// (+1 when this FAQ is not yet among them); new FAQs start at 1. Answers use the rich-text editor (HTML).
 
 interface FaqDetailModalProps {
   visible: boolean;
@@ -37,7 +39,6 @@ const MESSAGES = {
   confirmDelete: 'Are you sure you want to delete?',
   /** C02 */
   englishDropped: 'English content will not be saved. Do you want to save?',
-  locked: 'A published FAQ cannot be edited. Set it to Unpublished and save, then reopen it to edit the text.',
   registered: 'The FAQ has been registered.',
   updated: 'The FAQ has been updated.',
   deleted: 'The FAQ has been deleted.',
@@ -55,6 +56,7 @@ export default function FaqDetailModal({ visible, mode, faq, onClose, onRefresh 
   const categoryOptions = useFaqCategories();
   const [category, setCategory] = useState('');
   const [published, setPublished] = useState<'Y' | 'N'>('N');
+  const [displayOrder, setDisplayOrder] = useState(1);
   const [question, setQuestion] = useState('');
   const [answer, setAnswer] = useState('');
   const [provideEn, setProvideEn] = useState(false);
@@ -73,6 +75,7 @@ export default function FaqDetailModal({ visible, mode, faq, onClose, onRefresh 
     if (visible && isCreate) {
       setCategory(categoryOptions[0]?.value ?? '');
       setPublished('N');
+      setDisplayOrder(1);
       setQuestion('');
       setAnswer('');
       setProvideEn(false);
@@ -82,6 +85,7 @@ export default function FaqDetailModal({ visible, mode, faq, onClose, onRefresh 
       const titleEn = detail?.titleEn || faq?.titleEn || '';
       setCategory(detail?.category || faq?.category || '');
       setPublished((detail?.published || faq?.published) === 'Y' ? 'Y' : 'N');
+      setDisplayOrder(detail?.displayOrder ?? faq?.displayOrder ?? 1);
       setQuestion(detail?.title || faq?.title || '');
       setAnswer(detail?.content || faq?.content || '');
       // Design: checked on edit when Question (EN) exists.
@@ -91,12 +95,14 @@ export default function FaqDetailModal({ visible, mode, faq, onClose, onRefresh 
     }
   }
 
+  // Range of the order: published FAQs of the selected category, plus this FAQ when it is not among them yet.
+  const publishedCount = usePublishedFaqCount(category, visible && published === 'Y');
   if (!visible) return null;
 
-  // The API rejects text changes while the FAQ is published — unpublish first.
-  const contentLocked = !isCreate && detail?.contentEditable === false;
+  const countedAlready = !isCreate && detail?.published === 'Y' && detail?.category === category;
+  const maxOrder = Math.max(1, (publishedCount.data ?? 0) + (countedAlready ? 0 : 1));
+  const orderValue = Math.min(displayOrder, maxOrder);
   const busy = saveFaq.isPending || deleteFaqs.isPending;
-  const displayOrder = isCreate ? 1 : faq?.displayOrder;
 
   const clearError = (field: Field) => {
     if (errors[field]) setErrors((prev) => ({ ...prev, [field]: undefined }));
@@ -106,29 +112,27 @@ export default function FaqDetailModal({ visible, mode, faq, onClose, onRefresh 
     const next: Errors = {};
     if (!category) next.category = required('Category');
     if (!question.trim()) next.question = required('Question');
-    if (!answer.trim()) next.answer = required('Answer');
+    if (!answer) next.answer = required('Answer');
     if (provideEn && !questionEn.trim()) next.questionEn = required('Question (EN)');
-    if (provideEn && !answerEn.trim()) next.answerEn = required('Answer (EN)');
+    if (provideEn && !answerEn) next.answerEn = required('Answer (EN)');
     setErrors(next);
     return Object.keys(next).length === 0;
   };
 
   const save = async () => {
     try {
-      // Content is saved first, then category / publish status (content is locked while published).
       await saveFaq.mutateAsync({
         pstNo: isCreate ? null : String(pstNo),
         category,
         published,
-        content: contentLocked
-          ? undefined
-          : {
-              question: question.trim(),
-              answer: answer.trim(),
-              // Unchecked: English is not saved (cleared on edit).
-              questionEn: provideEn ? questionEn.trim() : undefined,
-              answerEn: provideEn ? answerEn.trim() : undefined,
-            },
+        displayOrder: orderValue,
+        content: {
+          question: question.trim(),
+          answer,
+          // Unchecked: English is not saved (cleared on edit).
+          questionEn: provideEn ? questionEn.trim() : undefined,
+          answerEn: provideEn ? answerEn : undefined,
+        },
       });
     } catch (err) {
       toast.error(ApiError.from(err).message);
@@ -141,8 +145,8 @@ export default function FaqDetailModal({ visible, mode, faq, onClose, onRefresh 
 
   const handleSubmit = () => {
     if (!validate()) return;
-    const englishEntered = Boolean(questionEn.trim() || answerEn.trim());
-    if (!provideEn && englishEntered && !contentLocked) {
+    const englishEntered = Boolean(questionEn.trim() || answerEn);
+    if (!provideEn && englishEntered) {
       dialog.confirm({ content: MESSAGES.englishDropped, okText: 'Save', cancelText: 'Cancel', onOk: save });
       return;
     }
@@ -180,7 +184,6 @@ export default function FaqDetailModal({ visible, mode, faq, onClose, onRefresh 
       submitText={isCreate ? 'Register' : 'Edit'}
       submitting={saveFaq.isPending}
       submitDisabled={busy}
-      notice={contentLocked ? MESSAGES.locked : undefined}
       leftActions={
         isCreate ? undefined : (
           <SysButton look="danger" onClick={handleDelete} loading={deleteFaqs.isPending} disabled={busy}>
@@ -198,8 +201,19 @@ export default function FaqDetailModal({ visible, mode, faq, onClose, onRefresh 
             </AppRadio.Group>
           </SysField>
           <SysField label="Display Order">
-            {/* Read only here: the order is managed by the server (new posts start at 1). */}
-            <Spinbox value={displayOrder} min={1} disabled />
+            {/* Arrows only (design: read only input). Unpublished FAQs have no display order. */}
+            <Spinbox
+              aria-label="Display Order"
+              value={orderValue}
+              min={1}
+              max={maxOrder}
+              precision={0}
+              disabled={published !== 'Y'}
+              onKeyDown={(e) => {
+                if (e.key !== 'ArrowUp' && e.key !== 'ArrowDown' && e.key !== 'Tab') e.preventDefault();
+              }}
+              onChange={(value) => setDisplayOrder(Math.min(Math.max(value ?? 1, 1), maxOrder))}
+            />
           </SysField>
           <SysField label="Category" required span="full" error={errors.category}>
             <AppSelect
@@ -215,7 +229,6 @@ export default function FaqDetailModal({ visible, mode, faq, onClose, onRefresh 
           <SysField label="Question" required span="full" error={errors.question}>
             <TextInput
               placeholder="Enter the question."
-              disabled={contentLocked}
               value={question}
               onChange={(e) => {
                 setQuestion(e.target.value);
@@ -224,21 +237,22 @@ export default function FaqDetailModal({ visible, mode, faq, onClose, onRefresh 
             />
           </SysField>
           <SysField label="Answer" required span="full" error={errors.answer}>
-            <TextArea
-              className={styles.editor}
-              placeholder="Enter the answer."
-              disabled={contentLocked}
-              value={answer}
-              onChange={(e) => {
-                setAnswer(e.target.value);
-                clearError('answer');
-              }}
-            />
+            <div className={styles.editor}>
+              <RichTextEditor
+                ariaLabel="Answer"
+                placeholder="Enter the answer."
+                invalid={Boolean(errors.answer)}
+                value={answer}
+                onChange={(html) => {
+                  setAnswer(html);
+                  clearError('answer');
+                }}
+              />
+            </div>
           </SysField>
           <SysField label="Provide English" span="full">
             <AppCheckbox
               checked={provideEn}
-              disabled={contentLocked}
               onChange={(e) => {
                 setProvideEn(e.target.checked);
                 if (!e.target.checked) setErrors((prev) => ({ ...prev, questionEn: undefined, answerEn: undefined }));
@@ -250,7 +264,7 @@ export default function FaqDetailModal({ visible, mode, faq, onClose, onRefresh 
           <SysField label="Question (EN)" required={provideEn} span="full" error={errors.questionEn}>
             <TextInput
               placeholder="Enter the question."
-              disabled={contentLocked || !provideEn}
+              disabled={!provideEn}
               value={questionEn}
               onChange={(e) => {
                 setQuestionEn(e.target.value);
@@ -259,16 +273,19 @@ export default function FaqDetailModal({ visible, mode, faq, onClose, onRefresh 
             />
           </SysField>
           <SysField label="Answer (EN)" required={provideEn} span="full" error={errors.answerEn}>
-            <TextArea
-              className={styles.editor}
-              placeholder="Enter the answer."
-              disabled={contentLocked || !provideEn}
-              value={answerEn}
-              onChange={(e) => {
-                setAnswerEn(e.target.value);
-                clearError('answerEn');
-              }}
-            />
+            <div className={styles.editor}>
+              <RichTextEditor
+                ariaLabel="Answer (EN)"
+                placeholder="Enter the answer."
+                disabled={!provideEn}
+                invalid={Boolean(errors.answerEn)}
+                value={answerEn}
+                onChange={(html) => {
+                  setAnswerEn(html);
+                  clearError('answerEn');
+                }}
+              />
+            </div>
           </SysField>
         </SysFieldGrid>
       </LoadingSpinner>

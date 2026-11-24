@@ -53,10 +53,10 @@ interface FaqFilter {
 
 const INITIAL_FILTER: FaqFilter = { published: ALL, category: ALL, keyword: '' };
 
-const byText = (pick: (row: FaqItem) => string | null | undefined) => (a: FaqItem, b: FaqItem) =>
-  (pick(a) ?? '').localeCompare(pick(b) ?? '');
-
-/** Design column set and alignment; header sorting applies to the loaded page. */
+/**
+ * Design column set and alignment; every column sorts on the server (`sorter: true`, key = API sort field).
+ * Category is kept although the design has none.
+ */
 const COLUMNS: TableColumnsType<FaqItem> = [
   {
     title: 'ID',
@@ -64,7 +64,7 @@ const COLUMNS: TableColumnsType<FaqItem> = [
     key: 'pstNo',
     width: 80,
     align: 'center',
-    sorter: byText((row) => row.pstNo),
+    sorter: true,
     render: (value?: string) => <span className={styles.idLink}>{value ?? '-'}</span>,
   },
   {
@@ -73,7 +73,7 @@ const COLUMNS: TableColumnsType<FaqItem> = [
     key: 'published',
     width: 120,
     align: 'center',
-    sorter: byText((row) => row.published),
+    sorter: true,
     render: (value?: string) =>
       value === 'Y' ? <StatusBadge tone="blue">Published</StatusBadge> : <StatusBadge>Unpublished</StatusBadge>,
   },
@@ -83,17 +83,17 @@ const COLUMNS: TableColumnsType<FaqItem> = [
     key: 'displayOrder',
     width: 125,
     align: 'center',
-    sorter: (a, b) => (a.displayOrder ?? Number.MAX_SAFE_INTEGER) - (b.displayOrder ?? Number.MAX_SAFE_INTEGER),
+    sorter: true,
     // Unpublished posts have no display order.
     render: (value: number | undefined, row) => (row.published === 'Y' && value != null ? value : '-'),
   },
   {
     title: 'Category',
     dataIndex: 'categoryNm',
-    key: 'categoryNm',
+    key: 'category',
     width: 130,
     ellipsis: true,
-    sorter: byText((row) => row.categoryNm),
+    sorter: true,
     render: (value?: string) => value || '-',
   },
   {
@@ -101,7 +101,16 @@ const COLUMNS: TableColumnsType<FaqItem> = [
     dataIndex: 'title',
     key: 'title',
     ellipsis: true,
-    sorter: byText((row) => row.title),
+    sorter: true,
+  },
+  {
+    title: 'English',
+    dataIndex: 'hasEnglish',
+    key: 'hasEnglish',
+    width: 100,
+    align: 'center',
+    sorter: true,
+    render: (value?: string) => (value === 'Y' ? 'Y' : '-'),
   },
   {
     title: 'Created Date',
@@ -109,17 +118,18 @@ const COLUMNS: TableColumnsType<FaqItem> = [
     key: 'crtDt',
     width: 135,
     align: 'center',
-    sorter: byText((row) => row.crtDt),
+    sorter: true,
     render: (value?: string) => <DateTimeText value={value} />,
   },
   {
     title: 'Created By',
-    dataIndex: 'crtByNm',
-    key: 'crtByNm',
+    dataIndex: 'crtBy',
+    key: 'crtBy',
     width: 120,
     ellipsis: true,
-    sorter: byText((row) => row.crtByNm || row.crtBy),
-    render: (_: unknown, row: FaqItem) => row.crtByNm || row.crtBy || '-',
+    sorter: true,
+    // Design: account ID that created the post.
+    render: (value?: string) => value || '-',
   },
   {
     title: 'Modified Date',
@@ -127,17 +137,17 @@ const COLUMNS: TableColumnsType<FaqItem> = [
     key: 'mdfcnDt',
     width: 135,
     align: 'center',
-    sorter: byText((row) => row.mdfcnDt),
+    sorter: true,
     render: (value?: string | null) => <DateTimeText value={value} />,
   },
   {
     title: 'Modified By',
-    dataIndex: 'mdfcnByNm',
-    key: 'mdfcnByNm',
+    dataIndex: 'mdfcnBy',
+    key: 'mdfcnBy',
     width: 120,
     ellipsis: true,
-    sorter: byText((row) => row.mdfcnByNm || row.mdfcnBy),
-    render: (_: unknown, row: FaqItem) => row.mdfcnByNm || row.mdfcnBy || '-',
+    sorter: true,
+    render: (value?: string | null) => value || '-',
   },
 ];
 
@@ -147,9 +157,21 @@ export default function FaqManagement() {
   const list = usePagedList<FaqFilter>(INITIAL_FILTER, { pageSize: PAGE_SIZE });
   const categories = useFaqCategories();
   const categoryOptions = [{ value: ALL, label: 'All' }, ...categories];
-  const params = { page: list.page, pageSize: PAGE_SIZE, ...list.applied };
+  const params = {
+    page: list.page,
+    pageSize: PAGE_SIZE,
+    sortBy: list.sort?.sortBy,
+    sortDirection: list.sort?.sortDirection,
+    ...list.applied,
+  };
   const { items, total, isFetching, refetch } = useFaqs(params);
-  const excel = useApiDownload((cond: PostSearchRequest) => apiDownload('/api/v1/contents/faqs/excel', 'faqs.xlsx', cond));
+  const excel = useApiDownload((cond: PostSearchRequest) =>
+    apiDownload('/api/v1/contents/faqs/excel', 'faqs.xlsx', {
+      ...cond,
+      sortBy: list.sort?.sortBy,
+      sortDirection: list.sort?.sortDirection,
+    }),
+  );
   const [modal, setModal] = useState<ModalState>(null);
 
   const handleSearch = () => list.search({ keyword: list.draft.keyword.trim() });
@@ -209,6 +231,8 @@ export default function FaqManagement() {
         dataSource={items}
         loading={isFetching}
         onRowClick={(faq) => setModal({ mode: 'detail', faq })}
+        sort={list.sort}
+        onSortChange={list.setSort}
         locale={{ emptyText: filtered ? MESSAGES.noResults : MESSAGES.noPosts }}
       />
       <SysPager page={list.page} pageSize={PAGE_SIZE} total={total} onChange={list.setPage} />

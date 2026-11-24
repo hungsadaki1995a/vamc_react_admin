@@ -8,7 +8,7 @@ import { SysField, SysFieldGrid } from '@/features/system/_shared/SysFormUi';
 import { SYS_MESSAGES } from '@/features/system/_shared/sys-messages';
 import { errorMessage } from '@/features/system/_shared/system-utils';
 import { useFieldErrors } from '@/features/system/_shared/use-field-errors';
-import RichTextEditor from './RichTextEditor';
+import RichTextEditor from '../_shared/RichTextEditor';
 import { useAboutOverview, useSaveAboutOverview } from './use-overview';
 import styles from './overview-management.module.scss';
 

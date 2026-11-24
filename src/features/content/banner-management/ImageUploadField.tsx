@@ -2,12 +2,14 @@ import { useRef, useState } from 'react';
 import TextInput from '@/components/inputs/TextInput';
 import { SysButton } from '@/features/system/_shared/SysListUi';
 
-// "Image / File" row of the Site Display popups (banner, logo): read-only file name + [Upload File].
+// "Image / File" row of the Site Display screens (banner popup, logo page): read-only file name + [Upload File].
 // The picked file is checked (E03), uploaded at once, and a new upload replaces the previous image.
 
 interface ImageUploadFieldProps {
   /** Current image group id; only used to tell "attached" from "empty" when no name is known. */
   fileUnqId?: string;
+  /** Name of the stored image (from the server) until a new file is picked. */
+  initialFileName?: string;
   /** Allowed extensions, lower case without the dot, e.g. ['jpg', 'jpeg', 'png']. */
   extensions: string[];
   maxBytes: number;
@@ -23,6 +25,7 @@ interface ImageUploadFieldProps {
 
 export default function ImageUploadField({
   fileUnqId,
+  initialFileName,
   extensions,
   maxBytes,
   invalidMessage,
@@ -53,8 +56,7 @@ export default function ImageUploadField({
     }
   };
 
-  // The list / detail APIs return no file name for a stored image, so an existing one is shown generically.
-  const shownName = fileName || (fileUnqId ? 'Attached image' : '');
+  const shownName = fileName || (fileUnqId ? initialFileName || 'Attached image' : '');
 
   return (
     <>

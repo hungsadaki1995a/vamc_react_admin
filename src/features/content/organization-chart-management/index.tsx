@@ -10,7 +10,7 @@ import { SysField, SysFieldGrid } from '@/features/system/_shared/SysFormUi';
 import { SYS_MESSAGES } from '@/features/system/_shared/sys-messages';
 import { errorMessage } from '@/features/system/_shared/system-utils';
 import { useFieldErrors } from '@/features/system/_shared/use-field-errors';
-import RichTextEditor from '../overview-management/RichTextEditor';
+import RichTextEditor from '../_shared/RichTextEditor';
 import { CHART_IMAGE_E03, isValidChartImage } from './chart-image';
 import ChartImageField from './ChartImageField';
 import { useAboutOrgChart, useImagePreviewUrl, useSaveAboutOrgChart } from './use-organization-chart';

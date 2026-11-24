@@ -3,12 +3,14 @@ import { useApiTask } from '@/hooks/use-api-action';
 import {
   createFaq,
   getFaq,
+  getFaqs,
   updateFaq,
+  updateFaqDisplayOrder,
   updateFaqStatus,
   type PostDetailResponse,
   type UpdateFaqRequest,
 } from '@/api/contents/faq-api';
-import { FAQ_KEYS } from './use-faqs';
+import { FAQ_KEYS, springQuerySerializer } from './use-faqs';
 
 export interface UseFaqDetailOptions {
   enabled?: boolean;
@@ -32,22 +34,43 @@ export interface SaveFaqVariables {
   pstNo: string | null;
   category: string;
   published: 'Y' | 'N';
-  /** Question / answer text; omitted when the FAQ is posted (content locked). */
-  content?: UpdateFaqRequest;
+  content: UpdateFaqRequest;
+  /** Order among the published FAQs of the category; used only when published. */
+  displayOrder: number;
 }
 
-/** Registers a FAQ, or saves its text first and the category / posting status afterwards. */
+/**
+ * Registers a FAQ, or saves its text, then the category / publish status, then the display order.
+ * Published FAQs stay editable (design); the server shifts the other FAQs when the order changes.
+ */
 export function useSaveFaq() {
   return useApiTask(
-    async ({ pstNo, category, published, content }: SaveFaqVariables) => {
+    async ({ pstNo, category, published, content, displayOrder }: SaveFaqVariables) => {
       if (pstNo === null) {
-        if (content) await createFaq({ body: { category, ...content, published }, throwOnError: true });
+        await createFaq({ category, ...content, published, displayOrder });
         return;
       }
-      // Content can only be edited while the FAQ is not posted (contentEditable).
-      if (content) await updateFaq({ path: { pstNo }, body: content, throwOnError: true });
+      await updateFaq({ path: { pstNo }, body: content, throwOnError: true });
       await updateFaqStatus({ path: { pstNo }, body: { category, published }, throwOnError: true });
+      if (published === 'Y') await updateFaqDisplayOrder(pstNo, displayOrder);
     },
     { invalidate: [FAQ_KEYS.all, FAQ_KEYS.details] },
   );
+}
+
+/** Published FAQs of a category (the display order range of the popup). */
+export function usePublishedFaqCount(category: string, enabled: boolean) {
+  return useQuery<number>({
+    queryKey: [...FAQ_KEYS.all, 'published-count', category],
+    queryFn: async () => {
+      const res = await getFaqs({
+        query: { pageRequest: { page: 1, size: 1 }, cond: { category, published: 'Y' } },
+        querySerializer: springQuerySerializer,
+        throwOnError: true,
+      });
+      return res.data?.data?.totalElements ?? 0;
+    },
+    enabled: enabled && Boolean(category),
+    staleTime: 0,
+  });
 }

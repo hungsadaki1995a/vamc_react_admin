@@ -5,8 +5,9 @@
   max-width: 320px;
 }
 
-/* Answer / Answer (EN) editor areas (design: about 200px tall). */
-.editor:global(.ant-input) {
-  min-height: 200px;
-  resize: vertical;
+/* Answer / Answer (EN) rich-text editors (design: about 230px tall including the toolbar). */
+.editor {
+  --rte-min-height: 230px;
+
+  width: 100%;
 }

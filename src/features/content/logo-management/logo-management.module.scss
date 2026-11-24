@@ -1,40 +1,15 @@
-/* Logo Management (VPA07060201): screen-specific layout on top of system/_shared/sys-ui. */
+/* Logo Management (VPA07060201): settings form on top of system/_shared/sys-ui. */
 
-$border: var(--color-border-primary, #d1d1e0);
 $frame-bg: var(--color-bg-secondary, #f6f6f9);
 $text-sub: var(--color-text-tertiary, #6f7b95);
 $icon: var(--color-gray-400, #c9cfdd);
-
-.rangePicker {
-  width: 100%;
-
-  &:global(.ant-picker-range) {
-    padding: 0 8px;
-  }
-
-  :global(.ant-picker-range-separator) {
-    padding: 0 4px;
-    color: $text-sub;
-  }
-}
-
-/* The list frame runs to the page bottom like the design. */
-.listTable {
-  flex: 1 0 auto;
-}
-
-.errorText {
-  font-size: var(--font-size-b2, 12px);
-  font-weight: 400;
-  color: var(--color-text-negative, #e62e44);
-}
 
 /* "Current Logo" row: centered preview, icon + caption when empty (design). */
 .preview {
   display: flex;
   justify-content: center;
   width: 100%;
-  padding: 14px 0;
+  padding: 16px 0;
 }
 
 .previewImage {
@@ -57,3 +32,12 @@ $icon: var(--color-gray-400, #c9cfdd);
   color: $icon;
 }
 
+.footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 16px;
+}
+
+.loading {
+  min-height: 200px;
+}

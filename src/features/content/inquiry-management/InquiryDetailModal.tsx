@@ -1,11 +1,12 @@
 import { useState } from 'react';
+import DOMPurify from 'dompurify';
 import { DownloadOutlined, FileTextOutlined } from '@ant-design/icons';
-import type { ContentFile } from '@/api/contents/post-api';
+import type { ContentFile, NotificationChannel } from '@/api/contents/inquiry-api';
 import ActionButton from '@/components/common/actions/ActionButton';
 import LoadingSpinner from '@/components/common/loading/LoadingSpinner';
-import TextArea from '@/components/inputs/TextArea';
 import { useNotify } from '@/hooks/use-notify';
 import { ApiError } from '@/lib/api/error';
+import RichTextEditor from '@/features/content/_shared/RichTextEditor';
 import { originalFileName, useDownloadContentFile } from '@/features/content/_shared/use-content-files';
 import { SysField, SysFieldGrid, SysFormModal } from '@/features/system/_shared/SysFormUi';
 import { formatSysDateTime } from '@/features/system/_shared/system-utils';
@@ -29,12 +30,12 @@ const MESSAGES = {
   answered: 'The answer has been sent.',
 } as const;
 
-/** The detail API returns full attachment rows (fileSeq, fileNm …) although its hand-written type is narrower. */
-function attachmentsOf(raw: unknown): ContentFile[] {
-  if (!Array.isArray(raw)) return [];
-  return (raw as Partial<ContentFile>[]).filter(
-    (file): file is ContentFile => Boolean(file.fileUnqId && file.fileSeq !== undefined && file.fileNm),
-  );
+const CHANNEL_LABELS: Record<string, string> = { EMAIL: 'Email', ZALO: 'Zalo' };
+
+/** "Email, Zalo" — the channels used once answered, the ones the answer will use before; "-" when none. */
+function channelText(channels?: NotificationChannel[]): string {
+  const labels = (channels ?? []).map((code) => CHANNEL_LABELS[code] ?? code);
+  return labels.length > 0 ? labels.join(', ') : '-';
 }
 
 export default function InquiryDetailModal({ visible, inquiry, onClose, onRefresh }: InquiryDetailModalProps) {
@@ -54,9 +55,9 @@ export default function InquiryDetailModal({ visible, inquiry, onClose, onRefres
   if (!visible || !inquiry) return null;
 
   const answered = (detail?.answerStatus || inquiry.answerStatus || 'UNANSWERED').toUpperCase() === 'ANSWERED';
-  const attachments = attachmentsOf(detail?.attachments);
+  const attachments = detail?.attachments ?? [];
   const contact = [detail?.inquirerEmail, detail?.inquirerPhone].filter(Boolean).join(', ') || '-';
-  const answeredBy = detail?.ansEmpNm || detail?.ansEmpNo || inquiry.ansEmpNm || inquiry.ansEmpNo;
+  const answeredBy = detail?.ansEmpNo || inquiry.ansEmpNo;
 
   const close = () => {
     setDraft({ text: '' });
@@ -104,15 +105,12 @@ export default function InquiryDetailModal({ visible, inquiry, onClose, onRefres
       <LoadingSpinner spinning={isLoading}>
         <SysFieldGrid columns={2}>
           <SysField label="Inquiry Type">{detail?.categoryNm || inquiry.categoryNm || '-'}</SysField>
-          <SysField label="Customer">{detail?.mbrNo || inquiry.mbrNo || '-'}</SysField>
+          {/* Login ID of General / Full members; "-" for non-members and Temporary members. */}
+          <SysField label="Customer">{detail?.customerLoginId || inquiry.customerLoginId || '-'}</SysField>
           <SysField label="Inquirer">{detail?.inquirerNm || inquiry.inquirerNm || '-'}</SysField>
           <SysField label="Email, Mobile">{contact}</SysField>
+          <SysField label="Answer Notification">{channelText(detail?.notificationChannels)}</SysField>
           <SysField label="Registered Date">{formatSysDateTime(detail?.crtDt || inquiry.crtDt)}</SysField>
-          <SysField label="Answered Date">
-            {answered
-              ? `${formatSysDateTime(detail?.answeredAt || inquiry.answeredAt)}${answeredBy ? ` (${answeredBy})` : ''}`
-              : '-'}
-          </SysField>
           <SysField label="Inquiry Title" span="full">
             {detail?.title || inquiry.title || '-'}
           </SysField>
@@ -141,19 +139,32 @@ export default function InquiryDetailModal({ visible, inquiry, onClose, onRefres
           </SysField>
           <SysField label="Answer" required={!answered} span="full" error={error}>
             {answered ? (
-              <div className={styles.answer}>{detail?.answer || inquiry.responseContent || '-'}</div>
-            ) : (
-              <TextArea
-                className={styles.answerInput}
-                placeholder="Enter the answer."
-                value={answerText}
-                onChange={(e) => {
-                  setDraft({ key: pstNo, text: e.target.value });
-                  if (error) setError(undefined);
-                }}
+              <div
+                className={styles.answer}
+                // Sent answers are editor HTML (older ones plain text).
+                // eslint-disable-next-line react/no-danger -- sanitized with DOMPurify
+                dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(detail?.answer || inquiry.responseContent || '-') }}
               />
+            ) : (
+              <div className={styles.answerEditor}>
+                <RichTextEditor
+                  ariaLabel="Answer"
+                  placeholder="Enter the answer."
+                  invalid={Boolean(error)}
+                  value={answerText}
+                  onChange={(html) => {
+                    setDraft({ key: pstNo, text: html });
+                    if (error) setError(undefined);
+                  }}
+                />
+              </div>
             )}
           </SysField>
+          {answered && (
+            <SysField label="Answered Date" span="full">
+              {`${formatSysDateTime(detail?.answeredAt || inquiry.answeredAt)}${answeredBy ? ` (${answeredBy})` : ''}`}
+            </SysField>
+          )}
         </SysFieldGrid>
       </LoadingSpinner>
     </SysFormModal>

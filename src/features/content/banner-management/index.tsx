@@ -2,15 +2,18 @@ import { useState } from 'react';
 import type { TableColumnsType } from 'antd';
 import { useMenuPermission } from '@/hooks/use-menu-permission';
 import type { Banner } from '@/api/contents/banner-api';
-import { DateTimeText, SysButton, SysPage, SysTable, SysTitleBar, UseBadge } from '@/features/system/_shared/SysListUi';
+import { DateTimeText, SysButton, SysPage, SysTable, SysTitleBar } from '@/features/system/_shared/SysListUi';
 import BannerModal from './BannerModal';
 import BannerThumb from './BannerThumb';
-import { BANNER_LIST_SIZE, BANNER_MAX, BANNER_MESSAGES } from './banner-constants';
+import { BANNER_HOME_POSITION, BANNER_LIST_SIZE, BANNER_MAX, BANNER_MESSAGES } from './banner-constants';
 import { useBanners } from './use-banners';
 import styles from './banner-management.module.scss';
 
 // Banner Management - List (VPA07060101), menu A07060100.
 // Design: no search filter, "Search Results | Total n / Max 5", rows in display order, row click → edit popup.
+// The screen lists the user home banner area; every banner there is shown on the user home.
+
+const HOME_SEARCH = { positionId: BANNER_HOME_POSITION };
 
 const byText = (a?: string, b?: string) => (a ?? '').localeCompare(b ?? '');
 
@@ -41,14 +44,6 @@ const columns: TableColumnsType<Banner> = [
     sorter: (a, b) => byText(a.title, b.title),
   },
   {
-    title: 'Use',
-    dataIndex: 'useYn',
-    key: 'useYn',
-    width: 100,
-    align: 'center',
-    render: (v: string) => <UseBadge value={v} />,
-  },
-  {
     title: 'Modified Date',
     dataIndex: 'mdfcnDt',
     key: 'mdfcnDt',
@@ -69,12 +64,11 @@ const columns: TableColumnsType<Banner> = [
 
 export default function BannerManagement() {
   const { canWrite } = useMenuPermission();
-  const { data, isFetching, error } = useBanners({}, 1, BANNER_LIST_SIZE);
+  const { data, isFetching, error } = useBanners(HOME_SEARCH, 1, BANNER_LIST_SIZE);
   const [modal, setModal] = useState<ModalState>(null);
 
   const banners = data?.content ?? [];
   const total = data?.totalElements ?? 0;
-  const lastOrder = banners.reduce((max, b) => Math.max(max, b.order ?? 0), 0);
 
   return (
     <SysPage fill>
@@ -108,7 +102,7 @@ export default function BannerManagement() {
           key={modal.banner?.bannerId ?? 'new'}
           banner={modal.banner}
           bannerCount={total}
-          nextOrder={lastOrder + 1}
+          nextOrder={total + 1}
           canWrite={canWrite}
           onClose={() => setModal(null)}
         />
