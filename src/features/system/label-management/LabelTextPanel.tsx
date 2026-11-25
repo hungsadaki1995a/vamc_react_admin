@@ -5,7 +5,7 @@ import { useNotify } from '@/hooks/use-notify';
 import { DEFAULT_LANG_CD } from '@/api/system/label-management-api';
 import type { LabelDetail, LabelKey, LabelLanguage } from '@/api/system/label-management-api';
 import { SYS_MESSAGES } from '@/features/system/_shared/sys-messages';
-import { SysButton, SysEmpty, SysSectionHeader, SysTable } from '@/features/system/_shared/SysListUi';
+import { SysButton, SysSectionHeader, SysTable } from '@/features/system/_shared/SysListUi';
 import { apiErrorCode, errorMessage } from '@/features/system/_shared/system-utils';
 import { hasTextChanges, LABEL_MESSAGES, storedTexts, variablesMatch } from './label-utils';
 import { useUpdateLabel } from './use-labels';
@@ -66,7 +66,10 @@ export default function LabelTextPanel({
 
   const save = async () => {
     if (!selected) return;
-    const texts = rows.map((row) => ({ langCd: row.langCd, trslLtr: row.text.trim() }));
+    const texts = rows.map((row) => ({
+      langCd: row.langCd,
+      trslLtr: row.text.trim(),
+    }));
     const defaultText = texts.find((t) => t.langCd === DEFAULT_LANG_CD)?.trslLtr ?? '';
     const next: Record<string, string> = {};
     if (defaultText === '') next[DEFAULT_LANG_CD] = SYS_MESSAGES.required;
@@ -149,25 +152,29 @@ export default function LabelTextPanel({
           )
         }
       />
-      {selected ? (
-        <div className={styles.textPanel}>
-          <SysTable<TextRow>
-            rowKey="langCd"
-            columns={columns}
-            dataSource={rows}
-            loading={loading}
-            onRowClick={canWrite ? (row) => setEditingLang(row.langCd) : undefined}
-            selectedRowKey={editingLang}
-          />
-          {errorText && <p className={styles.panelError}>{errorText}</p>}
+      {/* No label selected: the design keeps the empty "Language | Text" frame. */}
+      <div className={styles.textPanel}>
+        <SysTable<TextRow>
+          fill
+          tableLayout="fixed"
+          rowKey="langCd"
+          columns={columns}
+          dataSource={selected ? rows : []}
+          loading={loading}
+          locale={{
+            emptyText: <span className={styles.emptyText}>Select a label to see its text by language.</span>,
+          }}
+          onRowClick={canWrite && selected ? (row) => setEditingLang(row.langCd) : undefined}
+          selectedRowKey={editingLang}
+        />
+        {errorText && <p className={styles.panelError}>{errorText}</p>}
+        {selected && (
           <p className={styles.panelHint}>
             Data values use %1, %2 …, line breaks use &lt;br&gt;. Empty languages show the {defaultName} text on user
             screens.
           </p>
-        </div>
-      ) : (
-        <SysEmpty>Select a label to see its text by language.</SysEmpty>
-      )}
+        )}
+      </div>
     </>
   );
 }

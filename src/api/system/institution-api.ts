@@ -2,7 +2,7 @@ import { apiDownload, apiGet, apiPost, apiPut } from '@/api/common/api-utils';
 import type { PageQuery, PageResponse } from '@/api/common/api-utils';
 import type { YesNo } from './code-group-api';
 
-// ── Finance Institutions (A06030300) ─────────────────────────────────────────
+// ── Finance Institutions (A09030300) ─────────────────────────────────────────
 export interface InstitutionItem {
   fnstId?: number;
   /** Institution code 1–999. */

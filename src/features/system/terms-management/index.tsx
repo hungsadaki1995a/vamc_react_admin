@@ -21,6 +21,7 @@ import { usePagedList } from '@/features/system/_shared/use-paged-list';
 import { TERMS_STATUS, TERMS_STATUS_FILTER_OPTIONS, TERMS_TYPE_FILTER_OPTIONS, termsTypeLabel } from './terms-constants';
 import { TermsModal } from './TermsModal';
 import { useTermsPolicies } from './use-terms-policies';
+import styles from './terms-management.module.scss';
 
 // VPA09010701 Terms Management: versions of Terms of Use / Privacy Policy by effective date.
 
@@ -37,25 +38,40 @@ export default function TermsManagement() {
     {
       title: 'Effective Date',
       dataIndex: 'effectiveDate',
+      sorter: true,
       align: 'center',
+      width: 130,
       render: (v?: string) => <DateTimeText value={v} dateOnly />,
     },
     {
       title: 'Status',
       dataIndex: 'status',
+      sorter: true,
       align: 'center',
+      width: 140,
       render: (v: TermsStatus) =>
         TERMS_STATUS[v] ? <StatusBadge tone={TERMS_STATUS[v].tone}>{TERMS_STATUS[v].label}</StatusBadge> : (v ?? '-'),
     },
-    { title: 'Terms Type', dataIndex: 'type', align: 'center', render: (v: string) => termsTypeLabel(v) },
+    { title: 'Terms Type', dataIndex: 'type', sorter: true, align: 'center', width: 180, render: (v: string) => termsTypeLabel(v) },
     {
       title: 'Language',
       dataIndex: 'languages',
-      align: 'center',
+      // Sorted on the server by whether an English version exists (VN before VN, EN when ascending).
+      key: 'hasEn',
+      sorter: true,
+      // Frame: Language, Registered By and Registered Date values are left-aligned (headers stay centered).
       render: (v?: string[]) => (v?.length ? v.join(', ') : '-'),
     },
-    { title: 'Registered By', dataIndex: 'crtByNm', align: 'center', render: (v: string | undefined, row) => v || row.crtBy || '-' },
-    { title: 'Registered Date', dataIndex: 'crtDt', align: 'center', render: (v?: string) => <DateTimeText value={v} dateOnly /> },
+    {
+      title: 'Registered By',
+      dataIndex: 'crtByNm',
+      key: 'crtByNm',
+      sorter: true,
+      width: 240,
+      ellipsis: true,
+      render: (v: string | undefined, row) => v || row.crtBy || '-',
+    },
+    { title: 'Registered Date', dataIndex: 'crtDt', sorter: true, width: 280, render: (v?: string) => <DateTimeText value={v} dateOnly /> },
   ];
 
   return (
@@ -87,10 +103,16 @@ export default function TermsManagement() {
       />
       <SysTable<TermsPolicyItem>
         rowKey="termsId"
+        className={styles.listTable}
+        fill
+        tableLayout="fixed"
+        scroll={{ x: 1100 }}
         columns={columns}
         dataSource={data?.content}
         loading={isFetching}
         onRowClick={(row) => setOpenId(row.termsId)}
+        sort={list.sort}
+        onSortChange={list.setSort}
       />
       <SysPager page={list.page} pageSize={SYS_PAGE_SIZE} total={data?.totalElements ?? 0} onChange={list.setPage} />
 

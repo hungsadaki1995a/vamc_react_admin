@@ -1,0 +1,43 @@
+/* Logo Management (VPA07060201): settings form on top of system/_shared/sys-ui. */
+
+$frame-bg: var(--color-bg-secondary, #f6f6f9);
+$text-sub: var(--color-text-tertiary, #6f7b95);
+$icon: var(--color-gray-400, #c9cfdd);
+
+/* "Current Logo" row: centered preview, icon + caption when empty (design). */
+.preview {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  padding: 16px 0;
+}
+
+.previewImage {
+  max-width: 300px;
+  max-height: 88px;
+  object-fit: contain;
+}
+
+.previewEmpty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  font-size: var(--font-size-b2, 12px);
+  color: $text-sub;
+}
+
+.previewIcon {
+  font-size: var(--font-size-h1, 20px);
+  color: $icon;
+}
+
+.footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 16px;
+}
+
+.loading {
+  min-height: 200px;
+}

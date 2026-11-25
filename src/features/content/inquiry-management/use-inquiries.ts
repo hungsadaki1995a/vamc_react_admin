@@ -1,6 +1,5 @@
 import { useQuery, keepPreviousData } from '@tanstack/react-query';
 import type { UseQueryResult } from '@tanstack/react-query';
-import dayjs from 'dayjs';
 
 import {
   getInquiries,
@@ -26,8 +25,8 @@ export interface UseInquiriesParams {
   sortDirection?: 'ASC' | 'DESC';
   answerStatus?: string; // empty string for All, 'ANSWERED', 'UNANSWERED'
   category?: string;     // empty string for All, 'CST', 'ETC', etc.
-  fromDate?: string;     // 'DD/MM/YYYY' (default 30 days from today)
-  toDate?: string;       // 'DD/MM/YYYY' (default current day)
+  fromDate?: string;     // 'DD/MM/YYYY'; empty = no lower bound
+  toDate?: string;       // 'DD/MM/YYYY'; empty = no upper bound
   keyword?: string;      // empty string
 }
 
@@ -97,8 +96,10 @@ export function mapInquiryResponseToItem(
     inquiryType: typeName,
     title: res.title || '-',
     content: '',
-    registeredCustomer: res.inquirerNm || res.mbrNo || '-',
+    registeredCustomer: res.customerLoginId || '-',
     mbrNo: res.mbrNo,
+    customerLoginId: res.customerLoginId,
+    attachmentCount: res.attachmentCount ?? 0,
     inquirerNm: res.inquirerNm,
     registrationDate: res.crtDt || '-',
     crtDt: res.crtDt,
@@ -128,8 +129,9 @@ export function buildInquiryQueryParams(params: UseInquiriesParams): {
     answerStatus: params.answerStatus || 'ALL',
     // category is an exact match on INQRY_SE_CD — "ALL" means no filter.
     category: params.category && params.category !== 'ALL' ? params.category : undefined,
-    fromDate: params.fromDate || dayjs().subtract(30, 'day').format('DD/MM/YYYY'),
-    toDate: params.toDate || dayjs().format('DD/MM/YYYY'),
+    // Design: no default registration period.
+    fromDate: params.fromDate || undefined,
+    toDate: params.toDate || undefined,
     keyword: params.keyword?.trim() ? params.keyword.trim() : undefined,
   };
 

@@ -13,14 +13,14 @@ export interface paths {
         };
         /**
          * Get application
-         * @description **Screens:** VPA001101, VPA0011P01
+         * @description **Screens:** VPA05010201, VPA050102P01
          *
          *     Detail with NPLs, scanned documents, approval steps and processing history (VPA0004P04). Requires READ permission.
          */
         get: operations["getApplication"];
         /**
          * Edit a application
-         * @description **Screens:** VPA001101, VPA0011P01
+         * @description **Screens:** VPA05010201, VPA050102P01
          *
          *     Contract kind, base contract, currency, desired price and scan, before approval is requested. Requires WRITE permission.
          */
@@ -42,7 +42,7 @@ export interface paths {
         get?: never;
         /**
          * Change the officer in charge
-         * @description **Screens:** VPA001101, VPA0011P01
+         * @description **Screens:** VPA05010201, VPA050102P01
          *
          *     Hands the application (and its contracts) to another employee holding the processing role; an open officer step of the approval session follows. Requires WRITE permission.
          */
@@ -63,14 +63,14 @@ export interface paths {
         };
         /**
          * Get application
-         * @description **Screens:** VPA001001, VPA0010P01, VPA0004P01, VPA0004P04
+         * @description **Screens:** VPA05010101, VPA050101P01, VPA020500P01, VPA0004P04
          *
          *     Detail with NPLs, scanned documents, approval steps and processing history (VPA0004P04). Requires READ permission.
          */
         get: operations["getApplication_1"];
         /**
          * Edit a application
-         * @description **Screens:** VPA001001, VPA0010P01, VPA0004P01, VPA0004P04
+         * @description **Screens:** VPA05010101, VPA050101P01, VPA020500P01, VPA0004P04
          *
          *     Contract kind, base contract, currency, desired price and scan, before approval is requested. Requires WRITE permission.
          */
@@ -92,7 +92,7 @@ export interface paths {
         get?: never;
         /**
          * Change the officer in charge
-         * @description **Screens:** VPA001001, VPA0010P01, VPA0004P01, VPA0004P04
+         * @description **Screens:** VPA05010101, VPA050101P01, VPA020500P01, VPA0004P04
          *
          *     Hands the application (and its contracts) to another employee holding the processing role; an open officer step of the approval session follows. Requires WRITE permission.
          */
@@ -113,14 +113,14 @@ export interface paths {
         };
         /**
          * Get application
-         * @description **Screens:** VPA001201, VPA0012P01
+         * @description **Screens:** VPA05010301, VPA050103P01
          *
          *     Detail with NPLs, scanned documents, approval steps and processing history (VPA0004P04). Requires READ permission.
          */
         get: operations["getApplication_2"];
         /**
          * Edit a application
-         * @description **Screens:** VPA001201, VPA0012P01
+         * @description **Screens:** VPA05010301, VPA050103P01
          *
          *     Contract kind, base contract, currency, desired price and scan, before approval is requested. Requires WRITE permission.
          */
@@ -142,7 +142,7 @@ export interface paths {
         get?: never;
         /**
          * Change the officer in charge
-         * @description **Screens:** VPA001201, VPA0012P01
+         * @description **Screens:** VPA05010301, VPA050103P01
          *
          *     Hands the application (and its contracts) to another employee holding the processing role; an open officer step of the approval session follows. Requires WRITE permission.
          */
@@ -163,12 +163,12 @@ export interface paths {
         };
         /**
          * Detail / Chi tiết
-         * @description **Screens:** VPA005201, VPA0052P01
+         * @description **Screens:** VPA09040201, VPA090402P01
          */
         get: operations["detail"];
         /**
          * Update / Cập nhật
-         * @description **Screens:** VPA005201, VPA0052P01
+         * @description **Screens:** VPA09040201, VPA090402P01
          */
         put: operations["update_3"];
         post?: never;
@@ -187,14 +187,14 @@ export interface paths {
         };
         /**
          * Get contract
-         * @description **Screens:** VPA001401, VPA0014P01, VPA0014P02
+         * @description **Screens:** VPA05020201, VPA050202P01, VPA050202P02
          *
          *     Contract or annex with NPLs, draft / signed documents, fees, annexes and terminations. Requires READ permission.
          */
         get: operations["getContract"];
         /**
          * Edit the contract draft
-         * @description **Screens:** VPA001401, VPA0014P01, VPA0014P02
+         * @description **Screens:** VPA05020201, VPA050202P01, VPA050202P02
          *
          *     Step 13 / annex 2 (PREPR only): period (end defaults to start + 1 year), price, auto-termination clause, fee terms (LUMP, STAG + advance %, AFTR). Requires WRITE permission.
          */
@@ -215,14 +215,14 @@ export interface paths {
         };
         /**
          * Get role detail / Chi tiết vai trò
-         * @description **Screens:** VPA004701
+         * @description **Screens:** VPA09020401
          *
          *     Returns detail of a single role. / Trả về chi tiết một vai trò.
          */
         get: operations["getRole"];
         /**
          * Update role / Cập nhật vai trò
-         * @description **Screens:** VPA004701
+         * @description **Screens:** VPA09020401
          *
          *     Updates role name, group, and use status. Requires WRITE permission. / Cập nhật tên, nhóm và trạng thái vai trò. Yêu cầu quyền GHI.
          */
@@ -230,7 +230,7 @@ export interface paths {
         post?: never;
         /**
          * Delete role / Xóa vai trò
-         * @description **Screens:** VPA004701
+         * @description **Screens:** VPA09020401
          *
          *     Deletes a role. Fails if any user or menu mappings still reference it. Requires WRITE permission. / Xóa vai trò. Thất bại nếu còn ánh xạ người dùng hoặc menu. Yêu cầu quyền GHI.
          */
@@ -249,28 +249,28 @@ export interface paths {
         };
         /**
          * Get role menu permissions matrix / Lấy ma trận phân quyền menu của vai trò
-         * @description **Screens:** VPA004701
+         * @description **Screens:** VPA09020401
          *
          *     Returns complete menu tree with assigned permission levels for a given role. / Trả về toàn bộ cây menu kèm mức phân quyền được gán cho vai trò chỉ định.
          */
         get: operations["getRoleMenuPermissions"];
         /**
          * Batch save role menu permissions / Lưu hàng loạt phân quyền menu cho vai trò
-         * @description **Screens:** VPA004701
+         * @description **Screens:** VPA09020401
          *
          *     Batch updates menu permissions for a role. Items with NONE are revoked. Requires WRITE permission. / Lưu hàng loạt phân quyền menu cho vai trò. Các mục có quyền NONE sẽ bị thu hồi. Yêu cầu quyền GHI.
          */
         put: operations["batchSaveRoleMenuPermissions"];
         /**
          * Assign single menu permission to role / Gán phân quyền menu đơn lẻ cho vai trò
-         * @description **Screens:** VPA004701
+         * @description **Screens:** VPA09020401
          *
          *     Assigns or updates a single menu permission. Requires WRITE permission. / Gán hoặc cập nhật phân quyền của một menu cho vai trò. Yêu cầu quyền GHI.
          */
         post: operations["assignRoleMenuPermission"];
         /**
          * Revoke all menu permissions from role / Thu hồi toàn bộ phân quyền menu của vai trò
-         * @description **Screens:** VPA004701
+         * @description **Screens:** VPA09020401
          *
          *     Removes all menu permission mappings for a role. Requires WRITE permission. / Xóa toàn bộ phân quyền menu của vai trò. Yêu cầu quyền GHI.
          */
@@ -289,14 +289,14 @@ export interface paths {
         };
         /**
          * Get role group detail / Chi tiết nhóm vai trò
-         * @description **Screens:** VPA004601, VPA0046P01
+         * @description **Screens:** VPA09020301, VPA090203P01
          *
          *     Returns role group detail with nested role list. / Trả về chi tiết nhóm vai trò kèm danh sách vai trò con.
          */
         get: operations["getRoleGroup"];
         /**
          * Update role group / Cập nhật nhóm vai trò
-         * @description **Screens:** VPA004601, VPA0046P01
+         * @description **Screens:** VPA09020301, VPA090203P01
          *
          *     Updates name and use status of a role group. Requires WRITE permission. / Cập nhật tên và trạng thái sử dụng của nhóm vai trò. Yêu cầu quyền GHI.
          */
@@ -304,7 +304,7 @@ export interface paths {
         post?: never;
         /**
          * Delete role group / Xóa nhóm vai trò
-         * @description **Screens:** VPA004601, VPA0046P01
+         * @description **Screens:** VPA09020301, VPA090203P01
          *
          *     Deletes a role group. Fails if the group still has roles. Requires WRITE permission. / Xóa nhóm vai trò. Thất bại nếu nhóm còn vai trò con. Yêu cầu quyền GHI.
          */
@@ -324,7 +324,7 @@ export interface paths {
         get?: never;
         /**
          * Save role assignees / Lưu người phụ trách vai trò
-         * @description **Screens:** VPA004601, VPA0046P01
+         * @description **Screens:** VPA09020301, VPA090203P01
          *
          *     Adds and removes assignees of a role in one call (idempotent). Requires WRITE permission. / Thêm và gỡ người phụ trách của vai trò trong một lần gọi (idempotent). Yêu cầu quyền GHI.
          */
@@ -345,14 +345,14 @@ export interface paths {
         };
         /**
          * Get contract
-         * @description **Screens:** VPA001301, VPA0013P01, VPA0013P02
+         * @description **Screens:** VPA05020101, VPA050201P01, VPA050201P02
          *
          *     Contract or annex with NPLs, draft / signed documents, fees, annexes and terminations. Requires READ permission.
          */
         get: operations["getContract_1"];
         /**
          * Edit the contract draft
-         * @description **Screens:** VPA001301, VPA0013P01, VPA0013P02
+         * @description **Screens:** VPA05020101, VPA050201P01, VPA050201P02
          *
          *     Step 13 / annex 2 (PREPR only): period (end defaults to start + 1 year), price, auto-termination clause, fee terms (LUMP, STAG + advance %, AFTR). Requires WRITE permission.
          */
@@ -373,12 +373,12 @@ export interface paths {
         };
         /**
          * Detail / Chi tiết
-         * @description **Screens:** VPA005101, VPA0051P01
+         * @description **Screens:** VPA09040101, VPA090401P01
          */
         get: operations["detail_1"];
         /**
          * Update / Cập nhật
-         * @description **Screens:** VPA005101, VPA0051P01
+         * @description **Screens:** VPA09040101, VPA090401P01
          */
         put: operations["update_4"];
         post?: never;
@@ -397,14 +397,14 @@ export interface paths {
         };
         /**
          * Get fee item / Chi tiết mục phí
-         * @description **Screens:** VPA004101, VPA0041P01
+         * @description **Screens:** VPA09010301, VPA090103P01
          *
          *     editable=false while the item is in use. / editable=false khi đang sử dụng.
          */
         get: operations["getFee"];
         /**
          * Update fee item / Sửa mục phí
-         * @description **Screens:** VPA004101, VPA0041P01
+         * @description **Screens:** VPA09010301, VPA090103P01
          *
          *     Returns 409 (FEE001) while the item is in use. / Trả 409 khi đang sử dụng.
          */
@@ -425,24 +425,24 @@ export interface paths {
         };
         /**
          * Get NPL LOT
-         * @description **Screens:** VPA001901
+         * @description **Screens:** VPA04050001
          *
-         *     Selected LOT information. Requires READ on A03010400.
+         *     Selected LOT information. Requires READ on A04050000.
          */
         get: operations["getNplLot"];
         /**
          * Edit an NPL LOT
-         * @description **Screens:** VPA001901
+         * @description **Screens:** VPA04050001
          *
-         *     Changes LOT ID and name. Requires WRITE on A03010400.
+         *     Changes LOT ID and name. Requires WRITE on A04050000.
          */
         put: operations["updateNplLot"];
         post?: never;
         /**
          * Delete an NPL LOT
-         * @description **Screens:** VPA001901
+         * @description **Screens:** VPA04050001
          *
-         *     Hard delete; 409 while any NPL, service application or change history still references the LOT. Requires WRITE on A03010400.
+         *     Hard delete; 409 while any NPL, service application or change history still references the LOT. Requires WRITE on A04050000.
          */
         delete: operations["deleteNplLot"];
         options?: never;
@@ -459,16 +459,16 @@ export interface paths {
         };
         /**
          * List NPLs of a LOT
-         * @description **Screens:** VPA001901
+         * @description **Screens:** VPA04050001
          *
-         *     NPLs currently in the LOT. Requires READ on A03010400.
+         *     NPLs currently in the LOT. Requires READ on A04050000.
          */
         get: operations["getLotNpls"];
         /**
          * Save NPLs of a LOT
-         * @description **Screens:** VPA001901
+         * @description **Screens:** VPA04050001
          *
-         *     Replaces the LOT members with the given list (add and remove in one transaction). 409 when an NPL is in another LOT or is Under Contract/Sale Completed (UC/SD); 400 for unknown NPL codes. Requires WRITE on A03010400.
+         *     Replaces the LOT members with the given list (add and remove in one transaction). 409 when an NPL is in another LOT or is Under Contract/Sale Completed (UC/SD); 400 for unknown NPL codes. Requires WRITE on A04050000.
          */
         put: operations["replaceLotNpls"];
         post?: never;
@@ -487,14 +487,14 @@ export interface paths {
         };
         /**
          * Get notification template / Chi tiết mẫu thông báo
-         * @description **Screens:** VPA005501, VPA0055P01
+         * @description **Screens:** VPA09050101, VPA090501P01
          *
          *     With the content; editable = false while in use. Requires READ permission.
          */
         get: operations["getMessage"];
         /**
          * Update notification template / Sửa mẫu thông báo
-         * @description **Screens:** VPA005501, VPA0055P01
+         * @description **Screens:** VPA09050101, VPA090501P01
          *
          *     Only while not in use: 409 (NTF002) otherwise. Requires WRITE permission.
          */
@@ -515,14 +515,14 @@ export interface paths {
         };
         /**
          * Get menu / Chi tiết menu
-         * @description **Screens:** VPA004401, VPA0044P01
+         * @description **Screens:** VPA09020101, VPA090201P01
          *
          *     Includes child count. / Kèm số menu con.
          */
         get: operations["getMenu"];
         /**
          * Update menu / Sửa menu
-         * @description **Screens:** VPA004401, VPA0044P01
+         * @description **Screens:** VPA09020101, VPA090201P01
          *
          *     A menu in use can only be switched to not in use (409 MNU007 otherwise). / Menu đang dùng chỉ được tắt.
          */
@@ -530,7 +530,7 @@ export interface paths {
         post?: never;
         /**
          * Delete menu / Xóa menu
-         * @description **Screens:** VPA004401, VPA0044P01
+         * @description **Screens:** VPA09020101, VPA090201P01
          *
          *     Deletes the menu and its subtree; all must be not in use. / Xóa menu và cây con, tất cả phải không sử dụng.
          */
@@ -549,14 +549,14 @@ export interface paths {
         };
         /**
          * Get menu permission matrix / Ma trận phân quyền menu
-         * @description **Screens:** VPA004701
+         * @description **Screens:** VPA09020401
          *
          *     Roles as columns, menus as rows. Supports menuSeCd=A (Admin) and menuSeCd=W (User Web member grades); other values return 400 PRM003. / Cột là vai trò/hạng thành viên, dòng là menu.
          */
         get: operations["getMatrix"];
         /**
          * Save menu permission matrix / Lưu ma trận phân quyền menu
-         * @description **Screens:** VPA004701
+         * @description **Screens:** VPA09020401
          *
          *     Replaces the permissions of every role sent (supports A and W). ADMIN is fixed (400 PRM004); a caller cannot edit a role they hold (403 PRM007). / Thay toàn bộ quyền của các vai trò gửi lên.
          */
@@ -577,16 +577,16 @@ export interface paths {
         };
         /**
          * Get member details
-         * @description **Screens:** VPA000801, VPA0002P01, VPA0008P01
+         * @description **Screens:** VPA03010001, VPA030100P02, VPA030100P01
          *
-         *     Retrieves complete member profile details for popup screens VPA0002P01 and VPA0008P01. Requires READ permission on sign-up (A01010000) or member management (A01020000).
+         *     Retrieves complete member profile details for popup screens VPA030100P02 and VPA030100P01. Requires READ permission on sign-up (A03010000) or member management (A03010000).
          */
         get: operations["getMember"];
         /**
          * Update member information
-         * @description **Screens:** VPA000801, VPA0002P01, VPA0008P01
+         * @description **Screens:** VPA03010001, VPA030100P02, VPA030100P01
          *
-         *     Screens VPA0002P01 and VPA0008P01 Edit button: updates member profile information. Requires WRITE permission on sign-up (A01010000) or member management (A01020000).
+         *     Screens VPA030100P02 and VPA030100P01 Edit button: updates member profile information. Requires WRITE permission on sign-up (A03010000) or member management (A03010000).
          */
         put: operations["updateMember"];
         post?: never;
@@ -606,9 +606,9 @@ export interface paths {
         get?: never;
         /**
          * Unlock member account / Mở khoá tài khoản hội viên
-         * @description **Screens:** VPA000801, VPA0002P01, VPA0008P01
+         * @description **Screens:** VPA03010001, VPA030100P02, VPA030100P01
          *
-         *     VPA030100P02 [Unlock] (I01): a locked account (status L or 5 failed logins) becomes Active and the failed login count is reset. 409 when the account is not locked. Requires WRITE on menu A01010000. / Tài khoản bị khoá chuyển về Hoạt động, đặt lại số lần đăng nhập sai.
+         *     VPA030100P02 [Unlock] (I01): a locked account (status L or 5 failed logins) becomes Active and the failed login count is reset. 409 when the account is not locked. Requires WRITE on menu A03010000. / Tài khoản bị khoá chuyển về Hoạt động, đặt lại số lần đăng nhập sai.
          */
         put: operations["unlock"];
         post?: never;
@@ -628,7 +628,7 @@ export interface paths {
         get?: never;
         /**
          * Reassign the officer in charge
-         * @description **Screens:** VPA000801, VPA0002P01, VPA0008P01
+         * @description **Screens:** VPA03010001, VPA030100P02, VPA030100P01
          *
          *     Step 12-1: hands a received sign-up whose processing step is open to another employee holding the processing role. Requires WRITE permission.
          */
@@ -649,14 +649,14 @@ export interface paths {
         };
         /**
          * Get province detail / Chi tiết Tỉnh/Thành phố
-         * @description **Screens:** VPA004901, VPA0049P01
+         * @description **Screens:** VPA09030201, VPA090302P01
          *
          *     Returns province detail including its district list. / Trả về chi tiết Tỉnh/Thành phố kèm danh sách Quận/Huyện.
          */
         get: operations["getProvinceDetail"];
         /**
          * Update province / Cập nhật Tỉnh/Thành phố
-         * @description **Screens:** VPA004901, VPA0049P01
+         * @description **Screens:** VPA09030201, VPA090302P01
          *
          *     Updates an existing province. Requires WRITE permission. / Cập nhật Tỉnh/Thành phố. Yêu cầu quyền GHI.
          */
@@ -664,7 +664,7 @@ export interface paths {
         post?: never;
         /**
          * Delete province / Xóa Tỉnh/Thành phố
-         * @description **Screens:** VPA004901, VPA0049P01
+         * @description **Screens:** VPA09030201, VPA090302P01
          *
          *     Deletes a province. Fails if child districts or references exist. Requires WRITE permission. / Xóa Tỉnh/Thành phố. Yêu cầu quyền GHI.
          */
@@ -683,14 +683,14 @@ export interface paths {
         };
         /**
          * Get district detail / Chi tiết Quận/Huyện
-         * @description **Screens:** VPA004901, VPA0049P01
+         * @description **Screens:** VPA09030201, VPA090302P01
          *
          *     Returns detail of a single district. / Trả về chi tiết một Quận/Huyện.
          */
         get: operations["getDistrictDetail"];
         /**
          * Update district / Cập nhật Quận/Huyện
-         * @description **Screens:** VPA004901, VPA0049P01
+         * @description **Screens:** VPA09030201, VPA090302P01
          *
          *     Updates an existing district. Requires WRITE permission. / Cập nhật Quận/Huyện. Yêu cầu quyền GHI.
          */
@@ -698,7 +698,7 @@ export interface paths {
         post?: never;
         /**
          * Delete district / Xóa Quận/Huyện
-         * @description **Screens:** VPA004901, VPA0049P01
+         * @description **Screens:** VPA09030201, VPA090302P01
          *
          *     Deletes a district. Fails if member or debtor references exist. Requires WRITE permission. / Xóa Quận/Huyện. Yêu cầu quyền GHI.
          */
@@ -718,14 +718,14 @@ export interface paths {
         get?: never;
         /**
          * Update label / Sửa nhãn
-         * @description **Screens:** VPA005301, VPA0053P01
+         * @description **Screens:** VPA09040301, VPA090403P01
          *
          *     Null fields keep stored values; blank translation text removes it. / Trường null giữ nguyên.
          */
         put: operations["update_5"];
         /**
          * Create label / Tạo nhãn
-         * @description **Screens:** VPA005301, VPA0053P01
+         * @description **Screens:** VPA09040301, VPA090403P01
          *
          *     409 LBL002 if the key exists; 400 LBL004 for menu labels. / Trùng khoá trả 409.
          */
@@ -745,14 +745,14 @@ export interface paths {
         };
         /**
          * Get financial institution detail / Chi tiết Tổ chức tài chính
-         * @description **Screens:** VPA005001, VPA0050P01
+         * @description **Screens:** VPA09030301, VPA090303P01
          *
          *     Returns institution detail including its branch list. / Trả về chi tiết tổ chức tài chính kèm danh sách chi nhánh.
          */
         get: operations["getInstitutionDetail"];
         /**
          * Update financial institution / Cập nhật Tổ chức tài chính
-         * @description **Screens:** VPA005001, VPA0050P01
+         * @description **Screens:** VPA09030301, VPA090303P01
          *
          *     Updates an existing financial institution. Requires WRITE permission. / Cập nhật tổ chức tài chính. Yêu cầu quyền GHI.
          */
@@ -760,7 +760,7 @@ export interface paths {
         post?: never;
         /**
          * Delete financial institution / Xóa Tổ chức tài chính
-         * @description **Screens:** VPA005001, VPA0050P01
+         * @description **Screens:** VPA09030301, VPA090303P01
          *
          *     Deletes a financial institution. Fails if child branches or references exist. Requires WRITE permission. / Xóa tổ chức tài chính. Yêu cầu quyền GHI.
          */
@@ -779,14 +779,14 @@ export interface paths {
         };
         /**
          * Get branch detail / Chi tiết Chi nhánh
-         * @description **Screens:** VPA005001, VPA0050P01
+         * @description **Screens:** VPA09030301, VPA090303P01
          *
          *     Returns detail of a single branch. / Trả về chi tiết một chi nhánh.
          */
         get: operations["getBranchDetail"];
         /**
          * Update branch / Cập nhật Chi nhánh
-         * @description **Screens:** VPA005001, VPA0050P01
+         * @description **Screens:** VPA09030301, VPA090303P01
          *
          *     Updates an existing branch. Requires WRITE permission. / Cập nhật chi nhánh. Yêu cầu quyền GHI.
          */
@@ -794,7 +794,7 @@ export interface paths {
         post?: never;
         /**
          * Delete branch / Xóa Chi nhánh
-         * @description **Screens:** VPA005001, VPA0050P01
+         * @description **Screens:** VPA09030301, VPA090303P01
          *
          *     Deletes a branch. Fails if references exist. Requires WRITE permission. / Xóa chi nhánh. Yêu cầu quyền GHI.
          */
@@ -813,14 +813,14 @@ export interface paths {
         };
         /**
          * Get employee detail / Lấy chi tiết nhân viên
-         * @description **Screens:** VPA004501, VPA0045P01
+         * @description **Screens:** VPA09020201, VPA090202P01
          *
          *     Retrieves full profile of an employee by employee number. / Lấy toàn bộ thông tin chi tiết của nhân viên theo mã nhân viên.
          */
         get: operations["getEmployee"];
         /**
          * Update employee profile / Cập nhật hồ sơ nhân viên
-         * @description **Screens:** VPA004501, VPA0045P01
+         * @description **Screens:** VPA09020201, VPA090202P01
          *
          *     Updates employee profile attributes (name, email, phone, position, status). / Cập nhật các thông tin hồ sơ của nhân viên.
          */
@@ -828,7 +828,7 @@ export interface paths {
         post?: never;
         /**
          * Delete employee / Xóa nhân viên
-         * @description **Screens:** VPA004501, VPA0045P01
+         * @description **Screens:** VPA09020201, VPA090202P01
          *
          *     Deletes an employee record from the system. / Xóa một bản ghi nhân viên khỏi hệ thống.
          */
@@ -848,7 +848,7 @@ export interface paths {
         get?: never;
         /**
          * Unlock employee account / Mở khóa tài khoản nhân viên
-         * @description **Screens:** VPA004501, VPA0045P01
+         * @description **Screens:** VPA09020201, VPA090202P01
          *
          *     Resets login failure attempt count and activates the employee account. / Đặt lại số lần đăng nhập sai và kích hoạt lại tài khoản nhân viên.
          */
@@ -870,7 +870,7 @@ export interface paths {
         get?: never;
         /**
          * Update employee status / Cập nhật trạng thái nhân viên
-         * @description **Screens:** VPA004501, VPA0045P01
+         * @description **Screens:** VPA09020201, VPA090202P01
          *
          *     Updates employee employment/account status (H, L, R, S). / Cập nhật trạng thái làm việc/tài khoản của nhân viên.
          */
@@ -892,7 +892,7 @@ export interface paths {
         get?: never;
         /**
          * Reset / Change employee password / Đổi hoặc đặt lại mật khẩu nhân viên
-         * @description **Screens:** VPA004501, VPA0045P01
+         * @description **Screens:** VPA09020201, VPA090202P01
          *
          *     Resets the login password for the specified employee. / Đặt lại mật khẩu đăng nhập cho nhân viên chỉ định.
          */
@@ -1011,14 +1011,14 @@ export interface paths {
         };
         /**
          * Get NPL announcement detail / Chi tiết thông báo NPL
-         * @description **Screens:** VPA002701, VPA002801, VPA002901, VPA0027P01, VPA0028P01, VPA0029P01
+         * @description **Screens:** VPA07030101, VPA07030201, VPA07030301, VPA070301P01, VPA070302P01, VPA070303P01
          *
          *     tag = document number. contentEditable=false while published. / tag là số văn bản.
          */
         get: operations["getAnnouncement"];
         /**
          * Update NPL announcement content / Sửa nội dung thông báo NPL
-         * @description **Screens:** VPA002701, VPA002801, VPA002901, VPA0027P01, VPA0028P01, VPA0029P01
+         * @description **Screens:** VPA07030101, VPA07030201, VPA07030301, VPA070301P01, VPA070302P01, VPA070303P01
          *
          *     Returns 409 (CNT001) while published. / Trả 409 khi đang đăng.
          */
@@ -1039,14 +1039,14 @@ export interface paths {
         };
         /**
          * Get notice detail / Chi tiết thông báo
-         * @description **Screens:** VPA002301, VPA0023P01
+         * @description **Screens:** VPA07010001, VPA070100P01
          *
          *     Notice detail with attachments. contentEditable=false while published. / Chi tiết kèm tệp đính kèm.
          */
         get: operations["getNotice"];
         /**
          * Update notice content / Sửa nội dung thông báo
-         * @description **Screens:** VPA002301, VPA0023P01
+         * @description **Screens:** VPA07010001, VPA070100P01
          *
          *     Edits title, content and attachments. Returns 409 (CNT001) while published. / Sửa tiêu đề, nội dung, tệp. Trả 409 khi đang đăng.
          */
@@ -1067,14 +1067,14 @@ export interface paths {
         };
         /**
          * Detail / Chi tiết
-         * @description **Screens:** VPA002401, VPA002501, VPA002601, VPA0024P01, VPA0025P01, VPA0026P01
+         * @description **Screens:** VPA07020101, VPA07020201, VPA07020301, VPA070201P01, VPA070202P01, VPA070203P01
          *
          *     Detail with attachments. / Chi tiết kèm tệp đính kèm.
          */
         get: operations["detail_4"];
         /**
          * Edit news content / Sửa nội dung tin
-         * @description **Screens:** VPA002401, VPA002501, VPA002601, VPA0024P01, VPA0025P01, VPA0026P01
+         * @description **Screens:** VPA07020101, VPA07020201, VPA07020301, VPA070201P01, VPA070202P01, VPA070203P01
          *
          *     Returns 409 (CNT001) while published. Category, publication and featured flags are changed with PATCH /{pstNo}/status. / Trả 409 khi đang đăng.
          */
@@ -1113,14 +1113,14 @@ export interface paths {
         };
         /**
          * Detail / Chi tiết
-         * @description **Screens:** VPA003301, VPA0033P01
+         * @description **Screens:** VPA07070001, VPA070700P01
          *
          *     Detail with attachments. / Chi tiết kèm tệp đính kèm.
          */
         get: operations["detail_6"];
         /**
          * Edit legal document / Sửa văn bản
-         * @description **Screens:** VPA003301, VPA0033P01
+         * @description **Screens:** VPA07070001, VPA070700P01
          *
          *     Updates content, document type and publication status in one call. / Cập nhật nội dung, loại và trạng thái.
          */
@@ -1142,7 +1142,7 @@ export interface paths {
         get?: never;
         /**
          * Answer inquiry / Trả lời câu hỏi
-         * @description **Screens:** VPA003001, VPA0030P01
+         * @description **Screens:** VPA07040001, VPA070400P01
          *
          *     Stores the answer (shown in My Page) and e-mails the inquirer. Returns 409 (CNT008) if already answered. / Lưu câu trả lời và gửi email; trả 409 nếu đã trả lời.
          */
@@ -1163,14 +1163,14 @@ export interface paths {
         };
         /**
          * Get FAQ detail / Chi tiết FAQ
-         * @description **Screens:** VPA003101, VPA0031P01
+         * @description **Screens:** VPA07050001, VPA070500P01
          *
          *     title = question, content = answer. / title là câu hỏi, content là câu trả lời.
          */
         get: operations["getFaq"];
         /**
          * Update FAQ question/answer / Sửa câu hỏi và câu trả lời
-         * @description **Screens:** VPA003101, VPA0031P01
+         * @description **Screens:** VPA07050001, VPA070500P01
          *
          *     Returns 409 (CNT001) while published. / Trả 409 khi đang đăng.
          */
@@ -1191,14 +1191,14 @@ export interface paths {
         };
         /**
          * Detail / Chi tiết
-         * @description **Screens:** VPA003401, VPA0034P01
+         * @description **Screens:** VPA07080001, VPA070800P01
          *
          *     Detail with attachments. / Chi tiết kèm tệp đính kèm.
          */
         get: operations["detail_7"];
         /**
          * Edit career posting / Sửa tin tuyển dụng
-         * @description **Screens:** VPA003401, VPA0034P01
+         * @description **Screens:** VPA07080001, VPA070800P01
          *
          *     Updates content, publication status and pin in one call. / Cập nhật nội dung, trạng thái và ghim.
          */
@@ -1219,14 +1219,14 @@ export interface paths {
         };
         /**
          * Get banner / Chi tiết banner
-         * @description **Screens:** VPA003201, VPA0032P01
+         * @description **Screens:** VPA07060101, VPA070601P01
          *
          *     editable=false while in use. / editable=false khi đang sử dụng.
          */
         get: operations["detail_8"];
         /**
          * Edit banner / Sửa banner
-         * @description **Screens:** VPA003201, VPA0032P01
+         * @description **Screens:** VPA07060101, VPA070601P01
          *
          *     Returns 409 (BNR001) while in use. / Trả 409 khi đang sử dụng.
          */
@@ -1271,14 +1271,14 @@ export interface paths {
         };
         /**
          * Get contract
-         * @description **Screens:** VPA001501
+         * @description **Screens:** VPA05020301
          *
          *     Contract or annex with NPLs, draft / signed documents, fees, annexes and terminations. Requires READ permission.
          */
         get: operations["getContract_2"];
         /**
          * Edit the contract draft
-         * @description **Screens:** VPA001501
+         * @description **Screens:** VPA05020301
          *
          *     Step 13 / annex 2 (PREPR only): period (end defaults to start + 1 year), price, auto-termination clause, fee terms (LUMP, STAG + advance %, AFTR). Requires WRITE permission.
          */
@@ -1300,7 +1300,7 @@ export interface paths {
         get?: never;
         /**
          * Save the consulting report
-         * @description **Screens:** VPA001501
+         * @description **Screens:** VPA05020301
          *
          *     Execution 1: report PDF and summary (DRFT) once the contract runs and the advance is paid. Consultant or officer. Requires WRITE permission.
          */
@@ -1322,7 +1322,7 @@ export interface paths {
         get?: never;
         /**
          * Assign the consultant
-         * @description **Screens:** VPA001501
+         * @description **Screens:** VPA05020301
          *
          *     Step 20 (after the draft approval): consultant in charge of the report and additional consultations. Requires WRITE permission.
          */
@@ -1343,14 +1343,14 @@ export interface paths {
         };
         /**
          * Get the additional consulting switch
-         * @description **Screens:** VPA001501
+         * @description **Screens:** VPA05020301
          *
          *     Addition 12: whether members see the additional consulting button. Requires READ permission.
          */
         get: operations["getAdditionalConsultingSetting"];
         /**
          * Change the additional consulting switch
-         * @description **Screens:** VPA001501
+         * @description **Screens:** VPA05020301
          *
          *     Addition 12: show (Y) or hide (N) the additional consulting button to members. Requires WRITE permission.
          */
@@ -1371,14 +1371,14 @@ export interface paths {
         };
         /**
          * Get code group detail / Chi tiết nhóm mã
-         * @description **Screens:** VPA004801, VPA0048P01
+         * @description **Screens:** VPA09030101, VPA090301P01
          *
          *     Returns detail of a single code group. / Trả về thông tin chi tiết một nhóm mã.
          */
         get: operations["getGroupDetail"];
         /**
          * Update code group / Cập nhật nhóm mã
-         * @description **Screens:** VPA004801, VPA0048P01
+         * @description **Screens:** VPA09030101, VPA090301P01
          *
          *     Updates an existing code group. Requires WRITE permission. / Cập nhật thông tin nhóm mã. Yêu cầu quyền GHI.
          */
@@ -1386,7 +1386,7 @@ export interface paths {
         post?: never;
         /**
          * Delete code group / Xóa nhóm mã
-         * @description **Screens:** VPA004801, VPA0048P01
+         * @description **Screens:** VPA09030101, VPA090301P01
          *
          *     Deletes a code group and its detailed codes. Requires WRITE permission. / Xóa nhóm mã và toàn bộ mã chi tiết. Yêu cầu quyền GHI.
          */
@@ -1405,14 +1405,14 @@ export interface paths {
         };
         /**
          * Get auction notice / Chi tiết thông báo đấu giá
-         * @description **Screens:** VPA002001, VPA0020P01
+         * @description **Screens:** VPA06010001, VPA060100P01
          *
          *     Latest cycle, with editable / deletable flags. Requires READ permission.
          */
         get: operations["getAuction"];
         /**
          * Update auction notice / Sửa thông báo đấu giá
-         * @description **Screens:** VPA002001, VPA0020P01
+         * @description **Screens:** VPA06010001, VPA060100P01
          *
          *     Only while RD/AN with approval DR/RJ: 409 AUC002 otherwise. Requires WRITE permission.
          */
@@ -1420,7 +1420,7 @@ export interface paths {
         post?: never;
         /**
          * Delete one auction notice / Xoá một thông báo đấu giá
-         * @description **Screens:** VPA002001, VPA0020P01
+         * @description **Screens:** VPA06010001, VPA060100P01
          *
          *     Same rules as the bulk delete. Requires WRITE permission.
          */
@@ -1440,7 +1440,7 @@ export interface paths {
         get?: never;
         /**
          * Update menu / Cập nhật menu
-         * @description **Screens:** VPA004401, VPA0044P01
+         * @description **Screens:** VPA09020101, VPA090201P01
          *
          *     Updates an existing menu and its associated multilingual labels. Requires ADMIN role and write permission. / Cập nhật menu hiện có và nhãn đa ngôn ngữ liên quan. Yêu cầu vai trò ADMIN và quyền ghi.
          */
@@ -1448,7 +1448,7 @@ export interface paths {
         post?: never;
         /**
          * Delete menu / Xóa menu
-         * @description **Screens:** VPA004401, VPA0044P01
+         * @description **Screens:** VPA09020101, VPA090201P01
          *
          *     Deletes a menu, its role mappings, and associated labels. Rejects if child menus exist. Requires ADMIN role and write permission. / Xóa menu, phân quyền vai trò và nhãn liên quan. Bị từ chối nếu có menu con. Yêu cầu vai trò ADMIN và quyền ghi.
          */
@@ -1467,12 +1467,12 @@ export interface paths {
         };
         /**
          * Get batch job config details / Chi tiết cấu hình batch job
-         * @description **Screens:** VPA005401, VPA0054P01
+         * @description **Screens:** VPA09040401, VPA090404P01
          */
         get: operations["getJob"];
         /**
          * Update batch job config / Cập nhật cấu hình batch job
-         * @description **Screens:** VPA005401, VPA0054P01
+         * @description **Screens:** VPA09040401, VPA090404P01
          */
         put: operations["updateJob"];
         post?: never;
@@ -1492,7 +1492,7 @@ export interface paths {
         get?: never;
         /**
          * Update batch schedule / Cập nhật lịch chạy batch (cron + enabled)
-         * @description **Screens:** VPA005401, VPA0054P01
+         * @description **Screens:** VPA09040401, VPA090404P01
          */
         put: operations["updateSchedule"];
         post?: never;
@@ -1513,7 +1513,7 @@ export interface paths {
         put?: never;
         /**
          * Upload trade documents
-         * @description **Screens:** VPA0010P01, VPA0011P01, VPA0012P01, VPA0013P01, VPA0014P01
+         * @description **Screens:** VPA050101P01, VPA050102P01, VPA050103P01, VPA050201P01, VPA050202P01
          *
          *     Creates a new ATCH_FILE group, or appends to fileUnqId. Requires WRITE permission on the contract menu (scope=contract, default) or the application menu (scope=application) of the kind.
          */
@@ -1533,17 +1533,17 @@ export interface paths {
         };
         /**
          * Search applications
-         * @description **Screens:** VPA001101, VPA0011P01
+         * @description **Screens:** VPA05010201, VPA050102P01
          *
-         *     Paginated list (VPA001101) with the derived approval stage and the action available to the current employee. Drafts are excluded. Requires READ permission.
+         *     Paginated list (VPA05010201) with the derived approval stage and the action available to the current employee. Drafts are excluded. Requires READ permission.
          */
         get: operations["getApplications"];
         put?: never;
         /**
          * Register a paper application
-         * @description **Screens:** VPA001101, VPA0011P01
+         * @description **Screens:** VPA05010201, VPA050102P01
          *
-         *     Manual registration (VPA0011P01) for an active member and a registered NPL or lot. aplySttsCd PRCS receives it at once for tkcgEmpNo. Requires WRITE permission.
+         *     Manual registration (VPA050102P01) for an active member and a registered NPL or lot. aplySttsCd PRCS receives it at once for tkcgEmpNo. Requires WRITE permission.
          */
         post: operations["create_1"];
         delete?: never;
@@ -1563,7 +1563,7 @@ export interface paths {
         put?: never;
         /**
          * Attach scanned documents
-         * @description **Screens:** VPA001101, VPA0011P01
+         * @description **Screens:** VPA05010201, VPA050102P01
          *
          *     Steps 11 / 11-1c: the officer in charge attaches the scan of the posted documents (file group from POST /api/files/upload). Requires WRITE permission.
          */
@@ -1585,7 +1585,7 @@ export interface paths {
         put?: never;
         /**
          * Receive a application
-         * @description **Screens:** VPA001101, VPA0011P01
+         * @description **Screens:** VPA05010201, VPA050102P01
          *
          *     Step 7: RCPT -> PRCS, starts PROC_DSPSL_MDT_RCPT, assigns the officer in charge and mails the applicant the documents to post. Requires WRITE permission.
          */
@@ -1607,7 +1607,7 @@ export interface paths {
         put?: never;
         /**
          * Check documents
-         * @description **Screens:** VPA001101, VPA0011P01
+         * @description **Screens:** VPA05010201, VPA050102P01
          *
          *     Steps 11-1 / 11-1a / 11-2 by the officer in charge: 'Y' -> DCOK (approval can be requested), 'N' -> DCIN with the missing documents. Requires WRITE permission.
          */
@@ -1629,7 +1629,7 @@ export interface paths {
         put?: never;
         /**
          * Cancel a application
-         * @description **Screens:** VPA001101, VPA0011P01
+         * @description **Screens:** VPA05010201, VPA050102P01
          *
          *     Cancellation 1-2: cancels an application that is not approved yet (CNCL) and closes its open approval session. Requires WRITE permission.
          */
@@ -1651,7 +1651,7 @@ export interface paths {
         put?: never;
         /**
          * Request approval
-         * @description **Screens:** VPA001101, VPA0011P01
+         * @description **Screens:** VPA05010201, VPA050102P01
          *
          *     Step 11-3 by the officer in charge, only with complete documents (DCOK). Approval through POST /api/v1/approvals/{atrzHstryId}/approve creates the contract draft (11-5); a rejection keeps DCOK. Requires WRITE permission.
          */
@@ -1671,17 +1671,17 @@ export interface paths {
         };
         /**
          * Search applications
-         * @description **Screens:** VPA001001, VPA0010P01, VPA0004P01, VPA0004P04
+         * @description **Screens:** VPA05010101, VPA050101P01, VPA020500P01, VPA0004P04
          *
-         *     Paginated list (VPA001101) with the derived approval stage and the action available to the current employee. Drafts are excluded. Requires READ permission.
+         *     Paginated list (VPA05010201) with the derived approval stage and the action available to the current employee. Drafts are excluded. Requires READ permission.
          */
         get: operations["getApplications_1"];
         put?: never;
         /**
          * Register a paper application
-         * @description **Screens:** VPA001001, VPA0010P01, VPA0004P01, VPA0004P04
+         * @description **Screens:** VPA05010101, VPA050101P01, VPA020500P01, VPA0004P04
          *
-         *     Manual registration (VPA0011P01) for an active member and a registered NPL or lot. aplySttsCd PRCS receives it at once for tkcgEmpNo. Requires WRITE permission.
+         *     Manual registration (VPA050102P01) for an active member and a registered NPL or lot. aplySttsCd PRCS receives it at once for tkcgEmpNo. Requires WRITE permission.
          */
         post: operations["create_2"];
         delete?: never;
@@ -1701,7 +1701,7 @@ export interface paths {
         put?: never;
         /**
          * Attach scanned documents
-         * @description **Screens:** VPA001001, VPA0010P01, VPA0004P01, VPA0004P04
+         * @description **Screens:** VPA05010101, VPA050101P01, VPA020500P01, VPA0004P04
          *
          *     Steps 11 / 11-1c: the officer in charge attaches the scan of the posted documents (file group from POST /api/files/upload). Requires WRITE permission.
          */
@@ -1723,7 +1723,7 @@ export interface paths {
         put?: never;
         /**
          * Receive a application
-         * @description **Screens:** VPA001001, VPA0010P01, VPA0004P01, VPA0004P04
+         * @description **Screens:** VPA05010101, VPA050101P01, VPA020500P01, VPA0004P04
          *
          *     Step 7: RCPT -> PRCS, starts PROC_DSPSL_MDT_RCPT, assigns the officer in charge and mails the applicant the documents to post. Requires WRITE permission.
          */
@@ -1745,7 +1745,7 @@ export interface paths {
         put?: never;
         /**
          * Check documents
-         * @description **Screens:** VPA001001, VPA0010P01, VPA0004P01, VPA0004P04
+         * @description **Screens:** VPA05010101, VPA050101P01, VPA020500P01, VPA0004P04
          *
          *     Steps 11-1 / 11-1a / 11-2 by the officer in charge: 'Y' -> DCOK (approval can be requested), 'N' -> DCIN with the missing documents. Requires WRITE permission.
          */
@@ -1767,7 +1767,7 @@ export interface paths {
         put?: never;
         /**
          * Cancel a application
-         * @description **Screens:** VPA001001, VPA0010P01, VPA0004P01, VPA0004P04
+         * @description **Screens:** VPA05010101, VPA050101P01, VPA020500P01, VPA0004P04
          *
          *     Cancellation 1-2: cancels an application that is not approved yet (CNCL) and closes its open approval session. Requires WRITE permission.
          */
@@ -1789,7 +1789,7 @@ export interface paths {
         put?: never;
         /**
          * Request approval
-         * @description **Screens:** VPA001001, VPA0010P01, VPA0004P01, VPA0004P04
+         * @description **Screens:** VPA05010101, VPA050101P01, VPA020500P01, VPA0004P04
          *
          *     Step 11-3 by the officer in charge, only with complete documents (DCOK). Approval through POST /api/v1/approvals/{atrzHstryId}/approve creates the contract draft (11-5); a rejection keeps DCOK. Requires WRITE permission.
          */
@@ -1809,17 +1809,17 @@ export interface paths {
         };
         /**
          * Search applications
-         * @description **Screens:** VPA001201, VPA0012P01
+         * @description **Screens:** VPA05010301, VPA050103P01
          *
-         *     Paginated list (VPA001101) with the derived approval stage and the action available to the current employee. Drafts are excluded. Requires READ permission.
+         *     Paginated list (VPA05010201) with the derived approval stage and the action available to the current employee. Drafts are excluded. Requires READ permission.
          */
         get: operations["getApplications_2"];
         put?: never;
         /**
          * Register a paper application
-         * @description **Screens:** VPA001201, VPA0012P01
+         * @description **Screens:** VPA05010301, VPA050103P01
          *
-         *     Manual registration (VPA0011P01) for an active member and a registered NPL or lot. aplySttsCd PRCS receives it at once for tkcgEmpNo. Requires WRITE permission.
+         *     Manual registration (VPA050102P01) for an active member and a registered NPL or lot. aplySttsCd PRCS receives it at once for tkcgEmpNo. Requires WRITE permission.
          */
         post: operations["create_3"];
         delete?: never;
@@ -1839,7 +1839,7 @@ export interface paths {
         put?: never;
         /**
          * Attach scanned documents
-         * @description **Screens:** VPA001201, VPA0012P01
+         * @description **Screens:** VPA05010301, VPA050103P01
          *
          *     Steps 11 / 11-1c: the officer in charge attaches the scan of the posted documents (file group from POST /api/files/upload). Requires WRITE permission.
          */
@@ -1861,7 +1861,7 @@ export interface paths {
         put?: never;
         /**
          * Receive a application
-         * @description **Screens:** VPA001201, VPA0012P01
+         * @description **Screens:** VPA05010301, VPA050103P01
          *
          *     Step 7: RCPT -> PRCS, starts PROC_DSPSL_MDT_RCPT, assigns the officer in charge and mails the applicant the documents to post. Requires WRITE permission.
          */
@@ -1883,7 +1883,7 @@ export interface paths {
         put?: never;
         /**
          * Check documents
-         * @description **Screens:** VPA001201, VPA0012P01
+         * @description **Screens:** VPA05010301, VPA050103P01
          *
          *     Steps 11-1 / 11-1a / 11-2 by the officer in charge: 'Y' -> DCOK (approval can be requested), 'N' -> DCIN with the missing documents. Requires WRITE permission.
          */
@@ -1905,7 +1905,7 @@ export interface paths {
         put?: never;
         /**
          * Cancel a application
-         * @description **Screens:** VPA001201, VPA0012P01
+         * @description **Screens:** VPA05010301, VPA050103P01
          *
          *     Cancellation 1-2: cancels an application that is not approved yet (CNCL) and closes its open approval session. Requires WRITE permission.
          */
@@ -1927,7 +1927,7 @@ export interface paths {
         put?: never;
         /**
          * Request approval
-         * @description **Screens:** VPA001201, VPA0012P01
+         * @description **Screens:** VPA05010301, VPA050103P01
          *
          *     Step 11-3 by the officer in charge, only with complete documents (DCOK). Approval through POST /api/v1/approvals/{atrzHstryId}/approve creates the contract draft (11-5); a rejection keeps DCOK. Requires WRITE permission.
          */
@@ -1947,18 +1947,18 @@ export interface paths {
         };
         /**
          * List screens / Danh sách màn hình
-         * @description **Screens:** VPA005201, VPA0052P01
+         * @description **Screens:** VPA09040201, VPA090402P01
          */
         get: operations["list"];
         put?: never;
         /**
          * Create / Tạo mới
-         * @description **Screens:** VPA005201, VPA0052P01
+         * @description **Screens:** VPA09040201, VPA090402P01
          */
         post: operations["create_4"];
         /**
          * Delete / Xóa
-         * @description **Screens:** VPA005201, VPA0052P01
+         * @description **Screens:** VPA09040201, VPA090402P01
          */
         delete: operations["delete"];
         options?: never;
@@ -1977,7 +1977,7 @@ export interface paths {
         put?: never;
         /**
          * Register a termination
-         * @description **Screens:** VPA001401, VPA0014P01, VPA0014P02
+         * @description **Screens:** VPA05020201, VPA050202P01, VPA050202P02
          *
          *     Termination 1: PROGS -> ENDING with the reason and the fee handling. With the auto-termination clause the contract ends at once. Requires WRITE permission.
          */
@@ -1999,7 +1999,7 @@ export interface paths {
         put?: never;
         /**
          * Attach the signed settlement minutes
-         * @description **Screens:** VPA001401, VPA0014P01, VPA0014P02
+         * @description **Screens:** VPA05020201, VPA050202P01, VPA050202P02
          *
          *     Termination 17 (SGNCP). Requires WRITE permission.
          */
@@ -2021,7 +2021,7 @@ export interface paths {
         put?: never;
         /**
          * Request settlement minutes signature approval
-         * @description **Screens:** VPA001401, VPA0014P01, VPA0014P02
+         * @description **Screens:** VPA05020201, VPA050202P01, VPA050202P02
          *
          *     Termination 15-1 (PROC_DSPSL_MDT_END_SIGN); approval -> SGNCP. Requires WRITE permission.
          */
@@ -2043,7 +2043,7 @@ export interface paths {
         put?: never;
         /**
          * Register the settlement minutes for signature
-         * @description **Screens:** VPA001401, VPA0014P01, VPA0014P02
+         * @description **Screens:** VPA05020201, VPA050202P01, VPA050202P02
          *
          *     Termination 9: form 12 draft, DRFAPR -> SGNWT; mails the member. Requires WRITE permission.
          */
@@ -2065,7 +2065,7 @@ export interface paths {
         put?: never;
         /**
          * Complete the termination
-         * @description **Screens:** VPA001401, VPA0014P01, VPA0014P02
+         * @description **Screens:** VPA05020201, VPA050202P01, VPA050202P02
          *
          *     Termination 18: contract CMPTN (performed) or CNCLN; unsold NPLs hidden; collected fees refunded (RFPL) or open claims cancelled (CLCN); mails the member. Purchase: 409 when another active purchase contract exists or termination conditions are not met (CNCL only before delivery); 400 on invalid reason. Requires WRITE permission.
          */
@@ -2087,7 +2087,7 @@ export interface paths {
         put?: never;
         /**
          * Request termination approval
-         * @description **Screens:** VPA001401, VPA0014P01, VPA0014P02
+         * @description **Screens:** VPA05020201, VPA050202P01, VPA050202P02
          *
          *     Termination 2 (PROC_DSPSL_MDT_END); approval -> DRFAPR. Requires WRITE permission.
          */
@@ -2109,7 +2109,7 @@ export interface paths {
         put?: never;
         /**
          * Attach the signed scan
-         * @description **Screens:** VPA001401, VPA0014P01, VPA0014P02
+         * @description **Screens:** VPA05020201, VPA050202P01, VPA050202P02
          *
          *     Step 31 / annex 18 (SGNCP). Requires WRITE permission.
          */
@@ -2131,7 +2131,7 @@ export interface paths {
         put?: never;
         /**
          * Request signature approval
-         * @description **Screens:** VPA001401, VPA0014P01, VPA0014P02
+         * @description **Screens:** VPA05020201, VPA050202P01, VPA050202P02
          *
          *     Step 29-1 / annex 16-1: the approver checks the member-signed document and signs for VAMC (PROC_DSPSL_MDT_SIGN); approval -> SGNCP. Requires WRITE permission.
          */
@@ -2153,7 +2153,7 @@ export interface paths {
         put?: never;
         /**
          * Record the sale completion
-         * @description **Screens:** VPA001401, VPA0014P01, VPA0014P02
+         * @description **Screens:** VPA05020201, VPA050202P01, VPA050202P02
          *
          *     Step 39: actual price and sale date, NPLs marked sold (SD), remaining fee issued for STAG / AFTR and mailed. Requires WRITE permission.
          */
@@ -2175,7 +2175,7 @@ export interface paths {
         put?: never;
         /**
          * Decide the renewal of an expiring contract
-         * @description **Screens:** VPA001401, VPA0014P01, VPA0014P02
+         * @description **Screens:** VPA05020201, VPA050202P01, VPA050202P02
          *
          *     Expiry 2: EXTEND_ANNEX creates an extension annex; NEW_CONTRACT registers the termination (expired) and a new contract draft; NO_EXTEND registers the termination (expired). Requires WRITE permission.
          */
@@ -2197,7 +2197,7 @@ export interface paths {
         put?: never;
         /**
          * Record a fee refund
-         * @description **Screens:** VPA001401, VPA0014P01, VPA0014P02
+         * @description **Screens:** VPA05020201, VPA050202P01, VPA050202P02
          *
          *     Termination 18: refund transferred (RFPL -> RFCP). Requires WRITE permission.
          */
@@ -2219,7 +2219,7 @@ export interface paths {
         put?: never;
         /**
          * Confirm a fee transfer
-         * @description **Screens:** VPA001401, VPA0014P01, VPA0014P02
+         * @description **Screens:** VPA05020201, VPA050202P01, VPA050202P02
          *
          *     Step 37 / annex 24. Requires WRITE permission.
          */
@@ -2241,7 +2241,7 @@ export interface paths {
         put?: never;
         /**
          * Register the draft for signature
-         * @description **Screens:** VPA001401, VPA0014P01, VPA0014P02
+         * @description **Screens:** VPA05020201, VPA050202P01, VPA050202P02
          *
          *     Step 23 / annex 10: DRFAPR -> SGNWT with the PDF the member prints, signs and posts; mails the member. Requires WRITE permission.
          */
@@ -2263,7 +2263,7 @@ export interface paths {
         put?: never;
         /**
          * Conclude the contract
-         * @description **Screens:** VPA001401, VPA0014P01, VPA0014P02
+         * @description **Screens:** VPA05020201, VPA050202P01, VPA050202P02
          *
          *     Step 32 / annex 19: SGNCP with a scan -> PROGS; first installment (LUMP / STAG advance); NPLs published (step 38) for brokerage contracts and base contract annexes; extension / price annexes update the parent. Requires WRITE permission.
          */
@@ -2285,7 +2285,7 @@ export interface paths {
         put?: never;
         /**
          * Request draft approval
-         * @description **Screens:** VPA001401, VPA0014P01, VPA0014P02
+         * @description **Screens:** VPA05020201, VPA050202P01, VPA050202P02
          *
          *     Step 16 / annex 3: PROC_DSPSL_MDT_CTRT (contract) or PROC_DSPSL_MDT_ANX (annex); approval -> DRFAPR. Requires WRITE permission.
          */
@@ -2307,7 +2307,7 @@ export interface paths {
         put?: never;
         /**
          * Create an annex
-         * @description **Screens:** VPA001401, VPA0014P01, VPA0014P02
+         * @description **Screens:** VPA05020201, VPA050202P01, VPA050202P02
          *
          *     Annex 2: extension (new end date), price change (new price), after-sale or other annex of a brokerage contract in progress. Requires WRITE permission.
          */
@@ -2327,7 +2327,7 @@ export interface paths {
         };
         /**
          * List roles / Danh sách vai trò
-         * @description **Screens:** VPA004701
+         * @description **Screens:** VPA09020401
          *
          *     Returns paginated roles with optional group, use status, and keyword filters. / Trả về danh sách vai trò phân trang với bộ lọc nhóm, trạng thái và từ khóa tùy chọn.
          */
@@ -2335,7 +2335,7 @@ export interface paths {
         put?: never;
         /**
          * Create role / Tạo mới vai trò
-         * @description **Screens:** VPA004701
+         * @description **Screens:** VPA09020401
          *
          *     Creates a new role under a role group. Requires WRITE permission. / Tạo mới vai trò trong nhóm vai trò. Yêu cầu quyền GHI.
          */
@@ -2357,7 +2357,7 @@ export interface paths {
         put?: never;
         /**
          * Batch save role menu permissions (POST alias) / Lưu hàng loạt phân quyền menu (Bí danh POST)
-         * @description **Screens:** VPA004701
+         * @description **Screens:** VPA09020401
          *
          *     POST alias for batch updating menu permissions. Requires WRITE permission. / Bí danh POST để lưu hàng loạt phân quyền menu. Yêu cầu quyền GHI.
          */
@@ -2377,7 +2377,7 @@ export interface paths {
         };
         /**
          * Get user role assignments / Danh sách vai trò của người dùng
-         * @description **Screens:** VPA004701
+         * @description **Screens:** VPA09020401
          *
          *     Returns all roles assigned to a specific user. / Trả về tất cả vai trò được gán cho người dùng chỉ định.
          */
@@ -2385,14 +2385,14 @@ export interface paths {
         put?: never;
         /**
          * Assign role to user / Gán vai trò cho người dùng
-         * @description **Screens:** VPA004701
+         * @description **Screens:** VPA09020401
          *
          *     Assigns a role to a user. Requires WRITE permission. / Gán vai trò cho người dùng. Yêu cầu quyền GHI.
          */
         post: operations["assignRole"];
         /**
          * Revoke role from user / Thu hồi vai trò của người dùng
-         * @description **Screens:** VPA004701
+         * @description **Screens:** VPA09020401
          *
          *     Removes a specific role assignment from a user. Requires WRITE permission. / Xóa gán vai trò cụ thể khỏi người dùng. Yêu cầu quyền GHI.
          */
@@ -2411,7 +2411,7 @@ export interface paths {
         };
         /**
          * List role groups / Danh sách nhóm vai trò
-         * @description **Screens:** VPA004601, VPA0046P01
+         * @description **Screens:** VPA09020301, VPA090203P01
          *
          *     Returns paginated role groups with optional use status and keyword filters. / Trả về danh sách nhóm vai trò phân trang theo bộ lọc.
          */
@@ -2419,7 +2419,7 @@ export interface paths {
         put?: never;
         /**
          * Create role group / Tạo mới nhóm vai trò
-         * @description **Screens:** VPA004601, VPA0046P01
+         * @description **Screens:** VPA09020301, VPA090203P01
          *
          *     Creates a new role group. Requires WRITE permission. / Tạo mới một nhóm vai trò. Yêu cầu quyền GHI.
          */
@@ -2441,7 +2441,7 @@ export interface paths {
         put?: never;
         /**
          * Record the trade conclusion
-         * @description **Screens:** VPA001301, VPA0013P01, VPA0013P02
+         * @description **Screens:** VPA05020101, VPA050201P01, VPA050201P02
          *
          *     Step 38: purchase contract with the holder signed (date, actual price; see dspslCtrtCd for the linked sale contract), remaining fee issued and mailed. Requires WRITE permission.
          */
@@ -2463,7 +2463,7 @@ export interface paths {
         put?: never;
         /**
          * Register a termination
-         * @description **Screens:** VPA001301, VPA0013P01, VPA0013P02
+         * @description **Screens:** VPA05020101, VPA050201P01, VPA050201P02
          *
          *     Termination 1: PROGS -> ENDING with the reason and the fee handling. With the auto-termination clause the contract ends at once. Requires WRITE permission.
          */
@@ -2485,7 +2485,7 @@ export interface paths {
         put?: never;
         /**
          * Attach the signed settlement minutes
-         * @description **Screens:** VPA001301, VPA0013P01, VPA0013P02
+         * @description **Screens:** VPA05020101, VPA050201P01, VPA050201P02
          *
          *     Termination 17 (SGNCP). Requires WRITE permission.
          */
@@ -2507,7 +2507,7 @@ export interface paths {
         put?: never;
         /**
          * Request settlement minutes signature approval
-         * @description **Screens:** VPA001301, VPA0013P01, VPA0013P02
+         * @description **Screens:** VPA05020101, VPA050201P01, VPA050201P02
          *
          *     Termination 15-1 (PROC_DSPSL_MDT_END_SIGN); approval -> SGNCP. Requires WRITE permission.
          */
@@ -2529,7 +2529,7 @@ export interface paths {
         put?: never;
         /**
          * Register the settlement minutes for signature
-         * @description **Screens:** VPA001301, VPA0013P01, VPA0013P02
+         * @description **Screens:** VPA05020101, VPA050201P01, VPA050201P02
          *
          *     Termination 9: form 12 draft, DRFAPR -> SGNWT; mails the member. Requires WRITE permission.
          */
@@ -2551,7 +2551,7 @@ export interface paths {
         put?: never;
         /**
          * Complete the termination
-         * @description **Screens:** VPA001301, VPA0013P01, VPA0013P02
+         * @description **Screens:** VPA05020101, VPA050201P01, VPA050201P02
          *
          *     Termination 18: contract CMPTN (performed) or CNCLN; unsold NPLs hidden; collected fees refunded (RFPL) or open claims cancelled (CLCN); mails the member. Purchase: 409 when another active purchase contract exists or termination conditions are not met (CNCL only before delivery); 400 on invalid reason. Requires WRITE permission.
          */
@@ -2573,7 +2573,7 @@ export interface paths {
         put?: never;
         /**
          * Request termination approval
-         * @description **Screens:** VPA001301, VPA0013P01, VPA0013P02
+         * @description **Screens:** VPA05020101, VPA050201P01, VPA050201P02
          *
          *     Termination 2 (PROC_DSPSL_MDT_END); approval -> DRFAPR. Requires WRITE permission.
          */
@@ -2595,7 +2595,7 @@ export interface paths {
         put?: never;
         /**
          * Attach the signed scan
-         * @description **Screens:** VPA001301, VPA0013P01, VPA0013P02
+         * @description **Screens:** VPA05020101, VPA050201P01, VPA050201P02
          *
          *     Step 31 / annex 18 (SGNCP). Requires WRITE permission.
          */
@@ -2617,7 +2617,7 @@ export interface paths {
         put?: never;
         /**
          * Request signature approval
-         * @description **Screens:** VPA001301, VPA0013P01, VPA0013P02
+         * @description **Screens:** VPA05020101, VPA050201P01, VPA050201P02
          *
          *     Step 29-1 / annex 16-1: the approver checks the member-signed document and signs for VAMC (PROC_DSPSL_MDT_SIGN); approval -> SGNCP. Requires WRITE permission.
          */
@@ -2639,7 +2639,7 @@ export interface paths {
         put?: never;
         /**
          * Decide the renewal of an expiring contract
-         * @description **Screens:** VPA001301, VPA0013P01, VPA0013P02
+         * @description **Screens:** VPA05020101, VPA050201P01, VPA050201P02
          *
          *     Expiration 2 (after the end date passed without a trade): EXTEND_ANNEX creates an extension annex; NEW_CONTRACT registers the termination (expired) and a new contract draft; NO_EXTEND registers the termination (expired). Requires WRITE permission.
          */
@@ -2661,7 +2661,7 @@ export interface paths {
         put?: never;
         /**
          * Record a fee refund
-         * @description **Screens:** VPA001301, VPA0013P01, VPA0013P02
+         * @description **Screens:** VPA05020101, VPA050201P01, VPA050201P02
          *
          *     Termination 18: refund transferred (RFPL -> RFCP). Requires WRITE permission.
          */
@@ -2683,7 +2683,7 @@ export interface paths {
         put?: never;
         /**
          * Confirm a fee transfer
-         * @description **Screens:** VPA001301, VPA0013P01, VPA0013P02
+         * @description **Screens:** VPA05020101, VPA050201P01, VPA050201P02
          *
          *     Step 37 / annex 24. Requires WRITE permission.
          */
@@ -2705,7 +2705,7 @@ export interface paths {
         put?: never;
         /**
          * Register the draft for signature
-         * @description **Screens:** VPA001301, VPA0013P01, VPA0013P02
+         * @description **Screens:** VPA05020101, VPA050201P01, VPA050201P02
          *
          *     Step 23 / annex 10: DRFAPR -> SGNWT with the PDF the member prints, signs and posts; mails the member. Requires WRITE permission.
          */
@@ -2727,7 +2727,7 @@ export interface paths {
         put?: never;
         /**
          * Record the delivery
-         * @description **Screens:** VPA001301, VPA0013P01, VPA0013P02
+         * @description **Screens:** VPA05020101, VPA050201P01, VPA050201P02
          *
          *     Step 40: handover completed after the trade conclusion. Requires WRITE permission.
          */
@@ -2749,7 +2749,7 @@ export interface paths {
         put?: never;
         /**
          * Conclude the contract
-         * @description **Screens:** VPA001301, VPA0013P01, VPA0013P02
+         * @description **Screens:** VPA05020101, VPA050201P01, VPA050201P02
          *
          *     Step 32 / annex 19: SGNCP with a scan -> PROGS; first installment (LUMP / STAG advance); NPLs published (step 38) for brokerage contracts and base contract annexes; extension / price annexes update the parent. Requires WRITE permission.
          */
@@ -2771,7 +2771,7 @@ export interface paths {
         put?: never;
         /**
          * Request draft approval
-         * @description **Screens:** VPA001301, VPA0013P01, VPA0013P02
+         * @description **Screens:** VPA05020101, VPA050201P01, VPA050201P02
          *
          *     Step 16 / annex 3: PROC_DSPSL_MDT_CTRT (contract) or PROC_DSPSL_MDT_ANX (annex); approval -> DRFAPR. Requires WRITE permission.
          */
@@ -2793,7 +2793,7 @@ export interface paths {
         put?: never;
         /**
          * Create an annex
-         * @description **Screens:** VPA001301, VPA0013P01, VPA0013P02
+         * @description **Screens:** VPA05020101, VPA050201P01, VPA050201P02
          *
          *     Extension 1 - 4: extension annex (new end date) of a purchase brokerage contract in progress; then the shared lifecycle with PROC_PUR_MDT_ANX. Requires WRITE permission.
          */
@@ -2813,18 +2813,18 @@ export interface paths {
         };
         /**
          * List programs / Danh sách chương trình
-         * @description **Screens:** VPA005101, VPA0051P01
+         * @description **Screens:** VPA09040101, VPA090401P01
          */
         get: operations["list_1"];
         put?: never;
         /**
          * Create / Tạo mới
-         * @description **Screens:** VPA005101, VPA0051P01
+         * @description **Screens:** VPA09040101, VPA090401P01
          */
         post: operations["create_5"];
         /**
          * Delete / Xóa
-         * @description **Screens:** VPA005101, VPA0051P01
+         * @description **Screens:** VPA09040101, VPA090401P01
          */
         delete: operations["delete_1"];
         options?: never;
@@ -2841,7 +2841,7 @@ export interface paths {
         };
         /**
          * List fee items / Danh sách mục phí
-         * @description **Screens:** VPA004101, VPA0041P01
+         * @description **Screens:** VPA09010301, VPA090103P01
          *
          *     Ordered by batch, category (Annual fee, Consulting, Brokerage) and display order. / Sắp theo đợt, loại phí và thứ tự.
          */
@@ -2849,14 +2849,14 @@ export interface paths {
         put?: never;
         /**
          * Register fee item / Đăng ký mục phí
-         * @description **Screens:** VPA004101, VPA0041P01
+         * @description **Screens:** VPA09010301, VPA090103P01
          *
          *     Fee code is generated; the item joins the current batch and starts not in use. / Mã phí tự sinh, mặc định không sử dụng.
          */
         post: operations["createFee"];
         /**
          * Delete fee items / Xóa mục phí
-         * @description **Screens:** VPA004101, VPA0041P01
+         * @description **Screens:** VPA09010301, VPA090103P01
          *
          *     Only items not in use and not referenced by an application fee group. / Chỉ mục không sử dụng và chưa được tham chiếu.
          */
@@ -2875,17 +2875,17 @@ export interface paths {
         };
         /**
          * Search NPL LOTs
-         * @description **Screens:** VPA001901
+         * @description **Screens:** VPA04050001
          *
-         *     LOT list with filters, sort and paging. Requires READ on A03010400.
+         *     LOT list with filters, sort and paging. Requires READ on A04050000.
          */
         get: operations["getNplLots"];
         put?: never;
         /**
          * Register an NPL LOT
-         * @description **Screens:** VPA001901
+         * @description **Screens:** VPA04050001
          *
-         *     Creates an empty LOT; LOT ID must be unique (case-insensitive), else 409. Requires WRITE on A03010400.
+         *     Creates an empty LOT; LOT ID must be unique (case-insensitive), else 409. Requires WRITE on A04050000.
          */
         post: operations["createNplLot"];
         delete?: never;
@@ -2903,7 +2903,7 @@ export interface paths {
         };
         /**
          * List notification templates / Danh sách mẫu thông báo
-         * @description **Screens:** VPA005501, VPA0055P01
+         * @description **Screens:** VPA09050101, VPA090501P01
          *
          *     Filters: registration period, status (useYns), processing type, title. Sort: menuCd, notiMediaSe, prcsSttsCd, notiTtl, mdfcnDt (default newest registration). Requires READ permission.
          */
@@ -2911,14 +2911,14 @@ export interface paths {
         put?: never;
         /**
          * Register notification template / Đăng ký mẫu thông báo
-         * @description **Screens:** VPA005501, VPA0055P01
+         * @description **Screens:** VPA09050101, VPA090501P01
          *
          *     Starts not in use unless useYn = Y. Staff recipients (EMP) need roleGroupId. 409 (NTF003) when another template in use has the same menu, processing type, medium, recipient and language. Requires WRITE permission.
          */
         post: operations["createMessage"];
         /**
          * Delete notification templates / Xoá mẫu thông báo
-         * @description **Screens:** VPA005501, VPA0055P01
+         * @description **Screens:** VPA09050101, VPA090501P01
          *
          *     All or nothing: 404 (NTF001) for an unknown ID, 409 (NTF002) when one is in use. Requires WRITE permission.
          */
@@ -2937,7 +2937,7 @@ export interface paths {
         };
         /**
          * List menus / Danh sách menu
-         * @description **Screens:** VPA004401, VPA0044P01
+         * @description **Screens:** VPA09020101, VPA090201P01
          *
          *     Flat tree of one menu type (W/A) including not-in-use menus, with VN and EN names. / Cây phẳng theo loại menu, gồm menu không sử dụng.
          */
@@ -2945,7 +2945,7 @@ export interface paths {
         put?: never;
         /**
          * Create menu / Tạo menu
-         * @description **Screens:** VPA004401, VPA0044P01
+         * @description **Screens:** VPA09020101, VPA090201P01
          *
          *     New menus start not in use. / Menu mới mặc định không sử dụng.
          */
@@ -2965,10 +2965,10 @@ export interface paths {
         };
         /**
          * Search members / Tìm kiếm hội viên
-         * @description **Screens:** VPA000801, VPA0002P01, VPA0008P01
+         * @description **Screens:** VPA03010001, VPA030100P02, VPA030100P01
          *
-         *     VPA03010001 member list, paginated. Requires READ on menu A01010000.
-         *     / Danh sách hội viên có phân trang. Cần quyền xem menu A01010000.
+         *     VPA03010001 member list, paginated. Requires READ on menu A03010000.
+         *     / Danh sách hội viên có phân trang. Cần quyền xem menu A03010000.
          *
          *     Filters (optional; different filters = AND, several values of one list = OR):
          *     - aprvFromDt / aprvToDt: approval date (became a General Member); start after end -> 400 (E07)
@@ -2987,7 +2987,7 @@ export interface paths {
         put?: never;
         /**
          * Register member from admin channel
-         * @description **Screens:** VPA000801, VPA0002P01, VPA0008P01
+         * @description **Screens:** VPA03010001, VPA030100P02, VPA030100P01
          *
          *     Screen VPA03010001 'New' -> VPA030100P01: registers a new member from the admin channel. Matches client member registration schema. Requires WRITE permission.
          */
@@ -3009,9 +3009,9 @@ export interface paths {
         put?: never;
         /**
          * Resend temporary password / Gửi lại mật khẩu tạm thời
-         * @description **Screens:** VPA000801, VPA0002P01, VPA0008P01
+         * @description **Screens:** VPA03010001, VPA030100P02, VPA030100P01
          *
-         *     VPA030100P02 [Resend Temporary Password] (I02): for a member registered by staff (Offline) who has not set a password yet, creates a new temporary password and e-mails it; the previous temporary password and password setup link stop working. 409 for a web sign-up or once the member has set a password. Requires WRITE on menu A01010000. / Tạo mật khẩu tạm mới và gửi mail; mật khẩu tạm cũ hết hiệu lực.
+         *     VPA030100P02 [Resend Temporary Password] (I02): for a member registered by staff (Offline) who has not set a password yet, creates a new temporary password and e-mails it; the previous temporary password and password setup link stop working. 409 for a web sign-up or once the member has set a password. Requires WRITE on menu A03010000. / Tạo mật khẩu tạm mới và gửi mail; mật khẩu tạm cũ hết hiệu lực.
          */
         post: operations["resendTemporaryPassword"];
         delete?: never;
@@ -3031,9 +3031,9 @@ export interface paths {
         put?: never;
         /**
          * Request document supplement / Yêu cầu bổ sung hồ sơ
-         * @description **Screens:** VPA000801, VPA0002P01, VPA0008P01
+         * @description **Screens:** VPA03010001, VPA030100P02, VPA030100P01
          *
-         *     Pending sign-up (status P) -> Supplement Requested (U); the note is mailed to the applicant, who re-applies on the platform. 409 when the member is not pending. Requires WRITE on menu A01010000. / Hồ sơ chờ duyệt chuyển sang Yêu cầu bổ sung, gửi mail cho người đăng ký.
+         *     Pending sign-up (status P) -> Supplement Requested (U); the note is mailed to the applicant, who re-applies on the platform. 409 when the member is not pending. Requires WRITE on menu A03010000. / Hồ sơ chờ duyệt chuyển sang Yêu cầu bổ sung, gửi mail cho người đăng ký.
          */
         post: operations["requestSupplement"];
         delete?: never;
@@ -3053,9 +3053,9 @@ export interface paths {
         put?: never;
         /**
          * Request member restoration / Yêu cầu khôi phục hội viên
-         * @description **Screens:** VPA000801, VPA0002P01, VPA0008P01
+         * @description **Screens:** VPA03010001, VPA030100P02, VPA030100P01
          *
-         *     VPA030100P03 (C05): starts the restoration approval (PROC_MBR_RSTR) of a deleted member within the retention period (deleted date + 1 year). When approved the member returns to the status before deletion and can log in again. 409 when not deleted, retention expired or a request is pending. Requires WRITE on menu A01010000. / Trình khôi phục hội viên đã xoá trong thời hạn lưu giữ.
+         *     VPA030100P03 (C05): starts the restoration approval (PROC_MBR_RSTR) of a deleted member within the retention period (deleted date + 1 year). When approved the member returns to the status before deletion and can log in again. 409 when not deleted, retention expired or a request is pending. Requires WRITE on menu A03010000. / Trình khôi phục hội viên đã xoá trong thời hạn lưu giữ.
          */
         post: operations["requestRestoration"];
         delete?: never;
@@ -3075,7 +3075,7 @@ export interface paths {
         put?: never;
         /**
          * Re-issue the password setup link
-         * @description **Screens:** VPA000801, VPA0002P01, VPA0008P01
+         * @description **Screens:** VPA03010001, VPA030100P02, VPA030100P01
          *
          *     Manual (paper) sign-up, step 22: issues a new one-time password setup link (valid member.signup.password-setup-days) for an active member registered by staff and mails it; the previous link stops working. Local / dev (member.signup.expose-password-setup-link=true) also return devToken. Requires WRITE permission.
          */
@@ -3097,7 +3097,7 @@ export interface paths {
         put?: never;
         /**
          * Confirm membership fee deposit
-         * @description **Screens:** VPA000801, VPA0002P01, VPA0008P01
+         * @description **Screens:** VPA03010001, VPA030100P02, VPA030100P01
          *
          *     Records the membership fee transfer checked by the officer. A general member becomes a full member for one year from today; a full member who received the renewal notice is renewed for one year from the previous period end (the end date cannot be edited). Exempt members have no fee. Requires WRITE permission.
          */
@@ -3119,7 +3119,7 @@ export interface paths {
         put?: never;
         /**
          * Check posted sign-up documents
-         * @description **Screens:** VPA000801, VPA0002P01, VPA0008P01
+         * @description **Screens:** VPA03010001, VPA030100P02, VPA030100P01
          *
          *     After receipt: 'Y' marks the mandatory documents complete (optional scan file group) so the assignee can request approval; 'N' closes the approval session, sends the application back to the applicant (status U) with the supplement note and e-mails them. 'N' must be done by the assignee of the processing step. Requires WRITE permission.
          */
@@ -3141,7 +3141,7 @@ export interface paths {
         put?: never;
         /**
          * Upload scanned member documents
-         * @description **Screens:** VPA000801, VPA0002P01, VPA0008P01
+         * @description **Screens:** VPA03010001, VPA030100P02, VPA030100P01
          *
          *     Sign-up steps 10-12: the applicant posts the mandatory documents and the receptionist uploads their scans (PDF, JPG, JPEG, PNG, max 10MB each, several files per call). Creates a file group, or appends to fileUnqId. Send the returned fileUnqId as scanFileId to POST /{mbrNo}/documents (documentsComplete = Y) to link it to the member; it is then listed in the member files as DOCUMENT_SCAN. Only for a received application (status P). Requires WRITE permission.
          */
@@ -3163,9 +3163,9 @@ export interface paths {
         put?: never;
         /**
          * Request member deletion / Yêu cầu xoá hội viên
-         * @description **Screens:** VPA000801, VPA0002P01, VPA0008P01
+         * @description **Screens:** VPA03010001, VPA030100P02, VPA030100P01
          *
-         *     VPA030100P03 (C04): starts the deletion approval (PROC_MBR_LOSS) with the reason and the chosen approver. When the approver approves (POST /api/v1/approvals/{atrzHstryId}/approve) the member is soft-deleted: status Deleted, login blocked, hidden from the default list, sign-up data kept 1 year. 409 when deleted already, a request is pending, or an application / contract / bid is in progress (E09). Requires WRITE on menu A01010000. / Trình xoá hội viên; người duyệt đồng ý thì xoá mềm.
+         *     VPA030100P03 (C04): starts the deletion approval (PROC_MBR_LOSS) with the reason and the chosen approver. When the approver approves (POST /api/v1/approvals/{atrzHstryId}/approve) the member is soft-deleted: status Deleted, login blocked, hidden from the default list, sign-up data kept 1 year. 409 when deleted already, a request is pending, or an application / contract / bid is in progress (E09). Requires WRITE on menu A03010000. / Trình xoá hội viên; người duyệt đồng ý thì xoá mềm.
          */
         post: operations["requestDeletion"];
         delete?: never;
@@ -3185,7 +3185,7 @@ export interface paths {
         put?: never;
         /**
          * Receive member sign-up
-         * @description **Screens:** VPA000801, VPA0002P01, VPA0008P01
+         * @description **Screens:** VPA03010001, VPA030100P02, VPA030100P01
          *
          *     Starts the approval workflow of a pending, not yet received sign-up and assigns it to an employee holding the processing role. Requires WRITE permission.
          */
@@ -3205,7 +3205,7 @@ export interface paths {
         };
         /**
          * Get member approval context
-         * @description **Screens:** VPA000801, VPA0002P01, VPA0008P01
+         * @description **Screens:** VPA03010001, VPA030100P02, VPA030100P01
          *
          *     Retrieves workflow stage, current actor, summary application data, and steps timeline for popups ADF1234_P08..P12. Requires READ permission.
          */
@@ -3213,7 +3213,7 @@ export interface paths {
         put?: never;
         /**
          * Request member sign-up approval
-         * @description **Screens:** VPA000801, VPA0002P01, VPA0008P01
+         * @description **Screens:** VPA03010001, VPA030100P02, VPA030100P01
          *
          *     Step 2 -> 3: Assignee submits the member sign-up to a designated 1st approver with the SGDN member code and the membership fee terms (ADF1234_P09). The documents must have been checked as complete (409 otherwise). Requires WRITE permission.
          */
@@ -3235,7 +3235,7 @@ export interface paths {
         put?: never;
         /**
          * Batch generate pending members
-         * @description **Screens:** VPA000801, VPA0002P01, VPA0008P01
+         * @description **Screens:** VPA03010001, VPA030100P02, VPA030100P01
          *
          *     Creates multiple pending member sign-up applications with verification attachments for workflow testing and simulation. Local/dev only (404 when member.batch-generate.enabled=false). Requires WRITE permission.
          */
@@ -3255,7 +3255,7 @@ export interface paths {
         };
         /**
          * List provinces / Danh sách Tỉnh/Thành phố
-         * @description **Screens:** VPA004901, VPA0049P01
+         * @description **Screens:** VPA09030201, VPA090302P01
          *
          *     Returns paginated provinces with optional use status and search keyword. / Trả về danh sách Tỉnh/Thành phố phân trang với bộ lọc trạng thái và tìm kiếm.
          */
@@ -3263,7 +3263,7 @@ export interface paths {
         put?: never;
         /**
          * Create province / Tạo mới Tỉnh/Thành phố
-         * @description **Screens:** VPA004901, VPA0049P01
+         * @description **Screens:** VPA09030201, VPA090302P01
          *
          *     Creates a new province. Requires WRITE permission. / Tạo mới Tỉnh/Thành phố. Yêu cầu quyền GHI.
          */
@@ -3285,7 +3285,7 @@ export interface paths {
         put?: never;
         /**
          * Batch save / delete districts of a province / Lưu / xóa hàng loạt Quận/Huyện của Tỉnh
-         * @description **Screens:** VPA004901, VPA0049P01
+         * @description **Screens:** VPA09030201, VPA090302P01
          *
          *     Upserts and deletes districts of a province atomically (delete first, then save). Requires WRITE permission. / Thêm, sửa, xóa hàng loạt trong một giao dịch. Yêu cầu quyền GHI.
          */
@@ -3305,7 +3305,7 @@ export interface paths {
         };
         /**
          * List districts / Danh sách Quận/Huyện
-         * @description **Screens:** VPA004901, VPA0049P01
+         * @description **Screens:** VPA09030201, VPA090302P01
          *
          *     Returns paginated districts with optional province, status, and keyword filters. / Trả về danh sách Quận/Huyện phân trang theo các bộ lọc tùy chọn.
          */
@@ -3313,7 +3313,7 @@ export interface paths {
         put?: never;
         /**
          * Create district / Tạo mới Quận/Huyện
-         * @description **Screens:** VPA004901, VPA0049P01
+         * @description **Screens:** VPA09030201, VPA090302P01
          *
          *     Creates a new district under a province. Requires WRITE permission. / Tạo mới Quận/Huyện trong Tỉnh/Thành phố. Yêu cầu quyền GHI.
          */
@@ -3335,7 +3335,7 @@ export interface paths {
         put?: never;
         /**
          * Suspend and repost / Tạm dừng và đăng lại
-         * @description **Screens:** VPA002201, VPA0022P01
+         * @description **Screens:** VPA06030001, VPA060300P01
          *
          *     AN/IP/PS: the cycle is cancelled (CN) with the reason, its valid bids are cancelled and a new cycle starts as AN (optionally with a new schedule). Bidders keep their qualification. Requires WRITE permission.
          */
@@ -3357,7 +3357,7 @@ export interface paths {
         put?: never;
         /**
          * Start auction / Bắt đầu đấu giá
-         * @description **Screens:** VPA002201, VPA0022P01
+         * @description **Screens:** VPA06030001, VPA060300P01
          *
          *     AN -> IP once the scheduled start is reached and a bidder is qualified (409 AUC008). Requires WRITE permission.
          */
@@ -3379,7 +3379,7 @@ export interface paths {
         put?: never;
         /**
          * Close and confirm winner / Kết thúc và xác nhận người trúng
-         * @description **Screens:** VPA002201, VPA0022P01
+         * @description **Screens:** VPA06030001, VPA060300P01
          *
          *     IP -> AW (highest valid bid, earliest on a tie; award recorded) or FL (no bid) once the scheduled end is reached (409 AUC009). Cannot be undone. Requires WRITE permission.
          */
@@ -3401,7 +3401,7 @@ export interface paths {
         put?: never;
         /**
          * Reload label cache / Nạp lại cache
-         * @description **Screens:** VPA005301, VPA0053P01
+         * @description **Screens:** VPA09040301, VPA090403P01
          *
          *     Clears admin label caches only; the client app expires its own. / Chỉ xoá cache admin.
          */
@@ -3421,7 +3421,7 @@ export interface paths {
         };
         /**
          * List financial institutions / Danh sách Tổ chức tài chính
-         * @description **Screens:** VPA005001, VPA0050P01
+         * @description **Screens:** VPA09030301, VPA090303P01
          *
          *     Returns paginated financial institutions with optional filters. / Trả về danh sách tổ chức tài chính phân trang theo bộ lọc.
          */
@@ -3429,7 +3429,7 @@ export interface paths {
         put?: never;
         /**
          * Create financial institution / Tạo mới Tổ chức tài chính
-         * @description **Screens:** VPA005001, VPA0050P01
+         * @description **Screens:** VPA09030301, VPA090303P01
          *
          *     Creates a new financial institution. Requires WRITE permission. / Tạo mới tổ chức tài chính. Yêu cầu quyền GHI.
          */
@@ -3451,7 +3451,7 @@ export interface paths {
         put?: never;
         /**
          * Batch save / delete branches of an institution / Lưu / xóa hàng loạt Chi nhánh của Tổ chức
-         * @description **Screens:** VPA005001, VPA0050P01
+         * @description **Screens:** VPA09030301, VPA090303P01
          *
          *     Upserts and deletes branches of an institution atomically (delete first, then save). Requires WRITE permission. / Thêm, sửa, xóa hàng loạt trong một giao dịch. Yêu cầu quyền GHI.
          */
@@ -3471,7 +3471,7 @@ export interface paths {
         };
         /**
          * List branches / Danh sách Chi nhánh
-         * @description **Screens:** VPA005001, VPA0050P01
+         * @description **Screens:** VPA09030301, VPA090303P01
          *
          *     Returns paginated branches with optional filters. / Trả về danh sách chi nhánh phân trang theo các bộ lọc tùy chọn.
          */
@@ -3479,7 +3479,7 @@ export interface paths {
         put?: never;
         /**
          * Create branch / Tạo mới Chi nhánh
-         * @description **Screens:** VPA005001, VPA0050P01
+         * @description **Screens:** VPA09030301, VPA090303P01
          *
          *     Creates a new branch. Requires WRITE permission. / Tạo mới chi nhánh. Yêu cầu quyền GHI.
          */
@@ -3499,7 +3499,7 @@ export interface paths {
         };
         /**
          * Search employees / Tìm kiếm nhân viên
-         * @description **Screens:** VPA004501, VPA0045P01
+         * @description **Screens:** VPA09020201, VPA090202P01
          *
          *     Retrieves paginated employee list with optional filters. / Lấy danh sách nhân viên phân trang với các bộ lọc tùy chọn.
          */
@@ -3507,7 +3507,7 @@ export interface paths {
         put?: never;
         /**
          * Create employee / Thêm mới nhân viên
-         * @description **Screens:** VPA004501, VPA0045P01
+         * @description **Screens:** VPA09020201, VPA090202P01
          *
          *     Registers a new employee account. / Đăng ký mới một tài khoản nhân viên vào hệ thống.
          */
@@ -3636,7 +3636,7 @@ export interface paths {
         };
         /**
          * List NPL announcements / Danh sách thông báo NPL
-         * @description **Screens:** VPA002701, VPA002801, VPA002901, VPA0027P01, VPA0028P01, VPA0029P01
+         * @description **Screens:** VPA07030101, VPA07030201, VPA07030301, VPA070301P01, VPA070302P01, VPA070303P01
          *
          *     Filter by type (APPR, SALE, AUCT); pinnedOnly=true for View Major Notices. Keyword matches number, title or document number. / Lọc theo loại; pinnedOnly=true để xem thông báo chính.
          */
@@ -3644,14 +3644,14 @@ export interface paths {
         put?: never;
         /**
          * Create NPL announcement / Tạo thông báo NPL
-         * @description **Screens:** VPA002701, VPA002801, VPA002901, VPA0027P01, VPA0028P01, VPA0029P01
+         * @description **Screens:** VPA07030101, VPA07030201, VPA07030301, VPA070301P01, VPA070302P01, VPA070303P01
          *
          *     Default unpublished. At most 5 announcements can be published with top display. / Mặc định chưa đăng; tối đa 5 bài hiển thị đầu trang.
          */
         post: operations["createAnnouncement"];
         /**
          * Delete NPL announcements / Xóa thông báo NPL
-         * @description **Screens:** VPA002701, VPA002801, VPA002901, VPA0027P01, VPA0028P01, VPA0029P01
+         * @description **Screens:** VPA07030101, VPA07030201, VPA07030301, VPA070301P01, VPA070302P01, VPA070303P01
          *
          *     Soft-deletes the selected announcements. / Xóa mềm các thông báo được chọn.
          */
@@ -3670,7 +3670,7 @@ export interface paths {
         };
         /**
          * List notices / Danh sách thông báo
-         * @description **Screens:** VPA002301, VPA0023P01
+         * @description **Screens:** VPA07010001, VPA070100P01
          *
          *     Paginated notices; pinned first, then newest. sortBy: crtDt, title, viewCount. / Danh sách phân trang; bài ghim trước, sau đó mới nhất.
          */
@@ -3678,14 +3678,14 @@ export interface paths {
         put?: never;
         /**
          * Create notice / Tạo thông báo
-         * @description **Screens:** VPA002301, VPA0023P01
+         * @description **Screens:** VPA07010001, VPA070100P01
          *
          *     Creates a notice (default unpublished). At most 5 pinned notices can be published. / Tạo thông báo (mặc định chưa đăng). Tối đa 5 bài ghim đang đăng.
          */
         post: operations["createNotice"];
         /**
          * Delete notices / Xóa thông báo
-         * @description **Screens:** VPA002301, VPA0023P01
+         * @description **Screens:** VPA07010001, VPA070100P01
          *
          *     Soft-deletes the selected notices. / Xóa mềm các thông báo được chọn.
          */
@@ -3704,7 +3704,7 @@ export interface paths {
         };
         /**
          * List / Danh sách
-         * @description **Screens:** VPA002401, VPA002501, VPA002601, VPA0024P01, VPA0025P01, VPA0026P01
+         * @description **Screens:** VPA07020101, VPA07020201, VPA07020301, VPA070201P01, VPA070202P01, VPA070203P01
          *
          *     Paginated list with the board search conditions. / Danh sách phân trang theo điều kiện tìm kiếm.
          */
@@ -3712,14 +3712,14 @@ export interface paths {
         put?: never;
         /**
          * Register news / Đăng ký tin
-         * @description **Screens:** VPA002401, VPA002501, VPA002601, VPA0024P01, VPA0025P01, VPA0026P01
+         * @description **Screens:** VPA07020101, VPA07020201, VPA07020301, VPA070201P01, VPA070202P01, VPA070203P01
          *
          *     category = NWS, MED or RSC. Default unpublished. / Mặc định chưa đăng.
          */
         post: operations["create_8"];
         /**
          * Delete / Xóa
-         * @description **Screens:** VPA002401, VPA002501, VPA002601, VPA0024P01, VPA0025P01, VPA0026P01
+         * @description **Screens:** VPA07020101, VPA07020201, VPA07020301, VPA070201P01, VPA070202P01, VPA070203P01
          *
          *     Soft-deletes the selected posts. / Xóa mềm các bài được chọn.
          */
@@ -3774,7 +3774,7 @@ export interface paths {
         };
         /**
          * List / Danh sách
-         * @description **Screens:** VPA003301, VPA0033P01
+         * @description **Screens:** VPA07070001, VPA070700P01
          *
          *     Paginated list with the board search conditions. sortBy: postSn, published, category, docNumber, title, lawGroup, lawField, issuingAuthority, issueDate, attachmentCount, crtBy, mdfcnDt, mdfcnBy, viewCount (ASC/DESC). / Danh sách phân trang theo điều kiện tìm kiếm.
          */
@@ -3782,14 +3782,14 @@ export interface paths {
         put?: never;
         /**
          * Register legal document / Đăng ký văn bản
-         * @description **Screens:** VPA003301, VPA0033P01
+         * @description **Screens:** VPA07070001, VPA070700P01
          *
          *     Default published. Required: type, number/sign, issue date, title. / Mặc định công bố.
          */
         post: operations["create_10"];
         /**
          * Delete / Xóa
-         * @description **Screens:** VPA003301, VPA0033P01
+         * @description **Screens:** VPA07070001, VPA070700P01
          *
          *     Soft-deletes the selected posts. / Xóa mềm các bài được chọn.
          */
@@ -3828,7 +3828,7 @@ export interface paths {
         };
         /**
          * List FAQs / Danh sách FAQ
-         * @description **Screens:** VPA003101, VPA0031P01
+         * @description **Screens:** VPA07050001, VPA070500P01
          *
          *     Paginated FAQs. Use sortBy=displayOrder to list in display order per category. / Danh sách phân trang; sortBy=displayOrder để xem theo thứ tự hiển thị.
          */
@@ -3836,14 +3836,14 @@ export interface paths {
         put?: never;
         /**
          * Create FAQ / Tạo FAQ
-         * @description **Screens:** VPA003101, VPA0031P01
+         * @description **Screens:** VPA07050001, VPA070500P01
          *
          *     Creates an FAQ (default unpublished), appended at the end of its category. / Tạo FAQ (mặc định chưa đăng), xếp cuối danh mục.
          */
         post: operations["createFaq"];
         /**
          * Delete FAQs / Xóa FAQ
-         * @description **Screens:** VPA003101, VPA0031P01
+         * @description **Screens:** VPA07050001, VPA070500P01
          *
          *     Soft-deletes the selected FAQs. / Xóa mềm các FAQ được chọn.
          */
@@ -3862,7 +3862,7 @@ export interface paths {
         };
         /**
          * List / Danh sách
-         * @description **Screens:** VPA003401, VPA0034P01
+         * @description **Screens:** VPA07080001, VPA070800P01
          *
          *     Paginated list with the board search conditions. / Danh sách phân trang theo điều kiện tìm kiếm.
          */
@@ -3870,14 +3870,14 @@ export interface paths {
         put?: never;
         /**
          * Register career posting / Đăng ký tin tuyển dụng
-         * @description **Screens:** VPA003401, VPA0034P01
+         * @description **Screens:** VPA07080001, VPA070800P01
          *
          *     Default published. / Mặc định công bố.
          */
         post: operations["create_11"];
         /**
          * Delete / Xóa
-         * @description **Screens:** VPA003401, VPA0034P01
+         * @description **Screens:** VPA07080001, VPA070800P01
          *
          *     Soft-deletes the selected posts. / Xóa mềm các bài được chọn.
          */
@@ -3896,7 +3896,7 @@ export interface paths {
         };
         /**
          * List banners / Danh sách banner
-         * @description **Screens:** VPA003201, VPA0032P01
+         * @description **Screens:** VPA07060101, VPA070601P01
          *
          *     Ordered by position and display order. / Sắp theo vị trí và thứ tự.
          */
@@ -3904,14 +3904,14 @@ export interface paths {
         put?: never;
         /**
          * Register banner / Đăng ký banner
-         * @description **Screens:** VPA003201, VPA0032P01
+         * @description **Screens:** VPA07060101, VPA070601P01
          *
          *     Starts not in use. / Mặc định không sử dụng.
          */
         post: operations["create_12"];
         /**
          * Delete banners / Xóa banner
-         * @description **Screens:** VPA003201, VPA0032P01
+         * @description **Screens:** VPA07060101, VPA070601P01
          *
          *     Permanently deletes banners that are not in use; a banner in use returns 409 BNR004. / Chỉ xóa banner không sử dụng.
          */
@@ -3932,7 +3932,7 @@ export interface paths {
         put?: never;
         /**
          * Upload banner image / Tải ảnh banner
-         * @description **Screens:** VPA003201, VPA0032P01
+         * @description **Screens:** VPA07060101, VPA070601P01
          *
          *     Returns the file group ID to pass as imageFileId. / Trả mã nhóm ảnh dùng cho imageFileId.
          */
@@ -3982,7 +3982,7 @@ export interface paths {
         put?: never;
         /**
          * Register a termination
-         * @description **Screens:** VPA001501
+         * @description **Screens:** VPA05020301
          *
          *     Termination 1: PROGS -> ENDING with the reason and the fee handling. With the auto-termination clause the contract ends at once. Requires WRITE permission.
          */
@@ -4004,7 +4004,7 @@ export interface paths {
         put?: never;
         /**
          * Attach the signed settlement minutes
-         * @description **Screens:** VPA001501
+         * @description **Screens:** VPA05020301
          *
          *     Termination 17 (SGNCP). Requires WRITE permission.
          */
@@ -4026,7 +4026,7 @@ export interface paths {
         put?: never;
         /**
          * Request settlement minutes signature approval
-         * @description **Screens:** VPA001501
+         * @description **Screens:** VPA05020301
          *
          *     Termination 15-1 (PROC_DSPSL_MDT_END_SIGN); approval -> SGNCP. Requires WRITE permission.
          */
@@ -4048,7 +4048,7 @@ export interface paths {
         put?: never;
         /**
          * Register the settlement minutes for signature
-         * @description **Screens:** VPA001501
+         * @description **Screens:** VPA05020301
          *
          *     Termination 9: form 12 draft, DRFAPR -> SGNWT; mails the member. Requires WRITE permission.
          */
@@ -4070,7 +4070,7 @@ export interface paths {
         put?: never;
         /**
          * Complete the termination
-         * @description **Screens:** VPA001501
+         * @description **Screens:** VPA05020301
          *
          *     Termination 18: contract CMPTN (performed) or CNCLN; unsold NPLs hidden; collected fees refunded (RFPL) or open claims cancelled (CLCN); mails the member. Purchase: 409 when another active purchase contract exists or termination conditions are not met (CNCL only before delivery); 400 on invalid reason. Requires WRITE permission.
          */
@@ -4092,7 +4092,7 @@ export interface paths {
         put?: never;
         /**
          * Request termination approval
-         * @description **Screens:** VPA001501
+         * @description **Screens:** VPA05020301
          *
          *     Termination 2 (PROC_DSPSL_MDT_END); approval -> DRFAPR. Requires WRITE permission.
          */
@@ -4114,7 +4114,7 @@ export interface paths {
         put?: never;
         /**
          * Attach the signed scan
-         * @description **Screens:** VPA001501
+         * @description **Screens:** VPA05020301
          *
          *     Step 31 / annex 18 (SGNCP). Requires WRITE permission.
          */
@@ -4136,7 +4136,7 @@ export interface paths {
         put?: never;
         /**
          * Request signature approval
-         * @description **Screens:** VPA001501
+         * @description **Screens:** VPA05020301
          *
          *     Step 29-1 / annex 16-1: the approver checks the member-signed document and signs for VAMC (PROC_DSPSL_MDT_SIGN); approval -> SGNCP. Requires WRITE permission.
          */
@@ -4158,7 +4158,7 @@ export interface paths {
         put?: never;
         /**
          * Complete the report
-         * @description **Screens:** VPA001501
+         * @description **Screens:** VPA05020301
          *
          *     Execution 6: APRV -> RDY (not published); the remaining fee is issued and mailed. The report is published when the fee is confirmed (Execution 11-1). Requires WRITE permission.
          */
@@ -4180,7 +4180,7 @@ export interface paths {
         put?: never;
         /**
          * Request report approval
-         * @description **Screens:** VPA001501
+         * @description **Screens:** VPA05020301
          *
          *     Execution 2: PROC_CNSLT_RPTP; approval -> APRV, rejection -> DRFT. Requires WRITE permission.
          */
@@ -4202,7 +4202,7 @@ export interface paths {
         put?: never;
         /**
          * Record a fee refund
-         * @description **Screens:** VPA001501
+         * @description **Screens:** VPA05020301
          *
          *     Termination 18: refund transferred (RFPL -> RFCP). Requires WRITE permission.
          */
@@ -4224,7 +4224,7 @@ export interface paths {
         put?: never;
         /**
          * Confirm a fee transfer
-         * @description **Screens:** VPA001501
+         * @description **Screens:** VPA05020301
          *
          *     Step 37 / annex 24. Requires WRITE permission.
          */
@@ -4246,7 +4246,7 @@ export interface paths {
         put?: never;
         /**
          * Register the draft for signature
-         * @description **Screens:** VPA001501
+         * @description **Screens:** VPA05020301
          *
          *     Step 23 / annex 10: DRFAPR -> SGNWT with the PDF the member prints, signs and posts; mails the member. Requires WRITE permission.
          */
@@ -4268,7 +4268,7 @@ export interface paths {
         put?: never;
         /**
          * Conclude the contract
-         * @description **Screens:** VPA001501
+         * @description **Screens:** VPA05020301
          *
          *     Step 32 / annex 19: SGNCP with a scan -> PROGS; first installment (LUMP / STAG advance); NPLs published (step 38) for brokerage contracts and base contract annexes; extension / price annexes update the parent. Requires WRITE permission.
          */
@@ -4290,7 +4290,7 @@ export interface paths {
         put?: never;
         /**
          * Request draft approval
-         * @description **Screens:** VPA001501
+         * @description **Screens:** VPA05020301
          *
          *     Step 16 / annex 3: PROC_DSPSL_MDT_CTRT (contract) or PROC_DSPSL_MDT_ANX (annex); approval -> DRFAPR. Requires WRITE permission.
          */
@@ -4312,7 +4312,7 @@ export interface paths {
         put?: never;
         /**
          * Receive an additional consultation
-         * @description **Screens:** VPA001501
+         * @description **Screens:** VPA05020301
          *
          *     Addition 15: RQST -> RCPT. Consultant or officer. Requires WRITE permission.
          */
@@ -4334,7 +4334,7 @@ export interface paths {
         put?: never;
         /**
          * Complete an additional consultation
-         * @description **Screens:** VPA001501
+         * @description **Screens:** VPA05020301
          *
          *     Addition 21: result recorded and mailed to the member. Requires WRITE permission.
          */
@@ -4354,7 +4354,7 @@ export interface paths {
         };
         /**
          * List code groups (paginated) / Danh sách nhóm mã (phân trang)
-         * @description **Screens:** VPA004801, VPA0048P01
+         * @description **Screens:** VPA09030101, VPA090301P01
          *
          *     Returns paginated code groups with optional search filters. / Trả về danh sách nhóm mã phân trang theo bộ lọc.
          */
@@ -4362,7 +4362,7 @@ export interface paths {
         put?: never;
         /**
          * Create code group / Tạo mới nhóm mã
-         * @description **Screens:** VPA004801, VPA0048P01
+         * @description **Screens:** VPA09030101, VPA090301P01
          *
          *     Creates a new code group and synchronizes multilingual label. Requires WRITE permission. / Tạo mới nhóm mã và đồng bộ nhãn đa ngôn ngữ. Yêu cầu quyền GHI.
          */
@@ -4384,7 +4384,7 @@ export interface paths {
         put?: never;
         /**
          * Batch save / delete codes / Lưu / xóa hàng loạt mã chi tiết
-         * @description **Screens:** VPA004801, VPA0048P01
+         * @description **Screens:** VPA09030101, VPA090301P01
          *
          *     Batch upserts and deletes detailed codes within a group. Requires WRITE permission. / Thêm, sửa, xóa hàng loạt mã chi tiết trong nhóm. Yêu cầu quyền GHI.
          */
@@ -4406,7 +4406,7 @@ export interface paths {
         put?: never;
         /**
          * Copy code group / Sao chép nhóm mã (Domain Copy)
-         * @description **Screens:** VPA004801, VPA0048P01
+         * @description **Screens:** VPA09030101, VPA090301P01
          *
          *     Duplicates all codes from a source group to a new target group. Requires WRITE permission. / Sao chép toàn bộ mã từ nhóm nguồn sang nhóm đích. Yêu cầu quyền GHI.
          */
@@ -4428,7 +4428,7 @@ export interface paths {
         put?: never;
         /**
          * Disqualify bidder / Loại người tham gia
-         * @description **Screens:** VPA002101, VPA0021P01
+         * @description **Screens:** VPA06020001, VPA060200P01
          *
          *     AP/AV -> DQ, reason required. Requires WRITE permission.
          */
@@ -4450,7 +4450,7 @@ export interface paths {
         put?: never;
         /**
          * Confirm document receipt / Xác nhận nhận hồ sơ
-         * @description **Screens:** VPA002101, VPA0021P01
+         * @description **Screens:** VPA06020001, VPA060200P01
          *
          *     NR -> RC while applied and the auction is AN. Requires WRITE permission.
          */
@@ -4472,7 +4472,7 @@ export interface paths {
         put?: never;
         /**
          * Cancel document receipt / Huỷ nhận hồ sơ
-         * @description **Screens:** VPA002101, VPA0021P01
+         * @description **Screens:** VPA06020001, VPA060200P01
          *
          *     RC -> NR while applied. Requires WRITE permission.
          */
@@ -4494,7 +4494,7 @@ export interface paths {
         put?: never;
         /**
          * Refund deposit / Hoàn tiền cọc
-         * @description **Screens:** VPA002101, VPA0021P01
+         * @description **Screens:** VPA06020001, VPA060200P01
          *
          *     PA -> RF. Requires WRITE permission.
          */
@@ -4516,7 +4516,7 @@ export interface paths {
         put?: never;
         /**
          * Forfeit deposit / Tịch thu tiền cọc
-         * @description **Screens:** VPA002101, VPA0021P01
+         * @description **Screens:** VPA06020001, VPA060200P01
          *
          *     PA -> FF, reason required. Requires WRITE permission.
          */
@@ -4538,7 +4538,7 @@ export interface paths {
         put?: never;
         /**
          * Confirm deposit / Xác nhận tiền cọc
-         * @description **Screens:** VPA002101, VPA0021P01
+         * @description **Screens:** VPA06020001, VPA060200P01
          *
          *     UN -> PA; grnteAmt defaults to minimum bid price x deposit rate. Requires WRITE permission.
          */
@@ -4560,7 +4560,7 @@ export interface paths {
         put?: never;
         /**
          * Qualify bidder / Cấp tư cách
-         * @description **Screens:** VPA002101, VPA0021P01
+         * @description **Screens:** VPA06020001, VPA060200P01
          *
          *     AP -> AV; documents received and deposit paid (409 BDR004 otherwise). Requires WRITE permission.
          */
@@ -4580,22 +4580,22 @@ export interface paths {
         };
         /**
          * List auction notices / Danh sách thông báo đấu giá
-         * @description **Screens:** VPA002001, VPA0020P01
+         * @description **Screens:** VPA06010001, VPA060100P01
          *
-         *     Latest cycle of each auction. Filters: auction start period, status, approval status, method, number or name. approvalActions: REQUEST (DR/RJ), APPROVE / REJECT (open step assigned to me). Requires READ permission (A07010000).
+         *     Latest cycle of each auction. Filters: auction start period, status, approval status, method, number or name. approvalActions: REQUEST (DR/RJ), APPROVE / REJECT (open step assigned to me). Requires READ permission (A06010000).
          */
         get: operations["getAuctions"];
         put?: never;
         /**
          * Register auction notice / Đăng ký thông báo đấu giá
-         * @description **Screens:** VPA002001, VPA0020P01
+         * @description **Screens:** VPA06010001, VPA060100P01
          *
          *     Number AUC-YYYY-NNNNN, status RD, approval DR. 400 AUC004 unknown NPL, AUC005 collateral not linked to the NPL; 409 AUC006 the NPL already has an open auction. Requires WRITE permission.
          */
         post: operations["createAuction"];
         /**
          * Delete auction notices / Xoá thông báo đấu giá
-         * @description **Screens:** VPA002001, VPA0020P01
+         * @description **Screens:** VPA06010001, VPA060100P01
          *
          *     All or nothing; only RD with approval DR/RJ and no bidder (409 AUC003). Requires WRITE permission.
          */
@@ -4614,7 +4614,7 @@ export interface paths {
         };
         /**
          * Get publication approval / Phê duyệt công bố
-         * @description **Screens:** VPA002001, VPA0020P01
+         * @description **Screens:** VPA06010001, VPA060100P01
          *
          *     Steps of the publication approval session; null data before the first request. Requires READ permission.
          */
@@ -4622,7 +4622,7 @@ export interface paths {
         put?: never;
         /**
          * Request publication approval / Yêu cầu phê duyệt công bố
-         * @description **Screens:** VPA002001, VPA0020P01
+         * @description **Screens:** VPA06010001, VPA060100P01
          *
          *     RD with approval DR/RJ -> RQ (PROC_AUCTN_PBANC, the approver decides with /approvals/{id}/approve|reject; approval publishes the notice: AN). 409 AUC007 in another state. Requires WRITE permission.
          */
@@ -4644,7 +4644,7 @@ export interface paths {
         put?: never;
         /**
          * Reject current step
-         * @description **Screens:** VPA0003P01, VPA0003P02, VPA0003P03, VPA0003P04
+         * @description **Screens:** VPA020100P01, VPA020200P01, VPA020300P01, VPA0003P04
          *
          *     Approver rejects the session with a mandatory reason. Closes the session and updates target domain state (A-04, ADF1234_P11). Requires WRITE permission.
          */
@@ -4666,7 +4666,7 @@ export interface paths {
         put?: never;
         /**
          * Approve current step
-         * @description **Screens:** VPA0003P01, VPA0003P02, VPA0003P03, VPA0003P04
+         * @description **Screens:** VPA020100P01, VPA020200P01, VPA020300P01, VPA0003P04
          *
          *     Approver approves the current step. Completes the session if final and executes target domain side-effects (A-03, ADF1234_P10). Requires WRITE permission.
          */
@@ -4688,7 +4688,7 @@ export interface paths {
         put?: never;
         /**
          * Upload labels Excel / Tải lên file Excel nhãn
-         * @description **Screens:** VPA005301, VPA0053P01
+         * @description **Screens:** VPA09040301, VPA090403P01
          *
          *     Parses Excel file and batch saves labels / Phân tích file Excel và lưu hàng loạt nhãn
          */
@@ -4710,7 +4710,7 @@ export interface paths {
         put?: never;
         /**
          * Batch save labels / translations / Lưu hàng loạt nhãn / bản dịch
-         * @description **Screens:** VPA005301, VPA0053P01
+         * @description **Screens:** VPA09040301, VPA090403P01
          *
          *     Upserts labels and translations (requires write permission) / Thêm/sửa hàng loạt nhãn và bản dịch
          */
@@ -4792,7 +4792,7 @@ export interface paths {
         put?: never;
         /**
          * Create menu / Đăng ký menu mới
-         * @description **Screens:** VPA004401, VPA0044P01
+         * @description **Screens:** VPA09020101, VPA090201P01
          *
          *     Registers a new menu and its associated multilingual labels. Requires ADMIN role and write permission. / Đăng ký một menu mới và nhãn đa ngôn ngữ liên quan. Yêu cầu vai trò ADMIN và quyền ghi.
          */
@@ -4814,7 +4814,7 @@ export interface paths {
         put?: never;
         /**
          * Token Refresh
-         * @description **Screens:** VPA000701, VPA000101
+         * @description **Screens:** VPA02110001, VPA01000001
          *
          *     Issues new Access/Refresh tokens via HttpOnly cookie (refresh_token). (Token Rotation applied)
          */
@@ -4836,7 +4836,7 @@ export interface paths {
         put?: never;
         /**
          * Reset password (employee) / Đặt lại mật khẩu (nhân viên)
-         * @description **Screens:** VPA000701, VPA000101
+         * @description **Screens:** VPA02110001, VPA01000001
          *
          *     Sets the new password (8-72 characters with letters, digits and special characters) with the one-time token of the reset mail, resets the login failure count and lockout, and signs the employee out of every session. Invalid, used or expired link: 400 RCV003. Same as the current password: 400 RCV011.
          *
@@ -4860,7 +4860,7 @@ export interface paths {
         put?: never;
         /**
          * Check password reset token (employee) / Kiểm tra token đặt lại mật khẩu
-         * @description **Screens:** VPA000701, VPA000101
+         * @description **Screens:** VPA02110001, VPA01000001
          *
          *     Called by the reset page before POST /api/auth/password-reset. Checks the token of the reset mail without using it and returns the channel (EMAIL) and the masked employee number, so the page can show them and go on to the new password. Invalid, used or expired link, or an employee who is no longer active: 400 RCV003.
          *
@@ -4884,7 +4884,7 @@ export interface paths {
         put?: never;
         /**
          * Request password reset link (employee) / Yêu cầu liên kết đặt lại mật khẩu
-         * @description **Screens:** VPA000701, VPA000101
+         * @description **Screens:** VPA02110001, VPA01000001
          *
          *     When the employee number and the e-mail match an active employee, mails a one-time reset link (30 minutes); a new request revokes the previous link. No match: 404 RCV010. Mail not sent: 503 RCV009. ZALO: 400 RCV001. urlCallback outside cors.allowed-origins: 400 RCV012. On local/dev the token (devToken) is returned.
          *
@@ -4908,7 +4908,7 @@ export interface paths {
         put?: never;
         /**
          * Logout
-         * @description **Screens:** VPA000701, VPA000101
+         * @description **Screens:** VPA02110001, VPA01000001
          *
          *     Invalidates access token and clears refresh token cookie.
          */
@@ -4930,7 +4930,7 @@ export interface paths {
         put?: never;
         /**
          * User Login
-         * @description **Screens:** VPA000701, VPA000101
+         * @description **Screens:** VPA02110001, VPA01000001
          *
          *     Authenticates user and issues JWT token. Refresh Token is issued as HttpOnly cookie (refresh_token).
          */
@@ -4952,7 +4952,7 @@ export interface paths {
         put?: never;
         /**
          * Find ID (employee) / Tìm mã đăng nhập (nhân viên)
-         * @description **Screens:** VPA000701, VPA000101
+         * @description **Screens:** VPA02110001, VPA01000001
          *
          *     Step 1. Full name is required and must match the employee (ignoring case and accents). Only active employees (EMP_STTS_CD = H).
          *
@@ -4981,7 +4981,7 @@ export interface paths {
         put?: never;
         /**
          * Confirm find ID (employee) / Xác nhận tìm mã đăng nhập
-         * @description **Screens:** VPA000701, VPA000101
+         * @description **Screens:** VPA02110001, VPA01000001
          *
          *     Step 2; returns the masked employee number.
          *
@@ -5008,7 +5008,7 @@ export interface paths {
         put?: never;
         /**
          * Force refresh all schedules / Làm mới toàn bộ lịch chạy batch
-         * @description **Screens:** VPA005401, VPA0054P01
+         * @description **Screens:** VPA09040401, VPA090404P01
          */
         post: operations["refreshSchedules"];
         delete?: never;
@@ -5026,13 +5026,13 @@ export interface paths {
         };
         /**
          * Get batch job configs / Danh sách cấu hình batch job
-         * @description **Screens:** VPA005401, VPA0054P01
+         * @description **Screens:** VPA09040401, VPA090404P01
          */
         get: operations["getJobs"];
         put?: never;
         /**
          * Create batch job config / Đăng ký cấu hình batch job mới
-         * @description **Screens:** VPA005401, VPA0054P01
+         * @description **Screens:** VPA09040401, VPA090404P01
          */
         post: operations["createJob"];
         delete?: never;
@@ -5052,7 +5052,7 @@ export interface paths {
         put?: never;
         /**
          * Execute batch job manually / Chạy thủ công batch job
-         * @description **Screens:** VPA005401, VPA0054P01
+         * @description **Screens:** VPA09040401, VPA090404P01
          */
         post: operations["executeJob"];
         delete?: never;
@@ -5076,7 +5076,7 @@ export interface paths {
         head?: never;
         /**
          * Switch fee items in use / Bật tắt sử dụng mục phí
-         * @description **Screens:** VPA004101, VPA0041P01
+         * @description **Screens:** VPA09010301, VPA090103P01
          *
          *     useYn is required. / Bắt buộc useYn.
          */
@@ -5098,9 +5098,9 @@ export interface paths {
         head?: never;
         /**
          * Change NPL home posting / Đổi cờ đăng trang chủ của NPL
-         * @description **Screens:** VPA001601, VPA001701, VPA0016P01, VPA0017P01
+         * @description **Screens:** VPA04020001, VPA04030001, VPA040200P01, VPA040300P01
          *
-         *     Sets Main Posting (MSCRN_PSTG_YN) and/or Recommended (RCMDTN_YN); a flag left out is kept. The user web home lists an NPL only when it is also displayed (EXPSR_YN, changed by PATCH /npls/{bndCd}/disclosure): see onHome. Requires WRITE permission on NPL management (A03010100).
+         *     Sets Main Posting (MSCRN_PSTG_YN) and/or Recommended (RCMDTN_YN); a flag left out is kept. The user web home lists an NPL only when it is also displayed (EXPSR_YN, changed by PATCH /npls/{bndCd}/disclosure): see onHome. Requires WRITE permission on NPL management (A04020000).
          */
         patch: operations["updateNpl"];
         trace?: never;
@@ -5120,7 +5120,7 @@ export interface paths {
         head?: never;
         /**
          * Change the NPL disclosure
-         * @description **Screens:** VPA001601
+         * @description **Screens:** VPA04020001
          *
          *     Shows / hides an NPL and its collaterals on the platform and optionally sets the NPL status (SA, UC, SD), with a reason. The contract flow publishes at conclusion and marks sold at the sale completion. Requires WRITE permission.
          */
@@ -5142,7 +5142,7 @@ export interface paths {
         head?: never;
         /**
          * Switch notification template use / Bật tắt mẫu thông báo
-         * @description **Screens:** VPA005501, VPA0055P01
+         * @description **Screens:** VPA09050101, VPA090501P01
          *
          *     N unlocks editing; Y applies it (409 NTF003 on a duplicate in use). Requires WRITE permission.
          */
@@ -5247,7 +5247,7 @@ export interface paths {
         head?: never;
         /**
          * Update NPL announcement status / Cập nhật trạng thái thông báo NPL
-         * @description **Screens:** VPA002701, VPA002801, VPA002901, VPA0027P01, VPA0028P01, VPA0029P01
+         * @description **Screens:** VPA07030101, VPA07030201, VPA07030301, VPA070301P01, VPA070302P01, VPA070303P01
          *
          *     Type, published flag and top display (editable while published). / Loại, trạng thái đăng, hiển thị đầu trang.
          */
@@ -5269,7 +5269,7 @@ export interface paths {
         head?: never;
         /**
          * Bulk post / stop posting NPL announcements / Đăng hoặc dừng đăng hàng loạt
-         * @description **Screens:** VPA002701, VPA002801, VPA002901, VPA0027P01, VPA0028P01, VPA0029P01
+         * @description **Screens:** VPA07030101, VPA07030201, VPA07030301, VPA070301P01, VPA070302P01, VPA070303P01
          *
          *     Returns the number of updated announcements. / Trả về số bài được cập nhật.
          */
@@ -5291,7 +5291,7 @@ export interface paths {
         head?: never;
         /**
          * Update notice status / Cập nhật trạng thái thông báo
-         * @description **Screens:** VPA002301, VPA0023P01
+         * @description **Screens:** VPA07010001, VPA070100P01
          *
          *     Notice type, published flag and pin settings (editable while published). / Loại, trạng thái đăng, ghim (sửa được khi đang đăng).
          */
@@ -5313,7 +5313,7 @@ export interface paths {
         head?: never;
         /**
          * Bulk post / stop posting notices / Đăng hoặc dừng đăng hàng loạt
-         * @description **Screens:** VPA002301, VPA0023P01
+         * @description **Screens:** VPA07010001, VPA070100P01
          *
          *     Returns the number of updated notices. / Trả về số bài được cập nhật.
          */
@@ -5335,7 +5335,7 @@ export interface paths {
         head?: never;
         /**
          * Update news status / Cập nhật trạng thái tin
-         * @description **Screens:** VPA002401, VPA002501, VPA002601, VPA0024P01, VPA0025P01, VPA0026P01
+         * @description **Screens:** VPA07020101, VPA07020201, VPA07020301, VPA070201P01, VPA070202P01, VPA070203P01
          *
          *     Category, published flag and featured (pinned) settings. / Danh mục, trạng thái đăng, bài nổi bật.
          */
@@ -5357,7 +5357,7 @@ export interface paths {
         head?: never;
         /**
          * Bulk publish / unpublish / Đăng hoặc dừng đăng hàng loạt
-         * @description **Screens:** VPA002401, VPA002501, VPA002601, VPA0024P01, VPA0025P01, VPA0026P01
+         * @description **Screens:** VPA07020101, VPA07020201, VPA07020301, VPA070201P01, VPA070202P01, VPA070203P01
          *
          *     Returns the number of updated posts. / Trả về số bài được cập nhật.
          */
@@ -5396,7 +5396,7 @@ export interface paths {
         head?: never;
         /**
          * Bulk publish / unpublish / Đăng hoặc dừng đăng hàng loạt
-         * @description **Screens:** VPA003301, VPA0033P01
+         * @description **Screens:** VPA07070001, VPA070700P01
          *
          *     Returns the number of updated posts. / Trả về số bài được cập nhật.
          */
@@ -5418,7 +5418,7 @@ export interface paths {
         head?: never;
         /**
          * Change inquiry category
-         * @description **Screens:** VPA003001, VPA0030P01
+         * @description **Screens:** VPA07040001, VPA070400P01
          *
          *     Re-classifies the inquiry, e.g. to consulting (CNS) before answering with the consulting application link (consulting flow step 1). Returns 400 (CNT018) for an unknown category.
          */
@@ -5440,7 +5440,7 @@ export interface paths {
         head?: never;
         /**
          * Update FAQ status / Cập nhật trạng thái FAQ
-         * @description **Screens:** VPA003101, VPA0031P01
+         * @description **Screens:** VPA07050001, VPA070500P01
          *
          *     Category and published flag (pinning is not supported for FAQ). / Danh mục và trạng thái đăng (FAQ không hỗ trợ ghim).
          */
@@ -5462,7 +5462,7 @@ export interface paths {
         head?: never;
         /**
          * Reorder FAQs in a category / Sắp xếp lại FAQ trong danh mục
-         * @description **Screens:** VPA003101, VPA0031P01
+         * @description **Screens:** VPA07050001, VPA070500P01
          *
          *     pstNos must list every FAQ of the category in the desired order. / pstNos phải gồm toàn bộ FAQ của danh mục theo thứ tự mong muốn.
          */
@@ -5484,7 +5484,7 @@ export interface paths {
         head?: never;
         /**
          * Bulk post / stop posting FAQs / Đăng hoặc dừng đăng hàng loạt
-         * @description **Screens:** VPA003101, VPA0031P01
+         * @description **Screens:** VPA07050001, VPA070500P01
          *
          *     Returns the number of updated FAQs. / Trả về số FAQ được cập nhật.
          */
@@ -5506,7 +5506,7 @@ export interface paths {
         head?: never;
         /**
          * Bulk publish / unpublish / Đăng hoặc dừng đăng hàng loạt
-         * @description **Screens:** VPA003401, VPA0034P01
+         * @description **Screens:** VPA07080001, VPA070800P01
          *
          *     Returns the number of updated posts. / Trả về số bài được cập nhật.
          */
@@ -5528,7 +5528,7 @@ export interface paths {
         head?: never;
         /**
          * Switch banners in use / Bật tắt sử dụng banner
-         * @description **Screens:** VPA003201, VPA0032P01
+         * @description **Screens:** VPA07060101, VPA070601P01
          *
          *     useYn is required. / Bắt buộc useYn.
          */
@@ -5590,9 +5590,9 @@ export interface paths {
         head?: never;
         /**
          * Change collateral home posting / Đổi cờ đăng trang chủ của tài sản bảo đảm
-         * @description **Screens:** VPA001601, VPA001701, VPA0016P01, VPA0017P01
+         * @description **Screens:** VPA04020001, VPA04030001, VPA040200P01, VPA040300P01
          *
-         *     Sets Main Posting (MSCRN_PSTG_YN) and/or Recommended (RCMDTN_YN); a flag left out is kept. The user web home lists a collateral asset only when it is also displayed (EXPSR_YN): see onHome. Requires WRITE permission on collateral management (A03010200).
+         *     Sets Main Posting (MSCRN_PSTG_YN) and/or Recommended (RCMDTN_YN); a flag left out is kept. The user web home lists a collateral asset only when it is also displayed (EXPSR_YN): see onHome. Requires WRITE permission on collateral management (A04030000).
          */
         patch: operations["updateCollateral"];
         trace?: never;
@@ -5606,7 +5606,7 @@ export interface paths {
         };
         /**
          * Get trade document group
-         * @description **Screens:** VPA0010P01, VPA0011P01, VPA0012P01, VPA0013P01, VPA0014P01
+         * @description **Screens:** VPA050101P01, VPA050102P01, VPA050103P01, VPA050201P01, VPA050202P01
          *
          *     Active files of a group. Requires READ permission on the contract or application menu of the kind.
          */
@@ -5628,7 +5628,7 @@ export interface paths {
         };
         /**
          * Get processing history
-         * @description **Screens:** VPA001101, VPA0011P01
+         * @description **Screens:** VPA05010201, VPA050102P01
          *
          *     Status changes of the application, oldest first. Requires READ permission.
          */
@@ -5649,8 +5649,8 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Get applicant member (VPA001001/VPA001101/VPA001201 popup)
-         * @description **Screens:** VPA001101, VPA0011P01
+         * Get applicant member (VPA05010101/VPA05010201/VPA05010301 popup)
+         * @description **Screens:** VPA05010201, VPA050102P01
          *
          *     Member information popup opened from the application list; phone, e-mail and ID numbers are masked, files omitted. Requires READ permission on the application menu.
          */
@@ -5672,9 +5672,9 @@ export interface paths {
         };
         /**
          * Export applications to Excel
-         * @description **Screens:** VPA001101, VPA0011P01
+         * @description **Screens:** VPA05010201, VPA050102P01
          *
-         *     Excel download (VPA001001) of the list with the same filters, at most 10,000 rows. Requires READ permission.
+         *     Excel download (VPA05010101) of the list with the same filters, at most 10,000 rows. Requires READ permission.
          */
         get: operations["exportExcel"];
         put?: never;
@@ -5694,7 +5694,7 @@ export interface paths {
         };
         /**
          * Get processing history
-         * @description **Screens:** VPA001001, VPA0010P01, VPA0004P01, VPA0004P04
+         * @description **Screens:** VPA05010101, VPA050101P01, VPA020500P01, VPA0004P04
          *
          *     Status changes of the application, oldest first. Requires READ permission.
          */
@@ -5715,8 +5715,8 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Get applicant member (VPA001001/VPA001101/VPA001201 popup)
-         * @description **Screens:** VPA001001, VPA0010P01, VPA0004P01, VPA0004P04
+         * Get applicant member (VPA05010101/VPA05010201/VPA05010301 popup)
+         * @description **Screens:** VPA05010101, VPA050101P01, VPA020500P01, VPA0004P04
          *
          *     Member information popup opened from the application list; phone, e-mail and ID numbers are masked, files omitted. Requires READ permission on the application menu.
          */
@@ -5738,9 +5738,9 @@ export interface paths {
         };
         /**
          * Export applications to Excel
-         * @description **Screens:** VPA001001, VPA0010P01, VPA0004P01, VPA0004P04
+         * @description **Screens:** VPA05010101, VPA050101P01, VPA020500P01, VPA0004P04
          *
-         *     Excel download (VPA001001) of the list with the same filters, at most 10,000 rows. Requires READ permission.
+         *     Excel download (VPA05010101) of the list with the same filters, at most 10,000 rows. Requires READ permission.
          */
         get: operations["exportExcel_1"];
         put?: never;
@@ -5760,7 +5760,7 @@ export interface paths {
         };
         /**
          * Get processing history
-         * @description **Screens:** VPA001201, VPA0012P01
+         * @description **Screens:** VPA05010301, VPA050103P01
          *
          *     Status changes of the application, oldest first. Requires READ permission.
          */
@@ -5781,8 +5781,8 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Get applicant member (VPA001001/VPA001101/VPA001201 popup)
-         * @description **Screens:** VPA001201, VPA0012P01
+         * Get applicant member (VPA05010101/VPA05010201/VPA05010301 popup)
+         * @description **Screens:** VPA05010301, VPA050103P01
          *
          *     Member information popup opened from the application list; phone, e-mail and ID numbers are masked, files omitted. Requires READ permission on the application menu.
          */
@@ -5804,9 +5804,9 @@ export interface paths {
         };
         /**
          * Export applications to Excel
-         * @description **Screens:** VPA001201, VPA0012P01
+         * @description **Screens:** VPA05010301, VPA050103P01
          *
-         *     Excel download (VPA001001) of the list with the same filters, at most 10,000 rows. Requires READ permission.
+         *     Excel download (VPA05010101) of the list with the same filters, at most 10,000 rows. Requires READ permission.
          */
         get: operations["exportExcel_2"];
         put?: never;
@@ -5826,7 +5826,7 @@ export interface paths {
         };
         /**
          * Screen options / Danh sách chọn màn hình
-         * @description **Screens:** VPA005201, VPA0052P01
+         * @description **Screens:** VPA09040201, VPA090402P01
          */
         get: operations["options"];
         put?: never;
@@ -5846,7 +5846,7 @@ export interface paths {
         };
         /**
          * Export Excel / Xuất Excel
-         * @description **Screens:** VPA005201, VPA0052P01
+         * @description **Screens:** VPA09040201, VPA090402P01
          */
         get: operations["exportExcel_3"];
         put?: never;
@@ -5866,7 +5866,7 @@ export interface paths {
         };
         /**
          * Search contracts
-         * @description **Screens:** VPA001401, VPA0014P01, VPA0014P02
+         * @description **Screens:** VPA05020201, VPA050202P01, VPA050202P02
          *
          *     Contracts and annexes with the remaining days (D-xx), fee stage and latest approval. Requires READ permission.
          */
@@ -5887,8 +5887,8 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Get contract member (VPA001301/VPA001401 popup)
-         * @description **Screens:** VPA001401, VPA0014P01, VPA0014P02
+         * Get contract member (VPA05020101/VPA05020201 popup)
+         * @description **Screens:** VPA05020201, VPA050202P01, VPA050202P02
          *
          *     Member information popup opened from the contract list; phone, e-mail and ID numbers are masked, files omitted. Requires READ permission on the contract menu.
          */
@@ -5910,7 +5910,7 @@ export interface paths {
         };
         /**
          * Get fee installments
-         * @description **Screens:** VPA001401, VPA0014P01, VPA0014P02
+         * @description **Screens:** VPA05020201, VPA050202P01, VPA050202P02
          *
          *     Installments, receipts and refunds. Requires READ permission.
          */
@@ -5932,7 +5932,7 @@ export interface paths {
         };
         /**
          * Get approval history
-         * @description **Screens:** VPA001401, VPA0014P01, VPA0014P02
+         * @description **Screens:** VPA05020201, VPA050202P01, VPA050202P02
          *
          *     Approval sessions of the contract and of its terminations. Requires READ permission.
          */
@@ -5954,9 +5954,9 @@ export interface paths {
         };
         /**
          * Export contracts to Excel
-         * @description **Screens:** VPA001401, VPA0014P01, VPA0014P02
+         * @description **Screens:** VPA05020201, VPA050202P01, VPA050202P02
          *
-         *     Excel download (VPA001301) of contracts and annexes with the same filters, at most 10,000 rows. Requires READ permission.
+         *     Excel download (VPA05020101) of contracts and annexes with the same filters, at most 10,000 rows. Requires READ permission.
          */
         get: operations["exportExcel_4"];
         put?: never;
@@ -5976,7 +5976,7 @@ export interface paths {
         };
         /**
          * Get single menu permission for role / Chi tiết phân quyền menu của vai trò
-         * @description **Screens:** VPA004701
+         * @description **Screens:** VPA09020401
          *
          *     Returns permission level for a specific menu and role. / Trả về mức phân quyền của một menu cụ thể cho vai trò.
          */
@@ -5985,7 +5985,7 @@ export interface paths {
         post?: never;
         /**
          * Revoke single menu permission from role / Thu hồi phân quyền menu đơn lẻ của vai trò
-         * @description **Screens:** VPA004701
+         * @description **Screens:** VPA09020401
          *
          *     Removes permission mapping for a specific menu and role. Requires WRITE permission. / Xóa ánh xạ phân quyền của một menu cụ thể khỏi vai trò. Yêu cầu quyền GHI.
          */
@@ -6004,7 +6004,7 @@ export interface paths {
         };
         /**
          * Get users assigned to a role / Danh sách người dùng theo vai trò
-         * @description **Screens:** VPA004701
+         * @description **Screens:** VPA09020401
          *
          *     Returns paginated users assigned to a specific role group and/or role ID. / Trả về danh sách người dùng phân trang được gán theo mã nhóm vai trò và/hoặc mã vai trò.
          */
@@ -6026,7 +6026,7 @@ export interface paths {
         };
         /**
          * Get all users assigned to a role / Danh sách toàn bộ người dùng theo vai trò
-         * @description **Screens:** VPA004701
+         * @description **Screens:** VPA09020401
          *
          *     Returns all users assigned to a specific role group and/or role ID without pagination. / Trả về danh sách tất cả người dùng không phân trang theo mã nhóm vai trò và/hoặc mã vai trò.
          */
@@ -6048,7 +6048,7 @@ export interface paths {
         };
         /**
          * List all roles / Danh sách tất cả vai trò
-         * @description **Screens:** VPA004701
+         * @description **Screens:** VPA09020401
          *
          *     Returns all roles without pagination for dropdowns. / Trả về toàn bộ vai trò không phân trang cho dropdown.
          */
@@ -6070,7 +6070,7 @@ export interface paths {
         };
         /**
          * List all role groups / Danh sách tất cả nhóm vai trò
-         * @description **Screens:** VPA004601, VPA0046P01
+         * @description **Screens:** VPA09020301, VPA090203P01
          *
          *     Returns all role groups without pagination for dropdowns. / Trả về toàn bộ nhóm vai trò không phân trang cho dropdown.
          */
@@ -6092,7 +6092,7 @@ export interface paths {
         };
         /**
          * Search contracts
-         * @description **Screens:** VPA001301, VPA0013P01, VPA0013P02
+         * @description **Screens:** VPA05020101, VPA050201P01, VPA050201P02
          *
          *     Contracts and annexes with the remaining days (D-xx), fee stage and latest approval. Requires READ permission.
          */
@@ -6113,8 +6113,8 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Get contract member (VPA001301/VPA001401 popup)
-         * @description **Screens:** VPA001301, VPA0013P01, VPA0013P02
+         * Get contract member (VPA05020101/VPA05020201 popup)
+         * @description **Screens:** VPA05020101, VPA050201P01, VPA050201P02
          *
          *     Member information popup opened from the contract list; phone, e-mail and ID numbers are masked, files omitted. Requires READ permission on the contract menu.
          */
@@ -6136,7 +6136,7 @@ export interface paths {
         };
         /**
          * Get fee installments
-         * @description **Screens:** VPA001301, VPA0013P01, VPA0013P02
+         * @description **Screens:** VPA05020101, VPA050201P01, VPA050201P02
          *
          *     Installments, receipts and refunds. Requires READ permission.
          */
@@ -6158,7 +6158,7 @@ export interface paths {
         };
         /**
          * Get approval history
-         * @description **Screens:** VPA001301, VPA0013P01, VPA0013P02
+         * @description **Screens:** VPA05020101, VPA050201P01, VPA050201P02
          *
          *     Approval sessions of the contract and of its terminations. Requires READ permission.
          */
@@ -6180,9 +6180,9 @@ export interface paths {
         };
         /**
          * Export contracts to Excel
-         * @description **Screens:** VPA001301, VPA0013P01, VPA0013P02
+         * @description **Screens:** VPA05020101, VPA050201P01, VPA050201P02
          *
-         *     Excel download (VPA001301) of contracts and annexes with the same filters, at most 10,000 rows. Requires READ permission.
+         *     Excel download (VPA05020101) of contracts and annexes with the same filters, at most 10,000 rows. Requires READ permission.
          */
         get: operations["exportExcel_5"];
         put?: never;
@@ -6202,7 +6202,7 @@ export interface paths {
         };
         /**
          * Program options / Danh sách chọn chương trình
-         * @description **Screens:** VPA005101, VPA0051P01
+         * @description **Screens:** VPA09040101, VPA090401P01
          */
         get: operations["options_1"];
         put?: never;
@@ -6222,7 +6222,7 @@ export interface paths {
         };
         /**
          * Export Excel / Xuất Excel
-         * @description **Screens:** VPA005101, VPA0051P01
+         * @description **Screens:** VPA09040101, VPA090401P01
          */
         get: operations["exportExcel_6"];
         put?: never;
@@ -6242,7 +6242,7 @@ export interface paths {
         };
         /**
          * Excel download / Tải Excel
-         * @description **Screens:** VPA004101, VPA0041P01
+         * @description **Screens:** VPA09010301, VPA090103P01
          *
          *     Exports the list with the same search conditions and order (max 10,000 rows). / Xuất danh sách theo điều kiện tìm kiếm.
          */
@@ -6264,9 +6264,9 @@ export interface paths {
         };
         /**
          * Search NPLs
-         * @description **Screens:** VPA001601, VPA0006P01, VPA0019P01
+         * @description **Screens:** VPA04020001, VPA040200P02, VPA040500P01
          *
-         *     NPL list with filters and paging; lotYn=N gives the single-NPL selection popup. Requires READ on the NPL menus (A03010100, A03010400) or on a trade application/contract menu.
+         *     NPL list with filters and paging; lotYn=N gives the single-NPL selection popup. Requires READ on the NPL menus (A04020000, A04050000) or on a trade application/contract menu.
          */
         get: operations["getNpls"];
         put?: never;
@@ -6286,9 +6286,9 @@ export interface paths {
         };
         /**
          * Get NPL detail
-         * @description **Screens:** VPA001601, VPA0006P01, VPA0019P01
+         * @description **Screens:** VPA04020001, VPA040200P02, VPA040500P01
          *
-         *     NPL popup (LOT or single) with evaluation, files, collaterals, creditors and debtors. Debtor personal data is in clear (and the read is audited) only with READ on A03010300, otherwise masked. Same read permission as the list.
+         *     NPL popup (LOT or single) with evaluation, files, collaterals, creditors and debtors. Debtor personal data is in clear (and the read is audited) only with READ on A04040000, otherwise masked. Same read permission as the list.
          */
         get: operations["getNpl"];
         put?: never;
@@ -6308,9 +6308,9 @@ export interface paths {
         };
         /**
          * Export NPL LOTs to Excel
-         * @description **Screens:** VPA001901
+         * @description **Screens:** VPA04050001
          *
-         *     Exports the list filters as Excel, at most 10,000 rows. Requires READ on A03010400.
+         *     Exports the list filters as Excel, at most 10,000 rows. Requires READ on A04050000.
          */
         get: operations["exportNplLots"];
         put?: never;
@@ -6330,9 +6330,9 @@ export interface paths {
         };
         /**
          * List sent notifications / Danh sách thông báo đã gửi
-         * @description **Screens:** VPA005601
+         * @description **Screens:** VPA09050201
          *
-         *     fromDt and toDt are required, at most 92 days apart (400 NTF005). Keyword on TITLE (default), CONTENT or RECIPIENT. Sort: notiSndngDt (default, newest first), notiMediaSe, notiTtl, sndngScsYn. Requires READ permission on Notification Management (A06060100).
+         *     fromDt and toDt are required, at most 92 days apart (400 NTF005). Keyword on TITLE (default), CONTENT or RECIPIENT. Sort: notiSndngDt (default, newest first), notiMediaSe, notiTtl, sndngScsYn. Requires READ permission on Notification Management (A09050100).
          */
         get: operations["getHistories_3"];
         put?: never;
@@ -6352,7 +6352,7 @@ export interface paths {
         };
         /**
          * Get sent notification / Chi tiết thông báo đã gửi
-         * @description **Screens:** VPA005601
+         * @description **Screens:** VPA09050201
          *
          *     With the content and the failure reason. Requires READ permission.
          */
@@ -6374,7 +6374,7 @@ export interface paths {
         };
         /**
          * Excel download / Tải Excel
-         * @description **Screens:** VPA005601
+         * @description **Screens:** VPA09050201
          *
          *     Same conditions and order as the list, max 10,000 rows, content not exported. Requires READ permission.
          */
@@ -6396,9 +6396,9 @@ export interface paths {
         };
         /**
          * Get sign-up application history / Lịch sử nộp hồ sơ đăng ký
-         * @description **Screens:** VPA000801, VPA0002P01, VPA0008P01
+         * @description **Screens:** VPA03010001, VPA030100P02, VPA030100P01
          *
-         *     Review rounds of the sign-up application, oldest first: each approval session with its outcome (IN_PROGRESS, APPROVED, SUPPLEMENT_REQUESTED, REJECTED), the closing employee and the supplement note or rejection reason. Also returns the current round (aplyRndNo, 2+ = re-submitted) and the open supplement note (U) or rejection reason (R). The user web clears both from the member record when the applicant re-applies; this API keeps them visible. A supplement requested before receipt opens no session: it shows only while the status is U. Requires READ permission on sign-up (A01010000) or member management (A01020000).
+         *     Review rounds of the sign-up application, oldest first: each approval session with its outcome (IN_PROGRESS, APPROVED, SUPPLEMENT_REQUESTED, REJECTED), the closing employee and the supplement note or rejection reason. Also returns the current round (aplyRndNo, 2+ = re-submitted) and the open supplement note (U) or rejection reason (R). The user web clears both from the member record when the applicant re-applies; this API keeps them visible. A supplement requested before receipt opens no session: it shows only while the status is U. Requires READ permission on sign-up (A03010000) or member management (A03010000).
          */
         get: operations["getApplicationHistory"];
         put?: never;
@@ -6418,9 +6418,9 @@ export interface paths {
         };
         /**
          * Excel download of the member list / Tải Excel danh sách hội viên
-         * @description **Screens:** VPA000801, VPA0002P01, VPA0008P01
+         * @description **Screens:** VPA03010001, VPA030100P02, VPA030100P01
          *
-         *     VPA03010001 Excel Download: same search conditions and masking as the list (max 10,000 rows); deleted members only when mbrGrdCds contains DELETED. Requires READ on menu A01010000. / Cùng điều kiện tìm kiếm và che dữ liệu như danh sách.
+         *     VPA03010001 Excel Download: same search conditions and masking as the list (max 10,000 rows); deleted members only when mbrGrdCds contains DELETED. Requires READ on menu A03010000. / Cùng điều kiện tìm kiếm và che dữ liệu như danh sách.
          */
         get: operations["excel"];
         put?: never;
@@ -6440,7 +6440,7 @@ export interface paths {
         };
         /**
          * Get sign-up work counters
-         * @description **Screens:** VPA000801, VPA0002P01, VPA0008P01
+         * @description **Screens:** VPA03010001, VPA030100P02, VPA030100P01
          *
          *     Step 5: counters for the admin header badge - new applications waiting for receipt, supplement requests, applications assigned to me and awaiting my decision. Requires READ permission.
          */
@@ -6462,7 +6462,7 @@ export interface paths {
         };
         /**
          * Get districts by province / Danh sách Quận/Huyện theo Tỉnh
-         * @description **Screens:** VPA004901, VPA0049P01
+         * @description **Screens:** VPA09030201, VPA090302P01
          *
          *     Returns all districts belonging to a province. / Trả về danh sách Quận/Huyện trực thuộc một Tỉnh/Thành phố.
          */
@@ -6484,7 +6484,7 @@ export interface paths {
         };
         /**
          * Excel download of provinces / Tải Excel Tỉnh/Thành phố
-         * @description **Screens:** VPA004901, VPA0049P01
+         * @description **Screens:** VPA09030201, VPA090302P01
          *
          *     Exports the list with the same search conditions (max 10,000 rows). / Xuất danh sách theo điều kiện tìm kiếm.
          */
@@ -6506,9 +6506,9 @@ export interface paths {
         };
         /**
          * Live auction list / Danh sách đấu giá trực tiếp
-         * @description **Screens:** VPA002201, VPA0022P01
+         * @description **Screens:** VPA06030001, VPA060300P01
          *
-         *     Same board as the bidder list (default statuses AN, IP, PS, AW, FL, CL, WP, ST, DF). Requires READ permission (A07030000).
+         *     Same board as the bidder list (default statuses AN, IP, PS, AW, FL, CL, WP, ST, DF). Requires READ permission (A06030000).
          */
         get: operations["getAuctions_1"];
         put?: never;
@@ -6528,7 +6528,7 @@ export interface paths {
         };
         /**
          * Live auction summary / Tóm tắt
-         * @description **Screens:** VPA002201, VPA0022P01
+         * @description **Screens:** VPA06030001, VPA060300P01
          *
          *     Cards, winner (masked) and availableActions. Requires READ permission.
          */
@@ -6550,7 +6550,7 @@ export interface paths {
         };
         /**
          * Winning bid certificate data / Dữ liệu phiếu xác nhận trúng đấu giá
-         * @description **Screens:** VPA002201, VPA0022P01
+         * @description **Screens:** VPA06030001, VPA060300P01
          *
          *     Awarded auctions only (409 AUC011); carries the winner's full name. Requires READ permission.
          */
@@ -6572,7 +6572,7 @@ export interface paths {
         };
         /**
          * Polling snapshot / Ảnh chụp để polling
-         * @description **Screens:** VPA002201, VPA0022P01
+         * @description **Screens:** VPA06030001, VPA060300P01
          *
          *     Summary plus up to 100 valid bids after lastBidNo (oldest first). Poll every 2 s. Requires READ permission.
          */
@@ -6594,7 +6594,7 @@ export interface paths {
         };
         /**
          * Bids / Lượt đặt giá
-         * @description **Screens:** VPA002201, VPA0022P01
+         * @description **Screens:** VPA06030001, VPA060300P01
          *
          *     Valid bids, newest first; seq = order in time. Requires READ permission.
          */
@@ -6616,7 +6616,7 @@ export interface paths {
         };
         /**
          * Auction record data / Dữ liệu biên bản đấu giá
-         * @description **Screens:** VPA002201, VPA0022P01
+         * @description **Screens:** VPA06030001, VPA060300P01
          *
          *     Overview, result summary and every valid bid (bidders masked). Requires READ permission.
          */
@@ -6638,7 +6638,7 @@ export interface paths {
         };
         /**
          * List languages / Danh sách ngôn ngữ
-         * @description **Screens:** VPA005301, VPA0053P01
+         * @description **Screens:** VPA09040301, VPA090403P01
          *
          *     All languages, including not in use. / Gồm cả ngôn ngữ không sử dụng.
          */
@@ -6660,7 +6660,7 @@ export interface paths {
         };
         /**
          * Get label / Chi tiết nhãn
-         * @description **Screens:** VPA005301, VPA0053P01
+         * @description **Screens:** VPA09040301, VPA090403P01
          *
          *     Label with translations for every active language. / Nhãn kèm bản dịch các ngôn ngữ đang dùng.
          */
@@ -6682,7 +6682,7 @@ export interface paths {
         };
         /**
          * Get branches by institution / Danh sách Chi nhánh theo Tổ chức tài chính
-         * @description **Screens:** VPA005001, VPA0050P01
+         * @description **Screens:** VPA09030301, VPA090303P01
          *
          *     Returns all branches belonging to an institution. / Trả về danh sách chi nhánh trực thuộc một tổ chức tài chính.
          */
@@ -6704,7 +6704,7 @@ export interface paths {
         };
         /**
          * Excel download of institutions / Tải Excel Tổ chức tài chính
-         * @description **Screens:** VPA005001, VPA0050P01
+         * @description **Screens:** VPA09030301, VPA090303P01
          *
          *     Exports the list with the same search conditions (max 10,000 rows). / Xuất danh sách theo điều kiện tìm kiếm.
          */
@@ -6726,7 +6726,7 @@ export interface paths {
         };
         /**
          * Employee lookup popup / Popup chọn nhân viên
-         * @description **Screens:** VPA004501, VPA0045P01
+         * @description **Screens:** VPA09020201, VPA090202P01
          *
          *     Lists active employees (no contact data) for picking role assignees; can exclude those already assigned. / Liệt kê nhân viên đang làm việc (không có thông tin liên lạc) để chọn người phụ trách; có thể loại người đã được gán.
          */
@@ -6748,18 +6748,18 @@ export interface paths {
         };
         /**
          * Search debtors
-         * @description **Screens:** VPA001801, VPA0018P01
+         * @description **Screens:** VPA04040001, VPA040400P01
          *
-         *     Debtor list with filters, sort (dbtrCd, dbtrNm, cptl; default newest first) and paging. Personal data in clear, audited. Requires READ on A03010300.
+         *     Debtor list with filters, sort (dbtrCd, dbtrNm, cptl; default newest first) and paging. Personal data in clear, audited. Requires READ on A04040000.
          */
         get: operations["getDebtors"];
         put?: never;
         post?: never;
         /**
          * Soft delete debtors
-         * @description **Screens:** VPA001801, VPA0018P01
+         * @description **Screens:** VPA04040001, VPA040400P01
          *
-         *     Sets the status to deleted (D). Returns 409 (DBT001) while a debtor is linked to an NPL. Requires WRITE on A03010300.
+         *     Sets the status to deleted (D). Returns 409 (DBT001) while a debtor is linked to an NPL. Requires WRITE on A04040000.
          */
         delete: operations["deleteDebtors"];
         options?: never;
@@ -6776,9 +6776,9 @@ export interface paths {
         };
         /**
          * Get debtor detail
-         * @description **Screens:** VPA001801, VPA0018P01
+         * @description **Screens:** VPA04040001, VPA040400P01
          *
-         *     Debtor popup. Personal data in clear and audited with READ on A03010300, masked when the caller only has an NPL read menu.
+         *     Debtor popup. Personal data in clear and audited with READ on A04040000, masked when the caller only has an NPL read menu.
          */
         get: operations["getDebtor"];
         put?: never;
@@ -6798,9 +6798,9 @@ export interface paths {
         };
         /**
          * Export debtors to Excel
-         * @description **Screens:** VPA001801, VPA0018P01
+         * @description **Screens:** VPA04040001, VPA040400P01
          *
-         *     Exports the list filters as Excel with personal data in clear, at most 10,000 rows, audited. Requires READ on A03010300.
+         *     Exports the list filters as Excel with personal data in clear, at most 10,000 rows, audited. Requires READ on A04040000.
          */
         get: operations["exportDebtors"];
         put?: never;
@@ -6820,9 +6820,9 @@ export interface paths {
         };
         /**
          * Get dashboard counters / Số liệu dashboard
-         * @description **Screens:** VPA000101
+         * @description **Screens:** VPA01000001
          *
-         *     Provisional: the VPA000101 widgets are still to be confirmed. Returns the approvals waiting for the signed-in employee, the sign-up work counters (with sign-up menu permission) and the user web home posting counters (with NPL or collateral menu permission); a block without permission is null. Any authenticated employee.
+         *     Provisional: the VPA01000001 widgets are still to be confirmed. Returns the approvals waiting for the signed-in employee, the sign-up work counters (with sign-up menu permission) and the user web home posting counters (with NPL or collateral menu permission); a block without permission is null. Any authenticated employee.
          */
         get: operations["getSummary_1"];
         put?: never;
@@ -6864,7 +6864,7 @@ export interface paths {
         };
         /**
          * Dropdown options / Danh sách lựa chọn
-         * @description **Screens:** VPA003301, VPA0033P01
+         * @description **Screens:** VPA07070001, VPA070700P01
          *
          *     Document types, groups, fields and issuing authorities. / Loại văn bản, nhóm, lĩnh vực, cơ quan ban hành.
          */
@@ -6886,7 +6886,7 @@ export interface paths {
         };
         /**
          * Excel download / Tải Excel
-         * @description **Screens:** VPA003301, VPA0033P01
+         * @description **Screens:** VPA07070001, VPA070700P01
          *
          *     Exports the list with the same search conditions (max 10,000 rows). / Xuất danh sách theo điều kiện tìm kiếm.
          */
@@ -6908,7 +6908,7 @@ export interface paths {
         };
         /**
          * List inquiries / Danh sách câu hỏi
-         * @description **Screens:** VPA003001, VPA0030P01
+         * @description **Screens:** VPA07040001, VPA070400P01
          *
          *     Default filter: unanswered. Inquirer names are masked. / Mặc định lọc câu hỏi chưa trả lời; tên người hỏi được che.
          */
@@ -6930,7 +6930,7 @@ export interface paths {
         };
         /**
          * Get inquiry detail / Chi tiết câu hỏi
-         * @description **Screens:** VPA003001, VPA0030P01
+         * @description **Screens:** VPA07040001, VPA070400P01
          *
          *     Inquirer name, e-mail and phone are masked. Audited as a personal data read. / Tên, email, SĐT được che; có ghi audit.
          */
@@ -6952,7 +6952,7 @@ export interface paths {
         };
         /**
          * Excel download / Tải Excel
-         * @description **Screens:** VPA003001, VPA0030P01
+         * @description **Screens:** VPA07040001, VPA070400P01
          *
          *     Exports the inquiry list with the same search conditions (names masked, max 10,000 rows). / Xuất danh sách câu hỏi (tên đã che).
          */
@@ -6994,7 +6994,7 @@ export interface paths {
         };
         /**
          * Excel download / Tải Excel
-         * @description **Screens:** VPA003101, VPA0031P01
+         * @description **Screens:** VPA07050001, VPA070500P01
          *
          *     Exports the FAQ list with the same search conditions (max 10,000 rows). / Xuất danh sách FAQ theo điều kiện tìm kiếm.
          */
@@ -7016,7 +7016,7 @@ export interface paths {
         };
         /**
          * Excel download / Tải Excel
-         * @description **Screens:** VPA003401, VPA0034P01
+         * @description **Screens:** VPA07080001, VPA070800P01
          *
          *     Exports the list with the same search conditions (max 10,000 rows). / Xuất danh sách theo điều kiện tìm kiếm.
          */
@@ -7038,7 +7038,7 @@ export interface paths {
         };
         /**
          * Excel download / Tải Excel
-         * @description **Screens:** VPA003201, VPA0032P01
+         * @description **Screens:** VPA07060101, VPA070601P01
          *
          *     Exports the list with the same search conditions (max 10,000 rows). / Xuất danh sách theo điều kiện tìm kiếm.
          */
@@ -7060,7 +7060,7 @@ export interface paths {
         };
         /**
          * Search contracts
-         * @description **Screens:** VPA001501
+         * @description **Screens:** VPA05020301
          *
          *     Contracts and annexes with the remaining days (D-xx), fee stage and latest approval. Requires READ permission.
          */
@@ -7081,8 +7081,8 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Get contract member (VPA001301/VPA001401 popup)
-         * @description **Screens:** VPA001501
+         * Get contract member (VPA05020101/VPA05020201 popup)
+         * @description **Screens:** VPA05020301
          *
          *     Member information popup opened from the contract list; phone, e-mail and ID numbers are masked, files omitted. Requires READ permission on the contract menu.
          */
@@ -7104,7 +7104,7 @@ export interface paths {
         };
         /**
          * Get fee installments
-         * @description **Screens:** VPA001501
+         * @description **Screens:** VPA05020301
          *
          *     Installments, receipts and refunds. Requires READ permission.
          */
@@ -7126,7 +7126,7 @@ export interface paths {
         };
         /**
          * Get approval history
-         * @description **Screens:** VPA001501
+         * @description **Screens:** VPA05020301
          *
          *     Approval sessions of the contract and of its terminations. Requires READ permission.
          */
@@ -7148,9 +7148,9 @@ export interface paths {
         };
         /**
          * Export contracts to Excel
-         * @description **Screens:** VPA001501
+         * @description **Screens:** VPA05020301
          *
-         *     Excel download (VPA001301) of contracts and annexes with the same filters, at most 10,000 rows. Requires READ permission.
+         *     Excel download (VPA05020101) of contracts and annexes with the same filters, at most 10,000 rows. Requires READ permission.
          */
         get: operations["exportExcel_7"];
         put?: never;
@@ -7170,7 +7170,7 @@ export interface paths {
         };
         /**
          * List codes by group / Danh sách mã chi tiết theo nhóm
-         * @description **Screens:** VPA004801, VPA0048P01
+         * @description **Screens:** VPA09030101, VPA090301P01
          *
          *     Returns detailed codes within a group for admin grid display. / Trả về danh sách mã chi tiết thuộc một nhóm cho bảng quản trị.
          */
@@ -7192,7 +7192,7 @@ export interface paths {
         };
         /**
          * Excel download of code groups / Tải Excel nhóm mã
-         * @description **Screens:** VPA004801, VPA0048P01
+         * @description **Screens:** VPA09030101, VPA090301P01
          *
          *     Exports the list with the same search conditions (max 10,000 rows). / Xuất danh sách theo điều kiện tìm kiếm.
          */
@@ -7214,7 +7214,7 @@ export interface paths {
         };
         /**
          * List all code groups / Danh sách tất cả nhóm mã
-         * @description **Screens:** VPA004801, VPA0048P01
+         * @description **Screens:** VPA09030101, VPA090301P01
          *
          *     Returns all code groups (unpaginated) with optional filters. / Trả về toàn bộ danh sách nhóm mã không phân trang.
          */
@@ -7236,9 +7236,9 @@ export interface paths {
         };
         /**
          * Search collateral assets
-         * @description **Screens:** VPA001701, VPA0017P01
+         * @description **Screens:** VPA04030001, VPA040300P01
          *
-         *     Collateral asset list with filters, sort (cltrAstCd, cltrAstNm, loanTtmEvlAmt, rcntCltrWrthAmt; default newest first) and paging. Requires READ on A03010200.
+         *     Collateral asset list with filters, sort (cltrAstCd, cltrAstNm, loanTtmEvlAmt, rcntCltrWrthAmt; default newest first) and paging. Requires READ on A04030000.
          */
         get: operations["getCollateralAssets"];
         put?: never;
@@ -7258,9 +7258,9 @@ export interface paths {
         };
         /**
          * Get collateral asset detail
-         * @description **Screens:** VPA001701, VPA0017P01
+         * @description **Screens:** VPA04030001, VPA040300P01
          *
-         *     Collateral asset popup with characteristics, linked NPLs and files. Requires READ on A03010200 or on an NPL read menu (NPL, lot, trade application/contract).
+         *     Collateral asset popup with characteristics, linked NPLs and files. Requires READ on A04030000 or on an NPL read menu (NPL, lot, trade application/contract).
          */
         get: operations["getCollateralAsset"];
         put?: never;
@@ -7280,9 +7280,9 @@ export interface paths {
         };
         /**
          * Export collateral assets to Excel
-         * @description **Screens:** VPA001701, VPA0017P01
+         * @description **Screens:** VPA04030001, VPA040300P01
          *
-         *     Exports the list filters as Excel, one row per characteristic, at most 10,000 rows. Requires READ on A03010200.
+         *     Exports the list filters as Excel, one row per characteristic, at most 10,000 rows. Requires READ on A04030000.
          */
         get: operations["exportCollateralAssets"];
         put?: never;
@@ -7302,7 +7302,7 @@ export interface paths {
         };
         /**
          * Get bidder / Chi tiết người tham gia
-         * @description **Screens:** VPA002101, VPA0021P01
+         * @description **Screens:** VPA06020001, VPA060200P01
          *
          *     Requires READ permission.
          */
@@ -7311,7 +7311,7 @@ export interface paths {
         post?: never;
         /**
          * Delete bidder / Xoá đơn tham gia
-         * @description **Screens:** VPA002101, VPA0021P01
+         * @description **Screens:** VPA06020001, VPA060200P01
          *
          *     AP or DQ, deposit not held, no bid (409 BDR005). Requires WRITE permission.
          */
@@ -7330,9 +7330,9 @@ export interface paths {
         };
         /**
          * Auctions for bidder management / Danh sách phiên để quản lý người tham gia
-         * @description **Screens:** VPA002101, VPA0021P01
+         * @description **Screens:** VPA06020001, VPA060200P01
          *
-         *     Latest cycle; default statuses AN, IP, PS, AW, FL, CL, WP, ST, DF. Sort: auctnEndDt (default), auctnNo, auctnNm, auctnSttsCd. Requires READ permission (A07020000).
+         *     Latest cycle; default statuses AN, IP, PS, AW, FL, CL, WP, ST, DF. Sort: auctnEndDt (default), auctnNo, auctnNm, auctnSttsCd. Requires READ permission (A06020000).
          */
         get: operations["getAuctions_2"];
         put?: never;
@@ -7352,7 +7352,7 @@ export interface paths {
         };
         /**
          * Bidders of an auction / Người tham gia của phiên
-         * @description **Screens:** VPA002101, VPA0021P01
+         * @description **Screens:** VPA06020001, VPA060200P01
          *
          *     Name, phone and e-mail masked; availableActions per row. Requires READ permission.
          */
@@ -7374,7 +7374,7 @@ export interface paths {
         };
         /**
          * Collaterals of an NPL / Tài sản bảo đảm của NPL
-         * @description **Screens:** VPA002001, VPA0020P01
+         * @description **Screens:** VPA06010001, VPA060100P01
          *
          *     Target item lookup of the register popup. Requires READ permission.
          */
@@ -7396,7 +7396,7 @@ export interface paths {
         };
         /**
          * Excel download / Tải Excel
-         * @description **Screens:** VPA002001, VPA0020P01
+         * @description **Screens:** VPA06010001, VPA060100P01
          *
          *     Same conditions and order as the list, max 10,000 rows. Requires READ permission.
          */
@@ -7458,7 +7458,7 @@ export interface paths {
         };
         /**
          * Get approval session detail
-         * @description **Screens:** VPA0003P01, VPA0003P02, VPA0003P03, VPA0003P04
+         * @description **Screens:** VPA020100P01, VPA020200P01, VPA020300P01, VPA0003P04
          *
          *     Retrieves approval session state and complete steps timeline history (A-16, ADF1234_P12). Requires READ permission.
          */
@@ -7480,7 +7480,7 @@ export interface paths {
         };
         /**
          * Get my approval inbox
-         * @description **Screens:** VPA0003P01, VPA0003P02, VPA0003P03, VPA0003P04
+         * @description **Screens:** VPA020100P01, VPA020200P01, VPA020300P01, VPA0003P04
          *
          *     In-progress approval sessions whose current step is assigned to the signed-in employee, newest first, with a navigation hint (processKind, targetScreen, menuCd, tradeKind, srvcAplyId, srvcCtrtCd, ctrtEndId, mbrNo). Any authenticated employee; only their own items are returned.
          */
@@ -7502,7 +7502,7 @@ export interface paths {
         };
         /**
          * Get my approval inbox counts
-         * @description **Screens:** VPA0003P01, VPA0003P02, VPA0003P03, VPA0003P04
+         * @description **Screens:** VPA020100P01, VPA020200P01, VPA020300P01, VPA0003P04
          *
          *     Number of sessions waiting for the signed-in employee per process kind (member, sale, purchase, consulting, other). Any authenticated employee.
          */
@@ -7524,7 +7524,7 @@ export interface paths {
         };
         /**
          * Search step candidate employees
-         * @description **Screens:** VPA0003P01, VPA0003P02, VPA0003P03, VPA0003P04
+         * @description **Screens:** VPA020100P01, VPA020200P01, VPA020300P01, VPA0003P04
          *
          *     Finds eligible active employees holding the required role for an approval step (A-02, ADF1234_P08..P09). Requires READ permission.
          */
@@ -7546,7 +7546,7 @@ export interface paths {
         };
         /**
          * Query labels by screen / Truy vấn nhãn theo màn hình
-         * @description **Screens:** VPA005301, VPA0053P01
+         * @description **Screens:** VPA09040301, VPA090403P01
          *
          *     Returns labels/translations by screen ID for admin UI / Trả về danh sách nhãn/bản dịch theo ID màn hình
          */
@@ -7555,7 +7555,7 @@ export interface paths {
         post?: never;
         /**
          * Delete label / Xóa nhãn
-         * @description **Screens:** VPA005301, VPA0053P01
+         * @description **Screens:** VPA09040301, VPA090403P01
          *
          *     Deletes label and all associated translations / Xóa nhãn và toàn bộ bản dịch liên quan
          */
@@ -7574,7 +7574,7 @@ export interface paths {
         };
         /**
          * Query label-translation rows / Truy vấn danh sách dòng nhãn-bản dịch
-         * @description **Screens:** VPA005301, VPA0053P01
+         * @description **Screens:** VPA09040301, VPA090403P01
          *
          *     Returns label-translation rows with optional filters / Trả về danh sách nhãn-bản dịch kèm các bộ lọc tùy chọn
          */
@@ -7596,7 +7596,7 @@ export interface paths {
         };
         /**
          * Query active languages / Truy vấn danh sách ngôn ngữ
-         * @description **Screens:** VPA005301, VPA0053P01
+         * @description **Screens:** VPA09040301, VPA090403P01
          *
          *     Returns active languages in sorted order / Trả về danh sách ngôn ngữ hoạt động theo thứ tự
          */
@@ -7618,7 +7618,7 @@ export interface paths {
         };
         /**
          * Download labels upload template / Tải template Excel mẫu
-         * @description **Screens:** VPA005301, VPA0053P01
+         * @description **Screens:** VPA09040301, VPA090403P01
          *
          *     Downloads template with required columns / Tải file mẫu với các cột bắt buộc
          */
@@ -7640,7 +7640,7 @@ export interface paths {
         };
         /**
          * Download labels Excel / Tải file Excel danh sách nhãn
-         * @description **Screens:** VPA005301, VPA0053P01
+         * @description **Screens:** VPA09040301, VPA090403P01
          *
          *     Downloads all label-translation rows as Excel / Tải toàn bộ danh sách nhãn-bản dịch dưới dạng file Excel
          */
@@ -7662,7 +7662,7 @@ export interface paths {
         };
         /**
          * Bulk query all labels / Truy vấn toàn bộ nhãn hàng loạt
-         * @description **Screens:** VPA005301, VPA0053P01
+         * @description **Screens:** VPA09040301, VPA090403P01
          *
          *     Returns {LBL_CD: text} map based on X-Lang header / Trả về map {LBL_CD: text} theo ngôn ngữ trong header X-Lang
          */
@@ -7724,7 +7724,7 @@ export interface paths {
         };
         /**
          * Query programs by menu / Truy vấn chương trình theo menu
-         * @description **Screens:** VPA004401, VPA0044P01
+         * @description **Screens:** VPA09020101, VPA090201P01
          *
          *     Retrieves list of programs/screens mapped to a specific menu code. / Trả về danh sách chương trình/màn hình được liên kết với mã menu chỉ định.
          */
@@ -7746,7 +7746,7 @@ export interface paths {
         };
         /**
          * Query my permissions list / Truy vấn danh sách quyền cá nhân
-         * @description **Screens:** VPA004401, VPA0044P01
+         * @description **Screens:** VPA09020101, VPA090201P01
          *
          *     Retrieves detailed menu authorization permissions (AL: All, WT: Write, RD: Read-only) based on user's role. / Trả về danh sách quyền hạn chi tiết theo vai trò người dùng (AL: Toàn quyền, WT: Ghi, RD: Chỉ đọc).
          */
@@ -7768,7 +7768,7 @@ export interface paths {
         };
         /**
          * Query my menu tree / Truy vấn cây menu cá nhân
-         * @description **Screens:** VPA004401, VPA0044P01
+         * @description **Screens:** VPA09020101, VPA090201P01
          *
          *     Retrieves hierarchical menu tree according to the authenticated user's role and requested language code. / Trả về cây menu phân cấp theo vai trò của người dùng đã đăng nhập và mã ngôn ngữ yêu cầu.
          */
@@ -7790,7 +7790,7 @@ export interface paths {
         };
         /**
          * Query all menus list / Truy vấn danh sách toàn bộ menu
-         * @description **Screens:** VPA004401, VPA0044P01
+         * @description **Screens:** VPA09020101, VPA090201P01
          *
          *     Retrieves full menu list for administrative management with optional search filters. Requires ADMIN role. / Trả về toàn bộ danh sách menu phục vụ quản trị với các bộ lọc tìm kiếm tùy chọn. Yêu cầu vai trò ADMIN.
          */
@@ -7812,7 +7812,7 @@ export interface paths {
         };
         /**
          * Get active provinces / Lấy danh sách Tỉnh/Thành phố đang hoạt động
-         * @description **Screens:** VPA004901, VPA0049P01
+         * @description **Screens:** VPA09030201, VPA090302P01
          *
          *     Returns active provinces for dropdown selections (cached). / Trả về danh sách Tỉnh/Thành phố đang hoạt động cho các dropdown chọn lựa (có lưu cache).
          */
@@ -7834,7 +7834,7 @@ export interface paths {
         };
         /**
          * Get active districts by province / Lấy danh sách Quận/Huyện theo Tỉnh
-         * @description **Screens:** VPA004901, VPA0049P01
+         * @description **Screens:** VPA09030201, VPA090302P01
          *
          *     Returns active districts of a province for cascaded dropdowns. / Trả về danh sách Quận/Huyện của Tỉnh cho dropdown liên kết.
          */
@@ -7856,7 +7856,7 @@ export interface paths {
         };
         /**
          * Get active financial institutions / Lấy danh sách Tổ chức tài chính đang hoạt động
-         * @description **Screens:** VPA005001, VPA0050P01
+         * @description **Screens:** VPA09030301, VPA090303P01
          *
          *     Returns active financial institutions for dropdown selections (cached). / Trả về danh sách tổ chức tài chính đang hoạt động cho dropdown (có lưu cache).
          */
@@ -7878,7 +7878,7 @@ export interface paths {
         };
         /**
          * Get active branches by institution / Lấy danh sách Chi nhánh theo Tổ chức tài chính
-         * @description **Screens:** VPA005001, VPA0050P01
+         * @description **Screens:** VPA09030301, VPA090303P01
          *
          *     Returns active branches of an institution for cascaded dropdowns. / Trả về danh sách chi nhánh hoạt động theo ngân hàng.
          */
@@ -7900,7 +7900,7 @@ export interface paths {
         };
         /**
          * Get multiple groups at once / Lấy danh sách mã cho nhiều nhóm cùng lúc
-         * @description **Screens:** VPA004801, VPA0048P01
+         * @description **Screens:** VPA09030101, VPA090301P01
          *
          *     Returns map of group codes to their respective code lists. / Trả về bản đồ mã nhóm và danh sách mã tương ứng.
          */
@@ -7922,7 +7922,7 @@ export interface paths {
         };
         /**
          * Get code list by group / Lấy danh sách mã theo nhóm
-         * @description **Screens:** VPA004801, VPA0048P01
+         * @description **Screens:** VPA09030101, VPA090301P01
          *
          *     Returns active common codes for a specific group (cached). / Trả về danh sách mã đang hoạt động theo nhóm (có lưu cache).
          */
@@ -7944,7 +7944,7 @@ export interface paths {
         };
         /**
          * Get single code / Lấy chi tiết một mã
-         * @description **Screens:** VPA004801, VPA0048P01
+         * @description **Screens:** VPA09030101, VPA090301P01
          *
          *     Returns single common code detail. / Trả về chi tiết một mã dùng chung.
          */
@@ -7966,7 +7966,7 @@ export interface paths {
         };
         /**
          * Get RSA Public Key for login
-         * @description **Screens:** VPA000701, VPA000101
+         * @description **Screens:** VPA02110001, VPA01000001
          *
          *     Returns RSA-OAEP(SHA-256) public key used for password encryption.
          */
@@ -7988,7 +7988,7 @@ export interface paths {
         };
         /**
          * Get authenticated user profile and roles
-         * @description **Screens:** VPA000701, VPA000101
+         * @description **Screens:** VPA02110001, VPA01000001
          *
          *     Returns current authenticated employee profile, assigned roles, and menu trees.
          */
@@ -8010,7 +8010,7 @@ export interface paths {
         };
         /**
          * Get @BatchJob registry list / Tra cứu danh sách @BatchJob đã đăng ký trong mã nguồn
-         * @description **Screens:** VPA005401, VPA0054P01
+         * @description **Screens:** VPA09040401, VPA090404P01
          */
         get: operations["getRegistry"];
         put?: never;
@@ -8030,7 +8030,7 @@ export interface paths {
         };
         /**
          * Get execution history by job / Lịch sử thực thi theo từng công việc
-         * @description **Screens:** VPA005401, VPA0054P01
+         * @description **Screens:** VPA09040401, VPA090404P01
          */
         get: operations["getJobHistory"];
         put?: never;
@@ -8050,7 +8050,7 @@ export interface paths {
         };
         /**
          * Get all execution history / Tra cứu toàn bộ lịch sử thực thi (lọc theo tên/trạng thái)
-         * @description **Screens:** VPA005401, VPA0054P01
+         * @description **Screens:** VPA09040401, VPA090404P01
          */
         get: operations["getAllHistory"];
         put?: never;
@@ -9362,7 +9362,7 @@ export interface components {
         RoleMenuPermissionItem: {
             /**
              * @description Menu code / Mã menu
-             * @example A01010000
+             * @example A03010000
              */
             menuCd: string;
             /**
@@ -9532,7 +9532,7 @@ export interface components {
             prgrmCd: string;
             /**
              * @description Menu code / Mã menu
-             * @example A06040100
+             * @example A09040100
              */
             menuCd: string;
             /**
@@ -9850,7 +9850,7 @@ export interface components {
             useYn: string;
             /**
              * @description Menu code of the business (MENU_MNG) / Mã menu nghiệp vụ
-             * @example A01010000
+             * @example A03010000
              */
             menuCd: string;
             /**
@@ -9914,7 +9914,7 @@ export interface components {
             useYn?: string;
             /**
              * @description Menu code
-             * @example A01010000
+             * @example A03010000
              */
             menuCd?: string;
             /**
@@ -10044,7 +10044,7 @@ export interface components {
         MenuItem: {
             /**
              * @description Menu code / Mã menu
-             * @example A01010000
+             * @example A03010000
              */
             menuCd: string;
             /** @description Read permission / Quyền đọc */
@@ -10161,7 +10161,7 @@ export interface components {
             issueDate?: string;
             attachments?: components["schemas"]["DocumentAttachmentRequest"][];
         };
-        /** @description Member update request DTO for screen popups VPA0002P01 and VPA0008P01 */
+        /** @description Member update request DTO for screen popups VPA030100P02 and VPA030100P01 */
         UpdateMemberRequest: {
             /**
              * @description Member full name
@@ -10831,7 +10831,7 @@ export interface components {
             /** @description True while the member can still be restored / Còn khôi phục được */
             restorable?: boolean;
         };
-        /** @description Member detail response for popups VPA0002P01 and VPA0008P01 */
+        /** @description Member detail response for popups VPA030100P02 and VPA030100P01 */
         MemberDetailResponse: {
             /** @description Basic application and membership information */
             basic?: components["schemas"]["MemberBasicDto"];
@@ -13182,12 +13182,12 @@ export interface components {
         MenuSaveRequest: {
             /**
              * @description Menu code (9 chars, business PK; 1st char W: User Web / A: Admin Web, followed by 2-digit depth segments; immutable after creation) / Mã menu (9 ký tự, khóa chính nghiệp vụ; ký tự đầu W: Web người dùng / A: Web quản trị, tiếp theo là các cặp 2 số theo cấp độ sâu; không thể sửa sau khi tạo)
-             * @example A01010000
+             * @example A03010000
              */
             menuCd: string;
             /**
              * @description Parent menu code (9 chars; for root menu, points to itself; for child menus, points to direct parent menuCd) / Mã menu cấp trên/cấp cha (9 ký tự; đối với menu gốc, trỏ đến chính mã hiện tại; đối với menu con, trỏ đến mã menu cha trực tiếp)
-             * @example A01000000
+             * @example A03000000
              */
             upMenuCd: string;
             /**
@@ -13197,7 +13197,7 @@ export interface components {
             menuSeCd?: string;
             /**
              * @description Multilingual label code mapped to LANG_LBL (defaults to lbl.menu.{menuCd} if omitted) / Mã nhãn đa ngôn ngữ liên kết bảng LANG_LBL (mặc định tự sinh lbl.menu.{menuCd} nếu để trống)
-             * @example lbl.menu.A01010000
+             * @example lbl.menu.A03010000
              */
             lblCd?: string;
             /**
@@ -13544,7 +13544,7 @@ export interface components {
         RoleMenuPermissionRequest: {
             /**
              * @description Menu code / Mã menu
-             * @example A01010000
+             * @example A03010000
              */
             menuCd: string;
             /**
@@ -16153,12 +16153,12 @@ export interface components {
         RoleMenuPermissionResponse: {
             /**
              * @description Menu code / Mã menu
-             * @example A01010000
+             * @example A03010000
              */
             menuCd?: string;
             /**
              * @description Parent menu code / Mã menu cha
-             * @example A01000000
+             * @example A03000000
              */
             upMenuCd?: string;
             /**
@@ -16331,7 +16331,7 @@ export interface components {
             prgrmNm?: string;
             /**
              * @description Menu code / Mã menu
-             * @example A06040100
+             * @example A09040100
              */
             menuCd?: string;
         };
@@ -17043,12 +17043,12 @@ export interface components {
         MenuSettingResponse: {
             /**
              * @description Menu code / Mã menu
-             * @example A06010100
+             * @example A09010100
              */
             menuCd?: string;
             /**
              * @description Parent menu code / Mã menu cha
-             * @example A06010000
+             * @example A09010000
              */
             upMenuCd?: string;
             /**
@@ -17081,7 +17081,7 @@ export interface components {
             menuUrlAddr?: string;
             /**
              * @description Label code / Mã nhãn
-             * @example lbl.menu.A06010100
+             * @example lbl.menu.A09010100
              */
             lblCd?: string;
             /** @description Description / Mô tả */
@@ -17165,7 +17165,7 @@ export interface components {
         Row: {
             /**
              * @description Menu code / Mã menu
-             * @example A01010000
+             * @example A03010000
              */
             menuCd?: string;
             /** @description Parent menu code / Mã menu cha */
@@ -18528,7 +18528,7 @@ export interface components {
             message?: string;
             data?: components["schemas"]["DashboardSummaryResponse"];
         };
-        /** @description Admin dashboard counters (provisional, VPA000101 widgets are TBD) / Số liệu dashboard (tạm) */
+        /** @description Admin dashboard counters (provisional, VPA01000001 widgets are TBD) / Số liệu dashboard (tạm) */
         DashboardSummaryResponse: {
             /**
              * Format: int64
@@ -19761,7 +19761,7 @@ export interface components {
             targetScreen?: string;
             /**
              * @description Admin menu of the target screen
-             * @example A02020200
+             * @example A05020200
              */
             menuCd?: string;
             /**
@@ -21484,7 +21484,7 @@ export interface operations {
             path: {
                 /**
                  * @description Menu code / Mã menu
-                 * @example A06010100
+                 * @example A09010100
                  */
                 menuCd: string;
             };
@@ -23452,7 +23452,7 @@ export interface operations {
             path: {
                 /**
                  * @description Target menu code to update / Mã menu cần cập nhật
-                 * @example A01010000
+                 * @example A03010000
                  */
                 menuCd: string;
             };
@@ -23485,7 +23485,7 @@ export interface operations {
             path: {
                 /**
                  * @description Target menu code to delete / Mã menu cần xóa
-                 * @example A01010000
+                 * @example A03010000
                  */
                 menuCd: string;
             };
@@ -30811,7 +30811,7 @@ export interface operations {
                 roleId: string;
                 /**
                  * @description Menu code / Mã menu
-                 * @example A01010000
+                 * @example A03010000
                  */
                 menuCd: string;
             };
@@ -30845,7 +30845,7 @@ export interface operations {
                 roleId: string;
                 /**
                  * @description Menu code / Mã menu
-                 * @example A01010000
+                 * @example A03010000
                  */
                 menuCd: string;
             };
@@ -33324,7 +33324,7 @@ export interface operations {
             path: {
                 /**
                  * @description Menu code / Mã menu
-                 * @example A01010000
+                 * @example A03010000
                  */
                 menuCd: string;
             };

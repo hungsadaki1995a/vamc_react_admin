@@ -1,51 +1,117 @@
-// Editable detail grid of the code screens.
+// Editable detail grid of the code screens (Common / Region / Finance).
+// Frame, header and row heights come from SysTable (`fill`); cells read as plain text and
+// show an editor frame on hover / focus (frames VPA09030101 / 0201 / 0301).
 
-$border: var(--color-border-secondary, #e2e5eb);
-$label-bg: var(--color-bg-secondary, #f6f6f9);
+$surface: var(--color-bg-primary, #ffffff);
+$text: var(--color-text-primary, #3a404a);
+$text-sub: var(--color-text-tertiary, #6f7b95);
+$border-hover: var(--color-border-primary, #d1d1e0);
+$border-active: var(--color-border-active, #1876ff);
 $danger: var(--color-text-negative, #e62e44);
+$fs-b1: var(--font-size-b1, 13px);
+$fs-b2: var(--font-size-b2, 12px);
+$fs-b3: var(--font-size-b3, 10px);
 
-.gridWrap {
-  flex: 1;
-  min-height: 0;
-  overflow: auto;
-  border: 1px solid $border;
-  border-radius: 4px;
+.grid {
+  flex: 1 1 auto;
+  min-height: 240px;
+
+  /* The frame (SysTable `fill`) is the scroll box in both directions: the header sticks to its top
+     and a table wider than the panel is not clipped by antd's container. */
+  :global(.ant-table-container) {
+    overflow: visible;
+  }
 
   :global(.ant-table-thead > tr > th) {
-    background: $label-bg;
-    text-align: center;
-    font-weight: 500;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+  }
+
+  /* Editors sit inside the 38px row. */
+  :global(.ant-table-tbody > tr > td) {
+    padding: 4px 6px !important;
+  }
+
+  /* Finance: fixed widths wider than the panel, the frame scrolls sideways. */
+  :global(.ant-table table) {
+    min-width: var(--grid-min-width, 0);
+  }
+
+  /* Empty frame: no antd placeholder box, just a hint line. */
+  :global(.ant-table-placeholder > td) {
+    border-bottom: 0 !important;
   }
 }
 
-.control {
+/* Doubled class beats the input components' own border rules. */
+.control.control {
   width: 100%;
-  min-width: 72px;
+  min-width: 0;
+  border-color: transparent;
+  background: transparent;
+  box-shadow: none;
+  font-size: $fs-b1;
+  color: $text;
+  text-overflow: ellipsis;
+
+  &:hover {
+    border-color: $border-hover;
+    background: $surface;
+  }
+
+  &:focus,
+  &:focus-within {
+    border-color: $border-active;
+    background: $surface;
+  }
+
+  &:global(.ant-input-status-error),
+  &:global(.ant-input-number-status-error),
+  &:global(.ant-select-status-error) {
+    border-color: $danger;
+  }
+
+  :global(.ant-input-number-input),
+  :global(.ant-select-selection-item),
+  :global(.ant-select-selection-placeholder) {
+    font-size: $fs-b1;
+  }
+}
+
+/* Number arrows only while hovering / editing. */
+.control:not(:hover):not(:focus-within) :global(.ant-input-number-handler-wrap) {
+  opacity: 0;
 }
 
 .readonly {
+  display: block;
+  padding: 0 4px;
+  overflow: hidden;
   white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
-.requiredMark {
-  margin-left: 2px;
-  color: $danger;
-}
-
+/* E01 / E02 below the cell. */
 .cellError {
   margin-top: 2px;
-  font-size: 11px;
-  line-height: 1.3;
+  font-size: $fs-b3;
+  line-height: var(--line-height-b3, 14px);
   color: $danger;
   white-space: normal;
 }
 
 .gridError {
-  margin-bottom: 8px;
-  font-size: 13px;
+  font-size: $fs-b2;
+  line-height: var(--line-height-b2, 16px);
   color: $danger;
 }
 
 .newRow > td {
-  background: var(--color-bg-brand-subtle, #f0f6ff);
+  background: var(--color-bg-brand-hover, #eaf8ff);
+}
+
+.emptyText {
+  font-size: $fs-b1;
+  color: $text-sub;
 }

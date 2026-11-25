@@ -1,15 +1,7 @@
 import { apiDownload, apiGet, apiPost, apiPut } from '@/api/common/api-utils';
-import type { PageQuery, PageResponse } from '@/api/common/api-utils';
+import type { PageQuery, PageResponse, SortDirection } from '@/api/common/api-utils';
 
-// Form Management API (VPA09010201 / VPA090102P01, guard menu A06010200, table FORM_MNG).
-//
-// NOT IMPLEMENTED IN THE ADMIN BACKEND YET: no controller exists and FORM_MNG has no URL column
-// (waits for the FORM_FILE_URL DDL). Paths and fields follow the planned contract in
-// `vamc-analysis-tracker/admin/07-system-operation/figma-v08/01-platform.md` §2.4.
-// The screen checks FORM_API_AVAILABLE and never calls these functions while it is false.
-
-/** Flip to true once `/api/v1/platform/forms` is deployed. TODO(api) */
-export const FORM_API_AVAILABLE = false;
+// Form Management API (VPA09010201 / VPA090102P01, guard menu A09010200, table FORM_MNG).
 
 export type FormLang = 'VN' | 'EN';
 export type YesNo = 'Y' | 'N';
@@ -20,8 +12,10 @@ export interface FormItem {
   useYn: YesNo;
   langCd: FormLang;
   formNm: string;
-  /** https URL of a docx / xlsx / pdf file. */
-  fileUrl: string;
+  /** https URL of a docx / xlsx / pdf file; null for a seeded form whose URL is not supplied yet. */
+  fileUrl: string | null;
+  /** APFR application, CTFR contract, STFR statistical report (not on the v0.8 screen). */
+  formSeCd?: string | null;
   crtDt?: string;
   crtBy?: string;
   mdfcnDt?: string;
@@ -45,24 +39,27 @@ export interface FormSaveRequest {
   fileUrl: string;
 }
 
-/** Planned error codes: FRM001 not found, FRM002 duplicate form no. (E02), FRM003 invalid URL (E03). */
+export interface FormSort {
+  sortBy?: string;
+  sortDirection?: SortDirection;
+}
+
+/** FRM001 not found, FRM002 duplicate form no. (E02), FRM003 invalid file URL (E03). */
 export const FORM_ERRORS = { notFound: 'FRM001', duplicate: 'FRM002', invalidUrl: 'FRM003' } as const;
 
 const BASE = '/api/v1/platform/forms';
 
-// TODO(api) GET /platform/forms
 export const getForms = (search: FormSearch, query: PageQuery) =>
   apiGet<PageResponse<FormItem>>(BASE, { ...search, ...query });
 
-// TODO(api) GET /platform/forms/{formNo}
 export const getForm = (formNo: string) => apiGet<FormItem>(`${BASE}/${encodeURIComponent(formNo)}`);
 
-// TODO(api) POST /platform/forms
 export const createForm = (request: FormSaveRequest) => apiPost<FormItem>(BASE, request);
 
-// TODO(api) PUT /platform/forms/{formNo}
+/** The form number cannot be changed: the path wins over the body. */
 export const updateForm = (request: FormSaveRequest) =>
   apiPut<FormItem>(`${BASE}/${encodeURIComponent(request.formNo)}`, request);
 
-// TODO(api) GET /platform/forms/excel
-export const downloadFormExcel = (search: FormSearch) => apiDownload(`${BASE}/excel`, 'forms.xlsx', search);
+/** Same filters and sort as the list. */
+export const downloadFormExcel = (search: FormSearch, sort: FormSort) =>
+  apiDownload(`${BASE}/excel`, 'forms.xlsx', { ...search, ...sort });

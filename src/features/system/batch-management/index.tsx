@@ -34,29 +34,38 @@ import styles from './batch-management.module.scss';
 /** Edit popup target: `null` = closed, `'new'` = register mode. */
 type EditTarget = BatchJobItem | 'new' | null;
 
+// Fixed layout: every column keeps its width and Description ellipsizes, so all 8 columns stay visible (design).
 const COLUMNS: TableColumnsType<BatchJobItem> = [
   {
     title: 'Use',
     dataIndex: 'scheduleVtlzYn',
-    width: 90,
+    sorter: true,
+    width: 80,
     align: 'center',
     render: (value: boolean) => <UseBadge value={value} />,
   },
-  { title: 'Job Name', dataIndex: 'btchJobNm', width: 220 },
-  { title: 'Group', dataIndex: 'btchGroup', width: 120 },
-  // Width bounds the cell so the ellipsis works inside the max-content scroll table.
-  { title: 'Description', dataIndex: 'jobExpln', width: 320, ellipsis: true },
-  { title: 'Cron', dataIndex: 'cronExpression', width: 150, render: (value?: string) => value || '-' },
+  { title: 'Job Name', dataIndex: 'btchJobNm', sorter: true, width: 200, ellipsis: true },
+  { title: 'Group', dataIndex: 'btchGroup', sorter: true, width: 110, ellipsis: true },
+  { title: 'Description', dataIndex: 'jobExpln', sorter: true, ellipsis: true },
+  {
+    title: 'Cron',
+    dataIndex: 'cronExpression',
+    sorter: true,
+    width: 130,
+    ellipsis: true,
+    render: (value?: string) => value || '-',
+  },
   {
     title: 'Last Run',
     dataIndex: 'lastExcnAt',
-    width: 170,
-    align: 'center',
+    sorter: true,
+    width: 160,
     render: (value?: string) => <DateTimeText value={value} seconds />,
   },
   {
     title: 'Latest Result',
     dataIndex: 'lastBtchStts',
+    sorter: true,
     width: 120,
     align: 'center',
     render: (value?: string) => <ResultBadge value={toResult(value)} />,
@@ -64,13 +73,13 @@ const COLUMNS: TableColumnsType<BatchJobItem> = [
   {
     title: 'Modified Date',
     key: 'mdfcnDt',
-    width: 170,
-    align: 'center',
+    sorter: true,
+    width: 160,
     render: (_value, row) => <DateTimeText value={row.mdfcnDt ?? row.crtDt} seconds />,
   },
 ];
 
-/** Batch Management - List (VPA09040401, menu A06040400). */
+/** Batch Management - List (VPA09040401, menu A09040400). */
 export default function BatchManagement() {
   const { toast } = useNotify();
   const { confirm } = useSysDialogs();
@@ -101,7 +110,7 @@ export default function BatchManagement() {
   const total = data?.totalElements ?? 0;
 
   return (
-    <SysPage>
+    <SysPage fill>
       <SysTitleBar title="Batch Management" breadcrumb={BATCH_BREADCRUMB} />
       <SysFilterPanel>
         <SysFilterItem label="Use">
@@ -154,14 +163,20 @@ export default function BatchManagement() {
           )
         }
       />
-      <SysTable<BatchJobItem>
-        rowKey="btchJobNm"
-        columns={COLUMNS}
-        dataSource={data?.content}
-        loading={isFetching && !data}
-        onRowClick={setEditTarget}
-      />
-      <SysPager page={list.page} pageSize={SYS_PAGE_SIZE} total={total} onChange={list.setPage} />
+      <div className={styles.listBody}>
+        <SysTable<BatchJobItem>
+          fill
+          tableLayout="fixed"
+          rowKey="btchJobNm"
+          columns={COLUMNS}
+          dataSource={data?.content}
+          loading={isFetching && !data}
+          onRowClick={setEditTarget}
+          sort={list.sort}
+          onSortChange={list.setSort}
+        />
+        <SysPager page={list.page} pageSize={SYS_PAGE_SIZE} total={total} onChange={list.setPage} />
+      </div>
 
       {editTarget && (
         <BatchJobModal

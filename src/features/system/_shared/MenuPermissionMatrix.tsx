@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import type { CSSProperties } from 'react';
 import { Alert } from 'antd';
-import { MinusSquareOutlined, PlusSquareOutlined, ReloadOutlined } from '@ant-design/icons';
+import { CaretDownOutlined, CaretUpOutlined, MinusSquareOutlined, PlusSquareOutlined, ReloadOutlined } from '@ant-design/icons';
 import LoadingSpinner from '@/components/common/loading/LoadingSpinner';
 import AppCheckbox from '@/components/inputs/AppCheckbox';
 import { useNotify } from '@/hooks/use-notify';
@@ -13,14 +13,15 @@ import { SysButton, SysPage, SysTitleBar } from './SysListUi';
 import { SYS_MESSAGES } from './sys-messages';
 import { useSysDialogs } from './use-sys-dialogs';
 import { errorMessage } from './system-utils';
-import { buildMenuTree, descendants, menuName, visibleNodes } from './menu-tree';
+import { buildMenuTree, descendants, menuName } from './menu-tree';
 import type { MenuNode } from './menu-tree';
 import styles from './menu-permission-matrix.module.scss';
 import { useMenuPermissionMatrix, useSaveMenuPermissionMatrix } from './use-menu-permissions';
 
 // Menu permission matrix — menus (rows, as a tree) × roles (columns), Read / Write.
-//   menuSeCd = W → Web Menu Permission Management (VPA09010501), columns = Web member grades
-//   menuSeCd = A → Menu Permission Management     (VPA09020401), columns = every admin role
+//   menuSeCd = W → Web Menu Permission Management (VPA09010501), columns = member types (Individual, Foreigner, Organization)
+//   menuSeCd = A → Menu Permission Management     (VPA09020401), columns = Super Admin, Receiver, Staff in Charge,
+//                  Approver (one column for the approver roles 1STAPPR, 2NDAPPR and CEO, saved together)
 // Parent rows follow their submenus; Inactive menus keep (and send back) their permissions.
 
 interface Props {
@@ -48,6 +49,33 @@ const SCREEN = {
 
 const NO_FLAG: Flag = { read: false, write: false };
 
+/** Role names are stored as "English / Vietnamese"; the system screens show the English part. */
+const roleLabel = (column: MatrixColumn) =>
+  column.superAdmin ? 'Super Admin' : (column.roleNm?.split(' / ')[0]?.trim() || column.roleId);
+
+/** Display columns of the admin matrix (Figma VPA09020401); other admin roles are not shown and keep their mappings. */
+const ADMIN_GROUPS: Array<{ label: string; roleIds: string[] }> = [
+  { label: 'Receiver', roleIds: ['RCPT'] },
+  { label: 'Staff in Charge', roleIds: ['PRCS'] },
+  { label: 'Approver', roleIds: ['1STAPPR', '2NDAPPR', 'CEO'] },
+];
+
+/** One displayed column: a single role, or several roles edited together. */
+interface Group {
+  key: string;
+  label: string;
+  title: string;
+  superAdmin: boolean;
+  /** Indexes into the API columns. */
+  cols: number[];
+}
+
+type SortKey = 'menuCd' | 'menuName';
+interface SortState {
+  key: SortKey;
+  asc: boolean;
+}
+
 const roleKey = (column: Pick<MatrixColumn, 'roleGroupId' | 'roleId'>) => `${column.roleGroupId}|${column.roleId}`;
 const cellKey = (column: MatrixColumn, menuCd: string) => `${roleKey(column)}|${menuCd}`;
 
@@ -70,9 +98,47 @@ export default function MenuPermissionMatrix({ menuSeCd }: Props) {
   const [edits, setEdits] = useState<ReadonlyMap<string, Flag>>(new Map());
   const [collapsed, setCollapsed] = useState<ReadonlySet<string>>(new Set());
 
+  const [sort, setSort] = useState<SortState | null>(null);
+
   const columns = useMemo(() => data?.columns ?? [], [data]);
+  const groups = useMemo<Group[]>(() => {
+    const indexed = columns.map((column, index) => ({ column, index }));
+    const superAdmins = indexed.filter(({ column }) => column.superAdmin);
+    const own = (column: MatrixColumn) => ({ key: roleKey(column), label: roleLabel(column), title: column.roleNm ?? column.roleId });
+    const head = superAdmins.map(({ column, index }) => ({ ...own(column), superAdmin: true, cols: [index] }));
+    if (menuSeCd !== 'A') {
+      return [...head, ...indexed.filter(({ column }) => !column.superAdmin).map(({ column, index }) => ({ ...own(column), superAdmin: false, cols: [index] }))];
+    }
+    const rest = ADMIN_GROUPS.map((group) => {
+      const members = indexed.filter(({ column }) => !column.superAdmin && group.roleIds.includes(column.roleId));
+      return {
+        key: group.label,
+        label: group.label,
+        title: members.map(({ column }) => roleLabel(column)).join(', '),
+        superAdmin: false,
+        cols: members.map(({ index }) => index),
+      };
+    }).filter((group) => group.cols.length > 0);
+    return [...head, ...rest];
+  }, [columns, menuSeCd]);
   const tree = useMemo(() => buildMenuTree(data?.rows ?? []), [data]);
-  const visible = useMemo(() => visibleNodes(tree, collapsed), [tree, collapsed]);
+  /** Depth-first rows; with a sort, siblings are ordered by the sort key (the tree structure is kept). */
+  const visible = useMemo(() => {
+    const out: Node[] = [];
+    const order = (nodes: Node[]) => {
+      if (!sort) return nodes;
+      const value = (node: Node) => (sort.key === 'menuCd' ? node.menu.menuCd : menuName(node.menu));
+      const sorted = [...nodes].sort((a, b) => value(a).localeCompare(value(b), 'en', { numeric: true }));
+      return sort.asc ? sorted : sorted.reverse();
+    };
+    const walk = (nodes: Node[]) =>
+      order(nodes).forEach((node) => {
+        out.push(node);
+        if (node.children.length && !collapsed.has(node.menu.menuCd)) walk(node.children);
+      });
+    walk(tree.roots);
+    return out;
+  }, [tree, collapsed, sort]);
   /** Leaf submenus under each parent row. */
   const leavesOf = useMemo(() => {
     const map = new Map<string, Node[]>();
@@ -92,10 +158,12 @@ export default function MenuPermissionMatrix({ menuSeCd }: Props) {
   const leafFlag = (row: MatrixRow, colIndex: number): Flag =>
     edits.get(cellKey(columns[colIndex], row.menuCd)) ?? storedFlag(row, colIndex);
 
-  const derive = (node: Node, colIndex: number, kind: FlagKind): Derived => {
-    const leaves = leavesOf.get(node.menu.menuCd) ?? [];
-    const count = leaves.filter((leaf) => leafFlag(leaf.menu, colIndex)[kind]).length;
-    return { checked: leaves.length > 0 && count === leaves.length, indeterminate: count > 0 && count < leaves.length };
+  /** Checked when every (leaf, role) pair of the group is set, indeterminate when only some are. */
+  const derive = (node: Node, cols: number[], kind: FlagKind): Derived => {
+    const leaves = node.children.length ? (leavesOf.get(node.menu.menuCd) ?? []) : [node];
+    const total = leaves.length * cols.length;
+    const count = leaves.reduce((sum, leaf) => sum + cols.filter((c) => leafFlag(leaf.menu, c)[kind]).length, 0);
+    return { checked: total > 0 && count === total, indeterminate: count > 0 && count < total };
   };
 
   /** Applies `change` to the given leaves of one column (write ⇒ read, no read ⇒ no write). */
@@ -114,12 +182,14 @@ export default function MenuPermissionMatrix({ menuSeCd }: Props) {
     });
   };
 
-  const toggle = (node: Node, colIndex: number, kind: FlagKind, checked: boolean) => {
+  const toggle = (node: Node, cols: number[], kind: FlagKind, checked: boolean) => {
     const leaves = node.children.length ? (leavesOf.get(node.menu.menuCd) ?? []) : [node];
-    updateLeaves(leaves, colIndex, (current) => {
-      if (kind === 'read') return { read: checked, write: checked ? current.write : false };
-      return { read: checked ? true : current.read, write: checked };
-    });
+    cols.forEach((colIndex) =>
+      updateLeaves(leaves, colIndex, (current) => {
+        if (kind === 'read') return { read: checked, write: checked ? current.write : false };
+        return { read: checked ? true : current.read, write: checked };
+      }),
+    );
   };
 
   const toggleNode = (menuCd: string) =>
@@ -184,27 +254,25 @@ export default function MenuPermissionMatrix({ menuSeCd }: Props) {
     }
   };
 
-  const renderCell = (node: Node, column: MatrixColumn, colIndex: number, kind: FlagKind) => {
-    const key = `${roleKey(column)}-${kind}`;
-    if (column.superAdmin) {
+  const renderCell = (node: Node, group: Group, kind: FlagKind) => {
+    const key = `${group.key}-${kind}`;
+    if (group.superAdmin) {
       return (
-        <td key={key} className={styles.checkCell}>
+        <td key={key} className={styles.checkCell} data-fixed>
           <AppCheckbox checked disabled aria-label={`${kind} fixed for Super Admin`} />
         </td>
       );
     }
-    const state = node.children.length
-      ? derive(node, colIndex, kind)
-      : { checked: leafFlag(node.menu, colIndex)[kind], indeterminate: false };
-    const edited = !node.children.length && edits.has(cellKey(column, node.menu.menuCd));
+    const state = derive(node, group.cols, kind);
+    const edited = !node.children.length && group.cols.some((c) => edits.has(cellKey(columns[c], node.menu.menuCd)));
     return (
       <td key={key} className={styles.checkCell} data-edited={edited || undefined}>
         <AppCheckbox
           checked={state.checked}
           indeterminate={state.indeterminate}
           disabled={!canWrite}
-          aria-label={`${menuName(node.menu)} ${column.roleNm ?? column.roleId} ${kind}`}
-          onChange={(e) => toggle(node, colIndex, kind, e.target.checked)}
+          aria-label={`${menuName(node.menu)} ${group.label} ${kind}`}
+          onChange={(e) => toggle(node, group.cols, kind, e.target.checked)}
         />
       </td>
     );
@@ -235,11 +303,23 @@ export default function MenuPermissionMatrix({ menuSeCd }: Props) {
             <span className={styles.menuName}>{menuName(menu)}</span>
           </span>
         </td>
-        {columns.flatMap((column, colIndex) => [
-          renderCell(node, column, colIndex, 'read'),
-          renderCell(node, column, colIndex, 'write'),
-        ])}
+        {groups.flatMap((group) => [renderCell(node, group, 'read'), renderCell(node, group, 'write')])}
       </tr>
+    );
+  };
+
+  /** Header with a sort toggle: ascending → descending → menu order. */
+  const sortHeader = (key: SortKey, label: string) => {
+    const active = sort?.key === key;
+    const next = () => setSort(!active ? { key, asc: true } : sort?.asc ? { key, asc: false } : null);
+    return (
+      <button type="button" className={styles.sortHead} onClick={next} aria-label={`Sort by ${label}`}>
+        {label}
+        <span className={styles.sortIcons}>
+          <CaretUpOutlined data-on={(active && sort?.asc) || undefined} />
+          <CaretDownOutlined data-on={(active && !sort?.asc) || undefined} />
+        </span>
+      </button>
     );
   };
 
@@ -266,23 +346,23 @@ export default function MenuPermissionMatrix({ menuSeCd }: Props) {
             <thead>
               <tr>
                 <th rowSpan={2} className={styles.codeHead}>
-                  Menu Code
+                  {menuSeCd === 'A' ? sortHeader('menuCd', 'Menu Code') : 'Menu Code'}
                 </th>
                 <th rowSpan={2} className={styles.nameHead}>
-                  Menu Name
+                  {menuSeCd === 'A' ? sortHeader('menuName', 'Menu Name') : 'Menu Name'}
                 </th>
-                {columns.map((column) => (
-                  <th key={roleKey(column)} colSpan={2} title={column.roleGroupNm ?? column.roleGroupId}>
-                    {column.superAdmin ? 'Super Admin' : (column.roleNm ?? column.roleId)}
+                {groups.map((group) => (
+                  <th key={group.key} colSpan={2} title={group.title}>
+                    {group.label}
                   </th>
                 ))}
               </tr>
               <tr>
-                {columns.flatMap((column) => [
-                  <th key={`${roleKey(column)}-read`} className={styles.subHead}>
+                {groups.flatMap((group) => [
+                  <th key={`${group.key}-read`} className={styles.subHead}>
                     Read
                   </th>,
-                  <th key={`${roleKey(column)}-write`} className={styles.subHead}>
+                  <th key={`${group.key}-write`} className={styles.subHead}>
                     Write
                   </th>,
                 ])}
@@ -292,7 +372,7 @@ export default function MenuPermissionMatrix({ menuSeCd }: Props) {
               {visible.map(renderRow)}
               {!isFetching && visible.length === 0 && (
                 <tr>
-                  <td colSpan={2 + columns.length * 2} className={styles.emptyCell}>
+                  <td colSpan={2 + groups.length * 2} className={styles.emptyCell}>
                     No menus.
                   </td>
                 </tr>

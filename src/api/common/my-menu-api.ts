@@ -27,6 +27,7 @@ export interface MnuResponse {
   menuLblVal?: string;      // multilingual label value from label table (locale-dependent via X-Lang)
   menuUrlAddr?: string;     // URL path for leaf menus (absent on parent menus)
   menuAuthrt?: string;      // Role-based permission (RD=read, WT=write, AL=all) — present only in /my response
+  menuExpsrYn?: string;     // Show in Menu: 'N' = kept for routing/permissions, hidden in the rail/LNB
   sortPath: string;         // sort order string (e.g. "001-001")
   children: MnuResponse[];  // /my returns a nested tree, /all returns an empty array
 }
@@ -75,6 +76,7 @@ function buildServerMenuTree(items: MnuResponse[]): MenuItem[] {
       componentPath: resolveMenuComponent(item.menuCd, item.menuUrlAddr),
       labelKey: item.lblCd ?? undefined,
       permType: item.menuAuthrt ?? undefined,
+      hidden: item.menuExpsrYn === 'N' || undefined,
     });
   }
 

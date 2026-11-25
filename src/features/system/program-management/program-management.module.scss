@@ -1,5 +1,16 @@
 // Program Management list.
 
+// Table frame runs to the bottom of the page (design), pager below it.
+.listBody {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+
+  > :first-child {
+    flex: 1 1 auto;
+  }
+}
+
 .ellipsis {
   display: inline-block;
   max-width: 360px;

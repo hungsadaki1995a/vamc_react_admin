@@ -1,12 +1,19 @@
 /* Menu permission matrix (VPA09010501 / VPA09020401). */
 
-$border: var(--color-border-secondary, #e2e5eb);
+$border: var(--color-border-secondary, #eaeaf1);
+$border-strong: var(--color-border-primary, #d1d1e0);
+$surface: var(--color-bg-primary, #ffffff);
+$brand: var(--color-text-brand, #005be2);
+$sort-idle: var(--color-gray-400, #c9cfdd);
+$fs-b1: var(--font-size-b1, 13px);
+$fs-b2: var(--font-size-b2, 12px);
+$head-height: 34px;
 $label-bg: var(--color-bg-secondary, #f6f6f9);
 $text: var(--color-text-primary, #3a404a);
-$text-sub: var(--color-text-secondary, #6f7b95);
-$text-muted: #a3aab8;
-$parent-bg: #f4f5f8;
-$edited-bg: #fff7e6;
+$text-sub: var(--color-text-tertiary, #6f7b95);
+$text-muted: var(--color-text-disabled, #a8b2c8);
+$parent-bg: var(--color-bg-secondary, #f6f6f9);
+$edited-bg: var(--color-yellow-50, #fff9cc);
 
 .toolbar {
   display: flex;
@@ -17,7 +24,7 @@ $edited-bg: #fff7e6;
 
 .dirtyNote {
   margin-right: 8px;
-  font-size: 13px;
+  font-size: $fs-b1;
   color: var(--color-text-negative, #e62e44);
 }
 
@@ -32,16 +39,20 @@ $edited-bg: #fff7e6;
 .tableWrap {
   height: 100%;
   overflow: auto;
-  border: 1px solid $border;
+  border: 1px solid $border-strong;
   border-radius: 4px;
-  background: #ffffff;
+  background: $surface;
 }
 
 .matrix {
   width: 100%;
+  /* Fixed layout: code / name keep their width, the permission columns share the rest (design) */
+  table-layout: fixed;
   border-collapse: separate;
   border-spacing: 0;
-  font-size: 13px;
+  font-size: $fs-b1;
+  line-height: var(--line-height-b1, 18px);
+  letter-spacing: var(--letter-spacing-tight, -0.02em);
   color: $text;
 
   th,
@@ -59,8 +70,12 @@ $edited-bg: #fff7e6;
     position: sticky;
     top: 0;
     z-index: 1;
-    padding: 8px 10px;
+    height: $head-height;
+    padding: 0 10px;
+    border-bottom-color: $border-strong;
     background: $label-bg;
+    font-size: $fs-b2;
+    line-height: var(--line-height-b2, 16px);
     color: $text-sub;
     font-weight: 500;
     text-align: center;
@@ -69,11 +84,15 @@ $edited-bg: #fff7e6;
 
   /* Second header row sits under the first one. */
   thead tr:nth-child(2) th {
-    top: 37px;
+    top: $head-height;
   }
 
   tbody tr[data-parent] td {
     background: $parent-bg;
+  }
+
+  /* Design: only the menu name of a parent row is bold. */
+  tbody tr[data-parent] .menuName {
     font-weight: 600;
   }
 
@@ -89,7 +108,7 @@ $edited-bg: #fff7e6;
 }
 
 .nameHead {
-  min-width: 280px;
+  width: 300px;
 }
 
 .subHead {
@@ -97,8 +116,9 @@ $edited-bg: #fff7e6;
 }
 
 .codeCell {
+  height: 38px;
   padding: 6px 12px;
-  text-align: center;
+  text-align: left;
   white-space: nowrap;
 }
 
@@ -107,7 +127,9 @@ $edited-bg: #fff7e6;
 }
 
 .nameInner {
-  display: inline-flex;
+  min-width: 0;
+  /* Block flex: an inline box with an empty spacer would drop the text below the code cell's baseline. */
+  display: flex;
   align-items: center;
   gap: 6px;
   padding-left: calc(var(--level, 0) * 18px);
@@ -129,12 +151,24 @@ $edited-bg: #fff7e6;
 }
 
 .menuName {
+  overflow: hidden;
   white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .checkCell {
   padding: 6px 8px;
   text-align: center;
+}
+
+/* Super Admin: fixed Read / Write, shown checked in light blue (design) though not editable */
+.checkCell[data-fixed] :global(.ant-checkbox-disabled .ant-checkbox-inner) {
+  border-color: var(--color-blue-300, #8bbdff);
+  background: var(--color-blue-300, #8bbdff);
+}
+
+.checkCell[data-fixed] :global(.ant-checkbox-disabled .ant-checkbox-inner::after) {
+  border-color: var(--color-white, #ffffff);
 }
 
 .matrix tbody td.checkCell[data-edited] {
@@ -145,4 +179,29 @@ $edited-bg: #fff7e6;
   padding: 32px;
   text-align: center;
   color: $text-sub;
+}
+
+/* Sortable Menu Code / Menu Name headers */
+.sortHead {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+.sortIcons {
+  display: inline-flex;
+  flex-direction: column;
+  font-size: 9px;
+  line-height: 0.8;
+  color: $sort-idle;
+
+  [data-on] {
+    color: $brand;
+  }
 }

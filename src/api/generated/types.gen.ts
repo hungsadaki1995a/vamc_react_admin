@@ -1776,7 +1776,7 @@ export type RegistrationDocumentRequest = {
 };
 
 /**
- * Member update request DTO for screen popups VPA0002P01 and VPA0008P01
+ * Member update request DTO for screen popups VPA030100P02 and VPA030100P01
  */
 export type UpdateMemberRequest = {
     /**
@@ -2411,7 +2411,7 @@ export type MemberDeletionDto = {
 };
 
 /**
- * Member detail response for popups VPA0002P01 and VPA0008P01
+ * Member detail response for popups VPA030100P02 and VPA030100P01
  */
 export type MemberDetailResponse = {
     /**
@@ -10553,7 +10553,7 @@ export type ApiResponseDashboardSummaryResponse = {
 };
 
 /**
- * Admin dashboard counters (provisional, VPA000101 widgets are TBD) / Số liệu dashboard (tạm)
+ * Admin dashboard counters (provisional, VPA01000001 widgets are TBD) / Số liệu dashboard (tạm)
  */
 export type DashboardSummaryResponse = {
     /**

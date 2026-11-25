@@ -26,7 +26,12 @@ import styles from './program-management.module.scss';
 
 // VPA09040101 Program Management (no delete: unused programs are set Inactive).
 
-const INITIAL_FILTER: ProgramSearch = { useYn: '', prgrmSeCd: '', prgrmCd: '', prgrmNm: '' };
+const INITIAL_FILTER: ProgramSearch = {
+  useYn: '',
+  prgrmSeCd: '',
+  prgrmCd: '',
+  prgrmNm: '',
+};
 
 export default function ProgramManagement() {
   const { canWrite } = useMenuPermission();
@@ -36,34 +41,56 @@ export default function ProgramManagement() {
   const excel = useDownloadProgramsExcel();
 
   const columns: TableColumnsType<ProgramItem> = [
-    { title: 'Use', dataIndex: 'useYn', align: 'center', width: 100, render: (v: string) => <UseBadge value={v} /> },
-    { title: 'Menu Code', dataIndex: 'menuCd', align: 'center', width: 130 },
-    { title: 'Program Code', dataIndex: 'prgrmCd', align: 'center', width: 150 },
-    { title: 'Type', dataIndex: 'prgrmSeCd', align: 'center', width: 90, render: (v: string) => programTypeLabel(v) },
-    { title: 'Order', dataIndex: 'prgrmSeq', align: 'center', width: 80 },
-    { title: 'Program Name', dataIndex: 'prgrmNm', width: 240 },
+    {
+      title: 'Use',
+      dataIndex: 'useYn',
+      sorter: true,
+      align: 'center',
+      width: 80,
+      render: (v: string) => <UseBadge value={v} />,
+    },
+    { title: 'Menu Code', dataIndex: 'menuCd', sorter: true, width: 200 },
+    { title: 'Program Code', dataIndex: 'prgrmCd', sorter: true, width: 200 },
+    {
+      title: 'Type',
+      dataIndex: 'prgrmSeCd',
+      sorter: true,
+      width: 90,
+      render: (v: string) => programTypeLabel(v),
+    },
+    { title: 'Order', dataIndex: 'prgrmSeq', sorter: true, width: 80 },
+    { title: 'Program Name', dataIndex: 'prgrmNm', sorter: true, width: 240 },
     {
       title: 'Program Description',
       dataIndex: 'prgrmExpln',
+      sorter: true,
       render: (v?: string) => <span className={styles.ellipsis}>{v || '-'}</span>,
     },
   ];
 
   return (
-    <SysPage>
+    <SysPage fill>
       <SysTitleBar
         title="Program Management"
         breadcrumb={['System Operation Management', 'System Management', 'Program Management']}
       />
-      <SysFilterPanel columns={4}>
+      <SysFilterPanel>
         <SysFilterItem label="Use">
-          <AppSelect options={USE_YN_FILTER_OPTIONS} value={list.draft.useYn} onChange={(useYn) => list.setDraft({ useYn: (useYn ?? '') as ProgramSearch['useYn'] })} />
+          <AppSelect
+            options={USE_YN_FILTER_OPTIONS}
+            value={list.draft.useYn}
+            onChange={(useYn) => list.setDraft({ useYn: (useYn ?? '') as ProgramSearch['useYn'] })}
+          />
         </SysFilterItem>
         <SysFilterItem label="Type">
           <AppSelect
             options={PROGRAM_TYPE_FILTER_OPTIONS}
             value={list.draft.prgrmSeCd}
-            onChange={(prgrmSeCd) => list.setDraft({ prgrmSeCd: (prgrmSeCd ?? '') as ProgramSearch['prgrmSeCd'] })}
+            onChange={(prgrmSeCd) =>
+              list.setDraft({
+                prgrmSeCd: (prgrmSeCd ?? '') as ProgramSearch['prgrmSeCd'],
+              })
+            }
           />
         </SysFilterItem>
         <SysFilterItem label="Program Code">
@@ -96,14 +123,19 @@ export default function ProgramManagement() {
           )
         }
       />
-      <SysTable<ProgramItem>
-        rowKey="prgrmCd"
-        columns={columns}
-        dataSource={data?.content}
-        loading={isFetching}
-        onRowClick={setModalItem}
-      />
-      <SysPager page={list.page} pageSize={SYS_PAGE_SIZE} total={data?.totalElements ?? 0} onChange={list.setPage} />
+      <div className={styles.listBody}>
+        <SysTable<ProgramItem>
+          fill
+          rowKey="prgrmCd"
+          columns={columns}
+          dataSource={data?.content}
+          loading={isFetching}
+          onRowClick={setModalItem}
+          sort={list.sort}
+          onSortChange={list.setSort}
+        />
+        <SysPager page={list.page} pageSize={SYS_PAGE_SIZE} total={data?.totalElements ?? 0} onChange={list.setPage} />
+      </div>
 
       {modalItem !== undefined && (
         <ProgramModal

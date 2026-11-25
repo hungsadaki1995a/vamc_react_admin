@@ -20,7 +20,7 @@ import { getRoleGroups, getRoles } from '@/api/system/role-group-api';
 import type { Role, RoleGroup } from '@/api/system/role-group-api';
 import type { PageQuery, PageResponse } from '@/api/common/api-utils';
 
-// Data hooks of Approval Process Management (menu A06040500).
+// Data hooks of Approval Process Management (menu A09040500).
 
 const PROCESS_KEYS = {
   all: ['system', 'approval-process'] as const,

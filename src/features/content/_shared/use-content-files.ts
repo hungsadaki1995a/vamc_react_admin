@@ -1,12 +1,14 @@
 import { useEffect, useState } from 'react';
 import { useApiTask } from '@/hooks/use-api-action';
+import { useApiQuery } from '@/hooks/use-api-query';
 import {
   deleteContentFile,
   downloadContentFile,
   fetchAttachmentPreview,
+  getContentFiles,
   uploadContentFiles,
 } from '@/api/contents/post-api';
-import type { ContentFile, FileBoard } from '@/api/contents/post-api';
+import type { ContentFile, ContentFileGroup, FileBoard } from '@/api/contents/post-api';
 
 // File hooks of the content popups (attachment groups, image upload, image preview).
 
@@ -35,6 +37,15 @@ export function useDownloadContentFile() {
 /** Uploads one image into a new group of the board; resolves the file-group id. */
 export function useUploadContentImage(board: FileBoard) {
   return useApiTask(async (file: File) => (await uploadContentFiles(board, [file])).fileUnqId);
+}
+
+/** Files of one attachment group (e.g. the name of a thumbnail); skipped without an id. */
+export function useContentFileGroup(board: FileBoard, fileUnqId: string | undefined) {
+  return useApiQuery<ContentFileGroup>(
+    ['contents', 'files', board, fileUnqId ?? ''],
+    () => getContentFiles(board, fileUnqId as string),
+    { enabled: !!fileUnqId, staleTime: 60 * 1000 },
+  );
 }
 
 /** Tracks the pending state of an upload function handed to `ImageField`. */

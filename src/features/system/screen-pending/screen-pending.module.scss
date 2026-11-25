@@ -8,19 +8,21 @@
   min-height: 320px;
   padding: 48px 24px;
   text-align: center;
+  letter-spacing: var(--letter-spacing-tight, -0.02em);
 }
 
 .title {
   margin: 0;
-  font-size: 16px;
+  font-size: var(--font-size-h3, 16px);
+  line-height: var(--line-height-h3, 24px);
   font-weight: 600;
-  color: #333;
+  color: var(--color-text-primary, #3a404a);
 }
 
 .description {
   margin: 0;
   max-width: 520px;
-  font-size: 14px;
-  line-height: 1.6;
-  color: #777;
+  font-size: var(--font-size-b1, 13px);
+  line-height: var(--line-height-b1, 18px);
+  color: var(--color-text-tertiary, #6f7b95);
 }

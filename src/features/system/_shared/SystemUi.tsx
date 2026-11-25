@@ -1,3 +1,4 @@
+import { useOwnPageTitle } from '@/components/layout/page-header-slot-context';
 import type { ReactNode } from 'react';
 import {
   DownOutlined,
@@ -35,6 +36,8 @@ export function SysPageHeader({
   filterCollapsed,
   onToggleFilter,
 }: SysPageHeaderProps) {
+  // The page draws its own title and breadcrumb (design): hide the shared tab header row.
+  useOwnPageTitle();
   return (
     <>
       <div className={styles.breadcrumb}>

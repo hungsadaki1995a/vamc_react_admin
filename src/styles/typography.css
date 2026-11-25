@@ -39,3 +39,22 @@
 @utility typo-b3-medium { font-size: 10px; line-height: 14px; font-weight: 500; letter-spacing: -0.02em; }
 @utility typo-b3-regular { font-size: 10px; line-height: 14px; font-weight: 400; letter-spacing: -0.02em; }
 
+
+/* Same scale as CSS custom properties, for SCSS modules: font-size: var(--font-size-b1, 13px). */
+:root {
+  --font-size-h1: 20px;
+  --font-size-h2: 18px;
+  --font-size-h3: 16px;
+  --font-size-h4: 14px;
+  --font-size-b1: 13px;
+  --font-size-b2: 12px;
+  --font-size-b3: 10px;
+  --line-height-h1: 28px;
+  --line-height-h2: 26px;
+  --line-height-h3: 24px;
+  --line-height-h4: 20px;
+  --line-height-b1: 18px;
+  --line-height-b2: 16px;
+  --line-height-b3: 14px;
+  --letter-spacing-tight: -0.02em;
+}

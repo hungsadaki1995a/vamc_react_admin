@@ -77,7 +77,7 @@ export function InstitutionModal({ item, canWrite, onClose }: InstitutionModalPr
       onSubmit={canWrite ? () => void handleSubmit() : undefined}
       submitting={createInstitution.isPending || updateInstitution.isPending}
       onCancel={onClose}
-      width={720}
+      width={480}
     >
       <SysFieldGrid columns={1}>
         <SysField label="Institution Code" required error={errors.fnstCd}>

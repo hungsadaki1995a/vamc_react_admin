@@ -1,0 +1,38 @@
+/* Slogan Management (VPA07060301): settings form on top of system/_shared/sys-ui. */
+
+$text-sub: var(--color-text-tertiary, #6f7b95);
+
+/* Textarea with the "n / 100 characters" counter under its right edge (design). */
+.textBox {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+  padding: 2px 0;
+
+  :global(.ant-input) {
+    resize: none;
+  }
+}
+
+.counter {
+  align-self: flex-end;
+  font-size: var(--font-size-b2, 12px);
+  line-height: var(--line-height-b2, 16px);
+  color: $text-sub;
+
+  strong {
+    font-weight: 400;
+    color: var(--color-text-brand, #005be2);
+  }
+}
+
+.footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 16px;
+}
+
+.loading {
+  min-height: 200px;
+}

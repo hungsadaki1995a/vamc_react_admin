@@ -5,74 +5,80 @@
 // carry no component path yet, so the menu would render and do nothing on click.
 // The DB value always wins — drop an entry once MENU_MNG is updated.
 const MENU_COMPONENT_FALLBACK: Record<string, string> = {
+  // Home (IA v1.03)
+  A01000000: 'Dashboard',
+  // Approval Management (IA v1.03, VPA10000001): no screen yet
+  A10000000: 'ScreenPending',
   // Member Management
-  A01010000: 'MemberList',
-  A01020000: 'MemberList',
-  A01030000: 'MemberList',
+  A03010000: 'MemberList',
   // Trade Management
-  A02010100: 'PurchaseApplicationManagement',
-  A02010200: 'SaleApplicationManagement',
-  A02010300: 'ConsultingApplicationManagement',
-  A02020100: 'PurchaseContractManagement',
-  A02020200: 'SaleContractManagement',
-  A02020300: 'ConsultingContractManagement',
+  A05010100: 'PurchaseApplicationManagement',
+  A05010200: 'SaleApplicationManagement',
+  A05010300: 'ConsultingApplicationManagement',
+  A05020100: 'PurchaseContractManagement',
+  A05020200: 'SaleContractManagement',
+  A05020300: 'ConsultingContractManagement',
   // NPL Info Management
-  A03010100: 'NplManagement',
-  A03010200: 'CollateralAssetManagement',
-  A03010300: 'DebtorManagement',
-  A03010400: 'NplLotManagement',
-  A03020000: 'ScreenPending', // CIC Data Management: no backend API yet
+  A04020000: 'NplManagement',
+  A04030000: 'CollateralAssetManagement',
+  A04040000: 'DebtorManagement',
+  A04050000: 'NplLotManagement',
+  A04010000: 'ScreenPending', // CIC Data Management: no backend API yet
   // Statistics: no screen design and no backend API yet
-  A05010000: 'ScreenPending',
-  A05020000: 'ScreenPending',
-  A05030000: 'ScreenPending',
-  A05040000: 'ScreenPending',
+  A08010000: 'ScreenPending',
+  A08020000: 'ScreenPending',
+  A08030000: 'ScreenPending',
+  A08040000: 'ScreenPending',
   // Content Management
-  A04010000: 'NoticeManagement',
-  A04020100: 'NewsManagement',
-  A04020200: 'MediaManagement',
-  A04020300: 'ResourcesManagement',
-  A04020400: 'DisclosureManagement',
-  A04030100: 'AppraisalNoticeManagement',
-  A04030200: 'SaleNoticeManagement',
-  A04030300: 'AuctionNoticeManagement',
-  A04040000: 'InquiryManagement', // Direct (1:1) Inquiry Management
-  A04050000: 'FaqManagement',
-  A04060000: 'BannerManagement',
-  A04070000: 'LegalDocumentsManagement',
-  A04080100: 'LeadershipManagement',
-  A04080200: 'PartnersManagement',
-  A04090000: 'CareersManagement',
-  A04100000: 'ServiceGuideManagement',
-  A04110200: 'LogoManagement',
-  A04110300: 'SloganManagement',
-  A04120000: 'AuctionGuideManagement',
+  A07010000: 'NoticeManagement',
+  A07020100: 'NewsManagement',
+  A07020200: 'MediaManagement',
+  A07020300: 'ResourcesManagement',
+  A07020400: 'DisclosureManagement',
+  A07030100: 'AppraisalNoticeManagement',
+  A07030200: 'SaleNoticeManagement',
+  A07030300: 'AuctionNoticeManagement',
+  A07040000: 'InquiryManagement', // Direct (1:1) Inquiry Management
+  A07050000: 'FaqManagement',
+  A07060100: 'BannerManagement',
+  A07070000: 'LegalDocumentsManagement',
+  A07100100: 'OrganizationChartManagement', // Organization Chart Management (IA v1.03)
+  A07100200: 'HistoryManagement', // History Management (IA v1.03)
+  A07100300: 'DirectionsManagement', // Directions Management (IA v1.03)
+  A07100400: 'OverviewManagement', // Overview Management (IA v1.03)
+  A07100500: 'LeadershipManagement',
+  A07100600: 'PartnersManagement',
+  A07080000: 'CareersManagement',
+  A07110000: 'ServiceGuideManagement',
+  A07060200: 'LogoManagement',
+  A07060300: 'SloganManagement',
+  A07090000: 'AuctionGuideManagement',
   // System Operation Management
-  A06010100: 'SYS020101SC', // Platform Menu Management
-  A06010200: 'SYS020102SC', // Form Management
-  A06010300: 'SYS020103SC', // Fee Management
-  A06010400: 'SYS020104SC', // Web Menu Permission Management
-  A06010500: 'ExchangeRateManagement',
-  A06010600: 'ScreenPending', // Prohibited Words Management: no backend API yet
-  A06010700: 'TermsManagement',
-  A06020100: 'SYS030101SC', // Admin Menu Management
-  A06020200: 'SYS030102SC', // User Management
-  A06020300: 'SYS030103SC', // User Group Management
-  A06020400: 'SYS030104SC', // Admin Menu Permission Management
-  A06030100: 'CommonCodeManagement',
-  A06030200: 'RegionCodeManagement',
-  A06030300: 'FinanceCodeManagement',
-  A06040100: 'ProgramManagement',
-  A06040200: 'ScreenManagement',
-  A06040300: 'LabelManagement', // i18n Label Management (DB path SYS050301SC wins when set)
-  A06040400: 'BatchManagement',
-  A06040500: 'ApprovalProcessManagement',
-  A06060100: 'NotificationMessageManagement',
-  A06060200: 'NotificationHistoryManagement',
+  A09010100: 'SYS020101SC', // Platform Menu Management
+  A09010200: 'SYS020102SC', // Form Management
+  A09010300: 'SYS020103SC', // Fee Management
+  A09010500: 'SYS020104SC', // Web Menu Permission Management
+  A09010400: 'ExchangeRateManagement',
+  A09010600: 'ScreenPending', // Prohibited Words Management: no backend API yet
+  A09010700: 'TermsManagement',
+  A09020100: 'SYS030101SC', // Admin Menu Management
+  A09020200: 'SYS030102SC', // User Management
+  A09020300: 'SYS030103SC', // User Group Management
+  A09020400: 'SYS030104SC', // Admin Menu Permission Management
+  A09030100: 'CommonCodeManagement',
+  A09030200: 'RegionCodeManagement',
+  A09030300: 'FinanceCodeManagement',
+  A09040100: 'ProgramManagement',
+  A09040200: 'ScreenManagement',
+  A09040300: 'LabelManagement', // i18n Label Management (DB path SYS050301SC wins when set)
+  A09040400: 'BatchManagement',
+  A09040500: 'ApprovalProcessManagement',
+  A09050100: 'NotificationMessageManagement',
+  A09050200: 'NotificationHistoryManagement',
   // Auction Management
-  A07010000: 'AuctionManagement',
-  A07020000: 'BidderManagement',
-  A07030000: 'LiveAuctionManagement',
+  A06010000: 'AuctionManagement',
+  A06020000: 'BidderManagement',
+  A06030000: 'LiveAuctionManagement',
 };
 
 /** Component key (screen ID) a server menu opens — DB path first, then the fallback. */

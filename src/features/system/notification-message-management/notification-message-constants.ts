@@ -1,4 +1,4 @@
-import type { NotiChannel, NotiLang, NotiProcessType, NotiRecipientType } from '@/api/system/notification-api';
+import type { NotiChannel, NotiRecipientType } from '@/api/system/notification-api';
 import { NOTI_CHANNEL_LABELS, NOTI_RECIPIENT_LABELS } from '@/api/system/notification-api';
 import { ALL } from '../_shared/sys-constants';
 
@@ -25,33 +25,12 @@ export const RECIPIENT_TYPE_FILTER_OPTIONS: { value: NotiRecipientType | ''; lab
   ...RECIPIENT_TYPE_OPTIONS,
 ];
 
-/** Legacy fields the API still requires until the NOTI_MSG_MNG schema change. */
-export const PROCESS_TYPE_OPTIONS: { value: NotiProcessType; label: string }[] = [
-  { value: 'RCPT', label: 'RCPT - Receipt' },
-  { value: 'PRCS', label: 'PRCS - Processing' },
-  { value: '1ST_ATRZ', label: '1ST_ATRZ - 1st Approval' },
-  { value: '2ND_ATRZ', label: '2ND_ATRZ - 2nd Approval' },
-  { value: 'CMPTN', label: 'CMPTN - Completion' },
-];
-
-export const LANG_OPTIONS: { value: NotiLang; label: string }[] = [
-  { value: 'VN', label: 'VN' },
-  { value: 'EN', label: 'EN' },
-];
-
-export const MENU_CODE_PATTERN = /^A\d{8}$/;
-
-/**
- * Variables offered by [Insert Variable]. TODO(api): replace with the server list once the
- * send timing / variable registry exists; these are the three drawn in the v0.8 frame.
- */
-export const TEMPLATE_VARIABLES = [
-  { key: '{mbrName}', label: 'Member Name' },
-  { key: '{otpCode}', label: 'Verification Code' },
-  { key: '{expireTime}', label: 'Expiry Time' },
+/** Variables shown until the server list (GET /variables) is loaded; the three drawn in the v0.8 frame. */
+export const FALLBACK_TEMPLATE_VARIABLES = [
+  { name: 'mbrName', placeholder: '{mbrName}', description: 'Member name', secret: false },
+  { name: 'otpCode', placeholder: '{otpCode}', description: '6-digit verification code', secret: true },
+  { name: 'expireTime', placeholder: '{expireTime}', description: 'Expiry time of the code or link', secret: false },
 ] as const;
 
-/** Role group of web member grades (used by Web Menu Permission), not a staff group: hidden from Recipient. */
-export const HIDDEN_ROLE_GROUP_IDS: readonly string[] = ['RG00100'];
-
-export const NOT_AVAILABLE_REASON = 'Waits for a schema change; not saved.';
+/** Web role groups (Web Menu Permission: logged-out visitor, member types), not staff groups: hidden from Recipient. */
+export const HIDDEN_ROLE_GROUP_IDS: readonly string[] = ['RG00100', 'RG00200'];

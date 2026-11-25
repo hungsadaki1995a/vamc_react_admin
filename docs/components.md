@@ -187,7 +187,7 @@ The v0.8 frame for every `features/system/*` screen. Use them there instead of t
 |-----------------|--|
 | `SysPage` (`fill`) | page container |
 | `SysTitleBar` (`title`, `breadcrumb[]`) | title + breadcrumb |
-| `SysFilterPanel` (`columns` 2/3/4) + `SysFilterItem` (`label`, `span`, `hint`) | filter grid |
+| `SysFilterPanel` (`columns` 2/3/4, default 4 as in the design) + `SysFilterItem` (`label`, `span`, `hint`) | filter grid |
 | `SysSearchActions` (`onReset`, `onSearch`, `loading`) | [Reset] [Search] |
 | `SysSectionHeader` (`title`, `total`, `actions`, `primaryActions`) | result header |
 | `SysTable<T>` (antd table props + `onRowClick`, `sort`, `onSortChange`, `fill`) | result table |

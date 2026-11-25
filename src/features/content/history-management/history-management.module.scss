@@ -1,0 +1,35 @@
+// History Management: list cells and the register / edit popup.
+
+// The frame runs to the bottom of the page (design); the pager stays its own height below it
+.list {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.listWrap {
+  display: flex;
+  flex-direction: column;
+}
+
+.noCell {
+  color: var(--color-text-brand, #0057ff);
+}
+
+// Left-aligned columns keep a centered header, as in the design
+.list :global(.ant-table-thead) > tr > th.centerHeader {
+  text-align: center;
+}
+
+.content {
+  resize: none;
+}
+
+.counter {
+  display: block;
+  text-align: right;
+  color: var(--color-text-tertiary, #929fba);
+}
+
+.loading {
+  min-height: 200px;
+}

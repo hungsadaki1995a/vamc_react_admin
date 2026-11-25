@@ -1,201 +1,205 @@
 import { useState } from 'react';
-import type { CSSProperties } from 'react';
-import ActionButton from '@/components/common/actions/ActionButton';
-import LoadingSpinner from '@/components/common/loading/LoadingSpinner';
-import Popup from '@/components/common/popup/Popup';
-import AppRadio from '@/components/inputs/AppRadio';
+import { FileImageOutlined } from '@ant-design/icons';
 import Spinbox from '@/components/inputs/Spinbox';
 import TextInput from '@/components/inputs/TextInput';
 import { useNotify } from '@/hooks/use-notify';
+import { BANNER_ERRORS } from '@/api/contents/banner-api';
 import type { Banner, BannerRequest } from '@/api/contents/banner-api';
-import { FormField } from '@/features/system/_shared/SystemUi';
+import { SysField, SysFieldGrid, SysFormModal } from '@/features/system/_shared/SysFormUi';
+import { SysButton } from '@/features/system/_shared/SysListUi';
+import { SYS_MESSAGES } from '@/features/system/_shared/sys-messages';
+import { useFieldErrors } from '@/features/system/_shared/use-field-errors';
 import { errorMessage } from '@/features/system/_shared/system-utils';
-import styles from '@/features/system/_shared/system-page.module.scss';
-import { ImageField } from '../_shared/PostFiles';
-import { useBanner, useSaveBanner, useUploadBannerImage } from './use-banners';
-import type { SaveBannerVariables } from './use-banners';
+import { useAttachmentPreview } from '../_shared/use-content-files';
+import ImageUploadField from './ImageUploadField';
+import {
+  BANNER_IMAGE_EXTENSIONS,
+  BANNER_IMAGE_MAX_BYTES,
+  BANNER_MESSAGES,
+  BANNER_TITLE_MAX,
+} from './banner-constants';
+import { useDeleteBanners, useSaveBanner, useUploadBannerImage } from './use-banners';
+import styles from './banner-management.module.scss';
 
-// Banner Management - Detail / Register / Edit popup (VPA0032P01).
-// Policy: a banner in use cannot be edited — save it as Unused, then reopen to edit.
+// Banner Management - Register / Edit popup (VPA070601P01).
+// Design fields: Banner Title, Banner Image (+ preview), Display Order; footer [Delete] | [Cancel] [Register / Edit].
+// Every saved banner is shown on the user home; the server keeps the orders 1..n (moves the others on save,
+// closes the gap on delete) and refuses a 6th banner.
+
+type FieldKey = 'title' | 'imageFileId' | 'order';
 
 interface BannerModalProps {
-  /** null = register a new banner. */
-  bannerId: string | null;
+  /** null = register. */
+  banner: Banner | null;
+  /** Banners registered now: Display Order runs from 1 to this (+1 when registering). */
+  bannerCount: number;
+  /** Register default: next after the last order. */
+  nextOrder: number;
   canWrite: boolean;
   onClose: () => void;
-  onSaved: () => void;
 }
 
 interface FormState {
-  useYn: 'Y' | 'N';
-  order: number | null;
-  positionId: string;
   title: string;
-  linkUrl: string;
   imageFileId?: string;
+  order: number | null;
 }
 
-const NEW_FORM: FormState = { useYn: 'N', order: null, positionId: '', title: '', linkUrl: '' };
-const URL_PATTERN = /^https?:\/\/.+/;
+const required = (label: string) => `${label} is required.`;
 
-export default function BannerModal({ bannerId, canWrite, onClose, onSaved }: BannerModalProps) {
-  const isCreate = bannerId === null;
-  const { toast } = useNotify();
-
-  const { data: detail, isFetching } = useBanner(bannerId);
+export default function BannerModal({ banner, bannerCount, nextOrder, canWrite, onClose }: BannerModalProps) {
+  const isCreate = banner === null;
+  const { toast, dialog } = useNotify();
   const saveBanner = useSaveBanner();
+  const deleteBanners = useDeleteBanners();
   const uploadImage = useUploadBannerImage();
+  const { errors, setError, clearError, clearAll, applyApiError } = useFieldErrors<FieldKey>();
 
-  const [form, setForm] = useState<FormState>(NEW_FORM);
+  const [form, setForm] = useState<FormState>(() => ({
+    title: banner?.title ?? '',
+    imageFileId: banner?.imageFileId,
+    order: banner?.order ?? nextOrder,
+  }));
+  const preview = useAttachmentPreview(form.imageFileId);
 
-  // Fill the form when the detail arrives — adjusted during render, not in an effect.
-  const [loadedDetail, setLoadedDetail] = useState<Banner | undefined>(undefined);
-  if (detail && detail !== loadedDetail) {
-    setLoadedDetail(detail);
-    setForm({
-      useYn: detail.useYn,
-      order: detail.order,
-      positionId: detail.positionId,
-      title: detail.title,
-      linkUrl: detail.linkUrl ?? '',
-      imageFileId: detail.imageFileId,
-    });
-  }
+  const fieldsDisabled = !canWrite;
+  const maxOrder = Math.max(1, isCreate ? bannerCount + 1 : bannerCount);
 
-  const patch = (values: Partial<FormState>) => setForm((prev) => ({ ...prev, ...values }));
-  const inUse = !isCreate && detail?.useYn === 'Y';
-  const fieldsDisabled = !canWrite || inUse;
-
-  const validate = (): string | null => {
-    if (form.order === null) return 'Enter the display order.';
-    if (!form.positionId.trim()) return 'Enter the banner position.';
-    if (!form.title.trim()) return 'Enter the banner title.';
-    if (form.linkUrl.trim() && !URL_PATTERN.test(form.linkUrl.trim())) {
-      return 'The link URL must start with http:// or https://.';
-    }
-    if (!form.imageFileId) return 'Attach the banner image.';
-    return null;
+  const patch = (key: FieldKey, values: Partial<FormState>) => {
+    setForm((prev) => ({ ...prev, ...values }));
+    clearError(key);
   };
 
-  const handleConfirm = async () => {
-    let variables: SaveBannerVariables;
-    if (inUse) {
-      // Only the usage flag can change while the banner is in use.
-      variables = { bannerId, useYn: form.useYn === 'N' ? 'N' : undefined };
-    } else {
-      const invalid = validate();
-      if (invalid) {
-        toast.warning(invalid);
-        return;
-      }
-      const request: BannerRequest = {
-        title: form.title.trim(),
-        positionId: form.positionId.trim(),
-        order: form.order as number,
-        linkUrl: form.linkUrl.trim() || undefined,
-        imageFileId: form.imageFileId as string,
-      };
-      // New / edited banners are stored as Unused; switch on afterwards if asked.
-      variables = { bannerId, request, useYn: form.useYn === 'Y' ? 'Y' : undefined };
+  const validate = (): boolean => {
+    clearAll();
+    let valid = true;
+    if (!form.title.trim()) {
+      setError('title', required('Banner Title'));
+      valid = false;
     }
+    if (!form.imageFileId) {
+      setError('imageFileId', required('Banner Image'));
+      valid = false;
+    }
+    if (form.order === null) {
+      setError('order', required('Display Order'));
+      valid = false;
+    }
+    return valid;
+  };
+
+  const handleSubmit = async () => {
+    if (!validate()) return;
+    const request: BannerRequest = {
+      title: form.title.trim(),
+      order: form.order as number,
+      imageFileId: form.imageFileId as string,
+    };
     try {
-      await saveBanner.mutateAsync(variables);
-      toast.success('Saved.');
-      onSaved();
+      await saveBanner.mutateAsync({ bannerId: banner?.bannerId ?? null, request });
+      toast.success(isCreate ? SYS_MESSAGES.registered : SYS_MESSAGES.updated);
       onClose();
     } catch (e) {
-      toast.error(errorMessage(e));
+      const mapped = applyApiError(
+        e,
+        {
+          [BANNER_ERRORS.imageInvalid]: ['imageFileId', BANNER_MESSAGES.invalidImage],
+          [BANNER_ERRORS.orderOutOfRange]: ['order', errorMessage(e)],
+        },
+        { title: 'title', imageFileId: 'imageFileId', order: 'order' },
+      );
+      if (!mapped) toast.error(errorMessage(e));
     }
+  };
+
+  const handleDelete = () => {
+    if (!banner) return;
+    dialog.confirm({
+      content: BANNER_MESSAGES.confirmDelete,
+      okText: 'Delete',
+      cancelText: 'Cancel',
+      okButtonProps: { danger: true },
+      onOk: async () => {
+        try {
+          await deleteBanners.mutateAsync([banner.bannerId]);
+          toast.success(SYS_MESSAGES.deleted);
+          onClose();
+        } catch (e) {
+          toast.error(errorMessage(e));
+        }
+      },
+    });
   };
 
   return (
-    <Popup
+    <SysFormModal
       open
-      width={860}
-      title={
-        <span>
-          Check/Modify Banner
-          {inUse && <span className={styles.formNotice}>※ Can be edited when Unused.</span>}
-        </span>
-      }
+      width={1200}
+      title={isCreate ? 'Register Banner' : 'Edit Banner'}
+      submitText={isCreate ? 'Register' : 'Edit'}
+      onSubmit={canWrite ? () => void handleSubmit() : undefined}
+      submitting={saveBanner.isPending}
+      submitDisabled={uploadImage.isPending}
       onCancel={onClose}
-      maskClosable={false}
-      footer={
-        <div className={styles.modalFooter}>
-          <ActionButton action="cancel" onClick={onClose}>
-            Cancel
-          </ActionButton>
-          <ActionButton
-            intent="secondary"
-            appearance="filled"
-            disabled={!canWrite || saveBanner.isPending || isFetching}
-            onClick={handleConfirm}
-          >
-            Confirm
-          </ActionButton>
-        </div>
+      notice={BANNER_MESSAGES.imageHint}
+      leftActions={
+        !isCreate &&
+        canWrite && (
+          <SysButton look="danger" loading={deleteBanners.isPending} onClick={handleDelete}>
+            Delete
+          </SysButton>
+        )
       }
     >
-      <LoadingSpinner spinning={isFetching}>
-        <div className={styles.formGrid} style={{ '--form-cols': 3 } as CSSProperties}>
-          <FormField label="In Use">
-            <AppRadio.Group
-              value={form.useYn}
-              disabled={!canWrite}
-              onChange={(e) => patch({ useYn: e.target.value as 'Y' | 'N' })}
-              options={[
-                { value: 'Y', label: 'Used' },
-                { value: 'N', label: 'Unused' },
-              ]}
-            />
-          </FormField>
-          <FormField label="Order" required>
+      <SysFieldGrid columns={1}>
+        <SysField label="Banner Title" required error={errors.title}>
+          <TextInput
+            value={form.title}
+            placeholder="Enter the title."
+            maxLength={BANNER_TITLE_MAX}
+            disabled={fieldsDisabled}
+            onChange={(e) => patch('title', { title: e.target.value })}
+          />
+        </SysField>
+        <SysField label="Banner Image" required error={errors.imageFileId}>
+          <ImageUploadField
+            fileUnqId={form.imageFileId}
+            initialFileName={banner?.imageFileName}
+            extensions={BANNER_IMAGE_EXTENSIONS}
+            maxBytes={BANNER_IMAGE_MAX_BYTES}
+            invalidMessage={BANNER_MESSAGES.invalidImage}
+            disabled={fieldsDisabled}
+            upload={uploadImage.mutateAsync}
+            uploading={uploadImage.isPending}
+            onUploaded={(imageFileId) => patch('imageFileId', { imageFileId })}
+            onError={(message) => setError('imageFileId', message)}
+          />
+        </SysField>
+        <SysField label="Banner Preview">
+          <div className={styles.preview} data-empty={preview ? undefined : true}>
+            {preview ? (
+              <img src={preview} alt={form.title} className={styles.previewImage} />
+            ) : (
+              <span className={styles.previewEmpty}>
+                <FileImageOutlined className={styles.previewIcon} />
+                No image attached.
+              </span>
+            )}
+          </div>
+        </SysField>
+        <SysField label="Display Order" required error={errors.order}>
+          <div className={styles.orderBox}>
             <Spinbox
               value={form.order}
               min={1}
-              max={999}
+              max={maxOrder}
               precision={0}
               disabled={fieldsDisabled}
-              onChange={(order) => patch({ order })}
+              onChange={(order) => patch('order', { order })}
             />
-          </FormField>
-          <FormField label="Banner Position" required>
-            <TextInput
-              placeholder="e.g. MAIN_TOP"
-              value={form.positionId}
-              maxLength={100}
-              disabled={fieldsDisabled}
-              onChange={(e) => patch({ positionId: e.target.value })}
-            />
-          </FormField>
-
-          <FormField label="Banner Title" required span="full">
-            <TextInput
-              value={form.title}
-              maxLength={256}
-              disabled={fieldsDisabled}
-              onChange={(e) => patch({ title: e.target.value })}
-            />
-          </FormField>
-          <FormField label="Banner Link URL" span="full">
-            <TextInput
-              placeholder="https://… (leave blank if no link)"
-              value={form.linkUrl}
-              maxLength={2000}
-              disabled={fieldsDisabled}
-              onChange={(e) => patch({ linkUrl: e.target.value })}
-            />
-          </FormField>
-          <FormField label="Banner Image" required span="full">
-            <ImageField
-              upload={uploadImage.mutateAsync}
-              fileUnqId={form.imageFileId}
-              disabled={fieldsDisabled}
-              onChange={(imageFileId) => patch({ imageFileId })}
-            />
-          </FormField>
-        </div>
-      </LoadingSpinner>
-    </Popup>
+          </div>
+        </SysField>
+      </SysFieldGrid>
+    </SysFormModal>
   );
 }

@@ -1,15 +1,31 @@
 /* v0.8 (Figma 2026.11.11) look of the System Operation Management screens.
-   Used by sys-list-ui.tsx / sys-form-ui.tsx; screens add their own module for anything specific. */
+   Used by SysListUi.tsx / SysFormUi.tsx; screens add their own module for anything specific.
+   Measured on the 1920px design: title H3 bold, filter labels B2, table header B2, body B1, rows 38px. */
 
-$border: var(--color-border-secondary, #e2e5eb);
+$border: var(--color-border-secondary, #eaeaf1);
 $border-strong: var(--color-border-primary, #d1d1e0);
 $label-bg: var(--color-bg-secondary, #f6f6f9);
+$surface: var(--color-bg-primary, #ffffff);
 $text: var(--color-text-primary, #3a404a);
-$text-sub: var(--color-text-secondary, #6f7b95);
-$brand: var(--color-text-brand, #1764ff);
+$text-sub: var(--color-text-tertiary, #6f7b95);
+$text-faint: var(--color-text-disabled, #a8b2c8);
 $danger: var(--color-text-negative, #e62e44);
-$navy: #4a4f73;
-$navy-hover: #3b3f5e;
+$selected-bg: var(--color-blue-50, #eaf8ff);
+$warn-bg: var(--color-orange-50, #fff2e6);
+$warn-border: var(--color-orange-200, #ffbf7f);
+$warn-text: var(--color-orange-700, #ce4f00);
+
+$fs-h1: var(--font-size-h1, 20px);
+$fs-h3: var(--font-size-h3, 16px);
+$fs-h4: var(--font-size-h4, 14px);
+$fs-b1: var(--font-size-b1, 13px);
+$fs-b2: var(--font-size-b2, 12px);
+$tracking: var(--letter-spacing-tight, -0.02em);
+
+$radius: 4px;
+/* Popups may widen the label column with --field-label-width (SysFieldGrid labelWidth) */
+$field-label-width: var(--field-label-width, 120px);
+$filter-label-width: 88px;
 
 /* ── Page ───────────────────────────────────────────────────────────────── */
 .page {
@@ -19,8 +35,9 @@ $navy-hover: #3b3f5e;
   height: 100%;
   padding: 20px 24px 24px;
   overflow-y: auto;
-  background: var(--color-bg-primary, #ffffff);
+  background: $surface;
   color: $text;
+  letter-spacing: $tracking;
 }
 
 /* Last child takes the remaining height (tree + details, master-detail lists). */
@@ -39,9 +56,9 @@ $navy-hover: #3b3f5e;
 
 .title {
   margin: 0;
-  font-size: 18px;
+  font-size: $fs-h3;
   font-weight: 700;
-  line-height: 26px;
+  line-height: var(--line-height-h3, 24px);
   color: $text;
 }
 
@@ -49,7 +66,7 @@ $navy-hover: #3b3f5e;
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 12px;
+  font-size: $fs-b2;
   color: $text-sub;
   white-space: nowrap;
 }
@@ -62,17 +79,18 @@ $navy-hover: #3b3f5e;
 
 .breadcrumbSep {
   font-size: 9px;
-  color: #a8b2c8;
+  color: $text-faint;
 }
 
 /* ── Search conditions ──────────────────────────────────────────────────── */
+/* Design: 4 equal columns, right-aligned B2 label, 32px controls, 12px padding. */
 .filterPanel {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px 24px;
-  padding: 14px 20px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px 12px;
+  padding: 12px 16px;
   border: 1px solid $border;
-  border-radius: 4px;
+  border-radius: $radius;
   background: $label-bg;
 }
 
@@ -80,8 +98,8 @@ $navy-hover: #3b3f5e;
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
-.filterPanel[data-cols='4'] {
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+.filterPanel[data-cols='3'] {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
 .filterItem {
@@ -101,8 +119,10 @@ $navy-hover: #3b3f5e;
 
 .filterLabel {
   flex: 0 0 auto;
-  min-width: 96px;
-  font-size: 13px;
+  min-width: $filter-label-width;
+  font-size: $fs-b2;
+  font-weight: 500;
+  line-height: var(--line-height-b2, 16px);
   text-align: right;
   color: $text;
 }
@@ -125,7 +145,7 @@ $navy-hover: #3b3f5e;
 
 .filterHint {
   flex: 0 0 auto;
-  font-size: 12px;
+  font-size: $fs-b2;
   color: $text-sub;
   white-space: nowrap;
 }
@@ -133,7 +153,12 @@ $navy-hover: #3b3f5e;
 .searchActions {
   display: flex;
   justify-content: flex-end;
-  gap: 6px;
+  gap: 4px;
+}
+
+/* Design: ~24px between [Reset][Search] and the result section (page gap 12 + 12). */
+.searchActions + * {
+  margin-top: 12px;
 }
 
 /* ── List header / buttons ─────────────────────────────────────────────── */
@@ -142,26 +167,44 @@ $navy-hover: #3b3f5e;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  min-height: 36px;
+  min-height: 32px;
+}
+
+/* Design: 8px between a page-level section header and its table. */
+.page > .sectionHeader + * {
+  margin-top: -4px;
 }
 
 .sectionTitle {
   display: flex;
   align-items: center;
-  gap: 10px;
-  font-size: 15px;
+  gap: 8px;
+  min-width: 0;
+  font-size: $fs-h4;
   font-weight: 600;
+  line-height: var(--line-height-h4, 20px);
   color: $text;
 }
 
+/* Long titles (e.g. a selected master name) end with an ellipsis; Total stays on the same line */
+.sectionTitleText {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
 .sectionTotal {
-  padding-left: 10px;
+  flex: none;
+  white-space: nowrap;
+  padding-left: 8px;
   border-left: 1px solid $border-strong;
-  font-size: 14px;
+  font-size: $fs-b1;
   font-weight: 400;
+  line-height: 14px;
   color: $text-sub;
 
   strong {
+    font-weight: 600;
     color: $text;
   }
 }
@@ -169,114 +212,68 @@ $navy-hover: #3b3f5e;
 .sectionActions {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
 }
 
 .actionDivider {
   width: 1px;
   height: 24px;
-  margin: 0 6px;
+  margin: 0 8px;
   background: $border-strong;
-}
-
-.btnNavy:global(.ant-btn) {
-  border-color: $navy;
-  background: $navy;
-  color: #ffffff;
-
-  &:not(:disabled):hover {
-    border-color: $navy-hover;
-    background: $navy-hover;
-    color: #ffffff;
-  }
-}
-
-.excelIcon {
-  color: #1d6f42;
-}
-
-/* ── Badges ─────────────────────────────────────────────────────────────── */
-.badge {
-  display: inline-block;
-  padding: 0 8px;
-  border: 1px solid #c9ced8;
-  border-radius: 3px;
-  background: #f4f5f7;
-  font-size: 12px;
-  line-height: 20px;
-  color: #6f7b95;
-  white-space: nowrap;
-}
-
-.badge[data-tone='blue'] {
-  border-color: #9cc3ff;
-  background: #eef5ff;
-  color: #1764ff;
-}
-
-.badge[data-tone='green'] {
-  border-color: #9bd8b4;
-  background: #eefaf3;
-  color: #17894a;
-}
-
-.badge[data-tone='red'] {
-  border-color: #f5a8b2;
-  background: #fff1f3;
-  color: $danger;
-}
-
-.badge[data-tone='orange'] {
-  border-color: #f6c58f;
-  background: #fff6ec;
-  color: #c96a00;
-}
-
-.badge[data-tone='navy'] {
-  border-color: #b4b7cf;
-  background: #f0f1f7;
-  color: $navy;
 }
 
 .nowrap {
   white-space: nowrap;
 }
 
-/* ── Table ──────────────────────────────────────────────────────────────── */
+/* ── Table (borders, row height and colors come from DataTable) ─────────── */
 .tableWrap {
-  border: 1px solid $border;
-  border-radius: 4px;
-  background: #ffffff;
-
-  :global(.ant-table) {
-    font-size: 13px;
-  }
+  min-width: 0;
 
   :global(.ant-table-thead > tr > th) {
-    background: $label-bg;
-    color: $text-sub;
-    font-weight: 500;
+    font-size: $fs-b2;
     text-align: center;
   }
 
-  :global(.ant-table-tbody > tr > td) {
-    color: $text;
+  /* Sort arrows right after the title, not pushed to the cell edge. */
+  :global(.ant-table-column-sorters) {
+    justify-content: center;
+    gap: 4px;
+  }
+
+  :global(.ant-table-column-title) {
+    flex: 0 1 auto;
+  }
+
+  :global(.ant-table-column-sorter) {
+    margin-inline-start: 0;
+    font-size: 9px;
   }
 }
 
+/* Fill mode (master-detail panels): the frame runs to the bottom of the pane like the design,
+   so the border moves from the table container to the wrapper. */
 .tableFill {
   min-height: 0;
   overflow: auto;
+  border: 1px solid $border-strong;
+  border-radius: $radius;
+  background: $surface;
+
+  :global(.ant-table-container) {
+    border: 0;
+    border-radius: 0;
+  }
 }
 
 .rowClickable :global(.ant-table-tbody > tr) {
   cursor: pointer;
 }
 
-/* Selected master row (SysTable `selectedRowKey`); doubled class so it also beats antd's row hover background. */
+/* Selected master row (SysTable `selectedRowKey`); doubled class so it also beats DataTable's row hover. */
 .tableWrap.tableWrap :global(.ant-table-tbody) > tr.rowSelected > td,
 .tableWrap.tableWrap :global(.ant-table-tbody) > tr.rowSelected:hover > td {
-  background: #eaf3ff;
+  background: $selected-bg !important;
 }
 
 /* ── Pager ──────────────────────────────────────────────────────────────── */
@@ -284,47 +281,14 @@ $navy-hover: #3b3f5e;
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 6px;
   padding: 8px 0;
-}
-
-.pagerNav,
-.pagerNumber {
-  min-width: 28px;
-  height: 28px;
-  padding: 0 6px;
-  border: 1px solid transparent;
-  border-radius: 4px;
-  background: transparent;
-  font-size: 13px;
-  color: $text;
-  cursor: pointer;
-}
-
-.pagerNav {
-  border-color: $border-strong;
-  color: $text-sub;
-}
-
-.pagerNav:disabled {
-  color: #c4c9d4;
-  cursor: default;
-}
-
-.pagerNumber:hover {
-  background: $label-bg;
-}
-
-.pagerNumber[data-active] {
-  background: $brand;
-  color: #ffffff;
 }
 
 /* ── Split panels ───────────────────────────────────────────────────────── */
 .split {
   display: grid;
   grid-template-columns: var(--split-cols, 1fr 1fr);
-  gap: 24px;
+  gap: 20px;
   min-height: 0;
 }
 
@@ -345,15 +309,17 @@ $navy-hover: #3b3f5e;
   align-items: center;
   justify-content: center;
   min-height: 160px;
-  border: 1px dashed $border-strong;
-  border-radius: 4px;
+  border: 1px solid $border-strong;
+  border-radius: $radius;
   color: $text-sub;
-  font-size: 13px;
+  font-size: $fs-b1;
 }
 
 /* ── Register / edit popup ─────────────────────────────────────────────── */
+/* Design: 38px gray top bar (B2 title), H1 heading, 30px side padding, buttons 20px under the grid. */
 .modal :global(.ant-modal-container) {
   padding: 0;
+  letter-spacing: $tracking;
 }
 
 .modal :global(.ant-modal-header) {
@@ -364,30 +330,32 @@ $navy-hover: #3b3f5e;
 }
 
 .modal :global(.ant-modal-body) {
-  padding: 16px 40px 8px;
+  padding: 20px 30px 0;
 }
 
 .modal :global(.ant-modal-footer) {
   margin: 0;
-  padding: 12px 40px 24px;
+  padding: 20px 30px 24px;
 }
 
 .modalBarTitle {
-  font-size: 13px;
+  font-size: $fs-b2;
   font-weight: 400;
+  line-height: var(--line-height-b2, 16px);
   color: $text-sub;
 }
 
 .modalHeading {
-  margin: 8px 0 16px;
-  font-size: 22px;
+  margin: 4px 0 16px;
+  font-size: $fs-h1;
   font-weight: 700;
+  line-height: var(--line-height-h1, 28px);
   color: $text;
 }
 
 .modalNotice {
   margin: 12px 0 0;
-  font-size: 12px;
+  font-size: $fs-b2;
   color: $text-sub;
 }
 
@@ -403,34 +371,37 @@ $navy-hover: #3b3f5e;
   margin-right: auto;
 }
 
+/* Bordered label | value grid; 120px gray label column, 44px rows. */
 .fieldGrid {
   display: grid;
-  grid-template-columns: repeat(2, 140px minmax(0, 1fr));
-  border-top: 1px solid $border;
-  border-left: 1px solid $border;
+  grid-template-columns: repeat(2, $field-label-width minmax(0, 1fr));
+  border-top: 1px solid $border-strong;
+  border-left: 1px solid $border-strong;
 }
 
 .fieldGrid[data-cols='1'] {
-  grid-template-columns: 140px minmax(0, 1fr);
+  grid-template-columns: $field-label-width minmax(0, 1fr);
 }
 
 .fieldGrid[data-cols='3'] {
-  grid-template-columns: repeat(3, 140px minmax(0, 1fr));
+  grid-template-columns: repeat(3, $field-label-width minmax(0, 1fr));
 }
 
 .fieldLabel {
   display: flex;
   align-items: center;
-  padding: 8px 12px;
-  border-right: 1px solid $border;
-  border-bottom: 1px solid $border;
+  min-height: 44px;
+  padding: 8px;
+  border-right: 1px solid $border-strong;
+  border-bottom: 1px solid $border-strong;
   background: $label-bg;
-  font-size: 13px;
+  font-size: $fs-b2;
+  line-height: var(--line-height-b2, 16px);
   color: $text-sub;
 }
 
 .requiredMark {
-  margin-left: 2px;
+  margin-left: 1px;
   color: $danger;
 }
 
@@ -441,8 +412,8 @@ $navy-hover: #3b3f5e;
   gap: 4px;
   min-width: 0;
   padding: 6px 10px;
-  border-right: 1px solid $border;
-  border-bottom: 1px solid $border;
+  border-right: 1px solid $border-strong;
+  border-bottom: 1px solid $border-strong;
 }
 
 .fieldValue[data-span='2'] {
@@ -491,12 +462,12 @@ $navy-hover: #3b3f5e;
 }
 
 .fieldHint {
-  font-size: 12px;
+  font-size: $fs-b2;
   color: $text-sub;
 }
 
 .fieldError {
-  font-size: 12px;
+  font-size: $fs-b2;
   color: $danger;
 }
 
@@ -519,7 +490,7 @@ $navy-hover: #3b3f5e;
 
 .formSectionTitle {
   margin: 0;
-  font-size: 15px;
+  font-size: $fs-h4;
   font-weight: 600;
   color: $text;
 }
@@ -530,24 +501,24 @@ $navy-hover: #3b3f5e;
   align-items: flex-start;
   gap: 10px;
   padding: 10px 14px;
-  border: 1px solid #f6c58f;
-  border-radius: 4px;
-  background: #fff8ef;
+  border: 1px solid $warn-border;
+  border-radius: $radius;
+  background: $warn-bg;
   color: $text;
 }
 
 .notAvailableIcon {
   margin-top: 3px;
-  color: #c96a00;
+  color: $warn-text;
 }
 
 .notAvailableTitle {
-  font-size: 13px;
+  font-size: $fs-b1;
   font-weight: 600;
 }
 
 .notAvailableReason {
-  font-size: 12px;
+  font-size: $fs-b2;
   color: $text-sub;
 }
 
@@ -556,8 +527,8 @@ $navy-hover: #3b3f5e;
   flex-wrap: wrap;
   align-items: center;
   gap: 4px;
-  font-size: 12px;
-  color: #c96a00;
+  font-size: $fs-b2;
+  color: $warn-text;
 
   .notAvailableTitleInline {
     white-space: nowrap;

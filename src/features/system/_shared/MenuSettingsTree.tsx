@@ -15,9 +15,9 @@ import { menuName, planMenuMove } from './menu-tree';
 import type { DropPosition, MenuMove, MenuNode, MenuTree } from './menu-tree';
 import styles from './menu-settings.module.scss';
 
-// Left panel of Menu Settings: [Expand All] / [Add Submenu] [Add Top Menu] and the drag & drop tree.
+// Left panel of Menu Settings: [Expand All] / [Add Sub Menu] [Add Top Menu] and the drag & drop tree.
 
-/** Unsaved menu added with [Add Submenu] / [Add Top Menu], shown at the end of its parent. */
+/** Unsaved menu added with [Add Sub Menu] / [Add Top Menu], shown at the end of its parent. */
 export interface MenuDraftRow {
   upMenuCd: string;
   name: string;
@@ -212,7 +212,7 @@ export default function MenuSettingsTree({
         {canWrite && (
           <div className={styles.treeToolbarRight}>
             <SysButton disabled={addSubDisabled} onClick={onAddSub}>
-              Add Submenu
+              Add Sub Menu
             </SysButton>
             <SysButton look="navy" onClick={onAddTop}>
               Add Top Menu
@@ -224,7 +224,7 @@ export default function MenuSettingsTree({
         <div className={styles.treeBody} role="tree">
           {insertAt === -1 && draft && renderDraft(draft)}
           {visible.map((node, index) => (
-            <div key={node.menu.menuCd} className={styles.treeItem}>
+            <div key={node.menu.menuCd}>
               {renderNode(node)}
               {index === insertAt && draft && renderDraft(draft)}
             </div>

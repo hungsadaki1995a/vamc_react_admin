@@ -1,7 +1,7 @@
 import { apiGet, apiPost, apiPut } from '@/api/common/api-utils';
 
 // Member sign-up API — MemberApprovalController (`/api/v1/members/{mbrNo}/…`) and ApprovalController
-// (`/api/v1/approvals/…`), process PROC_MBR_JOIN, guard menu A01010000. Screens ADF1234 P08–P12.
+// (`/api/v1/approvals/…`), process PROC_MBR_JOIN, guard menu A03010000. Screens ADF1234 P08–P12.
 // Two steps (decided 2026-11-22): 1 receiver — receive, check the posted documents, assign the officer in charge;
 // 2 officer in charge — enter the SGDN code and the fee terms, which completes the sign-up. No approval, no rejection.
 

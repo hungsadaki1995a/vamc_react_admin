@@ -1,7 +1,7 @@
 import { apiDelete, apiDownload, apiGet, apiPost, apiPut } from '@/api/common/api-utils';
 import type { PageResponse } from '@/api/common/api-utils';
 
-// ── NPL Management (A03010100) ───────────────────────────────────────────────
+// ── NPL Management (A04020000) ───────────────────────────────────────────────
 export interface NplItem {
   bndCd: string;
   bndNm: string;
@@ -38,7 +38,7 @@ export const getNpls = (search: NplSearch, page: number, size: number) =>
   apiGet<PageResponse<NplItem>>('/api/v1/npls', { ...search, page, size });
 export const getNpl = (bndCd: string) => apiGet<NplItem>(`/api/v1/npls/${bndCd}`);
 
-// ── Collateral Asset Management (A03010200) ──────────────────────────────────
+// ── Collateral Asset Management (A04030000) ──────────────────────────────────
 export interface CollateralAssetItem {
   cltrAstCd: string;
   cltrAstNm: string;
@@ -66,7 +66,7 @@ export const getCollateralAsset = (cltrAstCd: string) =>
 export const downloadCollateralAssetsExcel = (search: Record<string, unknown>) =>
   apiDownload('/api/v1/collateral-assets/excel', 'collateral-assets.xlsx', search);
 
-// ── Debtor Management (A03010300) ────────────────────────────────────────────
+// ── Debtor Management (A04040000) ────────────────────────────────────────────
 export interface DebtorItem {
   dbtrCd: string;
   dbtrTypeCd?: string;
@@ -96,7 +96,7 @@ export const deleteDebtors = (dbtrCds: string[]) => apiDelete<void>('/api/v1/deb
 export const downloadDebtorsExcel = (search: Record<string, unknown>) =>
   apiDownload('/api/v1/debtors/excel', 'debtors.xlsx', search);
 
-// ── NPL LOT Change Management (A03010400) ────────────────────────────────────
+// ── NPL LOT Change Management (A04050000) ────────────────────────────────────
 export interface NplLotItem {
   bndLotId: string;
   bndLotNo: string;

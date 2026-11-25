@@ -1,221 +1,75 @@
-@mixin radio-circle-base($border-color) {
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  border: 1.5px solid $border-color;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  background-color: #ffffff;
-  flex-shrink: 0;
-  box-sizing: border-box;
-}
+/* Direct Inquiry Answer popup: frame and field grid come from SysFormModal / SysFieldGrid (sys-ui). */
 
-@mixin text-display-area {
-  min-height: 140px;
-  white-space: pre-wrap;
-  line-height: 1.65;
-  font-size: 13px;
-  color: #334155;
-  padding: 4px 0;
-}
+$text: var(--color-text-primary, #3a404a);
+$icon: var(--color-text-brand, #005be2);
+$fs-b1: var(--font-size-b1, 13px);
+$lh-b1: var(--line-height-b1, 18px);
 
-@mixin modal-btn-base($padding) {
-  height: 32px;
-  padding: $padding;
-  border-radius: 4px;
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.15s ease;
-  outline: none;
-}
-
-.modalBody {
-  padding-top: 8px;
-}
-
-.tableWrapper {
-  width: 100%;
-  border: 1px solid #cbd5e1;
-  border-collapse: collapse;
-  margin-top: 8px;
-  background-color: #ffffff;
-
-  tr {
-    border-bottom: 1px solid #cbd5e1;
-  }
-}
-
-.headerCell {
-  background-color: #eaecf0;
-  color: #1e293b;
-  font-weight: 600;
-  font-size: 13px;
-  text-align: center;
-  vertical-align: middle;
-  padding: 10px 8px;
-  border-right: 1px solid #cbd5e1;
-  border-bottom: 1px solid #cbd5e1;
-  line-height: 1.35;
-  user-select: none;
-}
-
-.dataCell {
-  background-color: #ffffff;
-  color: #334155;
-  font-size: 13px;
-  padding: 10px 14px;
-  vertical-align: middle;
-  border-right: 1px solid #cbd5e1;
-  border-bottom: 1px solid #cbd5e1;
-  line-height: 1.5;
-
-  &:last-child {
-    border-right: none;
-  }
-}
-
-.radioGroup {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
-
-.radioOption {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  font-size: 13px;
-  color: #1e293b;
-  cursor: default;
-  user-select: none;
-}
-
-.radioCircle {
-  @include radio-circle-base(#4b5563);
-
-  &Selected {
-    @include radio-circle-base(#111827);
-  }
-}
-
-.radioDot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background-color: #111827;
-}
-
-.contentArea {
-  @include text-display-area;
-}
-
-.replyArea {
-  @include text-display-area;
-}
-
-.footerRow {
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  padding-top: 14px;
-}
-
-.footerActions {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.closeBtn,
-.cancelBtn {
-  @include modal-btn-base(0 20px);
-  background: #ffffff;
-  border: 1px solid #d1d5db;
-  color: #374151;
-
-  &:hover {
-    background: #f9fafb;
-    border-color: #9ca3af;
-    color: #111827;
-  }
-}
-
-.sendBtn {
-  @include modal-btn-base(0 22px);
-  background: #111827;
-  border: 1px solid #111827;
-  color: #ffffff;
-
-  &:hover:not(:disabled) {
-    background: #1f2937;
-    border-color: #1f2937;
-  }
-
-  &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-  }
-}
-
-.replyInputContainer {
+/* Attachments: icon + name, download button on the right (design). */
+.files {
   display: flex;
   flex-direction: column;
+  gap: 4px;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.file {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 24px;
+  font-size: $fs-b1;
+  color: $text;
+}
+
+.fileIcon {
+  color: $icon;
+}
+
+.fileName {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Inquiry content and a sent answer keep the user's line breaks; the design reserves a tall block. */
+.content,
+.answer {
+  width: 100%;
+  min-height: 240px;
+  max-height: 320px;
+  padding: 4px 0;
+  overflow-y: auto;
+  font-size: $fs-b1;
+  line-height: $lh-b1;
+  color: $text;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.answer {
+  min-height: 160px;
+}
+
+/* Answer rich-text editor (design: about 290px tall). */
+.answerEditor {
+  --rte-min-height: 290px;
+
   width: 100%;
 }
 
-.replyTextarea {
-  width: 100%;
-  min-height: 140px;
-  padding: 12px 14px;
-  border: 1px solid #d1d5db;
-  border-radius: 4px;
-  font-family: inherit;
-  font-size: 13px;
-  line-height: 1.6;
-  color: #1f2937;
-  background-color: #ffffff;
-  resize: vertical;
-  box-sizing: border-box;
-  outline: none;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
-
-  &:focus {
-    border-color: #2563eb;
-    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.12);
+/* A sent answer is editor HTML: keep paragraph spacing compact and images inside the field. */
+.answer {
+  :global(p) {
+    margin: 0;
   }
 
-  &Error {
-    border-color: #dc2626 !important;
-
-    &:focus {
-      border-color: #dc2626 !important;
-      box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.15) !important;
-    }
-  }
-}
-
-.replyErrorMsg {
-  color: #dc2626;
-  font-size: 12px;
-  margin-top: 4px;
-  font-weight: 500;
-}
-
-/* ── Moved from inline styles ── */
-.modalTitle {
-  font-size: 16px;
-  font-weight: 700;
-  color: #111827;
-}
-
-/* Column widths of the first row. */
-@each $pct in 13, 14, 20, 27 {
-  .col#{$pct} {
-    width: $pct * 1%;
+  :global(img) {
+    max-width: 100%;
   }
 }

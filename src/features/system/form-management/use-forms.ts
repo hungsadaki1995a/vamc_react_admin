@@ -2,27 +2,19 @@ import { keepPreviousData } from '@tanstack/react-query';
 import { useApiQuery } from '@/hooks/use-api-query';
 import { useApiAction, useApiDownload } from '@/hooks/use-api-action';
 import type { PageQuery, PageResponse } from '@/api/common/api-utils';
-import {
-  FORM_API_AVAILABLE,
-  createForm,
-  downloadFormExcel,
-  getForms,
-  updateForm,
-} from '@/api/system/form-api';
-import type { FormItem, FormSaveRequest, FormSearch } from '@/api/system/form-api';
+import { createForm, downloadFormExcel, getForms, updateForm } from '@/api/system/form-api';
+import type { FormItem, FormSaveRequest, FormSearch, FormSort } from '@/api/system/form-api';
 
 // Data hooks of Form Management (VPA09010201 / VPA090102P01).
-// The backend has no form API yet: queries stay disabled while FORM_API_AVAILABLE is false.
 
 const FORM_KEYS = {
   all: ['system', 'forms'] as const,
   list: (search: FormSearch, query: PageQuery) => ['system', 'forms', 'list', search, query] as const,
 };
 
-/** Paged form list (20 rows). */
+/** Paged form list (20 rows; default server order is the form number unless `sortBy` is set). */
 export function useForms(search: FormSearch, query: PageQuery) {
   return useApiQuery<PageResponse<FormItem>>(FORM_KEYS.list(search, query), () => getForms(search, query), {
-    enabled: FORM_API_AVAILABLE,
     placeholderData: keepPreviousData,
   });
 }
@@ -40,7 +32,7 @@ export function useSaveForm() {
   );
 }
 
-/** [Excel Download] of the searched list. */
+/** [Excel Download] of the searched list in the current sort. */
 export function useDownloadFormExcel() {
-  return useApiDownload((search: FormSearch) => downloadFormExcel(search));
+  return useApiDownload(({ search, sort }: { search: FormSearch; sort: FormSort }) => downloadFormExcel(search, sort));
 }

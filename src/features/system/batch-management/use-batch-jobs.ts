@@ -21,7 +21,7 @@ import type {
   BatchRegistryJob,
 } from '@/api/system/batch-api';
 
-// Data hooks of Batch Management (menu A06040400); the history popup is also used by Exchange Rate.
+// Data hooks of Batch Management (menu A09040400); the history popup is also used by Exchange Rate.
 
 export const BATCH_KEYS = {
   all: ['system', 'batch'] as const,

@@ -1,59 +1,57 @@
 import { apiClient } from '@/lib/api/client';
-import { apiDelete, apiGet, apiPatch, apiPost, apiPut } from '@/api/common/api-utils';
-import type { PageResponse } from '@/api/common/api-utils';
-import type { ContentFileGroup, Post, PostDetail } from './post-api';
+import { apiGet, apiPut } from '@/api/common/api-utils';
+import type { ContentFileGroup } from './post-api';
 
-// Site Display Management APIs — LogoController (`/api/v1/contents/logos`, menu A04110200)
-// and SloganController (`/api/v1/contents/slogans`, menu A04110300).
+// Site Display Management settings — LogoController (`/api/v1/contents/logos`, menu A07060200, VPA07060201)
+// and SloganController (`/api/v1/contents/slogans`, menu A07060300, VPA07060301).
+// Each page edits one record: the user header logo (HEADER) and the user home hero slogan (MAIN_HERO).
 
-export interface SiteDisplaySearch {
-  published?: 'Y' | 'N';
-  tag?: string;
-  /** dd/MM/yyyy */
-  fromDate?: string;
-  toDate?: string;
-  keyword?: string;
+/** Current header logo; fields are empty when none is registered. */
+export interface LogoSetting {
+  logoId?: string;
+  positionId: string;
+  imageFileId?: string;
+  imageFileSeq?: number;
+  /** Original file name, e.g. logo_vamc.png */
+  imageFileName?: string;
+  imagePreviewUrl?: string;
+  mdfcnDt?: string;
+  mdfcnBy?: string;
 }
 
-export interface LogoRequest {
-  title: string;
-  titleEn?: string;
+/** Current home hero slogan; fields are empty when none is registered. Lines are separated by `\n`. */
+export interface SloganSetting {
+  sloganId?: string;
   positionId: string;
-  imageFileId: string;
-  linkUrl?: string;
-  description?: string;
-  descriptionEn?: string;
-  useYn?: 'Y' | 'N';
+  sloganVi?: string;
+  sloganEn?: string;
+  mdfcnDt?: string;
+  mdfcnBy?: string;
 }
 
 export interface SloganRequest {
-  title: string;
-  titleEn?: string;
-  subSlogan?: string;
-  subSloganEn?: string;
-  positionId: string;
-  useYn?: 'Y' | 'N';
+  /** Max 100 characters, 2 lines. */
+  sloganVi: string;
+  sloganEn: string;
 }
+
+/** Business error codes of the two pages. */
+export const SITE_DISPLAY_ERRORS = {
+  /** E03 — logo not PNG / SVG or over 2MB. */
+  logoImageInvalid: 'SDP001',
+  /** Slogan with more than 2 lines. */
+  sloganTooManyLines: 'SDP002',
+} as const;
 
 const LOGO_BASE = '/api/v1/contents/logos';
 const SLOGAN_BASE = '/api/v1/contents/slogans';
 
-export const getLogos = (search: SiteDisplaySearch, page: number, size: number) =>
-  apiGet<PageResponse<Post>>(LOGO_BASE, { ...search, page, size });
+export const getCurrentLogo = () => apiGet<LogoSetting>(`${LOGO_BASE}/current`);
 
-export const getLogo = (id: string) => apiGet<PostDetail>(`${LOGO_BASE}/${id}`);
+/** Applies the uploaded image to the user header logo at once. */
+export const saveLogo = (imageFileId: string) => apiPut<LogoSetting>(`${LOGO_BASE}/current`, { imageFileId });
 
-export const createLogo = (request: LogoRequest) => apiPost<PostDetail>(LOGO_BASE, request);
-
-export const updateLogo = (id: string, request: LogoRequest) =>
-  apiPut<PostDetail>(`${LOGO_BASE}/${id}`, request);
-
-export const changeLogoUse = (ids: string[], useYn: 'Y' | 'N') =>
-  apiPatch<number>(`${LOGO_BASE}/use`, { ids, useYn });
-
-export const deleteLogos = (ids: string[]) => apiDelete<number>(LOGO_BASE, { ids });
-
-/** Uploads a logo image (multipart part `files`) -> file group id for `imageFileId`. */
+/** Uploads one PNG / SVG of 2MB or less (multipart part `files`) → file group id for `saveLogo`. */
 export async function uploadLogoImage(file: File): Promise<string> {
   const body = new FormData();
   body.append('files', file);
@@ -63,17 +61,7 @@ export async function uploadLogoImage(file: File): Promise<string> {
   return fileUnqId;
 }
 
-export const getSlogans = (search: SiteDisplaySearch, page: number, size: number) =>
-  apiGet<PageResponse<Post>>(SLOGAN_BASE, { ...search, page, size });
+export const getCurrentSlogan = () => apiGet<SloganSetting>(`${SLOGAN_BASE}/current`);
 
-export const getSlogan = (id: string) => apiGet<PostDetail>(`${SLOGAN_BASE}/${id}`);
-
-export const createSlogan = (request: SloganRequest) => apiPost<PostDetail>(SLOGAN_BASE, request);
-
-export const updateSlogan = (id: string, request: SloganRequest) =>
-  apiPut<PostDetail>(`${SLOGAN_BASE}/${id}`, request);
-
-export const changeSloganUse = (ids: string[], useYn: 'Y' | 'N') =>
-  apiPatch<number>(`${SLOGAN_BASE}/use`, { ids, useYn });
-
-export const deleteSlogans = (ids: string[]) => apiDelete<number>(SLOGAN_BASE, { ids });
+/** Applies both slogans to the user home hero at once. */
+export const saveSlogan = (request: SloganRequest) => apiPut<SloganSetting>(`${SLOGAN_BASE}/current`, request);

@@ -82,9 +82,9 @@ export function ProgramModal({ item, canWrite, onClose }: ProgramModalProps) {
       onSubmit={canWrite ? () => void handleSubmit() : undefined}
       submitting={createProgram.isPending || updateProgram.isPending}
       onCancel={onClose}
-      width={1080}
+      width={1200}
     >
-      <SysFieldGrid columns={3}>
+      <SysFieldGrid columns={3} labelWidth={130}>
         <SysField label="Program Code" required error={errors.prgrmCd}>
           <TextInput
             value={values.prgrmCd}
@@ -97,7 +97,7 @@ export function ProgramModal({ item, canWrite, onClose }: ProgramModalProps) {
           <TextInput
             value={values.menuCd}
             maxLength={9}
-            placeholder="e.g. A03010000"
+            placeholder="e.g. A04000000"
             onChange={(e) => change('menuCd', e.target.value)}
           />
         </SysField>

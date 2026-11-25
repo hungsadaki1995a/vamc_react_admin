@@ -1,375 +1,248 @@
 import { useState } from 'react';
 import type { TableColumnsType } from 'antd';
-import {
-  UpOutlined,
-  DownOutlined,
-} from '@ant-design/icons';
-import dayjs from 'dayjs';
-import ActionButton from '@/components/common/actions/ActionButton';
-import DataTable from '@/components/common/table/DataTable';
-import AppCheckbox from '@/components/inputs/AppCheckbox';
-import { AppRangePicker } from '@/components/inputs/AppDatePicker';
+import { apiDownload } from '@/api/common/api-utils';
+import type { PostSearchRequest } from '@/api/contents/faq-api';
 import AppSelect from '@/components/inputs/AppSelect';
-import { ApiError } from '@/lib/api/error';
-import { useNotify } from '@/hooks/use-notify';
-import { DateTimeCell, SysPagination } from '@/features/system/_shared/SystemUi';
+import TextInput from '@/components/inputs/TextInput';
+import { useApiDownload } from '@/hooks/use-api-action';
+import {
+  DateTimeText,
+  StatusBadge,
+  SysButton,
+  SysExcelButton,
+  SysFilterItem,
+  SysFilterPanel,
+  SysPage,
+  SysPager,
+  SysSearchActions,
+  SysSectionHeader,
+  SysTable,
+  SysTitleBar,
+} from '@/features/system/_shared/SysListUi';
+import { usePagedList } from '@/features/system/_shared/use-paged-list';
 import type { FaqItem } from './faq.types';
-import { useDeleteFaqs, useFaqs } from './use-faqs';
+import { buildFaqQueryParams, useFaqs } from './use-faqs';
 import FaqDetailModal from './FaqDetailModal';
 import { useFaqCategories } from './use-faq-categories';
 import styles from './faq-management.module.scss';
 
-// "All" sends no category; the options come from COM_CD FAQ_CTGRY_CD.
-const CATEGORY_ALL = 'ALL';
+// FAQ Management - List (VPA07050001). Category (COM_CD FAQ_CTGRY_CD) is kept although the design has none.
 
+/** Design: 16 rows per page. */
+const PAGE_SIZE = 16;
+const ALL = 'ALL';
+
+const PUBLISH_OPTIONS = [
+  { value: ALL, label: 'All' },
+  { value: 'Y', label: 'Published' },
+  { value: 'N', label: 'Unpublished' },
+];
+
+const MESSAGES = {
+  /** I01 */
+  noPosts: 'There are no posts.',
+  /** I02 */
+  noResults: 'No search results found.',
+} as const;
+
+interface FaqFilter {
+  published: string;
+  category: string;
+  keyword: string;
+}
+
+const INITIAL_FILTER: FaqFilter = { published: ALL, category: ALL, keyword: '' };
+
+/**
+ * Design column set and alignment; every column sorts on the server (`sorter: true`, key = API sort field).
+ * Category is kept although the design has none.
+ */
+const COLUMNS: TableColumnsType<FaqItem> = [
+  {
+    title: 'ID',
+    dataIndex: 'pstNo',
+    key: 'pstNo',
+    width: 80,
+    align: 'center',
+    sorter: true,
+    render: (value?: string) => <span className={styles.idLink}>{value ?? '-'}</span>,
+  },
+  {
+    title: 'Publish Status',
+    dataIndex: 'published',
+    key: 'published',
+    width: 120,
+    align: 'center',
+    sorter: true,
+    render: (value?: string) =>
+      value === 'Y' ? <StatusBadge tone="blue">Published</StatusBadge> : <StatusBadge>Unpublished</StatusBadge>,
+  },
+  {
+    title: 'Display Order',
+    dataIndex: 'displayOrder',
+    key: 'displayOrder',
+    width: 125,
+    align: 'center',
+    sorter: true,
+    // Unpublished posts have no display order.
+    render: (value: number | undefined, row) => (row.published === 'Y' && value != null ? value : '-'),
+  },
+  {
+    title: 'Category',
+    dataIndex: 'categoryNm',
+    key: 'category',
+    width: 130,
+    ellipsis: true,
+    sorter: true,
+    render: (value?: string) => value || '-',
+  },
+  {
+    title: 'Question',
+    dataIndex: 'title',
+    key: 'title',
+    ellipsis: true,
+    sorter: true,
+  },
+  {
+    title: 'English',
+    dataIndex: 'hasEnglish',
+    key: 'hasEnglish',
+    width: 100,
+    align: 'center',
+    sorter: true,
+    render: (value?: string) => (value === 'Y' ? 'Y' : '-'),
+  },
+  {
+    title: 'Created Date',
+    dataIndex: 'crtDt',
+    key: 'crtDt',
+    width: 135,
+    align: 'center',
+    sorter: true,
+    render: (value?: string) => <DateTimeText value={value} />,
+  },
+  {
+    title: 'Created By',
+    dataIndex: 'crtBy',
+    key: 'crtBy',
+    width: 120,
+    ellipsis: true,
+    sorter: true,
+    // Design: account ID that created the post.
+    render: (value?: string) => value || '-',
+  },
+  {
+    title: 'Modified Date',
+    dataIndex: 'mdfcnDt',
+    key: 'mdfcnDt',
+    width: 135,
+    align: 'center',
+    sorter: true,
+    render: (value?: string | null) => <DateTimeText value={value} />,
+  },
+  {
+    title: 'Modified By',
+    dataIndex: 'mdfcnBy',
+    key: 'mdfcnBy',
+    width: 120,
+    ellipsis: true,
+    sorter: true,
+    render: (value?: string | null) => value || '-',
+  },
+];
+
+type ModalState = { mode: 'create' } | { mode: 'detail'; faq: FaqItem } | null;
 
 export default function FaqManagement() {
-  const { toast, dialog } = useNotify();
-  // ── Filter UI State ────────────────────────────────────────────────────────
-  const [category, setCategory] = useState<string>(CATEGORY_ALL);
-  const faqCategories = useFaqCategories();
-  const categoryOptions = [{ label: 'All', value: CATEGORY_ALL }, ...faqCategories];
-
-  const [statusAll, setStatusAll] = useState(true);
-  const [statusPost, setStatusPost] = useState(true);
-  const [statusStop, setStatusStop] = useState(true);
-
-  const [dateRange, setDateRange] = useState<[dayjs.Dayjs | null, dayjs.Dayjs | null] | null>(null);
-
-  const [filterCollapsed, setFilterCollapsed] = useState(false);
-
-  // ── Applied Filters (passed to getFaqs API) ────────────────────────────────
-  const [appliedFilters, setAppliedFilters] = useState({
-    category: CATEGORY_ALL,
-    fromDate: '',
-    toDate: '',
-    published: '',
-  });
-
-  // ── Pagination & Selection State ───────────────────────────────────────────
-  const [page, setPage] = useState(1);
-  const pageSize = 15;
-  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
-
-  // ── API Query Hook: getFaqs (/api/v1/contents/faqs) ────────────────────────
-  const {
-    items: faqItems,
-    total,
-    isLoading,
-    isFetching,
-    refetch,
-  } = useFaqs({
-    page,
-    pageSize,
-    category: appliedFilters.category,
-    fromDate: appliedFilters.fromDate,
-    toDate: appliedFilters.toDate,
-    published: appliedFilters.published,
-  });
-
-  const deleteFaqs = useDeleteFaqs();
-
-  // ── Modal State ────────────────────────────────────────────────────────────
-  const [modalVisible, setModalVisible] = useState(false);
-  const [modalMode, setModalMode] = useState<'create' | 'detail'>('detail');
-  const [selectedFaq, setSelectedFaq] = useState<FaqItem | null>(null);
-
-  // ── Status Checkbox Handlers ───────────────────────────────────────────────
-  const handleStatusAllChange = (e: { target: { checked: boolean } }) => {
-    const checked = e.target.checked;
-    setStatusAll(checked);
-    setStatusPost(checked);
-    setStatusStop(checked);
+  const list = usePagedList<FaqFilter>(INITIAL_FILTER, { pageSize: PAGE_SIZE });
+  const categories = useFaqCategories();
+  const categoryOptions = [{ value: ALL, label: 'All' }, ...categories];
+  const params = {
+    page: list.page,
+    pageSize: PAGE_SIZE,
+    sortBy: list.sort?.sortBy,
+    sortDirection: list.sort?.sortDirection,
+    ...list.applied,
   };
+  const { items, total, isFetching, refetch } = useFaqs(params);
+  const excel = useApiDownload((cond: PostSearchRequest) =>
+    apiDownload('/api/v1/contents/faqs/excel', 'faqs.xlsx', {
+      ...cond,
+      sortBy: list.sort?.sortBy,
+      sortDirection: list.sort?.sortDirection,
+    }),
+  );
+  const [modal, setModal] = useState<ModalState>(null);
 
-  const handleStatusPostChange = (e: { target: { checked: boolean } }) => {
-    const checked = e.target.checked;
-    setStatusPost(checked);
-    setStatusAll(checked && statusStop);
-  };
-
-  const handleStatusStopChange = (e: { target: { checked: boolean } }) => {
-    const checked = e.target.checked;
-    setStatusStop(checked);
-    setStatusAll(checked && statusPost);
-  };
-
-  // ── Action Handlers ────────────────────────────────────────────────────────
-  const handleView = () => {
-    let published = '';
-    if (statusPost && !statusStop) published = 'Y';
-    else if (statusStop && !statusPost) published = 'N';
-
-    setAppliedFilters({
-      category,
-      fromDate: dateRange?.[0] ? dateRange[0].format('DD/MM/YYYY') : '',
-      toDate: dateRange?.[1] ? dateRange[1].format('DD/MM/YYYY') : '',
-      published,
-    });
-    setSelectedRowKeys([]);
-    setPage(1);
-  };
-
-  const handleReset = () => {
-    setCategory(CATEGORY_ALL);
-    setStatusAll(true);
-    setStatusPost(true);
-    setStatusStop(true);
-    setDateRange(null);
-    setSelectedRowKeys([]);
-    setAppliedFilters({
-      category: CATEGORY_ALL,
-      fromDate: '',
-      toDate: '',
-      published: '',
-    });
-    setPage(1);
-  };
-
-  const handleOpenCreate = () => {
-    setSelectedFaq(null);
-    setModalMode('create');
-    setModalVisible(true);
-  };
-
-  const handleOpenDetail = (item: FaqItem) => {
-    setSelectedFaq(item);
-    setModalMode('detail');
-    setModalVisible(true);
-  };
-
-  const handleDelete = () => {
-    if (selectedRowKeys.length === 0) {
-      toast.warning('Please select at least one FAQ item to delete.');
-      return;
-    }
-    dialog.confirm({
-      title: 'Delete FAQs',
-      content: `Are you sure you want to delete ${selectedRowKeys.length} selected FAQ(s)?`,
-      okText: 'Delete',
-      okButtonProps: { danger: true },
-      cancelText: 'Cancel',
-      onOk: async () => {
-        try {
-          await deleteFaqs.mutateAsync(selectedRowKeys.map(String));
-          toast.success('Selected FAQs have been deleted.');
-          setSelectedRowKeys([]);
-        } catch (err) {
-          toast.error(ApiError.from(err).message);
-        }
-      },
-    });
-  };
-
-  // ── Table Columns (wireframe order) ────────────────────────────────────────
-  // No | Status | Order | Category | Questions and Answers |
-  // Registration Date | Registrant | Modification Date | Modifier
-  const columns: TableColumnsType<FaqItem> = [
-    {
-      title: 'No',
-      key: 'no',
-      width: 70,
-      align: 'center',
-      render: (_v, record) => record.no,
-    },
-    {
-      title: 'Status',
-      dataIndex: 'published',
-      key: 'published',
-      width: 100,
-      align: 'center',
-      render: (published: string) =>
-        published === 'Y' ? (
-          <span className={styles.statusPosted}>Post</span>
-        ) : (
-          <span className={styles.statusUnposted}>Post Stop</span>
-        ),
-    },
-    {
-      title: 'Order',
-      dataIndex: 'displayOrder',
-      key: 'displayOrder',
-      width: 80,
-      align: 'center',
-      render: (order?: number) => <span>{order ?? '-'}</span>,
-    },
-    {
-      title: 'Category',
-      dataIndex: 'categoryNm',
-      key: 'categoryNm',
-      width: 120,
-      align: 'center',
-      render: (_v, record) => <span>{record.categoryNm || record.category || '-'}</span>,
-    },
-    {
-      title: 'Questions and Answers',
-      dataIndex: 'title',
-      key: 'title',
-      align: 'left',
-      width: 420,
-      render: (title: string, record: FaqItem) => (
-        <a
-          className={styles.faqTitleLink}
-          onClick={(e) => {
-            e.preventDefault();
-            handleOpenDetail(record);
-          }}
-        >
-          {record.title || title || '-'}
-        </a>
-      ),
-    },
-    {
-      title: 'Registration Date',
-      dataIndex: 'crtDt',
-      key: 'crtDt',
-      width: 130,
-      align: 'center',
-      render: (crtDt: string) => <DateTimeCell value={crtDt} />,
-    },
-    {
-      title: 'Registrant',
-      dataIndex: 'crtByNm',
-      key: 'crtByNm',
-      width: 120,
-      align: 'center',
-      render: (_v, record) => <span>{record.crtByNm || record.crtBy || '-'}</span>,
-    },
-    {
-      title: 'Modification Date',
-      dataIndex: 'mdfcnDt',
-      key: 'mdfcnDt',
-      width: 130,
-      align: 'center',
-      render: (mdfcnDt: string | null) => <DateTimeCell value={mdfcnDt} />,
-    },
-    {
-      title: 'Modifier',
-      dataIndex: 'mdfcnByNm',
-      key: 'mdfcnByNm',
-      width: 120,
-      align: 'center',
-      render: (_v, record) => <span>{record.mdfcnByNm || record.mdfcnBy || '-'}</span>,
-    },
-  ];
+  const handleSearch = () => list.search({ keyword: list.draft.keyword.trim() });
+  const filtered =
+    list.applied.published !== ALL || list.applied.category !== ALL || Boolean(list.applied.keyword);
 
   return (
-    <div className={styles.container}>
-      {/* ── Breadcrumb ──────────────────────────────────────────────────────── */}
-      <div className={styles.breadcrumb}>
-        <span className={styles.breadcrumbLink}>Home</span>
-        <span className={styles.breadcrumbSeparator}>&gt;</span>
-        <span className={styles.breadcrumbLink}>Content Management</span>
-        <span className={styles.breadcrumbSeparator}>&gt;</span>
-        <span className={styles.breadcrumbCurrent}>FAQ Management</span>
-      </div>
-
-      {/* ── Title & Header Actions ──────────────────────────────────────────── */}
-      <div className={styles.titleRow}>
-        <h1 className={styles.pageTitle}>FAQ Management</h1>
-        <div className={styles.headerActions}>
-          <ActionButton action="reset" className={styles.btnReset} onClick={handleReset}>
-            Reset
-          </ActionButton>
-          <ActionButton action="search" intent="secondary" appearance="filled" className={styles.btnView} onClick={handleView}>
-            View
-          </ActionButton>
-          <ActionButton
-            intent="icon"
-            className={styles.btnCollapse}
-            icon={filterCollapsed ? <DownOutlined /> : <UpOutlined />}
-            onClick={() => setFilterCollapsed(!filterCollapsed)}
-            title={filterCollapsed ? 'Expand Filters' : 'Collapse Filters'}
+    <SysPage>
+      <SysTitleBar title="FAQ Management" breadcrumb={['Content Management', 'FAQ Management']} />
+      <SysFilterPanel>
+        <SysFilterItem label="Publish Status">
+          <AppSelect
+            value={list.draft.published}
+            options={PUBLISH_OPTIONS}
+            onChange={(published) => list.setDraft({ published: String(published) })}
           />
-        </div>
-      </div>
-
-      {/* ── Filter Card: Status | Category | Registration Period ────────────── */}
-      {!filterCollapsed && (
-        <div className={styles.filterCard}>
-          <div className={styles.filterGroup}>
-            <span className={styles.filterLabel}>Status</span>
-            <div className={styles.filterCheckboxes}>
-              <AppCheckbox checked={statusAll} onChange={handleStatusAllChange}>
-                All
-              </AppCheckbox>
-              <AppCheckbox checked={statusPost} onChange={handleStatusPostChange}>
-                Post
-              </AppCheckbox>
-              <AppCheckbox checked={statusStop} onChange={handleStatusStopChange}>
-                Stop Posting
-              </AppCheckbox>
-            </div>
-          </div>
-
-          <div className={styles.filterGroup}>
-            <span className={styles.filterLabel}>Category</span>
-            <AppSelect
-              value={category}
-              onChange={(val) => setCategory(String(val))}
-              className={styles.categorySelect}
-              options={categoryOptions}
-            />
-          </div>
-
-          <div className={styles.filterGroup}>
-            <span className={styles.filterLabel}>Registration Period</span>
-            <AppRangePicker
-              format="DD/MM/YYYY"
-              placeholder={['dd/mm/yyyy', 'dd/mm/yyyy']}
-              value={dateRange}
-              onChange={(dates) =>
-                setDateRange(dates as [dayjs.Dayjs | null, dayjs.Dayjs | null] | null)
-              }
-              className={styles.periodPicker}
-            />
-          </div>
-        </div>
-      )}
-
-      {/* ── Total ───────────────────────────────────────────────────────────── */}
-      <div className={styles.summaryRow}>
-        <span className={styles.totalCount}>Total ({total})</span>
-      </div>
-
-      {/* ── Data Table ──────────────────────────────────────────────────────── */}
-      <div className={styles.tableWrapper}>
-        <DataTable<FaqItem>
-          rowKey={(record) => record.pstNo || record.id}
-          rowSelection={{
-            selectedRowKeys,
-            onChange: (keys) => setSelectedRowKeys(keys),
-          }}
-          columns={columns}
-          dataSource={faqItems}
-          loading={isLoading || isFetching}
-          scroll={{ x: 'max-content', y: 480 }}
-        />
-      </div>
-
-      {/* ── Centered Pagination ─────────────────────────────────────────────── */}
-      {total > 0 && (
-        <SysPagination page={page} pageSize={pageSize} total={total} onChange={setPage} />
-      )}
-
-      {/* ── Bottom actions: Delete | Add New ────────────────────────────────── */}
-      <div className={styles.bottomActions}>
-        <ActionButton action="deleteRow" className={styles.btnSecondary} onClick={handleDelete}>
-          Delete
-        </ActionButton>
-        <ActionButton intent="primary" appearance="filled" className={styles.btnPrimary} onClick={handleOpenCreate}>
-          Add New
-        </ActionButton>
-      </div>
-
-      {/* ── Detail / Create Modal ───────────────────────────────────────────── */}
+        </SysFilterItem>
+        <SysFilterItem label="Category">
+          <AppSelect
+            value={list.draft.category}
+            options={categoryOptions}
+            onChange={(category) => list.setDraft({ category: String(category) })}
+          />
+        </SysFilterItem>
+        <SysFilterItem label="Question">
+          <TextInput
+            value={list.draft.keyword}
+            allowClear
+            maxLength={100}
+            onChange={(e) => list.setDraft({ keyword: e.target.value })}
+            onPressEnter={handleSearch}
+          />
+        </SysFilterItem>
+      </SysFilterPanel>
+      <SysSearchActions onReset={list.reset} onSearch={handleSearch} loading={isFetching} />
+      <SysSectionHeader
+        total={total}
+        actions={
+          <SysExcelButton
+            onClick={() => excel.mutate(buildFaqQueryParams(params).cond)}
+            loading={excel.isPending}
+            disabled={total === 0}
+          />
+        }
+        primaryActions={
+          <SysButton look="navy" onClick={() => setModal({ mode: 'create' })}>
+            New
+          </SysButton>
+        }
+      />
+      <SysTable<FaqItem>
+        rowKey={(row) => row.pstNo || row.id}
+        className={styles.listTable}
+        fill
+        tableLayout="fixed"
+        columns={COLUMNS}
+        dataSource={items}
+        loading={isFetching}
+        onRowClick={(faq) => setModal({ mode: 'detail', faq })}
+        sort={list.sort}
+        onSortChange={list.setSort}
+        locale={{ emptyText: filtered ? MESSAGES.noResults : MESSAGES.noPosts }}
+      />
+      <SysPager page={list.page} pageSize={PAGE_SIZE} total={total} onChange={list.setPage} />
       <FaqDetailModal
-        visible={modalVisible}
-        mode={modalMode}
-        faq={selectedFaq}
-        onClose={() => setModalVisible(false)}
+        visible={modal !== null}
+        mode={modal?.mode ?? 'create'}
+        faq={modal?.mode === 'detail' ? modal.faq : null}
+        onClose={() => setModal(null)}
         onRefresh={refetch}
       />
-    </div>
+    </SysPage>
   );
 }

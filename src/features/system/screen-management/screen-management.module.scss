@@ -1,27 +1,16 @@
 // Screen Management list and popup.
 
+// Table frame runs to the bottom of the page (design), pager below it.
+.listBody {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+
+  > :first-child {
+    flex: 1 1 auto;
+  }
+}
+
 .fullWidth {
   width: 100%;
 }
-
-.ellipsis {
-  display: inline-block;
-  max-width: 260px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  vertical-align: bottom;
-}
-
-.codeLink {
-  padding: 0;
-  border: 0;
-  background: none;
-  color: var(--color-text-brand, #1764ff);
-  cursor: pointer;
-}
-
-.codeLink:hover {
-  text-decoration: underline;
-}
-

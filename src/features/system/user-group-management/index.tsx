@@ -3,7 +3,7 @@ import type { TableColumnsType } from 'antd';
 import { useNotify } from '@/hooks/use-notify';
 import { useMenuPermission } from '@/hooks/use-menu-permission';
 import type { Role, RoleGroup, RoleUser } from '@/api/system/role-group-api';
-import { SysButton, SysEmpty, SysPage, SysSectionHeader, SysTable, SysTitleBar, UseBadge } from '../_shared/SysListUi';
+import { SysButton, SysPage, SysSectionHeader, SysTable, SysTitleBar, UseBadge } from '../_shared/SysListUi';
 import { SYS_DIALOG_LABELS, SYS_MESSAGES } from '../_shared/sys-messages';
 import { useSysDialogs } from '../_shared/use-sys-dialogs';
 import { errorMessage } from '../_shared/system-utils';
@@ -14,6 +14,14 @@ import { useRoleAssignees, useRoleGroups, useRoles, useSaveRoleAssignees } from 
 import styles from './user-group-management.module.scss';
 
 // User Group Management - List (VPA09020301): User Group → Group Roles → Role Staff.
+
+/** Panel tables fit their third of the page (no horizontal scroll); long names are ellipsized. */
+const FIT_WIDTH = {};
+
+/** Client-side sort: the three lists are loaded whole (`/all` endpoints). */
+function byText<T>(field: keyof T) {
+  return (a: T, b: T) => String(a[field] ?? '').localeCompare(String(b[field] ?? ''), 'vi', { numeric: true });
+}
 
 export default function UserGroupManagement() {
   const { toast } = useNotify();
@@ -92,7 +100,8 @@ export default function UserGroupManagement() {
     {
       title: 'Group ID',
       dataIndex: 'roleGroupId',
-      width: 120,
+      width: 110,
+      sorter: byText('roleGroupId'),
       align: 'center',
       render: (id: string, row) =>
         idLink(id, () => {
@@ -100,15 +109,16 @@ export default function UserGroupManagement() {
           setModal({ kind: 'group', record: row });
         }),
     },
-    { title: 'Group Name', dataIndex: 'roleGroupNm', ellipsis: true },
-    { title: 'Use', dataIndex: 'useYn', width: 100, align: 'center', render: (v: string) => <UseBadge value={v} /> },
+    { title: 'Group Name', dataIndex: 'roleGroupNm', ellipsis: true, sorter: byText('roleGroupNm') },
+    { title: 'Use', dataIndex: 'useYn', width: 90, align: 'center', sorter: byText('useYn'), render: (v: string) => <UseBadge value={v} /> },
   ];
 
   const roleColumns: TableColumnsType<Role> = [
     {
       title: 'Role ID',
       dataIndex: 'roleId',
-      width: 120,
+      width: 110,
+      sorter: byText('roleId'),
       align: 'center',
       render: (id: string, row) =>
         idLink(id, () => {
@@ -116,13 +126,13 @@ export default function UserGroupManagement() {
           setModal({ kind: 'role', roleGroupId: row.roleGroupId, record: row });
         }),
     },
-    { title: 'Role Name', dataIndex: 'roleNm', ellipsis: true },
-    { title: 'Use', dataIndex: 'useYn', width: 100, align: 'center', render: (v: string) => <UseBadge value={v} /> },
+    { title: 'Role Name', dataIndex: 'roleNm', ellipsis: true, sorter: byText('roleNm') },
+    { title: 'Use', dataIndex: 'useYn', width: 90, align: 'center', sorter: byText('useYn'), render: (v: string) => <UseBadge value={v} /> },
   ];
 
   const staffColumns: TableColumnsType<RoleUser> = [
-    { title: 'Employee No.', dataIndex: 'userNo', width: 140, align: 'center' },
-    { title: 'Name', dataIndex: 'userNm', ellipsis: true },
+    { title: 'Employee No.', dataIndex: 'userNo', width: 160, ellipsis: true, sorter: byText('userNo') },
+    { title: 'Name', dataIndex: 'userNm', ellipsis: true, sorter: byText('userNm') },
   ];
 
   return (
@@ -152,6 +162,7 @@ export default function UserGroupManagement() {
             loading={groups.isFetching}
             selectedRowKey={groupId}
             onRowClick={(row) => selectGroup(row.roleGroupId)}
+            scroll={FIT_WIDTH}
           />
         </section>
 
@@ -171,19 +182,17 @@ export default function UserGroupManagement() {
               )
             }
           />
-          {groupId ? (
-            <SysTable<Role>
-              fill
-              rowKey="roleId"
-              columns={roleColumns}
-              dataSource={roles.data ?? []}
-              loading={roles.isFetching}
-              selectedRowKey={roleId}
-              onRowClick={(row) => selectRole(row.roleId)}
-            />
-          ) : (
-            <SysEmpty>Select a user group.</SysEmpty>
-          )}
+          <SysTable<Role>
+            fill
+            rowKey="roleId"
+            columns={roleColumns}
+            dataSource={groupId ? (roles.data ?? []) : []}
+            loading={roles.isFetching}
+            selectedRowKey={roleId}
+            onRowClick={(row) => selectRole(row.roleId)}
+            scroll={FIT_WIDTH}
+            locale={groupId ? undefined : { emptyText: 'Select a user group.' }}
+          />
         </section>
 
         <section className={styles.panel}>
@@ -205,22 +214,20 @@ export default function UserGroupManagement() {
               )
             }
           />
-          {roleId ? (
-            <SysTable<RoleUser>
-              fill
-              rowKey="userNo"
-              columns={staffColumns}
-              dataSource={staff.data ?? []}
-              loading={staff.isFetching || saveAssignees.isPending}
-              rowSelection={
-                canWrite
-                  ? { selectedRowKeys: staffKeys, onChange: (keys) => setStaffKeys(keys.map(String)) }
-                  : undefined
-              }
-            />
-          ) : (
-            <SysEmpty>Select a role.</SysEmpty>
-          )}
+          <SysTable<RoleUser>
+            fill
+            rowKey="userNo"
+            columns={staffColumns}
+            dataSource={roleId ? (staff.data ?? []) : []}
+            loading={staff.isFetching || saveAssignees.isPending}
+            scroll={FIT_WIDTH}
+            locale={roleId ? undefined : { emptyText: 'Select a role.' }}
+            rowSelection={
+              canWrite && roleId
+                ? { selectedRowKeys: staffKeys, onChange: (keys) => setStaffKeys(keys.map(String)) }
+                : undefined
+            }
+          />
         </section>
       </div>
 

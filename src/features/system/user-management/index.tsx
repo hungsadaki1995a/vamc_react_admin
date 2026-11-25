@@ -23,8 +23,9 @@ import { usePagedList } from '../_shared/use-paged-list';
 import UserModal from './UserModal';
 import { ACCOUNT_STATUS_LABEL, EMP_STATUS_LABEL } from './user-constants';
 import { useEmployee, useEmployees, useEmployeesExcel } from './use-employees';
+import styles from './user-management.module.scss';
 
-// User Management - List (VPA09020201), menu A06020200.
+// User Management - List (VPA09020201), menu A09020200.
 
 const INITIAL_FILTER: EmployeeSearch = { empNo: '', empNm: '' };
 
@@ -47,18 +48,22 @@ export default function UserManagement() {
   const editEmpNo = typeof target === 'string' ? target : null;
   const detail = useEmployee(editEmpNo);
 
+  // Widths follow the design proportions so all nine columns fit; only Status and Account Status are centered.
   const columns: TableColumnsType<Employee> = [
     {
       title: 'Status',
       dataIndex: 'empSttsCd',
-      width: 110,
+      sorter: true,
+      width: 100,
       align: 'center',
       render: (code: Employee['empSttsCd']) => EMP_STATUS_LABEL[code] ?? code,
     },
     {
       title: 'Account Status',
       dataIndex: 'acntSttsCd',
-      width: 130,
+      key: 'acntSttsCd',
+      sorter: true,
+      width: 120,
       align: 'center',
       render: (code: Employee['acntSttsCd']) =>
         code ? (
@@ -67,29 +72,25 @@ export default function UserManagement() {
           '-'
         ),
     },
-    { title: 'Employee No.', dataIndex: 'empNo', width: 130, align: 'center' },
-    { title: 'Name', dataIndex: 'empNm', ellipsis: true },
-    { title: 'Email', dataIndex: 'empEmlAddr', ellipsis: true, render: (v?: string) => v || '-' },
-    { title: 'Office Phone', dataIndex: 'empTelno', width: 130, align: 'center', render: (v?: string) => v || '-' },
+    { title: 'Employee No.', dataIndex: 'empNo', sorter: true, width: 120, ellipsis: true },
+    { title: 'Name', dataIndex: 'empNm', key: 'empNm', sorter: true, width: 160, ellipsis: true },
+    { title: 'Email', dataIndex: 'empEmlAddr', key: 'empEmlAddr', sorter: true, width: 210, ellipsis: true, render: (v?: string) => v || '-' },
+    { title: 'Office Phone', dataIndex: 'empTelno', sorter: true, width: 120, ellipsis: true, render: (v?: string) => v || '-' },
     {
       title: 'Mobile Number',
       dataIndex: 'empMoblTelno',
-      width: 150,
-      align: 'center',
+      key: 'empMoblTelno',
+      sorter: true,
+      width: 140,
+      ellipsis: true,
       render: (v?: string) => v || '-',
     },
-    {
-      title: 'P/W Fail',
-      dataIndex: 'pswdFailNmtm',
-      width: 90,
-      align: 'center',
-      render: (v?: number) => v ?? 0,
-    },
+    { title: 'P/W Fail', dataIndex: 'pswdFailNmtm', sorter: true, width: 80, render: (v?: number) => v ?? 0 },
     {
       title: 'Registered Date',
       dataIndex: 'createdAt',
+      sorter: true,
       width: 150,
-      align: 'center',
       render: (v?: string) => <DateTimeText value={v} />,
     },
   ];
@@ -101,7 +102,7 @@ export default function UserManagement() {
     <SysPage>
       <SysTitleBar title="User Management" breadcrumb={['System Operation Management', 'Admin Management', 'User Management']} />
 
-      <SysFilterPanel columns={2}>
+      <SysFilterPanel>
         <SysFilterItem label="Employee No.">
           <TextInput
             value={list.draft.empNo}
@@ -139,11 +140,15 @@ export default function UserManagement() {
         }
       />
       <SysTable<Employee>
+        fill
+        className={styles.list}
         rowKey="empNo"
         columns={columns}
         dataSource={data?.content ?? []}
         loading={isFetching || detail.isFetching}
         onRowClick={(row) => (row.empNo === editEmpNo ? void detail.refetch() : setTarget(row.empNo))}
+        sort={list.sort}
+        onSortChange={list.setSort}
       />
       <SysPager page={list.page} pageSize={SYS_PAGE_SIZE} total={total} onChange={list.setPage} />
 

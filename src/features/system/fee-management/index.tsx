@@ -57,40 +57,38 @@ function toSearch(filter: FeeFilter): FeeSearch {
 
 // Column order of the v0.8 frame: Fee Code, Use, Type, Order, Item Name, Fee Item Content, Method, Currency, Fee, Minimum Amount, Registered Date.
 const columns: TableColumnsType<Fee> = [
-  { title: 'Fee Code', dataIndex: 'feeId', align: 'center', width: 130 },
-  { title: 'Use', dataIndex: 'useYn', align: 'center', width: 100, render: (v: YesNo) => <UseBadge value={v} /> },
-  { title: 'Type', dataIndex: 'category', width: 170, render: (_: string, row) => feeCategoryLabel(row) },
-  { title: 'Order', dataIndex: 'order', align: 'center', width: 80 },
-  { title: 'Item Name', dataIndex: 'name', width: 220 },
-  {
-    title: 'Fee Item Content',
-    dataIndex: 'description',
-    width: 280,
-    ellipsis: true,
-    render: (v?: string) => v || '-',
-  },
+  { title: 'Fee Code', dataIndex: 'feeId', sorter: true, align: 'center', width: 130 },
+  { title: 'Use', dataIndex: 'useYn', sorter: true, align: 'center', width: 80, render: (v: YesNo) => <UseBadge value={v} /> },
+  { title: 'Type', dataIndex: 'category', sorter: true, width: 150, ellipsis: true, render: (_: string, row) => feeCategoryLabel(row) },
+  { title: 'Order', dataIndex: 'order', sorter: true, align: 'center', width: 76 },
+  { title: 'Item Name', dataIndex: 'name', sorter: true, width: 180, ellipsis: true },
+  // Takes the remaining width (fixed layout) and is ellipsized, as in the frame.
+  { title: 'Fee Item Content', dataIndex: 'description', sorter: true, ellipsis: true, render: (v?: string) => v || '-' },
   {
     title: 'Method',
     dataIndex: 'method',
-    width: 100,
+    sorter: true,
+    width: 90,
     render: (v: Fee['method'], row) => FEE_METHOD_LABELS[v] ?? row.methodNm ?? v,
   },
-  { title: 'Currency', dataIndex: 'currency', width: 100 },
+  { title: 'Currency', dataIndex: 'currency', sorter: true, width: 96 },
   {
     title: 'Fee',
     key: 'fee',
+    sorter: true,
     align: 'right',
-    width: 130,
+    width: 110,
     render: (_: unknown, row) => <span className={styles.numberCell}>{feeValueText(row)}</span>,
   },
   {
     title: 'Minimum Amount',
     dataIndex: 'minAmount',
+    sorter: true,
     align: 'right',
     width: 140,
     render: (v?: number) => <span className={styles.numberCell}>{formatFeeNumber(v)}</span>,
   },
-  { title: 'Registered Date', dataIndex: 'crtDt', align: 'center', width: 160, render: (v?: string) => <DateTimeText value={v} /> },
+  { title: 'Registered Date', dataIndex: 'crtDt', sorter: true, align: 'center', width: 150, render: (v?: string) => <DateTimeText value={v} /> },
 ];
 
 /** Popup state: closed, register (null) or edit (fee id). */
@@ -109,7 +107,7 @@ export default function FeeManagement() {
   return (
     <SysPage>
       <SysTitleBar title="Fee Management" breadcrumb={['System Operation Management', 'NPL Platform Management', 'Fee Management']} />
-      <SysFilterPanel columns={4}>
+      <SysFilterPanel>
         <SysFilterItem label="Use">
           <AppSelect value={list.draft.useYn} options={USE_YN_FILTER_OPTIONS} onChange={(useYn) => list.setDraft({ useYn: String(useYn ?? '') as YesNo | '' })} />
         </SysFilterItem>
@@ -157,10 +155,17 @@ export default function FeeManagement() {
       />
       <SysTable<Fee>
         rowKey="feeId"
+        className={styles.listTable}
+        fill
+        // Fixed columns + at least 240px of Fee Item Content; fits without scrolling from a 1920px screen.
+        tableLayout="fixed"
+        scroll={{ x: 1440 }}
         columns={columns}
         dataSource={data?.content ?? []}
         loading={isFetching}
         onRowClick={(fee) => setModal({ feeId: fee.feeId })}
+        sort={list.sort}
+        onSortChange={list.setSort}
       />
       <SysPager page={list.page} pageSize={SYS_PAGE_SIZE} total={total} onChange={list.setPage} />
       {modal && (

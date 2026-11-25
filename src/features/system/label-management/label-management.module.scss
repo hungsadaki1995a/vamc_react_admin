@@ -10,6 +10,23 @@ $danger: var(--color-text-negative, #e62e44);
   width: 100%;
 }
 
+/* Master table frame runs to the bottom of the page (design), pager below it. */
+.listBody {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+
+  > :first-child {
+    flex: 1 1 auto;
+  }
+}
+
+/* "Show missing translations only" stays on one line (design). */
+.missingCheck,
+.missingCheck :global(span) {
+  font-size: var(--font-size-b2, 12px);
+  white-space: nowrap;
+}
 
 /* Divider between [Refresh Cache] and the Excel buttons (design groups). */
 .actionDivider {
@@ -28,9 +45,13 @@ $danger: var(--color-text-negative, #e62e44);
   padding: 0;
   border: none;
   background: none;
+  max-width: 100%;
+  overflow: hidden;
   color: $brand;
   text-align: left;
-  word-break: break-all;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  vertical-align: bottom;
   cursor: pointer;
 
   &:hover {
@@ -55,7 +76,7 @@ $danger: var(--color-text-negative, #e62e44);
 
 .panelKey {
   overflow: hidden;
-  font-size: 14px;
+  font-size: var(--font-size-b1, 13px);
   font-weight: 400;
   color: $text-sub;
   text-overflow: ellipsis;
@@ -66,6 +87,16 @@ $danger: var(--color-text-negative, #e62e44);
   display: flex;
   flex-direction: column;
   gap: 8px;
+  min-height: 0;
+
+  > :first-child {
+    flex: 1 1 auto;
+  }
+}
+
+.emptyText {
+  font-size: var(--font-size-b1, 13px);
+  color: $text-sub;
 }
 
 .textCell {
@@ -96,13 +127,13 @@ $danger: var(--color-text-negative, #e62e44);
 
 .panelError {
   margin: 0;
-  font-size: 12px;
+  font-size: var(--font-size-b2, 12px);
   color: $danger;
 }
 
 .panelHint {
   margin: 0;
-  font-size: 12px;
+  font-size: var(--font-size-b2, 12px);
   color: $text-sub;
 }
 

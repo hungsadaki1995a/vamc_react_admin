@@ -28,7 +28,7 @@ import { ApprovalProcessModal } from './ApprovalProcessModal';
 import { useApprovalProcesses, useUpdateApprovalProcessStatus } from './use-approval-processes';
 import styles from './approval-process-management.module.scss';
 
-// Approval Process Management (menu A06040500): approval processes and their ordered steps / roles.
+// Approval Process Management (menu A09040500): approval processes and their ordered steps / roles.
 
 const INITIAL_FILTER: ApprovalProcessSearch = { keyword: '', useYn: '' };
 
@@ -59,11 +59,7 @@ export default function ApprovalProcessManagement() {
   };
 
   const columns: TableColumnsType<ApprovalProcessItem> = [
-    {
-      title: 'Process Code',
-      dataIndex: 'atrzProcCd',
-      render: (v: string) => <span className={styles.code}>{v}</span>,
-    },
+    { title: 'Process Code', dataIndex: 'atrzProcCd' },
     { title: 'Process Name', dataIndex: 'atrzProcNm' },
     { title: 'Steps', dataIndex: 'stepCount', align: 'center', render: (v?: number) => v ?? '-' },
     {
@@ -87,7 +83,7 @@ export default function ApprovalProcessManagement() {
   ];
 
   return (
-    <SysPage>
+    <SysPage fill>
       <SysTitleBar
         title="Approval Process Management"
         breadcrumb={['System Operation Management', 'System Management', 'Approval Process Management']}
@@ -117,14 +113,17 @@ export default function ApprovalProcessManagement() {
           )
         }
       />
-      <SysTable<ApprovalProcessItem>
-        rowKey="atrzProcId"
-        columns={columns}
-        dataSource={data?.content}
-        loading={isFetching}
-        onRowClick={(row) => setOpenId(row.atrzProcId)}
-      />
-      <SysPager page={list.page} pageSize={SYS_PAGE_SIZE} total={data?.totalElements ?? 0} onChange={list.setPage} />
+      <div className={styles.listBody}>
+        <SysTable<ApprovalProcessItem>
+          fill
+          rowKey="atrzProcId"
+          columns={columns}
+          dataSource={data?.content}
+          loading={isFetching}
+          onRowClick={(row) => setOpenId(row.atrzProcId)}
+        />
+        <SysPager page={list.page} pageSize={SYS_PAGE_SIZE} total={data?.totalElements ?? 0} onChange={list.setPage} />
+      </div>
 
       {openId !== undefined && (
         <ApprovalProcessModal key={openId ?? 'new'} atrzProcId={openId} canWrite={canWrite} onClose={() => setOpenId(undefined)} />

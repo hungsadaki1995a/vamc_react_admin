@@ -32,6 +32,8 @@ export type YesNo = 'Y' | 'N';
 /** List row (PostResponse). */
 export interface Post {
   pstNo: string;
+  /** Numeric post id (PST_SN) shown in the ID column. */
+  postSn?: number;
   category?: string;
   categoryNm?: string;
   title: string;
@@ -39,6 +41,8 @@ export interface Post {
   tag?: string;
   name?: string;
   published: YesNo;
+  /** Y when the English title is saved ("English" column: Y / -). */
+  hasEnglish?: YesNo;
   pinned?: YesNo;
   pinOrder?: number;
   displayOrder?: number;
@@ -101,6 +105,11 @@ export interface PostSearch {
   fromDate?: string;
   toDate?: string;
   keyword?: string;
+  /** "Notice Type": Y = pinned (Notice), N = General. */
+  pinned?: YesNo;
+  /** Header sort; omitted = the board's default order. */
+  sortBy?: string;
+  sortDirection?: 'ASC' | 'DESC';
   // Legal documents
   lawGroup?: string;
   lawField?: string;
@@ -135,7 +144,7 @@ export const publishPosts = (board: BoardPath, pstNos: string[], published: YesN
 export const deletePosts = (board: BoardPath, pstNos: string[]) =>
   apiDelete<void>(base(board), { pstNos });
 
-/** careers and legal-documents only. */
+/** Same filters and sort as the list (notices, news, npl-announcements, careers, legal-documents). */
 export const downloadPostExcel = (board: BoardPath, search: PostSearch) =>
   apiDownload(`${base(board)}/excel`, `${board}.xlsx`, search);
 

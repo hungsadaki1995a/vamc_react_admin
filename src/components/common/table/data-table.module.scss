@@ -43,6 +43,13 @@
     }
   }
 
+  /* antd's hidden column-measure row (scroll.x): the cell padding above would make it an empty visible row. */
+  :global(.ant-table-tbody > tr.ant-table-measure-row > td) {
+    height: 0;
+    padding: 0 !important;
+    border: 0 !important;
+  }
+
   :global(.ant-table-tbody > tr:last-child > td) {
     border-bottom: none !important;
   }

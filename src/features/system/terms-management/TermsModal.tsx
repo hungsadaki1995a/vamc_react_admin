@@ -115,7 +115,7 @@ function TermsFormModal({ detail, canWrite, onClose }: TermsFormModalProps) {
       leftActions={
         !isCreate &&
         editable && (
-          <SysButton look="primary" danger loading={deleteTerms.isPending} onClick={handleDelete}>
+          <SysButton look="danger" loading={deleteTerms.isPending} onClick={handleDelete}>
             Delete
           </SysButton>
         )
@@ -140,6 +140,7 @@ function TermsFormModal({ detail, canWrite, onClose }: TermsFormModalProps) {
           <AppDatePicker
             className={styles.fullWidth}
             format={SYS_DATE_FORMAT}
+            placeholder="DD-MM-YYYY"
             value={values.effectiveDate}
             disabled={!editable}
             disabledDate={(d) => !isFromTomorrow(d)}
@@ -148,7 +149,7 @@ function TermsFormModal({ detail, canWrite, onClose }: TermsFormModalProps) {
         </SysField>
         <SysField label="Content (VN)" required span="full" error={errors.content}>
           <TextArea
-            rows={10}
+            rows={7}
             value={values.content}
             readOnly={!editable}
             onChange={(e) => change('content', e.target.value)}
@@ -161,7 +162,7 @@ function TermsFormModal({ detail, canWrite, onClose }: TermsFormModalProps) {
           hint={editable ? 'If empty, the VN original is shown on the English user screen.' : undefined}
         >
           <TextArea
-            rows={10}
+            rows={7}
             value={values.contentEn}
             readOnly={!editable}
             onChange={(e) => change('contentEn', e.target.value)}

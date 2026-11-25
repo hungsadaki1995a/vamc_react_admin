@@ -15,7 +15,7 @@ import { useDeleteNplLot, useDownloadNplLotsExcel, useNplLots, useSaveNplLot } f
 
 const PAGE_SIZE = 15;
 
-/** NPL LOT Change Management (menu A03010400). */
+/** NPL LOT Change Management (menu A04050000). */
 export default function NplLotManagement() {
   const { toast, dialog } = useNotify();
   const { canWrite } = useMenuPermission();

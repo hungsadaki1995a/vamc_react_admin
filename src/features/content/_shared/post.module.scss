@@ -1,6 +1,215 @@
-/* Extra styles of the shared content popups (the rest comes from system-page.module.scss). */
+/* Content boards (PostBoard / PostModal / PostFiles) — what the shared v0.8 look of
+   system/_shared/sys-ui.module.scss does not cover. Measured on the 1920px design. */
 
-/* One attached file: download link + remove icon. */
+$border-strong: var(--color-border-primary, #d1d1e0);
+$surface: var(--color-bg-primary, #ffffff);
+$row-alt: var(--color-bg-secondary, #f6f6f9);
+$text: var(--color-text-primary, #3a404a);
+$text-sub: var(--color-text-tertiary, #6f7b95);
+$text-faint: var(--color-text-disabled, #a8b2c8);
+$link: var(--color-blue-600, #005be2);
+$danger: var(--color-text-negative, #e62e44);
+
+$fs-h2: var(--font-size-h2, 18px);
+$fs-b1: var(--font-size-b1, 13px);
+$fs-b2: var(--font-size-b2, 12px);
+$fs-b3: var(--font-size-b3, 10px);
+
+/* ── List ───────────────────────────────────────────────────────────────── */
+
+/* The list frame runs to the page bottom like the design. */
+.listTable {
+  flex: 1 0 auto;
+}
+
+.rangePicker {
+  width: 100%;
+}
+
+/* ID column: blue link text (the whole row opens the popup). */
+.idLink {
+  color: $link;
+}
+
+/* ── Popup ──────────────────────────────────────────────────────────────── */
+
+.fullWidth {
+  width: 100%;
+}
+
+/* Editor-sized text areas (design: about 210px high). */
+.editor {
+  min-height: 210px;
+}
+
+/* ── Thumbnail row ──────────────────────────────────────────────────────── */
+
+.thumbnail {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+  padding: 4px 0;
+}
+
+.thumbnailRow {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.thumbnailName {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.thumbnailHint {
+  color: $text-sub;
+  font-size: $fs-b3;
+}
+
+.thumbnailError {
+  color: $danger;
+  font-size: $fs-b2;
+}
+
+/* ── Attachments block ──────────────────────────────────────────────────── */
+
+.attachments {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 20px;
+}
+
+.attachmentsHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.attachmentsTitle {
+  color: $text;
+  font-size: $fs-b1;
+  font-weight: 700;
+}
+
+.attachmentsTotal {
+  color: $text;
+  font-size: $fs-b2;
+}
+
+.attachmentsUpload {
+  margin-left: auto;
+}
+
+.dropArea {
+  min-height: 136px;
+  padding: 4px 8px;
+  border: 1px dashed $border-strong;
+  border-radius: 4px;
+  background: $surface;
+}
+
+.dropArea[data-dragging] {
+  border-color: $link;
+  background: var(--color-blue-50, #eaf8ff);
+}
+
+.dropArea[data-error] {
+  border-color: $danger;
+}
+
+.dropGuide {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 126px;
+  color: $text-sub;
+  font-size: $fs-b2;
+}
+
+.dropIcon {
+  color: $text-faint;
+  font-size: $fs-h2;
+}
+
+.attachmentsError {
+  color: $danger;
+  font-size: $fs-b2;
+}
+
+.fileList {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
 .fileRow {
-  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 28px;
+  padding: 0 4px;
+  color: $text;
+  font-size: $fs-b2;
+}
+
+.fileRow:nth-child(even) {
+  background: $row-alt;
+}
+
+.fileName {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.fileIconPdf {
+  color: $danger;
+}
+
+.fileIconDoc {
+  color: $link;
+}
+
+.fileIconXls {
+  color: var(--color-green-600, #1f9d55);
+}
+
+.fileDelete,
+.fileDownload {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  font-size: $fs-b1;
+}
+
+.fileDelete {
+  color: $danger;
+}
+
+.fileDownload {
+  color: $text-sub;
+}
+
+.fileDelete:hover,
+.fileDownload:hover {
+  opacity: 0.7;
+}
+
+.fileDivider {
+  width: 1px;
+  height: 12px;
+  background: $border-strong;
 }

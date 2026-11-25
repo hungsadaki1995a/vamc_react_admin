@@ -1,23 +1,25 @@
 import { useMemo } from 'react';
 import { keepPreviousData } from '@tanstack/react-query';
 import { useApiQuery } from '@/hooks/use-api-query';
-import { useApiTask } from '@/hooks/use-api-action';
+import { useApiDownload, useApiTask } from '@/hooks/use-api-action';
 import type { PageQuery, PageResponse } from '@/api/common/api-utils';
 import {
-  changeNotificationMessageUse,
   createNotificationMessage,
+  downloadNotificationMessagesExcel,
   getNotificationMessage,
   getNotificationMessages,
+  getNotificationVariables,
   updateNotificationMessage,
 } from '@/api/system/notification-api';
 import type {
   NotificationMessageItem,
   NotificationMessageRequest,
   NotificationMessageSearch,
+  NotificationVariable,
 } from '@/api/system/notification-api';
 import { getRoleGroups } from '@/api/system/role-group-api';
 import type { RoleGroup } from '@/api/system/role-group-api';
-import { HIDDEN_ROLE_GROUP_IDS } from './notification-message-constants';
+import { FALLBACK_TEMPLATE_VARIABLES, HIDDEN_ROLE_GROUP_IDS } from './notification-message-constants';
 
 // Data hooks of Notification Message Management (VPA09050101 / VPA090501P01).
 
@@ -27,6 +29,7 @@ const NOTIFICATION_MESSAGE_KEYS = {
     ['system', 'notification-messages', 'list', search, query] as const,
   detail: (id: string | null) => ['system', 'notification-messages', 'detail', id] as const,
   roleGroups: ['system', 'notification-messages', 'role-groups'] as const,
+  variables: ['system', 'notification-messages', 'variables'] as const,
 };
 
 export function useNotificationMessages(search: NotificationMessageSearch, query: PageQuery) {
@@ -64,30 +67,32 @@ export function useRecipientGroups() {
   }, [groups, query.isFetching]);
 }
 
+/** Variables of the [Insert Variable] buttons (server list; the frame's three until it loads). */
+export function useTemplateVariables(): readonly NotificationVariable[] {
+  const { data } = useApiQuery<NotificationVariable[]>(NOTIFICATION_MESSAGE_KEYS.variables, getNotificationVariables, {
+    staleTime: 30 * 60 * 1000,
+  });
+  return data ?? FALLBACK_TEMPLATE_VARIABLES;
+}
+
+/** [Excel Download] of the searched list. */
+export function useDownloadNotificationMessagesExcel() {
+  return useApiDownload(({ search, query }: { search: NotificationMessageSearch; query: PageQuery }) =>
+    downloadNotificationMessagesExcel(search, query),
+  );
+}
+
 export interface SaveNotificationMessageVariables {
   /** null = register. */
   current: NotificationMessageItem | null;
   request: NotificationMessageRequest;
 }
 
-/**
- * Registers or edits a template. The API only edits a template that is not in use (NTF002), while v0.8
- * allows free edit: an active template is switched off, saved with the chosen Use, and switched back
- * on if the save fails.
- */
+/** Registers or edits a template; active templates are edited directly (v0.8). */
 export function useSaveNotificationMessage() {
   return useApiTask(
-    async ({ current, request }: SaveNotificationMessageVariables) => {
-      if (current === null) return createNotificationMessage(request);
-      const wasActive = current.useYn === 'Y';
-      if (wasActive) await changeNotificationMessageUse(current.notiMsgId, 'N');
-      try {
-        return await updateNotificationMessage(current.notiMsgId, request);
-      } catch (error) {
-        if (wasActive) await changeNotificationMessageUse(current.notiMsgId, 'Y').catch(() => undefined);
-        throw error;
-      }
-    },
+    ({ current, request }: SaveNotificationMessageVariables) =>
+      current === null ? createNotificationMessage(request) : updateNotificationMessage(current.notiMsgId, request),
     { invalidate: [NOTIFICATION_MESSAGE_KEYS.all] },
   );
 }

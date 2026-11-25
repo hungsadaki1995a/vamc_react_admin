@@ -5,7 +5,7 @@ import { createProgram, downloadProgramsExcel, getPrograms, updateProgram } from
 import type { ProgramItem, ProgramRequest, ProgramSearch } from '@/api/system/program-screen-api';
 import type { PageQuery, PageResponse } from '@/api/common/api-utils';
 
-// Data hooks of Program Management (menu A06040100).
+// Data hooks of Program Management (menu A09040100).
 
 const PROGRAM_KEYS = {
   all: ['system', 'programs'] as const,

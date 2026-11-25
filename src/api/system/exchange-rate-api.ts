@@ -1,6 +1,6 @@
 import { apiGet, apiPost } from '@/api/common/api-utils';
 
-// ── Exchange Rate Management (A06010500) ─────────────────────────────────────
+// ── Exchange Rate Management (A09010400) ─────────────────────────────────────
 
 export interface ExchangeRateItem {
   currencyCode: string;

@@ -2,6 +2,21 @@
 
 .rangePicker {
   width: 100%;
+
+  /* Both DD-MM-YYYY dates fit in one filter column (design: "05-11-2026 ~ 11-11-2026"). */
+  &:global(.ant-picker-range) {
+    padding: 0 8px;
+  }
+
+  :global(.ant-picker-range-separator) {
+    padding: 0 4px;
+    color: var(--color-text-tertiary, #6f7b95);
+  }
+}
+
+/* The list frame runs to the page bottom like the design. */
+.listTable {
+  flex: 1 0 auto;
 }
 
 /* Grey read-only boxes of the detail popup. */

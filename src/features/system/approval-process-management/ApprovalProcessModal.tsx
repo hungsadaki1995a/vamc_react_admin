@@ -214,7 +214,7 @@ function ApprovalProcessFormModal({ detail, canWrite, onClose }: FormModalProps)
   return (
     <SysFormModal
       open
-      width={1040}
+      width={1200}
       title={title}
       submitText={isCreate ? 'Register' : 'Edit'}
       onSubmit={editable ? () => void handleSubmit() : undefined}
@@ -224,7 +224,7 @@ function ApprovalProcessFormModal({ detail, canWrite, onClose }: FormModalProps)
       leftActions={
         !isCreate &&
         editable && (
-          <SysButton look="primary" danger loading={deleteProcess.isPending} onClick={handleDelete}>
+          <SysButton look="danger" loading={deleteProcess.isPending} onClick={handleDelete}>
             Delete
           </SysButton>
         )
@@ -239,7 +239,6 @@ function ApprovalProcessFormModal({ detail, canWrite, onClose }: FormModalProps)
             hint={isCreate ? 'Used by the system to start sessions; cannot be changed later.' : undefined}
           >
             <TextInput
-              className={styles.code}
               value={values.atrzProcCd}
               maxLength={PROCESS_CODE_MAX}
               placeholder="e.g. PROC_MBR_JOIN"

@@ -1,257 +1,111 @@
 import { useState } from 'react';
-import type { TableColumnsType } from 'antd';
-import type { Dayjs } from 'dayjs';
-import ActionButton from '@/components/common/actions/ActionButton';
-import DataTable from '@/components/common/table/DataTable';
-import { AppRangePicker } from '@/components/inputs/AppDatePicker';
-import TextInput from '@/components/inputs/TextInput';
-import { useNotify } from '@/hooks/use-notify';
+import LoadingSpinner from '@/components/common/loading/LoadingSpinner';
+import TextArea from '@/components/inputs/TextArea';
 import { useMenuPermission } from '@/hooks/use-menu-permission';
-import type { SiteDisplaySearch } from '@/api/contents/site-display-api';
-import type { Post } from '@/api/contents/post-api';
-import { DateTimeCell, SysPageHeader, SysPagination, UseYnChecks } from '@/features/system/_shared/SystemUi';
-import { errorMessage, rowNumber, toUseYnFilter } from '@/features/system/_shared/system-utils';
-import styles from '@/features/system/_shared/system-page.module.scss';
-import SloganModal from './SloganModal';
-import { useChangeSloganUse, useDeleteSlogans, useSlogans } from './use-slogans';
+import { useNotify } from '@/hooks/use-notify';
+import type { SloganSetting } from '@/api/contents/site-display-api';
+import { SysButton, SysPage, SysTitleBar } from '@/features/system/_shared/SysListUi';
+import { SysField, SysFieldGrid } from '@/features/system/_shared/SysFormUi';
+import { SYS_MESSAGES } from '@/features/system/_shared/sys-messages';
+import { errorMessage } from '@/features/system/_shared/system-utils';
+import { useFieldErrors } from '@/features/system/_shared/use-field-errors';
+import { useCurrentSlogan, useSaveSlogan } from './use-slogans';
+import styles from './slogan-management.module.scss';
 
-// Slogan Management - List (menu A04110300).
+// Slogan Management (VPA07060301), menu A07060300: the user home hero text.
+// Design: Slogan (VN)* / (EN)* textareas, max 100 characters and 2 lines each, counter, [Save] (applied at once).
 
-const PAGE_SIZE = 15;
-const DATE_FORMAT = 'DD/MM/YYYY';
+const TITLE = 'Slogan Management';
+const BREADCRUMB = ['Content Management', 'Site Display Management', TITLE];
 
-type DateRange = [Dayjs | null, Dayjs | null] | null;
+const SLOGAN_MAX = 100;
+const SLOGAN_MAX_LINES = 2;
 
-interface FilterState {
-  used: boolean;
-  unused: boolean;
-  tag: string;
-  keyword: string;
-  period: DateRange;
-}
+type FieldKey = 'sloganVi' | 'sloganEn';
 
-const EMPTY_FILTER: FilterState = { used: true, unused: true, tag: '', keyword: '', period: null };
+const LABELS: Record<FieldKey, string> = { sloganVi: 'Slogan (VN)', sloganEn: 'Slogan (EN)' };
+
+/** Keeps at most two lines (Enter starts the second line, a third one is dropped). */
+const limitLines = (value: string) => value.split('\n').slice(0, SLOGAN_MAX_LINES).join('\n');
 
 export default function SloganManagement() {
-  const { toast, dialog } = useNotify();
-  const { canWrite } = useMenuPermission();
-
-  const [filter, setFilter] = useState<FilterState>(EMPTY_FILTER);
-  const [applied, setApplied] = useState<SiteDisplaySearch>({});
-  const [page, setPage] = useState(1);
-  const [filterCollapsed, setFilterCollapsed] = useState(false);
-  const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
-  /** undefined = closed, null = register, string = view/edit that slogan. */
-  const [modalSloganId, setModalSloganId] = useState<string | null | undefined>(undefined);
-
-  const { data, isFetching, error } = useSlogans(applied, page, PAGE_SIZE);
-  const changeSloganUse = useChangeSloganUse();
-  const deleteSlogans = useDeleteSlogans();
-  const rows = data?.content ?? [];
-  const total = data?.totalElements ?? 0;
-
-  const handleSearch = () => {
-    setApplied({
-      published: toUseYnFilter(filter.used, filter.unused),
-      tag: filter.tag.trim() || undefined,
-      keyword: filter.keyword.trim() || undefined,
-      fromDate: filter.period?.[0]?.format(DATE_FORMAT),
-      toDate: filter.period?.[1]?.format(DATE_FORMAT),
-    });
-    setPage(1);
-    setSelectedKeys([]);
-  };
-
-  const handleReset = () => {
-    setFilter(EMPTY_FILTER);
-    setApplied({});
-    setPage(1);
-    setSelectedKeys([]);
-  };
-
-  const handleBatchUse = async (useYn: 'Y' | 'N') => {
-    if (selectedKeys.length === 0) {
-      toast.warning('Select at least one slogan.');
-      return;
-    }
-    try {
-      const response = await changeSloganUse.mutateAsync({ ids: selectedKeys, useYn });
-      toast.success(response.message || 'Updated.');
-      setSelectedKeys([]);
-    } catch (e) {
-      toast.error(errorMessage(e));
-    }
-  };
-
-  const handleDelete = () => {
-    if (selectedKeys.length === 0) {
-      toast.warning('Select at least one slogan to delete.');
-      return;
-    }
-    dialog.warning({
-      okCancel: true,
-      content: `Delete the ${selectedKeys.length} selected slogan(s)?`,
-      onOk: async () => {
-        try {
-          const response = await deleteSlogans.mutateAsync(selectedKeys);
-          toast.success(response.message || 'Deleted.');
-          setSelectedKeys([]);
-        } catch (e) {
-          toast.error(errorMessage(e));
-        }
-      },
-    });
-  };
-
-  const columns: TableColumnsType<Post> = [
-    {
-      title: 'No',
-      key: 'no',
-      width: 60,
-      align: 'center',
-      render: (_v, _row, index) => rowNumber(total, page, PAGE_SIZE, index),
-    },
-    {
-      title: 'Usage',
-      dataIndex: 'published',
-      width: 90,
-      align: 'center',
-      render: (value: string) =>
-        value === 'Y' ? <span className={styles.useY}>Used</span> : <span className={styles.useN}>Unused</span>,
-    },
-    { title: 'Position', dataIndex: 'tag', width: 130, align: 'center', render: (v?: string) => v || '-' },
-    {
-      title: 'Main Slogan',
-      dataIndex: 'title',
-      width: 360,
-      render: (value: string, row) => (
-        <a className={styles.cellLink} onClick={() => setModalSloganId(row.pstNo)}>
-          {value}
-        </a>
-      ),
-    },
-    {
-      title: 'Registration Date',
-      dataIndex: 'crtDt',
-      width: 130,
-      align: 'center',
-      render: (value?: string) => <DateTimeCell value={value} />,
-    },
-    { title: 'Registrant', dataIndex: 'crtBy', width: 120, align: 'center', render: (v?: string) => v || '-' },
-    {
-      title: 'Modification Date',
-      dataIndex: 'mdfcnDt',
-      width: 130,
-      align: 'center',
-      render: (value?: string) => <DateTimeCell value={value} />,
-    },
-    { title: 'Modifier', dataIndex: 'mdfcnBy', width: 120, align: 'center', render: (v?: string) => v || '-' },
-  ];
+  const { data, isFetching, isError } = useCurrentSlogan();
 
   return (
-    <div className={styles.container}>
-      <SysPageHeader
-        breadcrumb={['Content Management', 'Site Display Management', 'Slogan Management']}
-        title="Slogan Management"
-        onReset={handleReset}
-        onSearch={handleSearch}
-        filterCollapsed={filterCollapsed}
-        onToggleFilter={() => setFilterCollapsed((v) => !v)}
-      />
-
-      {!filterCollapsed && (
-        <div className={styles.filterCard}>
-          <div className={styles.filterGroup}>
-            <span className={styles.filterLabel}>Usage Status</span>
-            <UseYnChecks
-              yes={filter.used}
-              no={filter.unused}
-              onChange={(used, unused) => setFilter((f) => ({ ...f, used, unused }))}
-              allLabel="All"
-              yesLabel="Used"
-              noLabel="Not Used"
-            />
-          </div>
-          <div className={styles.filterGroup}>
-            <span className={styles.filterLabel}>Position</span>
-            <TextInput
-              className={styles.filterInput}
-              placeholder="MAIN_HERO, FOOTER..."
-              value={filter.tag}
-              onChange={(e) => setFilter((f) => ({ ...f, tag: e.target.value }))}
-              onPressEnter={handleSearch}
-              allowClear
-            />
-          </div>
-          <div className={styles.filterGroup}>
-            <span className={styles.filterLabel}>Keyword</span>
-            <TextInput
-              className={styles.filterInput}
-              placeholder="Enter Slogan ID or Text."
-              value={filter.keyword}
-              onChange={(e) => setFilter((f) => ({ ...f, keyword: e.target.value }))}
-              onPressEnter={handleSearch}
-              allowClear
-            />
-          </div>
-          <div className={styles.filterGroup}>
-            <span className={styles.filterLabel}>Registration Period</span>
-            <AppRangePicker
-              format={DATE_FORMAT}
-              placeholder={['dd/mm/yyyy', 'dd/mm/yyyy']}
-              value={filter.period}
-              onChange={(dates) => setFilter((f) => ({ ...f, period: dates as DateRange }))}
-              className={styles.w250}
-            />
-          </div>
-        </div>
+    <SysPage>
+      <SysTitleBar title={TITLE} breadcrumb={BREADCRUMB} />
+      {data ? (
+        <SloganForm key={data.sloganId ?? 'new'} slogan={data} />
+      ) : (
+        <LoadingSpinner spinning={isFetching}>
+          <div className={styles.loading}>{isError ? 'The slogan could not be loaded.' : null}</div>
+        </LoadingSpinner>
       )}
+    </SysPage>
+  );
+}
 
-      <div className={styles.summaryRow}>
-        <span className={styles.totalCount}>
-          Total ({total}){error && <span className={styles.textDanger}> — {error.message}</span>}
-        </span>
-      </div>
+function SloganForm({ slogan }: { slogan: SloganSetting }) {
+  const { canWrite } = useMenuPermission();
+  const { toast } = useNotify();
+  const save = useSaveSlogan();
+  const { errors, setError, clearError, clearAll, applyApiError } = useFieldErrors<FieldKey>();
+  const [values, setValues] = useState<Record<FieldKey, string>>({
+    sloganVi: slogan.sloganVi ?? '',
+    sloganEn: slogan.sloganEn ?? '',
+  });
 
-      <div className={styles.tableWrapper}>
-        <DataTable<Post>
-          rowKey="pstNo"
-          columns={columns}
-          dataSource={rows}
-          loading={isFetching}
-          scroll={{ x: 'max-content' }}
-          rowSelection={{
-            selectedRowKeys: selectedKeys,
-            onChange: (keys) => setSelectedKeys(keys.map(String)),
+  const submit = async () => {
+    clearAll();
+    const empty = (Object.keys(LABELS) as FieldKey[]).filter((key) => !values[key].trim());
+    empty.forEach((key) => setError(key, `${LABELS[key]} is required.`));
+    if (empty.length > 0) return;
+    try {
+      await save.mutateAsync({ sloganVi: values.sloganVi, sloganEn: values.sloganEn });
+      toast.success(SYS_MESSAGES.saved);
+    } catch (e) {
+      if (!applyApiError(e)) toast.error(errorMessage(e));
+    }
+  };
+
+  const textField = (key: FieldKey) => (
+    <SysField label={LABELS[key]} required error={errors[key]}>
+      <div className={styles.textBox}>
+        <TextArea
+          aria-label={LABELS[key]}
+          rows={SLOGAN_MAX_LINES + 1}
+          value={values[key]}
+          maxLength={SLOGAN_MAX}
+          disabled={!canWrite}
+          status={errors[key] ? 'error' : undefined}
+          onChange={(e) => {
+            const value = limitLines(e.target.value);
+            setValues((prev) => ({ ...prev, [key]: value }));
+            clearError(key);
           }}
         />
+        <span className={styles.counter}>
+          <strong>{values[key].length}</strong> / {SLOGAN_MAX} characters
+        </span>
       </div>
+    </SysField>
+  );
 
-      <SysPagination page={page} pageSize={PAGE_SIZE} total={total} onChange={setPage} />
-
-      <div className={styles.bottomActions}>
-        <ActionButton disabled={!canWrite} onClick={() => handleBatchUse('Y')}>
-          Use
-        </ActionButton>
-        <ActionButton disabled={!canWrite} onClick={() => handleBatchUse('N')}>
-          Unuse
-        </ActionButton>
-        <ActionButton action="deleteRow" disabled={!canWrite} onClick={handleDelete}>
-          Delete
-        </ActionButton>
-        <ActionButton intent="secondary" appearance="filled" disabled={!canWrite} onClick={() => setModalSloganId(null)}>
-          Add New
-        </ActionButton>
-      </div>
-
-      {modalSloganId !== undefined && (
-        <SloganModal
-          sloganId={modalSloganId}
-          canWrite={canWrite}
-          onClose={() => setModalSloganId(undefined)}
-          onSaved={() => setSelectedKeys([])}
-        />
+  return (
+    <>
+      <form noValidate onSubmit={(e) => e.preventDefault()}>
+        <SysFieldGrid columns={1}>
+          {textField('sloganVi')}
+          {textField('sloganEn')}
+        </SysFieldGrid>
+      </form>
+      {canWrite && (
+        <div className={styles.footer}>
+          <SysButton look="primary" loading={save.isPending} onClick={submit}>
+            Save
+          </SysButton>
+        </div>
       )}
-    </div>
+    </>
   );
 }

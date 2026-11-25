@@ -89,7 +89,7 @@ export default function RoleGroupModal({ target, canWrite, onClose }: RoleGroupM
   return (
     <SysFormModal
       open
-      width={720}
+      width={500}
       title={`${isEdit ? 'Edit' : 'Register'} ${noun}`}
       submitText={isEdit ? 'Edit' : 'Register'}
       onSubmit={canWrite ? () => void handleSubmit() : undefined}

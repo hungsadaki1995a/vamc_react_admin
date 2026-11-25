@@ -3,7 +3,7 @@ import { apiGet, apiPost, apiPut } from '@/api/common/api-utils';
 // User Group Management API — RoleGroupController (`/api/v1/role-groups`) and
 // RoleInfoController (`/api/v1/roles`). Screens VPA09020301 / VPA090203P01.
 // Protected records: group RG09999 and role ADMIN (Super Admin).
-// Group RG00100 holds the Web member grades used by Web Menu Permission Management.
+// Groups RG00100 (logged-out visitor GUEST) and RG00200 (member types) are Web Menu Permission data.
 
 export type YesNo = 'Y' | 'N';
 

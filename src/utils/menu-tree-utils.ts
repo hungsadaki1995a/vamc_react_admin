@@ -12,20 +12,23 @@ import type { MenuItem, MenuTreeItem } from '@/types/menu';
 import { resolveMenuComponent } from '@/config/menu-component-fallback';
 
 export const MENU_ICON_BY_CODE: Record<string, string> = {
-  A01000000: gnbUser,
-  A02000000: gnbHandshake,
-  A03000000: gnbBuildingOffice,
-  A04000000: gnbBookOpenText,
-  A05000000: gnbChartPieSlice,
-  A06000000: gnbNetwork,
-  A07000000: gnbGavel,
-  A08000000: gnbPenNib,
+  A03000000: gnbUser,
+  A04000000: gnbBuildingOffice,
+  A05000000: gnbHandshake,
+  A06000000: gnbGavel,
+  A07000000: gnbBookOpenText,
+  A08000000: gnbChartPieSlice,
+  A09000000: gnbNetwork,
+  A10000000: gnbPenNib,
 };
 
-/** Returns the top-level (first list) items from login menuTrees. */
+/** False for menus set to Show in Menu = No: kept for routing and permissions, not drawn in the rail/LNB. */
+export const isMenuShown = (item: MenuTreeItem) => item.menuExpsrYn !== 'N';
+
+/** Returns the top-level (first list) items from login menuTrees that are shown in the menu. */
 export function getTopLevelMenuItems(menuTrees: MenuTreeItem[]): MenuTreeItem[] {
   if (!Array.isArray(menuTrees)) return [];
-  return [...menuTrees].sort((a, b) => (a.menuSeq ?? 0) - (b.menuSeq ?? 0));
+  return menuTrees.filter(isMenuShown).sort((a, b) => (a.menuSeq ?? 0) - (b.menuSeq ?? 0));
 }
 
 /** Returns the hardcoded GNB icon asset for a top-level menuCd. */
@@ -58,6 +61,7 @@ export function mapMenuTreesToMenuItems(menuTrees: MenuTreeItem[]): MenuItem[] {
     sceId: resolveMenuComponent(item.menuCd, item.menuUrlAddr),
     labelKey: item.lblCd ?? undefined,
     permType: item.menuAuthrt ?? undefined,
+    hidden: !isMenuShown(item) || undefined,
     children: item.children?.length ? mapMenuTreesToMenuItems(item.children) : undefined,
   }));
 }

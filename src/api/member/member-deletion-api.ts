@@ -3,7 +3,7 @@ import type { ApprovalCandidate } from '@/api/member/member-approval-api';
 
 // Member deletion and restoration API — MemberApprovalController (`/api/v1/members/{mbrNo}/deletion-request`,
 // `/restoration-request`) and ApprovalController (`/api/v1/approvals/{atrzHstryId}/approve|reject`), guard menu
-// A01020000, screen VPA030100P03. Decided 2026-11-23: no automatic deletion; the Staff in Charge requests the
+// A03010000, screen VPA030100P03. Decided 2026-11-23: no automatic deletion; the Staff in Charge requests the
 // deletion (or the restoration within one year) and the chosen approver decides. Every deletion is a soft delete.
 // Detail fields (`deletionRequest`, `deletable`, `deletionBlockCd`, `deletion.pendingRestoration`) come from the
 // generated `MemberDetailResponse` / `PendingRequest` types.

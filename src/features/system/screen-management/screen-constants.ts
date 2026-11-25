@@ -1,7 +1,7 @@
 import { ALL } from '@/features/system/_shared/sys-constants';
+import type { ScreenItem, ScreenType } from '@/api/system/program-screen-api';
 
-/** W = Web, A = Admin (same codes as MENU_SE_CD). */
-export type ScreenType = 'W' | 'A';
+export type { ScreenType };
 
 export const SCREEN_TYPE_OPTIONS: { value: ScreenType; label: string }[] = [
   { value: 'W', label: 'Web' },
@@ -18,16 +18,13 @@ export const POPUP_OPTIONS = [
   { value: 'N', label: 'No' },
 ];
 
-/** Reason shown with "Not available yet" on v0.8 fields the backend cannot store yet. */
-export const NOT_AVAILABLE_REASON = 'Waits for the screen schema change.';
-
-/**
- * Type guessed from the Screen ID prefix (WB_… / AD_…) until SCRN_MNG stores it.
- * TODO(schema): read the type column instead.
- */
-export function screenTypeOf(scrnId?: string): ScreenType | undefined {
-  const prefix = scrnId?.slice(0, 2).toUpperCase();
-  if (prefix === 'WB') return 'W';
-  if (prefix === 'AD') return 'A';
-  return undefined;
+/** Business (1Depth menu) name shown in the list. */
+export function businessName(row: Pick<ScreenItem, 'menuCd' | 'menuNmEn' | 'menuNmVn'>): string | undefined {
+  return row.menuNmEn || row.menuNmVn || row.menuCd;
 }
+
+export const SCREEN_MESSAGES = {
+  businessInvalid: 'Select a 1Depth menu of the selected type.',
+  labelKeyNotFound: 'This label key does not exist.',
+  hasLabels: 'This screen cannot be deleted while labels still use it.',
+} as const;

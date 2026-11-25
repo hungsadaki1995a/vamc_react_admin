@@ -1,7 +1,7 @@
 import { apiDelete, apiGet, apiPatch, apiPost, apiPut } from '@/api/common/api-utils';
 import type { PageQuery, PageResponse } from '@/api/common/api-utils';
 
-// Approval Process Management (menu A06040500) — ApprovalProcessController (`/api/v1/approval-processes`).
+// Approval Process Management (menu A09040500) — ApprovalProcessController (`/api/v1/approval-processes`).
 // A process is an ordered list of steps; each step is held by employees of one role.
 // Sessions in progress keep the steps they started with (ATRZ_STP_HSTRY): editing a process only
 // affects sessions started afterwards.

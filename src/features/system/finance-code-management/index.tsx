@@ -25,7 +25,7 @@ import { apiErrorCode } from '@/features/system/_shared/system-utils';
 import { ApiError } from '@/lib/api/error';
 import { CodeDetailGrid } from '@/features/system/common-code-management/CodeDetailGrid';
 import type { GridChanges, GridColumn, GridRecord } from '@/features/system/common-code-management/CodeDetailGrid';
-import styles from '@/features/system/common-code-management/code-page.module.scss';
+import styles from '@/features/system/common-code-management/common-code-management.module.scss';
 import { InstitutionModal } from './InstitutionModal';
 import {
   useAdminUnitOptions,
@@ -62,28 +62,31 @@ export default function FinanceCodeManagement() {
   const current = data?.content.find((i) => i.fnstCd === selected?.fnstCd) ?? selected;
 
   // Category Code (FNST_BRNCH_CLSF_CD) and Administrative Code are required by the API: editable selects.
+  // Pixel widths wider than the panel: the frame scrolls sideways (frame VPA09030301).
   const branchColumns = useMemo<GridColumn[]>(
     () => [
-      { field: 'useYn', title: 'Use', kind: 'use', required: true, width: 110 },
+      { field: 'useYn', title: 'Use', kind: 'use', required: true, width: 92, sortable: true },
       {
         field: 'fnstBrnchClsfCd',
         title: 'Category Code',
         kind: 'select',
         required: true,
         options: classificationOptions,
-        width: 170,
+        width: 150,
+        sortable: true,
       },
-      { field: 'fnstBrnchCd', title: 'Branch Code', kind: 'number', required: true, isKey: true, min: 1, max: 99999999, width: 130 },
-      { field: 'fnstBrnchNm', title: 'Branch Name', kind: 'text', required: true, maxLength: 200, width: 200 },
-      { field: 'fnstSlsbrNm', title: 'Office Name', kind: 'text', maxLength: 200, width: 200 },
-      { field: 'fnstBrnchAddr', title: 'Branch Address', kind: 'text', maxLength: 320, width: 200 },
+      { field: 'fnstBrnchCd', title: 'Branch Code', kind: 'number', required: true, isKey: true, min: 1, max: 99999999, width: 130, sortable: true },
+      { field: 'fnstBrnchNm', title: 'Branch Name', kind: 'text', required: true, maxLength: 200, width: 200, sortable: true },
+      { field: 'fnstSlsbrNm', title: 'Office Name', kind: 'text', maxLength: 200, width: 200, sortable: true },
+      { field: 'fnstBrnchAddr', title: 'Branch Address', kind: 'text', maxLength: 320, width: 200, sortable: true },
       {
         field: 'admdstCd',
         title: 'Administrative Code',
         kind: 'select',
         required: true,
         options: adminUnitOptions,
-        width: 190,
+        width: 170,
+        sortable: true,
       },
     ],
     [classificationOptions, adminUnitOptions],
@@ -131,12 +134,14 @@ export default function FinanceCodeManagement() {
     });
   };
 
+  // Fixed layout fits the half-width panel (frame VPA09030301); long names are cut with an ellipsis.
   const columns: TableColumnsType<InstitutionItem> = [
-    { title: 'Use', dataIndex: 'useYn', align: 'center', render: (v: string) => <UseBadge value={v} /> },
+    { title: 'Use', dataIndex: 'useYn', sorter: true, align: 'center', width: 76, render: (v: string) => <UseBadge value={v} /> },
     {
       title: 'Code',
       dataIndex: 'fnstCd',
-      align: 'center',
+      sorter: true,
+      width: 96,
       render: (value: number, row) => (
         <button
           type="button"
@@ -150,8 +155,8 @@ export default function FinanceCodeManagement() {
         </button>
       ),
     },
-    { title: 'Institution Name', dataIndex: 'fnstNm', render: (v: string) => <span className={styles.ellipsis}>{v}</span> },
-    { title: 'Short Name', dataIndex: 'fnstAbbrNm', render: (v?: string) => v || '-' },
+    { title: 'Institution Name', dataIndex: 'fnstNm', sorter: true, ellipsis: { showTitle: true } },
+    { title: 'Short Name', dataIndex: 'fnstAbbrNm', sorter: true, width: '30%', ellipsis: { showTitle: true }, render: (v?: string) => v || '-' },
   ];
 
   return (
@@ -181,7 +186,7 @@ export default function FinanceCodeManagement() {
       <SysSearchActions onReset={list.reset} onSearch={() => list.search()} loading={isFetching} />
 
       <SysSplit
-        ratio="2fr 3fr"
+        ratio="1fr 1fr"
         left={
           <div className={styles.pane}>
             <SysSectionHeader
@@ -199,18 +204,21 @@ export default function FinanceCodeManagement() {
             <SysTable<InstitutionItem>
               rowKey="fnstCd"
               fill
-              className={styles.paneBody}
+              className={`${styles.paneBody} ${styles.stickyHead}`}
               columns={columns}
               dataSource={data?.content}
+              tableLayout="fixed"
               loading={isFetching}
               onRowClick={selectInstitution}
               selectedRowKey={selected?.fnstCd}
+              sort={list.sort}
+              onSortChange={list.setSort}
             />
             <SysPager page={list.page} pageSize={SYS_PAGE_SIZE} total={data?.totalElements ?? 0} onChange={list.setPage} />
           </div>
         }
         right={
-          <div className={styles.paneDetail}>
+          <div className={styles.pane}>
             <CodeDetailGrid
               key={`${selected?.fnstCd ?? ''}-${branchesQuery.dataUpdatedAt}`}
               title={current ? `Branch Codes in [${current.fnstNm}]` : 'Branch Codes'}
@@ -219,6 +227,7 @@ export default function FinanceCodeManagement() {
               canWrite={canWrite}
               loading={branchesQuery.isFetching}
               columns={branchColumns}
+              fitWidth={false}
               rows={rows}
               newRowDefaults={{
                 fnstBrnchCd: null,

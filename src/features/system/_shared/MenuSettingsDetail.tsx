@@ -1,7 +1,7 @@
 import AppRadio from '@/components/inputs/AppRadio';
 import TextInput from '@/components/inputs/TextInput';
 import type { MenuSeCd, YesNo } from '@/api/system/menu-setting-api';
-import { SysButton, SysEmpty, SysNotAvailable } from './SysListUi';
+import { SysButton } from './SysListUi';
 import { SysField, SysFieldGrid } from './SysFormUi';
 import { USE_YN_RADIO_OPTIONS } from './sys-constants';
 import type { FieldErrors } from './use-field-errors';
@@ -47,8 +47,8 @@ export default function MenuSettingsDetail({
 }: MenuSettingsDetailProps) {
   if (!active) {
     return (
-      <div className={styles.detailPanel}>
-        <SysEmpty>Select a menu in the tree, or add a new one.</SysEmpty>
+      <div className={styles.detailPanel} data-empty>
+        Select a menu in the tree, or add a new one.
       </div>
     );
   }
@@ -109,7 +109,6 @@ export default function MenuSettingsDetail({
           required
           span={2}
           error={errors.lblCd}
-          hint="Label key from i18n Label Management."
         >
           <TextInput
             value={form.lblCd}
@@ -125,7 +124,6 @@ export default function MenuSettingsDetail({
             label="Screen ID"
             span={2}
             error={errors.menuUrlAddr}
-            hint="Screen registered in Screen Management; leave empty for group menus with only submenus."
           >
             <TextInput
               value={form.menuUrlAddr}
@@ -151,14 +149,14 @@ export default function MenuSettingsDetail({
             label="Show in Menu"
             required
             span={2}
-            hint={
-              <SysNotAvailable variant="inline">
-                Waits for a database change. Every menu is shown in the LNB for now.
-              </SysNotAvailable>
-            }
+            error={errors.showInMenu}
           >
-            {/* TODO(schema): MENU_EXPSR_YN — enable and send once the column exists. */}
-            <AppRadio.Group options={SHOW_IN_MENU_OPTIONS} value={form.showInMenu} disabled />
+            <AppRadio.Group
+              options={SHOW_IN_MENU_OPTIONS}
+              value={form.showInMenu}
+              disabled={readOnly}
+              onChange={(e) => onChange({ showInMenu: e.target.value as YesNo })}
+            />
           </SysField>
         )}
 

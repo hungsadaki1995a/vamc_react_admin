@@ -1,7 +1,7 @@
 import { apiDelete, apiDownload, apiGet, apiPost } from '@/api/common/api-utils';
 import type { PageResponse } from '@/api/common/api-utils';
 
-// ── Auction Notice Management (A07010000) ────────────────────────────────────
+// ── Auction Notice Management (A06010000) ────────────────────────────────────
 export interface AuctionItem {
   auctnNo: string;
   auctnCycl?: number;
@@ -34,7 +34,7 @@ export const deleteAuctions = (auctnNos: string[]) => apiDelete<void>('/api/v1/a
 export const downloadAuctionsExcel = (search: Record<string, unknown>) =>
   apiDownload('/api/v1/auctions/excel', 'auctions.xlsx', search);
 
-// ── Bidder Management (A07020000) ────────────────────────────────────────────
+// ── Bidder Management (A06020000) ────────────────────────────────────────────
 export interface BidderItem {
   bdrNo: string;
   auctnNo: string;
@@ -56,7 +56,7 @@ export const approveBidder = (bdrNo: string) => apiPost<void>(`/api/v1/bidders/$
 export const rejectBidder = (bdrNo: string, reason?: string) =>
   apiPost<void>(`/api/v1/bidders/${bdrNo}/reject`, { reason });
 
-// ── Live Online Auction Management (A07030000) ───────────────────────────────
+// ── Live Online Auction Management (A06030000) ───────────────────────────────
 export interface LiveAuctionItem {
   auctnNo: string;
   auctnCycl?: number;

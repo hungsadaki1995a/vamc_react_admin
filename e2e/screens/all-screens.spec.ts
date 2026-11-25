@@ -11,11 +11,13 @@ const SEARCH = /(^|\s)Search$/;
 const RESET = /(^|\s)Reset$/;
 const NEW = /(^|\s)(New|Register|Add New)$/;
 
-const groups = [...new Set(SCREENS.map((screen) => screen.path[0]))];
+// Hidden menus (Show in Menu = No) cannot be opened from the rail / LNB.
+const OPENABLE = SCREENS.filter((screen) => screen.kind !== 'hidden');
+const groups = [...new Set(OPENABLE.map((screen) => screen.path[0]))];
 
 for (const group of groups) {
   test.describe(group, () => {
-    for (const screen of SCREENS.filter((s) => s.path[0] === group)) {
+    for (const screen of OPENABLE.filter((s) => s.path[0] === group)) {
       const leaf = screen.path[screen.path.length - 1];
 
       test(`${screen.code} ${leaf}`, async ({ page }, testInfo) => {

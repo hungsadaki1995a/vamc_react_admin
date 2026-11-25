@@ -80,9 +80,9 @@ export function ProvinceModal({ item, canWrite, onClose }: ProvinceModalProps) {
       onSubmit={canWrite ? () => void handleSubmit() : undefined}
       submitting={createProvince.isPending || updateProvince.isPending}
       onCancel={onClose}
-      width={720}
+      width={480}
     >
-      <SysFieldGrid columns={1}>
+      <SysFieldGrid columns={1} labelWidth={150}>
         <SysField label="Province / City Code" required error={errors.mctpvCd}>
           <TextInput
             value={values.mctpvCd}

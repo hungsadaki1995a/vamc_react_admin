@@ -1,4 +1,20 @@
-// Approval Process Management list and popup.
+// Approval Process Management list and popup (no Figma design: follows the shared system look).
+
+$frame: var(--color-navy-200, #d1d1e0);
+$line: var(--color-navy-100, #eaeaf1);
+$text: var(--color-text-primary, #3a404a);
+$text-sub: var(--color-text-tertiary, #6f7b95);
+
+// Table frame runs to the bottom of the page, pager below it (same as the other system lists).
+.listBody {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+
+  > :first-child {
+    flex: 1 1 auto;
+  }
+}
 
 .fullWidth {
   width: 100%;
@@ -9,43 +25,56 @@
   align-items: center;
   justify-content: center;
   min-height: 160px;
-  color: var(--color-text-secondary, #6f7b95);
+  color: $text-sub;
 }
 
-.code {
-  font-family: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, monospace);
-  font-size: 13px;
+// Steps editor drawn like a SysTable (frame, 34px B2 header on navy-50, B1 body).
+.stepsWrap {
+  overflow-x: auto;
+  border: 1px solid $frame;
+  border-radius: 4px;
 }
 
 .stepsTable {
   width: 100%;
   border-collapse: collapse;
-  font-size: 13px;
+  color: $text;
+  font-size: var(--font-size-b1, 13px);
+  line-height: var(--line-height-b1, 18px);
+  letter-spacing: var(--letter-spacing-tight, -0.02em);
 
   th,
   td {
-    padding: 6px 8px;
-    border-bottom: 1px solid var(--color-border, #e3e6ee);
+    padding: 6px 10px;
+    border-bottom: 1px solid $line;
+    border-inline-end: 1px solid $line;
     text-align: left;
     vertical-align: middle;
+
+    &:last-child {
+      border-inline-end: none;
+    }
+  }
+
+  tbody tr:last-child td {
+    border-bottom: none;
   }
 
   th {
-    background: var(--color-bg-subtle, #f5f7fb);
-    font-weight: 600;
-    color: var(--color-text-secondary, #4a5473);
+    height: 34px;
+    border-bottom-color: $frame;
+    background: var(--color-navy-50, #f6f6f9);
+    color: $text-sub;
+    font-size: var(--font-size-b2, 12px);
+    font-weight: 500;
+    text-align: center;
     white-space: nowrap;
   }
-}
-
-.stepsWrap {
-  overflow-x: auto;
 }
 
 .stepNo {
   width: 48px;
   text-align: center !important;
-  font-weight: 600;
 }
 
 .stepName {
@@ -68,10 +97,10 @@
 
 .iconButton {
   padding: 2px 6px;
-  border: 1px solid var(--color-border, #d5d9e3);
+  border: 1px solid var(--color-border-primary, #d1d1e0);
   border-radius: 4px;
   background: transparent;
-  color: var(--color-text, #222);
+  color: $text;
   cursor: pointer;
 
   & + & {
@@ -79,20 +108,20 @@
   }
 
   &:disabled {
-    opacity: 0.35;
+    color: var(--color-text-disabled, #a8b2c8);
     cursor: default;
   }
 }
 
 .stepsError {
   margin: 8px 0 0;
-  color: var(--color-danger, #d9363e);
-  font-size: 12px;
+  color: var(--color-text-negative, #e62e44);
+  font-size: var(--font-size-b2, 12px);
 }
 
 .notice {
   margin: 0;
-  color: var(--color-text-secondary, #6f7b95);
-  font-size: 12px;
-  line-height: 1.5;
+  color: $text-sub;
+  font-size: var(--font-size-b2, 12px);
+  line-height: var(--line-height-b2, 16px);
 }

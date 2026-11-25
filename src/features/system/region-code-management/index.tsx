@@ -25,17 +25,18 @@ import { apiErrorCode } from '@/features/system/_shared/system-utils';
 import { ApiError } from '@/lib/api/error';
 import { CodeDetailGrid } from '@/features/system/common-code-management/CodeDetailGrid';
 import type { GridChanges, GridColumn, GridRecord } from '@/features/system/common-code-management/CodeDetailGrid';
-import styles from '@/features/system/common-code-management/code-page.module.scss';
+import styles from '@/features/system/common-code-management/common-code-management.module.scss';
 import { ProvinceModal } from './ProvinceModal';
 import { useBatchSaveDistricts, useDistricts, useDownloadProvincesExcel, useProvinces } from './use-regions';
 
 // VPA09030201 Region Code Management: provinces / cities (left) + editable district codes (right).
 
+// Code Name takes the rest of the panel (frame VPA09030201).
 const DISTRICT_COLUMNS: GridColumn[] = [
-  { field: 'useYn', title: 'Use', kind: 'use', required: true, width: 110 },
-  { field: 'distCd', title: 'District Code', kind: 'text', required: true, isKey: true, maxLength: 5, width: 120 },
-  { field: 'distNm', title: 'Code Name', kind: 'text', required: true, maxLength: 40, width: 220 },
-  { field: 'crtDt', title: 'Registered Date', kind: 'date', width: 150 },
+  { field: 'useYn', title: 'Use', kind: 'use', required: true, width: 92, sortable: true },
+  { field: 'distCd', title: 'District Code', kind: 'text', required: true, isKey: true, maxLength: 5, width: '20%', sortable: true },
+  { field: 'distNm', title: 'Code Name', kind: 'text', required: true, maxLength: 40, sortable: true },
+  { field: 'crtDt', title: 'Registered Date', kind: 'date', width: 140, sortable: true },
 ];
 
 const INITIAL_FILTER: ProvinceSearch = { mctpvCd: '', mctpvNm: '' };
@@ -94,15 +95,19 @@ export default function RegionCodeManagement() {
     });
   };
 
+  // Fixed layout fits the half-width panel (frame VPA09030201); long names are cut with an ellipsis.
   const columns: TableColumnsType<ProvinceItem> = [
-    { title: 'Use', dataIndex: 'useYn', align: 'center', render: (v: string) => <UseBadge value={v} /> },
+    { title: 'Use', dataIndex: 'useYn', sorter: true, align: 'center', width: 76, render: (v: string) => <UseBadge value={v} /> },
     {
       title: 'Province / City Code',
       dataIndex: 'mctpvCd',
-      align: 'center',
+      sorter: true,
+      width: '21%',
+      ellipsis: true,
       render: (value: string, row) => (
         <button
           type="button"
+          title={value}
           className={styles.codeLink}
           onClick={(e) => {
             e.stopPropagation();
@@ -113,9 +118,25 @@ export default function RegionCodeManagement() {
         </button>
       ),
     },
-    { title: 'Administrative Code', dataIndex: 'admdstCd', align: 'center' },
-    { title: 'Province / City Name', dataIndex: 'mctpvNm', render: (v: string) => <span className={styles.ellipsis}>{v}</span> },
-    { title: 'Registered Date', dataIndex: 'crtDt', align: 'center', render: (v?: string) => <DateTimeText value={v} /> },
+    {
+      title: 'Administrative Code',
+      dataIndex: 'admdstCd',
+      sorter: true,
+      width: '21%',
+      ellipsis: true,
+      // Two digits like the design (01, 08, 79).
+      render: (v?: number | null) => (v === null || v === undefined ? '-' : String(v).padStart(2, '0')),
+    },
+    { title: 'Province / City Name', dataIndex: 'mctpvNm', sorter: true, ellipsis: { showTitle: true } },
+    {
+      title: 'Registered Date',
+      dataIndex: 'crtDt',
+      sorter: true,
+      align: 'center',
+      width: 140,
+      ellipsis: true,
+      render: (v?: string) => <DateTimeText value={v} />,
+    },
   ];
 
   return (
@@ -163,18 +184,21 @@ export default function RegionCodeManagement() {
             <SysTable<ProvinceItem>
               rowKey="mctpvCd"
               fill
-              className={styles.paneBody}
+              className={`${styles.paneBody} ${styles.stickyHead}`}
               columns={columns}
               dataSource={data?.content}
+              tableLayout="fixed"
               loading={isFetching}
               onRowClick={selectProvince}
               selectedRowKey={selected?.mctpvCd}
+              sort={list.sort}
+              onSortChange={list.setSort}
             />
             <SysPager page={list.page} pageSize={SYS_PAGE_SIZE} total={data?.totalElements ?? 0} onChange={list.setPage} />
           </div>
         }
         right={
-          <div className={styles.paneDetail}>
+          <div className={styles.pane}>
             <CodeDetailGrid
               key={`${selected?.mctpvCd ?? ''}-${districtsQuery.dataUpdatedAt}`}
               title={current ? `Districts in [${current.mctpvNm}]` : 'Districts'}

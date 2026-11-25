@@ -26,7 +26,7 @@ Follow these rules for all styling in this React project to keep component logic
 
 ## 3. Design Tokens & Theme Consistency
 
-- Reuse CSS custom properties from `src/styles/` (`variables.scss`, `colors.css`, `semantic-colors.css`, `typography.css`) instead of hardcoding hex colors, font sizes, radii, or spacing values. A literal is allowed only as the fallback of a token: `color: var(--color-text-secondary, #6f7b95);`.
+- Reuse CSS custom properties from `src/styles/` (`variables.scss`, `colors.css`, `semantic-colors.css`, `typography.css`) instead of hardcoding hex colors, font sizes, radii, or spacing values. A literal is allowed only as the fallback of a token: `color: var(--color-text-secondary, #6f7b95);`. Font sizes in SCSS use `--font-size-{h1..h4,b1..b3}` / `--line-height-*` / `--letter-spacing-tight` from `typography.css` (same scale as the `typo-*` utilities).
 - Ant Design theme tokens live in `src/config/theme-config.ts`; change them there rather than overriding the same value in many stylesheets.
 - When styling Ant Design (`antd`) overrides, scope them under a component/module class rather than global element selectors.
 

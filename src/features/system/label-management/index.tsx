@@ -16,7 +16,6 @@ import {
   SysExcelButton,
   SysFilterItem,
   SysFilterPanel,
-  SysNotAvailable,
   SysPage,
   SysPager,
   SysSearchActions,
@@ -42,14 +41,19 @@ import {
 import styles from './label-management.module.scss';
 
 interface LabelFilter {
-  /** Type (Web/Admin) — disabled until SYS_SE_CD exists, never sent. */
+  /** Type: '' = All, W = Web, A = Admin. */
   sysSeCd: string;
   lblKey: string;
   keyword: string;
   missingOnly: boolean;
 }
 
-const INITIAL_FILTER: LabelFilter = { sysSeCd: '', lblKey: '', keyword: '', missingOnly: false };
+const INITIAL_FILTER: LabelFilter = {
+  sysSeCd: '',
+  lblKey: '',
+  keyword: '',
+  missingOnly: false,
+};
 
 const TYPE_FILTER_OPTIONS = [
   { value: '', label: 'All' },
@@ -60,15 +64,20 @@ const TYPE_FILTER_OPTIONS = [
 /** Edit popup target: `null` = closed, `'new'` = register mode. */
 type EditTarget = LabelListItem | 'new' | null;
 
-const toSearch = ({ lblKey, keyword, missingOnly }: LabelFilter): LabelSearch => ({
+const toSearch = ({ sysSeCd, lblKey, keyword, missingOnly }: LabelFilter): LabelSearch => ({
+  sysSeCd,
   lblKey: lblKey.trim(),
   keyword: keyword.trim(),
   missingOnly,
 });
 
-const toKey = ({ scrnId, lblSeCd, lblCd }: LabelKey): LabelKey => ({ scrnId, lblSeCd, lblCd });
+const toKey = ({ scrnId, lblSeCd, lblCd }: LabelKey): LabelKey => ({
+  scrnId,
+  lblSeCd,
+  lblCd,
+});
 
-/** i18n Label Management - List (VPA09040301, menu A06040300). */
+/** i18n Label Management - List (VPA09040301, menu A09040300). */
 export default function LabelManagement() {
   const { toast, dialog } = useNotify();
   const { confirm, guardDiscard } = useSysDialogs();
@@ -164,24 +173,29 @@ export default function LabelManagement() {
   const columns: TableColumnsType<LabelListItem> = [
     {
       title: 'Type',
-      key: 'sysSeCd',
-      width: 70,
-      // TODO(schema): SYS_SE_CD pending; the API omits it.
-      render: (_value, row) => (row.sysSeCd === 'W' ? 'Web' : row.sysSeCd === 'A' ? 'Admin' : '-'),
+      dataIndex: 'sysSeCd',
+      sorter: true,
+      width: 68,
+      // No Type = shared by both apps or not classified (legacy labels).
+      render: (value?: string | null) => (value === 'W' ? 'Web' : value === 'A' ? 'Admin' : '-'),
     },
     {
       title: 'Scope',
       dataIndex: 'scopeCd',
-      width: 100,
+      sorter: true,
+      width: 76,
       render: (value: string) => (value === 'C' ? 'Common' : 'Business'),
     },
     {
       title: 'Label Key',
       dataIndex: 'lblKey',
+      sorter: true,
+      ellipsis: true,
       render: (value: string, row) => (
         <button
           type="button"
           className={styles.keyLink}
+          title={value}
           onClick={(e) => {
             e.stopPropagation();
             openEdit(row);
@@ -191,40 +205,51 @@ export default function LabelManagement() {
         </button>
       ),
     },
-    { title: 'Description', dataIndex: 'lblExpln', ellipsis: true },
+    {
+      title: 'Description',
+      dataIndex: 'lblExpln',
+      width: 100,
+      ellipsis: true,
+      sorter: true,
+    },
     {
       title: 'Translation',
       dataIndex: 'missingCnt',
+      sorter: true,
       width: 110,
-      render: (value: number) =>
-        value > 0 ? <span className={styles.missing}>Missing {value}</span> : 'Complete',
+      render: (value: number) => (value > 0 ? <span className={styles.missing}>Missing {value}</span> : 'Complete'),
     },
     {
       title: 'Modified Date',
       dataIndex: 'mdfcnDt',
-      width: 150,
+      sorter: true,
+      width: 132,
       render: (value?: string) => <DateTimeText value={value} />,
     },
-    { title: 'Modified By', dataIndex: 'mdfcnBy', width: 120 },
+    {
+      title: 'Modified By',
+      dataIndex: 'mdfcnBy',
+      width: 110,
+      ellipsis: true,
+      sorter: true,
+    },
   ];
 
   const total = data?.totalElements ?? 0;
   const selectedId = selected ? labelRowId(selected) : null;
 
   return (
-    <SysPage>
+    <SysPage fill>
       <SysTitleBar
         title="i18n Label Management"
         breadcrumb={['System Operation Management', 'System Management', 'i18n Label Management']}
       />
-      <SysFilterPanel columns={4}>
-        <SysFilterItem label="Type" hint={<SysNotAvailable variant="inline" />}>
-          {/* TODO(schema): SYS_SE_CD pending — disabled, never sent. */}
+      <SysFilterPanel>
+        <SysFilterItem label="Type">
           <AppSelect
             options={TYPE_FILTER_OPTIONS}
             value={list.draft.sysSeCd}
-            disabled
-            title={LABEL_MESSAGES.typeNotAvailable}
+            onChange={(value) => list.setDraft({ sysSeCd: String(value ?? '') })}
           />
         </SysFilterItem>
         <SysFilterItem label="Label Key">
@@ -246,7 +271,11 @@ export default function LabelManagement() {
           />
         </SysFilterItem>
         <SysFilterItem label="Translation Status">
-          <AppCheckbox checked={list.draft.missingOnly} onChange={(e) => list.setDraft({ missingOnly: e.target.checked })}>
+          <AppCheckbox
+            className={styles.missingCheck}
+            checked={list.draft.missingOnly}
+            onChange={(e) => list.setDraft({ missingOnly: e.target.checked })}
+          >
             Show missing translations only
           </AppCheckbox>
         </SysFilterItem>
@@ -263,7 +292,7 @@ export default function LabelManagement() {
           <>
             <SysSectionHeader
               // The design titles the list with the Type filter value ("All | Total n").
-              title="All"
+              title={TYPE_FILTER_OPTIONS.find((o) => o.value === list.applied.sysSeCd)?.label ?? 'All'}
               total={total}
               actions={
                 <>
@@ -298,20 +327,26 @@ export default function LabelManagement() {
                 )
               }
             />
-            <SysTable<LabelListItem>
-              rowKey={labelRowId}
-              columns={columns}
-              dataSource={data?.content}
-              loading={isFetching && !data}
-              onRowClick={selectRow}
-              selectedRowKey={selectedId}
-            />
-            <SysPager
-              page={list.page}
-              pageSize={SYS_PAGE_SIZE}
-              total={total}
-              onChange={(page) => guarded(() => list.setPage(page))}
-            />
+            <div className={styles.listBody}>
+              <SysTable<LabelListItem>
+                fill
+                tableLayout="fixed"
+                rowKey={labelRowId}
+                columns={columns}
+                dataSource={data?.content}
+                loading={isFetching && !data}
+                onRowClick={selectRow}
+                selectedRowKey={selectedId}
+                sort={list.sort}
+                onSortChange={(sort) => guarded(() => list.setSort(sort))}
+              />
+              <SysPager
+                page={list.page}
+                pageSize={SYS_PAGE_SIZE}
+                total={total}
+                onChange={(page) => guarded(() => list.setPage(page))}
+              />
+            </div>
           </>
         }
         right={

@@ -1,26 +1,54 @@
-import { useRef } from 'react';
-import { DeleteOutlined, DownloadOutlined } from '@ant-design/icons';
+import { useRef, useState } from 'react';
+import type { DragEvent } from 'react';
+import {
+  DeleteOutlined,
+  DownloadOutlined,
+  FileAddFilled,
+  FileExcelOutlined,
+  FileImageOutlined,
+  FileOutlined,
+  FilePdfOutlined,
+  FileWordOutlined,
+} from '@ant-design/icons';
 import ActionButton from '@/components/common/actions/ActionButton';
+import TextInput from '@/components/inputs/TextInput';
 import { useNotify } from '@/hooks/use-notify';
 import type { ContentFile, FileBoard } from '@/api/contents/post-api';
+import { SysButton } from '@/features/system/_shared/SysListUi';
 import { errorMessage } from '@/features/system/_shared/system-utils';
 import styles from '@/features/system/_shared/system-page.module.scss';
-import postStyles from './post.module.scss';
 import {
   originalFileName,
   useAttachmentPreview,
+  useContentFileGroup,
   useDeleteContentFile,
   useDownloadContentFile,
   useImageUpload,
   useUploadContentFiles,
 } from './use-content-files';
+import postStyles from './post.module.scss';
 
 // File inputs of the content popups. Files are uploaded as soon as they are picked;
 // the popup then only stores the returned file-group id on the post.
 
-const MAX_FILES = 10;
+/** Design: max 5 files, 10MB each (E03 / E04). */
+const MAX_FILES = 5;
+const MAX_FILE_BYTES = 10 * 1024 * 1024;
+const ALLOWED_EXTENSIONS = ['pdf', 'png', 'jpg', 'jpeg', 'mp3', 'mp4', 'webm', 'doc', 'docx', 'xlsx', 'zip'];
+const IMAGE_EXTENSIONS = ['png', 'jpg', 'jpeg'];
 
-interface AttachmentFieldProps {
+const extensionOf = (name: string) => name.split('.').pop()?.toLowerCase() ?? '';
+
+function FileTypeIcon({ name }: { name: string }) {
+  const ext = extensionOf(name);
+  if (ext === 'pdf') return <FilePdfOutlined className={postStyles.fileIconPdf} />;
+  if (ext === 'doc' || ext === 'docx') return <FileWordOutlined className={postStyles.fileIconDoc} />;
+  if (ext === 'xlsx') return <FileExcelOutlined className={postStyles.fileIconXls} />;
+  if (IMAGE_EXTENSIONS.includes(ext)) return <FileImageOutlined className={postStyles.fileIconDoc} />;
+  return <FileOutlined className={postStyles.fileIconDoc} />;
+}
+
+interface AttachmentSectionProps {
   board: FileBoard;
   fileUnqId?: string;
   files: ContentFile[];
@@ -28,23 +56,35 @@ interface AttachmentFieldProps {
   onChange: (fileUnqId: string | undefined, files: ContentFile[]) => void;
 }
 
-/** "Attach files" row: upload into one attachment group, list / download / remove. */
-export function AttachmentField({ board, fileUnqId, files, disabled, onChange }: AttachmentFieldProps) {
+/**
+ * "Attachments  Total n  [Upload File]" block under the popup grid: drop area with a guide text,
+ * one row per file with [delete] and [download] icons (E03 / E04 below the area).
+ */
+export function AttachmentSection({ board, fileUnqId, files, disabled, onChange }: AttachmentSectionProps) {
   const { toast } = useNotify();
   const input = useRef<HTMLInputElement>(null);
+  const [dragging, setDragging] = useState(false);
+  const [error, setError] = useState<string>();
   const uploadFiles = useUploadContentFiles(board);
   const deleteFile = useDeleteContentFile(board);
   const downloadFile = useDownloadContentFile();
   const busy = uploadFiles.isPending || deleteFile.isPending;
+  const locked = disabled || busy;
 
-  const handlePick = async (picked: FileList | null) => {
-    if (!picked?.length) return;
-    if (files.length + picked.length > MAX_FILES) {
-      toast.warning(`Up to ${MAX_FILES} files can be attached.`);
+  const handlePick = async (picked: File[]) => {
+    if (picked.length === 0 || locked) return;
+    // Checked in the design order: extension > size > count.
+    if (picked.some((f) => !ALLOWED_EXTENSIONS.includes(extensionOf(f.name)) || f.size > MAX_FILE_BYTES)) {
+      setError(`Only ${ALLOWED_EXTENSIONS.join(', ')} files of 10MB or less can be uploaded.`);
       return;
     }
+    if (files.length + picked.length > MAX_FILES) {
+      setError(`You can upload up to ${MAX_FILES} files.`);
+      return;
+    }
+    setError(undefined);
     try {
-      const group = await uploadFiles.mutateAsync({ files: Array.from(picked), fileUnqId });
+      const group = await uploadFiles.mutateAsync({ files: picked, fileUnqId });
       onChange(group.fileUnqId, group.files);
     } catch (e) {
       toast.error(errorMessage(e));
@@ -58,6 +98,7 @@ export function AttachmentField({ board, fileUnqId, files, disabled, onChange }:
       await deleteFile.mutateAsync(file);
       const rest = files.filter((f) => f.fileSeq !== file.fileSeq);
       onChange(rest.length > 0 ? fileUnqId : undefined, rest);
+      setError(undefined);
     } catch (e) {
       toast.error(errorMessage(e));
     }
@@ -71,33 +112,143 @@ export function AttachmentField({ board, fileUnqId, files, disabled, onChange }:
     }
   };
 
+  const handleDrop = (e: DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setDragging(false);
+    handlePick(Array.from(e.dataTransfer.files));
+  };
+
   return (
-    <div className={styles.stack}>
-      <div className={styles.inline}>
-        <input ref={input} type="file" multiple hidden onChange={(e) => handlePick(e.target.files)} />
-        <ActionButton
-          size="small"
-          disabled={disabled || busy}
-          onClick={() => input.current?.click()}
-        >
-          {busy ? 'Uploading…' : 'Attach files'}
-        </ActionButton>
-        <span className={styles.textMuted}>
-          {files.length} / {MAX_FILES}
-        </span>
+    <section className={postStyles.attachments}>
+      <div className={postStyles.attachmentsHeader}>
+        <span className={postStyles.attachmentsTitle}>Attachments</span>
+        <span className={postStyles.attachmentsTotal}>Total {files.length}</span>
+        <input
+          ref={input}
+          type="file"
+          multiple
+          hidden
+          accept={ALLOWED_EXTENSIONS.map((ext) => `.${ext}`).join(',')}
+          onChange={(e) => handlePick(Array.from(e.target.files ?? []))}
+        />
+        <SysButton className={postStyles.attachmentsUpload} disabled={locked} onClick={() => input.current?.click()}>
+          {busy ? 'Uploading…' : 'Upload File'}
+        </SysButton>
       </div>
-      {files.map((file) => (
-        <div key={file.fileSeq} className={`${styles.inline} ${postStyles.fileRow}`}>
-          <a className={styles.cellLink} onClick={() => handleDownload(file)}>
-            <DownloadOutlined /> {originalFileName(file.fileNm)}
-          </a>
-          {!disabled && (
-            <a className={styles.textDanger} onClick={() => handleRemove(file)} title="Remove">
-              <DeleteOutlined />
-            </a>
-          )}
+      <div
+        className={postStyles.dropArea}
+        data-dragging={dragging || undefined}
+        data-error={error ? true : undefined}
+        onDragOver={(e) => {
+          e.preventDefault();
+          if (!locked) setDragging(true);
+        }}
+        onDragLeave={() => setDragging(false)}
+        onDrop={handleDrop}
+      >
+        {files.length === 0 ? (
+          <div className={postStyles.dropGuide}>
+            <FileAddFilled className={postStyles.dropIcon} />
+            <span>Add files with the Upload File button or by dragging with the mouse.</span>
+          </div>
+        ) : (
+          <ul className={postStyles.fileList}>
+            {files.map((file) => {
+              const name = originalFileName(file.fileNm);
+              return (
+                <li key={file.fileSeq} className={postStyles.fileRow}>
+                  <FileTypeIcon name={name} />
+                  <span className={postStyles.fileName} title={name}>
+                    {name}
+                  </span>
+                  {!disabled && (
+                    <button
+                      type="button"
+                      className={postStyles.fileDelete}
+                      title="Delete"
+                      aria-label={`Delete ${name}`}
+                      onClick={() => handleRemove(file)}
+                    >
+                      <DeleteOutlined />
+                    </button>
+                  )}
+                  <span className={postStyles.fileDivider} />
+                  <button
+                    type="button"
+                    className={postStyles.fileDownload}
+                    title="Download"
+                    aria-label={`Download ${name}`}
+                    onClick={() => handleDownload(file)}
+                  >
+                    <DownloadOutlined />
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        )}
+      </div>
+      {error && <div className={postStyles.attachmentsError}>{error}</div>}
+    </section>
+  );
+}
+
+interface ThumbnailFieldProps {
+  board: FileBoard;
+  /** Uploads the picked image and resolves the new file-group id. */
+  upload: (file: File) => Promise<string>;
+  fileUnqId?: string;
+  disabled?: boolean;
+  onChange: (fileUnqId: string | undefined) => void;
+}
+
+/** Design thumbnail row: read-only file name + [Upload File] and the 16:9 guide text (png / jpg / jpeg, 10MB). */
+export function ThumbnailField({ board, upload, fileUnqId, disabled, onChange }: ThumbnailFieldProps) {
+  const { toast } = useNotify();
+  const input = useRef<HTMLInputElement>(null);
+  const [error, setError] = useState<string>();
+  const uploadImage = useImageUpload(upload);
+  const { data: group } = useContentFileGroup(board, fileUnqId);
+  const name = group?.files[0] ? originalFileName(group.files[0].fileNm) : fileUnqId ? 'Image registered' : '';
+
+  const handlePick = async (file?: File) => {
+    if (!file) return;
+    if (!IMAGE_EXTENSIONS.includes(extensionOf(file.name)) || file.size > MAX_FILE_BYTES) {
+      setError(`Only ${IMAGE_EXTENSIONS.join(', ')} files of 10MB or less can be uploaded.`);
+      return;
+    }
+    setError(undefined);
+    try {
+      onChange(await uploadImage.mutateAsync(file));
+    } catch (e) {
+      toast.error(errorMessage(e));
+    } finally {
+      if (input.current) input.current.value = '';
+    }
+  };
+
+  return (
+    <div className={postStyles.thumbnail}>
+      <div className={postStyles.thumbnailRow}>
+        <TextInput readOnly placeholder="Register an image" value={name} className={postStyles.thumbnailName} />
+        <input
+          ref={input}
+          type="file"
+          accept={IMAGE_EXTENSIONS.map((ext) => `.${ext}`).join(',')}
+          hidden
+          onChange={(e) => handlePick(e.target.files?.[0])}
+        />
+        <SysButton disabled={disabled || uploadImage.isPending} onClick={() => input.current?.click()}>
+          {uploadImage.isPending ? 'Uploading…' : 'Upload File'}
+        </SysButton>
+      </div>
+      {error ? (
+        <div className={postStyles.thumbnailError}>{error}</div>
+      ) : (
+        <div className={postStyles.thumbnailHint}>
+          Recommended ratio 16:9 (e.g. 1200 × 675px); a different ratio may be cropped on the user screen.
         </div>
-      ))}
+      )}
     </div>
   );
 }

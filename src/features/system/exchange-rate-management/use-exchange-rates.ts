@@ -4,7 +4,7 @@ import { useApiAction } from '@/hooks/use-api-action';
 import { getExchangeRateStatus, syncExchangeRates } from '@/api/system/exchange-rate-api';
 import type { ExchangeRateStatus } from '@/api/system/exchange-rate-api';
 
-// Data hooks of Exchange Rate Management (menu A06010500).
+// Data hooks of Exchange Rate Management (menu A09010400).
 
 const EXCHANGE_RATE_KEYS = {
   all: ['system', 'exchange-rates'] as const,

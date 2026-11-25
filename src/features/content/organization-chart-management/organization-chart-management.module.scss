@@ -1,0 +1,34 @@
+// Organization Chart Management: image rows (name | [Preview] [Upload File]) and two editors.
+
+.form {
+  --rte-min-height: max(280px, calc((100vh - 450px) / 2));
+}
+
+.imageRow {
+  display: flex;
+  flex: 1 1 auto;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  border-radius: 4px;
+}
+
+.imageRowDragging {
+  outline: 1px dashed var(--color-border-brand, #0057ff);
+  outline-offset: 2px;
+}
+
+.fileName {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 16px;
+}
+
+.loading {
+  min-height: 200px;
+}

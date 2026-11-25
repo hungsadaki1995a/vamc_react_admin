@@ -18,8 +18,8 @@ import type { PageQuery, PageResponse } from '@/api/common/api-utils';
 
 // Data hooks of User Group Management (VPA09020301 / VPA090203P01 / Staff Search).
 
-/** Web member grades (GUEST / MEM_*) — managed by Web Menu Permission Management, not here. */
-const HIDDEN_GROUP_IDS = new Set(['RG00100']);
+/** Web roles: RG00100 logged-out visitor (GUEST), RG00200 member types — Web Menu Permission data, not staff groups. */
+const HIDDEN_GROUP_IDS = new Set(['RG00100', 'RG00200']);
 
 const ROLE_GROUP_KEYS = {
   all: ['system', 'role-groups'] as const,
