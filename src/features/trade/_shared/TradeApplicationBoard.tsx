@@ -1,50 +1,83 @@
 import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { Descriptions } from 'antd';
 import type { TableColumnsType } from 'antd';
 import type { Dayjs } from 'dayjs';
 import ActionButton from '@/components/common/actions/ActionButton';
-import Popup from '@/components/common/popup/Popup';
 import DataTable from '@/components/common/table/DataTable';
 import { AppRangePicker } from '@/components/inputs/AppDatePicker';
 import AppRadio from '@/components/inputs/AppRadio';
 import AppSelect from '@/components/inputs/AppSelect';
 import TextInput from '@/components/inputs/TextInput';
-import { useNotify } from '@/hooks/use-notify';
+import { useCommonCodes } from '@/hooks/use-common-codes';
 import { useMenuPermission } from '@/hooks/use-menu-permission';
-import type { TradeAppKind, TradeApplicationItem, TradeApplicationSearch } from '@/api/trade/trade-api';
+import type {
+  TradeAppKind,
+  TradeApplicationDetail,
+  TradeApplicationListItem,
+  TradeApplicationSearch,
+  TradeApplicationStatus,
+  TradeApprovalStage,
+} from '@/api/trade/trade-api';
+import { RECEIPT_OFFICER_STEP } from '@/api/common/approval-api';
+import { applicationNo, tradeProcessCode } from '@/api/trade/trade-api';
 import { SysPageHeader, SysPagination } from '@/components/common/sys-ui/SystemUi';
-import { errorMessage, rowNumber } from '@/utils/system-utils';
+import { EmployeePickField } from '@/features/approval/_shared/ApprovalParts';
+import { formatDateTime, formatDmy } from '@/utils/date-format';
+import { formatAmount, rowNumber } from '@/utils/system-utils';
 import styles from '@/components/common/sys-ui/system-page.module.scss';
-import {
-  useDownloadTradeApplicationsExcel,
-  useReceiptTradeApplication,
-  useTradeApplication,
-  useTradeApplications,
-} from './use-trade-applications';
+import TradeApplicationForm from './TradeApplicationForm';
+import TradeApplicationPopup from './TradeApplicationPopup';
+import { useDownloadTradeApplicationsExcel, useTradeApplications } from './use-trade-applications';
+
+// Trade application board (VPA05010101 purchase / 05010201 sale / 05010301 consulting): filters and columns of
+// plan §2.1, [Add New] (manual registration, WP3) and the processing popup (WP2). [Delete] of the design has no
+// API (F5 HOLD) and is not shown.
 
 const PAGE_SIZE = 15;
 type DateRange = [Dayjs | null, Dayjs | null] | null;
+/** Form: null closed, `new` Add New, or the application being edited. */
+type FormState = null | 'new' | TradeApplicationDetail;
+
+const STATUS_OPTIONS: { value: TradeApplicationStatus | ''; label: string }[] = [
+  { value: '', label: 'All' },
+  { value: 'RCPT', label: 'Submitted' },
+  { value: 'PRCS', label: 'Processing' },
+  { value: 'DCIN', label: 'Docs Incomplete' },
+  { value: 'DCOK', label: 'Docs Complete' },
+  { value: 'CMPL', label: 'Completed' },
+  { value: 'CNCL', label: 'Cancelled' },
+];
+
+const STAGE_OPTIONS: { value: TradeApprovalStage | ''; label: string }[] = [
+  { value: '', label: 'All' },
+  { value: 'NOT_RECEIVED', label: 'Not Received' },
+  { value: 'PROCESSING', label: 'Processing' },
+  { value: 'IN_APPROVAL', label: 'In Approval' },
+  { value: 'APPROVED', label: 'Approved' },
+  { value: 'REJECTED', label: 'Rejected' },
+  { value: 'CANCELLED', label: 'Cancelled' },
+];
+
+const STAGE_LABELS = Object.fromEntries(STAGE_OPTIONS.map((o) => [o.value, o.label])) as Record<string, string>;
 
 export default function TradeApplicationBoard({ kind, title }: { kind: TradeAppKind; title: string }) {
-  const { t } = useTranslation();
-  const { toast } = useNotify();
   const { canWrite } = useMenuPermission();
+  const consultingCodes = useCommonCodes(kind === 'consulting' ? 'CNSLT_DMND_SE_CD' : null);
 
   const [period, setPeriod] = useState<DateRange>(null);
-  const [sttsCd, setSttsCd] = useState('');
+  const [sttsCd, setSttsCd] = useState<TradeApplicationStatus | ''>('');
+  const [stage, setStage] = useState<TradeApprovalStage | ''>('');
   const [bndLotYn, setBndLotYn] = useState<'' | 'Y' | 'N'>('');
   const [mbrNo, setMbrNo] = useState('');
   const [bndCd, setBndCd] = useState('');
   const [keyword, setKeyword] = useState('');
+  const [tkcgEmpNo, setTkcgEmpNo] = useState('');
   const [applied, setApplied] = useState<TradeApplicationSearch>({});
   const [page, setPage] = useState(1);
   const [filterCollapsed, setFilterCollapsed] = useState(false);
   const [detailId, setDetailId] = useState<string | null>(null);
+  const [form, setForm] = useState<FormState>(null);
 
   const { data, isFetching } = useTradeApplications(kind, applied, page, PAGE_SIZE);
-  const { data: detail } = useTradeApplication(kind, detailId);
-  const receiptApplication = useReceiptTradeApplication();
   const downloadExcel = useDownloadTradeApplicationsExcel();
 
   const rows = data?.content ?? [];
@@ -55,10 +88,12 @@ export default function TradeApplicationBoard({ kind, title }: { kind: TradeAppK
       aplyFromDt: period?.[0]?.format('YYYY-MM-DD'),
       aplyToDt: period?.[1]?.format('YYYY-MM-DD'),
       sttsCds: sttsCd ? [sttsCd] : undefined,
+      approvalStages: stage ? [stage] : undefined,
       bndLotYn: bndLotYn || undefined,
       mbrNo: mbrNo.trim() || undefined,
       bndCd: bndCd.trim() || undefined,
       keyword: keyword.trim() || undefined,
+      tkcgEmpNo: tkcgEmpNo || undefined,
     });
     setPage(1);
   };
@@ -66,43 +101,74 @@ export default function TradeApplicationBoard({ kind, title }: { kind: TradeAppK
   const handleReset = () => {
     setPeriod(null);
     setSttsCd('');
+    setStage('');
     setBndLotYn('');
     setMbrNo('');
     setBndCd('');
     setKeyword('');
+    setTkcgEmpNo('');
     setApplied({});
     setPage(1);
   };
 
-  const handleReceipt = async (id: string) => {
-    try {
-      await receiptApplication.mutateAsync({ kind, id });
-      toast.success(t('messages.trade.received'));
-      setDetailId(null);
-    } catch (e) {
-      toast.error(errorMessage(e));
-    }
-  };
-
-  const columns: TableColumnsType<TradeApplicationItem> = [
+  const columns: TableColumnsType<TradeApplicationListItem> = [
     { title: 'No', key: 'no', width: 60, align: 'center', render: (_v, _r, i) => rowNumber(total, page, PAGE_SIZE, i) },
+    { title: 'Status', dataIndex: 'srvcPrcsSttsNm', width: 140, align: 'center', render: (v?: string, r?: TradeApplicationListItem) => v || r?.srvcPrcsSttsCd || '-' },
     {
-      title: 'Application ID',
-      dataIndex: 'srvcAplyId',
+      title: 'Application No.',
+      dataIndex: 'srvcAplyNo',
       width: 170,
-      render: (v: string) => <a className={styles.cellLink} onClick={() => setDetailId(v)}>{v}</a>,
+      render: (_v, r) => (
+        <a className={styles.cellLink} onClick={() => setDetailId(r.srvcAplyId)}>
+          {applicationNo(r)}
+        </a>
+      ),
     },
-    { title: 'Status', dataIndex: 'srvcPrcsSttsNm', width: 150, align: 'center', render: (v?: string) => v || '-' },
-    { title: 'Applicant', dataIndex: 'mbrNm', width: 200, render: (v?: string) => v || '-' },
-    { title: 'NPL / LOT', key: 'npl', width: 160, render: (_v, r) => r.bndCd || r.bndLotNm || '-' },
-    { title: 'Application Date', dataIndex: 'srvcAplyDmy', width: 130, align: 'center', render: (v?: string) => v || '-' },
-    { title: 'Approval Stage', dataIndex: 'approvalStage', width: 140, align: 'center', render: (v?: string) => v || '-' },
+    { title: 'Application Date', dataIndex: 'srvcAplyDmy', width: 120, align: 'center', render: (v?: string) => formatDmy(v) },
+    { title: 'Channel', dataIndex: 'aplyPathCd', width: 80, align: 'center', render: (v?: string) => (v === 'MANL' ? 'Manual' : v === 'WEB' ? 'Web' : '-') },
+    { title: 'Member', dataIndex: 'mbrNm', width: 180, render: (v?: string, r?: TradeApplicationListItem) => (v ? `${v} (${r?.mbrNo ?? ''})` : (r?.mbrNo ?? '-')) },
+    { title: 'Creditor', dataIndex: 'crdtrNm', width: 160, render: (v?: string) => v || '-' },
+    {
+      title: 'NPL / LOT',
+      key: 'npl',
+      width: 170,
+      render: (_v, r) => {
+        const label = r.bndLotYn === 'Y' ? r.bndLotNm || r.bndLotId : r.bndCd;
+        return label ? `${label}${r.bndCnt && r.bndCnt > 1 ? ` (${r.bndCnt})` : ''}` : '-';
+      },
+    },
+    ...(kind === 'consulting'
+      ? [
+          {
+            title: 'Consulting Type',
+            dataIndex: 'cnsltDmndSeCd',
+            width: 190,
+            render: (v?: string) => consultingCodes.find((c) => c.value === v)?.label ?? v ?? '-',
+          },
+        ]
+      : [
+          { title: 'Currency', dataIndex: 'crncCd', width: 80, align: 'center' as const, render: (v?: string) => v || '-' },
+          { title: 'Principal Balance', dataIndex: 'totPrnBlnc', width: 140, align: 'right' as const, render: (v?: number) => formatAmount(v) },
+          { title: 'Appraised Value', dataIndex: 'totEvlAmt', width: 140, align: 'right' as const, render: (v?: number) => formatAmount(v) },
+          {
+            title: kind === 'sale' ? 'Desired Price' : 'Proposed Price',
+            dataIndex: 'prpDsplPrc',
+            width: 140,
+            align: 'right' as const,
+            render: (v?: number) => formatAmount(v),
+          },
+        ]),
+    { title: 'Receipt Date', dataIndex: 'rcptDt', width: 140, align: 'center', render: (v?: string) => formatDateTime(v) },
+    { title: 'Receiver', dataIndex: 'rcptEmpNm', width: 160, render: (v?: string) => v || '-' },
+    { title: 'Officer', dataIndex: 'tkcgEmpNm', width: 170, render: (v?: string) => v || '-' },
+    { title: 'Approval Stage', dataIndex: 'approvalStage', width: 120, align: 'center', render: (v?: string) => (v && STAGE_LABELS[v]) || v || '-' },
+    { title: 'Contract No.', dataIndex: 'srvcCtrtNo', width: 160, render: (v?: string, r?: TradeApplicationListItem) => v || r?.srvcCtrtCd || '-' },
   ];
 
   return (
     <div className={styles.container}>
       <SysPageHeader
-        breadcrumb={['Trade Management', 'Service Application Management', title]}
+        breadcrumb={['Trade Management', 'Application Management', title]}
         title={title}
         onReset={handleReset}
         onSearch={handleSearch}
@@ -117,29 +183,22 @@ export default function TradeApplicationBoard({ kind, title }: { kind: TradeAppK
           </div>
           <div className={styles.filterGroup}>
             <span className={styles.filterLabel}>Status</span>
-            <AppSelect
-              className={styles.w150}
-              value={sttsCd}
-              onChange={(v) => setSttsCd(String(v ?? ''))}
-              options={[
-                { value: '', label: 'All' },
-                { value: 'RCPT', label: 'Submitted' },
-                { value: 'PRCS', label: 'Processing' },
-                { value: 'DCIN', label: 'Docs Incomplete' },
-                { value: 'DCOK', label: 'Docs Complete' },
-                { value: 'CMPL', label: 'Completed' },
-                { value: 'CNCL', label: 'Cancelled' },
-              ]}
-            />
+            <AppSelect className={styles.w150} value={sttsCd} onChange={(v) => setSttsCd((v ?? '') as TradeApplicationStatus | '')} options={STATUS_OPTIONS} />
           </div>
           <div className={styles.filterGroup}>
-            <span className={styles.filterLabel}>LOT Status</span>
-            <AppRadio.Group value={bndLotYn} onChange={(e) => setBndLotYn(e.target.value)}>
-              <AppRadio value="">All</AppRadio>
-              <AppRadio value="Y">Yes</AppRadio>
-              <AppRadio value="N">No</AppRadio>
-            </AppRadio.Group>
+            <span className={styles.filterLabel}>Approval Stage</span>
+            <AppSelect className={styles.w150} value={stage} onChange={(v) => setStage((v ?? '') as TradeApprovalStage | '')} options={STAGE_OPTIONS} />
           </div>
+          {kind !== 'consulting' && (
+            <div className={styles.filterGroup}>
+              <span className={styles.filterLabel}>LOT Status</span>
+              <AppRadio.Group value={bndLotYn} onChange={(e) => setBndLotYn(e.target.value)}>
+                <AppRadio value="">All</AppRadio>
+                <AppRadio value="Y">Yes</AppRadio>
+                <AppRadio value="N">No</AppRadio>
+              </AppRadio.Group>
+            </div>
+          )}
           <div className={styles.filterGroup}>
             <span className={styles.filterLabel}>Member Code</span>
             <TextInput className={styles.filterInput} placeholder="Member No" value={mbrNo} onChange={(e) => setMbrNo(e.target.value)} onPressEnter={handleSearch} allowClear />
@@ -149,45 +208,56 @@ export default function TradeApplicationBoard({ kind, title }: { kind: TradeAppK
             <TextInput className={styles.filterInput} placeholder="NPL Code" value={bndCd} onChange={(e) => setBndCd(e.target.value)} onPressEnter={handleSearch} allowClear />
           </div>
           <div className={styles.filterGroup}>
+            <span className={styles.filterLabel}>Officer</span>
+            <div className={styles.w240}>
+              <EmployeePickField value={tkcgEmpNo} onChange={setTkcgEmpNo} source={{ type: 'candidates', atrzProcCd: tradeProcessCode(kind, 'RCPT'), stpNo: RECEIPT_OFFICER_STEP }} placeholder="Any officer" searchTitle="Officer Search" />
+            </div>
+          </div>
+          <div className={styles.filterGroup}>
             <span className={styles.filterLabel}>Keyword</span>
-            <TextInput className={styles.filterInput} placeholder="Application ID, name..." value={keyword} onChange={(e) => setKeyword(e.target.value)} onPressEnter={handleSearch} allowClear />
+            <TextInput className={styles.filterInput} placeholder="Application No., name..." value={keyword} onChange={(e) => setKeyword(e.target.value)} onPressEnter={handleSearch} allowClear />
           </div>
         </div>
       )}
       <div className={styles.summaryRow}>
         <span className={styles.totalCount}>Total ({total})</span>
-        <ActionButton action="excelDownload" size="small" onClick={() => downloadExcel.mutate({ kind, search: applied })}>Excel Download</ActionButton>
+        <span className={styles.actions}>
+          {canWrite && (
+            <ActionButton action="register" size="small" onClick={() => setForm('new')}>
+              Add New
+            </ActionButton>
+          )}
+          <ActionButton action="excelDownload" size="small" onClick={() => downloadExcel.mutate({ kind, search: applied })}>
+            Excel Download
+          </ActionButton>
+        </span>
       </div>
       <div className={styles.tableWrapper}>
-        <DataTable<TradeApplicationItem> rowKey="srvcAplyId" columns={columns} dataSource={rows} loading={isFetching} scroll={{ x: 'max-content' }} />
+        <DataTable<TradeApplicationListItem> rowKey="srvcAplyId" columns={columns} dataSource={rows} loading={isFetching} scroll={{ x: 'max-content' }} />
       </div>
       <SysPagination page={page} pageSize={PAGE_SIZE} total={total} onChange={setPage} />
 
-      <Popup
-        open={!!detailId}
-        width={720}
-        title={`${title} — ${detailId ?? ''}`}
-        onCancel={() => setDetailId(null)}
-        footer={
-          <div className={styles.modalFooter}>
-            {canWrite && detail?.srvcPrcsSttsCd === 'RCPT' && (
-              <ActionButton intent="secondary" appearance="filled" onClick={() => void handleReceipt(detail.srvcAplyId)}>Receipt</ActionButton>
-            )}
-            <ActionButton action="close" onClick={() => setDetailId(null)}>Close</ActionButton>
-          </div>
-        }
-      >
-        {detail && (
-          <Descriptions bordered size="small" column={2}>
-            <Descriptions.Item label="Application ID">{detail.srvcAplyId}</Descriptions.Item>
-            <Descriptions.Item label="Status">{detail.srvcPrcsSttsNm || detail.srvcPrcsSttsCd || '-'}</Descriptions.Item>
-            <Descriptions.Item label="Applicant">{detail.mbrNm || '-'}</Descriptions.Item>
-            <Descriptions.Item label="Member No">{detail.mbrNo || '-'}</Descriptions.Item>
-            <Descriptions.Item label="NPL / LOT">{detail.bndCd || detail.bndLotId || '-'}</Descriptions.Item>
-            <Descriptions.Item label="Application Date">{detail.srvcAplyDmy || '-'}</Descriptions.Item>
-          </Descriptions>
-        )}
-      </Popup>
+      {detailId && !form && (
+        <TradeApplicationPopup
+          kind={kind}
+          srvcAplyId={detailId}
+          title={title}
+          canWrite={canWrite}
+          onClose={() => setDetailId(null)}
+          onEdit={(detail) => setForm(detail)}
+        />
+      )}
+      {form && (
+        <TradeApplicationForm
+          kind={kind}
+          detail={form === 'new' ? null : form}
+          onClose={() => setForm(null)}
+          onSaved={(id) => {
+            setForm(null);
+            setDetailId(id || null);
+          }}
+        />
+      )}
     </div>
   );
 }

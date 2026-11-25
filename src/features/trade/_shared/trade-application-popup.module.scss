@@ -1,0 +1,208 @@
+// Application processing popup (VPA050101P01 / 050102P01 / 050103P01).
+
+.header {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px 16px;
+  margin-bottom: 16px;
+  padding: 12px 16px;
+  border-radius: 8px;
+  background: var(--color-bg-subtle, #f8fafc);
+}
+
+.headerItem {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.headerLabel {
+  font-size: var(--font-size-b3, 12px);
+  color: var(--color-text-secondary, #64748b);
+}
+
+.headerValue {
+  font-weight: 600;
+  color: var(--color-text-primary, #1f2937);
+  word-break: break-all;
+}
+
+.section {
+  margin-bottom: 18px;
+}
+
+.sectionTitle {
+  margin-bottom: 8px;
+  font-size: var(--font-size-b1, 15px);
+  font-weight: 700;
+  color: var(--color-text-primary, #1f2937);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 160px 1fr 160px 1fr;
+  border: 1px solid var(--color-border, #e2e8f0);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.cellLabel,
+.cellValue {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--color-border, #e2e8f0);
+}
+
+.cellLabel {
+  background: var(--color-bg-subtle, #f8fafc);
+  color: var(--color-text-secondary, #64748b);
+  font-weight: 600;
+}
+
+.cellValue {
+  white-space: pre-line;
+  word-break: break-word;
+}
+
+.wide {
+  grid-column: 2 / -1;
+}
+
+.warning {
+  margin-bottom: 12px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: var(--color-danger-bg, #fef2f2);
+  color: var(--color-danger, #dc2626);
+}
+
+.notice {
+  margin-bottom: 12px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: var(--color-bg-subtle, #f8fafc);
+  color: var(--color-text-secondary, #64748b);
+  white-space: pre-line;
+}
+
+.files {
+  margin: 0 0 8px;
+  padding: 0;
+  list-style: none;
+}
+
+.fileItem {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 4px 0;
+}
+
+.fileSize {
+  color: var(--color-text-secondary, #64748b);
+  font-size: var(--font-size-b3, 12px);
+}
+
+.checkForm {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 8px;
+  padding: 12px;
+  border: 1px dashed var(--color-border, #e2e8f0);
+  border-radius: 8px;
+}
+
+.checkActions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.error {
+  font-size: var(--font-size-b3, 12px);
+  color: var(--color-danger, #dc2626);
+}
+
+.officerLink {
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--color-primary, #0b4fd1);
+  font-weight: 600;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.footer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.footerLeft {
+  display: flex;
+  gap: 8px;
+  margin-right: auto;
+}
+
+.loading {
+  min-height: 160px;
+}
+
+// Manual registration / edit form.
+
+.pickRow {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin: 6px 0;
+}
+
+.gridSpaced {
+  margin-top: 8px;
+}
+
+.field {
+  margin-bottom: 12px;
+}
+
+.fieldLabel {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+
+.required::after {
+  content: ' *';
+  color: var(--color-danger, #dc2626);
+}
+
+.control {
+  flex: 1;
+  width: 100%;
+}
+
+.currency {
+  width: 100px;
+}
+
+// Contract popup.
+
+.formRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 16px;
+}
+
+.stepper {
+  margin-bottom: 16px;
+}
+
+.inlineForm {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
