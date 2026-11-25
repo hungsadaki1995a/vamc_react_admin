@@ -7,7 +7,7 @@ import {
 import ActionButton from '@/components/common/actions/ActionButton';
 import Pagination from '@/components/common/pagination/Pagination';
 import AppCheckbox from '@/components/inputs/AppCheckbox';
-import { splitDateTime } from './system-utils';
+import { splitDateTime } from '@/utils/system-utils';
 import styles from './system-page.module.scss';
 
 // Small building blocks shared by the System Operation Management screens.

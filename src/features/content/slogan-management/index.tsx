@@ -4,11 +4,11 @@ import TextArea from '@/components/inputs/TextArea';
 import { useMenuPermission } from '@/hooks/use-menu-permission';
 import { useNotify } from '@/hooks/use-notify';
 import type { SloganSetting } from '@/api/contents/site-display-api';
-import { SysButton, SysPage, SysTitleBar } from '@/features/system/_shared/SysListUi';
-import { SysField, SysFieldGrid } from '@/features/system/_shared/SysFormUi';
-import { SYS_MESSAGES } from '@/features/system/_shared/sys-messages';
-import { errorMessage } from '@/features/system/_shared/system-utils';
-import { useFieldErrors } from '@/features/system/_shared/use-field-errors';
+import { SysButton, SysPage, SysTitleBar } from '@/components/common/sys-ui/SysListUi';
+import { SysField, SysFieldGrid } from '@/components/common/sys-ui/SysFormUi';
+import { SYS_MESSAGES } from '@/config/sys-messages';
+import { errorMessage } from '@/utils/system-utils';
+import { useFieldErrors } from '@/hooks/use-field-errors';
 import { useCurrentSlogan, useSaveSlogan } from './use-slogans';
 import styles from './slogan-management.module.scss';
 

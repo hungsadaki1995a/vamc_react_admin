@@ -10,7 +10,7 @@ import {
   PlusSquareOutlined,
 } from '@ant-design/icons';
 import type { MenuSetting, YesNo } from '@/api/system/menu-setting-api';
-import { SysButton, UseBadge } from './SysListUi';
+import { SysButton, UseBadge } from '@/components/common/sys-ui/SysListUi';
 import { menuName, planMenuMove } from './menu-tree';
 import type { DropPosition, MenuMove, MenuNode, MenuTree } from './menu-tree';
 import styles from './menu-settings.module.scss';

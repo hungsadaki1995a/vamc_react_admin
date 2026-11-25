@@ -5,11 +5,11 @@ import TextInput from '@/components/inputs/TextInput';
 import { useNotify } from '@/hooks/use-notify';
 import type { YesNo } from '@/api/system/code-group-api';
 import type { InstitutionItem } from '@/api/system/institution-api';
-import { SysField, SysFieldGrid, SysFormModal } from '@/features/system/_shared/SysFormUi';
-import { USE_YN_RADIO_OPTIONS } from '@/features/system/_shared/sys-constants';
-import { SYS_MESSAGES } from '@/features/system/_shared/sys-messages';
-import { useFieldErrors } from '@/features/system/_shared/use-field-errors';
-import { errorMessage } from '@/features/system/_shared/system-utils';
+import { SysField, SysFieldGrid, SysFormModal } from '@/components/common/sys-ui/SysFormUi';
+import { USE_YN_RADIO_OPTIONS } from '@/config/sys-constants';
+import { SYS_MESSAGES } from '@/config/sys-messages';
+import { useFieldErrors } from '@/hooks/use-field-errors';
+import { errorMessage } from '@/utils/system-utils';
 import { ApiError } from '@/lib/api/error';
 import { useCreateInstitution, useUpdateInstitution } from './use-institutions';
 

@@ -21,7 +21,7 @@ Follow these rules for all styling in this React project to keep component logic
   - When targeting third-party selectors (`antd`, `ag-grid`) inside a `.module.scss` file, scope them under a local module class using `:global(...)` (e.g. `.amountInput :global(.ant-input-number-input) { … }`).
   - Name the stylesheet after the component or screen folder (`FeeModal.tsx` / `fee-management/index.tsx` → `fee-management.module.scss`). `index.module.scss` exists only in the older `features/auth/*` pages — do not add new ones.
   - Class names are `camelCase` (`.numberCell`) and are used as `className={styles.numberCell}`; import the module last as `import styles from './x.module.scss';`.
-  - Screens of one domain share look-and-feel from `_shared/*.module.scss` (e.g. `features/system/_shared/sys-ui.module.scss`); the screen's own file holds only screen-specific layout.
+  - Screens of one domain share look-and-feel from `_shared/*.module.scss` or shared stylesheets in `components/common/` (e.g. `components/common/sys-ui/sys-ui.module.scss`); the screen's own file holds only screen-specific layout.
 - Keep `@keyframes`, pseudo-classes (`:hover`, `:focus`, `:disabled`), media queries, and state variants in the stylesheet—never in JSX.
 
 ## 3. Design Tokens & Theme Consistency

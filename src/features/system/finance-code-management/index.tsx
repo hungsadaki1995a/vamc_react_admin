@@ -17,11 +17,11 @@ import {
   SysTable,
   SysTitleBar,
   UseBadge,
-} from '@/features/system/_shared/SysListUi';
-import { SYS_PAGE_SIZE } from '@/features/system/_shared/sys-constants';
-import { usePagedList } from '@/features/system/_shared/use-paged-list';
-import { useSysDialogs } from '@/features/system/_shared/use-sys-dialogs';
-import { apiErrorCode } from '@/features/system/_shared/system-utils';
+} from '@/components/common/sys-ui/SysListUi';
+import { SYS_PAGE_SIZE } from '@/config/sys-constants';
+import { usePagedList } from '@/hooks/use-paged-list';
+import { useSysDialogs } from '@/hooks/use-sys-dialogs';
+import { apiErrorCode } from '@/utils/system-utils';
 import { ApiError } from '@/lib/api/error';
 import { CodeDetailGrid } from '@/features/system/common-code-management/CodeDetailGrid';
 import type { GridChanges, GridColumn, GridRecord } from '@/features/system/common-code-management/CodeDetailGrid';

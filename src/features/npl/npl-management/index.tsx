@@ -10,9 +10,9 @@ import AppRadio from '@/components/inputs/AppRadio';
 import AppSelect from '@/components/inputs/AppSelect';
 import TextInput from '@/components/inputs/TextInput';
 import type { NplItem, NplSearch } from '@/api/npl/npl-api';
-import { SysPageHeader, SysPagination } from '@/features/system/_shared/SystemUi';
-import { rowNumber } from '@/features/system/_shared/system-utils';
-import styles from '@/features/system/_shared/system-page.module.scss';
+import { SysPageHeader, SysPagination } from '@/components/common/sys-ui/SystemUi';
+import { rowNumber } from '@/utils/system-utils';
+import styles from '@/components/common/sys-ui/system-page.module.scss';
 import { useNpl, useNpls } from './use-npls';
 
 const PAGE_SIZE = 15;

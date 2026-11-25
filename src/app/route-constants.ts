@@ -22,6 +22,7 @@ export const ROUTE_MENU_CODES: Record<string, readonly string[]> = {
   '/contract/purchase-brokerage-contract': ['A05020100'],
   '/contract/sale-brokerage-contract': ['A05020200'],
   '/contract/consulting-contract': ['A05020300'],
+  '/content/banner': ['A07060100'],
   '/system-operation/npl-platform/menu-settings': ['A09010100'],
   '/system-operation/npl-platform/form': ['A09010200'],
   '/system-operation/npl-platform/fee': ['A09010300'],
@@ -48,4 +49,26 @@ const MENU_CODE_TO_ROUTE: Record<string, string> = Object.entries(ROUTE_MENU_COD
 /** Returns the hardcoded route path for a menu code, or undefined if unmapped. */
 export function getRouteByMenuCode(menuCode?: string | null): string | undefined {
   return menuCode ? MENU_CODE_TO_ROUTE[menuCode] : undefined;
+}
+
+export const REDIRECT_QUERY_KEY = 'redirect';
+
+/** Validates an internal redirect target against PRIVATE_ROUTES to prevent open redirects. */
+export function getSafeRedirectPath(raw: string | null): string | null {
+  if (!raw || !raw.startsWith('/') || raw.startsWith('//')) return null;
+  try {
+    const url = new URL(raw, window.location.origin);
+    if (url.origin !== window.location.origin) return null;
+    if (!PRIVATE_ROUTES.includes(url.pathname)) return null;
+    return `${url.pathname}${url.search}${url.hash}`;
+  } catch {
+    return null;
+  }
+}
+
+/** Builds `/login?redirect=...` for valid private routes, or `/login` otherwise. */
+export function buildLoginRedirectUrl(target: string): string {
+  const safeTarget = getSafeRedirectPath(target);
+  if (!safeTarget) return PUBLIC_ROUTES.LOGIN;
+  return `${PUBLIC_ROUTES.LOGIN}?${REDIRECT_QUERY_KEY}=${encodeURIComponent(safeTarget)}`;
 }

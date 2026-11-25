@@ -8,9 +8,9 @@ import TextInput from '@/components/inputs/TextInput';
 import { useNotify } from '@/hooks/use-notify';
 import { useMenuPermission } from '@/hooks/use-menu-permission';
 import type { NplLotItem, NplLotSearch } from '@/api/npl/npl-api';
-import { DateTimeCell, FormField, SysPageHeader, SysPagination } from '@/features/system/_shared/SystemUi';
-import { errorMessage, rowNumber } from '@/features/system/_shared/system-utils';
-import styles from '@/features/system/_shared/system-page.module.scss';
+import { DateTimeCell, FormField, SysPageHeader, SysPagination } from '@/components/common/sys-ui/SystemUi';
+import { errorMessage, rowNumber } from '@/utils/system-utils';
+import styles from '@/components/common/sys-ui/system-page.module.scss';
 import { useDeleteNplLot, useDownloadNplLotsExcel, useNplLots, useSaveNplLot } from './use-npl-lots';
 
 const PAGE_SIZE = 15;

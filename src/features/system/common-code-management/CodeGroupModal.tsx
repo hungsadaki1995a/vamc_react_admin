@@ -3,11 +3,11 @@ import AppRadio from '@/components/inputs/AppRadio';
 import TextInput from '@/components/inputs/TextInput';
 import { useNotify } from '@/hooks/use-notify';
 import type { CodeGroupItem, YesNo } from '@/api/system/code-group-api';
-import { SysField, SysFieldGrid, SysFormModal } from '@/features/system/_shared/SysFormUi';
-import { USE_YN_RADIO_OPTIONS } from '@/features/system/_shared/sys-constants';
-import { SYS_MESSAGES } from '@/features/system/_shared/sys-messages';
-import { useFieldErrors } from '@/features/system/_shared/use-field-errors';
-import { errorMessage } from '@/features/system/_shared/system-utils';
+import { SysField, SysFieldGrid, SysFormModal } from '@/components/common/sys-ui/SysFormUi';
+import { USE_YN_RADIO_OPTIONS } from '@/config/sys-constants';
+import { SYS_MESSAGES } from '@/config/sys-messages';
+import { useFieldErrors } from '@/hooks/use-field-errors';
+import { errorMessage } from '@/utils/system-utils';
 import { useCreateCodeGroup, useUpdateCodeGroup } from './use-common-codes';
 
 // VPA090301P01 Common Code Group Register / Edit.

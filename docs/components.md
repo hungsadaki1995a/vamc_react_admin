@@ -15,7 +15,7 @@ import { AppSelect, TextInput, AppRangePicker, Spinbox } from '@/components/inpu
 | AG Grid | `components/grid/` |
 | Tab shell | `components/tabs/` (used by `AppLayout` only) |
 | Route guard / auth header | `components/auth/` |
-| System Operation look (v0.8 frame) | `features/system/_shared/` (`SysListUi`, `SysFormUi`) |
+| System Operation look (v0.8 frame) | `components/common/sys-ui/` (`SysListUi`, `SysFormUi`, `SystemUi`) |
 
 ---
 
@@ -179,9 +179,9 @@ import { ComcdSelectCellRenderer, ComcdSelectCellEditor } from '@/components/gri
 
 ---
 
-## System Operation building blocks (`features/system/_shared`)
+## System Operation building blocks (`components/common/sys-ui`)
 
-The v0.8 frame for every `features/system/*` screen. Use them there instead of the generic layout components.
+The v0.8 frame for `features/system/*` and `features/content/*` screens. Use them instead of the generic layout components when matching the v0.8 design.
 
 | `SysListUi.tsx` | |
 |-----------------|--|
@@ -202,7 +202,7 @@ The v0.8 frame for every `features/system/*` screen. Use them there instead of t
 | `SysFieldGrid` (`columns` 1/2/3) + `SysField` (`label`, `required`, `error`, `span`, `hint`) | form grid with inline error |
 | `SysFormSection` (`title`, `actions`) | titled block |
 
-Hooks next to them: `usePagedList`, `useFieldErrors`, `useSysDialogs`, `useMenuSettings`, `useMenuPermissions`; constants `sys-constants.ts` (`SYS_PAGE_SIZE` = 20, date formats, `USE_YN_*_OPTIONS`), messages `sys-messages.ts`, helpers `system-utils.ts` (`errorMessage`, `formatAmount`, `rowNumber`, `lastDaysRange`, …).
+Shared hooks in `src/hooks/`: `usePagedList`, `useFieldErrors`, `useSysDialogs`; system-specific hooks in `features/system/_shared/`: `useMenuSettings`, `useMenuPermissions`; constants in `src/config/`: `sys-constants.ts` (`SYS_PAGE_SIZE` = 20, date formats, `USE_YN_*_OPTIONS`), `sys-messages.ts`; helpers in `src/utils/system-utils.ts` (`errorMessage`, `formatAmount`, `rowNumber`, `lastDaysRange`, …).
 
 ### `SystemUi.tsx` — wireframe header used by the other domains
 
@@ -214,4 +214,4 @@ Screens outside `system` (member, content, npl, trade, auction) build their list
 | `SysPagination` | centred numeric pager, blocks of 10 |
 | `DateTimeCell`, `UseFlag`, `UseYnChecks`, `FormField` | cell renderers, "All / Used / Unused" filter, label+value form cell |
 
-Import it with the alias: `import { SysPageHeader, SysPagination } from '@/features/system/_shared/SystemUi';`. `features/system/*` screens themselves use `SysListUi` / `SysFormUi` (v0.8 frame).
+Import it with the alias: `import { SysPageHeader, SysPagination } from '@/components/common/sys-ui/SystemUi';`. `features/system/*` screens themselves use `SysListUi` / `SysFormUi` (v0.8 frame).

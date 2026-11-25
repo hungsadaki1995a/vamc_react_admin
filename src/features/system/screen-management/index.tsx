@@ -16,9 +16,9 @@ import {
   SysSectionHeader,
   SysTable,
   SysTitleBar,
-} from '@/features/system/_shared/SysListUi';
-import { ALL, SYS_PAGE_SIZE } from '@/features/system/_shared/sys-constants';
-import { usePagedList } from '@/features/system/_shared/use-paged-list';
+} from '@/components/common/sys-ui/SysListUi';
+import { ALL, SYS_PAGE_SIZE } from '@/config/sys-constants';
+import { usePagedList } from '@/hooks/use-paged-list';
 import { businessName, SCREEN_TYPE_FILTER_OPTIONS } from './screen-constants';
 import { ScreenModal } from './ScreenModal';
 import { useBusinessOptions, useDownloadScreensExcel, useScreens } from './use-screens';

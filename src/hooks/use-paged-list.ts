@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
 import type { PageQuery, SortDirection } from '@/api/common/api-utils';
-import { SYS_PAGE_SIZE } from './sys-constants';
+import { SYS_PAGE_SIZE } from '@/config/sys-constants';
 
 // Search / paging / sort state of a v0.8 list screen.
 // The filter panel edits `draft`; [Search] copies it to `applied` and returns to page 1.

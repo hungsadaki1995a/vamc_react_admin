@@ -15,9 +15,9 @@ import {
   SysSectionHeader,
   SysTable,
   SysTitleBar,
-} from '@/features/system/_shared/SysListUi';
-import { SYS_PAGE_SIZE } from '@/features/system/_shared/sys-constants';
-import { usePagedList } from '@/features/system/_shared/use-paged-list';
+} from '@/components/common/sys-ui/SysListUi';
+import { SYS_PAGE_SIZE } from '@/config/sys-constants';
+import { usePagedList } from '@/hooks/use-paged-list';
 import { TERMS_STATUS, TERMS_STATUS_FILTER_OPTIONS, TERMS_TYPE_FILTER_OPTIONS, termsTypeLabel } from './terms-constants';
 import { TermsModal } from './TermsModal';
 import { useTermsPolicies } from './use-terms-policies';

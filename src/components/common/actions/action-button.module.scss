@@ -63,11 +63,16 @@
 
   &.sizeDefault:global(.ant-btn) {
     height: 32px;
+    min-width: 60px;
     padding: 0 10px;
     border-radius: 4px;
     font-size: 12px;
     line-height: 16px;
     font-weight: 600;
+
+    &:global(.ant-btn-icon-only) {
+      min-width: 32px;
+    }
   }
 
   &.sizeSmall:global(.ant-btn) {
@@ -278,6 +283,7 @@
   /* Button-text */
   &.intentText:global(.ant-btn) {
     height: auto;
+    min-width: 0;
     padding: 0 4px;
     border-color: transparent;
     background: transparent;

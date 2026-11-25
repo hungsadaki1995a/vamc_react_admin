@@ -23,9 +23,9 @@ import {
   SysTable,
   SysTitleBar,
   UseBadge,
-} from '../_shared/SysListUi';
-import { ALL, SYS_PAGE_SIZE, USE_YN_FILTER_OPTIONS } from '../_shared/sys-constants';
-import { usePagedList } from '../_shared/use-paged-list';
+} from '@/components/common/sys-ui/SysListUi';
+import { ALL, SYS_PAGE_SIZE, USE_YN_FILTER_OPTIONS } from '@/config/sys-constants';
+import { usePagedList } from '@/hooks/use-paged-list';
 import { CHANNEL_FILTER_OPTIONS, RECIPIENT_TYPE_FILTER_OPTIONS } from './notification-message-constants';
 import NotificationMessageModal from './NotificationMessageModal';
 import { useDownloadNotificationMessagesExcel, useNotificationMessages } from './use-notification-messages';

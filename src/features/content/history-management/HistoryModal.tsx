@@ -4,12 +4,12 @@ import TextArea from '@/components/inputs/TextArea';
 import TextInput from '@/components/inputs/TextInput';
 import { useNotify } from '@/hooks/use-notify';
 import type { AboutHistory, AboutHistoryRequest } from '@/api/contents/about-page-api';
-import { SysButton } from '@/features/system/_shared/SysListUi';
-import { SysField, SysFieldGrid, SysFormModal } from '@/features/system/_shared/SysFormUi';
-import { SYS_DIALOG_LABELS, SYS_MESSAGES } from '@/features/system/_shared/sys-messages';
-import { errorMessage } from '@/features/system/_shared/system-utils';
-import { useFieldErrors } from '@/features/system/_shared/use-field-errors';
-import { useSysDialogs } from '@/features/system/_shared/use-sys-dialogs';
+import { SysButton } from '@/components/common/sys-ui/SysListUi';
+import { SysField, SysFieldGrid, SysFormModal } from '@/components/common/sys-ui/SysFormUi';
+import { SYS_DIALOG_LABELS, SYS_MESSAGES } from '@/config/sys-messages';
+import { errorMessage } from '@/utils/system-utils';
+import { useFieldErrors } from '@/hooks/use-field-errors';
+import { useSysDialogs } from '@/hooks/use-sys-dialogs';
 import { useAboutHistory, useDeleteAboutHistory, useSaveAboutHistory } from './use-history';
 import styles from './history-management.module.scss';
 

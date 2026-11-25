@@ -7,9 +7,9 @@ import AppDatePicker from '@/components/inputs/AppDatePicker';
 import TextArea from '@/components/inputs/TextArea';
 import TextInput from '@/components/inputs/TextInput';
 import { FEE_SCHEDULE_API_AVAILABLE } from '@/api/system/fee-api';
-import { SysButton, SysNotAvailable } from '../_shared/SysListUi';
-import { SysField, SysFieldGrid, SysFormModal } from '../_shared/SysFormUi';
-import { SYS_DATE_FORMAT } from '../_shared/sys-constants';
+import { SysButton, SysNotAvailable } from '@/components/common/sys-ui/SysListUi';
+import { SysField, SysFieldGrid, SysFormModal } from '@/components/common/sys-ui/SysFormUi';
+import { SYS_DATE_FORMAT } from '@/config/sys-constants';
 import styles from './fee-management.module.scss';
 
 // Fee Management - Fee Schedule popup (VPA090103P02): one shared record shown at the bottom of the

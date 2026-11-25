@@ -5,8 +5,8 @@ import TextInput from '@/components/inputs/TextInput';
 import { useNotify } from '@/hooks/use-notify';
 import { useMenuPermission } from '@/hooks/use-menu-permission';
 import type { BatchJobItem, BatchJobSearch } from '@/api/system/batch-api';
-import { SYS_PAGE_SIZE, USE_YN_FILTER_OPTIONS } from '@/features/system/_shared/sys-constants';
-import { SYS_DIALOG_LABELS } from '@/features/system/_shared/sys-messages';
+import { SYS_PAGE_SIZE, USE_YN_FILTER_OPTIONS } from '@/config/sys-constants';
+import { SYS_DIALOG_LABELS } from '@/config/sys-messages';
 import {
   DateTimeText,
   ResultBadge,
@@ -21,10 +21,10 @@ import {
   SysTable,
   SysTitleBar,
   UseBadge,
-} from '@/features/system/_shared/SysListUi';
-import { errorMessage } from '@/features/system/_shared/system-utils';
-import { usePagedList } from '@/features/system/_shared/use-paged-list';
-import { useSysDialogs } from '@/features/system/_shared/use-sys-dialogs';
+} from '@/components/common/sys-ui/SysListUi';
+import { errorMessage } from '@/utils/system-utils';
+import { usePagedList } from '@/hooks/use-paged-list';
+import { useSysDialogs } from '@/hooks/use-sys-dialogs';
 import BatchHistoryModal from './BatchHistoryModal';
 import BatchJobModal from './BatchJobModal';
 import { BATCH_BREADCRUMB, BATCH_MESSAGES, toResult } from './batch-utils';

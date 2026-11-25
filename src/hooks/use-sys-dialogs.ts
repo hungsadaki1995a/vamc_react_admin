@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from 'react';
 import type { ReactNode } from 'react';
 import { useNotify } from '@/hooks/use-notify';
-import { SYS_DIALOG_LABELS, SYS_MESSAGES } from './sys-messages';
+import { SYS_DIALOG_LABELS, SYS_MESSAGES } from '@/config/sys-messages';
 
 // Confirm / alert dialogs of the v0.8 system messages (C0x codes), built on useNotify.
 // Dialog buttons follow the design: [Close] [<action>].

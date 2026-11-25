@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
-import { apiErrorCode, apiValidationErrors } from './system-utils';
-import { SYS_MESSAGES } from './sys-messages';
+import { apiErrorCode, apiValidationErrors } from '@/utils/system-utils';
+import { SYS_MESSAGES } from '@/config/sys-messages';
 
 // Inline field errors (E0x) of the v0.8 register/edit popups and edit panels.
 

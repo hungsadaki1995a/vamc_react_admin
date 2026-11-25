@@ -1,10 +1,10 @@
 import AppRadio from '@/components/inputs/AppRadio';
 import TextInput from '@/components/inputs/TextInput';
 import type { MenuSeCd, YesNo } from '@/api/system/menu-setting-api';
-import { SysButton } from './SysListUi';
-import { SysField, SysFieldGrid } from './SysFormUi';
-import { USE_YN_RADIO_OPTIONS } from './sys-constants';
-import type { FieldErrors } from './use-field-errors';
+import { SysButton } from '@/components/common/sys-ui/SysListUi';
+import { SysField, SysFieldGrid } from '@/components/common/sys-ui/SysFormUi';
+import { USE_YN_RADIO_OPTIONS } from '@/config/sys-constants';
+import type { FieldErrors } from '@/hooks/use-field-errors';
 import type { MenuForm, MenuFormKey } from './menu-settings-form';
 import styles from './menu-settings.module.scss';
 

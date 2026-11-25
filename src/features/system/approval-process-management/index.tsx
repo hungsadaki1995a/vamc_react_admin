@@ -17,12 +17,12 @@ import {
   SysSectionHeader,
   SysTable,
   SysTitleBar,
-} from '@/features/system/_shared/SysListUi';
-import { SYS_PAGE_SIZE, USE_YN_FILTER_OPTIONS } from '@/features/system/_shared/sys-constants';
-import { SYS_MESSAGES } from '@/features/system/_shared/sys-messages';
-import { useSysDialogs } from '@/features/system/_shared/use-sys-dialogs';
-import { usePagedList } from '@/features/system/_shared/use-paged-list';
-import { errorMessage } from '@/features/system/_shared/system-utils';
+} from '@/components/common/sys-ui/SysListUi';
+import { SYS_PAGE_SIZE, USE_YN_FILTER_OPTIONS } from '@/config/sys-constants';
+import { SYS_MESSAGES } from '@/config/sys-messages';
+import { useSysDialogs } from '@/hooks/use-sys-dialogs';
+import { usePagedList } from '@/hooks/use-paged-list';
+import { errorMessage } from '@/utils/system-utils';
 import { APPROVAL_PROCESS_MESSAGES } from './approval-process-constants';
 import { ApprovalProcessModal } from './ApprovalProcessModal';
 import { useApprovalProcesses, useUpdateApprovalProcessStatus } from './use-approval-processes';

@@ -4,11 +4,11 @@ import { useNotify } from '@/hooks/use-notify';
 import { useMenuPermission } from '@/hooks/use-menu-permission';
 import { useMenuStore } from '@/stores/menu-store';
 import type { MenuSeCd, MenuSetting, SaveMenuSettingRequest } from '@/api/system/menu-setting-api';
-import { SysPage, SysSplit, SysTitleBar } from './SysListUi';
-import { SYS_MESSAGES } from './sys-messages';
-import { useSysDialogs } from './use-sys-dialogs';
-import { useFieldErrors } from './use-field-errors';
-import { apiErrorCode, errorMessage } from './system-utils';
+import { SysPage, SysSplit, SysTitleBar } from '@/components/common/sys-ui/SysListUi';
+import { SYS_MESSAGES } from '@/config/sys-messages';
+import { useSysDialogs } from '@/hooks/use-sys-dialogs';
+import { useFieldErrors } from '@/hooks/use-field-errors';
+import { apiErrorCode, errorMessage } from '@/utils/system-utils';
 import { buildMenuTree, menuName, parentCodes, visibleNodes } from './menu-tree';
 import type { MenuMove, MenuNode } from './menu-tree';
 import {

@@ -12,8 +12,8 @@ import CommonStatusBadge, { type StatusBadgeColor } from '@/components/common/ba
 import Pagination from '@/components/common/pagination/Pagination';
 import DataTable, { type DataTableProps } from '@/components/common/table/DataTable';
 import type { ActionButtonProps } from '@/types/action-button';
-import type { SortState } from './use-paged-list';
-import { formatSysDateTime } from './system-utils';
+import type { SortState } from '@/hooks/use-paged-list';
+import { formatSysDateTime } from '@/utils/system-utils';
 import styles from './sys-ui.module.scss';
 
 // Layout building blocks of the v0.8 System Operation Management list screens:

@@ -9,10 +9,10 @@ import {
   SysSearchActions,
   SysSectionHeader,
   SysTable,
-} from '../_shared/SysListUi';
-import { SysFormModal } from '../_shared/SysFormUi';
-import { SYS_PAGE_SIZE } from '../_shared/sys-constants';
-import { usePagedList } from '../_shared/use-paged-list';
+} from '@/components/common/sys-ui/SysListUi';
+import { SysFormModal } from '@/components/common/sys-ui/SysFormUi';
+import { SYS_PAGE_SIZE } from '@/config/sys-constants';
+import { usePagedList } from '@/hooks/use-paged-list';
 import { useEmployeeLookup } from './use-role-groups';
 
 // Staff Search popup (VPA020500P01) opened by [Add Staff]: every employed staff member not yet

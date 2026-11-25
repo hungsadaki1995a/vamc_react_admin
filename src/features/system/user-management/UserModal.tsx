@@ -3,12 +3,12 @@ import AppSelect from '@/components/inputs/AppSelect';
 import TextInput from '@/components/inputs/TextInput';
 import { useNotify } from '@/hooks/use-notify';
 import type { EmpStatus, EmployeeDetail, UpdateEmployeeRequest } from '@/api/system/employee-api';
-import { SysButton } from '../_shared/SysListUi';
-import { SysField, SysFieldGrid, SysFormModal } from '../_shared/SysFormUi';
-import { SYS_DIALOG_LABELS, SYS_MESSAGES } from '../_shared/sys-messages';
-import { useSysDialogs } from '../_shared/use-sys-dialogs';
-import { useFieldErrors } from '../_shared/use-field-errors';
-import { errorMessage } from '../_shared/system-utils';
+import { SysButton } from '@/components/common/sys-ui/SysListUi';
+import { SysField, SysFieldGrid, SysFormModal } from '@/components/common/sys-ui/SysFormUi';
+import { SYS_DIALOG_LABELS, SYS_MESSAGES } from '@/config/sys-messages';
+import { useSysDialogs } from '@/hooks/use-sys-dialogs';
+import { useFieldErrors } from '@/hooks/use-field-errors';
+import { errorMessage } from '@/utils/system-utils';
 import { EMAIL_PATTERN, EMP_NO_PATTERN, EMP_STATUS_OPTIONS, MOBILE_PATTERN } from './user-constants';
 import { useCreateEmployee, useDeleteEmployee, useResetEmployeePassword, useUpdateEmployee } from './use-employees';
 

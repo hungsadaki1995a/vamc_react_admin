@@ -128,12 +128,14 @@ export function useTabRouteSync() {
       openTab(menuItem);
       syncRailFromKey(menuItem.key);
     } else {
-      // Still missing after menus arrived → invalid URL. Revert to active tab's mapped address if any.
+      // Still missing after menus arrived → invalid URL. Revert to active tab's mapped address or default.
       const active = useTabStore.getState().activeTabKey;
       const fallbackPath = getRouteByMenuCode(active);
       if (fallbackPath && location.pathname !== fallbackPath) {
         isNavigatingRef.current = true;
         navigate(fallbackPath, { replace: true });
+      } else if (!fallbackPath && location.pathname !== '/members') {
+        navigate('/members', { replace: true });
       }
     }
     pendingPathRef.current = null;

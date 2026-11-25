@@ -1,4 +1,4 @@
-import { ALL } from '@/features/system/_shared/sys-constants';
+import { ALL } from '@/config/sys-constants';
 import type { ScreenItem, ScreenType } from '@/api/system/program-screen-api';
 
 export type { ScreenType };

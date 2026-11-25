@@ -1,9 +1,9 @@
 import LoadingSpinner from '@/components/common/loading/LoadingSpinner';
 import TextInput from '@/components/inputs/TextInput';
 import { NOTI_CHANNEL_LABELS, NOTI_RECIPIENT_LABELS } from '@/api/system/notification-api';
-import { ResultBadge } from '../_shared/SysListUi';
-import { SysField, SysFieldGrid, SysFormModal } from '../_shared/SysFormUi';
-import { formatSysDateTime } from '../_shared/system-utils';
+import { ResultBadge } from '@/components/common/sys-ui/SysListUi';
+import { SysField, SysFieldGrid, SysFormModal } from '@/components/common/sys-ui/SysFormUi';
+import { formatSysDateTime } from '@/utils/system-utils';
 import { useNotificationHistory } from './use-notification-histories';
 import styles from './notification-history-management.module.scss';
 

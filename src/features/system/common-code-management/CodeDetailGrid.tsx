@@ -5,12 +5,12 @@ import AppSelect from '@/components/inputs/AppSelect';
 import Spinbox from '@/components/inputs/Spinbox';
 import TextInput from '@/components/inputs/TextInput';
 import { useNotify } from '@/hooks/use-notify';
-import { SysButton, SysSectionHeader, SysTable, UseBadge } from '@/features/system/_shared/SysListUi';
-import type { SortState } from '@/features/system/_shared/use-paged-list';
-import { SYS_MESSAGES } from '@/features/system/_shared/sys-messages';
-import { USE_YN_RADIO_OPTIONS } from '@/features/system/_shared/sys-constants';
-import { useSysDialogs } from '@/features/system/_shared/use-sys-dialogs';
-import { errorMessage, formatSysDateTime } from '@/features/system/_shared/system-utils';
+import { SysButton, SysSectionHeader, SysTable, UseBadge } from '@/components/common/sys-ui/SysListUi';
+import type { SortState } from '@/hooks/use-paged-list';
+import { SYS_MESSAGES } from '@/config/sys-messages';
+import { USE_YN_RADIO_OPTIONS } from '@/config/sys-constants';
+import { useSysDialogs } from '@/hooks/use-sys-dialogs';
+import { errorMessage, formatSysDateTime } from '@/utils/system-utils';
 import styles from './code-detail-grid.module.scss';
 
 // Editable detail grid of the code screens (Common / Region / Finance):

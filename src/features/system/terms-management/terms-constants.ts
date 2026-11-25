@@ -1,5 +1,5 @@
-import type { BadgeTone } from '@/features/system/_shared/SysListUi';
-import { ALL } from '@/features/system/_shared/sys-constants';
+import type { BadgeTone } from '@/components/common/sys-ui/SysListUi';
+import { ALL } from '@/config/sys-constants';
 import type { TermsStatus, TermsType } from '@/api/system/terms-api';
 
 export const TERMS_TYPE_OPTIONS: { value: TermsType; label: string }[] = [

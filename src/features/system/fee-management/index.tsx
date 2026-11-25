@@ -19,9 +19,9 @@ import {
   SysTable,
   SysTitleBar,
   UseBadge,
-} from '../_shared/SysListUi';
-import { ALL, API_DATE_DMY, SYS_DATE_FORMAT, SYS_PAGE_SIZE, USE_YN_FILTER_OPTIONS } from '../_shared/sys-constants';
-import { usePagedList } from '../_shared/use-paged-list';
+} from '@/components/common/sys-ui/SysListUi';
+import { ALL, API_DATE_DMY, SYS_DATE_FORMAT, SYS_PAGE_SIZE, USE_YN_FILTER_OPTIONS } from '@/config/sys-constants';
+import { usePagedList } from '@/hooks/use-paged-list';
 import {
   FEE_CATEGORY_FILTER_OPTIONS,
   FEE_METHOD_LABELS,

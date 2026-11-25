@@ -6,13 +6,13 @@ import TextInput from '@/components/inputs/TextInput';
 import { useNotify } from '@/hooks/use-notify';
 import { APPROVAL_PROCESS_ERRORS } from '@/api/system/approval-process-api';
 import type { ApprovalProcessDetail, ApprovalProcessStepRequest, YesNo } from '@/api/system/approval-process-api';
-import { SysField, SysFieldGrid, SysFormModal, SysFormSection } from '@/features/system/_shared/SysFormUi';
-import { SysButton } from '@/features/system/_shared/SysListUi';
-import { USE_YN_RADIO_OPTIONS } from '@/features/system/_shared/sys-constants';
-import { SYS_DIALOG_LABELS, SYS_MESSAGES } from '@/features/system/_shared/sys-messages';
-import { useFieldErrors } from '@/features/system/_shared/use-field-errors';
-import { useSysDialogs } from '@/features/system/_shared/use-sys-dialogs';
-import { apiErrorCode, errorMessage } from '@/features/system/_shared/system-utils';
+import { SysField, SysFieldGrid, SysFormModal, SysFormSection } from '@/components/common/sys-ui/SysFormUi';
+import { SysButton } from '@/components/common/sys-ui/SysListUi';
+import { USE_YN_RADIO_OPTIONS } from '@/config/sys-constants';
+import { SYS_DIALOG_LABELS, SYS_MESSAGES } from '@/config/sys-messages';
+import { useFieldErrors } from '@/hooks/use-field-errors';
+import { useSysDialogs } from '@/hooks/use-sys-dialogs';
+import { apiErrorCode, errorMessage } from '@/utils/system-utils';
 import {
   APPROVAL_PROCESS_MESSAGES,
   MAX_STEPS,

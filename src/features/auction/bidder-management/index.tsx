@@ -6,9 +6,9 @@ import TextInput from '@/components/inputs/TextInput';
 import { useNotify } from '@/hooks/use-notify';
 import { useMenuPermission } from '@/hooks/use-menu-permission';
 import type { AuctionItem, BidderItem } from '@/api/auction/auction-api';
-import { SysPageHeader, SysPagination } from '@/features/system/_shared/SystemUi';
-import { errorMessage } from '@/features/system/_shared/system-utils';
-import styles from '@/features/system/_shared/system-page.module.scss';
+import { SysPageHeader, SysPagination } from '@/components/common/sys-ui/SystemUi';
+import { errorMessage } from '@/utils/system-utils';
+import styles from '@/components/common/sys-ui/system-page.module.scss';
 import { useApproveBidder, useBidderAuctions, useBidders, useRejectBidder } from './use-bidders';
 import type { BidderAuctionSearch } from './use-bidders';
 

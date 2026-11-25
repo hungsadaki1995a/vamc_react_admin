@@ -9,8 +9,8 @@ import TextInput from '@/components/inputs/TextInput';
 import { useNotify } from '@/hooks/use-notify';
 import { MEMBER_JOIN_OFFICER_STEP } from '@/api/member/member-approval-api';
 import type { ApprovalStage, MemberApprovalContext, YesNo } from '@/api/member/member-approval-api';
-import { errorMessage } from '@/features/system/_shared/system-utils';
-import { useFieldErrors } from '@/features/system/_shared/use-field-errors';
+import { errorMessage } from '@/utils/system-utils';
+import { useFieldErrors } from '@/hooks/use-field-errors';
 import {
   useApproveMemberApplication,
   useAssignMemberOfficer,

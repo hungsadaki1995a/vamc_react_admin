@@ -21,7 +21,7 @@ There are two text sources:
 | Admin shell + shared components | DB labels (`LANG_LBL`) via `label-store` | `useScreenLabel`, `useComponentLabel`, `useLabelStore(s => s.t)` |
 | Auth pages (`/login`, `/find-id`, `/find-password`) and a few shell texts (`AppLayout`, `IconRail`) | `src/lib/i18n/locales/{en,vn}.json` | `useTranslation()` from `react-i18next` |
 
-Business screens (`features/system`, `content`, `npl`, …) currently show the English text of the screen design. Keep repeated texts in constants (`features/system/_shared/sys-messages.ts`, `*-constants.ts`).
+Business screens (`features/system`, `content`, `npl`, …) currently show the English text of the screen design. Keep repeated texts in constants (`config/sys-messages.ts`, `*-constants.ts`).
 
 ---
 

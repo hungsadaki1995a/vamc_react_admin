@@ -29,7 +29,7 @@ import type {
   AccountStatus,
 } from './member.types';
 import { useMembers, useExportMembers } from './use-members';
-import { SysPagination } from '@/features/system/_shared/SystemUi';
+import { SysPagination } from '@/components/common/sys-ui/SystemUi';
 import MemberDetailModal from './MemberDetailModal';
 import MemberApprovalModal from './MemberApprovalModal';
 import NewMemberModal from './NewMemberModal';

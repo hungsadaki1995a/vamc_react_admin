@@ -1,5 +1,5 @@
 import type { ProgramType } from '@/api/system/program-screen-api';
-import { ALL } from '@/features/system/_shared/sys-constants';
+import { ALL } from '@/config/sys-constants';
 
 /** Type radio of the popup: Page (default) / Popup. */
 export const PROGRAM_TYPE_OPTIONS: { value: ProgramType; label: string }[] = [

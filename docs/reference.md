@@ -29,14 +29,14 @@ Quick lookup of shared hooks, stores, utils and `lib/`. How-to guides: `developm
 | `useTabRouteSync()` | — | URL ↔ active tab, back/forward (mounted in `AppLayout`) |
 | `useRestoreSession()` | — | restore session on boot (mounted in `App`) |
 | `useAppSync()` | `{ antLocale }` | locale side effects + reload codes/menus/labels (mounted in `App`) |
+| `usePagedList<F>(initialFilter, { pageSize?, defaultSort? })` | `{ draft, applied, page, sort, pageQuery, setDraft, search, reset, setPage, setSort }` | list search / paging / sort state |
+| `useFieldErrors<K>()` | `{ errors, hasErrors, setError, clearError, clearAll, checkRequired, applyApiError }` | inline form field errors (E0x) |
+| `useSysDialogs()` | `{ confirm, ask, alert, guardDiscard }` | confirm / alert dialogs with v0.8 button texts |
 
 ### System Operation (`features/system/_shared/`)
 
 | Hook | Purpose |
 |------|---------|
-| `usePagedList<F>(initialFilter, { pageSize?, defaultSort? })` | `{ draft, applied, page, sort, pageQuery, setDraft, search, reset, setPage, setSort }` |
-| `useFieldErrors<K>()` | `{ errors, hasErrors, setError, clearError, clearAll, checkRequired, applyApiError }` |
-| `useSysDialogs()` | `{ confirm, ask, alert, guardDiscard }` with v0.8 button texts |
 | `useMenuSettings`, `useMenuPermissions` | data hooks of the menu settings / menu permission screens |
 
 ---
@@ -81,8 +81,7 @@ Persistence keys and caches: see `architecture.md` → Stores.
 | `locale-storage.ts` | `LocaleKey`, `DEFAULT_LOCALE`, `SUPPORTED_LOCALES`, `LOCALE_OPTIONS`, `normalizeLocale`, `toIsoLangTag`, `getInitialLocale`, cookie helpers |
 | `token-storage.ts` | `getAccessToken`, `setAccessToken`, `getRefreshToken`, `clearTokens` (localStorage + cookie) |
 | `jwt-utils.ts` | `parseJwt`, `isTokenExpired`, `getTokenExp`, `jwtToMeResponse` |
-
-`features/system/_shared/system-utils.ts`: `errorMessage(error, fallback?)`, `apiErrorCode`, `apiValidationErrors`, `formatAmount`, `formatSysDateTime`, `splitDateTime`, `rowNumber`, `toUseYnFilter`, `lastDaysRange`.
+| `system-utils.ts` | `errorMessage(error, fallback?)`, `apiErrorCode`, `apiValidationErrors`, `formatAmount`, `formatSysDateTime`, `splitDateTime`, `rowNumber`, `toUseYnFilter`, `lastDaysRange` |
 
 ---
 
@@ -94,6 +93,8 @@ Persistence keys and caches: see `architecture.md` → Stores.
 | `menu-config.ts` | static menus (not from the server) |
 | `menu-component-fallback.ts` | `resolveMenuComponent(menuCd, menuUrlAddr)` — menu → screen folder when the URL is missing |
 | `theme-config.ts` | `APP_THEME` — antd theme tokens |
+| `sys-constants.ts` | `SYS_PAGE_SIZE`, date format strings, `ALL`, `USE_YN_*_OPTIONS` |
+| `sys-messages.ts` | `SYS_MESSAGES`, `SYS_DIALOG_LABELS` |
 
 `src/app/route-constants.ts`: `PUBLIC_ROUTES`, `ROUTE_MENU_CODES`, `PRIVATE_ROUTES`, `getRouteByMenuCode(code)`.
 

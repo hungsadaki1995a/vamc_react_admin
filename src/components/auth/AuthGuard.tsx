@@ -1,5 +1,6 @@
 import { type ReactNode } from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
+import { buildLoginRedirectUrl } from '@/app/route-constants';
 import LoadingSpinner from '@/components/common/loading/LoadingSpinner';
 import { useAuthStore } from '@/stores/auth-store';
 
@@ -8,6 +9,7 @@ type AuthGuardProps = {
 };
 
 export default function AuthGuard({ children }: AuthGuardProps) {
+  const location = useLocation();
   const isLoading = useAuthStore((s) => s.isLoading);
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
 
@@ -20,7 +22,8 @@ export default function AuthGuard({ children }: AuthGuardProps) {
   }
 
   if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
+    const redirectTo = buildLoginRedirectUrl(`${location.pathname}${location.search}${location.hash}`);
+    return <Navigate to={redirectTo} replace />;
   }
 
   return <>{children}</>;

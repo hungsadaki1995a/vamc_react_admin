@@ -8,11 +8,10 @@ import { useLocaleStore } from '@/stores/locale-store';
 import { useAuthStore } from '@/stores/auth-store';
 import { useComcdStore } from '@/stores/common-code-store';
 import { useMenuStore } from '@/stores/menu-store';
-import { useLabelStore } from '@/stores/label-store';
 import { toIsoLangTag } from '@/utils/locale-storage';
 import i18n from '@/lib/i18n';
 
-/** Syncs Dayjs/HTML locale and locale-dependent stores (common codes, menus, labels). */
+/** Syncs Dayjs/HTML locale and locale-dependent stores (common codes, menus). */
 export function useAppSync() {
   const locale = useLocaleStore((s) => s.locale);
   const antLocale = locale === 'vn' ? viVN : enUS;
@@ -34,7 +33,6 @@ export function useAppSync() {
     if (useAuthStore.getState().accessToken) {
       useMenuStore.getState().loadMenuForProject();
     }
-    useLabelStore.getState().loadLabels();
   }, [locale]);
 
   return { antLocale };

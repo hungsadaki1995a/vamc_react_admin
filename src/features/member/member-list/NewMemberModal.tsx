@@ -17,7 +17,7 @@ import {
 } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import { MEMBER_FEE_ERRORS } from '@/api/member/member-fee-api';
-import { apiErrorCode, errorMessage } from '@/features/system/_shared/system-utils';
+import { apiErrorCode, errorMessage } from '@/utils/system-utils';
 import { buildFeeHistoryRows, nextPeriodStart } from './member-fee-history';
 import { useMemberFeePayments, useRegisterMembershipPayment } from './use-member-fee';
 

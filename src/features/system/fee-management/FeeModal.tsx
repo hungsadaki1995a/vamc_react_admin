@@ -7,13 +7,13 @@ import TextInput from '@/components/inputs/TextInput';
 import { useNotify } from '@/hooks/use-notify';
 import { FEE_ERRORS } from '@/api/system/fee-api';
 import type { Fee, FeeCategory, FeeCurrency, FeeMethod, FeeRequest, YesNo } from '@/api/system/fee-api';
-import { SysButton } from '../_shared/SysListUi';
-import { SysField, SysFieldGrid, SysFormModal } from '../_shared/SysFormUi';
-import { USE_YN_RADIO_OPTIONS } from '../_shared/sys-constants';
-import { SYS_DIALOG_LABELS, SYS_MESSAGES } from '../_shared/sys-messages';
-import { errorMessage } from '../_shared/system-utils';
-import { useFieldErrors } from '../_shared/use-field-errors';
-import { useSysDialogs } from '../_shared/use-sys-dialogs';
+import { SysButton } from '@/components/common/sys-ui/SysListUi';
+import { SysField, SysFieldGrid, SysFormModal } from '@/components/common/sys-ui/SysFormUi';
+import { USE_YN_RADIO_OPTIONS } from '@/config/sys-constants';
+import { SYS_DIALOG_LABELS, SYS_MESSAGES } from '@/config/sys-messages';
+import { errorMessage } from '@/utils/system-utils';
+import { useFieldErrors } from '@/hooks/use-field-errors';
+import { useSysDialogs } from '@/hooks/use-sys-dialogs';
 import {
   FEE_CATEGORY_OPTIONS,
   FEE_CURRENCY_OPTIONS,

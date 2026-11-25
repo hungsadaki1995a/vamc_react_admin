@@ -17,9 +17,9 @@ import {
   SysSectionHeader,
   SysTable,
   SysTitleBar,
-} from '../_shared/SysListUi';
-import { SYS_PAGE_SIZE } from '../_shared/sys-constants';
-import { usePagedList } from '../_shared/use-paged-list';
+} from '@/components/common/sys-ui/SysListUi';
+import { SYS_PAGE_SIZE } from '@/config/sys-constants';
+import { usePagedList } from '@/hooks/use-paged-list';
 import UserModal from './UserModal';
 import { ACCOUNT_STATUS_LABEL, EMP_STATUS_LABEL } from './user-constants';
 import { useEmployee, useEmployees, useEmployeesExcel } from './use-employees';

@@ -1,4 +1,4 @@
-import { apiErrorCode, errorMessage } from '@/features/system/_shared/system-utils';
+import { apiErrorCode, errorMessage } from '@/utils/system-utils';
 
 // Display / validation helpers of Batch Management (VPA09040401, P01, P02).
 

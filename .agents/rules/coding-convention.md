@@ -48,8 +48,8 @@ src/api/<domain>/<resource>-api.ts           HTTP calls + request/response types
 - Function components only; screens and components use `export default function Name()`. Shared folders expose a barrel (`components/common/index.ts`, `components/inputs/index.ts`) that also re-exports the props types.
 - Props: `interface XxxProps`, destructured in the signature. No `React.FC`, no `import React`.
 - Reuse existing building blocks before writing new ones:
-  - list screens in `system`: `SysPage`, `SysTitleBar`, `SysFilterPanel`/`SysFilterItem`, `SysTable`, `SysPager`, … from `features/system/_shared/SysListUi.tsx` and `SysFormUi.tsx`;
-  - list screens in other domains (member, content, npl, trade, auction): `SysPageHeader` + `SysPagination` from `@/features/system/_shared/SystemUi` with `DataTable` / `Popup`, plus the domain's `_shared/` boards (`PostBoard`, `TradeApplicationBoard`, …);
+  - list screens in `system`: `SysPage`, `SysTitleBar`, `SysFilterPanel`/`SysFilterItem`, `SysTable`, `SysPager`, … from `@/components/common/sys-ui/SysListUi` and `@/components/common/sys-ui/SysFormUi`;
+  - list screens in other domains (member, content, npl, trade, auction): `SysPageHeader` + `SysPagination` from `@/components/common/sys-ui/SystemUi` with `DataTable` / `Popup`, plus the domain's `_shared/` boards (`PostBoard`, `TradeApplicationBoard`, …);
   - inputs: `AppSelect`, `TextInput`, `AppDatePicker`/`AppRangePicker`, `AppCheckbox`, `AppRadio`, `AppSwitch`, `Spinbox`, `TextArea`, `CommonCodeSelect` from `@/components/inputs`;
   - common UI: `Popup`, `DataTable`, `Pagination`, `StatusBadge`, `ActionButton`, `FileUploadBox`, `TreeView`, … from `@/components/common`.
 - Keep pure helpers (`toSearch(filter)`, column definitions, option lists) at module level outside the component; static `columns` arrays are module constants.

@@ -20,10 +20,10 @@ import {
   SysSectionHeader,
   SysTable,
   SysTitleBar,
-} from '@/features/system/_shared/SysListUi';
-import { API_DATE_DMY, SYS_DATE_FORMAT } from '@/features/system/_shared/sys-constants';
-import { usePagedList } from '@/features/system/_shared/use-paged-list';
-import { useSysDialogs } from '@/features/system/_shared/use-sys-dialogs';
+} from '@/components/common/sys-ui/SysListUi';
+import { API_DATE_DMY, SYS_DATE_FORMAT } from '@/config/sys-constants';
+import { usePagedList } from '@/hooks/use-paged-list';
+import { useSysDialogs } from '@/hooks/use-sys-dialogs';
 import type { InquiryItem } from './inquiry.types';
 import { buildInquiryQueryParams, useInquiries } from './use-inquiries';
 import InquiryDetailModal from './InquiryDetailModal';

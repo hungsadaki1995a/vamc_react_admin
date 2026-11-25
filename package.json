@@ -24,6 +24,7 @@
   "dependencies": {
     "@ant-design/icons": "^6.1.0",
     "@fontsource-variable/geist": "^5.3.0",
+    "@hookform/resolvers": "^7.0.8",
     "@monaco-editor/react": "^4.7.0",
     "@tanstack/react-query": "^5.90.21",
     "@tanstack/react-virtual": "^3.13.21",
@@ -69,6 +70,7 @@
     "react-i18next": "^18.0.1",
     "react-router-dom": "^7.18.1",
     "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz",
+    "zod": "^4.6.7",
     "zustand": "^5.0.11"
   },
   "devDependencies": {

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useForm, useWatch, Controller } from 'react-hook-form';
 import { Form } from 'antd';
 import { EyeOutlined, EyeInvisibleOutlined } from '@ant-design/icons';
@@ -22,6 +22,7 @@ import { fetchAuthMenuList } from '@/api/common/my-menu-api';
 import { ApiError } from '@/lib/api/error';
 import type { LoginRequest } from '@/lib/api/types';
 import { useLocaleStore } from '@/stores/locale-store';
+import { REDIRECT_QUERY_KEY, getSafeRedirectPath } from '@/app/route-constants';
 import styles from './index.module.scss';
 import vamcLogoLogin from '@/assets/vamc-logo-login.png';
 
@@ -37,12 +38,12 @@ function isValidEmailOrPhone(value: string): boolean {
 export default function LoginPage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const setAuth = useAuthStore((s) => s.setAuth);
   const { openTab, resetTabs } = useTabStore();
   const { setMenuTrees, setServerMenus } = useMenuStore();
   const homeMenuKey = useSettingsStore((s) => s.homeMenuKey);
   const locale = useLocaleStore((s) => s.locale);
-  const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [failedAttempts, setFailedAttempts] = useState(0);
 
@@ -54,7 +55,6 @@ export default function LoginPage() {
   const isSubmitDisabled = !loginIdValue?.trim() || !passwordValue;
 
   const onFinish = async (values: LoginRequest) => {
-    setLoading(true);
     setErrorMsg(null);
     try {
       let password = values.password;
@@ -87,11 +87,15 @@ export default function LoginPage() {
 
         setAuth(loginRes.data.accessToken, me);
 
+        const redirectTarget = getSafeRedirectPath(searchParams.get(REDIRECT_QUERY_KEY));
+
         resetTabs();
         const homeMenu = findMenuByKey(menuConfig, homeMenuKey);
         if (homeMenu) openTab(homeMenu);
-        const memberMenu = findMenuByKey(menuConfig, 'members') || findMenuByKey(menuConfig, 'member.list');
-        if (memberMenu) openTab(memberMenu);
+        if (!redirectTarget) {
+          const memberMenu = findMenuByKey(menuConfig, 'members') || findMenuByKey(menuConfig, 'member.list');
+          if (memberMenu) openTab(memberMenu);
+        }
 
         if (loginRes.data.menuTrees?.length) {
           setMenuTrees(loginRes.data.menuTrees);
@@ -100,7 +104,7 @@ export default function LoginPage() {
         }
 
         setFailedAttempts(0);
-        navigate('/members', { replace: true });
+        navigate(redirectTarget ?? '/members', { replace: true });
       } else {
         setErrorMsg(t('auth.login.defaultError'));
       }
@@ -113,8 +117,6 @@ export default function LoginPage() {
       } else {
         setErrorMsg(apiErr.userMessage);
       }
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -203,7 +205,6 @@ export default function LoginPage() {
               appearance="filled"
               htmlType="submit"
               block
-              loading={loading}
               disabled={isSubmitDisabled}
               className={styles.submitBtn}
             >

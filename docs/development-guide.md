@@ -99,7 +99,7 @@ Key points:
 - `toSearch`, `columns`, `INITIAL_FILTER` live at module level.
 - Mount the modal only while open and give it a `key`, so its form state starts fresh.
 
-Other domains (member, content, npl, trade, auction) build list pages from `SysPageHeader` + `SysPagination` (`features/system/_shared/SystemUi.tsx`), `DataTable` and `Popup` — see `docs/components.md`. Reuse the domain's `_shared/` building blocks when they exist (`content/_shared/PostBoard`, `trade/_shared/TradeApplicationBoard`).
+Other domains (member, content, npl, trade, auction) build list pages from `SysPageHeader` + `SysPagination` (`components/common/sys-ui/SystemUi.tsx`), `DataTable` and `Popup` — see `docs/components.md`. Reuse the domain's `_shared/` building blocks when they exist (`content/_shared/PostBoard`, `trade/_shared/TradeApplicationBoard`).
 
 ---
 
@@ -162,7 +162,7 @@ function FeeForm({ fee, canWrite, onClose }: { fee: Fee | null; canWrite: boolea
 | Confirm / alert (system screens) | `useSysDialogs()` → `confirm`, `ask` (Promise<boolean>), `alert`; texts in `sys-messages.ts` |
 | Confirm / alert (elsewhere) | `useNotify().dialog.confirm / info / warning / error` |
 | Inline field errors | `useFieldErrors<K>()` |
-| Error text | `errorMessage(error)` (`system/_shared/system-utils.ts`) or `ApiError.from(error).userMessage` |
+| Error text | `errorMessage(error)` (`utils/system-utils.ts`) or `ApiError.from(error).userMessage` |
 
 ---
 

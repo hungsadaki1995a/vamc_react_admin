@@ -10,6 +10,7 @@ import { toIsoLangTag } from '@/utils/locale-storage';
 import { useLabelStore } from '@/stores/label-store';
 import { useLoadingStore } from '@/stores/loading-store';
 import { useTabStore } from '@/stores/tab-store';
+import { PUBLIC_ROUTES, buildLoginRedirectUrl } from '@/app/route-constants';
 import { registerTabRequest, unregisterTabRequest } from './tab-request-registry';
 
 // Extend config type to support retry flag + tab binding + toast opt-out
@@ -44,6 +45,13 @@ function cleanupTabBinding(config?: InternalAxiosRequestConfig): void {
     unregisterTabRequest(cfg.__tabKey, cfg.__tabCtrl);
     cfg.__tabKey = undefined;
     cfg.__tabCtrl = undefined;
+  }
+}
+
+function redirectToLogin(): void {
+  if (window.location.pathname !== PUBLIC_ROUTES.LOGIN) {
+    const currentPath = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+    window.location.href = buildLoginRedirectUrl(currentPath);
   }
 }
 
@@ -173,9 +181,7 @@ apiClient.interceptors.response.use(
         processQueue(null, error);
         clearTokens();
         useAuthStore.getState().logout();
-        if (window.location.pathname !== '/login') {
-          window.location.href = '/login';
-        }
+        redirectToLogin();
         return Promise.reject(ApiError.fromAxiosError(error));
       }
 
@@ -214,9 +220,7 @@ apiClient.interceptors.response.use(
         processQueue(null, refreshError);
         clearTokens();
         useAuthStore.getState().logout();
-        if (window.location.pathname !== '/login') {
-          window.location.href = '/login';
-        }
+        redirectToLogin();
         return Promise.reject(ApiError.from(refreshError));
       } finally {
         isRefreshing = false;

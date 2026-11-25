@@ -14,12 +14,12 @@ import type {
   NotificationMessageRequest,
   YesNo,
 } from '@/api/system/notification-api';
-import { SysButton } from '../_shared/SysListUi';
-import { SysField, SysFieldGrid, SysFormModal } from '../_shared/SysFormUi';
-import { USE_YN_RADIO_OPTIONS } from '../_shared/sys-constants';
-import { SYS_MESSAGES } from '../_shared/sys-messages';
-import { errorMessage } from '../_shared/system-utils';
-import { useFieldErrors } from '../_shared/use-field-errors';
+import { SysButton } from '@/components/common/sys-ui/SysListUi';
+import { SysField, SysFieldGrid, SysFormModal } from '@/components/common/sys-ui/SysFormUi';
+import { USE_YN_RADIO_OPTIONS } from '@/config/sys-constants';
+import { SYS_MESSAGES } from '@/config/sys-messages';
+import { errorMessage } from '@/utils/system-utils';
+import { useFieldErrors } from '@/hooks/use-field-errors';
 import { CHANNEL_OPTIONS, RECIPIENT_TYPE_OPTIONS } from './notification-message-constants';
 import {
   useNotificationMessage,

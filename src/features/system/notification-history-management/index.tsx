@@ -29,12 +29,12 @@ import {
   SysSectionHeader,
   SysTable,
   SysTitleBar,
-} from '../_shared/SysListUi';
-import { API_DATE_ISO, SYS_DATE_FORMAT, SYS_PAGE_SIZE } from '../_shared/sys-constants';
-import { apiErrorCode, lastDaysRange } from '../_shared/system-utils';
-import { usePagedList } from '../_shared/use-paged-list';
-import type { SortState } from '../_shared/use-paged-list';
-import { useSysDialogs } from '../_shared/use-sys-dialogs';
+} from '@/components/common/sys-ui/SysListUi';
+import { API_DATE_ISO, SYS_DATE_FORMAT, SYS_PAGE_SIZE } from '@/config/sys-constants';
+import { apiErrorCode, lastDaysRange } from '@/utils/system-utils';
+import { usePagedList } from '@/hooks/use-paged-list';
+import type { SortState } from '@/hooks/use-paged-list';
+import { useSysDialogs } from '@/hooks/use-sys-dialogs';
 import NotificationHistoryDetailModal from './NotificationHistoryDetailModal';
 import { useDownloadNotificationHistoriesExcel, useNotificationHistories } from './use-notification-histories';
 import styles from './notification-history-management.module.scss';

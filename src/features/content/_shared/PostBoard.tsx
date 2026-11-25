@@ -23,11 +23,11 @@ import {
   SysSectionHeader,
   SysTable,
   SysTitleBar,
-} from '@/features/system/_shared/SysListUi';
-import { ALL, API_DATE_DMY, SYS_DATE_FORMAT } from '@/features/system/_shared/sys-constants';
-import { errorMessage } from '@/features/system/_shared/system-utils';
-import { useSysDialogs } from '@/features/system/_shared/use-sys-dialogs';
-import type { SortState } from '@/features/system/_shared/use-paged-list';
+} from '@/components/common/sys-ui/SysListUi';
+import { ALL, API_DATE_DMY, SYS_DATE_FORMAT } from '@/config/sys-constants';
+import { errorMessage } from '@/utils/system-utils';
+import { useSysDialogs } from '@/hooks/use-sys-dialogs';
+import type { SortState } from '@/hooks/use-paged-list';
 import type { BoardConfig, CategoryOption } from './board-config';
 import PostModal from './PostModal';
 import { useDownloadPostExcel, useLegalOptions, usePosts } from './use-posts';

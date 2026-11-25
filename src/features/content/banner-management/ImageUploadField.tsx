@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 import TextInput from '@/components/inputs/TextInput';
-import { SysButton } from '@/features/system/_shared/SysListUi';
+import { SysButton } from '@/components/common/sys-ui/SysListUi';
 
 // "Image / File" row of the Site Display screens (banner popup, logo page): read-only file name + [Upload File].
 // The picked file is checked (E03), uploaded at once, and a new upload replaces the previous image.

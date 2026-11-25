@@ -1,15 +1,17 @@
-import { useState } from 'react';
+import { useMemo } from 'react';
+import { Controller, useForm, useWatch } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import { FileImageOutlined } from '@ant-design/icons';
 import Spinbox from '@/components/inputs/Spinbox';
 import TextInput from '@/components/inputs/TextInput';
 import { useNotify } from '@/hooks/use-notify';
 import { BANNER_ERRORS } from '@/api/contents/banner-api';
 import type { Banner, BannerRequest } from '@/api/contents/banner-api';
-import { SysField, SysFieldGrid, SysFormModal } from '@/features/system/_shared/SysFormUi';
-import { SysButton } from '@/features/system/_shared/SysListUi';
-import { SYS_MESSAGES } from '@/features/system/_shared/sys-messages';
-import { useFieldErrors } from '@/features/system/_shared/use-field-errors';
-import { errorMessage } from '@/features/system/_shared/system-utils';
+import { SysField, SysFieldGrid, SysFormModal } from '@/components/common/sys-ui/SysFormUi';
+import { SysButton } from '@/components/common/sys-ui/SysListUi';
+import { SYS_MESSAGES } from '@/config/sys-messages';
+import { apiErrorCode, apiValidationErrors, errorMessage } from '@/utils/system-utils';
 import { useAttachmentPreview } from '../_shared/use-content-files';
 import ImageUploadField from './ImageUploadField';
 import {
@@ -26,8 +28,6 @@ import styles from './banner-management.module.scss';
 // Every saved banner is shown on the user home; the server keeps the orders 1..n (moves the others on save,
 // closes the gap on delete) and refuses a 6th banner.
 
-type FieldKey = 'title' | 'imageFileId' | 'order';
-
 interface BannerModalProps {
   /** null = register. */
   banner: Banner | null;
@@ -39,13 +39,41 @@ interface BannerModalProps {
   onClose: () => void;
 }
 
-interface FormState {
-  title: string;
-  imageFileId?: string;
-  order: number | null;
+const required = (label: string) => `${label} is required.`;
+
+function createBannerSchema(maxOrder: number) {
+  return z.object({
+    title: z
+      .string()
+      .trim()
+      .min(1, required('Banner Title'))
+      .max(BANNER_TITLE_MAX, `Banner Title must be ${BANNER_TITLE_MAX} characters or less.`),
+    imageFileId: z.string().min(1, required('Banner Image')),
+    order: z
+      .number()
+      .int('Display Order must be a whole number.')
+      .min(1, 'Display Order must be at least 1.')
+      .max(maxOrder, `Display Order must be at most ${maxOrder}.`)
+      .nullable()
+      .transform((value, ctx) => {
+        if (value === null) {
+          ctx.addIssue({ code: 'custom', message: required('Display Order') });
+          return z.NEVER;
+        }
+        return value;
+      }),
+  });
 }
 
-const required = (label: string) => `${label} is required.`;
+type BannerSchema = ReturnType<typeof createBannerSchema>;
+type BannerFormInput = z.input<BannerSchema>;
+type BannerFormOutput = z.output<BannerSchema>;
+
+const BANNER_FIELD_MAP: Record<string, keyof BannerFormInput> = {
+  title: 'title',
+  imageFileId: 'imageFileId',
+  order: 'order',
+};
 
 export default function BannerModal({ banner, bannerCount, nextOrder, canWrite, onClose }: BannerModalProps) {
   const isCreate = banner === null;
@@ -53,62 +81,62 @@ export default function BannerModal({ banner, bannerCount, nextOrder, canWrite, 
   const saveBanner = useSaveBanner();
   const deleteBanners = useDeleteBanners();
   const uploadImage = useUploadBannerImage();
-  const { errors, setError, clearError, clearAll, applyApiError } = useFieldErrors<FieldKey>();
-
-  const [form, setForm] = useState<FormState>(() => ({
-    title: banner?.title ?? '',
-    imageFileId: banner?.imageFileId,
-    order: banner?.order ?? nextOrder,
-  }));
-  const preview = useAttachmentPreview(form.imageFileId);
 
   const fieldsDisabled = !canWrite;
   const maxOrder = Math.max(1, isCreate ? bannerCount + 1 : bannerCount);
+  const schema = useMemo(() => createBannerSchema(maxOrder), [maxOrder]);
 
-  const patch = (key: FieldKey, values: Partial<FormState>) => {
-    setForm((prev) => ({ ...prev, ...values }));
-    clearError(key);
-  };
+  const {
+    control,
+    handleSubmit,
+    setError,
+    clearErrors,
+    formState: { errors },
+  } = useForm<BannerFormInput, unknown, BannerFormOutput>({
+    resolver: zodResolver(schema),
+    defaultValues: {
+      title: banner?.title ?? '',
+      imageFileId: banner?.imageFileId ?? '',
+      order: banner?.order ?? nextOrder,
+    },
+  });
 
-  const validate = (): boolean => {
-    clearAll();
-    let valid = true;
-    if (!form.title.trim()) {
-      setError('title', required('Banner Title'));
-      valid = false;
-    }
-    if (!form.imageFileId) {
-      setError('imageFileId', required('Banner Image'));
-      valid = false;
-    }
-    if (form.order === null) {
-      setError('order', required('Display Order'));
-      valid = false;
-    }
-    return valid;
-  };
+  const [title, imageFileId] = useWatch({ control, name: ['title', 'imageFileId'] });
+  const preview = useAttachmentPreview(imageFileId);
 
-  const handleSubmit = async () => {
-    if (!validate()) return;
+  const onValidSubmit = async (values: BannerFormOutput) => {
     const request: BannerRequest = {
-      title: form.title.trim(),
-      order: form.order as number,
-      imageFileId: form.imageFileId as string,
+      title: values.title,
+      order: values.order,
+      imageFileId: values.imageFileId,
     };
     try {
       await saveBanner.mutateAsync({ bannerId: banner?.bannerId ?? null, request });
       toast.success(isCreate ? SYS_MESSAGES.registered : SYS_MESSAGES.updated);
       onClose();
     } catch (e) {
-      const mapped = applyApiError(
-        e,
-        {
-          [BANNER_ERRORS.imageInvalid]: ['imageFileId', BANNER_MESSAGES.invalidImage],
-          [BANNER_ERRORS.orderOutOfRange]: ['order', errorMessage(e)],
-        },
-        { title: 'title', imageFileId: 'imageFileId', order: 'order' },
-      );
-      if (!mapped) toast.error(errorMessage(e));
+      const code = apiErrorCode(e);
+      if (code === BANNER_ERRORS.imageInvalid) {
+        setError('imageFileId', { type: 'server', message: BANNER_MESSAGES.invalidImage });
+        return;
+      }
+      if (code === BANNER_ERRORS.orderOutOfRange) {
+        setError('order', { type: 'server', message: errorMessage(e) });
+        return;
+      }
+      const validation = apiValidationErrors(e);
+      if (validation) {
+        let mapped = false;
+        Object.entries(validation).forEach(([field, message]) => {
+          const key = BANNER_FIELD_MAP[field];
+          if (key) {
+            setError(key, { type: 'server', message });
+            mapped = true;
+          }
+        });
+        if (mapped) return;
+      }
+      toast.error(errorMessage(e));
     }
   };
 
@@ -137,7 +165,7 @@ export default function BannerModal({ banner, bannerCount, nextOrder, canWrite, 
       width={1200}
       title={isCreate ? 'Register Banner' : 'Edit Banner'}
       submitText={isCreate ? 'Register' : 'Edit'}
-      onSubmit={canWrite ? () => void handleSubmit() : undefined}
+      onSubmit={canWrite ? () => void handleSubmit(onValidSubmit)() : undefined}
       submitting={saveBanner.isPending}
       submitDisabled={uploadImage.isPending}
       onCancel={onClose}
@@ -152,33 +180,49 @@ export default function BannerModal({ banner, bannerCount, nextOrder, canWrite, 
       }
     >
       <SysFieldGrid columns={1}>
-        <SysField label="Banner Title" required error={errors.title}>
-          <TextInput
-            value={form.title}
-            placeholder="Enter the title."
-            maxLength={BANNER_TITLE_MAX}
-            disabled={fieldsDisabled}
-            onChange={(e) => patch('title', { title: e.target.value })}
+        <SysField label="Banner Title" required error={errors.title?.message}>
+          <Controller
+            name="title"
+            control={control}
+            render={({ field }) => (
+              <TextInput
+                value={field.value}
+                placeholder="Enter the title."
+                maxLength={BANNER_TITLE_MAX}
+                disabled={fieldsDisabled}
+                onChange={field.onChange}
+                onBlur={field.onBlur}
+              />
+            )}
           />
         </SysField>
-        <SysField label="Banner Image" required error={errors.imageFileId}>
-          <ImageUploadField
-            fileUnqId={form.imageFileId}
-            initialFileName={banner?.imageFileName}
-            extensions={BANNER_IMAGE_EXTENSIONS}
-            maxBytes={BANNER_IMAGE_MAX_BYTES}
-            invalidMessage={BANNER_MESSAGES.invalidImage}
-            disabled={fieldsDisabled}
-            upload={uploadImage.mutateAsync}
-            uploading={uploadImage.isPending}
-            onUploaded={(imageFileId) => patch('imageFileId', { imageFileId })}
-            onError={(message) => setError('imageFileId', message)}
+        <SysField label="Banner Image" required error={errors.imageFileId?.message}>
+          <Controller
+            name="imageFileId"
+            control={control}
+            render={({ field }) => (
+              <ImageUploadField
+                fileUnqId={field.value}
+                initialFileName={banner?.imageFileName}
+                extensions={BANNER_IMAGE_EXTENSIONS}
+                maxBytes={BANNER_IMAGE_MAX_BYTES}
+                invalidMessage={BANNER_MESSAGES.invalidImage}
+                disabled={fieldsDisabled}
+                upload={uploadImage.mutateAsync}
+                uploading={uploadImage.isPending}
+                onUploaded={(uploadedId) => {
+                  field.onChange(uploadedId);
+                  clearErrors('imageFileId');
+                }}
+                onError={(message) => setError('imageFileId', { type: 'manual', message })}
+              />
+            )}
           />
         </SysField>
         <SysField label="Banner Preview">
           <div className={styles.preview} data-empty={preview ? undefined : true}>
             {preview ? (
-              <img src={preview} alt={form.title} className={styles.previewImage} />
+              <img src={preview} alt={title} className={styles.previewImage} />
             ) : (
               <span className={styles.previewEmpty}>
                 <FileImageOutlined className={styles.previewIcon} />
@@ -187,15 +231,22 @@ export default function BannerModal({ banner, bannerCount, nextOrder, canWrite, 
             )}
           </div>
         </SysField>
-        <SysField label="Display Order" required error={errors.order}>
+        <SysField label="Display Order" required error={errors.order?.message}>
           <div className={styles.orderBox}>
-            <Spinbox
-              value={form.order}
-              min={1}
-              max={maxOrder}
-              precision={0}
-              disabled={fieldsDisabled}
-              onChange={(order) => patch('order', { order })}
+            <Controller
+              name="order"
+              control={control}
+              render={({ field }) => (
+                <Spinbox
+                  value={field.value}
+                  min={1}
+                  max={maxOrder}
+                  precision={0}
+                  disabled={fieldsDisabled}
+                  onChange={field.onChange}
+                  onBlur={field.onBlur}
+                />
+              )}
             />
           </div>
         </SysField>

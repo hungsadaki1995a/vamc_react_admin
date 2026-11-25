@@ -10,9 +10,9 @@ import {
   SysSectionHeader,
   SysTable,
   SysTitleBar,
-} from '@/features/system/_shared/SysListUi';
-import { SYS_PAGE_SIZE } from '@/features/system/_shared/sys-constants';
-import { usePagedList } from '@/features/system/_shared/use-paged-list';
+} from '@/components/common/sys-ui/SysListUi';
+import { SYS_PAGE_SIZE } from '@/config/sys-constants';
+import { usePagedList } from '@/hooks/use-paged-list';
 import HistoryModal from './HistoryModal';
 import { useAboutHistories } from './use-history';
 import styles from './history-management.module.scss';

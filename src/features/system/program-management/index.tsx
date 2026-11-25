@@ -16,9 +16,9 @@ import {
   SysTable,
   SysTitleBar,
   UseBadge,
-} from '@/features/system/_shared/SysListUi';
-import { SYS_PAGE_SIZE, USE_YN_FILTER_OPTIONS } from '@/features/system/_shared/sys-constants';
-import { usePagedList } from '@/features/system/_shared/use-paged-list';
+} from '@/components/common/sys-ui/SysListUi';
+import { SYS_PAGE_SIZE, USE_YN_FILTER_OPTIONS } from '@/config/sys-constants';
+import { usePagedList } from '@/hooks/use-paged-list';
 import { PROGRAM_TYPE_FILTER_OPTIONS, programTypeLabel } from './program-constants';
 import { ProgramModal } from './ProgramModal';
 import { useDownloadProgramsExcel, usePrograms } from './use-programs';

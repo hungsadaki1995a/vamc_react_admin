@@ -7,12 +7,12 @@ import { useNotify } from '@/hooks/use-notify';
 import { useCommonCodes } from '@/hooks/use-common-codes';
 import { COMMON_SCREEN_ID, RESERVED_LABEL_SCREEN_IDS } from '@/api/system/label-management-api';
 import type { LabelKey, LabelListItem } from '@/api/system/label-management-api';
-import { SYS_DIALOG_LABELS, SYS_MESSAGES } from '@/features/system/_shared/sys-messages';
-import { SysButton } from '@/features/system/_shared/SysListUi';
-import { SysField, SysFieldGrid, SysFormModal } from '@/features/system/_shared/SysFormUi';
-import { errorMessage } from '@/features/system/_shared/system-utils';
-import { useFieldErrors } from '@/features/system/_shared/use-field-errors';
-import { useSysDialogs } from '@/features/system/_shared/use-sys-dialogs';
+import { SYS_DIALOG_LABELS, SYS_MESSAGES } from '@/config/sys-messages';
+import { SysButton } from '@/components/common/sys-ui/SysListUi';
+import { SysField, SysFieldGrid, SysFormModal } from '@/components/common/sys-ui/SysFormUi';
+import { errorMessage } from '@/utils/system-utils';
+import { useFieldErrors } from '@/hooks/use-field-errors';
+import { useSysDialogs } from '@/hooks/use-sys-dialogs';
 import {
   composeLabelKey,
   isCommonScreen,

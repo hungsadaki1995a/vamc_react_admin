@@ -2,7 +2,7 @@ import { useState } from 'react';
 import type { TableColumnsType } from 'antd';
 import { useMenuPermission } from '@/hooks/use-menu-permission';
 import type { Banner } from '@/api/contents/banner-api';
-import { DateTimeText, SysButton, SysPage, SysTable, SysTitleBar } from '@/features/system/_shared/SysListUi';
+import { DateTimeText, SysButton, SysPage, SysTable, SysTitleBar } from '@/components/common/sys-ui/SysListUi';
 import BannerModal from './BannerModal';
 import BannerThumb from './BannerThumb';
 import { BANNER_HOME_POSITION, BANNER_LIST_SIZE, BANNER_MAX, BANNER_MESSAGES } from './banner-constants';

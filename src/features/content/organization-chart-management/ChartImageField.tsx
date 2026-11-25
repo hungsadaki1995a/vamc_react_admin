@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react';
 import type { ChangeEvent, DragEvent } from 'react';
 import TextInput from '@/components/inputs/TextInput';
-import { SysButton } from '@/features/system/_shared/SysListUi';
+import { SysButton } from '@/components/common/sys-ui/SysListUi';
 import styles from './organization-chart-management.module.scss';
 
 // One "Chart Image" row: file name, [Preview] (new window, disabled without a file) and [Upload File];

@@ -1,6 +1,6 @@
 import type { NotiChannel, NotiRecipientType } from '@/api/system/notification-api';
 import { NOTI_CHANNEL_LABELS, NOTI_RECIPIENT_LABELS } from '@/api/system/notification-api';
-import { ALL } from '../_shared/sys-constants';
+import { ALL } from '@/config/sys-constants';
 
 // Options and texts of Notification Message Management (v0.8 wording).
 

@@ -16,10 +16,10 @@ import {
   SysTable,
   SysTitleBar,
   UseBadge,
-} from '@/features/system/_shared/SysListUi';
-import { usePagedList } from '@/features/system/_shared/use-paged-list';
-import { useSysDialogs } from '@/features/system/_shared/use-sys-dialogs';
-import { apiErrorCode } from '@/features/system/_shared/system-utils';
+} from '@/components/common/sys-ui/SysListUi';
+import { usePagedList } from '@/hooks/use-paged-list';
+import { useSysDialogs } from '@/hooks/use-sys-dialogs';
+import { apiErrorCode } from '@/utils/system-utils';
 import { CodeDetailGrid } from './CodeDetailGrid';
 import type { GridChanges, GridColumn, GridRecord } from './CodeDetailGrid';
 import { CodeGroupModal } from './CodeGroupModal';

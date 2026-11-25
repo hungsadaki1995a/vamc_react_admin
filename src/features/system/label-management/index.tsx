@@ -8,8 +8,8 @@ import TextInput from '@/components/inputs/TextInput';
 import { useNotify } from '@/hooks/use-notify';
 import { useMenuPermission } from '@/hooks/use-menu-permission';
 import type { LabelKey, LabelListItem, LabelSearch } from '@/api/system/label-management-api';
-import { SYS_PAGE_SIZE } from '@/features/system/_shared/sys-constants';
-import { SYS_DIALOG_LABELS } from '@/features/system/_shared/sys-messages';
+import { SYS_PAGE_SIZE } from '@/config/sys-constants';
+import { SYS_DIALOG_LABELS } from '@/config/sys-messages';
 import {
   DateTimeText,
   SysButton,
@@ -23,10 +23,10 @@ import {
   SysSplit,
   SysTable,
   SysTitleBar,
-} from '@/features/system/_shared/SysListUi';
-import { errorMessage } from '@/features/system/_shared/system-utils';
-import { usePagedList } from '@/features/system/_shared/use-paged-list';
-import { useSysDialogs } from '@/features/system/_shared/use-sys-dialogs';
+} from '@/components/common/sys-ui/SysListUi';
+import { errorMessage } from '@/utils/system-utils';
+import { usePagedList } from '@/hooks/use-paged-list';
+import { useSysDialogs } from '@/hooks/use-sys-dialogs';
 import LabelModal from './LabelModal';
 import LabelTextPanel from './LabelTextPanel';
 import { hasTextChanges, LABEL_MESSAGES, labelRowId, sameLabel, storedTexts } from './label-utils';

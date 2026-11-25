@@ -14,9 +14,9 @@ import ActionButton from '@/components/common/actions/ActionButton';
 import TextInput from '@/components/inputs/TextInput';
 import { useNotify } from '@/hooks/use-notify';
 import type { ContentFile, FileBoard } from '@/api/contents/post-api';
-import { SysButton } from '@/features/system/_shared/SysListUi';
-import { errorMessage } from '@/features/system/_shared/system-utils';
-import styles from '@/features/system/_shared/system-page.module.scss';
+import { SysButton } from '@/components/common/sys-ui/SysListUi';
+import { errorMessage } from '@/utils/system-utils';
+import styles from '@/components/common/sys-ui/system-page.module.scss';
 import {
   originalFileName,
   useAttachmentPreview,

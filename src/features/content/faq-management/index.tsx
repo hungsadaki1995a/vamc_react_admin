@@ -18,8 +18,8 @@ import {
   SysSectionHeader,
   SysTable,
   SysTitleBar,
-} from '@/features/system/_shared/SysListUi';
-import { usePagedList } from '@/features/system/_shared/use-paged-list';
+} from '@/components/common/sys-ui/SysListUi';
+import { usePagedList } from '@/hooks/use-paged-list';
 import type { FaqItem } from './faq.types';
 import { buildFaqQueryParams, useFaqs } from './use-faqs';
 import FaqDetailModal from './FaqDetailModal';

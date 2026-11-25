@@ -7,7 +7,7 @@ import Popup from '@/components/common/popup/Popup';
 import TextArea from '@/components/inputs/TextArea';
 import dayjs from 'dayjs';
 import { useNotify } from '@/hooks/use-notify';
-import { errorMessage } from '@/features/system/_shared/system-utils';
+import { errorMessage } from '@/utils/system-utils';
 import { buildFeeHistoryRows } from './member-fee-history';
 import { useMemberFeePayments } from './use-member-fee';
 import type { MemberAddressDto, MemberAttachmentDto, PendingRequest } from '@/api/generated/types.gen';

@@ -1,6 +1,6 @@
 import { LEGACY_FEE_CATEGORY } from '@/api/system/fee-api';
 import type { Fee, FeeCategory, FeeCurrency, FeeMethod } from '@/api/system/fee-api';
-import { ALL } from '../_shared/sys-constants';
+import { ALL } from '@/config/sys-constants';
 
 // Labels and formatting of Fee Management (v0.8 wording).
 
