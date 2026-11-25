@@ -222,6 +222,10 @@ if (menu) openTab(menu, { feeId });          // params arrive as tab.params
 ```bash
 npx tsc -b      # must pass
 pnpm lint       # 0 errors
+pnpm e2e        # E2E on every screen (local backend on :7200, e2e/.env.e2e) — see e2e/README.md
+pnpm e2e -g "A06010300"   # or only the screen you changed, by menu code
 ```
 
 Check manually in the browser (`pnpm dev`, backend running): list, search/reset, paging, register, edit, delete, read-only role.
+
+A new menu makes the E2E manifest check (T-01) fail — add the screen to `e2e/support/screens.ts`; the smoke and register-validation suites then cover it automatically.

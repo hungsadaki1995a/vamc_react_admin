@@ -18,6 +18,8 @@ pnpm dev                        # http://localhost:3000 (admin backend must be r
 | `pnpm lint` | ESLint |
 | `npx tsc -b` | type check |
 | `pnpm api:generate` | regenerate the OpenAPI client in `src/api/generated` |
+| `pnpm e2e` | Playwright E2E tests on every screen + HTML report (setup: [e2e/README.md](e2e/README.md)) |
+| `pnpm e2e:report` | open the newest E2E report |
 
 ## Documentation
 
