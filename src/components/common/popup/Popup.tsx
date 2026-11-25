@@ -93,6 +93,12 @@ export default function Popup({
       </div>
     ) : null;
 
+  const modalTitle = title ? (
+    <span className={styles.title}>{title}</span>
+  ) : isMessagePopup ? (
+    <span className={styles.title} />
+  ) : null;
+
   return (
     <Modal
       {...props}
@@ -101,7 +107,7 @@ export default function Popup({
       destroyOnHidden={destroyOnHidden}
       onCancel={onCancel}
       closeIcon={closeIcon ?? <img src={popupClose} alt="" className={styles.closeIcon} />}
-      title={title ? <span className={styles.title}>{title}</span> : null}
+      title={modalTitle}
       footer={defaultFooter}
       className={[styles.root, isMessagePopup ? styles.messageModal : '', className].filter(Boolean).join(' ')}
       wrapClassName={[styles.wrap, wrapClassName].filter(Boolean).join(' ')}

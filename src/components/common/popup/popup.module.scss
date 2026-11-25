@@ -5,7 +5,7 @@
 }
 
 .root {
-  :global(.ant-modal-content) {
+  :global(.ant-modal-container) {
     padding: 0;
     border: 1px solid var(--color-navy-200, #d1d1e0);
     border-radius: 4px;
@@ -27,9 +27,8 @@
   }
 
   :global(.ant-modal-close) {
-    top: 50%;
+    top: 4px;
     right: 8px;
-    transform: translateY(-50%);
     width: 24px;
     height: 24px;
     color: var(--color-gray-700, #6f7b95);

@@ -97,10 +97,16 @@ $icon: var(--color-gray-400, #c9cfdd);
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 4px;
   font-size: var(--font-size-b1, 13px);
   line-height: var(--line-height-b1, 18px);
   letter-spacing: var(--letter-spacing-tight, -0.02em);
   color: var(--color-gray-600, #929fba);
+}
+
+.previewIcon {
+  width: 36px;
+  height: 36px;
 }
 
 /* Design: Display Order spin box is about 430px wide, not full width */

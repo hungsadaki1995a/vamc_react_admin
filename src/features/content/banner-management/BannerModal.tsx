@@ -4,6 +4,7 @@ import type { TFunction } from 'i18next';
 import { Controller, useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { fileX } from '@/assets/images';
 import Popup from '@/components/common/popup/Popup';
 import Spinbox from '@/components/inputs/Spinbox';
 import TextInput from '@/components/inputs/TextInput';
@@ -221,6 +222,7 @@ export default function BannerModal({ banner, bannerCount, nextOrder, canWrite, 
                 <img src={preview} alt={title} className={styles.previewImage} />
               ) : (
                 <span className={styles.previewEmpty}>
+                  <img src={fileX} alt="" className={styles.previewIcon} />
                   {t('messages.content.banner.noImageAttached')}
                 </span>
               )}
@@ -250,11 +252,9 @@ export default function BannerModal({ banner, bannerCount, nextOrder, canWrite, 
       {banner && (
         <Popup
           open={confirmDeleteOpen}
-          title={t('messages.dialog.confirm')}
           status="confirm"
-          confirmText={t('messages.dialog.delete')}
+          confirmText={t('messages.dialog.confirm')}
           cancelText={t('messages.dialog.cancel')}
-          confirmDanger
           confirmLoading={deleteBanners.isPending}
           mask={{ closable: false }}
           onConfirm={() => void handleConfirmDelete()}
