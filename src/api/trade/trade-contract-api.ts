@@ -1,5 +1,6 @@
 import { apiGet, apiPost, apiPut } from '@/api/common/api-utils';
 import type { ApprovalRequestBody } from '@/api/common/approval-api';
+import type { Fee } from '@/api/system/fee-api';
 import type { TradeContractDetail, TradeContractKind, YesNo } from '@/api/trade/trade-api';
 
 // Trade contract write API — AbstractTradeContractController and Sale / Purchase / ConsultingContractController
@@ -22,7 +23,7 @@ export interface UpdateContractDraftRequest {
   anxCn?: string;
   /** LUMP full after signing ①, AFTR full after the trade ②, STAG advance + balance ③. Required on a main contract. */
   feeClclnMthCd?: FeeMethod;
-  /** Fee schedule (FEE_MNG); the server uses the default one of the kind when absent. */
+  /** Fee schedule item (`feeId` of GET …/fee-items); the server uses the first active item of the kind when absent. */
   feeMngId?: string;
   feeAmt?: number;
   /** Advance rate in % (STAG). */
@@ -73,6 +74,9 @@ export interface ContractStatusResult {
 }
 
 const contract = (kind: TradeContractKind, ctrtCd: string) => `/api/v1/${kind}/${encodeURIComponent(ctrtCd)}`;
+
+/** Active fee schedule items of the contract kind (DMDT / PMDT / CNSLT), for the draft's `feeMngId` select. */
+export const getContractFeeItems = (kind: TradeContractKind) => apiGet<Fee[]>(`/api/v1/${kind}/fee-items`, undefined, []);
 
 export const getContractApprovalHistories = (kind: TradeContractKind, ctrtCd: string) =>
   apiGet<ContractApprovalHistory[]>(`${contract(kind, ctrtCd)}/approval-histories`, undefined, []);
@@ -128,7 +132,10 @@ export const recordPurchaseDelivery = (ctrtCd: string, body: { dlvrCmptnDt: stri
 export const createContractAnnex = (kind: TradeContractKind, ctrtCd: string, body: CreateAnnexRequest) =>
   apiPost<ContractStatusResult>(`${contract(kind, ctrtCd)}/annexes`, body);
 
-/** X2: renewal decision near the end date (NO_EXTEND opens an EXPR termination at once — open question N3). */
+/**
+ * X2: renewal decision, only within 30 days of the end date (or past it): earlier → 409 TRD053. NO_EXTEND opens an
+ * EXPR termination at once (open question N3).
+ */
 export const decideContractRenewal = (
   kind: TradeContractKind,
   ctrtCd: string,
@@ -208,6 +215,6 @@ export const completeAdditionalConsultation = (ctrtCd: string, adtnId: string, r
 /** Whether members may request follow-up consultations (system switch on the consulting contract board). */
 export const getAdditionalConsultingSetting = () => apiGet<boolean>('/api/v1/consulting-contracts/settings/additional-consulting');
 
-/** Body `enabled` is Y / N (AdditionalConsultingSettingRequest). */
+/** Body `enabled` is a boolean (Y / N also accepted); answers the new value. */
 export const setAdditionalConsultingSetting = (enabled: boolean) =>
-  apiPut<boolean>('/api/v1/consulting-contracts/settings/additional-consulting', { enabled: enabled ? 'Y' : 'N' });
+  apiPut<boolean>('/api/v1/consulting-contracts/settings/additional-consulting', { enabled });

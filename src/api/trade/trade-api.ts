@@ -79,6 +79,12 @@ export interface TradeApplicationListItem {
   availableAction?: TradeApplicationAction;
   /** VAMC, BRKR. */
   astCtgrCd?: string;
+  /**
+   * Purchase applications not yet approved: a running purchase contract of another application on the same NPL /
+   * LOT; receipt / approval request will be refused (409 TRD021).
+   */
+  activePurchaseCtrtCd?: string;
+  activePurchaseCtrtNo?: string;
 }
 
 export interface TradeCollateral {
@@ -125,7 +131,10 @@ export interface TradeApplicationHistory {
   srvcPrcsSttsCd?: string;
   srvcPrcsSttsNm?: string;
   prcsDt?: string;
+  /** Employee or member number. */
   prcsBy?: string;
+  /** Name of the employee / member of `prcsBy`. */
+  prcsByNm?: string;
   prcsCn?: string;
 }
 
@@ -183,6 +192,7 @@ export interface TradeApplicationDetail {
   esntlDcmntScnFile?: string;
   /** Running purchase contract of the same subject (purchase). */
   activePurchaseCtrtCd?: string;
+  activePurchaseCtrtNo?: string;
   npls?: TradeNpl[];
   cltrAstCd?: string;
   collaterals?: TradeCollateral[];
@@ -391,7 +401,36 @@ export interface TradeContractSearch {
   endingWithinDays?: number;
 }
 
-/** Body of manual registration (POST) and edit (PUT) — SaveTradeApplicationRequest. */
+/** CLTR_AST_LCLSF_CD of a typed consulting collateral. */
+export type CollateralCategory = 'REST' | 'PERS' | 'FNRT' | 'TSBDK';
+
+export const COLLATERAL_CATEGORY_LABELS: Record<CollateralCategory, string> = {
+  REST: 'Real estate',
+  PERS: 'Movable property',
+  FNRT: 'Financial rights',
+  TSBDK: 'Other collateral',
+};
+
+/** Collateral typed in a manual consulting registration (ConsultingTargetCollateralRequest). */
+export interface ConsultingTargetCollateral {
+  cltrAstLclsfCd: CollateralCategory;
+  /** ≤ 25. */
+  cltrCtrtNo: string;
+  /** yyyy-MM-dd. */
+  ctrtDt: string;
+  /** ≤ 1000. */
+  astChrcCn: string;
+  lglSttsCn?: string;
+  loanTtmCltrWrthCn?: string;
+  rcntCltrWrthCn?: string;
+  cltrAplcnScpCn?: string;
+  prstCn?: string;
+}
+
+/**
+ * Body of manual registration (POST) and edit (PUT) — SaveTradeApplicationRequest. On PUT a field left out keeps the
+ * stored value (price, scan group, contract kind, consulting fields), so the edit sends only what changed.
+ */
 export interface SaveTradeApplicationRequest {
   /** Active member (create only). */
   mbrNo?: string;
@@ -404,9 +443,13 @@ export interface SaveTradeApplicationRequest {
   /** Consulting: CNSLT_DMND_SE_CD and the request (≤ 4000). */
   cnsltDmndSeCd?: string;
   cnsltDmndPrpsCn?: string;
+  /** Consulting: listed collateral (CLTR_AST_INFO.CLTR_AST_CD); unknown → 404 TRD052. */
+  cltrAstCd?: string;
+  /** Consulting, create only: collaterals typed from the paper form (max 20), stored like the member's web form. */
+  targetCollaterals?: ConsultingTargetCollateral[];
   crncCd?: 'VND' | 'USD';
   prpDsplPrc?: number;
-  /** File group uploaded with scope `application`. The edit replaces it, so send the current one to keep it. */
+  /** File group uploaded with scope `application`. */
   scanFileId?: string;
   /** Create: RCPT, or PRCS = received at once (needs tkcgEmpNo). */
   aplySttsCd?: 'RCPT' | 'PRCS';

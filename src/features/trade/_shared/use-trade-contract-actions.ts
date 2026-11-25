@@ -24,6 +24,7 @@ import {
   createContractAnnex,
   decideContractRenewal,
   getContractApprovalHistories,
+  getContractFeeItems,
   recordPurchaseDelivery,
   refundContractFee,
   registerContractDraft,
@@ -41,6 +42,7 @@ import type {
   UpdateContractDraftRequest,
 } from '@/api/trade/trade-contract-api';
 import { uploadTradeFiles } from '@/api/trade/trade-file-api';
+import type { Fee } from '@/api/system/fee-api';
 
 // Write hooks of the contract popup (VPA050201P01 / 050202P01 / 050203P01). Every write refetches the contract
 // lists / details, the application lists (contract link) and the approval inbox.
@@ -58,6 +60,14 @@ export function useContractApprovalHistories(kind: TradeContractKind, ctrtCd: st
     () => getContractApprovalHistories(kind, ctrtCd as string),
     { enabled: !!ctrtCd },
   );
+}
+
+/** Fee schedule items of the contract kind (draft form select); skipped while disabled. */
+export function useContractFeeItems(kind: TradeContractKind, enabled: boolean) {
+  return useApiQuery<Fee[]>(['trade', 'contracts', 'fee-items', kind], () => getContractFeeItems(kind), {
+    enabled,
+    staleTime: 5 * 60 * 1000,
+  });
 }
 
 export function useChangeContractOfficer() {

@@ -315,7 +315,9 @@ export function RenewalDecisionModal({ kind, detail, onClose }: BaseProps) {
       confirmLoading={action.isPending}
       confirmDisabled={decision === 'EXTEND_ANNEX' && !endDate}
     >
-      <div className={styles.notice}>Contract end date: {formatDmy(detail.ctrtEndDmy)}</div>
+      <div className={styles.notice}>
+        Contract end date: {formatDmy(detail.ctrtEndDmy)}. {t('messages.trade.renewalWindowHint')}
+      </div>
       <div className={styles.field}>
         <AppRadio.Group value={decision} onChange={(e) => setDecision(e.target.value as RenewalDecision)} options={RENEWAL_OPTIONS} />
       </div>

@@ -24,6 +24,8 @@ import type { ApprovalDetailRow } from '@/features/approval/_shared/ApprovalPart
 import { SessionStatusBadge } from '@/features/approval/_shared/ApprovalParts';
 import ApprovalRequestPopup from '@/features/approval/_shared/ApprovalRequestPopup';
 import AssignOfficerPopup from '@/features/approval/_shared/AssignOfficerPopup';
+import MemberDetailModal from '@/features/member/member-list/MemberDetailModal';
+import { memberItemFor } from '@/features/member/member-list/use-members';
 import { formatDateTime, formatDmy } from '@/utils/date-format';
 import { errorMessage, formatAmount } from '@/utils/system-utils';
 import ContractDraftForm from './ContractDraftForm';
@@ -52,7 +54,7 @@ import styles from './trade-application-popup.module.scss';
 // uses `openAtrzHstryId`. The officer name opens the officer change, like the member Staff in Charge.
 
 type SubPopup =
-  | { type: 'officer' | 'consultant' | 'requestDraft' | 'requestSignature' | 'approve' | 'reject' | 'trade' | 'delivery' | 'annex' | 'renewal' }
+  | { type: 'officer' | 'consultant' | 'requestDraft' | 'requestSignature' | 'approve' | 'reject' | 'trade' | 'delivery' | 'annex' | 'renewal' | 'member' }
   | { type: 'info'; atrzHstryId: string }
   | { type: 'fee'; fee: TradeContractFee; refund: boolean }
   | null;
@@ -75,15 +77,20 @@ function isAnnexOf(detail: TradeContractDetail): boolean {
   return !!detail.mstCtrtCd && detail.mstCtrtCd !== detail.srvcCtrtCd;
 }
 
+/** Tabs of the contract popup. */
+export type ContractTab = 'contract' | 'documents' | 'fees' | 'annexes' | 'report' | 'termination' | 'approvals';
+
 export interface TradeContractPopupProps {
   kind: TradeAppKind;
   srvcCtrtCd: string;
+  /** Tab shown first (hand-off from Approval Management: termination, report). */
+  initialTab?: ContractTab;
   title: string;
   canWrite: boolean;
   onClose: () => void;
 }
 
-export default function TradeContractPopup({ kind, srvcCtrtCd, title, canWrite, onClose }: TradeContractPopupProps) {
+export default function TradeContractPopup({ kind, srvcCtrtCd, initialTab, title, canWrite, onClose }: TradeContractPopupProps) {
   const { t } = useTranslation();
   const contractKind = TRADE_CONTRACT_KIND[kind];
   // Annexes open in the same popup; [Back] returns to the main contract.
@@ -108,6 +115,7 @@ export default function TradeContractPopup({ kind, srvcCtrtCd, title, canWrite, 
       detail={detail}
       title={title}
       canWrite={canWrite}
+      initialTab={current === srvcCtrtCd ? initialTab : undefined}
       onClose={onClose}
       onOpen={(code) => setStack((prev) => [...prev, code])}
       onBack={stack.length > 1 ? () => setStack((prev) => prev.slice(0, -1)) : undefined}
@@ -118,6 +126,7 @@ export default function TradeContractPopup({ kind, srvcCtrtCd, title, canWrite, 
 interface ContractViewProps {
   kind: TradeAppKind;
   detail: TradeContractDetail;
+  initialTab?: ContractTab;
   title: string;
   canWrite: boolean;
   onClose: () => void;
@@ -125,7 +134,7 @@ interface ContractViewProps {
   onBack?: () => void;
 }
 
-function ContractView({ kind, detail, title, canWrite, onClose, onOpen, onBack }: ContractViewProps) {
+function ContractView({ kind, detail, initialTab, title, canWrite, onClose, onOpen, onBack }: ContractViewProps) {
   const { t } = useTranslation();
   const { toast } = useNotify();
   const me = useAuthStore((s) => s.user?.usrId);
@@ -268,7 +277,14 @@ function ContractView({ kind, detail, title, canWrite, onClose, onOpen, onBack }
             <div className={styles.grid}>
               <div className={styles.cellLabel}>Customer</div>
               <div className={styles.cellValue}>
-                {member?.mbrNm || member?.orgnzNm || detail.mbrNm || '-'} ({detail.mbrNo ?? '-'}) · {member?.mbrTypeNm ?? '-'}
+                {detail.mbrNo ? (
+                  <button type="button" className={styles.officerLink} title="Open the member detail" onClick={() => setSub({ type: 'member' })}>
+                    {member?.mbrNm || member?.orgnzNm || detail.mbrNm || '-'} ({detail.mbrNo})
+                  </button>
+                ) : (
+                  '-'
+                )}{' '}
+                · {member?.mbrTypeNm ?? '-'}
               </div>
               <div className={styles.cellLabel}>Customer Contact</div>
               <div className={styles.cellValue}>{[member?.telno, member?.emlAddr].filter(Boolean).join(' · ') || '-'}</div>
@@ -527,9 +543,12 @@ function ContractView({ kind, detail, title, canWrite, onClose, onOpen, onBack }
             </div>
           )}
         </div>
-        <Tabs items={tabs} />
+        <Tabs items={tabs} defaultActiveKey={initialTab && tabs.some((tab) => tab.key === initialTab) ? initialTab : undefined} />
       </Popup>
 
+      {sub?.type === 'member' && detail.mbrNo && (
+        <MemberDetailModal visible member={memberItemFor(detail.mbrNo, detail.mbrNm)} onClose={close} />
+      )}
       {sub?.type === 'officer' && (
         <AssignOfficerPopup
           atrzProcCd={tradeProcessCode(kind, 'RCPT')}
@@ -549,9 +568,9 @@ function ContractView({ kind, detail, title, canWrite, onClose, onOpen, onBack }
         <AssignOfficerPopup
           atrzProcCd={tradeProcessCode(kind, 'RCPT')}
           stpNo={RECEIPT_OFFICER_STEP}
-          // Any trade staff member of the process (receiver, officer, approver) except the officer; the backend only
-          // requires a hired employee (Q-U7: the flow lets the approver assign).
-          source={{ type: 'processStaff', atrzProcCd: tradeProcessCode(kind, 'RCPT'), stpNos: [1, 2, 3] }}
+          // Any employed staff member except the officer; the backend only requires a hired employee (Q-U7: the
+          // flow lets the approver assign).
+          source={{ type: 'employees' }}
           label="Consultant"
           title="Assign Consultant"
           confirmText="Assign"

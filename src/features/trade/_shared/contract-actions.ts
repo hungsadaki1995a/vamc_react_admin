@@ -1,5 +1,10 @@
+import dayjs from 'dayjs';
 import type { TradeAppKind, TradeContractDetail } from '@/api/trade/trade-api';
 import type { FeeMethod } from '@/api/trade/trade-contract-api';
+import { dmyToDayjs } from '@/utils/date-format';
+
+/** The renewal decision opens this many days before the end date (sale.contract.expiry-notice-days). */
+export const RENEWAL_WINDOW_DAYS = 30;
 
 /** Fee payment options of the flows (sale contract step 13 / Mẫu 11 Art. 3). */
 export const FEE_METHOD_LABELS: Record<FeeMethod, string> = {
@@ -59,10 +64,16 @@ export function contractActions(detail: TradeContractDetail, me: string | undefi
       if (kind === 'purchase' && main && !detail.trdCnclsDmy) actions.add('CONCLUDE_TRADE');
       if (kind === 'purchase' && detail.trdCnclsDmy && !detail.dlvrCmptnDmy) actions.add('RECORD_DELIVERY');
       if (kind !== 'consulting' && main) actions.add('CREATE_ANNEX');
-      if (kind !== 'consulting' && main && detail.ctrtEndDmy) actions.add('DECIDE_RENEWAL');
+      if (kind !== 'consulting' && main && withinRenewalWindow(detail.ctrtEndDmy)) actions.add('DECIDE_RENEWAL');
       break;
     default:
       break;
   }
   return actions;
+}
+
+/** End date within the renewal window (or past it); open-ended contracts never are. */
+function withinRenewalWindow(ctrtEndDmy?: string): boolean {
+  const end = dmyToDayjs(ctrtEndDmy);
+  return !!end && end.diff(dayjs().startOf('day'), 'day') <= RENEWAL_WINDOW_DAYS;
 }

@@ -587,7 +587,12 @@
       "additionalAnswered": "Answer sent to the member.",
       "reportSaved": "Report saved.",
       "reportCompleted": "Report completed.",
-      "consultantAssigned": "Consultant assigned."
+      "consultantAssigned": "Consultant assigned.",
+      "noChanges": "Nothing has changed.",
+      "collateralFieldsRequired": "Enter the category, collateral contract number, contract date and characteristics.",
+      "collateralHint": "Collaterals not listed on the system can be typed from the paper form (up to 20). They are saved with the application only.",
+      "feeItemHint": "Fee schedule item of this kind (Fee Management). When none is chosen the server uses the first active item.",
+      "renewalWindowHint": "The renewal decision opens 30 days before the end date."
     },
     "approval": {
       "requested": "Approval requested.",

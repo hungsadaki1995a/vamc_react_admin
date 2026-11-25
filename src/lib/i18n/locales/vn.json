@@ -587,7 +587,12 @@
       "additionalAnswered": "Đã gửi trả lời cho hội viên.",
       "reportSaved": "Đã lưu báo cáo.",
       "reportCompleted": "Đã hoàn tất báo cáo.",
-      "consultantAssigned": "Đã chỉ định cán bộ tư vấn."
+      "consultantAssigned": "Đã chỉ định cán bộ tư vấn.",
+      "noChanges": "Không có thay đổi.",
+      "collateralFieldsRequired": "Nhập nhóm tài sản, số hợp đồng bảo đảm, ngày hợp đồng và đặc điểm tài sản.",
+      "collateralHint": "Tài sản bảo đảm chưa niêm yết trên hệ thống có thể nhập theo đơn giấy (tối đa 20). Chỉ lưu kèm theo yêu cầu.",
+      "feeItemHint": "Mục biểu phí của loại hợp đồng này (Quản lý phí). Không chọn thì hệ thống dùng mục đang áp dụng đầu tiên.",
+      "renewalWindowHint": "Quyết định gia hạn được mở từ 30 ngày trước ngày kết thúc hợp đồng."
     },
     "approval": {
       "requested": "Đã gửi yêu cầu phê duyệt.",

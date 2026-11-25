@@ -17,7 +17,9 @@ import { useMenuPermission } from '@/hooks/use-menu-permission';
 import { formatDmy } from '@/utils/date-format';
 import { errorMessage, formatAmount, rowNumber } from '@/utils/system-utils';
 import styles from '@/components/common/sys-ui/system-page.module.scss';
+import { useApprovalTargetHandoff } from '@/features/approval/_shared/approval-navigation';
 import TradeContractPopup from './TradeContractPopup';
+import type { ContractTab } from './TradeContractPopup';
 import {
   useAdditionalConsultingSetting,
   useDownloadTradeContractsExcel,
@@ -35,6 +37,8 @@ const APP_KIND: Record<TradeContractKind, TradeAppKind> = {
 const FEE_METHODS: Record<string, string> = { LUMP: '① Full after signing', AFTR: '② After the sale', STAG: '③ Advance + balance' };
 const ANNEX_PURPOSES: Record<string, string> = { EXTN: 'Extension', PRCE: 'Price', POST: 'After sale', ETC: 'Other' };
 type DateRange = [Dayjs | null, Dayjs | null] | null;
+const PERIOD_HELP =
+  'Contracts whose term overlaps the period: concluded (drafts: started or created) on or before the end of the period and ending on or after its start; contracts without an end date match any start.';
 
 export default function TradeContractBoard({ kind, title }: { kind: TradeContractKind; title: string }) {
   const [period, setPeriod] = useState<DateRange>(null);
@@ -47,6 +51,14 @@ export default function TradeContractBoard({ kind, title }: { kind: TradeContrac
   const [page, setPage] = useState(1);
   const [filterCollapsed, setFilterCollapsed] = useState(false);
   const [detailId, setDetailId] = useState<string | null>(null);
+  const [detailTab, setDetailTab] = useState<ContractTab | undefined>(undefined);
+
+  // Opened from Approval Management: show the contract of the inbox row on the tab of the approval.
+  useApprovalTargetHandoff((item) => {
+    if (!item.srvcCtrtCd || (item.tradeKind && item.tradeKind.toLowerCase() !== APP_KIND[kind])) return;
+    setDetailTab(item.targetScreen === 'TERMINATION' ? 'termination' : item.targetScreen === 'CONSULTING_REPORT' ? 'report' : undefined);
+    setDetailId(item.srvcCtrtCd);
+  });
 
   const { data, isFetching } = useTradeContracts(kind, applied, page, PAGE_SIZE);
   const { canWrite } = useMenuPermission();
@@ -92,7 +104,13 @@ export default function TradeContractBoard({ kind, title }: { kind: TradeContrac
       dataIndex: 'srvcCtrtNo',
       width: 180,
       render: (_v, r) => (
-        <a className={styles.cellLink} onClick={() => setDetailId(r.srvcCtrtCd)}>
+        <a
+          className={styles.cellLink}
+          onClick={() => {
+            setDetailTab(undefined);
+            setDetailId(r.srvcCtrtCd);
+          }}
+        >
           {contractNo(r)}
         </a>
       ),
@@ -137,8 +155,17 @@ export default function TradeContractBoard({ kind, title }: { kind: TradeContrac
       {!filterCollapsed && (
         <div className={styles.filterCard}>
           <div className={styles.filterGroup}>
-            <span className={styles.filterLabel}>Contract Period</span>
-            <AppRangePicker format="DD/MM/YYYY" value={period} onChange={(d) => setPeriod(d as DateRange)} className={styles.w240} />
+            {/* Server rule (R3-02): the contract term [conclusion (draft: start / creation), end] overlaps the period. */}
+            <span className={styles.filterLabel} title={PERIOD_HELP}>
+              Contract Period
+            </span>
+            <AppRangePicker
+              format="DD/MM/YYYY"
+              placeholder={['Term from', 'Term to']}
+              value={period}
+              onChange={(d) => setPeriod(d as DateRange)}
+              className={styles.w240}
+            />
           </div>
           <div className={styles.filterGroup}>
             <span className={styles.filterLabel}>Status</span>
@@ -194,7 +221,15 @@ export default function TradeContractBoard({ kind, title }: { kind: TradeContrac
       <SysPagination page={page} pageSize={PAGE_SIZE} total={total} onChange={setPage} />
 
       {detailId && (
-        <TradeContractPopup kind={APP_KIND[kind]} srvcCtrtCd={detailId} title={title} canWrite={canWrite} onClose={() => setDetailId(null)} />
+        <TradeContractPopup
+          key={`${detailId}-${detailTab ?? ''}`}
+          kind={APP_KIND[kind]}
+          srvcCtrtCd={detailId}
+          initialTab={detailTab}
+          title={title}
+          canWrite={canWrite}
+          onClose={() => setDetailId(null)}
+        />
       )}
     </div>
   );

@@ -16,11 +16,11 @@ import { usePagedList } from '@/hooks/use-paged-list';
 import type { PagedListState } from '@/hooks/use-paged-list';
 import { ACTIVE_MEMBER_STATUS } from '@/api/member/member-lookup-api';
 import type { MemberLookup } from '@/api/member/member-lookup-api';
-import type { NplItem, NplLotItem } from '@/api/npl/npl-api';
+import type { CollateralAssetItem, NplItem, NplLotItem } from '@/api/npl/npl-api';
 import { formatAmount } from '@/utils/system-utils';
-import { useMemberSearch, useNplLotSearch, useNplSearch } from './use-trade-application-form';
+import { useCollateralSearch, useMemberSearch, useNplLotSearch, useNplSearch } from './use-trade-application-form';
 
-// Pickers of the manual registration form: active member, registered NPL, NPL LOT (single pick).
+// Pickers of the manual registration form: active member, registered NPL, NPL LOT, listed collateral (single pick).
 
 interface CodeNameFilter {
   code: string;
@@ -43,6 +43,13 @@ const NPL_COLUMNS: TableColumnsType<NplItem> = [
   { title: 'Status', dataIndex: 'bndSttsCd', width: 80, align: 'center', render: (v?: string) => v || '-' },
   { title: 'LOT', dataIndex: 'bndLotNo', width: 110, render: (v?: string) => v || '-' },
   { title: 'Appraised Value', dataIndex: 'bndEvlAmt', width: 140, align: 'right', render: (v?: number) => formatAmount(v) },
+];
+
+const COLLATERAL_COLUMNS: TableColumnsType<CollateralAssetItem> = [
+  { title: 'Collateral Code', dataIndex: 'cltrAstCd', width: 140, align: 'center' },
+  { title: 'Collateral Name', dataIndex: 'cltrAstNm', ellipsis: true },
+  { title: 'Type', dataIndex: 'cltrAstTypeNm', width: 160, render: (v?: string) => v || '-' },
+  { title: 'NPL', dataIndex: 'rprsBndCd', width: 120, render: (v?: string) => v || '-' },
 ];
 
 const LOT_COLUMNS: TableColumnsType<NplLotItem> = [
@@ -165,6 +172,44 @@ export function NplSearchPopup({ mode, onSelect, onClose }: { mode: 'npl' | 'lot
           rowSelection={{ type: 'radio', selectedRowKeys: pickedLot ? [pickedLot.bndLotId] : [], onChange: (_k, rows) => setPickedLot(rows[0] ?? null) }}
         />
       )}
+    </PickerShell>
+  );
+}
+
+export interface PickedCollateral {
+  cltrAstCd: string;
+  cltrAstNm: string;
+}
+
+/** Listed collateral (CLTR_AST_INFO, exposed on the market) that a consulting application is about. */
+export function CollateralSearchPopup({ onSelect, onClose }: { onSelect: (collateral: PickedCollateral) => void; onClose: () => void }) {
+  const list = usePagedList<CodeNameFilter>(INITIAL_FILTER);
+  const { data, isFetching } = useCollateralSearch(
+    { cltrAstCd: list.applied.code.trim() || undefined, cltrAstNm: list.applied.name.trim() || undefined, expsrYn: 'Y' },
+    list.pageQuery,
+  );
+  const [picked, setPicked] = useState<CollateralAssetItem | null>(null);
+  return (
+    <PickerShell
+      title="Collateral Search (listed collaterals)"
+      codeLabel="Collateral Code"
+      nameLabel="Collateral Name"
+      canSelect={!!picked}
+      onSelect={() => picked && onSelect({ cltrAstCd: picked.cltrAstCd, cltrAstNm: picked.cltrAstNm })}
+      onClose={onClose}
+      list={list}
+      loading={isFetching}
+      total={data?.totalElements ?? 0}
+    >
+      <SysTable<CollateralAssetItem>
+        rowKey="cltrAstCd"
+        columns={COLLATERAL_COLUMNS}
+        dataSource={data?.content ?? []}
+        loading={isFetching}
+        scroll={{ y: 320 }}
+        onRowClick={setPicked}
+        rowSelection={{ type: 'radio', selectedRowKeys: picked ? [picked.cltrAstCd] : [], onChange: (_k, rows) => setPicked(rows[0] ?? null) }}
+      />
     </PickerShell>
   );
 }

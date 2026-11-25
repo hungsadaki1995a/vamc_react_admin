@@ -6,8 +6,8 @@ import type { SaveTradeApplicationRequest, TradeAppKind } from '@/api/trade/trad
 import { uploadTradeFiles } from '@/api/trade/trade-file-api';
 import { getMemberLookup, searchMembers } from '@/api/member/member-lookup-api';
 import type { MemberLookup, MemberLookupSearch } from '@/api/member/member-lookup-api';
-import { getNplLots, getNpls } from '@/api/npl/npl-api';
-import type { NplItem, NplLotItem, NplSearch } from '@/api/npl/npl-api';
+import { getCollateralAssets, getNplLots, getNpls } from '@/api/npl/npl-api';
+import type { CollateralAssetItem, CollateralSearch, NplItem, NplLotItem, NplSearch } from '@/api/npl/npl-api';
 import type { PageQuery, PageResponse } from '@/api/common/api-utils';
 import { AFTER_WRITE } from './use-trade-applications';
 
@@ -18,6 +18,7 @@ const FORM_KEYS = {
   member: (mbrNo: string | null) => ['trade', 'form', 'member', mbrNo] as const,
   npls: (search: NplSearch, query: PageQuery) => ['trade', 'form', 'npls', search, query] as const,
   lots: (search: { bndLotNo?: string; bndLotNm?: string }, query: PageQuery) => ['trade', 'form', 'lots', search, query] as const,
+  collaterals: (search: CollateralSearch, query: PageQuery) => ['trade', 'form', 'collaterals', search, query] as const,
 };
 
 export function useMemberSearch(search: MemberLookupSearch, query: PageQuery) {
@@ -43,6 +44,15 @@ export function useNplLotSearch(search: { bndLotNo?: string; bndLotNm?: string }
     enabled,
     placeholderData: keepPreviousData,
   });
+}
+
+/** Listed collaterals for the consulting target (GET /api/v1/collateral-assets). */
+export function useCollateralSearch(search: CollateralSearch, query: PageQuery) {
+  return useApiQuery<PageResponse<CollateralAssetItem>>(
+    FORM_KEYS.collaterals(search, query),
+    () => getCollateralAssets(search, query.page, query.size),
+    { placeholderData: keepPreviousData },
+  );
 }
 
 /** Scans uploaded with the form (scope `application`); appends to `fileUnqId` when given. */

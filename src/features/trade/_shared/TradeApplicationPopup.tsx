@@ -31,6 +31,8 @@ import { ApprovalStepsTable } from '@/features/approval/_shared/ApprovalParts';
 import type { ApprovalDetailRow } from '@/features/approval/_shared/ApprovalParts';
 import ApprovalRequestPopup from '@/features/approval/_shared/ApprovalRequestPopup';
 import AssignOfficerPopup from '@/features/approval/_shared/AssignOfficerPopup';
+import MemberDetailModal from '@/features/member/member-list/MemberDetailModal';
+import { memberItemFor } from '@/features/member/member-list/use-members';
 import { formatDateTime, formatDmy } from '@/utils/date-format';
 import { errorMessage, formatAmount } from '@/utils/system-utils';
 import {
@@ -56,7 +58,7 @@ import styles from './trade-application-popup.module.scss';
 // Buttons follow the server's `availableAction` (or `availableActions` once WP8 sends it); the officer name opens
 // the officer change, like Staff in Charge of member management.
 
-type SubPopup = 'receipt' | 'officer' | 'request' | 'approve' | 'reject' | 'info' | 'cancel' | null;
+type SubPopup = 'receipt' | 'officer' | 'request' | 'approve' | 'reject' | 'info' | 'cancel' | 'member' | null;
 
 const KIND_LABELS: Record<TradeAppKind, string> = { sale: 'Sale', purchase: 'Purchase', consulting: 'Consulting' };
 const STATUS_COLORS: Record<string, StatusBadgeColor> = {
@@ -98,7 +100,7 @@ const COLLATERAL_COLUMNS: TableColumnsType<TradeCollateral> = [
 const HISTORY_COLUMNS: TableColumnsType<TradeApplicationHistory> = [
   { title: 'Status', dataIndex: 'srvcPrcsSttsNm', width: 170, render: (v?: string, r?: TradeApplicationHistory) => v || r?.srvcPrcsSttsCd || '-' },
   { title: 'Processed At', dataIndex: 'prcsDt', width: 150, align: 'center', render: (v?: string) => formatDateTime(v) },
-  { title: 'By', dataIndex: 'prcsBy', width: 130, render: (v?: string) => v || '-' },
+  { title: 'By', dataIndex: 'prcsByNm', width: 190, render: (v?: string, r?: TradeApplicationHistory) => v || r?.prcsBy || '-' },
   { title: 'Note', dataIndex: 'prcsCn', render: (v?: string) => v || '-' },
 ];
 
@@ -290,9 +292,14 @@ export default function TradeApplicationPopup({ kind, srvcAplyId, title, canWrit
           </div>
           <div className={styles.headerItem}>
             <span className={styles.headerLabel}>Applicant</span>
-            <span className={styles.headerValue}>
-              {detail.mbrNm || '-'} ({detail.mbrNo || '-'})
-            </span>
+            {detail.mbrNo ? (
+              // Member detail popup of Member Management (decision 2026-11-26: customer data comes from the member).
+              <button type="button" className={styles.officerLink} title="Open the member detail" onClick={() => setSubPopup('member')}>
+                {detail.mbrNm || '-'} ({detail.mbrNo})
+              </button>
+            ) : (
+              <span className={styles.headerValue}>-</span>
+            )}
           </div>
           <div className={styles.headerItem}>
             <span className={styles.headerLabel}>Receiver</span>
@@ -316,7 +323,8 @@ export default function TradeApplicationPopup({ kind, srvcAplyId, title, canWrit
 
         {detail.activePurchaseCtrtCd && (
           <div className={styles.warning}>
-            A purchase contract for the same subject is still running ({detail.activePurchaseCtrtCd}); the approval request will be refused.
+            A purchase contract for the same subject is still running ({detail.activePurchaseCtrtNo || detail.activePurchaseCtrtCd}); receipt and
+            the approval request will be refused.
           </div>
         )}
         {detail.cnclRsnCn && <div className={styles.warning}>Cancellation reason: {detail.cnclRsnCn}</div>}
@@ -510,6 +518,11 @@ export default function TradeApplicationPopup({ kind, srvcAplyId, title, canWrit
           atrzProcCd={rcptProcess}
           atrzHstryId={detail.atrzHstryId}
           details={details}
+          warning={
+            detail.activePurchaseCtrtCd
+              ? `Purchase contract ${detail.activePurchaseCtrtNo || detail.activePurchaseCtrtCd} is still running for the same NPL / LOT: the request will be refused until it ends.`
+              : undefined
+          }
           onSubmit={async (body) => {
             const response = await requestApproval.mutateAsync({ kind, id: srvcAplyId, body });
             toast.success(response.message || t('messages.approval.requested'));
@@ -522,6 +535,9 @@ export default function TradeApplicationPopup({ kind, srvcAplyId, title, canWrit
         <ApprovalDecisionPopup atrzHstryId={detail.atrzHstryId} mode={subPopup} target={applicationNo(detail)} details={details} onClose={() => setSubPopup(null)} />
       )}
       {detail.atrzHstryId && subPopup === 'info' && <ApprovalInfoPopup atrzHstryId={detail.atrzHstryId} target={applicationNo(detail)} onClose={() => setSubPopup(null)} />}
+      {subPopup === 'member' && detail.mbrNo && (
+        <MemberDetailModal visible member={memberItemFor(detail.mbrNo, detail.mbrNm)} onClose={() => setSubPopup(null)} />
+      )}
       {subPopup === 'cancel' && (
         <Popup
           open

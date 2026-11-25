@@ -2,6 +2,7 @@ import { useState } from 'react';
 import type { TableColumnsType } from 'antd';
 import type { Dayjs } from 'dayjs';
 import ActionButton from '@/components/common/actions/ActionButton';
+import StatusBadge from '@/components/common/badge/StatusBadge';
 import DataTable from '@/components/common/table/DataTable';
 import { AppRangePicker } from '@/components/inputs/AppDatePicker';
 import AppRadio from '@/components/inputs/AppRadio';
@@ -17,10 +18,10 @@ import type {
   TradeApplicationStatus,
   TradeApprovalStage,
 } from '@/api/trade/trade-api';
-import { RECEIPT_OFFICER_STEP } from '@/api/common/approval-api';
-import { applicationNo, tradeProcessCode } from '@/api/trade/trade-api';
+import { applicationNo } from '@/api/trade/trade-api';
 import { SysPageHeader, SysPagination } from '@/components/common/sys-ui/SystemUi';
 import { EmployeePickField } from '@/features/approval/_shared/ApprovalParts';
+import { useApprovalTargetHandoff } from '@/features/approval/_shared/approval-navigation';
 import { formatDateTime, formatDmy } from '@/utils/date-format';
 import { formatAmount, rowNumber } from '@/utils/system-utils';
 import styles from '@/components/common/sys-ui/system-page.module.scss';
@@ -57,6 +58,9 @@ const STAGE_OPTIONS: { value: TradeApprovalStage | ''; label: string }[] = [
   { value: 'CANCELLED', label: 'Cancelled' },
 ];
 
+/** Officer filter: every employee holding the processing role (GET /employees/lookup?roleId=PRCS). */
+const OFFICER_SOURCE = { type: 'employees', roleId: 'PRCS' } as const;
+
 const STAGE_LABELS = Object.fromEntries(STAGE_OPTIONS.map((o) => [o.value, o.label])) as Record<string, string>;
 
 export default function TradeApplicationBoard({ kind, title }: { kind: TradeAppKind; title: string }) {
@@ -76,6 +80,14 @@ export default function TradeApplicationBoard({ kind, title }: { kind: TradeAppK
   const [filterCollapsed, setFilterCollapsed] = useState(false);
   const [detailId, setDetailId] = useState<string | null>(null);
   const [form, setForm] = useState<FormState>(null);
+
+  // Opened from Approval Management: show the application of the inbox row.
+  useApprovalTargetHandoff((item) => {
+    if (item.srvcAplyId && (!item.tradeKind || item.tradeKind.toLowerCase() === kind)) {
+      setForm(null);
+      setDetailId(item.srvcAplyId);
+    }
+  });
 
   const { data, isFetching } = useTradeApplications(kind, applied, page, PAGE_SIZE);
   const downloadExcel = useDownloadTradeApplicationsExcel();
@@ -117,11 +129,19 @@ export default function TradeApplicationBoard({ kind, title }: { kind: TradeAppK
     {
       title: 'Application No.',
       dataIndex: 'srvcAplyNo',
-      width: 170,
+      width: 260,
       render: (_v, r) => (
-        <a className={styles.cellLink} onClick={() => setDetailId(r.srvcAplyId)}>
-          {applicationNo(r)}
-        </a>
+        <span className={styles.inline}>
+          <a className={styles.cellLink} onClick={() => setDetailId(r.srvcAplyId)}>
+            {applicationNo(r)}
+          </a>
+          {r.activePurchaseCtrtCd && (
+            // Receipt / approval request will be refused while that contract runs (409 TRD021).
+            <span title={`Purchase contract ${r.activePurchaseCtrtNo || r.activePurchaseCtrtCd} is running for the same NPL / LOT`}>
+              <StatusBadge color="red">Contract running</StatusBadge>
+            </span>
+          )}
+        </span>
       ),
     },
     { title: 'Application Date', dataIndex: 'srvcAplyDmy', width: 120, align: 'center', render: (v?: string) => formatDmy(v) },
@@ -210,7 +230,7 @@ export default function TradeApplicationBoard({ kind, title }: { kind: TradeAppK
           <div className={styles.filterGroup}>
             <span className={styles.filterLabel}>Officer</span>
             <div className={styles.w240}>
-              <EmployeePickField value={tkcgEmpNo} onChange={setTkcgEmpNo} source={{ type: 'candidates', atrzProcCd: tradeProcessCode(kind, 'RCPT'), stpNo: RECEIPT_OFFICER_STEP }} placeholder="Any officer" searchTitle="Officer Search" />
+              <EmployeePickField value={tkcgEmpNo} onChange={setTkcgEmpNo} source={OFFICER_SOURCE} placeholder="Any officer" searchTitle="Officer Search" />
             </div>
           </div>
           <div className={styles.filterGroup}>
