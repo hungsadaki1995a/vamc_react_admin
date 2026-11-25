@@ -5,7 +5,6 @@ import {
   approveApproval,
   getApprovalCandidates,
   getApprovalDetail,
-  getProcessStaff,
   rejectApproval,
 } from '@/api/common/approval-api';
 import type { ApprovalCandidate, ApprovalCandidateSearch, ApprovalDetail } from '@/api/common/approval-api';
@@ -45,15 +44,7 @@ export function useApprovalCandidates(search: ApprovalCandidateSearch | null) {
   );
 }
 
-/** Employees holding any of several steps of a process; skipped while `search` is null. */
-export function useProcessStaff(search: (Omit<ApprovalCandidateSearch, 'stpNo'> & { stpNos: number[] }) | null) {
-  return useApiQuery<ApprovalCandidate[]>(['approval', 'process-staff', search], () => getProcessStaff(search as NonNullable<typeof search>), {
-    enabled: search !== null,
-    staleTime: 60 * 1000,
-  });
-}
-
-/** Every employee (paged), for filters that are not tied to a process step; skipped while disabled. */
+/** Employees (paged, optionally by role) for pickers that are not tied to a process step; skipped while disabled. */
 export function useEmployeeDirectory(search: EmployeeLookupSearch, query: PageQuery, enabled: boolean) {
   return useApiQuery<PageResponse<EmployeeLookup>>(
     APPROVAL_KEYS.employees(search, query),

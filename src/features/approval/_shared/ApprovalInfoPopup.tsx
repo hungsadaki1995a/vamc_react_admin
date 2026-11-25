@@ -4,12 +4,14 @@ import Popup from '@/components/common/popup/Popup';
 import { APPROVAL_STAGE_LABELS, approvalStageOf } from '@/api/common/approval-api';
 import { formatDateTime } from '@/utils/date-format';
 import { ApprovalStepsTable, ApprovalSummary, SessionStatusBadge } from './ApprovalParts';
+import { targetSummaryRows } from './approval-target';
 import type { ApprovalDetailRow } from './ApprovalParts';
 import { useApprovalDetail } from './use-approval';
 import styles from './approval-popups.module.scss';
 
 // Approval Information popup (VPA020400P01): stage, status, steps timeline (who / when / comment) and the
-// rejection reason of one session (GET /api/v1/approvals/{atrzHstryId}).
+// rejection reason of one session (GET /api/v1/approvals/{atrzHstryId}). The business rows come from the server's
+// target summary; `details` of the caller are used only when the server sends none.
 
 export interface ApprovalInfoPopupProps {
   atrzHstryId: string;
@@ -47,13 +49,13 @@ export default function ApprovalInfoPopup({ atrzHstryId, details = [], target, o
                 { label: 'Approval Stage', value: APPROVAL_STAGE_LABELS[approvalStageOf(session.atrzProcCd)] },
                 { label: 'Process', value: session.atrzProcNm || session.atrzProcCd },
                 { label: 'Status', value: <SessionStatusBadge status={session.atrzSttsCd} /> },
-                { label: 'Target', value: target ?? session.atrzTrgtId ?? '-' },
+                { label: 'Target', value: session.atrzTrgtNo ?? target ?? session.atrzTrgtId ?? '-' },
                 {
                   label: 'Requested',
                   value: session.rtsoEmpNo ? `${requester ?? session.rtsoEmpNo} · ${formatDateTime(session.rtsoDt)}` : '-',
                 },
                 ...(session.atrzCmptnDt ? [{ label: 'Closed At', value: formatDateTime(session.atrzCmptnDt) }] : []),
-                ...details,
+                ...(session.target ? targetSummaryRows(session.target) : details),
               ]}
             />
             <ApprovalStepsTable steps={steps} />

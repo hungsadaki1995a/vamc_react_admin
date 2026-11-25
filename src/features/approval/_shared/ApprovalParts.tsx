@@ -11,7 +11,7 @@ import type { ApprovalStep } from '@/api/common/approval-api';
 import { formatDateTime } from '@/utils/date-format';
 import EmployeeSearchPopup from './EmployeeSearchPopup';
 import type { EmployeeSearchSource, PickedEmployee } from './EmployeeSearchPopup';
-import { useApprovalCandidates, useProcessStaff } from './use-approval';
+import { useApprovalCandidates, useEmployeeDirectory } from './use-approval';
 import styles from './approval-popups.module.scss';
 
 // Building blocks shared by the approval popups and the screens that call them.
@@ -92,6 +92,8 @@ export function ApprovalStepsTable({ steps }: { steps: ApprovalStep[] }) {
 }
 
 const NO_CANDIDATES: PickedEmployee[] = [];
+/** Options listed in the select of an `employees` source (first page; [Search] pages through the rest). */
+const EMPLOYEE_OPTIONS_QUERY = { page: 1, size: 100 };
 
 export interface EmployeePickFieldProps {
   /** Selected employee number ('' = none). */
@@ -105,9 +107,9 @@ export interface EmployeePickFieldProps {
 }
 
 /**
- * Employee select + [Search] button that opens the Employee Search popup (VPA020500P01). With a `candidates`
- * source the select lists the step's candidates (`processStaff`: of several steps); with `employees` it shows only
- * the employee picked in the popup.
+ * Employee select + [Search] button that opens the Employee Search popup (VPA020500P01). The select lists the
+ * step's candidates (`candidates`) or the first employees of the role (`employees`); [Search] filters by number /
+ * name.
  */
 export function EmployeePickField({
   value,
@@ -125,10 +127,14 @@ export function EmployeePickField({
       ? { atrzProcCd: source.atrzProcCd, stpNo: source.stpNo, atrzHstryId: source.atrzHstryId }
       : null,
   );
-  const { data: staff = NO_CANDIDATES } = useProcessStaff(
-    source.type === 'processStaff' ? { atrzProcCd: source.atrzProcCd, stpNos: source.stpNos } : null,
+  const { data: employees } = useEmployeeDirectory(
+    { roleId: source.type === 'employees' ? source.roleId : undefined },
+    EMPLOYEE_OPTIONS_QUERY,
+    source.type === 'employees',
   );
-  const listed = (source.type === 'processStaff' ? staff : candidates).filter((c) => !excludeEmpNos?.includes(c.empNo));
+  const listed = (source.type === 'employees' ? (employees?.content ?? NO_CANDIDATES) : candidates).filter(
+    (c) => !excludeEmpNos?.includes(c.empNo),
+  );
   const all = picked && !listed.some((c) => c.empNo === picked.empNo) ? [...listed, picked] : listed;
   const options = all.map((c) => ({ value: c.empNo, label: c.jbpsNm ? `${c.empNm} (${c.empNo} · ${c.jbpsNm})` : `${c.empNm} (${c.empNo})` }));
 

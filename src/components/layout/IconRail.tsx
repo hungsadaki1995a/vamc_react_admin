@@ -19,6 +19,7 @@ import type { MenuItem } from '@/types/menu';
 import { useMenuStore } from '@/stores/menu-store';
 import { useTabStore } from '@/stores/tab-store';
 import { useLogout } from '@/hooks/use-logout';
+import { APPROVAL_MENU_CD, useApprovalInboxCount } from '@/hooks/use-approval-inbox-count';
 import { useAllMenus } from '@/hooks/use-all-menus';
 import { useTranslation } from 'react-i18next';
 import { useComponentLabel } from '@/hooks/use-component-label';
@@ -114,6 +115,7 @@ export default function IconRail() {
 
   // All menus with locale applied (server menus + static menus)
   const allMenus = useAllMenus();
+  const approvalCount = useApprovalInboxCount();
   const bottomRailMenu = useMemo(
     () => allMenus.find((m) => m.key === BOTTOM_RAIL_KEY),
     [allMenus],
@@ -179,6 +181,7 @@ export default function IconRail() {
           const isActive = activeTopKey === item.key;
           const isFlyoutActive = flyoutVisible && activeRailKey === item.key;
           const showBadge = badgeKeys.has(item.key);
+          const count = item.key === APPROVAL_MENU_CD ? approvalCount : 0;
           return (
             <AppTooltip key={item.key} variant="default" title={item.label} placement="right" mouseEnterDelay={0.3}>
               <div
@@ -187,6 +190,11 @@ export default function IconRail() {
               >
                 {getIconComponent(item)}
                 {showBadge && <span className="rail-badge" />}
+                {count > 0 && (
+                  <span className="rail-count" aria-label={`${count} waiting`}>
+                    {count > 99 ? '99+' : count}
+                  </span>
+                )}
               </div>
             </AppTooltip>
           );

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import Popup from '@/components/common/popup/Popup';
 import AppCheckbox from '@/components/inputs/AppCheckbox';
@@ -24,6 +25,8 @@ export interface ApprovalRequestPopupProps {
   title?: string;
   /** Business detail of the target (code, member, NPL, value, …). */
   details?: ApprovalDetailRow[];
+  /** Shown above the form when the request is expected to be refused (e.g. a purchase contract still running). */
+  warning?: ReactNode;
   /** Sends the request; resolve on success (the caller shows the toast and closes), reject to keep the popup. */
   onSubmit: (body: ApprovalRequestBody) => Promise<unknown>;
   onClose: () => void;
@@ -34,6 +37,7 @@ export default function ApprovalRequestPopup({
   atrzHstryId,
   title,
   details = [],
+  warning,
   onSubmit,
   onClose,
 }: ApprovalRequestPopupProps) {
@@ -76,6 +80,7 @@ export default function ApprovalRequestPopup({
       confirmLoading={submitting}
       confirmDisabled={!confirmed || !approverEmpNo}
     >
+      {warning && <div className={styles.rejection}>{warning}</div>}
       <ApprovalSummary
         rows={[
           { label: 'Approval Stage', value: stageLabel },

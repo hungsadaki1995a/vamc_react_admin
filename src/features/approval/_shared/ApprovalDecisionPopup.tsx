@@ -11,6 +11,7 @@ import { APPROVAL_STAGE_LABELS, approvalStageOf } from '@/api/common/approval-ap
 import { formatDateTime } from '@/utils/date-format';
 import { errorMessage } from '@/utils/system-utils';
 import { ApprovalSummary } from './ApprovalParts';
+import { targetSummaryRows } from './approval-target';
 import type { ApprovalDetailRow } from './ApprovalParts';
 import { useApprovalDetail, useApproveApproval, useRejectApproval } from './use-approval';
 import styles from './approval-popups.module.scss';
@@ -103,13 +104,14 @@ export default function ApprovalDecisionPopup({ atrzHstryId, mode, details = [],
         <ApprovalSummary
           rows={[
             { label: 'Process', value: session?.atrzProcNm || stageLabel },
-            { label: 'Target', value: target ?? session?.atrzTrgtId ?? '-' },
+            { label: 'Target', value: session?.atrzTrgtNo ?? target ?? session?.atrzTrgtId ?? '-' },
             {
               label: 'Requester',
               value: session?.rtsoEmpNo ? `${requester ?? session.rtsoEmpNo} · ${formatDateTime(session.rtsoDt)}` : '-',
             },
             { label: 'Approver', value: me ? `${me.usrNm ?? ''} (${me.usrId})` : '-' },
-            ...details,
+            // Business content of the target from the server; the caller's rows only when it sends none.
+            ...(session?.target ? targetSummaryRows(session.target) : details),
           ]}
         />
       </LoadingSpinner>

@@ -1,13 +1,12 @@
 import { apiGet, apiPost } from '@/api/common/api-utils';
 import type { PageQuery, PageResponse } from '@/api/common/api-utils';
-import type { ApiResponse } from '@/lib/api/types';
 
 // Common approval API — ApprovalController (/api/v1/approvals): inbox, session detail, step candidates,
 // approver decision. Screens VPA10000001 (Approval Management) and the common popups VPA020100P01–0400P01,
 // VPA020500P01. Approval requests are sent by each module (POST …/approval of applications, contracts, …).
 
-/** Inbox filter by process kind; `other` (auctions, …) has a count but no filter. */
-export type ApprovalInboxKind = 'member' | 'sale' | 'purchase' | 'consulting';
+/** Inbox filter by process kind; `other` = every process that is not member / sale / purchase / consulting. */
+export type ApprovalInboxKind = 'member' | 'sale' | 'purchase' | 'consulting' | 'other';
 /** Session status (ATRZ_HSTRY.ATRZ_STTS_CD). */
 export type ApprovalSessionStatus = 'INPROGRESS' | 'COMPLETED' | 'REJECTED' | string;
 /** Step status of the timeline. */
@@ -28,6 +27,33 @@ export interface ApprovalStep {
   comment?: string;
 }
 
+/** Business summary of the approval target (GET /approvals/{id} `target`); empty fields are omitted. */
+export interface ApprovalTargetSummary {
+  /** Readable number: application / contract number, member number for members, else the key. */
+  atrzTrgtNo?: string;
+  srvcAplyId?: string;
+  srvcAplyNo?: string;
+  srvcCtrtCd?: string;
+  srvcCtrtNo?: string;
+  /** CTRT_DSPSL_MDT, CTRT_PUR_MDT, CTRT_CNSLT, annex types. */
+  ctrtSeCd?: string;
+  /** Main contract number of an annex. */
+  mstCtrtNo?: string;
+  mbrNo?: string;
+  mbrNm?: string;
+  bndLotYn?: 'Y' | 'N';
+  bndCd?: string;
+  bndLotId?: string;
+  bndLotNm?: string;
+  totEvlAmt?: number;
+  crncCd?: string;
+  /** Contract PRP_PRC, or the application's desired price. */
+  prpPrc?: number;
+  /** LUMP, AFTR, STAG. */
+  feeClclnMthCd?: string;
+  feeAmt?: number;
+}
+
 export interface ApprovalDetail {
   atrzHstryId: string;
   atrzProcCd: string;
@@ -41,6 +67,9 @@ export interface ApprovalDetail {
   /** Employee who sent the approval request. */
   rtsoEmpNo?: string;
   rtsoDt?: string;
+  /** Readable number of the target (falls back to the key on the server). */
+  atrzTrgtNo?: string;
+  target?: ApprovalTargetSummary;
   steps?: ApprovalStep[];
 }
 
@@ -52,6 +81,7 @@ export interface ApprovalInboxItem {
   atrzTrgtId?: string;
   nowStpNo?: number;
   stpNm?: string;
+  /** Who decided the step before the current one (the session starter while it is at its first step). */
   requesterEmpNo?: string;
   requesterEmpNm?: string;
   requestedAt?: string;
@@ -177,22 +207,6 @@ export const getApprovalDetail = (atrzHstryId: string) => apiGet<ApprovalDetail>
 /** Active employees holding the role of a step (VPA020500P01, approver / officer selection). */
 export const getApprovalCandidates = (search: ApprovalCandidateSearch) =>
   apiGet<ApprovalCandidate[]>(`${BASE}/candidates`, search, []);
-
-/**
- * Employees holding the role of any of `stpNos` (deduplicated), e.g. every trade staff member of a process when
- * no single step fits (consultant). Employee lookup itself is guarded by User Management, so staff cannot use it.
- */
-export async function getProcessStaff(
-  search: Omit<ApprovalCandidateSearch, 'stpNo'> & { stpNos: number[] },
-): Promise<ApiResponse<ApprovalCandidate[]>> {
-  const { stpNos, ...rest } = search;
-  const answers = await Promise.all(stpNos.map((stpNo) => getApprovalCandidates({ ...rest, stpNo })));
-  const failed = answers.find((answer) => !answer.success);
-  if (failed) return failed;
-  const merged = new Map<string, ApprovalCandidate>();
-  answers.forEach((answer) => (answer.data ?? []).forEach((c) => merged.set(c.empNo, merged.get(c.empNo) ?? c)));
-  return { ...answers[0], data: [...merged.values()] };
-}
 
 /** Approver approves the current step (VPA020200P01). */
 export const approveApproval = (atrzHstryId: string, cmntCn?: string) =>

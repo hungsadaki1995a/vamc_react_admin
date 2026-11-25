@@ -12,18 +12,16 @@ import {
 import { SysFormModal } from '@/components/common/sys-ui/SysFormUi';
 import { SYS_PAGE_SIZE } from '@/config/sys-constants';
 import { usePagedList } from '@/hooks/use-paged-list';
-import { useApprovalCandidates, useEmployeeDirectory, useProcessStaff } from './use-approval';
+import { useApprovalCandidates, useEmployeeDirectory } from './use-approval';
 
 // Employee Search popup (VPA020500P01), single pick. Two sources:
-//   candidates — employees holding the role of an approval step (officer, approver, consultant);
-//   employees  — every employee (paged), for list filters such as receiver / officer.
+//   candidates — employees holding the role of an approval step (officer, approver);
+//   employees  — employed staff (paged), optionally by role (`roleId` PRCS / RCPT), for list filters and the
+//                consultant. Trade staff may read it (GET /api/v1/employees/lookup).
 
 export type EmployeeSearchSource =
   | { type: 'candidates'; atrzProcCd: string; stpNo: number; atrzHstryId?: string }
-  /** Holders of any of several steps (e.g. every trade staff member for the consultant). */
-  | { type: 'processStaff'; atrzProcCd: string; stpNos: number[] }
-  /** Every employee — needs read permission on User Management (not for trade staff). */
-  | { type: 'employees' };
+  | { type: 'employees'; roleId?: string };
 
 export interface PickedEmployee {
   empNo: string;
@@ -79,23 +77,17 @@ export default function EmployeeSearchPopup({
         }
       : null,
   );
-  const staff = useProcessStaff(
-    source.type === 'processStaff'
-      ? { atrzProcCd: source.atrzProcCd, stpNos: source.stpNos, keyword: empNo || undefined, empNm: empNm || undefined }
-      : null,
+  const directory = useEmployeeDirectory(
+    { empNo: empNo || undefined, empNm: empNm || undefined, roleId: source.type === 'employees' ? source.roleId : undefined },
+    list.pageQuery,
+    !isCandidates,
   );
-  const directory = useEmployeeDirectory({ empNo, empNm }, list.pageQuery, source.type === 'employees');
   const [picked, setPicked] = useState<PickedEmployee | null>(null);
 
-  const isList = source.type !== 'employees';
-  const sourceRows: PickedEmployee[] = isCandidates
-    ? (candidates.data ?? NO_ROWS)
-    : source.type === 'processStaff'
-      ? (staff.data ?? NO_ROWS)
-      : (directory.data?.content ?? NO_ROWS);
+  const sourceRows: PickedEmployee[] = isCandidates ? (candidates.data ?? NO_ROWS) : (directory.data?.content ?? NO_ROWS);
   const rows = excludeEmpNos?.length ? sourceRows.filter((row) => !excludeEmpNos.includes(row.empNo)) : sourceRows;
-  const total = isList ? rows.length : (directory.data?.totalElements ?? 0);
-  const loading = isCandidates ? candidates.isFetching : source.type === 'processStaff' ? staff.isFetching : directory.isFetching;
+  const total = isCandidates ? rows.length : (directory.data?.totalElements ?? 0);
+  const loading = isCandidates ? candidates.isFetching : directory.isFetching;
 
   return (
     <SysFormModal
@@ -142,7 +134,7 @@ export default function EmployeeSearchPopup({
           onChange: (_keys, selected) => setPicked(selected[0] ?? null),
         }}
       />
-      {!isList && <SysPager page={list.page} pageSize={SYS_PAGE_SIZE} total={total} onChange={list.setPage} />}
+      {!isCandidates && <SysPager page={list.page} pageSize={SYS_PAGE_SIZE} total={total} onChange={list.setPage} />}
     </SysFormModal>
   );
 }

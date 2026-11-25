@@ -210,6 +210,24 @@ body,
   border: 1.5px solid var(--rail-bg-end);
 }
 
+/* Number of approvals waiting (Approval Management) */
+.rail-item .rail-count {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  border-radius: 9px;
+  border: 1.5px solid var(--rail-bg-end);
+  background: var(--error-color);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 15px;
+  text-align: center;
+}
+
 /* ============================
    Flyout Panel — Tree Lines + Active State
    ============================ */

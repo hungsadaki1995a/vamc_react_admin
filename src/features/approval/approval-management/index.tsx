@@ -24,7 +24,7 @@ import styles from './approval-management.module.scss';
 
 const PAGE_SIZE = 15;
 
-type KindChip = { key: ApprovalInboxKind | 'all' | 'other'; label: string; count: (s?: ApprovalInboxSummary) => number };
+type KindChip = { key: ApprovalInboxKind | 'all'; label: string; count: (s?: ApprovalInboxSummary) => number };
 
 const KIND_CHIPS: KindChip[] = [
   { key: 'all', label: 'All', count: (s) => s?.total ?? 0 },
@@ -32,7 +32,7 @@ const KIND_CHIPS: KindChip[] = [
   { key: 'sale', label: 'Sale', count: (s) => s?.sale ?? 0 },
   { key: 'purchase', label: 'Purchase', count: (s) => s?.purchase ?? 0 },
   { key: 'consulting', label: 'Consulting', count: (s) => s?.consulting ?? 0 },
-  // No inbox filter exists for other processes (auctions, …): count only.
+  // Every other process (auction publication, …).
   { key: 'other', label: 'Other', count: (s) => s?.other ?? 0 },
 ];
 
@@ -112,7 +112,8 @@ export default function ApprovalManagement() {
     },
     { title: 'Step', dataIndex: 'stpNm', width: 110, align: 'center', render: (v?: string) => (v && APPROVAL_STEP_LABELS[v]) || v || '-' },
     { title: 'Target', key: 'target', width: 260, render: (_v, r) => targetOf(r) },
-    { title: 'Requester', dataIndex: 'requesterEmpNm', width: 180, render: (v?: string, r?: ApprovalInboxItem) => v || r?.requesterEmpNo || '-' },
+    // Who decided the previous step and so sent the item to this step.
+    { title: 'Requested By', dataIndex: 'requesterEmpNm', width: 180, render: (v?: string, r?: ApprovalInboxItem) => v || r?.requesterEmpNo || '-' },
     { title: 'Requested At', dataIndex: 'requestedAt', width: 140, align: 'center', render: (v?: string) => formatDateTime(v) },
     { title: 'Assigned At', dataIndex: 'assignedAt', width: 140, align: 'center', render: (v?: string) => formatDateTime(v) },
     {
@@ -174,7 +175,6 @@ export default function ApprovalManagement() {
       )}
       <div className={styles.chips} role="tablist" aria-label="Process kind">
         {KIND_CHIPS.map((chip) => {
-          const selectable = chip.key !== 'other';
           const active = chip.key === kind;
           return (
             <button
@@ -184,8 +184,7 @@ export default function ApprovalManagement() {
               aria-selected={active}
               className={styles.chip}
               data-active={active || undefined}
-              disabled={!selectable}
-              onClick={() => selectable && selectKind(chip.key as ApprovalInboxKind | 'all')}
+              onClick={() => selectKind(chip.key)}
             >
               {chip.label}
               <span className={styles.chipCount}>{chip.count(summary)}</span>
@@ -212,7 +211,6 @@ export default function ApprovalManagement() {
         <ApprovalInfoPopup
           atrzHstryId={popup.item.atrzHstryId}
           target={targetOf(popup.item)}
-          details={[{ label: 'Requested By', value: popup.item.requesterEmpNm || popup.item.requesterEmpNo || '-' }]}
           onClose={() => setPopup(null)}
         />
       )}
@@ -221,7 +219,6 @@ export default function ApprovalManagement() {
           atrzHstryId={popup.item.atrzHstryId}
           mode={popup.kind}
           target={targetOf(popup.item)}
-          details={[{ label: 'Kind', value: (popup.item.processKind && KIND_LABELS[popup.item.processKind]) || '-' }]}
           onClose={() => setPopup(null)}
         />
       )}
