@@ -5,12 +5,15 @@ import { defineConfig, devices } from '@playwright/test';
 // developer's own `pnpm dev` on :3000 is never touched.
 // Credentials come from E2E_USER / E2E_PASS (see e2e/README.md) — never commit them.
 // Team entry point: `pnpm e2e` (e2e/run.mjs).
+// The `workflow` project WRITES data (receipt, approval requests, decisions) with the staff accounts
+// rcpt01 / prcs01 / appr01 / admin; it is only defined when E2E_WORKFLOW=1 (password in E2E_WORKFLOW_PASS).
 
 const PORT = Number(process.env.E2E_PORT ?? 13000);
 const API_TARGET = process.env.E2E_API_TARGET ?? 'http://127.0.0.1:7200';
 const BASE_URL = `http://localhost:${PORT}`;
 // e2e/run.mjs points this at a timestamped folder so earlier reports are kept.
 const REPORT_DIR = process.env.E2E_REPORT_DIR ?? 'e2e/.report';
+const WORKFLOW = process.env.E2E_WORKFLOW === '1';
 
 export default defineConfig({
   testDir: './e2e',
@@ -34,13 +37,24 @@ export default defineConfig({
       name: 'chromium',
       use: { ...devices['Desktop Chrome'], viewport: { width: 1600, height: 900 }, storageState: 'e2e/.auth/admin.json' },
       dependencies: ['setup'],
-      testIgnore: /auth\.setup\.ts|auth\/.*\.spec\.ts/,
+      testIgnore: /auth\.setup\.ts|auth\/.*\.spec\.ts|workflow\.setup\.ts|workflow\/.*\.spec\.ts/,
     },
     {
       name: 'public',
       use: { ...devices['Desktop Chrome'], viewport: { width: 1600, height: 900 } },
       testMatch: /auth\/.*\.spec\.ts/,
     },
+    ...(WORKFLOW
+      ? [
+          { name: 'workflow-setup', testMatch: /workflow\.setup\.ts/ },
+          {
+            name: 'workflow',
+            use: { ...devices['Desktop Chrome'], viewport: { width: 1600, height: 900 } },
+            testMatch: /workflow\/.*\.spec\.ts/,
+            dependencies: ['workflow-setup'],
+          },
+        ]
+      : []),
   ],
   webServer: {
     command: `pnpm exec vite --port ${PORT} --strictPort`,
