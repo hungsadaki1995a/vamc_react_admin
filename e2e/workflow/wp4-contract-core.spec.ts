@@ -1,10 +1,11 @@
 import { expect, test } from '@playwright/test';
 import dayjs from 'dayjs';
-import { getContract, preparePreparingContract, shot } from '../support/trade-setup';
+import { api, CONTRACT_PATH, getContract, preparePreparingContract, shot } from '../support/trade-setup';
 import type { TradeKind } from '../support/trade-setup';
 import {
   MENU,
   confirmApproval,
+  pickOption,
   fillDate,
   openContract,
   openScreen,
@@ -42,11 +43,17 @@ for (const kind of KINDS) {
       await expect(popup.locator('.ant-picker input').nth(1)).toHaveValue(dayjs().add(1, 'year').subtract(1, 'day').format('DD/MM/YYYY'));
     }
     await popup.getByText('③ Advance + balance').click();
+    // Fee schedule item of the kind (GET …/fee-items, R3-03).
+    const items = await api<{ feeId: string }[]>('prcs01', 'GET', `${CONTRACT_PATH[kind]}/fee-items`);
+    expect(items.length).toBeGreaterThan(0);
+    const feeItem = popup.getByText('Fee Schedule Item', { exact: true }).locator('..').locator('.ant-select');
+    await pickOption(prcs, feeItem, items[0].feeId);
     await popup.locator('.ant-input-number input').nth(1).fill('100000000');
     await popup.locator('.ant-input-number input').nth(2).fill('20');
     await expect(popup).toContainText('Advance: 20,000,000');
     await popup.getByRole('button', { name: 'Save Draft' }).click();
     await expect.poll(async () => (await getContract(kind, ctrtCd)).availableActions ?? []).toContain('REQUEST_DRAFT_APPROVAL');
+    expect((await getContract(kind, ctrtCd)).feeMngId).toBe(items[0].feeId);
     await shot(prcs, `wp4-${kind}-draft`);
     await popup.getByRole('button', { name: 'Request Draft Approval' }).click();
     await submitApprovalRequest(prcs, 'Request Draft Contract Approval');

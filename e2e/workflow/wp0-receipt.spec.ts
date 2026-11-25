@@ -50,14 +50,15 @@ for (const board of BOARDS) {
   });
 }
 
-// The backend filters the contract term inside the period: CTRT_CNCLS_DMY >= from AND CTRT_END_DMY <= to.
+// The backend filters by term overlap (R3-02): concluded on or before the end of the period and ending on or after
+// its start, so contracts concluded in 2026 that end in 2027 / 2028 match a 2026 period.
 test('W0-2 sale contract list: period + status filter, dates as dd/MM/yyyy', async ({ browser }) => {
   const page = await staffPage(browser, 'prcs01');
   const panel = await openScreen(page, MENU.saleContracts);
   const range = panel.locator('.ant-picker-range').first();
   await range.locator('input').first().click();
   await range.locator('input').first().fill('01/01/2026');
-  await range.locator('input').nth(1).fill('31/12/2027');
+  await range.locator('input').nth(1).fill('31/12/2026');
   await range.locator('input').nth(1).press('Enter');
   await pickOption(page, panel.locator('.ant-select').first(), 'In Effect');
   const response = page.waitForResponse((r) => r.url().includes('/api/v1/sale-brokerage-contracts?') && r.url().includes('ctrtFromDt='));
@@ -71,6 +72,9 @@ test('W0-2 sale contract list: period + status filter, dates as dd/MM/yyyy', asy
   expect(await rows.count()).toBeGreaterThan(0);
   await expect(rows.first().locator('td').nth(6)).toHaveText(/^(\d{2}\/\d{2}\/\d{4}|-)$/);
   await expect(panel.locator('td').filter({ hasText: /^\d{8}$/ })).toHaveCount(0);
+  // Overlap: at least one listed contract ends after the period.
+  await expect(panel.locator('tr.ant-table-row td').filter({ hasText: /^\d{2}\/\d{2}\/202[7-9]$/ }).first()).toBeVisible();
+  await expect(panel.getByText('Contract Period', { exact: true })).toHaveAttribute('title', /overlaps/);
   await shot(page, 'wp0-contract-filter');
   await page.context().close();
 });
@@ -84,5 +88,11 @@ test('W0-3 application popup shows the single NPL code', async ({ browser }) => 
   await expect(popup).toContainText(row.bndCd);
   await expect(popup).toContainText(/\d{2}\/\d{2}\/\d{4}/);
   await shot(page, 'wp0-application-popup');
+  // The applicant opens the member detail popup of Member Management.
+  await popup.getByRole('button', { name: /\(TV\d+\)/ }).click();
+  const member = page.locator('.ant-modal-wrap').filter({ has: page.locator('.ant-modal-title', { hasText: 'Member Details' }) });
+  await expect(member).toBeVisible();
+  await expect(member).toContainText(/TV\d{8}/);
+  await shot(page, 'wp0-member-detail');
   await page.context().close();
 });

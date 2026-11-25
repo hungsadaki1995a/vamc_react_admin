@@ -1,10 +1,12 @@
 import { expect, test } from '@playwright/test';
-import { applicationText, getApplication, prepareApprovalRequest, requestApproval, shot } from '../support/trade-setup';
+import { api, applicationText, getApplication, prepareApprovalRequest, requestApproval, shot, vietnamTime } from '../support/trade-setup';
 import { MENU, openApplication, openScreen, pickOption, staffPage, topModal } from '../support/workflow-ui';
 import type { Locator, Page } from '@playwright/test';
 
 // WP1 acceptance: approval request (prcs01) → reject with a reason from the inbox (appr01) → request again →
 // approve from the inbox → approval information shows the three steps. One sale application, picked at run time.
+// Round 3: requester = who decided the previous step, business summary in the popups, menu badge, [Open] hands the
+// row to the application board, "Other" chip filters, times in Vietnam time, history names.
 
 test.describe.configure({ mode: 'serial' });
 
@@ -51,13 +53,29 @@ test('W1-1 prcs01 requests the receipt approval with an approver', async ({ brow
 });
 
 test('W1-2 appr01 rejects from Approval Management; a reason is required', async ({ browser }) => {
+  // [Open] hands the row to the sale application board, which opens the processing popup.
+  const opener = await staffPage(browser, 'appr01');
+  await expect(opener.locator('.icon-rail .rail-count')).toBeVisible(); // waiting count on the menu
+  const first = await inboxRow(opener);
+  await first.row.getByRole('button', { name: 'Open' }).click();
+  await expect(opener.locator(`.ant-modal-wrap [data-record-key="${id}"]`)).toHaveCount(1);
+  await shot(opener, 'wp1-open-from-inbox');
+  await opener.context().close();
+
   const page = await staffPage(browser, 'appr01');
   const { panel, row } = await inboxRow(page);
+  // Requester = the officer who sent the step-3 request, not the receiver who opened the session.
+  await expect(row).toContainText('Default Processing Officer');
   await shot(page, 'wp1-inbox');
   await row.getByRole('button', { name: 'Reject' }).click();
 
   const reject = topModal(page);
   await expect(reject.locator('.ant-modal-title')).toHaveText('Reject');
+  // Business content from GET /approvals/{id} `target`: readable number, member, NPL.
+  const application = await getApplication('sale', id, 'appr01');
+  await expect(reject).toContainText(application.srvcAplyNo ?? id);
+  await expect(reject).toContainText('Member');
+  await expect(reject).toContainText(/NPL|LOT/);
   const submit = reject.getByRole('button', { name: 'Submit' });
   await reject.getByRole('checkbox').check();
   await expect(submit).toBeDisabled(); // no reason
@@ -77,6 +95,12 @@ test('W1-2 appr01 rejects from Approval Management; a reason is required', async
 test('W1-3 appr01 approves the repeated request from Approval Management', async ({ browser }) => {
   await requestApproval('sale', id);
   const page = await staffPage(browser, 'appr01');
+  // "Other" is a real filter now (GET /approvals/inbox?kind=other).
+  const inbox = await openScreen(page, MENU.approvals);
+  const other = page.waitForResponse((r) => r.url().includes('/api/v1/approvals/inbox?') && r.url().includes('kind=other'));
+  await inbox.getByRole('tab', { name: /^Other/ }).click();
+  expect((await other).status()).toBe(200);
+  await expect(inbox.getByRole('tab', { name: /^Other/ })).toHaveAttribute('aria-selected', 'true');
   const { panel, row } = await inboxRow(page);
 
   // [Info] from the inbox: the session in progress with its steps.
@@ -123,6 +147,14 @@ test('W1-4 approval information shows the three steps with employee and time', a
   }
   await expect(rows.nth(2)).toContainText('Default First Approver');
   await expect(info).toContainText('Approved');
+  // processedAt is DB time (UTC): shown in Vietnam time.
+  const session = await api<{ steps: { processedAt?: string }[] }>('appr01', 'GET', `/api/v1/approvals/${(await getApplication('sale', id, 'appr01')).atrzHstryId}`);
+  const decided = session.steps[2]?.processedAt;
+  if (decided) await expect(rows.nth(2)).toContainText(vietnamTime(decided));
+  await info.locator('button', { hasText: 'Close' }).click();
+  // Processing history names the employees (prcsByNm).
+  await expect(popup.getByText('Processing History')).toBeVisible();
+  await expect(popup).toContainText('Default Receiver');
   await shot(page, 'wp1-approval-info');
   await page.context().close();
 });

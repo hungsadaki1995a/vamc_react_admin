@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 import dayjs from 'dayjs';
-import { findContractWith, getContract, prepareContractInProgress, shot } from '../support/trade-setup';
+import { CONTRACT_PATH, api, findContractWith, getContract, listContracts, prepareContractInProgress, shot } from '../support/trade-setup';
 import { confirmApproval, contractPopup, fillDate, modalTitled, openContract, staffPage, submitApprovalRequest, uploadSamplePdf } from '../support/workflow-ui';
 import type { Locator, Page } from '@playwright/test';
 
@@ -116,8 +116,20 @@ test('W5-2 sale: EXTN annex through conclusion moves the parent end date', async
   await page.context().close();
 });
 
-test('W5-3 renewal decision on a contract that offers it', async ({ browser }) => {
-  test.setTimeout(120_000);
+test('W5-3 renewal decision only within 30 days of the end date (D-30)', async ({ browser }) => {
+  test.setTimeout(180_000);
+  // Far from the end: no button, and the API refuses with 409 TRD053.
+  const far =
+    (await listContracts('sale', 'ctrtSttsCds=PROGS')).find(
+      (r) => (!r.mstCtrtCd || r.mstCtrtCd === r.srvcCtrtCd) && (r.remainingDays ?? 0) > 30 && r.tkcgEmpNo === 'prcs01',
+    )?.srvcCtrtCd ?? (await prepareContractInProgress('sale', dayjs().add(1, 'year').format('YYYY-MM-DD')));
+  expect((await getContract('sale', far)).availableActions ?? []).not.toContain('DECIDE_RENEWAL');
+  await expect(api('prcs01', 'POST', `${CONTRACT_PATH.sale}/${far}/renewal-decision`, { decision: 'NO_EXTEND', note: 'e2e early' })).rejects.toThrow(/409/);
+  const early = await staffPage(browser, 'prcs01');
+  const farPopup = await openContract(early, 'sale', far);
+  await expect(farPopup.getByRole('button', { name: 'Renewal Decision' })).toHaveCount(0);
+  await early.context().close();
+
   // A seeded contract near its end date, else a fixture contract ending in 20 days (D-30 window).
   const ctrtCd =
     (await findContractWith('sale', 'ctrtSttsCds=PROGS&endingWithinDays=30', 'DECIDE_RENEWAL')) ??
@@ -127,6 +139,7 @@ test('W5-3 renewal decision on a contract that offers it', async ({ browser }) =
   const popup = await openContract(page, 'sale', ctrtCd);
   await popup.getByRole('button', { name: 'Renewal Decision' }).click();
   const modal = modalTitled(page, 'Renewal Decision');
+  await expect(modal).toContainText('30 days before the end date');
   await modal.getByText('Do not extend').click();
   await expect(modal).toContainText('N3');
   await modal.getByRole('button', { name: 'Save' }).click();

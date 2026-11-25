@@ -1,11 +1,12 @@
 import { expect, test } from '@playwright/test';
 import { getApplication, listApplications, shot } from '../support/trade-setup';
 import type { TradeKind } from '../support/trade-setup';
-import { MENU, openApplication, openScreen, pickOption, staffPage, topModal, uploadSamplePdf } from '../support/workflow-ui';
+import { MENU, fillDate, modalTitled, openApplication, openScreen, pickOption, staffPage, topModal, uploadSamplePdf } from '../support/workflow-ui';
 
 // WP3 acceptance per kind: rcpt01 registers a paper application (member picked, registered NPL picked, scan,
 // officer prcs01) → it is listed as Manual / Received and prcs01 can continue in the processing popup;
-// then an editable application is edited (price, or the consulting request).
+// then an editable application is edited (price, or the consulting request) — the PUT carries only that field.
+// Consulting (R3-07): a listed collateral and a collateral typed from the paper form.
 
 const KINDS: { kind: TradeKind; menu: string[] }[] = [
   { kind: 'sale', menu: MENU.saleApplications },
@@ -39,10 +40,31 @@ for (const { kind, menu } of KINDS) {
     if (kind === 'consulting') {
       await pickOption(page, form.locator('.ant-select').first(), 'Debtor Advice');
       await form.locator('textarea').first().fill('Advice on the debtor restructuring options (e2e manual).');
+      // Listed collateral (Collateral Search, listed only).
+      await form.getByRole('button', { name: 'Collateral Search' }).click();
+      const collaterals = modalTitled(page, 'Collateral Search');
+      await collaterals.locator('.ant-table-row').first().click();
+      await collaterals.getByRole('button', { name: 'Select' }).click();
+      await expect(collaterals).toBeHidden();
+      await expect(form.getByPlaceholder('Search a listed collateral')).toHaveValue(/^TSBD/);
+      // A collateral typed from the paper form; the required fields are checked first.
+      await form.getByRole('button', { name: 'Add Collateral' }).click();
+      const typed = modalTitled(page, 'Add Target Collateral');
+      await typed.getByRole('button', { name: 'Add' }).click();
+      await expect(typed).toContainText('Enter the category');
+      await pickOption(page, typed.locator('.ant-select').first(), 'Real estate');
+      await typed.locator('input:not([type="search"])').first().fill('HDTC-E2E/2022');
+      await fillDate(typed, 0, '02/05/2022');
+      await typed.locator('textarea').fill('Factory and land use right, lot C-12 (e2e)');
+      await typed.getByRole('button', { name: 'Add' }).click();
+      await expect(typed).toBeHidden();
+      await expect(form).toContainText('HDTC-E2E/2022');
+      await expect(form).toContainText('(1/20)');
     } else {
       await form.getByRole('button', { name: /NPL Search/ }).click();
       const npls = topModal(page);
-      await npls.locator('.ant-table-row').first().click();
+      // An NPL still on sale (SA): a sold one (SD) is refused for a purchase.
+      await npls.locator('.ant-table-row').filter({ has: page.locator('td', { hasText: /^SA$/ }) }).first().click();
       await npls.getByRole('button', { name: 'Select' }).click();
       await form.locator('.ant-input-number input').fill('1500000000');
     }
@@ -66,6 +88,12 @@ for (const { kind, menu } of KINDS) {
 
     const created = await getApplication(kind, id, 'prcs01');
     expect(created.srvcPrcsSttsCd).toBe('PRCS');
+    if (kind === 'consulting') {
+      const consulting = created as unknown as { cltrAstCd?: string; collaterals?: { cltrAstCd?: string; cltrCtrtNo?: string }[] };
+      expect(consulting.cltrAstCd).toMatch(/^TSBD/);
+      expect(consulting.collaterals?.some((c) => c.cltrCtrtNo === 'HDTC-E2E/2022')).toBe(true);
+      await expect(popup).toContainText('HDTC-E2E/2022');
+    }
     expect(created.tkcgEmpNo).toBe('prcs01');
     expect(created.availableAction).toBe('CHECK_DOCUMENTS'); // continues in the WP2 popup as the officer
     const listed = await listApplications(kind, 'rcpt01', `keyword=${id}`);
@@ -84,18 +112,24 @@ for (const { kind, menu } of KINDS) {
     const form = page.locator('.ant-modal-wrap').filter({ has: page.locator('.ant-modal-title', { hasText: /^Edit / }) });
     await expect(form).toBeVisible();
     const before = await getApplication(kind, row.srvcAplyId, 'rcpt01');
+    // Values that differ from any earlier run, so the field really changes.
+    const request = `Edited consulting request (e2e ${Date.now()}).`;
+    const price = 2_345_000_000 + (Date.now() % 1000) * 1000;
     if (kind === 'consulting') {
-      await form.locator('textarea').first().fill('Edited consulting request (e2e).');
+      await form.locator('textarea').first().fill(request);
     } else {
-      await form.locator('.ant-input-number input').fill('2345678000');
+      await form.locator('.ant-input-number input').fill(String(price));
     }
+    const put = page.waitForRequest((r) => r.method() === 'PUT' && r.url().includes(`/service-applications/${kind}/`));
     await form.getByRole('button', { name: 'Save' }).click();
+    // Only the changed field is sent; the server keeps the others (R3-06).
+    expect(Object.keys((await put).postDataJSON() as object)).toEqual([kind === 'consulting' ? 'cnsltDmndPrpsCn' : 'prpDsplPrc']);
     await expect(form).toBeHidden();
     const after = await getApplication(kind, row.srvcAplyId, 'rcpt01');
     if (kind === 'consulting') {
-      expect((after as unknown as { cnsltDmndPrpsCn: string }).cnsltDmndPrpsCn).toBe('Edited consulting request (e2e).');
+      expect((after as unknown as { cnsltDmndPrpsCn: string }).cnsltDmndPrpsCn).toBe(request);
     } else {
-      expect(Number((after as unknown as { prpDsplPrc: number }).prpDsplPrc)).toBe(2345678000);
+      expect(Number((after as unknown as { prpDsplPrc: number }).prpDsplPrc)).toBe(price);
     }
     // Fields not on the form are kept (scan group, member).
     expect((after as unknown as { esntlDcmntScnFile?: string }).esntlDcmntScnFile).toBe(

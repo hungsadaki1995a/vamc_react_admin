@@ -50,8 +50,11 @@ test('W7-1 assign the consultant (the officer cannot be chosen)', async ({ brows
   const assign = modalTitled(page, 'Assign Consultant');
   await assign.getByRole('button', { name: 'Search' }).click();
   const search = modalTitled(page, 'Consultant Search');
+  // Any employed staff member, from GET /employees/lookup (open to trade staff since round 3).
+  const lookup = page.waitForResponse((r) => r.url().includes('/api/v1/employees/lookup') && r.url().includes('empNo=prcs01'));
   await search.locator('input').first().fill('prcs01');
   await search.locator('input').first().press('Enter');
+  expect((await lookup).status()).toBe(200);
   await expect(search.locator('.ant-table-row', { hasText: 'prcs01' })).toHaveCount(0); // officer excluded
   await search.locator('input').first().fill('rcpt01');
   await search.locator('input').first().press('Enter');
@@ -111,9 +114,21 @@ test('W7-3 follow-up consultation from the member: receive and answer', async ({
   test.setTimeout(120_000);
   // Switch on follow-up requests from the consulting contract board.
   let page = await staffPage(browser, 'prcs01');
+  const setting = page.waitForResponse((r) => r.request().method() === 'GET' && r.url().includes('/settings/additional-consulting'));
   const panel = await openScreen(page, CONTRACT_MENU.consulting);
   const toggle = panel.getByRole('switch');
-  if ((await toggle.getAttribute('aria-checked')) !== 'true') await toggle.click();
+  const current = ((await (await setting).json()) as { data: boolean }).data;
+  await expect(toggle).toHaveAttribute('aria-checked', String(current));
+  // The switch sends a boolean (R3-09): off then on, or just on.
+  if ((await toggle.getAttribute('aria-checked')) === 'true') {
+    const off = page.waitForRequest((r) => r.method() === 'PUT' && r.url().includes('/settings/additional-consulting'));
+    await toggle.click();
+    expect((await off).postDataJSON()).toEqual({ enabled: false });
+    await expect(toggle).toHaveAttribute('aria-checked', 'false');
+  }
+  const on = page.waitForRequest((r) => r.method() === 'PUT' && r.url().includes('/settings/additional-consulting'));
+  await toggle.click();
+  expect((await on).postDataJSON()).toEqual({ enabled: true });
   await expect(toggle).toHaveAttribute('aria-checked', 'true');
   expect(await api<boolean>('prcs01', 'GET', '/api/v1/consulting-contracts/settings/additional-consulting')).toBe(true);
   await page.context().close();

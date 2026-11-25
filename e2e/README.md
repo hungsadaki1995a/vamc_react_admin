@@ -77,7 +77,10 @@ E2E_WORKFLOW=1 … pnpm e2e --project workflow e2e/workflow/wp1-approval.spec.ts
 | `E2E_SHOT_DIR` | — | folder for step screenshots (keep it outside the repo) |
 
 - `workflow.setup.ts` logs the four accounts in through the UI → `e2e/.auth/wf-<account>.json`; each step opens its
-  own context (`staffPage(browser, 'prcs01')`).
+  own context (`staffPage(browser, 'prcs01')`). The second officer `prcs02` (dev-sync optional 70) is only picked as
+  officer: it has no e-mail and the login page accepts only an e-mail or phone number.
+- Keep your own artefacts: `--output <dir>` moves test results, `E2E_REPORT_DIR` the HTML report, `E2E_SHOT_DIR` the
+  step screenshots.
 - Records are picked **by status at run time** through the admin API (`support/trade-setup.ts`: `pickReceivable`,
   `prepareApprovalRequest`, `preparePreparingContract`, `prepareContractInProgress`, …); missing data is built with
   the same API chain as `docs/simulator/flow.py` (purchase / consulting contracts, fee schedule items of the kind).
@@ -85,12 +88,12 @@ E2E_WORKFLOW=1 … pnpm e2e --project workflow e2e/workflow/wp1-approval.spec.ts
 
 | Spec | Covers |
 |------|--------|
-| `wp0-receipt` | receipt with officer (3 kinds), contract list date / status filter, `dd/MM/yyyy`, single NPL code |
-| `wp1-approval` | approval request → reject with reason / approve from Approval Management, approval information |
-| `wp2-application` | processing popup: scans, documents incomplete / complete, request approval, approve, cancel, officer change |
-| `wp3-manual` | manual registration (member / NPL pickers, scan, officer) and edit, 3 kinds |
-| `wp4-contract-core` | contract draft → draft approval → draft registration → signature approval → signed scan → conclusion, 3 kinds |
-| `wp5-execution` | fees (amount > 0), sale completion, EXTN annex lifecycle, renewal decision, purchase agreement + delivery |
+| `wp0-receipt` | receipt with officer (3 kinds), contract list period (term overlap) / status filter, `dd/MM/yyyy`, single NPL code, member detail from the applicant |
+| `wp1-approval` | approval request → reject with reason / approve from Approval Management (requester, business summary, menu badge, [Open], "Other" chip), approval information in Vietnam time, history names |
+| `wp2-application` | processing popup: scans, documents incomplete / complete, request approval, approve, cancel, officer change to `prcs02`, officer filter by role, running purchase contract warning |
+| `wp3-manual` | manual registration (member / NPL pickers, scan, officer; consulting: listed + typed collaterals) and edit sending only the changed field, 3 kinds |
+| `wp4-contract-core` | contract draft (fee schedule item) → draft approval → draft registration → signature approval → signed scan → conclusion, 3 kinds |
+| `wp5-execution` | fees (amount > 0), sale completion, EXTN annex lifecycle, renewal decision only within D-30 (409 TRD053 earlier), purchase agreement + delivery |
 | `wp6-termination` | termination chain (CMPL / CNCL, server guard shown), consulting without Expired |
 | `wp7-consulting` | consultant, report → approval → publication, member follow-up request → receive → answer |
 

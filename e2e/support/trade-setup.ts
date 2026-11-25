@@ -94,6 +94,8 @@ export interface ApplicationRow {
   rjctRsnCn?: string;
   srvcCtrtCd?: string;
   atrzHstryId?: string;
+  /** Purchase: running purchase contract on the same subject (list and detail). */
+  activePurchaseCtrtCd?: string;
 }
 
 const applications = (kind: TradeKind) => `/api/v1/service-applications/${kind}`;
@@ -118,7 +120,8 @@ export async function applicationText(kind: TradeKind, id: string): Promise<RegE
  */
 export async function pickReceivable(kind: TradeKind): Promise<string> {
   const rows = await listApplications(kind, 'rcpt01', 'sttsCds=RCPT');
-  const row = rows.find((r) => r.availableAction === 'RECEIVE');
+  // A purchase subject with a running purchase contract cannot be received (409 TRD021): skip those rows.
+  const row = rows.find((r) => r.availableAction === 'RECEIVE' && !r.activePurchaseCtrtCd);
   if (row) return row.srvcAplyId;
   const npl = (await api<{ content: { bndCd: string }[] }>('rcpt01', 'GET', '/api/v1/npls?page=1&size=1&lotYn=N')).content[0];
   const created = await api<{ srvcAplyId: string }>('rcpt01', 'POST', applications(kind), {
@@ -173,6 +176,14 @@ export async function prepareApprovalRequest(kind: TradeKind): Promise<string> {
 export const requestApproval = (kind: TradeKind, id: string, approverEmpNo = 'appr01') =>
   api('prcs01', 'POST', `${applications(kind)}/${encodeURIComponent(id)}/approval`, { approverEmpNo, comment: 'e2e workflow' });
 
+/** Server timestamp (DB clock, UTC when it has no zone) as the screens show it: `dd/MM/yyyy HH:mm` in Vietnam time. */
+export function vietnamTime(iso: string): string {
+  const zoned = /(Z|[+-]\d{2}:?\d{2})$/.test(iso) ? iso : `${iso}Z`;
+  const local = new Date(new Date(zoned).getTime() + 7 * 3600_000);
+  const pad = (n: number) => String(n).padStart(2, '0');
+  return `${pad(local.getUTCDate())}/${pad(local.getUTCMonth() + 1)}/${local.getUTCFullYear()} ${pad(local.getUTCHours())}:${pad(local.getUTCMinutes())}`;
+}
+
 /** Full-page screenshot into E2E_SHOT_DIR (kept outside the repo), when set. */
 export async function shot(page: Page, name: string): Promise<void> {
   const dir = process.env.E2E_SHOT_DIR;
@@ -198,6 +209,7 @@ export interface ContractRow {
   trdCnclsDmy?: string;
   dlvrCmptnDmy?: string;
   remainingDays?: number;
+  feeMngId?: string;
   availableActions?: string[];
   openAtrzHstryId?: string;
   fees?: { feeId: string; feeSeCd?: string; fee?: number; feeRcptYn?: string }[];
@@ -241,13 +253,13 @@ export async function preparePreparingContract(kind: TradeKind): Promise<string>
 const FEE_CATEGORY: Record<TradeKind, string> = { sale: 'DMDT', purchase: 'PMDT', consulting: 'CNSLT' };
 
 /**
- * The draft save needs an active fee schedule item of the kind (SRVC_FEE_MNG, default = first in use). The local
- * seed has one for sale only: creates a test item for purchase / consulting when missing (Fee Management API).
+ * The draft save needs an active fee schedule item of the kind (SRVC_FEE_MNG, default = first in use). dev-sync 68
+ * seeds one per kind; on an older database a test item is created when missing (Fee Management API). The check uses
+ * GET …/fee-items of the contract kind, the list the draft form offers.
  */
 export async function ensureFeeSchedule(kind: TradeKind): Promise<void> {
-  const page = await api<{ content: { feeId: string; useYn?: string }[] }>('admin', 'GET', '/api/v1/platform/fees?page=1&size=100');
-  const prefix = { DMDT: 'FEE-SBR-', PMDT: 'FEE-PBR-', CNSLT: 'FEE-CNS-' }[FEE_CATEGORY[kind]] as string;
-  if (page.content.some((fee) => fee.feeId.startsWith(prefix) && fee.useYn !== 'N')) return;
+  const items = await api<{ feeId: string }[]>('prcs01', 'GET', `${CONTRACT_PATH[kind]}/fee-items`);
+  if (items.length > 0) return;
   await api('admin', 'POST', '/api/v1/platform/fees', {
     category: FEE_CATEGORY[kind],
     order: 1,

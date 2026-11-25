@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { getApplication, pickReceivable, shot } from '../support/trade-setup';
+import { listApplications, getApplication, pickReceivable, shot } from '../support/trade-setup';
 import type { TradeKind } from '../support/trade-setup';
 import { MENU, openApplication, openScreen, pickOption, staffPage, topModal, uploadSamplePdf } from '../support/workflow-ui';
 import type { Locator, Page } from '@playwright/test';
@@ -115,7 +115,7 @@ for (const { kind, menu } of KINDS) {
   });
 }
 
-test('W2-3 officer name opens the officer change with the candidates', async ({ browser }) => {
+test('W2-3 officer name opens the officer change; the second officer prcs02 takes over', async ({ browser }) => {
   const id = await pickReceivable('purchase');
   const page = await staffPage(browser, 'rcpt01');
   const panel = await openScreen(page, MENU.purchaseApplications);
@@ -132,7 +132,52 @@ test('W2-3 officer name opens the officer change with the candidates', async ({ 
   await change.getByRole('button', { name: 'Search' }).click();
   const search = topModal(page);
   await expect(search).toContainText('Officer Search');
+  await expect(search.locator('.ant-table-row', { hasText: 'prcs02' })).toBeVisible();
+  await expect(search.locator('.ant-table-row', { hasText: 'prcs01' })).toHaveCount(0); // current officer
+  await search.locator('.ant-table-row', { hasText: 'prcs02' }).click();
+  await search.getByRole('button', { name: 'Select' }).click();
   await shot(page, 'wp2-officer-change');
-  test.info().annotations.push({ type: 'record', description: `purchase received ${id}` });
+  await change.getByRole('button', { name: 'Change' }).click();
+  // topModal() re-resolves to the popup underneath once the change popup closes: check by title.
+  await expect(page.locator('.ant-modal-title', { hasText: 'Change Officer in Charge' }).filter({ visible: true })).toHaveCount(0);
+  await expect.poll(async () => (await getApplication('purchase', id, 'rcpt01')).tkcgEmpNo).toBe('prcs02');
+  await expect(topModal(page).getByRole('button', { name: 'Second Processing Officer' })).toBeVisible();
+  test.info().annotations.push({ type: 'record', description: `purchase received ${id}, officer prcs02` });
+  await page.context().close();
+});
+
+test('W2-4 board officer filter lists the processing officers by role (employees/lookup?roleId=PRCS)', async ({ browser }) => {
+  const page = await staffPage(browser, 'prcs01');
+  const panel = await openScreen(page, MENU.purchaseApplications);
+  const lookup = page.waitForResponse((r) => r.url().includes('/api/v1/employees/lookup') && r.url().includes('roleId=PRCS'));
+  // The [Search] of the Officer filter (the page header has its own search button).
+  await panel.getByText('Officer', { exact: true }).locator('..').getByRole('button', { name: 'Search' }).click();
+  const search = topModal(page);
+  await expect(search).toContainText('Officer Search');
+  expect((await lookup).status()).toBe(200); // trade staff may read the lookup now (was 403)
+  await expect(search.locator('.ant-table-row', { hasText: 'prcs02' })).toBeVisible();
+  await expect(search.locator('.ant-table-row', { hasText: 'rcpt01' })).toHaveCount(0);
+  await search.locator('.ant-table-row', { hasText: 'prcs02' }).click();
+  await search.getByRole('button', { name: 'Select' }).click();
+  const list = page.waitForResponse((r) => r.url().includes('/api/v1/service-applications/purchase?') && r.url().includes('tkcgEmpNo=prcs02'));
+  await panel.getByRole('button', { name: /Search$/ }).first().click();
+  expect((await list).status()).toBe(200);
+  await shot(page, 'wp2-officer-filter');
+  await page.context().close();
+});
+
+test('W2-5 purchase list warns about a running purchase contract on the same subject', async ({ browser }) => {
+  const rows = await listApplications('purchase', 'prcs01', 'sttsCds=RCPT&sttsCds=PRCS&sttsCds=DCIN&sttsCds=DCOK');
+  const blocked = rows.find((r) => (r as { activePurchaseCtrtCd?: string }).activePurchaseCtrtCd);
+  test.skip(!blocked, 'No purchase application with a running purchase contract on its subject');
+  const page = await staffPage(browser, 'prcs01');
+  const panel = await openScreen(page, MENU.purchaseApplications);
+  await panel.getByPlaceholder('Application No., name...').fill(blocked?.srvcAplyNo ?? '');
+  await panel.getByPlaceholder('Application No., name...').press('Enter');
+  const row = panel.locator(`tr[data-row-key="${blocked?.srvcAplyId}"]`);
+  await expect(row).toContainText('Contract running');
+  await row.locator('a').first().click();
+  await expect(topModal(page)).toContainText('purchase contract for the same subject is still running');
+  await shot(page, 'wp2-purchase-running');
   await page.context().close();
 });
