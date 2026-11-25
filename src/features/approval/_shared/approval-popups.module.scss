@@ -1,0 +1,108 @@
+// Common approval popups (VPA020100P01–0400P01) and the employee pick field.
+
+.summary {
+  display: grid;
+  grid-template-columns: 150px 1fr;
+  margin-bottom: 16px;
+  border: 1px solid var(--color-border, #e2e8f0);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.summaryLabel,
+.summaryValue {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--color-border, #e2e8f0);
+
+  &:nth-last-child(-n + 2) {
+    border-bottom: none;
+  }
+}
+
+.summaryLabel {
+  background: var(--color-bg-subtle, #f8fafc);
+  color: var(--color-text-secondary, #64748b);
+  font-weight: 600;
+}
+
+.summaryValue {
+  color: var(--color-text-primary, #1f2937);
+  word-break: break-all;
+}
+
+.field {
+  margin-bottom: 14px;
+}
+
+.label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+
+.required::after {
+  content: ' *';
+  color: var(--color-danger, #dc2626);
+}
+
+.pickRow {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.pickSelect {
+  flex: 1;
+  min-width: 0;
+}
+
+.error {
+  margin-top: 4px;
+  font-size: var(--font-size-b3, 12px);
+  color: var(--color-danger, #dc2626);
+}
+
+.hint {
+  margin-bottom: 12px;
+  color: var(--color-text-secondary, #64748b);
+}
+
+.confirmRow {
+  margin-top: 4px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: var(--color-bg-subtle, #f8fafc);
+}
+
+.footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.footerLeft {
+  margin-right: auto;
+}
+
+.loading {
+  min-height: 120px;
+  padding: 24px 0;
+  text-align: center;
+  color: var(--color-text-secondary, #64748b);
+}
+
+.steps {
+  margin-bottom: 12px;
+}
+
+.stepComment {
+  white-space: pre-line;
+}
+
+.rejection {
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: var(--color-danger-bg, #fef2f2);
+  color: var(--color-danger, #dc2626);
+  white-space: pre-line;
+}
