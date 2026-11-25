@@ -169,6 +169,8 @@
       "unknown": "An unknown error occurred."
     },
     "content": {
+      "attachFilePlaceholder": "Please attach a file.",
+      "attachedImage": "Attached image",
       "banner": {
         "empty": "There are no registered banners.",
         "invalidImage": "Only JPG, PNG files of 10MB or less can be uploaded.",
@@ -186,7 +188,8 @@
       "logo": {
         "required": "Logo File is required.",
         "invalidImage": "Only PNG, SVG files of 2MB or less can be uploaded.",
-        "loadFailed": "The logo could not be loaded."
+        "loadFailed": "The logo could not be loaded.",
+        "emptyPreview": "VAMC Logo"
       },
       "slogan": {
         "loadFailed": "The slogan could not be loaded."

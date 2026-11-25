@@ -169,6 +169,8 @@
       "unknown": "Đã xảy ra lỗi không xác định."
     },
     "content": {
+      "attachFilePlaceholder": "Vui lòng đính kèm tệp.",
+      "attachedImage": "Hình ảnh đã đính kèm",
       "banner": {
         "empty": "Không có banner nào được đăng ký.",
         "invalidImage": "Chỉ có thể tải lên tệp JPG, PNG dung lượng tối đa 10MB.",
@@ -186,7 +188,8 @@
       "logo": {
         "required": "Tệp logo là bắt buộc.",
         "invalidImage": "Chỉ có thể tải lên tệp PNG, SVG dung lượng tối đa 2MB.",
-        "loadFailed": "Không thể tải logo."
+        "loadFailed": "Không thể tải logo.",
+        "emptyPreview": "Logo VAMC"
       },
       "slogan": {
         "loadFailed": "Không thể tải khẩu hiệu."

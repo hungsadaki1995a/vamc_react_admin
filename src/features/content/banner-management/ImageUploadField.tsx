@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import TextInput from '@/components/inputs/TextInput';
 import { SysButton } from '@/components/common/sys-ui/SysListUi';
 
@@ -35,6 +36,7 @@ export default function ImageUploadField({
   onUploaded,
   onError,
 }: ImageUploadFieldProps) {
+  const { t } = useTranslation();
   const input = useRef<HTMLInputElement>(null);
   const [fileName, setFileName] = useState('');
 
@@ -56,7 +58,7 @@ export default function ImageUploadField({
     }
   };
 
-  const shownName = fileName || (fileUnqId ? initialFileName || 'Attached image' : '');
+  const shownName = fileName || (fileUnqId ? initialFileName || t('messages.content.attachedImage') : '');
 
   return (
     <>
@@ -67,7 +69,7 @@ export default function ImageUploadField({
         hidden
         onChange={(e) => void handlePick(e.target.files)}
       />
-      <TextInput value={shownName} placeholder="Please attach a file." readOnly disabled={disabled} />
+      <TextInput value={shownName} placeholder={t('messages.content.attachFilePlaceholder')} readOnly disabled={disabled} />
       <SysButton disabled={disabled || uploading} loading={uploading} onClick={() => input.current?.click()}>
         Upload File
       </SysButton>
