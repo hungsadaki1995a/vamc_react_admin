@@ -1,3 +1,4 @@
+import i18n from '@/lib/i18n';
 import { apiClient } from '@/lib/api/client';
 import { apiDelete, apiGet, apiPost, apiPut } from '@/api/common/api-utils';
 import type { PageResponse } from '@/api/common/api-utils';
@@ -66,6 +67,6 @@ export async function uploadBannerImage(file: File): Promise<string> {
   body.append('files', file);
   const { data } = await apiClient.post<{ data?: ContentFileGroup }>(`${BASE}/images`, body);
   const fileUnqId = data.data?.fileUnqId;
-  if (!fileUnqId) throw new Error('Upload did not return an image id.');
+  if (!fileUnqId) throw new Error(i18n.t('messages.api.uploadNoImageId'));
   return fileUnqId;
 }

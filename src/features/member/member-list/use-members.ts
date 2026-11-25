@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query';
 import type { UseQueryResult } from '@tanstack/react-query';
 import dayjs from 'dayjs';
+import i18n from '@/lib/i18n';
 
 import {
   getMembers,
@@ -365,7 +366,7 @@ export function useMembers(
       });
 
       if (response.data?.status && response.data.status >= 400) {
-        throw new Error(response.data.message || 'Failed to fetch members');
+        throw new Error(response.data.message || i18n.t('messages.member.list.fetchFailed'));
       }
 
       const pageData: PageResponseMemberResponse | undefined = response.data?.data;

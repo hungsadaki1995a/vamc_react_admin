@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Descriptions } from 'antd';
 import type { TableColumnsType } from 'antd';
 import type { Dayjs } from 'dayjs';
@@ -12,6 +13,7 @@ import { useNotify } from '@/hooks/use-notify';
 import { useMenuPermission } from '@/hooks/use-menu-permission';
 import type { AuctionItem, AuctionSearch } from '@/api/auction/auction-api';
 import { SysPageHeader, SysPagination } from '@/components/common/sys-ui/SystemUi';
+import { SYS_MESSAGES } from '@/config/sys-messages';
 import { errorMessage, rowNumber } from '@/utils/system-utils';
 import styles from '@/components/common/sys-ui/system-page.module.scss';
 import { useAuction, useAuctions, useDeleteAuctions, useDownloadAuctionsExcel } from './use-auctions';
@@ -21,6 +23,7 @@ type DateRange = [Dayjs | null, Dayjs | null] | null;
 
 /** Online Auction Notice Management (menu A06010000). */
 export default function AuctionManagement() {
+  const { t } = useTranslation();
   const { toast, dialog } = useNotify();
   const { canWrite } = useMenuPermission();
 
@@ -66,14 +69,17 @@ export default function AuctionManagement() {
   };
 
   const handleDelete = () => {
-    if (!selectedKeys.length) { toast.warning('Select at least one auction.'); return; }
+    if (!selectedKeys.length) {
+      toast.warning(t('messages.auction.selectAtLeastOne'));
+      return;
+    }
     dialog.warning({
       okCancel: true,
-      content: `Delete ${selectedKeys.length} selected auction(s)?`,
+      content: t('messages.auction.confirmDelete', { count: selectedKeys.length }),
       onOk: async () => {
         try {
           await deleteAuctions.mutateAsync(selectedKeys);
-          toast.success('Deleted.');
+          toast.success(SYS_MESSAGES.deleted);
           setSelectedKeys([]);
         } catch (e) {
           toast.error(errorMessage(e));

@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react';
 import type { SyntheticEvent } from 'react';
+import { useTranslation } from 'react-i18next';
 import LoadingSpinner from '@/components/common/loading/LoadingSpinner';
 import AppRadio from '@/components/inputs/AppRadio';
 import AppSelect from '@/components/inputs/AppSelect';
@@ -47,10 +48,6 @@ interface MessageFormState {
   noteCn: string;
 }
 
-const MESSAGES = {
-  roleGroupNotFound: 'The selected user group does not exist or is not in use.',
-} as const;
-
 function toState(item: NotificationMessageItem | null): MessageFormState {
   return {
     notiSrvcNm: item?.notiSrvcNm ?? '',
@@ -73,13 +70,14 @@ interface NotificationMessageModalProps {
 
 /** Loads the template in edit mode (the list has no content), then mounts the form with it. */
 export default function NotificationMessageModal({ notiMsgId, canWrite, onClose }: NotificationMessageModalProps) {
+  const { t } = useTranslation();
   const { data: detail, isFetching, isError } = useNotificationMessage(notiMsgId);
 
   if (notiMsgId !== null && !detail) {
     return (
       <SysFormModal width={1200} open title="Edit Notification Message" onCancel={onClose}>
         <LoadingSpinner spinning={isFetching}>
-          <div className={styles.loading}>{isError ? 'The notification message could not be loaded.' : null}</div>
+          <div className={styles.loading}>{isError ? t('messages.system.notificationMessage.loadFailed') : null}</div>
         </LoadingSpinner>
       </SysFormModal>
     );
@@ -97,6 +95,7 @@ function MessageForm({
   canWrite: boolean;
   onClose: () => void;
 }) {
+  const { t } = useTranslation();
   const isCreate = item === null;
   const { toast } = useNotify();
   const recipients = useRecipientGroups();
@@ -160,7 +159,7 @@ function MessageForm({
       onClose();
     } catch (error) {
       const handled = applyApiError(error, {
-        [NOTIFICATION_ERRORS.roleGroupNotFound]: ['roleGroupId', MESSAGES.roleGroupNotFound],
+        [NOTIFICATION_ERRORS.roleGroupNotFound]: ['roleGroupId', t('messages.system.notificationMessage.roleGroupNotFound')],
         [NOTIFICATION_ERRORS.unknownVariable]: ['notiCn', errorMessage(error)],
       });
       if (!handled) toast.error(errorMessage(error));

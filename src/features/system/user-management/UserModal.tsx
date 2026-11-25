@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import AppSelect from '@/components/inputs/AppSelect';
 import TextInput from '@/components/inputs/TextInput';
 import { useNotify } from '@/hooks/use-notify';
@@ -47,6 +48,7 @@ function toForm(detail?: EmployeeDetail): UserForm {
 }
 
 export default function UserModal({ detail, canWrite, onClose }: UserModalProps) {
+  const { t } = useTranslation();
   const isEdit = detail !== undefined;
   const { toast, notify } = useNotify();
   const { confirm } = useSysDialogs();
@@ -68,15 +70,15 @@ export default function UserModal({ detail, canWrite, onClose }: UserModalProps)
     if (!checkRequired(form, REQUIRED)) return false;
     let valid = true;
     if (!isEdit && !EMP_NO_PATTERN.test(form.empNo)) {
-      setError('empNo', 'Use 3 to 10 letters, digits, "_" or "-".');
+      setError('empNo', t('messages.system.user.empNoPattern'));
       valid = false;
     }
     if (!EMAIL_PATTERN.test(form.empEmlAddr.trim())) {
-      setError('empEmlAddr', 'Invalid email format.');
+      setError('empEmlAddr', t('messages.system.user.invalidEmail'));
       valid = false;
     }
     if (!MOBILE_PATTERN.test(form.empMoblTelno.trim())) {
-      setError('empMoblTelno', 'Please check the mobile number format.');
+      setError('empMoblTelno', t('messages.system.user.invalidMobile'));
       valid = false;
     }
     return valid;
@@ -101,19 +103,17 @@ export default function UserModal({ detail, canWrite, onClose }: UserModalProps)
         const response = await createEmployee.mutateAsync({ ...request, empNo: form.empNo.trim() });
         const result = response.data;
         if (result?.mailSent) {
-          notify.success(`The user was registered. A temporary password was sent to ${result.mailSentTo ?? form.empEmlAddr}.`);
+          notify.success(t('messages.system.user.registeredMailSent', { email: result.mailSentTo ?? form.empEmlAddr }));
         } else {
-          notify.warning(
-            'The user was registered, but the temporary password mail could not be sent. Open the user and use [Reset Password] to send it again.',
-          );
+          notify.warning(t('messages.system.user.registeredMailFailed'));
         }
       }
       onClose();
     } catch (e) {
       const handled = applyApiError(e, {
-        EMP_DUPLICATED: ['empNo', SYS_MESSAGES.duplicate('Employee No.')],
-        EMP001: ['empEmlAddr', SYS_MESSAGES.duplicate('Email')],
-        EMP002: ['empMoblTelno', SYS_MESSAGES.duplicate('Mobile Number')],
+        EMP_DUPLICATED: ['empNo', SYS_MESSAGES.duplicate(t('messages.sys.items.employeeNo'))],
+        EMP001: ['empEmlAddr', SYS_MESSAGES.duplicate(t('messages.sys.items.email'))],
+        EMP002: ['empMoblTelno', SYS_MESSAGES.duplicate(t('messages.sys.items.mobileNumber'))],
       });
       if (!handled) toast.error(errorMessage(e));
     }
@@ -122,7 +122,7 @@ export default function UserModal({ detail, canWrite, onClose }: UserModalProps)
   const handleDelete = () => {
     if (!detail) return;
     confirm({
-      content: SYS_MESSAGES.confirmDelete('this user'),
+      content: SYS_MESSAGES.confirmDelete(t('messages.sys.items.thisUser')),
       okText: SYS_DIALOG_LABELS.delete,
       danger: true,
       onOk: async () => {
@@ -140,16 +140,18 @@ export default function UserModal({ detail, canWrite, onClose }: UserModalProps)
   const handleResetPassword = () => {
     if (!detail) return;
     confirm({
-      content: `Send a temporary password to ${detail.empEmlAddr ?? 'the user'}? The lock will also be released.`,
-      okText: 'Reset',
+      content: t('messages.system.user.confirmResetPassword', {
+        target: detail.empEmlAddr ?? t('messages.system.user.theUser'),
+      }),
+      okText: t('messages.dialog.reset'),
       onOk: async () => {
         try {
           const response = await resetPassword.mutateAsync(detail.empNo);
           const result = response.data;
           if (result?.mailSent) {
-            notify.success(`A temporary password was sent to ${result.mailSentTo ?? detail.empEmlAddr}.`);
+            notify.success(t('messages.system.user.tempPasswordSent', { email: result.mailSentTo ?? detail.empEmlAddr }));
           } else {
-            notify.error('The account was unlocked, but the temporary password mail could not be sent. Please try again.');
+            notify.error(t('messages.system.user.tempPasswordFailed'));
           }
         } catch (e) {
           toast.error(errorMessage(e));

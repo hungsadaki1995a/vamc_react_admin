@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import AppRadio from '@/components/inputs/AppRadio';
 import AppSelect from '@/components/inputs/AppSelect';
 import TextInput from '@/components/inputs/TextInput';
@@ -12,7 +13,7 @@ import { SysField, SysFieldGrid, SysFormModal } from '@/components/common/sys-ui
 import { errorMessage } from '@/utils/system-utils';
 import { useFieldErrors } from '@/hooks/use-field-errors';
 import { useSysDialogs } from '@/hooks/use-sys-dialogs';
-import { BATCH_MESSAGES, isValidCron, isValidJson, runErrorMessage } from './batch-utils';
+import { isValidCron, isValidJson, runErrorMessage } from './batch-utils';
 import { useBatchRegistry, useCreateBatchJob, useExecuteBatchJob, useUpdateBatchJob } from './use-batch-jobs';
 import styles from './batch-management.module.scss';
 
@@ -48,6 +49,7 @@ function toFormValues(job?: BatchJobItem): FormValues {
 
 /** Batch Management - Register/Edit (VPA090404P01). Mount with a `key` so the form starts from `job`. */
 export default function BatchJobModal({ job, canWrite, onClose, onOpenHistory }: BatchJobModalProps) {
+  const { t } = useTranslation();
   const isEdit = job !== undefined;
   const { toast } = useNotify();
   const { confirm } = useSysDialogs();
@@ -85,11 +87,11 @@ export default function BatchJobModal({ job, canWrite, onClose, onOpenHistory }:
     if (!checkRequired(values, ['btchJobNm', 'btchGroup', 'cronExpression'])) return;
     let valid = true;
     if (!isValidCron(values.cronExpression)) {
-      setError('cronExpression', BATCH_MESSAGES.invalidCron);
+      setError('cronExpression', t('messages.system.batch.invalidCron'));
       valid = false;
     }
     if (!isValidJson(values.jobParameters)) {
-      setError('jobParameters', BATCH_MESSAGES.invalidJson);
+      setError('jobParameters', t('messages.system.batch.invalidJson'));
       valid = false;
     }
     if (!valid) return;
@@ -113,9 +115,9 @@ export default function BatchJobModal({ job, canWrite, onClose, onOpenHistory }:
       onClose();
     } catch (error) {
       const handled = applyApiError(error, {
-        BAT002: ['btchJobNm', BATCH_MESSAGES.duplicate],
-        BAT004: ['cronExpression', BATCH_MESSAGES.invalidCron],
-        BAT005: ['jobParameters', BATCH_MESSAGES.invalidJson],
+        BAT002: ['btchJobNm', t('messages.system.batch.duplicate')],
+        BAT004: ['cronExpression', t('messages.system.batch.invalidCron')],
+        BAT005: ['jobParameters', t('messages.system.batch.invalidJson')],
         BAT008: ['btchJobNm', errorMessage(error)],
       });
       if (!handled) toast.error(errorMessage(error));
@@ -125,12 +127,12 @@ export default function BatchJobModal({ job, canWrite, onClose, onOpenHistory }:
   const runNow = () => {
     if (!job) return;
     confirm({
-      content: BATCH_MESSAGES.confirmRunNow(job.btchJobNm),
+      content: t('messages.system.batch.confirmRunNow', { jobName: job.btchJobNm }),
       okText: SYS_DIALOG_LABELS.run,
       onOk: async () => {
         try {
           await execute.mutateAsync(job.btchJobNm);
-          toast.success(BATCH_MESSAGES.runStarted(job.btchJobNm));
+          toast.success(t('messages.system.batch.runStarted', { jobName: job.btchJobNm }));
         } catch (error) {
           toast.error(runErrorMessage(error));
         }
@@ -161,7 +163,7 @@ export default function BatchJobModal({ job, canWrite, onClose, onOpenHistory }:
       onCancel={onClose}
       leftActions={leftActions}
       width={1200}
-      notice={BATCH_MESSAGES.notice}
+      notice={t('messages.system.batch.notice')}
     >
       <SysFieldGrid columns={2}>
         <SysField label="Job Name" required error={errors.btchJobNm}>

@@ -1,4 +1,5 @@
 import { Suspense, useRef, useState, memo } from 'react';
+import { useTranslation } from 'react-i18next';
 import LoadingSpinner from '@/components/common/loading/LoadingSpinner';
 import { useTabStore } from '@/stores/tab-store';
 import { componentRegistry } from '@/config/component-registry';
@@ -20,6 +21,7 @@ const TabPanel = memo(function TabPanel({
   tab: Tab;
   isActive: boolean;
 }) {
+  const { t } = useTranslation();
   const Component: ComponentType | undefined = componentRegistry[tab.componentKey];
   // Per-tab header slot — registered by the page via usePageHeaderSlot
   const [headerSlot, setHeaderSlot] = useState<PageHeaderSlot | null>(null);
@@ -49,7 +51,7 @@ const TabPanel = memo(function TabPanel({
             </Suspense>
           ) : (
             <div className="p-5 text-[#999]">
-              Component not found: {tab.componentKey}
+              {t('common.componentNotFound', { key: tab.componentKey })}
             </div>
           )}
         </PageHeaderSlotContext.Provider>
@@ -67,6 +69,7 @@ const TabPanel = memo(function TabPanel({
  * - Zustand subscriptions are split: tab keys vs activeTabKey
  */
 export default function TabContent() {
+  const { t } = useTranslation();
   // Subscribe to tab keys only (shallow-stable when order/count doesn't change)
   const tabs = useTabStore((s) => s.tabs);
   const activeTabKey = useTabStore((s) => s.activeTabKey);
@@ -88,7 +91,7 @@ export default function TabContent() {
   if (tabs.length === 0) {
     return (
       <div className="tab-content-container flex items-center justify-center text-[#999]">
-        Please select a menu
+        {t('common.selectMenu')}
       </div>
     );
   }

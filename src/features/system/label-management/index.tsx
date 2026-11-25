@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Upload } from 'antd';
 import type { TableColumnsType } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
@@ -29,7 +30,7 @@ import { usePagedList } from '@/hooks/use-paged-list';
 import { useSysDialogs } from '@/hooks/use-sys-dialogs';
 import LabelModal from './LabelModal';
 import LabelTextPanel from './LabelTextPanel';
-import { hasTextChanges, LABEL_MESSAGES, labelRowId, sameLabel, storedTexts } from './label-utils';
+import { hasTextChanges, labelRowId, sameLabel, storedTexts } from './label-utils';
 import {
   useDownloadLabels,
   useLabelDetail,
@@ -79,6 +80,7 @@ const toKey = ({ scrnId, lblSeCd, lblCd }: LabelKey): LabelKey => ({
 
 /** i18n Label Management - List (VPA09040301, menu A09040300). */
 export default function LabelManagement() {
+  const { t } = useTranslation();
   const { toast, dialog } = useNotify();
   const { confirm, guardDiscard } = useSysDialogs();
   const { canWrite } = useMenuPermission();
@@ -129,12 +131,12 @@ export default function LabelManagement() {
 
   const refreshCache = () =>
     confirm({
-      content: LABEL_MESSAGES.confirmRefreshCache,
+      content: t('messages.system.label.confirmRefreshCache'),
       okText: SYS_DIALOG_LABELS.apply,
       onOk: async () => {
         try {
           await reloadCache.run();
-          toast.success(LABEL_MESSAGES.cacheRefreshed);
+          toast.success(t('messages.system.label.cacheRefreshed'));
         } catch (error) {
           toast.error(errorMessage(error));
         }
@@ -149,22 +151,29 @@ export default function LabelManagement() {
         dialog.error({
           content: (
             <div className={styles.uploadErrors}>
-              <p>{LABEL_MESSAGES.uploadFailed}</p>
+              <p>{t('messages.system.label.uploadFailed')}</p>
               <ul>
                 {(result.errors ?? []).slice(0, 20).map((e) => (
                   <li key={`${e.row}-${e.col ?? ''}-${e.message}`}>
-                    Row {e.row}
-                    {e.header ? ` (${e.header})` : ''}: {e.message}
+                    {t('messages.system.label.uploadRow', {
+                      row: e.row,
+                      header: e.header ? ` (${e.header})` : '',
+                      message: e.message,
+                    })}
                   </li>
                 ))}
               </ul>
-              {(result.errors?.length ?? 0) > 20 && <p>… {(result.errors?.length ?? 0) - 20} more</p>}
+              {(result.errors?.length ?? 0) > 20 && (
+                <p>{t('messages.system.label.uploadMoreErrors', { count: (result.errors?.length ?? 0) - 20 })}</p>
+              )}
             </div>
           ),
         });
         return;
       }
-      toast.success(LABEL_MESSAGES.uploadDone(result?.totalRows ?? 0));
+      toast.success(
+        t('messages.system.label.uploadDone', { rows: (result?.totalRows ?? 0).toLocaleString('en-US') }),
+      );
     } catch (error) {
       toast.error(errorMessage(error));
     }

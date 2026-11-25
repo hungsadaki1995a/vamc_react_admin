@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { Form, Typography } from 'antd';
 import Popup from '@/components/common/popup/Popup';
 import TextInput from '@/components/inputs/TextInput';
@@ -18,6 +19,7 @@ type FormValues = {
 };
 
 export default function InitChangePwModal({ open, usrId, onSuccess }: Props) {
+  const { t } = useTranslation();
   const [form] = Form.useForm<FormValues>();
 
   const mutation = useApiMutation<void, { usrId: string; newPswd: string }>(
@@ -48,17 +50,17 @@ export default function InitChangePwModal({ open, usrId, onSuccess }: Props) {
       width={420}
     >
       <Text type="secondary" className="block mb-4!">
-        This is your first login. Please change your password to continue.
+        {t('auth.initialPassword.subtitle')}
       </Text>
       <Form form={form} layout="vertical">
         <Form.Item
           label="New Password"
           name="chgPasswd"
           rules={[
-            { required: true, message: 'Please enter a new password.' },
+            { required: true, message: t('auth.initialPassword.newPasswordRequired') },
             {
               pattern: /^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@!%*#?&])[A-Za-z\d$@!%*#?&]{8,20}$/,
-              message: '8–20 characters including letters, numbers, and special characters ($@!%*#?&).',
+              message: t('auth.initialPassword.newPasswordRule'),
             },
           ]}
         >
@@ -69,11 +71,11 @@ export default function InitChangePwModal({ open, usrId, onSuccess }: Props) {
           name="chgPasswdChk"
           dependencies={['chgPasswd']}
           rules={[
-            { required: true, message: 'Please confirm your new password.' },
+            { required: true, message: t('auth.initialPassword.confirmPasswordRequired') },
             ({ getFieldValue }) => ({
               validator(_, value) {
                 if (!value || getFieldValue('chgPasswd') === value) return Promise.resolve();
-                return Promise.reject(new Error('Passwords do not match.'));
+                return Promise.reject(new Error(t('auth.initialPassword.passwordMismatch')));
               },
             }),
           ]}

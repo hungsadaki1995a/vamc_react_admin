@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Descriptions } from 'antd';
 import type { TableColumnsType } from 'antd';
 import type { Dayjs } from 'dayjs';
@@ -26,6 +27,7 @@ const PAGE_SIZE = 15;
 type DateRange = [Dayjs | null, Dayjs | null] | null;
 
 export default function TradeApplicationBoard({ kind, title }: { kind: TradeAppKind; title: string }) {
+  const { t } = useTranslation();
   const { toast } = useNotify();
   const { canWrite } = useMenuPermission();
 
@@ -75,7 +77,7 @@ export default function TradeApplicationBoard({ kind, title }: { kind: TradeAppK
   const handleReceipt = async (id: string) => {
     try {
       await receiptApplication.mutateAsync({ kind, id });
-      toast.success('Received.');
+      toast.success(t('messages.trade.received'));
       setDetailId(null);
     } catch (e) {
       toast.error(errorMessage(e));

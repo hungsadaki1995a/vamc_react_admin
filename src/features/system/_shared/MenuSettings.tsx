@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Alert } from 'antd';
 import { useNotify } from '@/hooks/use-notify';
 import { useMenuPermission } from '@/hooks/use-menu-permission';
@@ -55,6 +56,7 @@ const SCREEN = {
 const EMPTY_FORM = emptyMenuForm('');
 
 export default function MenuSettings({ menuSeCd }: Props) {
+  const { t } = useTranslation();
   const screen = SCREEN[menuSeCd];
   const maxDepth = menuSeCd === 'W' ? WEB_MAX_DEPTH : ADMIN_MAX_DEPTH;
   const { toast } = useNotify();
@@ -129,10 +131,10 @@ export default function MenuSettings({ menuSeCd }: Props) {
   const handleMove = async (menuCd: string, move: MenuMove) => {
     try {
       await moveMenu.mutateAsync({ menuCd, request: move });
-      toast.success('The menu position was saved.');
+      toast.success(t('messages.system.menu.positionSaved'));
       void useMenuStore.getState().invalidateMenuCache();
     } catch (e) {
-      if (apiErrorCode(e) === 'MNU006') toast.error(`A menu cannot be placed below ${maxDepth}Depth.`);
+      if (apiErrorCode(e) === 'MNU006') toast.error(t('messages.system.menu.cannotPlaceBelow', { maxDepth }));
       else toast.error(errorMessage(e));
     }
   };
@@ -142,11 +144,11 @@ export default function MenuSettings({ menuSeCd }: Props) {
     if (!checkRequired(form, REQUIRED_MENU_FIELDS)) return;
     if (isNew) {
       if (!menuCodePattern(menuSeCd).test(form.menuCd)) {
-        setError('menuCd', `Enter ${menuSeCd} followed by 8 digits.`);
+        setError('menuCd', t('messages.system.menu.codePattern', { prefix: menuSeCd }));
         return;
       }
       if (tree.byCd.has(form.menuCd) || form.menuCd === tree.rootCd) {
-        setError('menuCd', SYS_MESSAGES.duplicate('menu code'));
+        setError('menuCd', SYS_MESSAGES.duplicate(t('messages.sys.items.menuCode')));
         return;
       }
     }
@@ -174,12 +176,12 @@ export default function MenuSettings({ menuSeCd }: Props) {
       void useMenuStore.getState().invalidateMenuCache();
     } catch (e) {
       const handled = applyApiError(e, {
-        MNU002: ['menuCd', SYS_MESSAGES.duplicate('menu code')],
-        MNU012: ['lblCd', 'This label key is already used by another menu.'],
-        MNU014: ['lblCd', 'This label key is not registered in i18n Label Management.'],
+        MNU002: ['menuCd', SYS_MESSAGES.duplicate(t('messages.sys.items.menuCode'))],
+        MNU012: ['lblCd', t('messages.system.menu.labelUsedByOther')],
+        MNU014: ['lblCd', t('messages.system.menu.labelNotRegistered')],
       });
       if (handled) return;
-      if (apiErrorCode(e) === 'MNU006') toast.error(`A menu cannot be added below ${maxDepth}Depth.`);
+      if (apiErrorCode(e) === 'MNU006') toast.error(t('messages.system.menu.cannotAddBelow', { maxDepth }));
       else toast.error(errorMessage(e));
     }
   };
@@ -195,7 +197,9 @@ export default function MenuSettings({ menuSeCd }: Props) {
   return (
     <SysPage fill>
       <SysTitleBar title={screen.title} breadcrumb={[...screen.breadcrumb]} />
-      {error && <Alert type="error" showIcon title="The menu list could not be loaded." description={error.message} />}
+      {error && (
+        <Alert type="error" showIcon title={t('messages.system.menu.loadListFailed')} description={error.message} />
+      )}
       <SysSplit
         ratio="minmax(340px, 3fr) 7fr"
         left={

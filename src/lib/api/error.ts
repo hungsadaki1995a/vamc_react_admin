@@ -1,31 +1,33 @@
 import type { AxiosError } from 'axios';
 import type { ApiErrorResponse } from './types';
+import i18n from '@/lib/i18n';
 import { useLabelStore } from '@/stores/label-store';
 
-const DEFAULT_MESSAGES: Record<number, string> = {
-  400: 'Bad request.',
-  401: 'Authentication is required.',
-  403: 'You do not have permission to access this resource.',
-  404: 'The requested resource was not found.',
-  408: 'The request timed out.',
-  422: 'Please check your input data.',
-  429: 'Too many requests. Please try again later.',
-  500: 'A server error occurred. Please try again later.',
-  502: 'Unable to connect to the server.',
-  503: 'The service is temporarily unavailable.',
-};
+const HTTP_MESSAGE_KEYS = {
+  400: 'messages.api.http400',
+  401: 'messages.api.http401',
+  403: 'messages.api.http403',
+  404: 'messages.api.http404',
+  408: 'messages.api.http408',
+  422: 'messages.api.http422',
+  429: 'messages.api.http429',
+  500: 'messages.api.http500',
+  502: 'messages.api.http502',
+  503: 'messages.api.http503',
+} as const;
 
-const UNKNOWN_ERROR = 'An unknown error occurred.';
+type HttpMessageKey = (typeof HTTP_MESSAGE_KEYS)[keyof typeof HTTP_MESSAGE_KEYS];
 
 /**
- * Default HTTP status message — label table first, falling back to English constants above if unregistered.
+ * Default HTTP status message — label table first, falling back to i18n messages if unregistered.
  *
  * <p>Called outside React (axios interceptor), so read via `getState()` instead of a hook.
  * Labels are replaced wholesale on locale change, so reading each time always reflects the current language.</p>
  */
 function httpMessage(statusCode: number | undefined): string | undefined {
   if (statusCode === undefined) return undefined;
-  const fallback = DEFAULT_MESSAGES[statusCode];
+  const fallbackKey = (HTTP_MESSAGE_KEYS as Record<number, HttpMessageKey | undefined>)[statusCode];
+  const fallback = fallbackKey ? i18n.t(fallbackKey) : undefined;
   const key = `MESSAGE.ERROR.TEXT_HTTP${statusCode}`;
   const msg = useLabelStore.getState().t(key, fallback);
   // If neither label nor fallback exists for the status code, the key string is returned — that is not a message.
@@ -34,7 +36,7 @@ function httpMessage(statusCode: number | undefined): string | undefined {
 
 /** Final fallback when no message is found anywhere */
 function unknownMessage(): string {
-  return useLabelStore.getState().t('MESSAGE.ERROR.TEXT_UNKNOWN', UNKNOWN_ERROR);
+  return useLabelStore.getState().t('MESSAGE.ERROR.TEXT_UNKNOWN', i18n.t('messages.api.unknown'));
 }
 
 /** Keeps only string → string entries of the backend `validation` map. */

@@ -1,4 +1,5 @@
 import { useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { TableColumnsType } from 'antd';
 import TextInput from '@/components/inputs/TextInput';
 import { useMenuPermission } from '@/hooks/use-menu-permission';
@@ -44,6 +45,7 @@ const INITIAL_FILTER: CodeGroupSearch = { groupCd: '', groupNm: '' };
 const text = (value: GridRecord[string]) => (typeof value === 'string' && value !== '' ? value : undefined);
 
 export default function CommonCodeManagement() {
+  const { t } = useTranslation();
   const { canWrite } = useMenuPermission();
   const { guardDiscard } = useSysDialogs();
   const list = usePagedList<CodeGroupSearch>(INITIAL_FILTER);
@@ -198,7 +200,7 @@ export default function CommonCodeManagement() {
               key={`${selected?.groupCd ?? ''}-${codesQuery.dataUpdatedAt}`}
               title={current ? `[${current.groupNm}] Code Details` : 'Code Details'}
               disabled={!selected}
-              emptyText="Select a code group."
+              emptyText={t('messages.system.commonCode.emptyDetail')}
               canWrite={canWrite}
               loading={codesQuery.isFetching}
               columns={CODE_COLUMNS}

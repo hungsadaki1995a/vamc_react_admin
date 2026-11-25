@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import AppRadio from '@/components/inputs/AppRadio';
 import Spinbox from '@/components/inputs/Spinbox';
 import TextInput from '@/components/inputs/TextInput';
@@ -25,6 +26,7 @@ interface InstitutionModalProps {
 }
 
 export function InstitutionModal({ item, canWrite, onClose }: InstitutionModalProps) {
+  const { t } = useTranslation();
   const isCreate = item === null;
   const { toast } = useNotify();
   const { errors, setError, clearError, checkRequired } = useFieldErrors<Field>();
@@ -46,7 +48,7 @@ export function InstitutionModal({ item, canWrite, onClose }: InstitutionModalPr
     if (!checkRequired(values, ['fnstCd', 'fnstNm', 'useYn'])) return;
     const fnstCd = values.fnstCd as number;
     if (!Number.isInteger(fnstCd) || fnstCd < 1 || fnstCd > 999) {
-      setError('fnstCd', 'Please enter a number from 1 to 999.');
+      setError('fnstCd', t('messages.system.financeCode.codeRange'));
       return;
     }
     const request = { fnstNm: values.fnstNm.trim(), fnstAbbrNm: values.fnstAbbrNm.trim() || undefined, useYn: values.useYn };
@@ -62,7 +64,7 @@ export function InstitutionModal({ item, canWrite, onClose }: InstitutionModalPr
     } catch (e) {
       // Duplicate institution code: 409 without an error code.
       if (isCreate && e instanceof ApiError && e.statusCode === 409) {
-        setError('fnstCd', SYS_MESSAGES.duplicate('code'));
+        setError('fnstCd', SYS_MESSAGES.duplicate(t('messages.sys.items.code')));
         return;
       }
       toast.error(errorMessage(e));

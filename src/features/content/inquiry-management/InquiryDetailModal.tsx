@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import DOMPurify from 'dompurify';
 import { DownloadOutlined, FileTextOutlined } from '@ant-design/icons';
 import type { ContentFile, NotificationChannel } from '@/api/contents/inquiry-api';
@@ -24,12 +25,6 @@ interface InquiryDetailModalProps {
   onRefresh?: () => void;
 }
 
-const MESSAGES = {
-  /** E01 */
-  answerRequired: 'Answer is required.',
-  answered: 'The answer has been sent.',
-} as const;
-
 const CHANNEL_LABELS: Record<string, string> = { EMAIL: 'Email', ZALO: 'Zalo' };
 
 /** "Email, Zalo" — the channels used once answered, the ones the answer will use before; "-" when none. */
@@ -39,6 +34,7 @@ function channelText(channels?: NotificationChannel[]): string {
 }
 
 export default function InquiryDetailModal({ visible, inquiry, onClose, onRefresh }: InquiryDetailModalProps) {
+  const { t } = useTranslation();
   const { toast } = useNotify();
   const pstNo = inquiry?.pstNo || inquiry?.id;
   const { data: detail, isLoading } = useInquiryDetail(visible ? pstNo : undefined, {
@@ -68,7 +64,7 @@ export default function InquiryDetailModal({ visible, inquiry, onClose, onRefres
   const handleAnswer = async () => {
     const text = answerText.trim();
     if (!text) {
-      setError(MESSAGES.answerRequired);
+      setError(t('messages.content.inquiry.answerRequired'));
       return;
     }
     if (!pstNo) return;
@@ -79,7 +75,7 @@ export default function InquiryDetailModal({ visible, inquiry, onClose, onRefres
       toast.error(ApiError.from(err).message);
       return;
     }
-    toast.success(MESSAGES.answered);
+    toast.success(t('messages.content.inquiry.answered'));
     close();
     onRefresh?.();
   };

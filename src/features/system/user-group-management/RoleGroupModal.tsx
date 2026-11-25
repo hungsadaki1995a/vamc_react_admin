@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import AppRadio from '@/components/inputs/AppRadio';
 import TextInput from '@/components/inputs/TextInput';
 import { useNotify } from '@/hooks/use-notify';
@@ -34,6 +35,7 @@ type Field = keyof Form;
 const GROUP_ID_PATTERN = /^RG\d{5}$/;
 
 export default function RoleGroupModal({ target, canWrite, onClose }: RoleGroupModalProps) {
+  const { t } = useTranslation();
   const isGroup = target.kind === 'group';
   const isEdit = target.record !== undefined;
   const noun = isGroup ? 'User Group' : 'Role';
@@ -58,7 +60,7 @@ export default function RoleGroupModal({ target, canWrite, onClose }: RoleGroupM
     if (!checkRequired(form, ['id', 'name', 'useYn'])) return;
     const id = form.id.trim();
     if (isGroup && !isEdit && !GROUP_ID_PATTERN.test(id)) {
-      setError('id', 'Enter RG followed by 5 digits (e.g. RG00010).');
+      setError('id', t('messages.system.userGroup.groupIdPattern'));
       return;
     }
     try {
@@ -80,7 +82,7 @@ export default function RoleGroupModal({ target, canWrite, onClose }: RoleGroupM
       onClose();
     } catch (e) {
       const handled = applyApiError(e, {
-        [isGroup ? ROLE_GROUP_DUPLICATED : ROLE_DUPLICATED]: ['id', SYS_MESSAGES.duplicate('ID')],
+        [isGroup ? ROLE_GROUP_DUPLICATED : ROLE_DUPLICATED]: ['id', SYS_MESSAGES.duplicate(t('messages.sys.items.id'))],
       });
       if (!handled) toast.error(errorMessage(e));
     }

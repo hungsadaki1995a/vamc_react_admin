@@ -82,7 +82,7 @@ $icon: var(--color-gray-400, #c9cfdd);
 }
 
 .preview[data-empty] {
-  padding: 18px 0;
+  padding: 24px 8px;
 }
 
 .previewImage {
@@ -97,14 +97,10 @@ $icon: var(--color-gray-400, #c9cfdd);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
-  font-size: var(--font-size-b2, 12px);
-  color: $text-sub;
-}
-
-.previewIcon {
-  font-size: var(--font-size-h1, 20px);
-  color: $icon;
+  font-size: var(--font-size-b1, 13px);
+  line-height: var(--line-height-b1, 18px);
+  letter-spacing: var(--letter-spacing-tight, -0.02em);
+  color: var(--color-gray-600, #929fba);
 }
 
 /* Design: Display Order spin box is about 430px wide, not full width */
@@ -115,5 +111,12 @@ $icon: var(--color-gray-400, #c9cfdd);
   :global(.ant-input-number) {
     width: 100%;
   }
+}
+
+/* Empty table: fixed 300px content area with centered "no data" message. */
+.emptyTable :global(.ant-table-tbody > tr.ant-table-placeholder > td) {
+  height: 300px;
+  text-align: center;
+  vertical-align: middle;
 }
 

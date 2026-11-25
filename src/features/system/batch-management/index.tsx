@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { TableColumnsType } from 'antd';
 import AppSelect from '@/components/inputs/AppSelect';
 import TextInput from '@/components/inputs/TextInput';
@@ -27,7 +28,7 @@ import { usePagedList } from '@/hooks/use-paged-list';
 import { useSysDialogs } from '@/hooks/use-sys-dialogs';
 import BatchHistoryModal from './BatchHistoryModal';
 import BatchJobModal from './BatchJobModal';
-import { BATCH_BREADCRUMB, BATCH_MESSAGES, toResult } from './batch-utils';
+import { BATCH_BREADCRUMB, toResult } from './batch-utils';
 import { useBatchJobs, useDownloadBatchJobs, useRefreshBatchSchedules } from './use-batch-jobs';
 import styles from './batch-management.module.scss';
 
@@ -81,6 +82,7 @@ const COLUMNS: TableColumnsType<BatchJobItem> = [
 
 /** Batch Management - List (VPA09040401, menu A09040400). */
 export default function BatchManagement() {
+  const { t } = useTranslation();
   const { toast } = useNotify();
   const { confirm } = useSysDialogs();
   const { canWrite } = useMenuPermission();
@@ -95,12 +97,12 @@ export default function BatchManagement() {
 
   const refreshSchedule = () =>
     confirm({
-      content: BATCH_MESSAGES.confirmRefresh,
+      content: t('messages.system.batch.confirmRefresh'),
       okText: SYS_DIALOG_LABELS.apply,
       onOk: async () => {
         try {
           await refresh.mutateAsync();
-          toast.success(BATCH_MESSAGES.refreshed);
+          toast.success(t('messages.system.batch.refreshed'));
         } catch (error) {
           toast.error(errorMessage(error));
         }

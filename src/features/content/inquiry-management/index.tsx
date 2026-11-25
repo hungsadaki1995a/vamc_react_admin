@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { TableColumnsType } from 'antd';
 import type { Dayjs } from 'dayjs';
 import { apiDownload } from '@/api/common/api-utils';
@@ -39,15 +40,6 @@ const ANSWER_STATUS_OPTIONS = [
   { value: 'ANSWERED', label: 'Answered' },
   { value: 'UNANSWERED', label: 'Unanswered' },
 ];
-
-const MESSAGES = {
-  /** E02 */
-  periodBoth: 'Please set both the start date and end date.',
-  /** I01 */
-  noPosts: 'There are no posts.',
-  /** I02 */
-  noResults: 'No search results found.',
-} as const;
 
 type Period = [Dayjs | null, Dayjs | null] | null;
 
@@ -168,6 +160,7 @@ const COLUMNS: TableColumnsType<InquiryItem> = [
 ];
 
 export default function InquiryManagement() {
+  const { t } = useTranslation();
   const { alert } = useSysDialogs();
   const list = usePagedList<InquiryFilter>(INITIAL_FILTER, { pageSize: PAGE_SIZE });
   const typeCodes = useCommonCodes('INQRY_SE_CD');
@@ -192,7 +185,7 @@ export default function InquiryManagement() {
   const handleSearch = () => {
     const [from, to] = list.draft.period ?? [null, null];
     if (Boolean(from) !== Boolean(to)) {
-      alert(MESSAGES.periodBoth);
+      alert(t('messages.content.inquiry.periodBoth'));
       return;
     }
     list.search({ keyword: list.draft.keyword.trim(), period: from && to ? [from, to] : null });
@@ -266,7 +259,7 @@ export default function InquiryManagement() {
         onRowClick={setSelected}
         sort={list.sort}
         onSortChange={list.setSort}
-        locale={{ emptyText: filtered ? MESSAGES.noResults : MESSAGES.noPosts }}
+        locale={{ emptyText: filtered ? t('messages.content.inquiry.noResults') : t('messages.content.inquiry.noPosts') }}
       />
       <SysPager page={list.page} pageSize={PAGE_SIZE} total={total} onChange={list.setPage} />
       <InquiryDetailModal

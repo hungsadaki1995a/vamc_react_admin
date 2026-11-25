@@ -1,3 +1,4 @@
+import i18n from '@/lib/i18n';
 import { apiGet, apiPost } from '@/api/common/api-utils';
 import type { ApprovalCandidate } from '@/api/member/member-approval-api';
 
@@ -36,10 +37,18 @@ export const MEMBER_DELETION_ERRORS = {
 
 /** Why the Delete button is disabled (`deletionBlockCd` of the member detail). */
 export const DELETION_BLOCK_REASONS: Record<string, string> = {
-  MBR017: 'Only applications in Pending Approval past the payment deadline and Full Members can be deleted',
-  MBR018: 'The payment deadline has not passed yet',
-  REQUEST_PENDING: 'A request is waiting for approval',
-  E09: 'An application, contract or bid is in progress',
+  get MBR017() {
+    return i18n.t('messages.member.detail.deletionBlock.MBR017');
+  },
+  get MBR018() {
+    return i18n.t('messages.member.detail.deletionBlock.MBR018');
+  },
+  get REQUEST_PENDING() {
+    return i18n.t('messages.member.detail.deletionBlock.REQUEST_PENDING');
+  },
+  get E09() {
+    return i18n.t('messages.member.detail.deletionBlock.E09');
+  },
 };
 
 const member = (mbrNo: string) => `/api/v1/members/${encodeURIComponent(mbrNo)}`;

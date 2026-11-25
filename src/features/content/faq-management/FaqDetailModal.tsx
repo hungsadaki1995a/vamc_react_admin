@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import LoadingSpinner from '@/components/common/loading/LoadingSpinner';
 import AppCheckbox from '@/components/inputs/AppCheckbox';
 import AppRadio from '@/components/inputs/AppRadio';
@@ -32,19 +33,8 @@ interface FaqDetailModalProps {
 type Field = 'category' | 'question' | 'answer' | 'questionEn' | 'answerEn';
 type Errors = Partial<Record<Field, string>>;
 
-const required = (field: string) => `${field} is required.`;
-
-const MESSAGES = {
-  /** C01 */
-  confirmDelete: 'Are you sure you want to delete?',
-  /** C02 */
-  englishDropped: 'English content will not be saved. Do you want to save?',
-  registered: 'The FAQ has been registered.',
-  updated: 'The FAQ has been updated.',
-  deleted: 'The FAQ has been deleted.',
-} as const;
-
 export default function FaqDetailModal({ visible, mode, faq, onClose, onRefresh }: FaqDetailModalProps) {
+  const { t } = useTranslation();
   const { toast, dialog } = useNotify();
   const isCreate = mode === 'create';
   const pstNo = !isCreate ? faq?.pstNo || faq?.id : undefined;
@@ -110,11 +100,12 @@ export default function FaqDetailModal({ visible, mode, faq, onClose, onRefresh 
 
   const validate = (): boolean => {
     const next: Errors = {};
-    if (!category) next.category = required('Category');
-    if (!question.trim()) next.question = required('Question');
-    if (!answer) next.answer = required('Answer');
-    if (provideEn && !questionEn.trim()) next.questionEn = required('Question (EN)');
-    if (provideEn && !answerEn) next.answerEn = required('Answer (EN)');
+    const required = (field: string) => t('messages.sys.fieldRequired', { label: field });
+    if (!category) next.category = required(t('messages.content.faq.fields.category'));
+    if (!question.trim()) next.question = required(t('messages.content.faq.fields.question'));
+    if (!answer) next.answer = required(t('messages.content.faq.fields.answer'));
+    if (provideEn && !questionEn.trim()) next.questionEn = required(t('messages.content.faq.fields.questionEn'));
+    if (provideEn && !answerEn) next.answerEn = required(t('messages.content.faq.fields.answerEn'));
     setErrors(next);
     return Object.keys(next).length === 0;
   };
@@ -138,7 +129,7 @@ export default function FaqDetailModal({ visible, mode, faq, onClose, onRefresh 
       toast.error(ApiError.from(err).message);
       return;
     }
-    toast.success(isCreate ? MESSAGES.registered : MESSAGES.updated);
+    toast.success(isCreate ? t('messages.content.faq.registered') : t('messages.content.faq.updated'));
     onClose();
     onRefresh?.();
   };
@@ -147,7 +138,12 @@ export default function FaqDetailModal({ visible, mode, faq, onClose, onRefresh 
     if (!validate()) return;
     const englishEntered = Boolean(questionEn.trim() || answerEn);
     if (!provideEn && englishEntered) {
-      dialog.confirm({ content: MESSAGES.englishDropped, okText: 'Save', cancelText: 'Cancel', onOk: save });
+      dialog.confirm({
+        content: t('messages.content.faq.englishDropped'),
+        okText: t('messages.dialog.save'),
+        cancelText: t('messages.dialog.cancel'),
+        onOk: save,
+      });
       return;
     }
     void save();
@@ -156,9 +152,9 @@ export default function FaqDetailModal({ visible, mode, faq, onClose, onRefresh 
   const handleDelete = () => {
     if (!pstNo) return;
     dialog.confirm({
-      content: MESSAGES.confirmDelete,
-      okText: 'Delete',
-      cancelText: 'Cancel',
+      content: t('messages.content.faq.confirmDelete'),
+      okText: t('messages.dialog.delete'),
+      cancelText: t('messages.dialog.cancel'),
       okButtonProps: { danger: true },
       onOk: async () => {
         try {
@@ -167,7 +163,7 @@ export default function FaqDetailModal({ visible, mode, faq, onClose, onRefresh 
           toast.error(ApiError.from(err).message);
           return;
         }
-        toast.success(MESSAGES.deleted);
+        toast.success(t('messages.content.faq.deleted'));
         onClose();
         onRefresh?.();
       },

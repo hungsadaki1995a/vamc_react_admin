@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import LoadingSpinner from '@/components/common/loading/LoadingSpinner';
 import { useMenuPermission } from '@/hooks/use-menu-permission';
 import { useNotify } from '@/hooks/use-notify';
@@ -19,6 +20,7 @@ const TITLE = 'Overview Management';
 const BREADCRUMB = ['Content Management', 'About VAMC Management', TITLE];
 
 export default function OverviewManagement() {
+  const { t } = useTranslation();
   const { data, isFetching, isError } = useAboutOverview();
 
   return (
@@ -28,7 +30,7 @@ export default function OverviewManagement() {
         <OverviewForm key={data.pstNo ?? 'new'} overview={data} />
       ) : (
         <LoadingSpinner spinning={isFetching}>
-          <div className={styles.loading}>{isError ? 'The overview could not be loaded.' : null}</div>
+          <div className={styles.loading}>{isError ? t('messages.content.overview.loadFailed') : null}</div>
         </LoadingSpinner>
       )}
     </SysPage>
@@ -36,6 +38,7 @@ export default function OverviewManagement() {
 }
 
 function OverviewForm({ overview }: { overview: AboutOverview }) {
+  const { t } = useTranslation();
   const { canWrite } = useMenuPermission();
   const { toast } = useNotify();
   const save = useSaveAboutOverview();
@@ -46,7 +49,7 @@ function OverviewForm({ overview }: { overview: AboutOverview }) {
   const submit = async () => {
     // E01 under the field
     if (!bodyVn.trim()) {
-      setError('bodyVn', 'Body (VN) is required.');
+      setError('bodyVn', t('messages.content.overview.bodyVnRequired'));
       return;
     }
     try {

@@ -1,4 +1,5 @@
 import { useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { TableColumnsType } from 'antd';
 import TextInput from '@/components/inputs/TextInput';
 import { useMenuPermission } from '@/hooks/use-menu-permission';
@@ -46,6 +47,7 @@ const isDuplicateDistrict = (e: unknown) =>
   apiErrorCode(e) === 'COD006' || (e instanceof ApiError && e.statusCode === 409);
 
 export default function RegionCodeManagement() {
+  const { t } = useTranslation();
   const { canWrite } = useMenuPermission();
   const { guardDiscard } = useSysDialogs();
   const list = usePagedList<ProvinceSearch>(INITIAL_FILTER);
@@ -203,7 +205,7 @@ export default function RegionCodeManagement() {
               key={`${selected?.mctpvCd ?? ''}-${districtsQuery.dataUpdatedAt}`}
               title={current ? `Districts in [${current.mctpvNm}]` : 'Districts'}
               disabled={!selected}
-              emptyText="Select a province / city."
+              emptyText={t('messages.system.regionCode.emptyDetail')}
               canWrite={canWrite}
               loading={districtsQuery.isFetching}
               columns={DISTRICT_COLUMNS}

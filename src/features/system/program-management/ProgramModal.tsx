@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import AppRadio from '@/components/inputs/AppRadio';
 import Spinbox from '@/components/inputs/Spinbox';
 import TextInput from '@/components/inputs/TextInput';
@@ -25,6 +26,7 @@ interface ProgramModalProps {
 }
 
 export function ProgramModal({ item, canWrite, onClose }: ProgramModalProps) {
+  const { t } = useTranslation();
   const isCreate = item === null;
   const { toast } = useNotify();
   const { errors, clearError, checkRequired, applyApiError } = useFieldErrors<Field>();
@@ -67,8 +69,8 @@ export function ProgramModal({ item, canWrite, onClose }: ProgramModalProps) {
       onClose();
     } catch (e) {
       const handled = applyApiError(e, {
-        SYS409: ['prgrmCd', SYS_MESSAGES.duplicate('program code')],
-        SYS400: ['menuCd', 'This menu code does not exist.'],
+        SYS409: ['prgrmCd', SYS_MESSAGES.duplicate(t('messages.sys.items.programCode'))],
+        SYS400: ['menuCd', t('messages.system.program.menuNotExist')],
       });
       if (!handled) toast.error(errorMessage(e));
     }

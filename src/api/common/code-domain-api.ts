@@ -1,3 +1,4 @@
+import i18n from '@/lib/i18n';
 import { apiClient } from '@/lib/api/client';
 import type { ApiResponse } from '@/lib/api/types';
 
@@ -31,7 +32,7 @@ export const getCodeList = async (projId: string, cdDmnId: string): Promise<Code
   const { data } = await apiClient.get<ApiResponse<CodeDetail[]>>('/api/comcd/codes', {
     params: { projId, cdDmnId }
   });
-  if (!data.data) throw new Error(data.message || 'Failed to load codes');
+  if (!data.data) throw new Error(data.message || i18n.t('messages.api.loadCodesFailed'));
   return data.data;
 };
 
@@ -50,6 +51,6 @@ export const getCodeDomains = async (projId: string): Promise<CodeDomain[]> => {
   const { data } = await apiClient.get<ApiResponse<CodeDomain[]>>('/api/comcd/domains', {
     params: { projId }
   });
-  if (!data.data) throw new Error(data.message || 'Failed to load codes');
+  if (!data.data) throw new Error(data.message || i18n.t('messages.api.loadCodesFailed'));
   return data.data;
 };

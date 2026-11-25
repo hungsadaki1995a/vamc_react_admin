@@ -22,9 +22,3 @@ export const POPUP_OPTIONS = [
 export function businessName(row: Pick<ScreenItem, 'menuCd' | 'menuNmEn' | 'menuNmVn'>): string | undefined {
   return row.menuNmEn || row.menuNmVn || row.menuCd;
 }
-
-export const SCREEN_MESSAGES = {
-  businessInvalid: 'Select a 1Depth menu of the selected type.',
-  labelKeyNotFound: 'This label key does not exist.',
-  hasLabels: 'This screen cannot be deleted while labels still use it.',
-} as const;

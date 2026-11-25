@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import StatusBadge, { type StatusBadgeColor } from '@/components/common/badge/StatusBadge';
 import LoadingSpinner from '@/components/common/loading/LoadingSpinner';
 import Popup from '@/components/common/popup/Popup';
@@ -55,23 +56,6 @@ const YES_NO_OPTIONS: { label: string; value: YesNo }[] = [
   { label: 'No', value: 'N' },
 ];
 
-const APPROVAL_MESSAGES = {
-  title: 'Member Sign-up',
-  loadFailed: 'The sign-up information could not be loaded.',
-  viewOnly: 'No action is open to you at this step.',
-  noPermission: 'You do not have write permission on this menu.',
-  receiveHint: 'You will check the original documents and assign the officer in charge after receiving.',
-  assignHint: 'The documents are complete. Assign the officer in charge who registers the SGDN member code.',
-  legacyHint: 'This application was received before the approval step was removed and still waits for its approver.',
-  sgdnFormat: 'Enter 1 to 10 characters: letters, digits, . _ / -',
-  received: 'The application was received.',
-  documentsComplete: 'The documents were marked complete.',
-  supplementRequested: 'The supplement request was sent to the applicant.',
-  assigned: 'The officer in charge was assigned.',
-  completed: 'The member sign-up was completed.',
-  approved: 'The application was approved.',
-} as const;
-
 const CONFIRM_TEXT: Record<string, string> = {
   RECEIVE: 'Receive',
   ASSIGN: 'Assign',
@@ -103,15 +87,16 @@ interface MemberApprovalModalProps {
 
 /** Loads the approval context, then mounts the form of the open action. */
 export default function MemberApprovalModal({ mbrNo, memberName, canWrite, onClose }: MemberApprovalModalProps) {
+  const { t } = useTranslation();
   const { data: context, isFetching, isError } = useMemberApprovalContext(mbrNo);
 
   if (mbrNo === null) return null;
 
   if (!context) {
     return (
-      <Popup open title={APPROVAL_MESSAGES.title} width={560} onCancel={onClose} cancelText="Close">
+      <Popup open title={t('messages.member.approval.title')} width={560} onCancel={onClose} cancelText={t('messages.dialog.close')}>
         <LoadingSpinner spinning={isFetching}>
-          <div className={styles.loading}>{isError ? APPROVAL_MESSAGES.loadFailed : null}</div>
+          <div className={styles.loading}>{isError ? t('messages.member.approval.loadFailed') : null}</div>
         </LoadingSpinner>
       </Popup>
     );
@@ -137,6 +122,7 @@ interface ApprovalFormProps {
 }
 
 function ApprovalForm({ context, memberName, canWrite, onClose }: ApprovalFormProps) {
+  const { t } = useTranslation();
   const { toast } = useNotify();
   const action = canWrite ? context.availableAction : 'VIEW';
   // Candidates of this member's session (its role snapshot), not of the process as currently configured
@@ -171,7 +157,7 @@ function ApprovalForm({ context, memberName, canWrite, onClose }: ApprovalFormPr
     if (action === 'REQUEST') {
       if (!checkRequired(values, ['sgdnMbrCd'])) return false;
       if (!SGDN_CODE_PATTERN.test(values.sgdnMbrCd.trim())) {
-        setError('sgdnMbrCd', APPROVAL_MESSAGES.sgdnFormat);
+        setError('sgdnMbrCd', t('messages.member.approval.sgdnFormat'));
         return false;
       }
     }
@@ -182,16 +168,16 @@ function ApprovalForm({ context, memberName, canWrite, onClose }: ApprovalFormPr
     const mbrNo = context.mbrNo;
     if (action === 'RECEIVE') {
       await receive.mutateAsync(mbrNo);
-      return APPROVAL_MESSAGES.received;
+      return t('messages.member.approval.received');
     }
     if (action === 'CHECK_DOCUMENTS') {
       const isComplete = values.documents === 'Y';
       await checkDocuments.mutateAsync({ mbrNo, complete: isComplete, note: values.supplementNote.trim() });
-      return isComplete ? APPROVAL_MESSAGES.documentsComplete : APPROVAL_MESSAGES.supplementRequested;
+      return isComplete ? t('messages.member.approval.documentsComplete') : t('messages.member.approval.supplementRequested');
     }
     if (action === 'ASSIGN') {
       await assign.mutateAsync({ mbrNo, assigneeEmpNo: values.assigneeEmpNo });
-      return APPROVAL_MESSAGES.assigned;
+      return t('messages.member.approval.assigned');
     }
     if (action === 'REQUEST') {
       await complete.mutateAsync({
@@ -203,10 +189,10 @@ function ApprovalForm({ context, memberName, canWrite, onClose }: ApprovalFormPr
           mbrshpPayYn: values.feeExempt === 'Y' ? 'N' : values.feePaid,
         },
       });
-      return APPROVAL_MESSAGES.completed;
+      return t('messages.member.approval.completed');
     }
     await approve.mutateAsync({ atrzHstryId: context.atrzHstryId as string, comment: values.comment.trim() });
-    return APPROVAL_MESSAGES.approved;
+    return t('messages.member.approval.approved');
   };
 
   const handleConfirm = async () => {
@@ -228,11 +214,11 @@ function ApprovalForm({ context, memberName, canWrite, onClose }: ApprovalFormPr
   return (
     <Popup
       open
-      title={APPROVAL_MESSAGES.title}
+      title={t('messages.member.approval.title')}
       width={560}
       footerAlign="right"
       onCancel={onClose}
-      cancelText={action === 'VIEW' ? 'Close' : 'Cancel'}
+      cancelText={action === 'VIEW' ? t('messages.dialog.close') : t('messages.dialog.cancel')}
       onConfirm={action === 'VIEW' ? undefined : handleConfirm}
       confirmText={confirmText}
       confirmLoading={pending}
@@ -269,11 +255,13 @@ function ApprovalForm({ context, memberName, canWrite, onClose }: ApprovalFormPr
 
       {action === 'VIEW' && (
         <div className={styles.notice}>
-          {canWrite || context.availableAction === 'VIEW' ? APPROVAL_MESSAGES.viewOnly : APPROVAL_MESSAGES.noPermission}
+          {canWrite || context.availableAction === 'VIEW'
+            ? t('messages.member.approval.viewOnly')
+            : t('messages.member.approval.noPermission')}
         </div>
       )}
 
-      {action === 'RECEIVE' && <div className={styles.notice}>{APPROVAL_MESSAGES.receiveHint}</div>}
+      {action === 'RECEIVE' && <div className={styles.notice}>{t('messages.member.approval.receiveHint')}</div>}
 
       {action === 'CHECK_DOCUMENTS' && (
         <>
@@ -306,7 +294,7 @@ function ApprovalForm({ context, memberName, canWrite, onClose }: ApprovalFormPr
 
       {action === 'ASSIGN' && (
         <>
-          <div className={styles.notice}>{APPROVAL_MESSAGES.assignHint}</div>
+          <div className={styles.notice}>{t('messages.member.approval.assignHint')}</div>
           <div className={styles.field}>
             <label className={`${styles.label} ${styles.required}`}>Officer in Charge</label>
             <AppSelect
@@ -356,7 +344,7 @@ function ApprovalForm({ context, memberName, canWrite, onClose }: ApprovalFormPr
 
       {action === 'DECIDE' && (
         <>
-          <div className={styles.notice}>{APPROVAL_MESSAGES.legacyHint}</div>
+          <div className={styles.notice}>{t('messages.member.approval.legacyHint')}</div>
           <div className={styles.field}>
             <label className={styles.label}>Comment</label>
             <TextArea

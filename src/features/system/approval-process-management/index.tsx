@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { TableColumnsType } from 'antd';
 import AppSelect from '@/components/inputs/AppSelect';
 import AppSwitch from '@/components/inputs/AppSwitch';
@@ -23,7 +24,6 @@ import { SYS_MESSAGES } from '@/config/sys-messages';
 import { useSysDialogs } from '@/hooks/use-sys-dialogs';
 import { usePagedList } from '@/hooks/use-paged-list';
 import { errorMessage } from '@/utils/system-utils';
-import { APPROVAL_PROCESS_MESSAGES } from './approval-process-constants';
 import { ApprovalProcessModal } from './ApprovalProcessModal';
 import { useApprovalProcesses, useUpdateApprovalProcessStatus } from './use-approval-processes';
 import styles from './approval-process-management.module.scss';
@@ -33,6 +33,7 @@ import styles from './approval-process-management.module.scss';
 const INITIAL_FILTER: ApprovalProcessSearch = { keyword: '', useYn: '' };
 
 export default function ApprovalProcessManagement() {
+  const { t } = useTranslation();
   const { canWrite } = useMenuPermission();
   const { toast } = useNotify();
   const { confirm } = useSysDialogs();
@@ -55,7 +56,11 @@ export default function ApprovalProcessManagement() {
       void apply();
       return;
     }
-    confirm({ content: APPROVAL_PROCESS_MESSAGES.confirmDeactivate, okText: 'Deactivate', onOk: apply });
+    confirm({
+      content: t('messages.system.approvalProcess.confirmDeactivate'),
+      okText: t('messages.dialog.deactivate'),
+      onOk: apply,
+    });
   };
 
   const columns: TableColumnsType<ApprovalProcessItem> = [

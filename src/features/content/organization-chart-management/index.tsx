@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import LoadingSpinner from '@/components/common/loading/LoadingSpinner';
 import { useMenuPermission } from '@/hooks/use-menu-permission';
 import { useNotify } from '@/hooks/use-notify';
@@ -11,7 +12,7 @@ import { SYS_MESSAGES } from '@/config/sys-messages';
 import { errorMessage } from '@/utils/system-utils';
 import { useFieldErrors } from '@/hooks/use-field-errors';
 import RichTextEditor from '../_shared/RichTextEditor';
-import { CHART_IMAGE_E03, isValidChartImage } from './chart-image';
+import { isValidChartImage } from './chart-image';
 import ChartImageField from './ChartImageField';
 import { useAboutOrgChart, useImagePreviewUrl, useSaveAboutOrgChart } from './use-organization-chart';
 import styles from './organization-chart-management.module.scss';
@@ -31,6 +32,7 @@ interface ChartImage {
 }
 
 export default function OrganizationChartManagement() {
+  const { t } = useTranslation();
   const { data, isFetching, isError } = useAboutOrgChart();
 
   return (
@@ -40,7 +42,7 @@ export default function OrganizationChartManagement() {
         <OrgChartForm key={data.pstNo ?? 'new'} chart={data} />
       ) : (
         <LoadingSpinner spinning={isFetching}>
-          <div className={styles.loading}>{isError ? 'The organization chart could not be loaded.' : null}</div>
+          <div className={styles.loading}>{isError ? t('messages.content.orgChart.loadFailed') : null}</div>
         </LoadingSpinner>
       )}
     </SysPage>
@@ -48,6 +50,7 @@ export default function OrganizationChartManagement() {
 }
 
 function OrgChartForm({ chart }: { chart: AboutOrgChart }) {
+  const { t } = useTranslation();
   const { canWrite } = useMenuPermission();
   const { toast } = useNotify();
   const save = useSaveAboutOrgChart();
@@ -70,7 +73,7 @@ function OrgChartForm({ chart }: { chart: AboutOrgChart }) {
 
   const uploadImage = async (key: ImageKey, file: File) => {
     if (!isValidChartImage(file)) {
-      setError(key, CHART_IMAGE_E03);
+      setError(key, t('messages.content.orgChart.invalidImage'));
       return;
     }
     clearError(key);
@@ -102,11 +105,11 @@ function OrgChartForm({ chart }: { chart: AboutOrgChart }) {
   const submit = async () => {
     let valid = true;
     if (!images.chartImageVnFileId.fileId) {
-      setError('chartImageVnFileId', 'Organization Chart Image (VN) is required.');
+      setError('chartImageVnFileId', t('messages.content.orgChart.imageVnRequired'));
       valid = false;
     }
     if (!bodyVn.trim()) {
-      setError('bodyVn', 'Body (VN) is required.');
+      setError('bodyVn', t('messages.content.orgChart.bodyVnRequired'));
       valid = false;
     }
     if (!valid) return;
@@ -119,7 +122,11 @@ function OrgChartForm({ chart }: { chart: AboutOrgChart }) {
       });
       toast.success(SYS_MESSAGES.saved);
     } catch (error) {
-      if (!applyApiError(error, { [ABOUT_PAGE_ERRORS.imageInvalid]: ['chartImageVnFileId', CHART_IMAGE_E03] })) {
+      if (
+        !applyApiError(error, {
+          [ABOUT_PAGE_ERRORS.imageInvalid]: ['chartImageVnFileId', t('messages.content.orgChart.invalidImage')],
+        })
+      ) {
         toast.error(errorMessage(error));
       }
     }

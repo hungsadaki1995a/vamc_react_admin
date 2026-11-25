@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import AppRadio from '@/components/inputs/AppRadio';
 import Spinbox from '@/components/inputs/Spinbox';
 import TextInput from '@/components/inputs/TextInput';
@@ -25,6 +26,7 @@ interface ProvinceModalProps {
 }
 
 export function ProvinceModal({ item, canWrite, onClose }: ProvinceModalProps) {
+  const { t } = useTranslation();
   const isCreate = item === null;
   const { toast } = useNotify();
   const { errors, setError, clearError, checkRequired } = useFieldErrors<Field>();
@@ -65,7 +67,7 @@ export function ProvinceModal({ item, canWrite, onClose }: ProvinceModalProps) {
     } catch (e) {
       // Duplicate province code: 409 without an error code.
       if (isCreate && e instanceof ApiError && e.statusCode === 409) {
-        setError('mctpvCd', SYS_MESSAGES.duplicate('code'));
+        setError('mctpvCd', SYS_MESSAGES.duplicate(t('messages.sys.items.code')));
         return;
       }
       toast.error(errorMessage(e));

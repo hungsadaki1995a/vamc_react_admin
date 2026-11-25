@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Alert } from 'antd';
 import type { TableColumnsType } from 'antd';
 import TextInput from '@/components/inputs/TextInput';
@@ -38,6 +39,7 @@ const trimSearch = (search: EmployeeSearch): EmployeeSearch => ({
 });
 
 export default function UserManagement() {
+  const { t } = useTranslation();
   const { canWrite } = useMenuPermission();
   const list = usePagedList<EmployeeSearch>(INITIAL_FILTER);
   const search = trimSearch(list.applied);
@@ -125,7 +127,7 @@ export default function UserManagement() {
       <SysSearchActions onReset={list.reset} onSearch={() => list.search()} loading={isFetching} />
 
       {detail.error && (
-        <Alert type="error" showIcon closable title="The user could not be loaded." description={detail.error.message} />
+        <Alert type="error" showIcon closable title={t('messages.system.user.loadFailed')} description={detail.error.message} />
       )}
 
       <SysSectionHeader

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import AppRadio from '@/components/inputs/AppRadio';
 import AppSelect from '@/components/inputs/AppSelect';
 import TextArea from '@/components/inputs/TextArea';
@@ -18,7 +19,6 @@ import {
   isCommonScreen,
   LABEL_CODE_PATTERN,
   LABEL_KEY_MAX,
-  LABEL_MESSAGES,
   labelCodeOf,
   SCREEN_ID_PATTERN,
 } from './label-utils';
@@ -72,6 +72,7 @@ function toFormValues(label?: LabelListItem): FormValues {
 
 /** i18n Label Management - Register/Edit (VPA090403P01). Registers the key only; texts are entered on the list. */
 export default function LabelModal({ label, canWrite, onClose, onSaved, onDeleted }: LabelModalProps) {
+  const { t } = useTranslation();
   const isEdit = label !== undefined;
   const { toast } = useNotify();
   const { confirm } = useSysDialogs();
@@ -102,14 +103,14 @@ export default function LabelModal({ label, canWrite, onClose, onSaved, onDelete
   const validateFormat = (): boolean => {
     let valid = true;
     if (!SCREEN_ID_PATTERN.test(values.scrnId.trim())) {
-      setError('scrnId', LABEL_MESSAGES.invalidScreenId);
+      setError('scrnId', t('messages.system.label.invalidScreenId'));
       valid = false;
     }
     if (!LABEL_CODE_PATTERN.test(values.code.trim())) {
-      setError('code', LABEL_MESSAGES.invalidLabelCode);
+      setError('code', t('messages.system.label.invalidLabelCode'));
       valid = false;
     } else if (labelKey.length > LABEL_KEY_MAX) {
-      setError('code', LABEL_MESSAGES.keyTooLong);
+      setError('code', t('messages.system.label.keyTooLong'));
       valid = false;
     }
     return valid;
@@ -136,16 +137,16 @@ export default function LabelModal({ label, canWrite, onClose, onSaved, onDelete
     } catch (error) {
       if (
         applyApiError(error, {
-          LBL004: ['scrnId', LABEL_MESSAGES.menuScreenReserved],
-          LBL012: ['scrnId', LABEL_MESSAGES.screenNotRegistered],
-          LBL013: ['code', LABEL_MESSAGES.keyTooLong],
+          LBL004: ['scrnId', t('messages.system.label.menuScreenReserved')],
+          LBL012: ['scrnId', t('messages.system.label.screenNotRegistered')],
+          LBL013: ['code', t('messages.system.label.keyTooLong')],
         })
       )
         return;
-      if (applyApiError(error, { LBL002: ['scrnId', LABEL_MESSAGES.duplicate] })) {
+      if (applyApiError(error, { LBL002: ['scrnId', t('messages.system.label.duplicate')] })) {
         // E02 marks Screen ID, Label Type and Label Code.
-        setError('lblSeCd', LABEL_MESSAGES.duplicate);
-        setError('code', LABEL_MESSAGES.duplicate);
+        setError('lblSeCd', t('messages.system.label.duplicate'));
+        setError('code', t('messages.system.label.duplicate'));
         return;
       }
       toast.error(errorMessage(error));
@@ -169,7 +170,7 @@ export default function LabelModal({ label, canWrite, onClose, onSaved, onDelete
     if (!label) return;
     const key: LabelKey = { scrnId: label.scrnId, lblSeCd: label.lblSeCd, lblCd: label.lblCd };
     confirm({
-      content: LABEL_MESSAGES.confirmDelete,
+      content: t('messages.system.label.confirmDelete'),
       okText: SYS_DIALOG_LABELS.delete,
       danger: true,
       onOk: async () => {

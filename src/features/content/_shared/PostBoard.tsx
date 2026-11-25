@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { TableColumnsType } from 'antd';
 import { AppRangePicker } from '@/components/inputs/AppDatePicker';
 import AppSelect from '@/components/inputs/AppSelect';
@@ -89,6 +90,7 @@ const halfRange = (range: DateRange) => !!range && !range[0] !== !range[1];
 const text = (value?: string | null) => value || '-';
 
 export default function PostBoard({ config }: { config: BoardConfig }) {
+  const { t } = useTranslation();
   const { toast } = useNotify();
   const dialogs = useSysDialogs();
   const { canWrite } = useMenuPermission();
@@ -143,7 +145,7 @@ export default function PostBoard({ config }: { config: BoardConfig }) {
   const handleSearch = () => {
     // E02: a period needs both its start and end date.
     if (halfRange(filter.period) || halfRange(filter.issuePeriod)) {
-      dialogs.alert('Please set both the start date and end date.');
+      dialogs.alert(t('messages.content.post.periodBoth'));
       return;
     }
     const search: PostSearch = {
@@ -443,7 +445,7 @@ export default function PostBoard({ config }: { config: BoardConfig }) {
         onSortChange={handleSort}
         dataSource={rows}
         loading={isFetching}
-        locale={{ emptyText: filtered ? 'No search results found.' : 'There are no posts.' }}
+        locale={{ emptyText: filtered ? t('messages.content.post.noResults') : t('messages.content.post.noPosts') }}
         onRowClick={(row) => setModalPstNo(row.pstNo)}
       />
 

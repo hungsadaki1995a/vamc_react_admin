@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import LoadingSpinner from '@/components/common/loading/LoadingSpinner';
 import TextArea from '@/components/inputs/TextArea';
 import TextInput from '@/components/inputs/TextInput';
@@ -23,15 +24,11 @@ const EMPTY: FormState = { year: '', periodVn: '', periodEn: '', contentVn: '', 
 const PERIOD_MAX = 30;
 const CONTENT_MAX = 300;
 
-/** E01 texts: "{Field name} is required." */
-const REQUIRED: Partial<Record<FieldKey, string>> = {
-  year: 'Year is required.',
-  periodVn: 'Period Label (VN) is required.',
-  contentVn: 'Content (VN) is required.',
-};
-const YEAR_FORMAT = 'Enter the year as 4 digits.';
-/** C01 */
-const CONFIRM_DELETE = 'Are you sure you want to delete?';
+const REQUIRED_KEYS = {
+  year: 'messages.content.history.yearRequired',
+  periodVn: 'messages.content.history.periodVnRequired',
+  contentVn: 'messages.content.history.contentVnRequired',
+} as const;
 
 function toState(item: AboutHistory): FormState {
   return {
@@ -62,13 +59,14 @@ interface HistoryModalProps {
 
 /** Loads the item in edit mode, then mounts the form with it. */
 export default function HistoryModal({ pstNo, canWrite, onClose }: HistoryModalProps) {
+  const { t } = useTranslation();
   const { data, isFetching, isError } = useAboutHistory(pstNo);
 
   if (pstNo !== null && !data) {
     return (
       <SysFormModal width={1200} open title="Edit History" onCancel={onClose}>
         <LoadingSpinner spinning={isFetching}>
-          <div className={styles.loading}>{isError ? 'The history item could not be loaded.' : null}</div>
+          <div className={styles.loading}>{isError ? t('messages.content.history.loadFailed') : null}</div>
         </LoadingSpinner>
       </SysFormModal>
     );
@@ -77,6 +75,7 @@ export default function HistoryModal({ pstNo, canWrite, onClose }: HistoryModalP
 }
 
 function HistoryForm({ item, canWrite, onClose }: { item: AboutHistory | null; canWrite: boolean; onClose: () => void }) {
+  const { t } = useTranslation();
   const isCreate = item === null;
   const { toast } = useNotify();
   const { confirm } = useSysDialogs();
@@ -93,14 +92,14 @@ function HistoryForm({ item, canWrite, onClose }: { item: AboutHistory | null; c
   const validate = (): boolean => {
     clearAll();
     let valid = true;
-    (Object.keys(REQUIRED) as FieldKey[]).forEach((key) => {
+    (Object.keys(REQUIRED_KEYS) as (keyof typeof REQUIRED_KEYS)[]).forEach((key) => {
       if (!values[key].trim()) {
-        setError(key, REQUIRED[key] as string);
+        setError(key, t(REQUIRED_KEYS[key]));
         valid = false;
       }
     });
     if (values.year.trim() && !/^\d{4}$/.test(values.year.trim())) {
-      setError('year', YEAR_FORMAT);
+      setError('year', t('messages.content.history.yearFormat'));
       valid = false;
     }
     return valid;
@@ -120,7 +119,7 @@ function HistoryForm({ item, canWrite, onClose }: { item: AboutHistory | null; c
   const askDelete = () => {
     if (!item) return;
     confirm({
-      content: CONFIRM_DELETE,
+      content: t('messages.content.history.confirmDelete'),
       okText: SYS_DIALOG_LABELS.delete,
       danger: true,
       onOk: async () => {

@@ -3,7 +3,9 @@
     "signOut": "Đăng xuất",
     "settings": "Cài đặt",
     "collapseMenu": "Thu gọn menu",
-    "expandMenu": "Mở rộng menu"
+    "expandMenu": "Mở rộng menu",
+    "selectMenu": "Vui lòng chọn menu",
+    "componentNotFound": "Không tìm thấy thành phần: {{key}}"
   },
   "auth": {
     "login": {
@@ -88,6 +90,454 @@
       "passwordMismatch": "Mật khẩu không khớp",
       "changePassword": "Đổi mật khẩu",
       "resetSuccessMsg": "Mật khẩu của bạn đã được thay đổi. Vui lòng đăng nhập bằng mật khẩu mới."
+    },
+    "initialPassword": {
+      "subtitle": "Đây là lần đăng nhập đầu tiên của bạn. Vui lòng đổi mật khẩu để tiếp tục.",
+      "newPasswordRequired": "Vui lòng nhập mật khẩu mới.",
+      "newPasswordRule": "8–20 ký tự bao gồm chữ cái, số và ký tự đặc biệt ($@!%*#?&).",
+      "confirmPasswordRequired": "Vui lòng xác nhận mật khẩu mới.",
+      "passwordMismatch": "Mật khẩu không khớp."
+    }
+  },
+  "messages": {
+    "sys": {
+      "required": "Vui lòng điền đầy đủ các trường bắt buộc.",
+      "fieldRequired": "{{label}} là bắt buộc.",
+      "duplicate": "{{item}} này đã được đăng ký.",
+      "discardLeave": "Các thay đổi chưa lưu sẽ bị mất. Rời khỏi?",
+      "discardRefresh": "Các thay đổi chưa lưu sẽ bị mất. Làm mới?",
+      "confirmDelete": "Xóa {{target}}?",
+      "confirmDeleteCount": "Xóa {{count}} mục đã chọn?",
+      "selectToDelete": "Vui lòng chọn {{item}} để xóa.",
+      "saved": "Đã lưu.",
+      "registered": "Đã đăng ký.",
+      "updated": "Đã cập nhật.",
+      "deleted": "Đã xóa.",
+      "notAvailableYet": "Chưa khả dụng",
+      "items": {
+        "codes": "mã",
+        "code": "Mã",
+        "formNo": "Số biểu mẫu",
+        "programCode": "Mã chương trình",
+        "screenId": "ID màn hình",
+        "id": "ID",
+        "employeeNo": "Mã nhân viên",
+        "email": "Email",
+        "mobileNumber": "Số điện thoại",
+        "menuCode": "Mã menu",
+        "thisFeeItem": "mục phí này",
+        "thisScreen": "màn hình này",
+        "thisUser": "người dùng này"
+      }
+    },
+    "dialog": {
+      "confirm": "Xác nhận",
+      "close": "Đóng",
+      "cancel": "Hủy",
+      "save": "Lưu",
+      "leave": "Rời khỏi",
+      "refresh": "Làm mới",
+      "delete": "Xóa",
+      "apply": "Áp dụng",
+      "run": "Chạy",
+      "rerun": "Chạy lại",
+      "send": "Gửi",
+      "sync": "Đồng bộ",
+      "ok": "Đồng ý",
+      "deactivate": "Ngừng sử dụng",
+      "reset": "Đặt lại"
+    },
+    "api": {
+      "requestFailed": "Không thể xử lý yêu cầu.",
+      "processFailed": "Xử lý yêu cầu thất bại.",
+      "loadFailed": "Tải dữ liệu thất bại.",
+      "loadCodesFailed": "Tải danh sách mã thất bại",
+      "uploadNoImageId": "Tải lên không trả về ID hình ảnh.",
+      "uploadNoFileGroup": "Tải lên không trả về nhóm tệp.",
+      "uploadSessionNotOpened": "Không thể mở phiên tải lên.",
+      "uploadNoFile": "Tải lên không trả về tệp.",
+      "http400": "Yêu cầu không hợp lệ.",
+      "http401": "Yêu cầu xác thực.",
+      "http403": "Bạn không có quyền truy cập tài nguyên này.",
+      "http404": "Không tìm thấy tài nguyên được yêu cầu.",
+      "http408": "Yêu cầu đã hết thời gian chờ.",
+      "http422": "Vui lòng kiểm tra dữ liệu đầu vào.",
+      "http429": "Quá nhiều yêu cầu. Vui lòng thử lại sau.",
+      "http500": "Đã xảy ra lỗi máy chủ. Vui lòng thử lại sau.",
+      "http502": "Không thể kết nối đến máy chủ.",
+      "http503": "Dịch vụ tạm thời không khả dụng.",
+      "unknown": "Đã xảy ra lỗi không xác định."
+    },
+    "content": {
+      "banner": {
+        "empty": "Không có banner nào được đăng ký.",
+        "invalidImage": "Chỉ có thể tải lên tệp JPG, PNG dung lượng tối đa 10MB.",
+        "confirmDelete": "Bạn có chắc chắn muốn xóa không?",
+        "imageHint": "JPG, PNG, tối đa 10MB, khuyến nghị 1920 × 540px. Hình ảnh có thể bị cắt từ chính giữa trên thiết bị di động.",
+        "titleMax": "Tiêu đề banner không được vượt quá {{max}} ký tự.",
+        "orderInt": "Thứ tự hiển thị phải là số nguyên.",
+        "orderMin": "Thứ tự hiển thị phải ít nhất là 1.",
+        "orderMax": "Thứ tự hiển thị tối đa là {{max}}.",
+        "noImageAttached": "Chưa đính kèm hình ảnh.",
+        "fieldTitle": "Tiêu đề banner",
+        "fieldImage": "Hình ảnh banner",
+        "fieldOrder": "Thứ tự hiển thị"
+      },
+      "logo": {
+        "required": "Tệp logo là bắt buộc.",
+        "invalidImage": "Chỉ có thể tải lên tệp PNG, SVG dung lượng tối đa 2MB.",
+        "loadFailed": "Không thể tải logo."
+      },
+      "slogan": {
+        "loadFailed": "Không thể tải khẩu hiệu."
+      },
+      "overview": {
+        "loadFailed": "Không thể tải thông tin tổng quan.",
+        "bodyVnRequired": "Nội dung (VN) là bắt buộc."
+      },
+      "orgChart": {
+        "loadFailed": "Không thể tải sơ đồ tổ chức.",
+        "invalidImage": "Chỉ có thể tải lên tệp PNG, JPG, JPEG dung lượng tối đa 10MB.",
+        "imageVnRequired": "Hình ảnh sơ đồ tổ chức (VN) là bắt buộc.",
+        "bodyVnRequired": "Nội dung (VN) là bắt buộc."
+      },
+      "history": {
+        "loadFailed": "Không thể tải mục lịch sử.",
+        "yearRequired": "Năm là bắt buộc.",
+        "periodVnRequired": "Nhãn giai đoạn (VN) là bắt buộc.",
+        "contentVnRequired": "Nội dung (VN) là bắt buộc.",
+        "yearFormat": "Vui lòng nhập năm gồm 4 chữ số.",
+        "confirmDelete": "Bạn có chắc chắn muốn xóa không?"
+      },
+      "directions": {
+        "loadFailed": "Không thể tải thông tin chỉ đường.",
+        "mapLocationRequired": "Vị trí bản đồ là bắt buộc.",
+        "emailInvalid": "Vui lòng nhập email hợp lệ."
+      },
+      "post": {
+        "periodBoth": "Vui lòng chọn cả ngày bắt đầu và ngày kết thúc.",
+        "noResults": "Không tìm thấy kết quả tìm kiếm.",
+        "noPosts": "Không có bài viết nào.",
+        "tagFormat": "{{label}} phải gồm chữ in hoa, chữ số hoặc \"_\" (2–50 ký tự).",
+        "englishDropped": "Nội dung tiếng Anh sẽ không được lưu. Bạn có muốn lưu không?",
+        "confirmDelete": "Bạn có chắc chắn muốn xóa không?",
+        "contentLockedNotice": "※ Chỉ có thể chỉnh sửa nội dung sau khi chuyển bài viết sang trạng thái Chưa xuất bản.",
+        "invalidFiles": "Chỉ có thể tải lên tệp {{extensions}} dung lượng tối đa 10MB.",
+        "maxFiles": "Bạn có thể tải lên tối đa {{max}} tệp.",
+        "dropGuide": "Thêm tệp bằng nút Tải tệp lên hoặc kéo thả bằng chuột.",
+        "thumbnailHint": "Khuyến nghị tỷ lệ 16:9 (ví dụ: 1200 × 675px); tỷ lệ khác có thể bị cắt trên màn hình người dùng.",
+        "noImage": "Không có hình ảnh",
+        "fields": {
+          "group": "Nhóm",
+          "field": "Lĩnh vực",
+          "issuingAgency": "Cơ quan ban hành",
+          "docNumber": "Số/Ký hiệu",
+          "issueDate": "Ngày ban hành",
+          "pinOrder": "Thứ tự ghim lên đầu",
+          "documentName": "Tên văn bản",
+          "title": "Tiêu đề",
+          "content": "Nội dung",
+          "titleEn": "Tiêu đề (EN)",
+          "contentEn": "Nội dung (EN)"
+        }
+      },
+      "faq": {
+        "confirmDelete": "Bạn có chắc chắn muốn xóa không?",
+        "englishDropped": "Nội dung tiếng Anh sẽ không được lưu. Bạn có muốn lưu không?",
+        "registered": "Đã đăng ký câu hỏi thường gặp.",
+        "updated": "Đã cập nhật câu hỏi thường gặp.",
+        "deleted": "Đã xóa câu hỏi thường gặp.",
+        "noPosts": "Không có bài viết nào.",
+        "noResults": "Không tìm thấy kết quả tìm kiếm.",
+        "fields": {
+          "category": "Danh mục",
+          "question": "Câu hỏi",
+          "answer": "Câu trả lời",
+          "questionEn": "Câu hỏi (EN)",
+          "answerEn": "Câu trả lời (EN)"
+        }
+      },
+      "inquiry": {
+        "periodBoth": "Vui lòng chọn cả ngày bắt đầu và ngày kết thúc.",
+        "noPosts": "Không có bài viết nào.",
+        "noResults": "Không tìm thấy kết quả tìm kiếm.",
+        "answerRequired": "Câu trả lời là bắt buộc.",
+        "answered": "Đã gửi câu trả lời."
+      }
+    },
+    "member": {
+      "list": {
+        "invalidDateRange": "Ngày bắt đầu không thể lớn hơn ngày kết thúc. (E07)",
+        "exported": "Đã xuất {{fileName}}",
+        "exportFailed": "Xuất tệp Excel thất bại",
+        "empty": "Không tìm thấy thành viên nào.",
+        "fetchFailed": "Tải danh sách thành viên thất bại"
+      },
+      "approval": {
+        "title": "Đăng ký thành viên",
+        "loadFailed": "Không thể tải thông tin đăng ký.",
+        "viewOnly": "Không có thao tác nào khả dụng cho bạn ở bước này.",
+        "noPermission": "Bạn không có quyền ghi trên menu này.",
+        "receiveHint": "Bạn sẽ kiểm tra hồ sơ gốc và phân công nhân viên phụ trách sau khi tiếp nhận.",
+        "assignHint": "Hồ sơ đã đầy đủ. Phân công nhân viên phụ trách đăng ký mã thành viên SGDN.",
+        "legacyHint": "Hồ sơ này được tiếp nhận trước khi bỏ bước phê duyệt và vẫn đang chờ người phê duyệt.",
+        "sgdnFormat": "Nhập từ 1 đến 10 ký tự: chữ cái, chữ số, . _ / -",
+        "received": "Đã tiếp nhận hồ sơ.",
+        "documentsComplete": "Đã đánh dấu hồ sơ đầy đủ.",
+        "supplementRequested": "Đã gửi yêu cầu bổ sung đến người đăng ký.",
+        "assigned": "Đã phân công nhân viên phụ trách.",
+        "completed": "Đã hoàn tất đăng ký thành viên.",
+        "approved": "Đã phê duyệt hồ sơ."
+      },
+      "detail": {
+        "openFileFailed": "Không thể mở {{fileName}}.",
+        "previewUnavailable": "Không thể xem trước {{fileName}}",
+        "defaultFileName": "tệp",
+        "unlocked": "Đã mở khóa tài khoản và chuyển sang Đang hoạt động.",
+        "unlockFailed": "Mở khóa tài khoản thất bại.",
+        "tempPasswordSent": "Đã gửi mật khẩu tạm thời mới.",
+        "tempPasswordFailed": "Không thể gửi lại mật khẩu tạm thời (thành viên có thể đã đặt mật khẩu).",
+        "deleteReasonRequired": "Vui lòng nhập lý do xóa.",
+        "approverRequired": "Vui lòng chọn người phê duyệt.",
+        "deletionRequested": "Đã gửi yêu cầu xóa đến người phê duyệt.",
+        "restorationRequested": "Đã gửi yêu cầu khôi phục đến người phê duyệt.",
+        "loadingDetails": "Đang tải chi tiết thành viên",
+        "cannotDelete": "Không thể xóa thành viên này",
+        "rejectionReasonRequired": "Vui lòng nhập lý do từ chối.",
+        "restorePendingHint": "Đang có yêu cầu khôi phục chờ phê duyệt.",
+        "restoreExpiredHint": "Đã quá một năm kể từ khi xóa: không thể khôi phục thành viên này nữa.",
+        "memberRestored": "Đã khôi phục thành viên.",
+        "restorationRejected": "Đã từ chối yêu cầu khôi phục.",
+        "memberDeleted": "Đã xóa thành viên.",
+        "deletionRejected": "Đã từ chối yêu cầu xóa.",
+        "deleteNotice": "Sau khi người phê duyệt đồng ý, thành viên sẽ bị xóa và không thể đăng nhập nữa. Trong vòng một năm có thể khôi phục thông qua người phê duyệt; sau thời hạn đó sẽ không thể khôi phục. Dữ liệu vẫn được giữ lại để báo cáo.",
+        "restoreNotice": "Sau khi được phê duyệt, tài khoản thành viên sẽ trở về trạng thái trước đó và có thể đăng nhập lại. Có thể khôi phục đến {{date}}.",
+        "deletionBlock": {
+          "MBR017": "Chỉ có thể xóa hồ sơ Chờ phê duyệt đã quá hạn thanh toán và Thành viên chính thức",
+          "MBR018": "Chưa quá hạn thanh toán",
+          "REQUEST_PENDING": "Đang có yêu cầu chờ phê duyệt",
+          "E09": "Đang có hồ sơ, hợp đồng hoặc lượt đấu giá đang xử lý"
+        }
+      },
+      "form": {
+        "periodOverlap": "E06: Thời hạn này trùng với thời hạn thành viên hiện có. Vui lòng kiểm tra ngày bắt đầu.",
+        "provinceRequired": "E01: Tỉnh / Thành phố là bắt buộc",
+        "districtRequired": "E01: Quận / Huyện là bắt buộc",
+        "detailAddressRequired": "E01: Địa chỉ chi tiết là bắt buộc",
+        "noFilesAttached": "Chưa đính kèm tệp nào.",
+        "openFileFailed": "Không thể mở tệp.",
+        "invalidFile": "E04: Chỉ cho phép tệp JPG, PNG hoặc PDF dung lượng tối đa 10MB.",
+        "sectionFilesFull": "E04: Mục này đã đủ số lượng tệp. Vui lòng xóa bớt trước khi tải thêm.",
+        "ocrUnavailable": "E05: Tự động điền AI OCR hiện không khả dụng. Vui lòng nhập hoặc kiểm tra thủ công.",
+        "uploadFailed": "Tải tệp lên thất bại.",
+        "replaceDocTitle": "Đính kèm tài liệu (C02)",
+        "replaceDocConfirm": "Tài liệu mới sẽ thay thế các tài liệu hiện đang lưu ở mục này. Tiếp tục?",
+        "changeMemberTypeTitle": "Đổi loại thành viên (C03)",
+        "changeMemberTypeConfirm": "Đổi loại thành viên sẽ đặt lại thông tin định danh và tệp đính kèm. Tiếp tục?",
+        "changeIdTypeTitle": "Đổi loại giấy tờ tùy thân (C03)",
+        "changeIdTypeConfirm": "Đổi loại giấy tờ tùy thân sẽ đặt lại thông tin giấy tờ và tệp đính kèm. Tiếp tục?",
+        "payStartDateRequired": "E01: Vui lòng chọn ngày bắt đầu thời hạn thành viên.",
+        "payDateRequired": "E01: Vui lòng chọn ngày thanh toán.",
+        "paymentRegisteredTemporary": "Đã đăng ký thanh toán phí thành viên. Thành viên sẽ trở thành Thành viên chính thức sau khi hồ sơ đạt yêu cầu.",
+        "paymentRegistered": "Đã đăng ký thanh toán phí thành viên.",
+        "poaRequired": "E01: Tệp đính kèm Giấy ủy quyền là bắt buộc.",
+        "memberRegistered": "Đã đăng ký thành viên {{name}} thành công.",
+        "memberUpdated": "Đã cập nhật thông tin thành viên.",
+        "saveFailed": "Lưu thông tin thành viên thất bại.",
+        "officerChanged": "Đã thay đổi nhân viên phụ trách.",
+        "officerChangeFailed": "Không thể thay đổi nhân viên phụ trách: {{error}}",
+        "memberTypeRequired": "E01: Loại thành viên là bắt buộc",
+        "memberGradeRequired": "E01: Hạng thành viên là bắt buộc",
+        "statusRequired": "E01: Trạng thái là bắt buộc",
+        "termsDateRequired": "E01: Ngày đồng ý điều khoản là bắt buộc",
+        "officerRequired": "E01: Nhân viên phụ trách là bắt buộc",
+        "rejectionReasonRequired": "E01: Lý do từ chối là bắt buộc",
+        "noRegisterHistoryHint": "Có thể đăng ký thanh toán sau khi thành viên được tạo.",
+        "cannotRegisterPaymentHint": "Chỉ có thể đăng ký thanh toán cho thành viên đang hoạt động hoặc thành viên tạm thời đang chờ phê duyệt.",
+        "noMembershipHistory": "Không có lịch sử thành viên.",
+        "phoneRequired": "E01: Số điện thoại là bắt buộc",
+        "phoneInvalid": "E02: Định dạng số điện thoại không hợp lệ",
+        "emailRequired": "E01: Địa chỉ email là bắt buộc",
+        "emailInvalid": "E02: Định dạng địa chỉ email không hợp lệ",
+        "fullNameRequired": "E01: Họ tên là bắt buộc",
+        "dobRequired": "E01: Ngày sinh là bắt buộc",
+        "genderRequired": "E01: Giới tính là bắt buộc",
+        "nationalityRequired": "E01: Quốc tịch là bắt buộc",
+        "idNumberRequired": "E01: Số giấy tờ tùy thân là bắt buộc",
+        "cccdInvalid": "E02: CCCD phải gồm 12 chữ số",
+        "cmndInvalid": "E02: CMND phải gồm 9 hoặc 12 chữ số",
+        "passportInvalid": "E02: Hộ chiếu chỉ được chứa chữ cái và chữ số",
+        "issuingAuthorityRequired": "E01: Nơi cấp là bắt buộc",
+        "issueDateRequired": "E01: Ngày cấp là bắt buộc",
+        "expiryDateRequired": "E01: Ngày hết hạn là bắt buộc",
+        "passportGuide": "Vui lòng tải lên trang ảnh của hộ chiếu.",
+        "idCardGuide": "Vui lòng tải lên cả mặt trước và mặt sau của thẻ CCCD/CMND.",
+        "addressRequired": "E01: Địa chỉ là bắt buộc",
+        "companyNameRequired": "E01: Tên doanh nghiệp là bắt buộc",
+        "charterCapitalRequired": "E01: Vốn điều lệ là bắt buộc",
+        "mstRequired": "E01: Mã số thuế (MST) là bắt buộc",
+        "mstInvalid": "E02: MST phải gồm 10 hoặc 13 chữ số",
+        "projectCodeRequired": "E01: Mã dự án là bắt buộc",
+        "positionRequired": "E01: Chức vụ là bắt buộc"
+      }
+    },
+    "system": {
+      "approvalProcess": {
+        "codeFormat": "Chỉ sử dụng chữ cái in hoa, chữ số và dấu gạch dưới.",
+        "duplicateCode": "Mã quy trình này đã được đăng ký.",
+        "stepsRequired": "Vui lòng thêm ít nhất một bước.",
+        "stepIncomplete": "Vui lòng điền tên, nhóm vai trò và vai trò cho tất cả các bước.",
+        "invalidStepOrder": "Các bước phải được đánh số liên tục 1, 2, 3…",
+        "invalidRejectStep": "Từ chối chỉ có thể quay lại một bước trước đó.",
+        "invalidRole": "Vai trò đã chọn không hoạt động hoặc không tồn tại. Vui lòng chọn vai trò khác.",
+        "inUse": "Quy trình này đã được sử dụng trong các phiên phê duyệt nên không thể xóa. Vui lòng chuyển sang Ngừng sử dụng.",
+        "confirmDelete": "Xóa quy trình phê duyệt này và các bước của nó?",
+        "confirmDeactivate": "Ngừng sử dụng quy trình này? Các phiên mới thuộc loại này sẽ không thể bắt đầu khi quy trình đang tắt.",
+        "sessionsKeepSteps": "Thay đổi áp dụng cho các phiên bắt đầu sau thời điểm này. Các phiên đang diễn ra vẫn giữ nguyên các bước và vai trò ban đầu.",
+        "codeHint": "Hệ thống dùng để khởi tạo phiên; không thể thay đổi sau này."
+      },
+      "batch": {
+        "duplicate": "Tên tác vụ này đã được đăng ký.",
+        "invalidCron": "Định dạng Cron không hợp lệ. (ví dụ: 0 0 3 * * ?)",
+        "invalidJson": "Vui lòng nhập theo định dạng JSON.",
+        "notice": "Thay đổi về Sử dụng và Cron được áp dụng lên máy chủ thực thi sau khi nhấn [Làm mới lịch] trên danh sách.",
+        "confirmRunNow": "Chạy {{jobName}} ngay bây giờ?",
+        "confirmRefresh": "Áp dụng lịch đã thay đổi lên máy chủ thực thi?",
+        "confirmRerun": "Chạy lại lượt thực thi thất bại?",
+        "runStarted": "{{jobName}} đã bắt đầu. Kiểm tra kết quả trong Lịch sử thực thi.",
+        "refreshed": "Đã áp dụng lịch lên máy chủ thực thi.",
+        "inactive": "Không thể chạy tác vụ đang ngừng sử dụng.",
+        "alreadyRunning": "Tác vụ này đang chạy."
+      },
+      "commonCode": {
+        "emptyDetail": "Vui lòng chọn một nhóm mã."
+      },
+      "exchangeRate": {
+        "confirmSync": "Nhận lại tỷ giá từ Vietcombank?",
+        "syncFailed": "Không thể nhận tỷ giá. Vui lòng thử lại sau.",
+        "syncRunning": "Đang đồng bộ tỷ giá. Vui lòng thử lại sau.",
+        "synced": "Đã nhận tỷ giá thành công.",
+        "notScheduled": "Chưa lên lịch",
+        "off": "Tắt",
+        "everyMinutes": "Mỗi {{count}} phút",
+        "hourlyAt": "Hàng giờ vào phút :{{minute}}",
+        "everyHoursAt": "Mỗi {{count}} giờ vào phút :{{minute}}",
+        "everyDayAt": "Hàng ngày lúc {{times}}"
+      },
+      "fee": {
+        "loadFailed": "Không thể tải mục phí.",
+        "rateRange": "Vui lòng nhập tỷ lệ lớn hơn 0 và tối đa 100.",
+        "positive": "Vui lòng nhập số tiền lớn hơn 0.",
+        "legacyNotice": "Mục này sử dụng loại Môi giới cũ, không thể lưu chỉnh sửa được nữa. Chỉ có thể thay đổi trạng thái Sử dụng; hãy đăng ký lại dưới dạng Môi giới mua hoặc Môi giới bán.",
+        "scheduleNotAvailable": "Việc lưu biểu phí đang chờ thay đổi lược đồ dữ liệu (Căn cứ và lưu trữ biểu phí).",
+        "scheduleFileHint": "Chỉ hỗ trợ PDF."
+      },
+      "financeCode": {
+        "emptyDetail": "Vui lòng chọn một tổ chức tài chính.",
+        "codeRange": "Vui lòng nhập số từ 1 đến 999."
+      },
+      "form": {
+        "invalidUrl": "Vui lòng nhập URL tệp docx, xlsx hoặc pdf bắt đầu bằng https.",
+        "formNoDigits": "Vui lòng nhập số gồm 4 chữ số."
+      },
+      "label": {
+        "duplicate": "Khóa nhãn này đã được đăng ký.",
+        "variableMismatch": "Các biến (%1, %2) không khớp với Tiếng Việt.",
+        "confirmDelete": "Nếu xóa nhãn đang sử dụng, khóa nhãn sẽ hiển thị trên màn hình người dùng. Vẫn xóa?",
+        "confirmRefreshCache": "Áp dụng các nhãn đã chỉnh sửa lên màn hình quản trị ngay bây giờ? Màn hình người dùng sẽ cập nhật khi bộ nhớ đệm hết hạn.",
+        "cacheRefreshed": "Đã làm mới bộ nhớ đệm nhãn.",
+        "menuScreenReserved": "Nhãn menu được quản lý trong Cài đặt menu.",
+        "invalidScreenId": "Chỉ sử dụng chữ cái, chữ số và _.",
+        "invalidLabelCode": "Chỉ sử dụng chữ cái, chữ số, _ . -.",
+        "keyTooLong": "Khóa nhãn không được vượt quá 100 ký tự.",
+        "screenNotRegistered": "ID màn hình này chưa được đăng ký trong Quản lý màn hình.",
+        "uploadDone": "Đã tải Excel lên (đã kiểm tra {{rows}} dòng).",
+        "uploadFailed": "Chưa có dữ liệu nào được lưu. Vui lòng sửa các dòng bên dưới và tải lên lại.",
+        "uploadRow": "Dòng {{row}}{{header}}: {{message}}",
+        "uploadMoreErrors": "… còn {{count}} lỗi khác",
+        "emptyTextPanel": "Chọn một nhãn để xem nội dung theo ngôn ngữ.",
+        "textHint": "Giá trị dữ liệu dùng %1, %2 …, xuống dòng dùng <br>. Ngôn ngữ để trống sẽ hiển thị nội dung {{defaultName}} trên màn hình người dùng.",
+        "emptyPlaceholder": "(trống — hiển thị {{defaultName}})"
+      },
+      "menu": {
+        "positionSaved": "Đã lưu vị trí menu.",
+        "cannotPlaceBelow": "Không thể đặt menu dưới cấp {{maxDepth}}Depth.",
+        "codePattern": "Vui lòng nhập {{prefix}} theo sau là 8 chữ số.",
+        "labelUsedByOther": "Khóa nhãn này đã được menu khác sử dụng.",
+        "labelNotRegistered": "Khóa nhãn này chưa được đăng ký trong Quản lý nhãn đa ngôn ngữ.",
+        "cannotAddBelow": "Không thể thêm menu dưới cấp {{maxDepth}}Depth.",
+        "loadListFailed": "Không thể tải danh sách menu.",
+        "emptyDetail": "Chọn một menu trong cây hoặc thêm menu mới.",
+        "menuCodeHint": "{{prefix}} theo sau là 8 chữ số, không thể thay đổi sau khi lưu.",
+        "noPermissionChanges": "Không có thay đổi nào để lưu.",
+        "loadMatrixFailed": "Không thể tải ma trận phân quyền.",
+        "unsavedChanges": "{{count}} thay đổi chưa lưu"
+      },
+      "notificationHistory": {
+        "periodRequired": "Vui lòng chọn khoảng thời gian gửi.",
+        "periodRange": "Khoảng thời gian gửi tối đa là {{days}} ngày.",
+        "recipientUnavailable": "Tìm kiếm người nhận chưa được cấu hình trên máy chủ."
+      },
+      "notificationMessage": {
+        "loadFailed": "Không thể tải mẫu thông báo.",
+        "roleGroupNotFound": "Nhóm người dùng đã chọn không tồn tại hoặc không được sử dụng."
+      },
+      "program": {
+        "menuNotExist": "Mã menu này không tồn tại."
+      },
+      "regionCode": {
+        "emptyDetail": "Vui lòng chọn một tỉnh / thành phố."
+      },
+      "screen": {
+        "businessInvalid": "Vui lòng chọn một menu cấp 1Depth thuộc loại đã chọn.",
+        "labelKeyNotFound": "Khóa nhãn này không tồn tại.",
+        "hasLabels": "Không thể xóa màn hình này khi vẫn còn nhãn đang sử dụng."
+      },
+      "terms": {
+        "duplicateDate": "Đã tồn tại điều khoản có cùng ngày hiệu lực.",
+        "fromTomorrow": "Vui lòng chọn ngày hiệu lực từ ngày mai.",
+        "confirmDelete": "Xóa điều khoản đã lên lịch?",
+        "locked": "Chỉ có thể chỉnh sửa hoặc xóa điều khoản đang lên lịch.",
+        "effectiveDateHint": "Từ ngày mai; mỗi ngày và mỗi loại chỉ có một phiên bản.",
+        "contentEnHint": "Nếu để trống, bản gốc tiếng Việt sẽ hiển thị trên màn hình người dùng tiếng Anh."
+      },
+      "user": {
+        "loadFailed": "Không thể tải thông tin người dùng.",
+        "empNoPattern": "Sử dụng 3 đến 10 chữ cái, chữ số, \"_\" hoặc \"-\".",
+        "invalidEmail": "Định dạng email không hợp lệ.",
+        "invalidMobile": "Vui lòng kiểm tra định dạng số điện thoại.",
+        "registeredMailSent": "Đã đăng ký người dùng. Mật khẩu tạm thời đã được gửi đến {{email}}.",
+        "registeredMailFailed": "Đã đăng ký người dùng, nhưng không thể gửi email mật khẩu tạm thời. Hãy mở người dùng và dùng [Đặt lại mật khẩu] để gửi lại.",
+        "confirmResetPassword": "Gửi mật khẩu tạm thời đến {{target}}? Tài khoản cũng sẽ được mở khóa.",
+        "theUser": "người dùng",
+        "tempPasswordSent": "Đã gửi mật khẩu tạm thời đến {{email}}.",
+        "tempPasswordFailed": "Tài khoản đã được mở khóa, nhưng không thể gửi email mật khẩu tạm thời. Vui lòng thử lại."
+      },
+      "userGroup": {
+        "selectGroup": "Vui lòng chọn một nhóm người dùng.",
+        "selectRole": "Vui lòng chọn một vai trò.",
+        "groupIdPattern": "Nhập RG theo sau là 5 chữ số (ví dụ: RG00010)."
+      },
+      "screenPending": {
+        "title": "Màn hình này hiện chưa khả dụng",
+        "descriptionWithTitle": "\"{{title}}\" chưa có màn hình trong phiên bản này. Vui lòng liên hệ quản trị viên hệ thống nếu bạn cần chức năng này.",
+        "descriptionDefault": "Menu này chưa có màn hình trong phiên bản này. Vui lòng liên hệ quản trị viên hệ thống nếu bạn cần chức năng này."
+      }
+    },
+    "auction": {
+      "selectAtLeastOne": "Vui lòng chọn ít nhất một phiên đấu giá.",
+      "confirmDelete": "Xóa {{count}} phiên đấu giá đã chọn?",
+      "confirmStartLive": "Bắt đầu phiên đấu giá trực tuyến {{auctnNo}}?",
+      "confirmCloseLive": "Đóng phiên đấu giá trực tuyến {{auctnNo}}?"
+    },
+    "npl": {
+      "selectAtLeastOneDebtor": "Vui lòng chọn ít nhất một khách hàng nợ.",
+      "confirmDeleteDebtors": "Xóa {{count}} khách hàng nợ đã chọn?",
+      "confirmDeleteLot": "Xóa lô NPL này?",
+      "lotNameRequired": "Vui lòng nhập tên lô."
+    },
+    "trade": {
+      "received": "Đã tiếp nhận."
     }
   }
 }

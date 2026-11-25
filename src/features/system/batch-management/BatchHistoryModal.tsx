@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { TableColumnsType } from 'antd';
 import ActionButton from '@/components/common/actions/ActionButton';
 import { useNotify } from '@/hooks/use-notify';
@@ -9,7 +10,7 @@ import { DateTimeText, ResultBadge, SysPager, SysTable, UseBadge } from '@/compo
 import { SysFormModal } from '@/components/common/sys-ui/SysFormUi';
 import { useSysDialogs } from '@/hooks/use-sys-dialogs';
 import type { SortState } from '@/hooks/use-paged-list';
-import { BATCH_MESSAGES, formatCount, formatDuration, runErrorMessage, toResult } from './batch-utils';
+import { formatCount, formatDuration, runErrorMessage, toResult } from './batch-utils';
 import { useBatchHistory, useBatchJob, useExecuteBatchJob } from './use-batch-jobs';
 import styles from './batch-management.module.scss';
 
@@ -22,6 +23,7 @@ interface BatchHistoryModalProps {
 
 /** Batch Management - Execution History (VPA090404P02), read-only. Mount with `key={jobName}`. */
 export default function BatchHistoryModal({ jobName, onClose, allowRerun = false }: BatchHistoryModalProps) {
+  const { t } = useTranslation();
   const { toast } = useNotify();
   const { confirm } = useSysDialogs();
   const [page, setPage] = useState(1);
@@ -43,12 +45,12 @@ export default function BatchHistoryModal({ jobName, onClose, allowRerun = false
 
   const rerun = () =>
     confirm({
-      content: BATCH_MESSAGES.confirmRerun,
+      content: t('messages.system.batch.confirmRerun'),
       okText: SYS_DIALOG_LABELS.rerun,
       onOk: async () => {
         try {
           await execute.mutateAsync(jobName);
-          toast.success(BATCH_MESSAGES.runStarted(jobName));
+          toast.success(t('messages.system.batch.runStarted', { jobName }));
           setPage(1);
         } catch (error) {
           toast.error(runErrorMessage(error));

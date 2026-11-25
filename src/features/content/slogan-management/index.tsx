@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import LoadingSpinner from '@/components/common/loading/LoadingSpinner';
 import TextArea from '@/components/inputs/TextArea';
 import { useMenuPermission } from '@/hooks/use-menu-permission';
@@ -29,6 +30,7 @@ const LABELS: Record<FieldKey, string> = { sloganVi: 'Slogan (VN)', sloganEn: 'S
 const limitLines = (value: string) => value.split('\n').slice(0, SLOGAN_MAX_LINES).join('\n');
 
 export default function SloganManagement() {
+  const { t } = useTranslation();
   const { data, isFetching, isError } = useCurrentSlogan();
 
   return (
@@ -38,7 +40,7 @@ export default function SloganManagement() {
         <SloganForm key={data.sloganId ?? 'new'} slogan={data} />
       ) : (
         <LoadingSpinner spinning={isFetching}>
-          <div className={styles.loading}>{isError ? 'The slogan could not be loaded.' : null}</div>
+          <div className={styles.loading}>{isError ? t('messages.content.slogan.loadFailed') : null}</div>
         </LoadingSpinner>
       )}
     </SysPage>
@@ -46,6 +48,7 @@ export default function SloganManagement() {
 }
 
 function SloganForm({ slogan }: { slogan: SloganSetting }) {
+  const { t } = useTranslation();
   const { canWrite } = useMenuPermission();
   const { toast } = useNotify();
   const save = useSaveSlogan();
@@ -58,7 +61,7 @@ function SloganForm({ slogan }: { slogan: SloganSetting }) {
   const submit = async () => {
     clearAll();
     const empty = (Object.keys(LABELS) as FieldKey[]).filter((key) => !values[key].trim());
-    empty.forEach((key) => setError(key, `${LABELS[key]} is required.`));
+    empty.forEach((key) => setError(key, t('messages.sys.fieldRequired', { label: LABELS[key] })));
     if (empty.length > 0) return;
     try {
       await save.mutateAsync({ sloganVi: values.sloganVi, sloganEn: values.sloganEn });

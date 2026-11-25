@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import LoadingSpinner from '@/components/common/loading/LoadingSpinner';
 import AppRadio from '@/components/inputs/AppRadio';
 import AppSelect from '@/components/inputs/AppSelect';
@@ -14,7 +15,6 @@ import { useFieldErrors } from '@/hooks/use-field-errors';
 import { useSysDialogs } from '@/hooks/use-sys-dialogs';
 import { apiErrorCode, errorMessage } from '@/utils/system-utils';
 import {
-  APPROVAL_PROCESS_MESSAGES,
   MAX_STEPS,
   PROCESS_CODE_MAX,
   PROCESS_CODE_PATTERN,
@@ -99,6 +99,7 @@ interface FormModalProps {
 }
 
 function ApprovalProcessFormModal({ detail, canWrite, onClose }: FormModalProps) {
+  const { t } = useTranslation();
   const isCreate = detail === null;
   const editable = canWrite;
   const { toast } = useNotify();
@@ -146,15 +147,15 @@ function ApprovalProcessFormModal({ detail, canWrite, onClose }: FormModalProps)
   const validate = (): boolean => {
     if (!checkRequired(values, isCreate ? ['atrzProcCd', 'atrzProcNm', 'useYn'] : ['atrzProcNm', 'useYn'])) return false;
     if (isCreate && !PROCESS_CODE_PATTERN.test(values.atrzProcCd.trim())) {
-      setError('atrzProcCd', APPROVAL_PROCESS_MESSAGES.codeFormat);
+      setError('atrzProcCd', t('messages.system.approvalProcess.codeFormat'));
       return false;
     }
     if (rows.length === 0) {
-      setError('steps', APPROVAL_PROCESS_MESSAGES.stepsRequired);
+      setError('steps', t('messages.system.approvalProcess.stepsRequired'));
       return false;
     }
     if (rows.some((row) => !row.stpNm.trim() || !row.roleGroupId || !row.roleId)) {
-      setError('steps', APPROVAL_PROCESS_MESSAGES.stepIncomplete);
+      setError('steps', t('messages.system.approvalProcess.stepIncomplete'));
       return false;
     }
     return true;
@@ -182,10 +183,10 @@ function ApprovalProcessFormModal({ detail, canWrite, onClose }: FormModalProps)
       onClose();
     } catch (e) {
       const handled = applyApiError(e, {
-        [APPROVAL_PROCESS_ERRORS.duplicateCode]: ['atrzProcCd', APPROVAL_PROCESS_MESSAGES.duplicateCode],
-        [APPROVAL_PROCESS_ERRORS.invalidStepOrder]: ['steps', APPROVAL_PROCESS_MESSAGES.invalidStepOrder],
-        [APPROVAL_PROCESS_ERRORS.invalidRejectStep]: ['steps', APPROVAL_PROCESS_MESSAGES.invalidRejectStep],
-        [APPROVAL_PROCESS_ERRORS.invalidRole]: ['steps', APPROVAL_PROCESS_MESSAGES.invalidRole],
+        [APPROVAL_PROCESS_ERRORS.duplicateCode]: ['atrzProcCd', t('messages.system.approvalProcess.duplicateCode')],
+        [APPROVAL_PROCESS_ERRORS.invalidStepOrder]: ['steps', t('messages.system.approvalProcess.invalidStepOrder')],
+        [APPROVAL_PROCESS_ERRORS.invalidRejectStep]: ['steps', t('messages.system.approvalProcess.invalidRejectStep')],
+        [APPROVAL_PROCESS_ERRORS.invalidRole]: ['steps', t('messages.system.approvalProcess.invalidRole')],
       });
       if (!handled) toast.error(errorMessage(e));
     }
@@ -194,7 +195,7 @@ function ApprovalProcessFormModal({ detail, canWrite, onClose }: FormModalProps)
   const handleDelete = () => {
     if (!detail) return;
     confirm({
-      content: APPROVAL_PROCESS_MESSAGES.confirmDelete,
+      content: t('messages.system.approvalProcess.confirmDelete'),
       okText: SYS_DIALOG_LABELS.delete,
       danger: true,
       onOk: async () => {
@@ -203,7 +204,11 @@ function ApprovalProcessFormModal({ detail, canWrite, onClose }: FormModalProps)
           toast.success(SYS_MESSAGES.deleted);
           onClose();
         } catch (e) {
-          toast.error(apiErrorCode(e) === APPROVAL_PROCESS_ERRORS.inUse ? APPROVAL_PROCESS_MESSAGES.inUse : errorMessage(e));
+          toast.error(
+            apiErrorCode(e) === APPROVAL_PROCESS_ERRORS.inUse
+              ? t('messages.system.approvalProcess.inUse')
+              : errorMessage(e),
+          );
         }
       },
     });
@@ -220,7 +225,7 @@ function ApprovalProcessFormModal({ detail, canWrite, onClose }: FormModalProps)
       onSubmit={editable ? () => void handleSubmit() : undefined}
       submitting={createProcess.isPending || updateProcess.isPending}
       onCancel={onClose}
-      notice={!isCreate && <p className={styles.notice}>{APPROVAL_PROCESS_MESSAGES.sessionsKeepSteps}</p>}
+      notice={!isCreate && <p className={styles.notice}>{t('messages.system.approvalProcess.sessionsKeepSteps')}</p>}
       leftActions={
         !isCreate &&
         editable && (
@@ -236,7 +241,7 @@ function ApprovalProcessFormModal({ detail, canWrite, onClose }: FormModalProps)
             label="Process Code"
             required
             error={errors.atrzProcCd}
-            hint={isCreate ? 'Used by the system to start sessions; cannot be changed later.' : undefined}
+            hint={isCreate ? t('messages.system.approvalProcess.codeHint') : undefined}
           >
             <TextInput
               value={values.atrzProcCd}

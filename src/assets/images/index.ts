@@ -39,6 +39,7 @@ import bookOpenText from './files-folders/book-open-text.svg';
 import clipboardText from './files-folders/clipboard-text.svg';
 import excelFilled from './files-folders/excel-filled.svg';
 import filePlus from './files-folders/file-plus.svg';
+import fileX from './files-folders/file-x.svg';
 import file from './files-folders/file.svg';
 import folderAdd from './files-folders/folder-add.svg';
 import folderClose from './files-folders/folder-close.svg';
@@ -86,6 +87,7 @@ import lock from './actions/lock.svg';
 import minus from './actions/minus.svg';
 import move from './actions/move.svg';
 import plus from './actions/plus.svg';
+import popupClose from './actions/popup-close.svg';
 import printer from './actions/printer.svg';
 import refresh from './actions/refresh.svg';
 import save from './actions/save.svg';
@@ -98,6 +100,7 @@ import bellSimple from './status/bell-simple.svg';
 import checkCircle from './status/check-circle.svg';
 import hourglassMedium from './status/hourglass-medium.svg';
 import infoCircle from './status/info-circle.svg';
+import popupCheckCircle from './status/popup-check-circle.svg';
 import question from './status/question.svg';
 import statusCheckCircleFilled from './status/status-check-circle-filled.svg';
 import statusInfoFilled from './status/status-info-filled.svg';
@@ -162,6 +165,7 @@ export {
   eyFilled,
   eye,
   filePlus,
+  fileX,
   file,
   flagUkRound,
   flagVnRound,
@@ -207,6 +211,8 @@ export {
   note,
   phone,
   plus,
+  popupCheckCircle,
+  popupClose,
   printer,
   question,
   receipt,

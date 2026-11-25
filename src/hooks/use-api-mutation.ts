@@ -1,6 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 import type { UseMutationOptions } from '@tanstack/react-query';
 import { App } from 'antd';
+import i18n from '@/lib/i18n';
 import { ApiError } from '@/lib/api/error';
 import type { ApiResponse } from '@/lib/api/types';
 
@@ -29,7 +30,7 @@ export function useApiMutation<TData, TVariables = void>(
         throw new ApiError({
           code: 'E_API',
           data: null,
-          message: response.message || 'Failed to process request.',
+          message: response.message || i18n.t('messages.api.processFailed'),
           statusCode: 0,
           timestamp: new Date().toISOString(),
           path: '',

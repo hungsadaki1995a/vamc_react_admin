@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import AppRadio from '@/components/inputs/AppRadio';
 import AppSelect from '@/components/inputs/AppSelect';
 import TextInput from '@/components/inputs/TextInput';
@@ -32,14 +33,6 @@ const LANG_OPTIONS: { value: FormLang; label: string }[] = [
 const FORM_NO_PATTERN = /^\d{4}$/;
 const FILE_URL_PATTERN = /^https:\/\/\S+\.(docx|xlsx|pdf)$/i;
 
-const FORM_MESSAGES = {
-  /** E02 */
-  duplicate: SYS_MESSAGES.duplicate('form no.'),
-  /** E03 */
-  invalidUrl: 'Please enter a docx, xlsx or pdf file URL starting with https.',
-  formNoDigits: 'Enter a 4-digit number.',
-} as const;
-
 interface FormModalProps {
   /** null = register. */
   form: FormItem | null;
@@ -48,6 +41,7 @@ interface FormModalProps {
 }
 
 export default function FormModal({ form, canWrite, onClose }: FormModalProps) {
+  const { t } = useTranslation();
   const isCreate = form === null;
   const { toast } = useNotify();
   const saveForm = useSaveForm();
@@ -70,11 +64,11 @@ export default function FormModal({ form, canWrite, onClose }: FormModalProps) {
     if (!checkRequired(values, ['formNo', 'langCd', 'useYn', 'formNm', 'fileUrl'])) return false;
     let valid = true;
     if (!FORM_NO_PATTERN.test(values.formNo.trim())) {
-      setError('formNo', FORM_MESSAGES.formNoDigits);
+      setError('formNo', t('messages.system.form.formNoDigits'));
       valid = false;
     }
     if (!FILE_URL_PATTERN.test(values.fileUrl.trim())) {
-      setError('fileUrl', FORM_MESSAGES.invalidUrl);
+      setError('fileUrl', t('messages.system.form.invalidUrl'));
       valid = false;
     }
     return valid;
@@ -95,8 +89,8 @@ export default function FormModal({ form, canWrite, onClose }: FormModalProps) {
       onClose();
     } catch (error) {
       const handled = applyApiError(error, {
-        [FORM_ERRORS.duplicate]: ['formNo', FORM_MESSAGES.duplicate],
-        [FORM_ERRORS.invalidUrl]: ['fileUrl', FORM_MESSAGES.invalidUrl],
+        [FORM_ERRORS.duplicate]: ['formNo', SYS_MESSAGES.duplicate(t('messages.sys.items.formNo'))],
+        [FORM_ERRORS.invalidUrl]: ['fileUrl', t('messages.system.form.invalidUrl')],
       });
       if (!handled) toast.error(errorMessage(error));
     }

@@ -1,3 +1,4 @@
+import i18n from '@/lib/i18n';
 import { apiClient } from '@/lib/api/client';
 import { apiDelete, apiDownload, apiGet, apiPatch, apiPost, apiPut } from '@/api/common/api-utils';
 import type { PageResponse } from '@/api/common/api-utils';
@@ -180,7 +181,7 @@ export async function uploadContentFiles(
   const { data } = await apiClient.post<{ data?: ContentFileGroup }>('/api/v1/contents/files', body, {
     params: { board, ...(fileUnqId ? { fileUnqId } : {}) },
   });
-  if (!data.data) throw new Error('Upload did not return a file group.');
+  if (!data.data) throw new Error(i18n.t('messages.api.uploadNoFileGroup'));
   return data.data;
 }
 

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Descriptions } from 'antd';
 import type { TableColumnsType } from 'antd';
 import ActionButton from '@/components/common/actions/ActionButton';
@@ -9,6 +10,7 @@ import { useNotify } from '@/hooks/use-notify';
 import { useMenuPermission } from '@/hooks/use-menu-permission';
 import type { LiveAuctionItem } from '@/api/auction/auction-api';
 import { DateTimeCell, SysPageHeader, SysPagination } from '@/components/common/sys-ui/SystemUi';
+import { SYS_MESSAGES } from '@/config/sys-messages';
 import { errorMessage, rowNumber } from '@/utils/system-utils';
 import styles from '@/components/common/sys-ui/system-page.module.scss';
 import { useCloseLiveAuction, useLiveAuction, useLiveAuctions, useStartLiveAuction } from './use-live-auctions';
@@ -18,6 +20,7 @@ const PAGE_SIZE = 15;
 
 /** Live Online Auction Management (menu A06030000). */
 export default function LiveAuctionManagement() {
+  const { t } = useTranslation();
   const { toast, dialog } = useNotify();
   const { canWrite } = useMenuPermission();
 
@@ -37,12 +40,15 @@ export default function LiveAuctionManagement() {
   const handleControl = (auctnNo: string, action: 'start' | 'close') => {
     dialog.warning({
       okCancel: true,
-      content: `${action === 'start' ? 'Start' : 'Close'} live auction ${auctnNo}?`,
+      content:
+        action === 'start'
+          ? t('messages.auction.confirmStartLive', { auctnNo })
+          : t('messages.auction.confirmCloseLive', { auctnNo }),
       onOk: async () => {
         try {
           if (action === 'start') await startLiveAuction.mutateAsync(auctnNo);
           else await closeLiveAuction.mutateAsync(auctnNo);
-          toast.success('Updated.');
+          toast.success(SYS_MESSAGES.updated);
           setDetailId(null);
         } catch (e) {
           toast.error(errorMessage(e));

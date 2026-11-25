@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Descriptions } from 'antd';
 import type { TableColumnsType } from 'antd';
 import type { Dayjs } from 'dayjs';
@@ -12,6 +13,7 @@ import { useNotify } from '@/hooks/use-notify';
 import { useMenuPermission } from '@/hooks/use-menu-permission';
 import type { DebtorItem, DebtorSearch } from '@/api/npl/npl-api';
 import { SysPageHeader, SysPagination } from '@/components/common/sys-ui/SystemUi';
+import { SYS_MESSAGES } from '@/config/sys-messages';
 import { errorMessage, rowNumber } from '@/utils/system-utils';
 import styles from '@/components/common/sys-ui/system-page.module.scss';
 import { useDebtor, useDebtors, useDeleteDebtors, useDownloadDebtorsExcel } from './use-debtors';
@@ -21,6 +23,7 @@ type DateRange = [Dayjs | null, Dayjs | null] | null;
 
 /** Debtor Management (menu A04040000). */
 export default function DebtorManagement() {
+  const { t } = useTranslation();
   const { toast, dialog } = useNotify();
   const { canWrite } = useMenuPermission();
 
@@ -69,14 +72,17 @@ export default function DebtorManagement() {
   };
 
   const handleDelete = () => {
-    if (!selectedKeys.length) { toast.warning('Select at least one debtor.'); return; }
+    if (!selectedKeys.length) {
+      toast.warning(t('messages.npl.selectAtLeastOneDebtor'));
+      return;
+    }
     dialog.warning({
       okCancel: true,
-      content: `Delete ${selectedKeys.length} selected debtor(s)?`,
+      content: t('messages.npl.confirmDeleteDebtors', { count: selectedKeys.length }),
       onOk: async () => {
         try {
           await deleteDebtors.mutateAsync(selectedKeys);
-          toast.success('Deleted.');
+          toast.success(SYS_MESSAGES.deleted);
           setSelectedKeys([]);
         } catch (e) {
           toast.error(errorMessage(e));

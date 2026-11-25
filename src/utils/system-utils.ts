@@ -1,7 +1,8 @@
 import dayjs from 'dayjs';
+import i18n from '@/lib/i18n';
 
 /** Message of a rejected API call (the 4xx body message is already on ApiError). */
-export function errorMessage(error: unknown, fallback = 'The request could not be processed.'): string {
+export function errorMessage(error: unknown, fallback = i18n.t('messages.api.requestFailed')): string {
   return error instanceof Error && error.message ? error.message : fallback;
 }
 

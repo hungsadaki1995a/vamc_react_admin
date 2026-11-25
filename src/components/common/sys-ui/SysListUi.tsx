@@ -1,5 +1,6 @@
 import { useOwnPageTitle } from '@/components/layout/page-header-slot-context';
 import type { CSSProperties, Key, ReactNode } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { TableColumnsType } from 'antd';
 import type { SortOrder, SorterResult } from 'antd/es/table/interface';
 import {
@@ -361,12 +362,14 @@ interface SysNotAvailableProps {
 }
 
 /** Notice for a feature waiting on a backend / schema change; keep the matching `TODO(schema)` in code. */
-export function SysNotAvailable({ title = 'Not available yet', children, variant = 'banner' }: SysNotAvailableProps) {
+export function SysNotAvailable({ title, children, variant = 'banner' }: SysNotAvailableProps) {
+  const { t } = useTranslation();
+  const resolvedTitle = title ?? t('messages.sys.notAvailableYet');
   if (variant === 'inline') {
     return (
       <span className={styles.notAvailableInline}>
         <ClockCircleOutlined />
-        <span className={styles.notAvailableTitleInline}>{title}</span>
+        <span className={styles.notAvailableTitleInline}>{resolvedTitle}</span>
         {children && <span className={styles.notAvailableReason}>{children}</span>}
       </span>
     );
@@ -375,7 +378,7 @@ export function SysNotAvailable({ title = 'Not available yet', children, variant
     <div className={styles.notAvailable} role="note">
       <ClockCircleOutlined className={styles.notAvailableIcon} />
       <div>
-        <div className={styles.notAvailableTitle}>{title}</div>
+        <div className={styles.notAvailableTitle}>{resolvedTitle}</div>
         {children && <div className={styles.notAvailableReason}>{children}</div>}
       </div>
     </div>

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { TableColumnsType } from 'antd';
 import { useNotify } from '@/hooks/use-notify';
 import type { ExchangeRateItem, ExchangeRateRun } from '@/api/system/exchange-rate-api';
@@ -7,7 +8,7 @@ import { DateTimeText, ResultBadge, SysButton, SysTable, SysTitleBar, SysPage } 
 import { apiErrorCode, errorMessage } from '@/utils/system-utils';
 import BatchHistoryModal from '@/features/system/batch-management/BatchHistoryModal';
 import { EXCHANGE_RATE_SYNC_JOB } from '@/features/system/batch-management/batch-utils';
-import { EXCHANGE_RATE_MESSAGES, formatRate, formatRunBy, formatSchedule } from './exchange-rate-utils';
+import { formatRate, formatRunBy, formatSchedule } from './exchange-rate-utils';
 import { useExchangeRateStatus, useSyncExchangeRates } from './use-exchange-rates';
 import styles from './exchange-rate-management.module.scss';
 
@@ -77,6 +78,7 @@ const RUN_COLUMNS: TableColumnsType<ExchangeRateRun> = [
 
 /** Exchange Rate Management - List (VPA09010401, menu A09010400), incl. the Sync Failed state. */
 export default function ExchangeRateManagement() {
+  const { t } = useTranslation();
   const { toast, dialog } = useNotify();
   const { data: status, isFetching } = useExchangeRateStatus();
   const sync = useSyncExchangeRates();
@@ -86,18 +88,18 @@ export default function ExchangeRateManagement() {
   // C01 — the design uses [Cancel] / [Sync] here (not [Close]).
   const confirmSync = () =>
     dialog.confirm({
-      content: EXCHANGE_RATE_MESSAGES.confirmSync,
+      content: t('messages.system.exchangeRate.confirmSync'),
       okText: SYS_DIALOG_LABELS.sync,
-      cancelText: 'Cancel',
+      cancelText: t('messages.dialog.cancel'),
       onOk: async () => {
         try {
           await sync.sync();
-          toast.success(EXCHANGE_RATE_MESSAGES.synced);
+          toast.success(t('messages.system.exchangeRate.synced'));
         } catch (error) {
           const code = apiErrorCode(error);
-          if (code === 'BAT007') toast.error(EXCHANGE_RATE_MESSAGES.syncRunning);
-          else if (code === 'EXR001') dialog.error({ content: EXCHANGE_RATE_MESSAGES.syncFailed });
-          else toast.error(errorMessage(error, EXCHANGE_RATE_MESSAGES.syncFailed));
+          if (code === 'BAT007') toast.error(t('messages.system.exchangeRate.syncRunning'));
+          else if (code === 'EXR001') dialog.error({ content: t('messages.system.exchangeRate.syncFailed') });
+          else toast.error(errorMessage(error, t('messages.system.exchangeRate.syncFailed')));
         }
       },
     });

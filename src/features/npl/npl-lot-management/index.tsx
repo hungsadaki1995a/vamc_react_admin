@@ -1,4 +1,5 @@
 import { useState, type CSSProperties } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { TableColumnsType } from 'antd';
 import ActionButton from '@/components/common/actions/ActionButton';
 import Popup from '@/components/common/popup/Popup';
@@ -9,6 +10,7 @@ import { useNotify } from '@/hooks/use-notify';
 import { useMenuPermission } from '@/hooks/use-menu-permission';
 import type { NplLotItem, NplLotSearch } from '@/api/npl/npl-api';
 import { DateTimeCell, FormField, SysPageHeader, SysPagination } from '@/components/common/sys-ui/SystemUi';
+import { SYS_MESSAGES } from '@/config/sys-messages';
 import { errorMessage, rowNumber } from '@/utils/system-utils';
 import styles from '@/components/common/sys-ui/system-page.module.scss';
 import { useDeleteNplLot, useDownloadNplLotsExcel, useNplLots, useSaveNplLot } from './use-npl-lots';
@@ -17,6 +19,7 @@ const PAGE_SIZE = 15;
 
 /** NPL LOT Change Management (menu A04050000). */
 export default function NplLotManagement() {
+  const { t } = useTranslation();
   const { toast, dialog } = useNotify();
   const { canWrite } = useMenuPermission();
 
@@ -51,11 +54,11 @@ export default function NplLotManagement() {
   const handleDelete = (bndLotId: string) => {
     dialog.warning({
       okCancel: true,
-      content: 'Delete this NPL LOT?',
+      content: t('messages.npl.confirmDeleteLot'),
       onOk: async () => {
         try {
           await deleteNplLot.mutateAsync(bndLotId);
-          toast.success('Deleted.');
+          toast.success(SYS_MESSAGES.deleted);
         } catch (e) {
           toast.error(errorMessage(e));
         }
@@ -130,6 +133,7 @@ export default function NplLotManagement() {
 }
 
 function LotModal({ item, canWrite, onClose }: { item: NplLotItem | null; canWrite: boolean; onClose: () => void }) {
+  const { t } = useTranslation();
   const isCreate = item === null;
   const { toast } = useNotify();
   const saveNplLot = useSaveNplLot();
@@ -138,7 +142,10 @@ function LotModal({ item, canWrite, onClose }: { item: NplLotItem | null; canWri
   const [bndLotExpln, setBndLotExpln] = useState(item?.bndLotExpln ?? '');
 
   const handleSave = async () => {
-    if (!bndLotNm.trim()) { toast.warning('Enter LOT name.'); return; }
+    if (!bndLotNm.trim()) {
+      toast.warning(t('messages.npl.lotNameRequired'));
+      return;
+    }
     try {
       // The list is refetched by the hook.
       await saveNplLot.mutateAsync({
@@ -147,7 +154,7 @@ function LotModal({ item, canWrite, onClose }: { item: NplLotItem | null; canWri
         bndLotNm: bndLotNm.trim(),
         bndLotExpln: bndLotExpln.trim() || undefined,
       });
-      toast.success('Saved.');
+      toast.success(SYS_MESSAGES.saved);
       onClose();
     } catch (e) {
       toast.error(errorMessage(e));

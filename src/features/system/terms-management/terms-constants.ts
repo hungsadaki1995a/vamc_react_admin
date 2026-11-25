@@ -24,11 +24,3 @@ export const TERMS_STATUS_FILTER_OPTIONS: { value: '' | TermsStatus; label: stri
 ];
 
 export const termsTypeLabel = (value?: string) => TERMS_TYPE_OPTIONS.find((o) => o.value === value)?.label ?? value ?? '-';
-
-/** System messages of VPA09010701. */
-export const TERMS_MESSAGES = {
-  duplicateDate: 'Terms with the same effective date already exist.',
-  fromTomorrow: 'Please select an effective date from tomorrow.',
-  confirmDelete: 'Delete the scheduled terms?',
-  locked: 'Only scheduled terms can be edited or deleted.',
-} as const;

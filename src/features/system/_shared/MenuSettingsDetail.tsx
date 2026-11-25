@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import AppRadio from '@/components/inputs/AppRadio';
 import TextInput from '@/components/inputs/TextInput';
 import type { MenuSeCd, YesNo } from '@/api/system/menu-setting-api';
@@ -45,10 +46,11 @@ export default function MenuSettingsDetail({
   onCancel,
   onSave,
 }: MenuSettingsDetailProps) {
+  const { t } = useTranslation();
   if (!active) {
     return (
       <div className={styles.detailPanel} data-empty>
-        Select a menu in the tree, or add a new one.
+        {t('messages.system.menu.emptyDetail')}
       </div>
     );
   }
@@ -68,7 +70,7 @@ export default function MenuSettingsDetail({
           label="Menu Code"
           required
           error={errors.menuCd}
-          hint={isNew ? `${menuSeCd} followed by 8 digits, cannot be changed after saving.` : undefined}
+          hint={isNew ? t('messages.system.menu.menuCodeHint', { prefix: menuSeCd }) : undefined}
         >
           <TextInput
             value={form.menuCd}

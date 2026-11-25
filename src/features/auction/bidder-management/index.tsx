@@ -7,6 +7,7 @@ import { useNotify } from '@/hooks/use-notify';
 import { useMenuPermission } from '@/hooks/use-menu-permission';
 import type { AuctionItem, BidderItem } from '@/api/auction/auction-api';
 import { SysPageHeader, SysPagination } from '@/components/common/sys-ui/SystemUi';
+import { SYS_MESSAGES } from '@/config/sys-messages';
 import { errorMessage } from '@/utils/system-utils';
 import styles from '@/components/common/sys-ui/system-page.module.scss';
 import { useApproveBidder, useBidderAuctions, useBidders, useRejectBidder } from './use-bidders';
@@ -39,7 +40,7 @@ export default function BidderManagement() {
     try {
       if (action === 'approve') await approveBidder.mutateAsync(bdrNo);
       else await rejectBidder.mutateAsync(bdrNo);
-      toast.success('Updated.');
+      toast.success(SYS_MESSAGES.updated);
     } catch (e) {
       toast.error(errorMessage(e));
     }

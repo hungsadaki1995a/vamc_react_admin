@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { TableColumnsType } from 'antd';
 import { useNotify } from '@/hooks/use-notify';
 import { useMenuPermission } from '@/hooks/use-menu-permission';
@@ -24,6 +25,7 @@ function byText<T>(field: keyof T) {
 }
 
 export default function UserGroupManagement() {
+  const { t } = useTranslation();
   const { toast } = useNotify();
   const { confirm } = useSysDialogs();
   const { canWrite } = useMenuPermission();
@@ -191,7 +193,7 @@ export default function UserGroupManagement() {
             selectedRowKey={roleId}
             onRowClick={(row) => selectRole(row.roleId)}
             scroll={FIT_WIDTH}
-            locale={groupId ? undefined : { emptyText: 'Select a user group.' }}
+            locale={groupId ? undefined : { emptyText: t('messages.system.userGroup.selectGroup') }}
           />
         </section>
 
@@ -221,7 +223,7 @@ export default function UserGroupManagement() {
             dataSource={roleId ? (staff.data ?? []) : []}
             loading={staff.isFetching || saveAssignees.isPending}
             scroll={FIT_WIDTH}
-            locale={roleId ? undefined : { emptyText: 'Select a role.' }}
+            locale={roleId ? undefined : { emptyText: t('messages.system.userGroup.selectRole') }}
             rowSelection={
               canWrite && roleId
                 ? { selectedRowKeys: staffKeys, onChange: (keys) => setStaffKeys(keys.map(String)) }

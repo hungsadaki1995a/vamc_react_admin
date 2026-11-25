@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { FileImageOutlined } from '@ant-design/icons';
 import LoadingSpinner from '@/components/common/loading/LoadingSpinner';
 import TextInput from '@/components/inputs/TextInput';
@@ -46,8 +47,6 @@ const MAX_LENGTH: Record<FieldKey, number> = {
   closedDaysVn: 200,
   closedDaysEn: 200,
 };
-/** E05 */
-const EMAIL_INVALID = 'Please enter a valid email.';
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 function toState(d: AboutDirections): FormState {
@@ -85,6 +84,7 @@ function mapEmbedUrl(query: string): string {
 }
 
 export default function DirectionsManagement() {
+  const { t } = useTranslation();
   const { data, isFetching, isError } = useAboutDirections();
 
   return (
@@ -94,7 +94,7 @@ export default function DirectionsManagement() {
         <DirectionsForm key={data.pstNo ?? 'new'} directions={data} />
       ) : (
         <LoadingSpinner spinning={isFetching}>
-          <div className={styles.loading}>{isError ? 'The directions could not be loaded.' : null}</div>
+          <div className={styles.loading}>{isError ? t('messages.content.directions.loadFailed') : null}</div>
         </LoadingSpinner>
       )}
     </SysPage>
@@ -102,6 +102,7 @@ export default function DirectionsManagement() {
 }
 
 function DirectionsForm({ directions }: { directions: AboutDirections }) {
+  const { t } = useTranslation();
   const { canWrite } = useMenuPermission();
   const { toast } = useNotify();
   const save = useSaveAboutDirections();
@@ -118,7 +119,7 @@ function DirectionsForm({ directions }: { directions: AboutDirections }) {
   const findLocation = () => {
     const query = values.mapLocation.trim() || values.addressVn.trim();
     if (!query) {
-      setError('mapLocation', 'Map Location is required.');
+      setError('mapLocation', t('messages.content.directions.mapLocationRequired'));
       return;
     }
     setMapQuery(query);
@@ -129,12 +130,12 @@ function DirectionsForm({ directions }: { directions: AboutDirections }) {
     let valid = true;
     FIELDS.forEach(({ key, label, required }) => {
       if (required && !values[key].trim()) {
-        setError(key, `${label} is required.`);
+        setError(key, t('messages.sys.fieldRequired', { label }));
         valid = false;
       }
     });
     if (values.email.trim() && !EMAIL_PATTERN.test(values.email.trim())) {
-      setError('email', EMAIL_INVALID);
+      setError('email', t('messages.content.directions.emailInvalid'));
       valid = false;
     }
     return valid;

@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Form, Upload } from 'antd';
 import ActionButton from '@/components/common/actions/ActionButton';
 import LoadingSpinner from '@/components/common/loading/LoadingSpinner';
@@ -20,9 +21,6 @@ import { MEMBER_FEE_ERRORS } from '@/api/member/member-fee-api';
 import { apiErrorCode, errorMessage } from '@/utils/system-utils';
 import { buildFeeHistoryRows, nextPeriodStart } from './member-fee-history';
 import { useMemberFeePayments, useRegisterMembershipPayment } from './use-member-fee';
-
-/** E06 of the member management system messages. */
-const E06_PERIOD_OVERLAP = 'E06: This overlaps an existing membership period. Please check the start date.';
 import { useNotify } from '@/hooks/use-notify';
 import { MEMBER_JOIN_OFFICER_STEP } from '@/api/member/member-approval-api';
 import { useAssignMemberOfficer, useMemberApprovalCandidates } from './use-member-approval';
@@ -143,6 +141,7 @@ interface AddressFieldsProps {
 }
 
 function CascadedAddressRows({ form, prefix, disabled = false, optional = false }: AddressFieldsProps) {
+  const { t } = useTranslation();
   const provinceCode = Form.useWatch([prefix, 'mctpvCd'], form) as string | undefined;
   const districtCode = Form.useWatch([prefix, 'distCd'], form) as string | undefined;
   const detailAddr = Form.useWatch([prefix, 'daddr'], form) as string | undefined;
@@ -163,7 +162,7 @@ function CascadedAddressRows({ form, prefix, disabled = false, optional = false 
           <Form.Item
             name={[prefix, 'mctpvCd']}
             className={styles.formItemCompact}
-            rules={isRequired ? [{ required: true, message: 'E01: Province / City is required' }] : []}
+            rules={isRequired ? [{ required: true, message: t('messages.member.form.provinceRequired') }] : []}
           >
             <AppSelect
               showSearch
@@ -187,7 +186,7 @@ function CascadedAddressRows({ form, prefix, disabled = false, optional = false 
           <Form.Item
             name={[prefix, 'distCd']}
             className={styles.formItemCompact}
-            rules={isRequired ? [{ required: true, message: 'E01: District is required' }] : []}
+            rules={isRequired ? [{ required: true, message: t('messages.member.form.districtRequired') }] : []}
           >
             <AppSelect
               showSearch
@@ -212,7 +211,7 @@ function CascadedAddressRows({ form, prefix, disabled = false, optional = false 
           <Form.Item
             name={[prefix, 'daddr']}
             className={styles.formItemCompact}
-            rules={isRequired ? [{ required: true, message: 'E01: Detailed Address is required' }] : []}
+            rules={isRequired ? [{ required: true, message: t('messages.member.form.detailAddressRequired') }] : []}
           >
             <TextInput
               disabled={disabled}
@@ -246,6 +245,7 @@ function AttachmentFieldRow({
   onRemove,
   onOpen,
 }: AttachmentFieldRowProps) {
+  const { t } = useTranslation();
   return (
     <tr>
       <td className={styles.labelCell}>
@@ -293,7 +293,7 @@ function AttachmentFieldRow({
               </div>
             ))
           ) : (
-            <span className={styles.uploadGuide}>No files attached.</span>
+            <span className={styles.uploadGuide}>{t('messages.member.form.noFilesAttached')}</span>
           )}
         </div>
       </td>
@@ -470,6 +470,7 @@ function MemberFormModalContent({
   onClose: () => void;
   onSuccess?: () => void;
 }) {
+  const { t } = useTranslation();
   const { toast, dialog } = useNotify();
   const [form] = Form.useForm();
   const initial = buildInitialFormState(isEdit, apiDetail, member);
@@ -576,7 +577,7 @@ function MemberFormModalContent({
   };
 
   const handleOpenAttachment = (url: string) => {
-    openAttachmentMutate(url, { onError: () => toast.error('Failed to open the file.') });
+    openAttachmentMutate(url, { onError: () => toast.error(t('messages.member.form.openFileFailed')) });
   };
 
   const handleRemoveFile = (section: DocumentSection, idx: number) => {
@@ -590,7 +591,7 @@ function MemberFormModalContent({
   const validateAndUpload = async (file: File, section: DocumentSection, isOcrTrigger = false) => {
     const ext = file.name.split('.').pop()?.toLowerCase() || '';
     if (!ALLOWED_EXTENSIONS.includes(ext) || file.size > MAX_FILE_BYTES) {
-      toast.error('E04: Only JPG, PNG, or PDF files up to 10MB are allowed.');
+      toast.error(t('messages.member.form.invalidFile'));
       return;
     }
 
@@ -599,7 +600,7 @@ function MemberFormModalContent({
     // Stored files of an edited member are replaced by the first new upload, so only new files count
     const slot = nextDocumentSlot(section, files.filter((f) => f.slot), passport);
     if (!slot) {
-      toast.error('E04: This section already has all its files. Remove one before uploading another.');
+      toast.error(t('messages.member.form.sectionFilesFull'));
       return;
     }
 
@@ -619,17 +620,17 @@ function MemberFormModalContent({
           { fileUnqId: uploaded.fileId, fileNm: file.name, slot },
         ]);
         if (isOcrTrigger) {
-          toast.info('E05: AI OCR auto-fill is unavailable. Please enter or verify fields manually.');
+          toast.info(t('messages.member.form.ocrUnavailable'));
         }
       } catch {
-        toast.error('Failed to upload file.');
+        toast.error(t('messages.member.form.uploadFailed'));
       }
     };
 
     if (isEdit && files.some((f) => !f.slot)) {
       dialog.confirm({
-        title: 'Attach Document (C02)',
-        content: 'The new document replaces the documents currently stored for this section. Continue?',
+        title: t('messages.member.form.replaceDocTitle'),
+        content: t('messages.member.form.replaceDocConfirm'),
         onOk: doUpload,
       });
     } else {
@@ -641,8 +642,8 @@ function MemberFormModalContent({
     const prevType = form.getFieldValue('memberType');
     if (prevType === nextType) return;
     dialog.confirm({
-      title: 'Change Member Type (C03)',
-      content: 'Changing Member Type will reset identity information and attachments. Continue?',
+      title: t('messages.member.form.changeMemberTypeTitle'),
+      content: t('messages.member.form.changeMemberTypeConfirm'),
       onOk: () => {
         form.setFieldsValue({
           memberType: nextType,
@@ -668,8 +669,8 @@ function MemberFormModalContent({
 
   const handleIdCardTypeChange = (nextIdType: string) => {
     dialog.confirm({
-      title: 'Change ID Card Type (C03)',
-      content: 'Changing ID Card Type will reset ID card information and attachments. Continue?',
+      title: t('messages.member.form.changeIdTypeTitle'),
+      content: t('messages.member.form.changeIdTypeConfirm'),
       onOk: () => {
         form.setFieldsValue({
           idCardType: nextIdType,
@@ -701,11 +702,11 @@ function MemberFormModalContent({
   const handleRegisterPayment = async () => {
     if (!feeMbrNo) return;
     if (!payStartDate) {
-      toast.error('E01: Please select Membership Period start date.');
+      toast.error(t('messages.member.form.payStartDateRequired'));
       return;
     }
     if (payType === 'Paid' && !payDate) {
-      toast.error('E01: Please select Payment Date.');
+      toast.error(t('messages.member.form.payDateRequired'));
       return;
     }
     const endD = payStartDate.add(1, 'year').subtract(1, 'day');
@@ -716,7 +717,7 @@ function MemberFormModalContent({
       return !endD.isBefore(rStart, 'day') && !payStartDate.isAfter(rEnd, 'day');
     });
     if (overlaps) {
-      toast.error(E06_PERIOD_OVERLAP);
+      toast.error(t('messages.member.form.periodOverlap'));
       return;
     }
     try {
@@ -727,16 +728,20 @@ function MemberFormModalContent({
       });
       if (isTemporaryApplicant) {
         // A Temporary member stays T and becomes Full once its documents pass
-        toast.success('Membership payment registered. The member becomes a Full Member once the documents pass.');
+        toast.success(t('messages.member.form.paymentRegisteredTemporary'));
       } else {
-        toast.success('Membership payment registered.');
+        toast.success(t('messages.member.form.paymentRegistered'));
         form.setFieldValue('memberGrade', 'Full');
       }
       setPayStartDate(endD.add(1, 'day'));
       setPayDate(dayjs());
     } catch (err) {
       // The server checks the overlap too (MBR016), e.g. when the history was changed in another tab
-      toast.error(apiErrorCode(err) === MEMBER_FEE_ERRORS.periodOverlap ? E06_PERIOD_OVERLAP : errorMessage(err));
+      toast.error(
+        apiErrorCode(err) === MEMBER_FEE_ERRORS.periodOverlap
+          ? t('messages.member.form.periodOverlap')
+          : errorMessage(err),
+      );
     }
   };
 
@@ -744,7 +749,7 @@ function MemberFormModalContent({
     try {
       const values = await form.validateFields();
       if (isOrganization && poaFiles.length === 0) {
-        toast.error('E01: Power of Attorney attachment is required.');
+        toast.error(t('messages.member.form.poaRequired'));
         return;
       }
 
@@ -847,7 +852,7 @@ function MemberFormModalContent({
         };
         const created = await createMemberMutate(payload);
         documentSession.current = null;
-        toast.success(`Member ${values.fullName || values.companyName} registered successfully.`);
+        toast.success(t('messages.member.form.memberRegistered', { name: values.fullName || values.companyName }));
         // Not received yet: the server receives the application and hands it to the officer at once
         if (created?.mbrNo && values.staffInCharge) await saveOfficer(created.mbrNo, values.staffInCharge);
       } else if (member) {
@@ -952,7 +957,7 @@ function MemberFormModalContent({
         };
         await updateMemberMutate({ mbrNo: member.memberCode, body: payload });
         documentSession.current = null;
-        toast.success('Member information updated.');
+        toast.success(t('messages.member.form.memberUpdated'));
         // Changed only after the member update succeeded; the new officer gets an e-mail
         if (values.staffInCharge && values.staffInCharge !== currentOfficerEmpNo) {
           await saveOfficer(member.memberCode, values.staffInCharge);
@@ -966,7 +971,7 @@ function MemberFormModalContent({
         const firstField = (err as { errorFields: { name: (string | number)[] }[] }).errorFields[0];
         if (firstField) form.scrollToField(firstField.name);
       } else {
-        toast.error(errorMessage(err, 'Failed to save member information.'));
+        toast.error(errorMessage(err, t('messages.member.form.saveFailed')));
       }
     }
   };
@@ -975,9 +980,9 @@ function MemberFormModalContent({
   const saveOfficer = async (mbrNo: string, assigneeEmpNo: string) => {
     try {
       await assignOfficer.mutateAsync({ mbrNo, assigneeEmpNo });
-      toast.success('The Staff in Charge was changed.');
+      toast.success(t('messages.member.form.officerChanged'));
     } catch (err) {
-      toast.error(`The Staff in Charge could not be changed: ${errorMessage(err)}`);
+      toast.error(t('messages.member.form.officerChangeFailed', { error: errorMessage(err) }));
     }
   };
 
@@ -1070,7 +1075,7 @@ function MemberFormModalContent({
                               <Form.Item
                                 name="memberType"
                                 className={styles.formItemCompact}
-                                rules={[{ required: true, message: 'E01: Member Type is required' }]}
+                                rules={[{ required: true, message: t('messages.member.form.memberTypeRequired') }]}
                               >
                                 <AppSelect
                                   onChange={(val) => handleMemberTypeChange(val as MemberType)}
@@ -1092,7 +1097,7 @@ function MemberFormModalContent({
                             <Form.Item
                               name="memberGrade"
                               className={styles.formItemCompact}
-                              rules={[{ required: true, message: 'E01: Member Grade is required' }]}
+                              rules={[{ required: true, message: t('messages.member.form.memberGradeRequired') }]}
                             >
                               <AppSelect
                                 options={[
@@ -1113,7 +1118,7 @@ function MemberFormModalContent({
                               <Form.Item
                                 name="status"
                                 className={styles.formItemCompact}
-                                rules={[{ required: true, message: 'E01: Status is required' }]}
+                                rules={[{ required: true, message: t('messages.member.form.statusRequired') }]}
                                 onReset={() => undefined}
                               >
                                 <AppSelect
@@ -1150,7 +1155,7 @@ function MemberFormModalContent({
                             <Form.Item
                               name="termsAgreementDate"
                               className={styles.formItemCompact}
-                              rules={[{ required: true, message: 'E01: Terms Agreement Date is required' }]}
+                              rules={[{ required: true, message: t('messages.member.form.termsDateRequired') }]}
                             >
                               <AppDatePicker format="DD-MM-YYYY" className="w-full" />
                             </Form.Item>
@@ -1163,7 +1168,7 @@ function MemberFormModalContent({
                             <Form.Item
                               name="staffInCharge"
                               className={styles.formItemCompact}
-                              rules={isEdit ? [] : [{ required: true, message: 'E01: Staff in Charge is required' }]}
+                              rules={isEdit ? [] : [{ required: true, message: t('messages.member.form.officerRequired') }]}
                             >
                               <AppSelect<string>
                                 showSearch
@@ -1184,7 +1189,7 @@ function MemberFormModalContent({
                               <Form.Item
                                 name="rejectionReason"
                                 className={styles.formItemCompact}
-                                rules={[{ required: true, message: 'E01: Rejection Reason is required' }]}
+                                rules={[{ required: true, message: t('messages.member.form.rejectionReasonRequired') }]}
                               >
                                 <TextArea
                                   rows={2}
@@ -1218,11 +1223,11 @@ function MemberFormModalContent({
                   )}
 
                   {!isEdit && (
-                    <div className={styles.emptyHistory}>Payments can be registered after the member is registered.</div>
+                    <div className={styles.emptyHistory}>{t('messages.member.form.noRegisterHistoryHint')}</div>
                   )}
                   {isEdit && !isLockedReadOnly && !canRegisterPayment && (
                     <div className={styles.emptyHistory}>
-                      Payments can be registered for active members and for Temporary members in Pending Approval.
+                      {t('messages.member.form.cannotRegisterPaymentHint')}
                     </div>
                   )}
                   {canRegisterPayment && (
@@ -1304,7 +1309,7 @@ function MemberFormModalContent({
                         </tbody>
                       </table>
                     ) : (
-                      <div className={styles.emptyHistory}>No membership history.</div>
+                      <div className={styles.emptyHistory}>{t('messages.member.form.noMembershipHistory')}</div>
                     )}
                   </div>
                 </div>
@@ -1348,8 +1353,8 @@ function MemberFormModalContent({
                                 name="phone"
                                 className={`${styles.formItemCompact} flex-1`}
                                 rules={[
-                                  { required: true, message: 'E01: Phone Number is required' },
-                                  { pattern: /^\d{8,15}$/, message: 'E02: Invalid phone number format' },
+                                  { required: true, message: t('messages.member.form.phoneRequired') },
+                                  { pattern: /^\d{8,15}$/, message: t('messages.member.form.phoneInvalid') },
                                 ]}
                               >
                                 <TextInput
@@ -1369,8 +1374,8 @@ function MemberFormModalContent({
                               name="email"
                               className={styles.formItemCompact}
                               rules={[
-                                { required: true, message: 'E01: Email Address is required' },
-                                { type: 'email', message: 'E02: Invalid email address format' },
+                                { required: true, message: t('messages.member.form.emailRequired') },
+                                { type: 'email', message: t('messages.member.form.emailInvalid') },
                               ]}
                             >
                               <TextInput placeholder="example@domain.com" />
@@ -1422,7 +1427,7 @@ function MemberFormModalContent({
                                 <Form.Item
                                   name="fullName"
                                   className={styles.formItemCompact}
-                                  rules={[{ required: true, message: 'E01: Full Name is required' }]}
+                                  rules={[{ required: true, message: t('messages.member.form.fullNameRequired') }]}
                                 >
                                   <TextInput placeholder="Full Name" />
                                 </Form.Item>
@@ -1434,7 +1439,7 @@ function MemberFormModalContent({
                                 <Form.Item
                                   name="dateOfBirth"
                                   className={styles.formItemCompact}
-                                  rules={[{ required: true, message: 'E01: Date of Birth is required' }]}
+                                  rules={[{ required: true, message: t('messages.member.form.dobRequired') }]}
                                 >
                                   <AppDatePicker format="DD-MM-YYYY" className="w-full" />
                                 </Form.Item>
@@ -1446,7 +1451,7 @@ function MemberFormModalContent({
                                 <Form.Item
                                   name="gender"
                                   className={styles.formItemCompact}
-                                  rules={[{ required: true, message: 'E01: Gender is required' }]}
+                                  rules={[{ required: true, message: t('messages.member.form.genderRequired') }]}
                                 >
                                   <AppRadio.Group
                                     options={[
@@ -1466,7 +1471,7 @@ function MemberFormModalContent({
                                   <Form.Item
                                     name="nationality"
                                     className={styles.formItemCompact}
-                                    rules={[{ required: true, message: 'E01: Nationality is required' }]}
+                                    rules={[{ required: true, message: t('messages.member.form.nationalityRequired') }]}
                                   >
                                     <AppSelect
                                       showSearch
@@ -1492,18 +1497,18 @@ function MemberFormModalContent({
                                   name="idNumber"
                                   className={styles.formItemCompact}
                                   rules={[
-                                    { required: true, message: 'E01: ID Card Number is required' },
+                                    { required: true, message: t('messages.member.form.idNumberRequired') },
                                     {
                                       validator: (_, val) => {
                                         if (!val) return Promise.resolve();
                                         if (idCardType === 'CCCD' && !/^\d{12}$/.test(val)) {
-                                          return Promise.reject('E02: CCCD must be 12 digits');
+                                          return Promise.reject(t('messages.member.form.cccdInvalid'));
                                         }
                                         if (idCardType === 'CMND' && !/^(\d{9}|\d{12})$/.test(val)) {
-                                          return Promise.reject('E02: CMND must be 9 or 12 digits');
+                                          return Promise.reject(t('messages.member.form.cmndInvalid'));
                                         }
                                         if (idCardType === 'PSPT' && !/^[A-Za-z0-9]+$/.test(val)) {
-                                          return Promise.reject('E02: Passport must be alphanumeric');
+                                          return Promise.reject(t('messages.member.form.passportInvalid'));
                                         }
                                         return Promise.resolve();
                                       },
@@ -1520,7 +1525,7 @@ function MemberFormModalContent({
                                 <Form.Item
                                   name="issuingAuthority"
                                   className={styles.formItemCompact}
-                                  rules={[{ required: true, message: 'E01: Issuing Authority is required' }]}
+                                  rules={[{ required: true, message: t('messages.member.form.issuingAuthorityRequired') }]}
                                 >
                                   <TextInput placeholder="Issuing Authority" />
                                 </Form.Item>
@@ -1534,7 +1539,7 @@ function MemberFormModalContent({
                                 <Form.Item
                                   name="issueDate"
                                   className={styles.formItemCompact}
-                                  rules={[{ required: true, message: 'E01: Issue Date is required' }]}
+                                  rules={[{ required: true, message: t('messages.member.form.issueDateRequired') }]}
                                 >
                                   <AppDatePicker format="DD-MM-YYYY" className="w-full" />
                                 </Form.Item>
@@ -1548,7 +1553,7 @@ function MemberFormModalContent({
                                     <Form.Item
                                       name="expiryDate"
                                       className={styles.formItemCompact}
-                                      rules={[{ required: true, message: 'E01: Expiry Date is required' }]}
+                                      rules={[{ required: true, message: t('messages.member.form.expiryDateRequired') }]}
                                     >
                                       <AppDatePicker format="DD-MM-YYYY" className="w-full" />
                                     </Form.Item>
@@ -1560,8 +1565,8 @@ function MemberFormModalContent({
                               files={idFiles}
                               guideText={
                                 idCardType === 'PSPT'
-                                  ? 'Please upload the photo page of the passport.'
-                                  : 'Please upload both the front and back of the ID card.'
+                                  ? t('messages.member.form.passportGuide')
+                                  : t('messages.member.form.idCardGuide')
                               }
                               disabled={isLockedReadOnly}
                               uploading={isUploading}
@@ -1624,7 +1629,7 @@ function MemberFormModalContent({
                                         <Form.Item
                                           name="overseasAddress"
                                           className={styles.formItemCompact}
-                                          rules={[{ required: true, message: 'E01: Address is required' }]}
+                                          rules={[{ required: true, message: t('messages.member.form.addressRequired') }]}
                                         >
                                           <TextInput placeholder="Full address (street, city, state, country)" />
                                         </Form.Item>
@@ -1713,7 +1718,7 @@ function MemberFormModalContent({
                                 <Form.Item
                                   name="companyName"
                                   className={styles.formItemCompact}
-                                  rules={[{ required: true, message: 'E01: Company Name is required' }]}
+                                  rules={[{ required: true, message: t('messages.member.form.companyNameRequired') }]}
                                 >
                                   <TextInput placeholder="Company Name" />
                                 </Form.Item>
@@ -1725,7 +1730,7 @@ function MemberFormModalContent({
                                 <Form.Item
                                   name="charterCapital"
                                   className={styles.formItemCompact}
-                                  rules={[{ required: true, message: 'E01: Charter Capital is required' }]}
+                                  rules={[{ required: true, message: t('messages.member.form.charterCapitalRequired') }]}
                                 >
                                   <TextInput
                                     placeholder="e.g. 10.000.000.000"
@@ -1759,10 +1764,10 @@ function MemberFormModalContent({
                                   name="mstNo"
                                   className={styles.formItemCompact}
                                   rules={[
-                                    { required: true, message: 'E01: Enterprise Code (MST) is required' },
+                                    { required: true, message: t('messages.member.form.mstRequired') },
                                     {
                                       pattern: /^(\d{10}|\d{10}-\d{3}|\d{13})$/,
-                                      message: 'E02: MST must be 10 or 13 digits',
+                                      message: t('messages.member.form.mstInvalid'),
                                     },
                                   ]}
                                 >
@@ -1776,7 +1781,7 @@ function MemberFormModalContent({
                                 <Form.Item
                                   name="corpIssuingAuthority"
                                   className={styles.formItemCompact}
-                                  rules={[{ required: true, message: 'E01: Issuing Authority is required' }]}
+                                  rules={[{ required: true, message: t('messages.member.form.issuingAuthorityRequired') }]}
                                 >
                                   <TextInput placeholder="Issuing Authority" />
                                 </Form.Item>
@@ -1788,7 +1793,7 @@ function MemberFormModalContent({
                                 <Form.Item
                                   name="corpIssueDate"
                                   className={styles.formItemCompact}
-                                  rules={[{ required: true, message: 'E01: Issue Date is required' }]}
+                                  rules={[{ required: true, message: t('messages.member.form.issueDateRequired') }]}
                                 >
                                   <AppDatePicker format="DD-MM-YYYY" className="w-full" />
                                 </Form.Item>
@@ -1813,7 +1818,7 @@ function MemberFormModalContent({
                                   <Form.Item
                                     name="projectCode"
                                     className={styles.formItemCompact}
-                                    rules={[{ required: true, message: 'E01: Project Code is required' }]}
+                                    rules={[{ required: true, message: t('messages.member.form.projectCodeRequired') }]}
                                   >
                                     <TextInput placeholder="Enter Project Code" />
                                   </Form.Item>
@@ -1862,7 +1867,7 @@ function MemberFormModalContent({
                                 <Form.Item
                                   name="legalRepName"
                                   className={styles.formItemCompact}
-                                  rules={[{ required: true, message: 'E01: Full Name is required' }]}
+                                  rules={[{ required: true, message: t('messages.member.form.fullNameRequired') }]}
                                 >
                                   <TextInput placeholder="Full Name" />
                                 </Form.Item>
@@ -1874,7 +1879,7 @@ function MemberFormModalContent({
                                 <Form.Item
                                   name="legalRepPosition"
                                   className={styles.formItemCompact}
-                                  rules={[{ required: true, message: 'E01: Position is required' }]}
+                                  rules={[{ required: true, message: t('messages.member.form.positionRequired') }]}
                                 >
                                   <TextInput placeholder="Position" />
                                 </Form.Item>
@@ -1902,7 +1907,7 @@ function MemberFormModalContent({
                                 <Form.Item
                                   name="legalRepIdNumber"
                                   className={styles.formItemCompact}
-                                  rules={[{ required: true, message: 'E01: ID Card Number is required' }]}
+                                  rules={[{ required: true, message: t('messages.member.form.idNumberRequired') }]}
                                 >
                                   <TextInput placeholder="ID Card Number" />
                                 </Form.Item>
@@ -1914,7 +1919,7 @@ function MemberFormModalContent({
                                 <Form.Item
                                   name="legalRepIssuingAuthority"
                                   className={styles.formItemCompact}
-                                  rules={[{ required: true, message: 'E01: Issuing Authority is required' }]}
+                                  rules={[{ required: true, message: t('messages.member.form.issuingAuthorityRequired') }]}
                                 >
                                   <TextInput placeholder="Issuing Authority" />
                                 </Form.Item>
@@ -1928,7 +1933,7 @@ function MemberFormModalContent({
                                 <Form.Item
                                   name="legalRepIssueDate"
                                   className={styles.formItemCompact}
-                                  rules={[{ required: true, message: 'E01: Issue Date is required' }]}
+                                  rules={[{ required: true, message: t('messages.member.form.issueDateRequired') }]}
                                 >
                                   <AppDatePicker format="DD-MM-YYYY" className="w-full" />
                                 </Form.Item>
@@ -1942,7 +1947,7 @@ function MemberFormModalContent({
                                     <Form.Item
                                       name="legalRepExpiryDate"
                                       className={styles.formItemCompact}
-                                      rules={[{ required: true, message: 'E01: Expiry Date is required' }]}
+                                      rules={[{ required: true, message: t('messages.member.form.expiryDateRequired') }]}
                                     >
                                       <AppDatePicker format="DD-MM-YYYY" className="w-full" />
                                     </Form.Item>
@@ -1998,7 +2003,7 @@ function MemberFormModalContent({
                                 <Form.Item
                                   name="agentName"
                                   className={styles.formItemCompact}
-                                  rules={[{ required: true, message: 'E01: Full Name is required' }]}
+                                  rules={[{ required: true, message: t('messages.member.form.fullNameRequired') }]}
                                 >
                                   <TextInput disabled={selfApplyYn === 'Y'} placeholder="Full Name" />
                                 </Form.Item>
@@ -2027,7 +2032,7 @@ function MemberFormModalContent({
                                 <Form.Item
                                   name="agentIdNumber"
                                   className={styles.formItemCompact}
-                                  rules={[{ required: true, message: 'E01: ID Card Number is required' }]}
+                                  rules={[{ required: true, message: t('messages.member.form.idNumberRequired') }]}
                                 >
                                   <TextInput disabled={selfApplyYn === 'Y'} placeholder="ID Card Number" />
                                 </Form.Item>
@@ -2039,7 +2044,7 @@ function MemberFormModalContent({
                                 <Form.Item
                                   name="agentIssuingAuthority"
                                   className={styles.formItemCompact}
-                                  rules={[{ required: true, message: 'E01: Issuing Authority is required' }]}
+                                  rules={[{ required: true, message: t('messages.member.form.issuingAuthorityRequired') }]}
                                 >
                                   <TextInput disabled={selfApplyYn === 'Y'} placeholder="Issuing Authority" />
                                 </Form.Item>
@@ -2053,7 +2058,7 @@ function MemberFormModalContent({
                                 <Form.Item
                                   name="agentIssueDate"
                                   className={styles.formItemCompact}
-                                  rules={[{ required: true, message: 'E01: Issue Date is required' }]}
+                                  rules={[{ required: true, message: t('messages.member.form.issueDateRequired') }]}
                                 >
                                   <AppDatePicker
                                     disabled={selfApplyYn === 'Y'}
@@ -2071,7 +2076,7 @@ function MemberFormModalContent({
                                     <Form.Item
                                       name="agentExpiryDate"
                                       className={styles.formItemCompact}
-                                      rules={[{ required: true, message: 'E01: Expiry Date is required' }]}
+                                      rules={[{ required: true, message: t('messages.member.form.expiryDateRequired') }]}
                                     >
                                       <AppDatePicker
                                         disabled={selfApplyYn === 'Y'}

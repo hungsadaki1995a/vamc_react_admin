@@ -1,5 +1,6 @@
 import { useMemo, useRef, useState } from 'react';
 import type { CSSProperties, Key, ReactNode } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { TableColumnsType } from 'antd';
 import AppSelect from '@/components/inputs/AppSelect';
 import Spinbox from '@/components/inputs/Spinbox';
@@ -122,6 +123,7 @@ export function CodeDetailGrid({
   onDirtyChange,
   fitWidth = true,
 }: CodeDetailGridProps) {
+  const { t } = useTranslation();
   const { toast } = useNotify();
   const { alert } = useSysDialogs();
   const keyField = columns.find((c) => c.isKey)?.field ?? columns[0].field;
@@ -176,7 +178,7 @@ export function CodeDetailGrid({
 
   const handleDeleteRow = () => {
     if (checked.length === 0) {
-      alert(SYS_MESSAGES.selectToDelete('codes'));
+      alert(SYS_MESSAGES.selectToDelete(t('messages.sys.items.codes')));
       return;
     }
     const removed = gridRows.filter((r) => checked.includes(r.rowKey));
@@ -206,9 +208,10 @@ export function CodeDetailGrid({
       if (!key) return;
       const first = seen.get(key);
       if (first !== undefined) {
-        setCell(row.rowKey, keyField, SYS_MESSAGES.duplicate('code'));
+        const dupMsg = SYS_MESSAGES.duplicate(t('messages.sys.items.code'));
+        setCell(row.rowKey, keyField, dupMsg);
         const firstRow = gridRows.find((r) => r.rowKey === first);
-        if (firstRow?.isNew) setCell(first, keyField, SYS_MESSAGES.duplicate('code'));
+        if (firstRow?.isNew) setCell(first, keyField, dupMsg);
       } else {
         seen.set(key, row.rowKey);
       }
@@ -216,7 +219,7 @@ export function CodeDetailGrid({
 
     setCellErrors(errors);
     if (hasRequired) setGridError(SYS_MESSAGES.required);
-    else if (Object.keys(errors).length > 0) setGridError(SYS_MESSAGES.duplicate('code'));
+    else if (Object.keys(errors).length > 0) setGridError(SYS_MESSAGES.duplicate(t('messages.sys.items.code')));
     else setGridError(undefined);
     return Object.keys(errors).length === 0;
   };
@@ -241,10 +244,11 @@ export function CodeDetailGrid({
     } catch (e) {
       if (isDuplicateError?.(e)) {
         // The server does not name the code: mark every added row.
+        const dupMsg = SYS_MESSAGES.duplicate(t('messages.sys.items.code'));
         const errors: CellErrors = {};
-        gridRows.filter((r) => r.isNew).forEach((r) => (errors[r.rowKey] = { [keyField]: SYS_MESSAGES.duplicate('code') }));
+        gridRows.filter((r) => r.isNew).forEach((r) => (errors[r.rowKey] = { [keyField]: dupMsg }));
         setCellErrors(errors);
-        setGridError(SYS_MESSAGES.duplicate('code'));
+        setGridError(dupMsg);
         return;
       }
       toast.error(errorMessage(e));

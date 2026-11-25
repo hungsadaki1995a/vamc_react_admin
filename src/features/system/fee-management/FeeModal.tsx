@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import LoadingSpinner from '@/components/common/loading/LoadingSpinner';
 import AppRadio from '@/components/inputs/AppRadio';
 import AppSelect from '@/components/inputs/AppSelect';
@@ -59,13 +60,6 @@ const NEW_FEE: FeeFormState = {
   description: '',
 };
 
-const FEE_MESSAGES = {
-  rateRange: 'Enter a rate greater than 0 and up to 100.',
-  positive: 'Enter an amount greater than 0.',
-  legacyNotice:
-    'This item uses the old Brokerage type, which can no longer be saved. Only Use can be changed; register it again as Purchase Brokerage or Sale Brokerage.',
-} as const;
-
 function toState(fee: Fee): FeeFormState {
   return {
     useYn: fee.useYn,
@@ -90,6 +84,7 @@ interface FeeModalProps {
 
 /** Loads the item in edit mode, then mounts the form with it. */
 export default function FeeModal({ feeId, canWrite, onClose }: FeeModalProps) {
+  const { t } = useTranslation();
   const { data: detail, isFetching, isError } = useFee(feeId);
   const isCreate = feeId === null;
 
@@ -97,7 +92,7 @@ export default function FeeModal({ feeId, canWrite, onClose }: FeeModalProps) {
     return (
       <SysFormModal width={1200} open title="Edit Fee Information" onCancel={onClose}>
         <LoadingSpinner spinning={isFetching}>
-          <div className={styles.loading}>{isError ? 'The fee item could not be loaded.' : null}</div>
+          <div className={styles.loading}>{isError ? t('messages.system.fee.loadFailed') : null}</div>
         </LoadingSpinner>
       </SysFormModal>
     );
@@ -107,6 +102,7 @@ export default function FeeModal({ feeId, canWrite, onClose }: FeeModalProps) {
 }
 
 function FeeForm({ fee, canWrite, onClose }: { fee: Fee | null; canWrite: boolean; onClose: () => void }) {
+  const { t } = useTranslation();
   const isCreate = fee === null;
   const legacy = !isCreate && isLegacyFee(fee.category);
   const { toast } = useNotify();
@@ -136,15 +132,15 @@ function FeeForm({ fee, canWrite, onClose }: { fee: Fee | null; canWrite: boolea
     if (!checkRequired(values, required)) return false;
     let valid = true;
     if (isRate && !(values.rate !== null && values.rate > 0 && values.rate <= 100)) {
-      setError('rate', FEE_MESSAGES.rateRange);
+      setError('rate', t('messages.system.fee.rateRange'));
       valid = false;
     }
     if (!isRate && !(values.fee !== null && values.fee > 0)) {
-      setError('fee', FEE_MESSAGES.positive);
+      setError('fee', t('messages.system.fee.positive'));
       valid = false;
     }
     if (isRate && values.minAmount !== null && values.minAmount <= 0) {
-      setError('minAmount', FEE_MESSAGES.positive);
+      setError('minAmount', t('messages.system.fee.positive'));
       valid = false;
     }
     return valid;
@@ -196,7 +192,7 @@ function FeeForm({ fee, canWrite, onClose }: { fee: Fee | null; canWrite: boolea
   const handleDelete = () => {
     if (!fee) return;
     confirm({
-      content: SYS_MESSAGES.confirmDelete('this fee item'),
+      content: SYS_MESSAGES.confirmDelete(t('messages.sys.items.thisFeeItem')),
       okText: SYS_DIALOG_LABELS.delete,
       danger: true,
       onOk: async () => {
@@ -231,7 +227,7 @@ function FeeForm({ fee, canWrite, onClose }: { fee: Fee | null; canWrite: boolea
           </SysButton>
         ) : undefined
       }
-      notice={legacy ? FEE_MESSAGES.legacyNotice : undefined}
+      notice={legacy ? t('messages.system.fee.legacyNotice') : undefined}
     >
       {/* Frame layout: Fee Code | Type | Order / Use | Method | Currency / Fee Amount | Minimum Amount | Item Name / Item Content */}
       <SysFieldGrid columns={3}>

@@ -1,3 +1,4 @@
+import i18n from '@/lib/i18n';
 import { apiClient } from '@/lib/api/client';
 import { apiGet, apiPut } from '@/api/common/api-utils';
 import type { ContentFileGroup } from './post-api';
@@ -57,7 +58,7 @@ export async function uploadLogoImage(file: File): Promise<string> {
   body.append('files', file);
   const { data } = await apiClient.post<{ data?: ContentFileGroup }>(`${LOGO_BASE}/images`, body);
   const fileUnqId = data.data?.fileUnqId;
-  if (!fileUnqId) throw new Error('Upload did not return an image id.');
+  if (!fileUnqId) throw new Error(i18n.t('messages.api.uploadNoImageId'));
   return fileUnqId;
 }
 

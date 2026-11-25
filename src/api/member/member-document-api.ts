@@ -1,3 +1,4 @@
+import i18n from '@/lib/i18n';
 import { apiClient } from '@/lib/api/client';
 
 // Staff upload of a member's ID documents (paper sign-up, VPA030100P01).
@@ -38,7 +39,7 @@ const BASE = '/api/v1/member-document-sessions';
 
 export async function openMemberDocumentSession(mbrTypeCd: MemberDocumentType): Promise<MemberDocumentSession> {
   const { data } = await apiClient.post<{ data?: MemberDocumentSession }>(BASE, { mbrTypeCd });
-  if (!data.data) throw new Error('The upload session was not opened.');
+  if (!data.data) throw new Error(i18n.t('messages.api.uploadSessionNotOpened'));
   return data.data;
 }
 
@@ -53,7 +54,7 @@ export async function uploadMemberDocument(
   const { data } = await apiClient.post<{ data?: MemberDocumentUpload }>(`${BASE}/${sessionId}/files`, body, {
     params: { slot },
   });
-  if (!data.data) throw new Error('The upload did not return a file.');
+  if (!data.data) throw new Error(i18n.t('messages.api.uploadNoFile'));
   return data.data;
 }
 

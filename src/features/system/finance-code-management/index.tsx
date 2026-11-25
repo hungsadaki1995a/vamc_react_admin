@@ -1,4 +1,5 @@
 import { useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { TableColumnsType } from 'antd';
 import TextInput from '@/components/inputs/TextInput';
 import { useMenuPermission } from '@/hooks/use-menu-permission';
@@ -46,6 +47,7 @@ const isDuplicateBranch = (e: unknown) =>
 const text = (value: GridRecord[string]) => (typeof value === 'string' && value !== '' ? value : undefined);
 
 export default function FinanceCodeManagement() {
+  const { t } = useTranslation();
   const { canWrite } = useMenuPermission();
   const { guardDiscard } = useSysDialogs();
   const list = usePagedList<InstitutionSearch>(INITIAL_FILTER);
@@ -223,7 +225,7 @@ export default function FinanceCodeManagement() {
               key={`${selected?.fnstCd ?? ''}-${branchesQuery.dataUpdatedAt}`}
               title={current ? `Branch Codes in [${current.fnstNm}]` : 'Branch Codes'}
               disabled={!selected}
-              emptyText="Select a financial institution."
+              emptyText={t('messages.system.financeCode.emptyDetail')}
               canWrite={canWrite}
               loading={branchesQuery.isFetching}
               columns={branchColumns}

@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react';
 import type { DragEvent } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   DeleteOutlined,
   DownloadOutlined,
@@ -61,6 +62,7 @@ interface AttachmentSectionProps {
  * one row per file with [delete] and [download] icons (E03 / E04 below the area).
  */
 export function AttachmentSection({ board, fileUnqId, files, disabled, onChange }: AttachmentSectionProps) {
+  const { t } = useTranslation();
   const { toast } = useNotify();
   const input = useRef<HTMLInputElement>(null);
   const [dragging, setDragging] = useState(false);
@@ -75,11 +77,11 @@ export function AttachmentSection({ board, fileUnqId, files, disabled, onChange 
     if (picked.length === 0 || locked) return;
     // Checked in the design order: extension > size > count.
     if (picked.some((f) => !ALLOWED_EXTENSIONS.includes(extensionOf(f.name)) || f.size > MAX_FILE_BYTES)) {
-      setError(`Only ${ALLOWED_EXTENSIONS.join(', ')} files of 10MB or less can be uploaded.`);
+      setError(t('messages.content.post.invalidFiles', { extensions: ALLOWED_EXTENSIONS.join(', ') }));
       return;
     }
     if (files.length + picked.length > MAX_FILES) {
-      setError(`You can upload up to ${MAX_FILES} files.`);
+      setError(t('messages.content.post.maxFiles', { max: MAX_FILES }));
       return;
     }
     setError(undefined);
@@ -149,7 +151,7 @@ export function AttachmentSection({ board, fileUnqId, files, disabled, onChange 
         {files.length === 0 ? (
           <div className={postStyles.dropGuide}>
             <FileAddFilled className={postStyles.dropIcon} />
-            <span>Add files with the Upload File button or by dragging with the mouse.</span>
+            <span>{t('messages.content.post.dropGuide')}</span>
           </div>
         ) : (
           <ul className={postStyles.fileList}>
@@ -204,6 +206,7 @@ interface ThumbnailFieldProps {
 
 /** Design thumbnail row: read-only file name + [Upload File] and the 16:9 guide text (png / jpg / jpeg, 10MB). */
 export function ThumbnailField({ board, upload, fileUnqId, disabled, onChange }: ThumbnailFieldProps) {
+  const { t } = useTranslation();
   const { toast } = useNotify();
   const input = useRef<HTMLInputElement>(null);
   const [error, setError] = useState<string>();
@@ -214,7 +217,7 @@ export function ThumbnailField({ board, upload, fileUnqId, disabled, onChange }:
   const handlePick = async (file?: File) => {
     if (!file) return;
     if (!IMAGE_EXTENSIONS.includes(extensionOf(file.name)) || file.size > MAX_FILE_BYTES) {
-      setError(`Only ${IMAGE_EXTENSIONS.join(', ')} files of 10MB or less can be uploaded.`);
+      setError(t('messages.content.post.invalidFiles', { extensions: IMAGE_EXTENSIONS.join(', ') }));
       return;
     }
     setError(undefined);
@@ -246,7 +249,7 @@ export function ThumbnailField({ board, upload, fileUnqId, disabled, onChange }:
         <div className={postStyles.thumbnailError}>{error}</div>
       ) : (
         <div className={postStyles.thumbnailHint}>
-          Recommended ratio 16:9 (e.g. 1200 × 675px); a different ratio may be cropped on the user screen.
+          {t('messages.content.post.thumbnailHint')}
         </div>
       )}
     </div>
@@ -263,6 +266,7 @@ interface ImageFieldProps {
 
 /** "Attach image" row with a preview (thumbnail, portrait, logo, banner image). */
 export function ImageField({ upload, fileUnqId, disabled, onChange }: ImageFieldProps) {
+  const { t } = useTranslation();
   const { toast } = useNotify();
   const input = useRef<HTMLInputElement>(null);
   const uploadImage = useImageUpload(upload);
@@ -298,7 +302,7 @@ export function ImageField({ upload, fileUnqId, disabled, onChange }: ImageField
             <DeleteOutlined /> Remove
           </a>
         )}
-        {!fileUnqId && <span className={styles.textMuted}>No image</span>}
+        {!fileUnqId && <span className={styles.textMuted}>{t('messages.content.post.noImage')}</span>}
       </div>
       {preview && <img src={preview} alt="" className={styles.imagePreview} />}
     </div>

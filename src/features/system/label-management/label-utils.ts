@@ -3,22 +3,6 @@ import type { LabelDetail, LabelKey } from '@/api/system/label-management-api';
 
 // Label key rules and messages of i18n Label Management (VPA09040301 / VPA090403P01).
 
-export const LABEL_MESSAGES = {
-  duplicate: 'This label key is already registered.',
-  variableMismatch: 'Variables (%1, %2) do not match Tiếng Việt.',
-  confirmDelete: 'If a label in use is deleted, the label key will be shown on user screens. Delete?',
-  // Design: "Apply the edited labels to user screens now?" — the API only clears the admin caches.
-  confirmRefreshCache:
-    'Apply the edited labels to admin screens now? User screens pick them up when their own cache expires.',
-  cacheRefreshed: 'Label cache refreshed.',
-  menuScreenReserved: 'Menu labels are managed in Menu Settings.',
-  invalidScreenId: 'Use letters, numbers and _ only.',
-  invalidLabelCode: 'Use letters, numbers, _ . - only.',
-  keyTooLong: 'The label key must be 100 characters or less.',
-  screenNotRegistered: 'This Screen ID is not registered in Screen Management.',
-  uploadDone: (rows: number) => `Excel uploaded (${rows.toLocaleString('en-US')} rows checked).`,
-  uploadFailed: 'Nothing was saved. Fix the rows below and upload again.',
-} as const;
 
 export const SCREEN_ID_PATTERN = /^[A-Za-z0-9_]+$/;
 export const LABEL_CODE_PATTERN = /^[A-Za-z0-9_.-]+$/;

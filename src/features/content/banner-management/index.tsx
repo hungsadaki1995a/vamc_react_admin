@@ -1,11 +1,12 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { TableColumnsType } from 'antd';
 import { useMenuPermission } from '@/hooks/use-menu-permission';
 import type { Banner } from '@/api/contents/banner-api';
 import { DateTimeText, SysButton, SysPage, SysTable, SysTitleBar } from '@/components/common/sys-ui/SysListUi';
 import BannerModal from './BannerModal';
 import BannerThumb from './BannerThumb';
-import { BANNER_HOME_POSITION, BANNER_LIST_SIZE, BANNER_MAX, BANNER_MESSAGES } from './banner-constants';
+import { BANNER_HOME_POSITION, BANNER_LIST_SIZE, BANNER_MAX } from './banner-constants';
 import { useBanners } from './use-banners';
 import styles from './banner-management.module.scss';
 
@@ -63,6 +64,7 @@ const columns: TableColumnsType<Banner> = [
 ];
 
 export default function BannerManagement() {
+  const { t } = useTranslation();
   const { canWrite } = useMenuPermission();
   const { data, isFetching, error } = useBanners(HOME_SEARCH, 1, BANNER_LIST_SIZE);
   const [modal, setModal] = useState<ModalState>(null);
@@ -71,7 +73,7 @@ export default function BannerManagement() {
   const total = data?.totalElements ?? 0;
 
   return (
-    <SysPage fill>
+    <SysPage>
       <SysTitleBar title="Banner Management" breadcrumb={['Content Management', 'Site Display Management', 'Banner Management']} />
       <div className={styles.sectionHeader}>
         <div className={styles.sectionTitle}>
@@ -89,12 +91,12 @@ export default function BannerManagement() {
       </div>
       <SysTable<Banner>
         rowKey="bannerId"
-        fill
+        className={banners.length === 0 ? styles.emptyTable : undefined}
         tableLayout="fixed"
         columns={columns}
         dataSource={banners}
         loading={isFetching}
-        locale={{ emptyText: BANNER_MESSAGES.empty }}
+        locale={{ emptyText: t('messages.content.banner.empty') }}
         onRowClick={(banner) => setModal({ banner })}
       />
       {modal && (

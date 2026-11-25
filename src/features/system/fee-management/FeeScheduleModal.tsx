@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Upload } from 'antd';
 import type { UploadFile } from 'antd';
 import type { Dayjs } from 'dayjs';
@@ -22,11 +23,8 @@ interface FeeScheduleState {
   files: UploadFile[];
 }
 
-const NOT_AVAILABLE = (
-  <SysNotAvailable>Saving the fee schedule waits for a schema change (Basis and fee schedule storage).</SysNotAvailable>
-);
-
 export default function FeeScheduleModal({ canWrite, onClose }: { canWrite: boolean; onClose: () => void }) {
+  const { t } = useTranslation();
   const [values, setValues] = useState<FeeScheduleState>({ effectiveDate: null, basis: '', notes: '', files: [] });
   const patch = (value: Partial<FeeScheduleState>) => setValues((prev) => ({ ...prev, ...value }));
 
@@ -39,7 +37,7 @@ export default function FeeScheduleModal({ canWrite, onClose }: { canWrite: bool
       onSubmit={canWrite ? () => undefined : undefined}
       submitDisabled={!FEE_SCHEDULE_API_AVAILABLE}
       onCancel={onClose}
-      notice={FEE_SCHEDULE_API_AVAILABLE ? undefined : NOT_AVAILABLE}
+      notice={FEE_SCHEDULE_API_AVAILABLE ? undefined : <SysNotAvailable>{t('messages.system.fee.scheduleNotAvailable')}</SysNotAvailable>}
       width={700}
     >
       <SysFieldGrid columns={1}>
@@ -64,7 +62,7 @@ export default function FeeScheduleModal({ canWrite, onClose }: { canWrite: bool
           <TextArea rows={8} value={values.notes} maxLength={1000} onChange={(e) => patch({ notes: e.target.value })} />
         </SysField>
         {/* In the spec text (pdf, optional) but not drawn in the frame. */}
-        <SysField label="Fee Schedule File" hint="PDF only.">
+        <SysField label="Fee Schedule File" hint={t('messages.system.fee.scheduleFileHint')}>
           <Upload
             className={styles.upload}
             accept=".pdf,application/pdf"

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { TableColumnsType } from 'antd';
 import { apiDownload } from '@/api/common/api-utils';
 import type { PostSearchRequest } from '@/api/contents/faq-api';
@@ -37,13 +38,6 @@ const PUBLISH_OPTIONS = [
   { value: 'Y', label: 'Published' },
   { value: 'N', label: 'Unpublished' },
 ];
-
-const MESSAGES = {
-  /** I01 */
-  noPosts: 'There are no posts.',
-  /** I02 */
-  noResults: 'No search results found.',
-} as const;
 
 interface FaqFilter {
   published: string;
@@ -154,6 +148,7 @@ const COLUMNS: TableColumnsType<FaqItem> = [
 type ModalState = { mode: 'create' } | { mode: 'detail'; faq: FaqItem } | null;
 
 export default function FaqManagement() {
+  const { t } = useTranslation();
   const list = usePagedList<FaqFilter>(INITIAL_FILTER, { pageSize: PAGE_SIZE });
   const categories = useFaqCategories();
   const categoryOptions = [{ value: ALL, label: 'All' }, ...categories];
@@ -233,7 +228,7 @@ export default function FaqManagement() {
         onRowClick={(faq) => setModal({ mode: 'detail', faq })}
         sort={list.sort}
         onSortChange={list.setSort}
-        locale={{ emptyText: filtered ? MESSAGES.noResults : MESSAGES.noPosts }}
+        locale={{ emptyText: filtered ? t('messages.content.faq.noResults') : t('messages.content.faq.noPosts') }}
       />
       <SysPager page={list.page} pageSize={PAGE_SIZE} total={total} onChange={list.setPage} />
       <FaqDetailModal

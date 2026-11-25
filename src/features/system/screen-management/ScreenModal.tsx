@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import AppRadio from '@/components/inputs/AppRadio';
 import AppSelect from '@/components/inputs/AppSelect';
 import TextInput from '@/components/inputs/TextInput';
@@ -11,7 +12,7 @@ import { SYS_DIALOG_LABELS, SYS_MESSAGES } from '@/config/sys-messages';
 import { useFieldErrors } from '@/hooks/use-field-errors';
 import { useSysDialogs } from '@/hooks/use-sys-dialogs';
 import { apiErrorCode, errorMessage } from '@/utils/system-utils';
-import { POPUP_OPTIONS, SCREEN_MESSAGES, SCREEN_TYPE_OPTIONS } from './screen-constants';
+import { POPUP_OPTIONS, SCREEN_TYPE_OPTIONS } from './screen-constants';
 import { useBusinessOptions, useCreateScreen, useDeleteScreen, useUpdateScreen } from './use-screens';
 import styles from './screen-management.module.scss';
 
@@ -27,6 +28,7 @@ interface ScreenModalProps {
 }
 
 export function ScreenModal({ item, canWrite, onClose }: ScreenModalProps) {
+  const { t } = useTranslation();
   const isCreate = item === null;
   const { toast } = useNotify();
   const { confirm } = useSysDialogs();
@@ -82,9 +84,9 @@ export function ScreenModal({ item, canWrite, onClose }: ScreenModalProps) {
       onClose();
     } catch (e) {
       const handled = applyApiError(e, {
-        SYS409: ['scrnId', SYS_MESSAGES.duplicate('Screen ID')],
-        SCR001: ['menuCd', SCREEN_MESSAGES.businessInvalid],
-        SCR002: ['lblCd', SCREEN_MESSAGES.labelKeyNotFound],
+        SYS409: ['scrnId', SYS_MESSAGES.duplicate(t('messages.sys.items.screenId'))],
+        SCR001: ['menuCd', t('messages.system.screen.businessInvalid')],
+        SCR002: ['lblCd', t('messages.system.screen.labelKeyNotFound')],
       });
       if (!handled) toast.error(errorMessage(e));
     }
@@ -93,7 +95,7 @@ export function ScreenModal({ item, canWrite, onClose }: ScreenModalProps) {
   const handleDelete = () => {
     if (!item) return;
     confirm({
-      content: SYS_MESSAGES.confirmDelete('this screen'),
+      content: SYS_MESSAGES.confirmDelete(t('messages.sys.items.thisScreen')),
       okText: SYS_DIALOG_LABELS.delete,
       danger: true,
       onOk: async () => {
@@ -102,7 +104,7 @@ export function ScreenModal({ item, canWrite, onClose }: ScreenModalProps) {
           toast.success(SYS_MESSAGES.deleted);
           onClose();
         } catch (e) {
-          toast.error(apiErrorCode(e) === 'SYS409' ? SCREEN_MESSAGES.hasLabels : errorMessage(e));
+          toast.error(apiErrorCode(e) === 'SYS409' ? t('messages.system.screen.hasLabels') : errorMessage(e));
         }
       },
     });

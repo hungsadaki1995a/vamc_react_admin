@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { PaperClipOutlined } from '@ant-design/icons';
 import ActionButton from '@/components/common/actions/ActionButton';
 import AppTooltip from '@/components/common/tooltip/AppTooltip';
@@ -224,6 +225,7 @@ export default function MemberDetailModal({
   onStatusChange,
   onEdit,
 }: MemberDetailModalProps) {
+  const { t } = useTranslation();
   const { toast } = useNotify();
 
   // Sub-modals state
@@ -332,22 +334,23 @@ export default function MemberDetailModal({
 
   const handlePreviewFile = (file: MemberAttachmentDto) => {
     const url = file.previewUrl || file.downloadUrl;
+    const fileName = file.fileNm || t('messages.member.detail.defaultFileName');
     if (url) {
       // The attachment API needs the bearer token: a plain window.open(url) is answered 401
-      openAttachment(url, { onError: () => toast.error(`Failed to open ${file.fileNm || 'file'}.`) });
+      openAttachment(url, { onError: () => toast.error(t('messages.member.detail.openFileFailed', { fileName })) });
     } else {
-      toast.info(`Preview unavailable for ${file.fileNm || 'file'}`);
+      toast.info(t('messages.member.detail.previewUnavailable', { fileName }));
     }
   };
 
   const handleUnlock = () => {
     unlockMember(mbrNo, {
       onSuccess: () => {
-        toast.success('Account unlocked and changed to Active.');
+        toast.success(t('messages.member.detail.unlocked'));
         onStatusChange?.(member.id, 'Active');
       },
       onError: () => {
-        toast.error('Failed to unlock account.');
+        toast.error(t('messages.member.detail.unlockFailed'));
       },
     });
   };
@@ -355,10 +358,10 @@ export default function MemberDetailModal({
   const handleResendTempPassword = () => {
     resendPassword(mbrNo, {
       onSuccess: () => {
-        toast.success('A new temporary password has been sent.');
+        toast.success(t('messages.member.detail.tempPasswordSent'));
       },
       onError: () => {
-        toast.error('Cannot resend temporary password (member may have already set a password).');
+        toast.error(t('messages.member.detail.tempPasswordFailed'));
       },
     });
   };
@@ -371,16 +374,16 @@ export default function MemberDetailModal({
 
   const handleSubmitDelete = async () => {
     if (!deleteReason.trim()) {
-      toast.error('Please enter a deletion reason.');
+      toast.error(t('messages.member.detail.deleteReasonRequired'));
       return;
     }
     if (!deleteApprover) {
-      toast.error('Please select an approver.');
+      toast.error(t('messages.member.detail.approverRequired'));
       return;
     }
     try {
       await deletion.mutateAsync({ mbrNo, reason: deleteReason.trim(), approverEmpNo: deleteApprover });
-      toast.success('The deletion request was sent to the approver.');
+      toast.success(t('messages.member.detail.deletionRequested'));
       setDeleteModalOpen(false);
     } catch (error) {
       // MBR017 / MBR018 / E09 / request pending (409), MBR014 (not the officer in charge): the server says which
@@ -395,12 +398,12 @@ export default function MemberDetailModal({
 
   const handleSubmitRestore = async () => {
     if (!restoreApprover) {
-      toast.error('Please select an approver.');
+      toast.error(t('messages.member.detail.approverRequired'));
       return;
     }
     try {
       await restoration.mutateAsync({ mbrNo, approverEmpNo: restoreApprover });
-      toast.success('The restoration request was sent to the approver.');
+      toast.success(t('messages.member.detail.restorationRequested'));
       setRestoreModalOpen(false);
     } catch (error) {
       // Past one year, request already open, contact or Login ID (MBR019) reused, MBR014: the server says which
@@ -417,9 +420,9 @@ export default function MemberDetailModal({
   const deleteBlockedReason = deletable
     ? undefined
     : !apiDetail
-      ? 'Loading member details'
+      ? t('messages.member.detail.loadingDetails')
       : (apiDetail.deletionBlockCd && DELETION_BLOCK_REASONS[apiDetail.deletionBlockCd]) ||
-        'This member cannot be deleted';
+        t('messages.member.detail.cannotDelete');
 
   /** Returns true once decided; the popup then closes so the refreshed list shows the new status. */
   const handleDecide = async (
@@ -430,7 +433,7 @@ export default function MemberDetailModal({
   ): Promise<boolean> => {
     if (!request.atrzHstryId) return false;
     if (!approve && !text) {
-      toast.error('Please enter the rejection reason.');
+      toast.error(t('messages.member.detail.rejectionReasonRequired'));
       return false;
     }
     try {
@@ -470,8 +473,8 @@ export default function MemberDetailModal({
             {isDeleted && restoreState !== 'restorable' && (
               <span className={styles.restoreHint}>
                 {restoreState === 'pending'
-                  ? 'A restoration request is waiting for approval.'
-                  : 'More than one year has passed since the deletion: the member can no longer be restored.'}
+                  ? t('messages.member.detail.restorePendingHint')
+                  : t('messages.member.detail.restoreExpiredHint')}
               </span>
             )}
           </div>
@@ -485,8 +488,8 @@ export default function MemberDetailModal({
               deciding={decideRequest.isPending}
               onDecide={(approve, text) =>
                 handleDecide(pendingRestoration, approve, text, {
-                  approved: 'The member was restored.',
-                  rejected: 'The restoration request was rejected.',
+                  approved: t('messages.member.detail.memberRestored'),
+                  rejected: t('messages.member.detail.restorationRejected'),
                 })
               }
             />
@@ -501,8 +504,8 @@ export default function MemberDetailModal({
               deciding={decideRequest.isPending}
               onDecide={(approve, text) =>
                 handleDecide(deletionRequest, approve, text, {
-                  approved: 'The member was deleted.',
-                  rejected: 'The deletion request was rejected.',
+                  approved: t('messages.member.detail.memberDeleted'),
+                  rejected: t('messages.member.detail.deletionRejected'),
                 })
               }
             />
@@ -1039,8 +1042,7 @@ export default function MemberDetailModal({
             />
           </div>
           <div className={styles.deleteNotice}>
-            Once the approver approves, the member is deleted and can no longer log in. Within one year it can be
-            restored through an approver; after that it cannot be restored. The data is kept for reporting.
+            {t('messages.member.detail.deleteNotice')}
           </div>
         </div>
       </Popup>
@@ -1057,8 +1059,9 @@ export default function MemberDetailModal({
       >
         <div className="flex flex-col gap-3">
           <div className={styles.deleteNotice}>
-            Once approved, the member account returns to the previous status and the member can log in again.
-            Restorable until {formatDateHyphen(apiDetail?.deletion?.rtnEndDt || member.retentionEndDate)}.
+            {t('messages.member.detail.restoreNotice', {
+              date: formatDateHyphen(apiDetail?.deletion?.rtnEndDt || member.retentionEndDate),
+            })}
           </div>
           <div>
             <div className="mb-1 font-medium">Approver *</div>

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Alert } from 'antd';
 import type { TableColumnsType } from 'antd';
 import type { Dayjs } from 'dayjs';
@@ -54,12 +55,6 @@ const SEARCH_TYPE_OPTIONS: { value: NotiHistorySearchType; label: string }[] = [
   { value: 'TITLE', label: 'Title' },
   { value: 'RECIPIENT', label: 'Recipient' },
 ];
-
-const MESSAGES = {
-  periodRequired: 'Please select the send period.',
-  periodRange: `The send period can span at most ${NOTI_HISTORY_MAX_DAYS} days.`,
-  recipientUnavailable: 'Recipient search is not configured on the server.',
-} as const;
 
 function initialFilter(): HistoryFilter {
   return { period: lastDaysRange(7), searchType: 'TITLE', keyword: '' };
@@ -143,6 +138,7 @@ function buildColumns(page: number, total: number, sort?: SortState): TableColum
 }
 
 export default function NotificationHistoryManagement() {
+  const { t } = useTranslation();
   const { alert } = useSysDialogs();
   const list = usePagedList<HistoryFilter>(initialFilter);
   // The period picker may be cleared while editing; the applied filter always has both dates.
@@ -156,11 +152,11 @@ export default function NotificationHistoryManagement() {
   const handleSearch = () => {
     const [from, to] = draftPeriod ?? [null, null];
     if (!from || !to) {
-      alert(MESSAGES.periodRequired);
+      alert(t('messages.system.notificationHistory.periodRequired'));
       return;
     }
     if (to.diff(from, 'day') > NOTI_HISTORY_MAX_DAYS) {
-      alert(MESSAGES.periodRange);
+      alert(t('messages.system.notificationHistory.periodRange', { days: NOTI_HISTORY_MAX_DAYS }));
       return;
     }
     list.search({ period: [from, to] });
@@ -210,8 +206,10 @@ export default function NotificationHistoryManagement() {
         </SysFilterItem>
       </SysFilterPanel>
       <SysSearchActions onReset={handleReset} onSearch={handleSearch} loading={isFetching} />
-      {periodError && <Alert type="error" showIcon title={MESSAGES.periodRange} />}
-      {recipientError && <Alert type="error" showIcon title={MESSAGES.recipientUnavailable} />}
+      {periodError && (
+        <Alert type="error" showIcon title={t('messages.system.notificationHistory.periodRange', { days: NOTI_HISTORY_MAX_DAYS })} />
+      )}
+      {recipientError && <Alert type="error" showIcon title={t('messages.system.notificationHistory.recipientUnavailable')} />}
       <SysSectionHeader
         total={total}
         actions={<SysExcelButton onClick={() => excel.mutate(search)} loading={excel.isPending} />}

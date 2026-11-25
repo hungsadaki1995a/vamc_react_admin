@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { useTabContext } from '@/contexts/tab-context';
 import styles from './screen-pending.module.scss';
 
@@ -7,13 +8,15 @@ import styles from './screen-pending.module.scss';
  * Replace the menu's entry in `menu-component-fallback.ts` once the real screen exists.
  */
 export default function ScreenPending() {
+  const { t } = useTranslation();
   const tab = useTabContext()?.tab;
   return (
     <div className={styles.wrapper}>
-      <p className={styles.title}>This screen is not available yet</p>
+      <p className={styles.title}>{t('messages.system.screenPending.title')}</p>
       <p className={styles.description}>
-        {tab?.title ? `"${tab.title}" ` : 'This menu '}
-        has no screen in this version. Contact the system administrator if you need this function.
+        {tab?.title
+          ? t('messages.system.screenPending.descriptionWithTitle', { title: tab.title })
+          : t('messages.system.screenPending.descriptionDefault')}
       </p>
     </div>
   );

@@ -3,7 +3,9 @@
     "signOut": "Sign Out",
     "settings": "Settings",
     "collapseMenu": "Collapse menu",
-    "expandMenu": "Expand menu"
+    "expandMenu": "Expand menu",
+    "selectMenu": "Please select a menu",
+    "componentNotFound": "Component not found: {{key}}"
   },
   "auth": {
     "login": {
@@ -88,6 +90,454 @@
       "passwordMismatch": "The passwords do not match",
       "changePassword": "Change Password",
       "resetSuccessMsg": "Your password has been changed. Please log in with your new password."
+    },
+    "initialPassword": {
+      "subtitle": "This is your first login. Please change your password to continue.",
+      "newPasswordRequired": "Please enter a new password.",
+      "newPasswordRule": "8–20 characters including letters, numbers, and special characters ($@!%*#?&).",
+      "confirmPasswordRequired": "Please confirm your new password.",
+      "passwordMismatch": "Passwords do not match."
+    }
+  },
+  "messages": {
+    "sys": {
+      "required": "Please fill in the required fields.",
+      "fieldRequired": "{{label}} is required.",
+      "duplicate": "This {{item}} is already registered.",
+      "discardLeave": "Unsaved changes will be lost. Leave?",
+      "discardRefresh": "Unsaved changes will be lost. Refresh?",
+      "confirmDelete": "Delete {{target}}?",
+      "confirmDeleteCount": "Delete {{count}} selected items?",
+      "selectToDelete": "Please select {{item}} to delete.",
+      "saved": "Saved.",
+      "registered": "Registered.",
+      "updated": "Updated.",
+      "deleted": "Deleted.",
+      "notAvailableYet": "Not available yet",
+      "items": {
+        "codes": "codes",
+        "code": "code",
+        "formNo": "form no.",
+        "programCode": "program code",
+        "screenId": "Screen ID",
+        "id": "ID",
+        "employeeNo": "Employee No.",
+        "email": "Email",
+        "mobileNumber": "Mobile Number",
+        "menuCode": "menu code",
+        "thisFeeItem": "this fee item",
+        "thisScreen": "this screen",
+        "thisUser": "this user"
+      }
+    },
+    "dialog": {
+      "confirm": "Confirm",
+      "close": "Close",
+      "cancel": "Cancel",
+      "save": "Save",
+      "leave": "Leave",
+      "refresh": "Refresh",
+      "delete": "Delete",
+      "apply": "Apply",
+      "run": "Run",
+      "rerun": "Rerun",
+      "send": "Send",
+      "sync": "Sync",
+      "ok": "OK",
+      "deactivate": "Deactivate",
+      "reset": "Reset"
+    },
+    "api": {
+      "requestFailed": "The request could not be processed.",
+      "processFailed": "Failed to process request.",
+      "loadFailed": "Failed to load data.",
+      "loadCodesFailed": "Failed to load codes",
+      "uploadNoImageId": "Upload did not return an image id.",
+      "uploadNoFileGroup": "Upload did not return a file group.",
+      "uploadSessionNotOpened": "The upload session was not opened.",
+      "uploadNoFile": "The upload did not return a file.",
+      "http400": "Bad request.",
+      "http401": "Authentication is required.",
+      "http403": "You do not have permission to access this resource.",
+      "http404": "The requested resource was not found.",
+      "http408": "The request timed out.",
+      "http422": "Please check your input data.",
+      "http429": "Too many requests. Please try again later.",
+      "http500": "A server error occurred. Please try again later.",
+      "http502": "Unable to connect to the server.",
+      "http503": "The service is temporarily unavailable.",
+      "unknown": "An unknown error occurred."
+    },
+    "content": {
+      "banner": {
+        "empty": "There are no registered banners.",
+        "invalidImage": "Only JPG, PNG files of 10MB or less can be uploaded.",
+        "confirmDelete": "Are you sure you want to delete?",
+        "imageHint": "JPG, PNG, max 10MB, recommended 1920 × 540px. It may be cropped from the center on mobile.",
+        "titleMax": "Banner Title must be {{max}} characters or less.",
+        "orderInt": "Display Order must be a whole number.",
+        "orderMin": "Display Order must be at least 1.",
+        "orderMax": "Display Order must be at most {{max}}.",
+        "noImageAttached": "No image attached.",
+        "fieldTitle": "Banner Title",
+        "fieldImage": "Banner Image",
+        "fieldOrder": "Display Order"
+      },
+      "logo": {
+        "required": "Logo File is required.",
+        "invalidImage": "Only PNG, SVG files of 2MB or less can be uploaded.",
+        "loadFailed": "The logo could not be loaded."
+      },
+      "slogan": {
+        "loadFailed": "The slogan could not be loaded."
+      },
+      "overview": {
+        "loadFailed": "The overview could not be loaded.",
+        "bodyVnRequired": "Body (VN) is required."
+      },
+      "orgChart": {
+        "loadFailed": "The organization chart could not be loaded.",
+        "invalidImage": "Only PNG, JPG, JPEG files of 10MB or less can be uploaded.",
+        "imageVnRequired": "Organization Chart Image (VN) is required.",
+        "bodyVnRequired": "Body (VN) is required."
+      },
+      "history": {
+        "loadFailed": "The history item could not be loaded.",
+        "yearRequired": "Year is required.",
+        "periodVnRequired": "Period Label (VN) is required.",
+        "contentVnRequired": "Content (VN) is required.",
+        "yearFormat": "Enter the year as 4 digits.",
+        "confirmDelete": "Are you sure you want to delete?"
+      },
+      "directions": {
+        "loadFailed": "The directions could not be loaded.",
+        "mapLocationRequired": "Map Location is required.",
+        "emailInvalid": "Please enter a valid email."
+      },
+      "post": {
+        "periodBoth": "Please set both the start date and end date.",
+        "noResults": "No search results found.",
+        "noPosts": "There are no posts.",
+        "tagFormat": "{{label}} must be uppercase letters, digits or \"_\" (2–50 characters).",
+        "englishDropped": "English content will not be saved. Do you want to save?",
+        "confirmDelete": "Are you sure you want to delete?",
+        "contentLockedNotice": "※ Content can be edited after the post is set to Unpublished.",
+        "invalidFiles": "Only {{extensions}} files of 10MB or less can be uploaded.",
+        "maxFiles": "You can upload up to {{max}} files.",
+        "dropGuide": "Add files with the Upload File button or by dragging with the mouse.",
+        "thumbnailHint": "Recommended ratio 16:9 (e.g. 1200 × 675px); a different ratio may be cropped on the user screen.",
+        "noImage": "No image",
+        "fields": {
+          "group": "Group",
+          "field": "Field",
+          "issuingAgency": "Issuing Agency",
+          "docNumber": "Number/Symbol",
+          "issueDate": "Issue Date",
+          "pinOrder": "Pin to Top Order",
+          "documentName": "Document Name",
+          "title": "Title",
+          "content": "Content",
+          "titleEn": "Title (EN)",
+          "contentEn": "Content (EN)"
+        }
+      },
+      "faq": {
+        "confirmDelete": "Are you sure you want to delete?",
+        "englishDropped": "English content will not be saved. Do you want to save?",
+        "registered": "The FAQ has been registered.",
+        "updated": "The FAQ has been updated.",
+        "deleted": "The FAQ has been deleted.",
+        "noPosts": "There are no posts.",
+        "noResults": "No search results found.",
+        "fields": {
+          "category": "Category",
+          "question": "Question",
+          "answer": "Answer",
+          "questionEn": "Question (EN)",
+          "answerEn": "Answer (EN)"
+        }
+      },
+      "inquiry": {
+        "periodBoth": "Please set both the start date and end date.",
+        "noPosts": "There are no posts.",
+        "noResults": "No search results found.",
+        "answerRequired": "Answer is required.",
+        "answered": "The answer has been sent."
+      }
+    },
+    "member": {
+      "list": {
+        "invalidDateRange": "Start date cannot be later than end date. (E07)",
+        "exported": "Exported {{fileName}}",
+        "exportFailed": "Failed to export Excel file",
+        "empty": "No members found.",
+        "fetchFailed": "Failed to fetch members"
+      },
+      "approval": {
+        "title": "Member Sign-up",
+        "loadFailed": "The sign-up information could not be loaded.",
+        "viewOnly": "No action is open to you at this step.",
+        "noPermission": "You do not have write permission on this menu.",
+        "receiveHint": "You will check the original documents and assign the officer in charge after receiving.",
+        "assignHint": "The documents are complete. Assign the officer in charge who registers the SGDN member code.",
+        "legacyHint": "This application was received before the approval step was removed and still waits for its approver.",
+        "sgdnFormat": "Enter 1 to 10 characters: letters, digits, . _ / -",
+        "received": "The application was received.",
+        "documentsComplete": "The documents were marked complete.",
+        "supplementRequested": "The supplement request was sent to the applicant.",
+        "assigned": "The officer in charge was assigned.",
+        "completed": "The member sign-up was completed.",
+        "approved": "The application was approved."
+      },
+      "detail": {
+        "openFileFailed": "Failed to open {{fileName}}.",
+        "previewUnavailable": "Preview unavailable for {{fileName}}",
+        "defaultFileName": "file",
+        "unlocked": "Account unlocked and changed to Active.",
+        "unlockFailed": "Failed to unlock account.",
+        "tempPasswordSent": "A new temporary password has been sent.",
+        "tempPasswordFailed": "Cannot resend temporary password (member may have already set a password).",
+        "deleteReasonRequired": "Please enter a deletion reason.",
+        "approverRequired": "Please select an approver.",
+        "deletionRequested": "The deletion request was sent to the approver.",
+        "restorationRequested": "The restoration request was sent to the approver.",
+        "loadingDetails": "Loading member details",
+        "cannotDelete": "This member cannot be deleted",
+        "rejectionReasonRequired": "Please enter the rejection reason.",
+        "restorePendingHint": "A restoration request is waiting for approval.",
+        "restoreExpiredHint": "More than one year has passed since the deletion: the member can no longer be restored.",
+        "memberRestored": "The member was restored.",
+        "restorationRejected": "The restoration request was rejected.",
+        "memberDeleted": "The member was deleted.",
+        "deletionRejected": "The deletion request was rejected.",
+        "deleteNotice": "Once the approver approves, the member is deleted and can no longer log in. Within one year it can be restored through an approver; after that it cannot be restored. The data is kept for reporting.",
+        "restoreNotice": "Once approved, the member account returns to the previous status and the member can log in again. Restorable until {{date}}.",
+        "deletionBlock": {
+          "MBR017": "Only applications in Pending Approval past the payment deadline and Full Members can be deleted",
+          "MBR018": "The payment deadline has not passed yet",
+          "REQUEST_PENDING": "A request is waiting for approval",
+          "E09": "An application, contract or bid is in progress"
+        }
+      },
+      "form": {
+        "periodOverlap": "E06: This overlaps an existing membership period. Please check the start date.",
+        "provinceRequired": "E01: Province / City is required",
+        "districtRequired": "E01: District is required",
+        "detailAddressRequired": "E01: Detailed Address is required",
+        "noFilesAttached": "No files attached.",
+        "openFileFailed": "Failed to open the file.",
+        "invalidFile": "E04: Only JPG, PNG, or PDF files up to 10MB are allowed.",
+        "sectionFilesFull": "E04: This section already has all its files. Remove one before uploading another.",
+        "ocrUnavailable": "E05: AI OCR auto-fill is unavailable. Please enter or verify fields manually.",
+        "uploadFailed": "Failed to upload file.",
+        "replaceDocTitle": "Attach Document (C02)",
+        "replaceDocConfirm": "The new document replaces the documents currently stored for this section. Continue?",
+        "changeMemberTypeTitle": "Change Member Type (C03)",
+        "changeMemberTypeConfirm": "Changing Member Type will reset identity information and attachments. Continue?",
+        "changeIdTypeTitle": "Change ID Card Type (C03)",
+        "changeIdTypeConfirm": "Changing ID Card Type will reset ID card information and attachments. Continue?",
+        "payStartDateRequired": "E01: Please select Membership Period start date.",
+        "payDateRequired": "E01: Please select Payment Date.",
+        "paymentRegisteredTemporary": "Membership payment registered. The member becomes a Full Member once the documents pass.",
+        "paymentRegistered": "Membership payment registered.",
+        "poaRequired": "E01: Power of Attorney attachment is required.",
+        "memberRegistered": "Member {{name}} registered successfully.",
+        "memberUpdated": "Member information updated.",
+        "saveFailed": "Failed to save member information.",
+        "officerChanged": "The Staff in Charge was changed.",
+        "officerChangeFailed": "The Staff in Charge could not be changed: {{error}}",
+        "memberTypeRequired": "E01: Member Type is required",
+        "memberGradeRequired": "E01: Member Grade is required",
+        "statusRequired": "E01: Status is required",
+        "termsDateRequired": "E01: Terms Agreement Date is required",
+        "officerRequired": "E01: Staff in Charge is required",
+        "rejectionReasonRequired": "E01: Rejection Reason is required",
+        "noRegisterHistoryHint": "Payments can be registered after the member is registered.",
+        "cannotRegisterPaymentHint": "Payments can be registered for active members and for Temporary members in Pending Approval.",
+        "noMembershipHistory": "No membership history.",
+        "phoneRequired": "E01: Phone Number is required",
+        "phoneInvalid": "E02: Invalid phone number format",
+        "emailRequired": "E01: Email Address is required",
+        "emailInvalid": "E02: Invalid email address format",
+        "fullNameRequired": "E01: Full Name is required",
+        "dobRequired": "E01: Date of Birth is required",
+        "genderRequired": "E01: Gender is required",
+        "nationalityRequired": "E01: Nationality is required",
+        "idNumberRequired": "E01: ID Card Number is required",
+        "cccdInvalid": "E02: CCCD must be 12 digits",
+        "cmndInvalid": "E02: CMND must be 9 or 12 digits",
+        "passportInvalid": "E02: Passport must be alphanumeric",
+        "issuingAuthorityRequired": "E01: Issuing Authority is required",
+        "issueDateRequired": "E01: Issue Date is required",
+        "expiryDateRequired": "E01: Expiry Date is required",
+        "passportGuide": "Please upload the photo page of the passport.",
+        "idCardGuide": "Please upload both the front and back of the ID card.",
+        "addressRequired": "E01: Address is required",
+        "companyNameRequired": "E01: Company Name is required",
+        "charterCapitalRequired": "E01: Charter Capital is required",
+        "mstRequired": "E01: Enterprise Code (MST) is required",
+        "mstInvalid": "E02: MST must be 10 or 13 digits",
+        "projectCodeRequired": "E01: Project Code is required",
+        "positionRequired": "E01: Position is required"
+      }
+    },
+    "system": {
+      "approvalProcess": {
+        "codeFormat": "Use upper-case letters, digits and underscores only.",
+        "duplicateCode": "This process code is already registered.",
+        "stepsRequired": "Add at least one step.",
+        "stepIncomplete": "Fill in the name, role group and role of every step.",
+        "invalidStepOrder": "Steps must be numbered 1, 2, 3… without gaps.",
+        "invalidRejectStep": "A rejection can only return to an earlier step.",
+        "invalidRole": "A selected role is inactive or does not exist. Choose another role.",
+        "inUse": "This process has already been used by approval sessions and cannot be deleted. Set it to Inactive instead.",
+        "confirmDelete": "Delete this approval process and its steps?",
+        "confirmDeactivate": "Deactivate this process? New sessions of this kind cannot start while it is inactive.",
+        "sessionsKeepSteps": "Changes apply to sessions started afterwards. Sessions already in progress keep the steps and roles they started with.",
+        "codeHint": "Used by the system to start sessions; cannot be changed later."
+      },
+      "batch": {
+        "duplicate": "This job name is already registered.",
+        "invalidCron": "Invalid Cron format. (e.g. 0 0 3 * * ?)",
+        "invalidJson": "Please enter in JSON format.",
+        "notice": "Use and Cron changes are applied to the execution server after [Refresh Schedule] on the list.",
+        "confirmRunNow": "Run {{jobName}} once now?",
+        "confirmRefresh": "Apply the changed schedule to the execution server?",
+        "confirmRerun": "Run the failed execution again?",
+        "runStarted": "{{jobName}} started. Check the result in Execution History.",
+        "refreshed": "The schedule was applied to the execution server.",
+        "inactive": "An inactive job cannot be run.",
+        "alreadyRunning": "This job is already running."
+      },
+      "commonCode": {
+        "emptyDetail": "Select a code group."
+      },
+      "exchangeRate": {
+        "confirmSync": "Receive exchange rates from Vietcombank again?",
+        "syncFailed": "Could not receive exchange rates. Please try again later.",
+        "syncRunning": "Exchange rate sync is already running. Please try again later.",
+        "synced": "Exchange rates were received.",
+        "notScheduled": "Not scheduled",
+        "off": "Off",
+        "everyMinutes": "Every {{count}} minutes",
+        "hourlyAt": "Hourly at :{{minute}}",
+        "everyHoursAt": "Every {{count}} hours at :{{minute}}",
+        "everyDayAt": "Every day at {{times}}"
+      },
+      "fee": {
+        "loadFailed": "The fee item could not be loaded.",
+        "rateRange": "Enter a rate greater than 0 and up to 100.",
+        "positive": "Enter an amount greater than 0.",
+        "legacyNotice": "This item uses the old Brokerage type, which can no longer be saved. Only Use can be changed; register it again as Purchase Brokerage or Sale Brokerage.",
+        "scheduleNotAvailable": "Saving the fee schedule waits for a schema change (Basis and fee schedule storage).",
+        "scheduleFileHint": "PDF only."
+      },
+      "financeCode": {
+        "emptyDetail": "Select a financial institution.",
+        "codeRange": "Please enter a number from 1 to 999."
+      },
+      "form": {
+        "invalidUrl": "Please enter a docx, xlsx or pdf file URL starting with https.",
+        "formNoDigits": "Enter a 4-digit number."
+      },
+      "label": {
+        "duplicate": "This label key is already registered.",
+        "variableMismatch": "Variables (%1, %2) do not match Tiếng Việt.",
+        "confirmDelete": "If a label in use is deleted, the label key will be shown on user screens. Delete?",
+        "confirmRefreshCache": "Apply the edited labels to admin screens now? User screens pick them up when their own cache expires.",
+        "cacheRefreshed": "Label cache refreshed.",
+        "menuScreenReserved": "Menu labels are managed in Menu Settings.",
+        "invalidScreenId": "Use letters, numbers and _ only.",
+        "invalidLabelCode": "Use letters, numbers, _ . - only.",
+        "keyTooLong": "The label key must be 100 characters or less.",
+        "screenNotRegistered": "This Screen ID is not registered in Screen Management.",
+        "uploadDone": "Excel uploaded ({{rows}} rows checked).",
+        "uploadFailed": "Nothing was saved. Fix the rows below and upload again.",
+        "uploadRow": "Row {{row}}{{header}}: {{message}}",
+        "uploadMoreErrors": "… {{count}} more",
+        "emptyTextPanel": "Select a label to see its text by language.",
+        "textHint": "Data values use %1, %2 …, line breaks use <br>. Empty languages show the {{defaultName}} text on user screens.",
+        "emptyPlaceholder": "(empty — shows {{defaultName}})"
+      },
+      "menu": {
+        "positionSaved": "The menu position was saved.",
+        "cannotPlaceBelow": "A menu cannot be placed below {{maxDepth}}Depth.",
+        "codePattern": "Enter {{prefix}} followed by 8 digits.",
+        "labelUsedByOther": "This label key is already used by another menu.",
+        "labelNotRegistered": "This label key is not registered in i18n Label Management.",
+        "cannotAddBelow": "A menu cannot be added below {{maxDepth}}Depth.",
+        "loadListFailed": "The menu list could not be loaded.",
+        "emptyDetail": "Select a menu in the tree, or add a new one.",
+        "menuCodeHint": "{{prefix}} followed by 8 digits, cannot be changed after saving.",
+        "noPermissionChanges": "There are no changes to save.",
+        "loadMatrixFailed": "The permission matrix could not be loaded.",
+        "unsavedChanges": "{{count}} unsaved change(s)"
+      },
+      "notificationHistory": {
+        "periodRequired": "Please select the send period.",
+        "periodRange": "The send period can span at most {{days}} days.",
+        "recipientUnavailable": "Recipient search is not configured on the server."
+      },
+      "notificationMessage": {
+        "loadFailed": "The notification message could not be loaded.",
+        "roleGroupNotFound": "The selected user group does not exist or is not in use."
+      },
+      "program": {
+        "menuNotExist": "This menu code does not exist."
+      },
+      "regionCode": {
+        "emptyDetail": "Select a province / city."
+      },
+      "screen": {
+        "businessInvalid": "Select a 1Depth menu of the selected type.",
+        "labelKeyNotFound": "This label key does not exist.",
+        "hasLabels": "This screen cannot be deleted while labels still use it."
+      },
+      "terms": {
+        "duplicateDate": "Terms with the same effective date already exist.",
+        "fromTomorrow": "Please select an effective date from tomorrow.",
+        "confirmDelete": "Delete the scheduled terms?",
+        "locked": "Only scheduled terms can be edited or deleted.",
+        "effectiveDateHint": "From tomorrow; one version per date and type.",
+        "contentEnHint": "If empty, the VN original is shown on the English user screen."
+      },
+      "user": {
+        "loadFailed": "The user could not be loaded.",
+        "empNoPattern": "Use 3 to 10 letters, digits, \"_\" or \"-\".",
+        "invalidEmail": "Invalid email format.",
+        "invalidMobile": "Please check the mobile number format.",
+        "registeredMailSent": "The user was registered. A temporary password was sent to {{email}}.",
+        "registeredMailFailed": "The user was registered, but the temporary password mail could not be sent. Open the user and use [Reset Password] to send it again.",
+        "confirmResetPassword": "Send a temporary password to {{target}}? The lock will also be released.",
+        "theUser": "the user",
+        "tempPasswordSent": "A temporary password was sent to {{email}}.",
+        "tempPasswordFailed": "The account was unlocked, but the temporary password mail could not be sent. Please try again."
+      },
+      "userGroup": {
+        "selectGroup": "Select a user group.",
+        "selectRole": "Select a role.",
+        "groupIdPattern": "Enter RG followed by 5 digits (e.g. RG00010)."
+      },
+      "screenPending": {
+        "title": "This screen is not available yet",
+        "descriptionWithTitle": "\"{{title}}\" has no screen in this version. Contact the system administrator if you need this function.",
+        "descriptionDefault": "This menu has no screen in this version. Contact the system administrator if you need this function."
+      }
+    },
+    "auction": {
+      "selectAtLeastOne": "Select at least one auction.",
+      "confirmDelete": "Delete {{count}} selected auction(s)?",
+      "confirmStartLive": "Start live auction {{auctnNo}}?",
+      "confirmCloseLive": "Close live auction {{auctnNo}}?"
+    },
+    "npl": {
+      "selectAtLeastOneDebtor": "Select at least one debtor.",
+      "confirmDeleteDebtors": "Delete {{count}} selected debtor(s)?",
+      "confirmDeleteLot": "Delete this NPL LOT?",
+      "lotNameRequired": "Enter LOT name."
+    },
+    "trade": {
+      "received": "Received."
     }
   }
 }

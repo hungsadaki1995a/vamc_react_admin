@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import type { QueryKey, UseQueryOptions, UseQueryResult } from '@tanstack/react-query';
+import i18n from '@/lib/i18n';
 import { ApiError } from '@/lib/api/error';
 import type { ApiResponse } from '@/lib/api/types';
 
@@ -27,7 +28,7 @@ export function useApiQuery<T>(
         throw new ApiError({
           code: 'E_API',
           data: null,
-          message: response.message || 'Failed to load data.',
+          message: response.message || i18n.t('messages.api.loadFailed'),
           statusCode: 0,
           timestamp: new Date().toISOString(),
           path: '',

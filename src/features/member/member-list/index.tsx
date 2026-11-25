@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import ActionButton from '@/components/common/actions/ActionButton';
 import AppTooltip from '@/components/common/tooltip/AppTooltip';
 import DataTable from '@/components/common/table/DataTable';
@@ -118,6 +119,7 @@ function formatPaymentDeadline(val?: string): { text: string; isDanger: boolean 
 }
 
 export default function MemberList() {
+  const { t } = useTranslation();
   const { toast } = useNotify();
   const { canWrite } = useMenuPermission();
   // ── Pagination & Sort State ────────────────────────────────────────────────
@@ -243,7 +245,7 @@ export default function MemberList() {
       dateRange?.[1] &&
       dateRange[0].startOf('day').isAfter(dateRange[1].startOf('day'))
     ) {
-      toast.error('Start date cannot be later than end date. (E07)');
+      toast.error(t('messages.member.list.invalidDateRange'));
       return;
     }
 
@@ -365,10 +367,10 @@ export default function MemberList() {
       { ...appliedFilters, sortBy, sortDirection },
       {
         onSuccess: (fileName) => {
-          toast.success(`Exported ${fileName}`);
+          toast.success(t('messages.member.list.exported', { fileName }));
         },
         onError: () => {
-          toast.error('Failed to export Excel file');
+          toast.error(t('messages.member.list.exportFailed'));
         },
       },
     );
@@ -813,7 +815,7 @@ export default function MemberList() {
           loading={isLoading || isFetching}
           sortDirections={['ascend', 'descend']}
           onChange={handleTableChange}
-          locale={{ emptyText: 'No members found.' }}
+          locale={{ emptyText: t('messages.member.list.empty') }}
           scroll={{ x: 'max-content', y: 560 }}
         />
       </div>

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import AppRadio from '@/components/inputs/AppRadio';
 import TextInput from '@/components/inputs/TextInput';
 import { useNotify } from '@/hooks/use-notify';
@@ -22,6 +23,7 @@ interface CodeGroupModalProps {
 }
 
 export function CodeGroupModal({ item, canWrite, onClose }: CodeGroupModalProps) {
+  const { t } = useTranslation();
   const isCreate = item === null;
   const { toast } = useNotify();
   const { errors, clearError, checkRequired, applyApiError } = useFieldErrors<Field>();
@@ -54,7 +56,7 @@ export function CodeGroupModal({ item, canWrite, onClose }: CodeGroupModalProps)
       onClose();
     } catch (e) {
       // The server answers CODE_GROUP_DUPLICATED (COD002 in the enum).
-      const duplicate: [Field, string] = ['groupCd', SYS_MESSAGES.duplicate('code')];
+      const duplicate: [Field, string] = ['groupCd', SYS_MESSAGES.duplicate(t('messages.sys.items.code'))];
       if (!applyApiError(e, { CODE_GROUP_DUPLICATED: duplicate, COD002: duplicate })) toast.error(errorMessage(e));
     }
   };

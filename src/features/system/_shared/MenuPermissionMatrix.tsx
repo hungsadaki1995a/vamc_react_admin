@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import type { CSSProperties } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Alert } from 'antd';
 import { CaretDownOutlined, CaretUpOutlined, MinusSquareOutlined, PlusSquareOutlined, ReloadOutlined } from '@ant-design/icons';
 import LoadingSpinner from '@/components/common/loading/LoadingSpinner';
@@ -86,6 +87,7 @@ interface Derived {
 }
 
 export default function MenuPermissionMatrix({ menuSeCd }: Props) {
+  const { t } = useTranslation();
   const screen = SCREEN[menuSeCd];
   const { toast } = useNotify();
   const { guardDiscard } = useSysDialogs();
@@ -241,7 +243,7 @@ export default function MenuPermissionMatrix({ menuSeCd }: Props) {
 
   const handleSave = async () => {
     if (!dirty) {
-      toast.info('There are no changes to save.');
+      toast.info(t('messages.system.menu.noPermissionChanges'));
       return;
     }
     try {
@@ -327,7 +329,7 @@ export default function MenuPermissionMatrix({ menuSeCd }: Props) {
     <SysPage fill>
       <SysTitleBar title={screen.title} breadcrumb={[...screen.breadcrumb]} />
       <div className={styles.toolbar}>
-        {dirty && <span className={styles.dirtyNote}>{edits.size} unsaved change(s)</span>}
+        {dirty && <span className={styles.dirtyNote}>{t('messages.system.menu.unsavedChanges', { count: edits.size })}</span>}
         <SysButton look="outline" icon={<ReloadOutlined />} onClick={handleRefresh}>
           Refresh
         </SysButton>
@@ -338,7 +340,7 @@ export default function MenuPermissionMatrix({ menuSeCd }: Props) {
         )}
       </div>
       {error && (
-        <Alert type="error" showIcon title="The permission matrix could not be loaded." description={error.message} />
+        <Alert type="error" showIcon title={t('messages.system.menu.loadMatrixFailed')} description={error.message} />
       )}
       <LoadingSpinner spinning={isFetching} classNames={{ root: styles.spin }}>
         <div className={styles.tableWrap}>

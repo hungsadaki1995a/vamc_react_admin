@@ -1,5 +1,6 @@
 import { Fragment, useState } from 'react';
 import type { ReactNode } from 'react';
+import { useTranslation } from 'react-i18next';
 import LoadingSpinner from '@/components/common/loading/LoadingSpinner';
 import AppCheckbox from '@/components/inputs/AppCheckbox';
 import AppDatePicker from '@/components/inputs/AppDatePicker';
@@ -17,6 +18,7 @@ import type { ContentFile, LegalOptions, PostDetail, YesNo } from '@/api/content
 import { SysButton } from '@/components/common/sys-ui/SysListUi';
 import { SysField, SysFieldGrid, SysFormModal } from '@/components/common/sys-ui/SysFormUi';
 import { API_DATE_DMY, SYS_DATE_FORMAT } from '@/config/sys-constants';
+import { SYS_DIALOG_LABELS, SYS_MESSAGES } from '@/config/sys-messages';
 import { errorMessage } from '@/utils/system-utils';
 import { useSysDialogs } from '@/hooks/use-sys-dialogs';
 import type { BoardConfig, CategoryOption } from './board-config';
@@ -87,9 +89,6 @@ const CONTENT_PLACEHOLDER: Record<string, string> = {
   notice: 'Enter the notice content.',
   news: 'Enter the news content.',
 };
-
-/** E01 of the design. */
-const required = (field: string) => `${field} is required.`;
 
 function emptyForm(category: string): FormState {
   return {
@@ -223,6 +222,7 @@ export default function PostModal({
   legalOptions,
   onClose,
 }: PostModalProps) {
+  const { t } = useTranslation();
   const isCreate = pstNo === null;
   const { toast } = useNotify();
   const dialogs = useSysDialogs();
@@ -275,29 +275,35 @@ export default function PostModal({
   const showEnglish = !config.noEnglish;
   const titleLabel = config.legal ? 'Document Name' : 'Title';
 
+  const required = (field: string) => t('messages.sys.fieldRequired', { label: field });
+
   const validate = (): FieldErrors => {
     const found: FieldErrors = {};
     if (showCategorySelect && !form.category) found.category = required(categoryLabel);
     if (config.tag?.required && isCreate && config.tag.requestKey === 'sectionKey') {
       if (!/^[A-Z][A-Z0-9_]{1,49}$/.test(form.tag.trim())) {
-        found.tag = `${config.tag.label} must be uppercase letters, digits or "_" (2–50 characters).`;
+        found.tag = t('messages.content.post.tagFormat', { label: config.tag.label });
       }
     } else if (config.tag?.required && tagEditable && !form.tag.trim()) {
       found.tag = required(config.tag.label);
     }
     if (config.legal) {
-      if (!form.lawGroup) found.lawGroup = required('Group');
-      if (!form.lawField) found.lawField = required('Field');
-      if (!form.issuingAuthority) found.issuingAuthority = required('Issuing Agency');
-      if (!form.docNumber.trim()) found.docNumber = required('Number/Symbol');
-      if (!form.issueDate) found.issueDate = required('Issue Date');
+      if (!form.lawGroup) found.lawGroup = required(t('messages.content.post.fields.group'));
+      if (!form.lawField) found.lawField = required(t('messages.content.post.fields.field'));
+      if (!form.issuingAuthority) found.issuingAuthority = required(t('messages.content.post.fields.issuingAgency'));
+      if (!form.docNumber.trim()) found.docNumber = required(t('messages.content.post.fields.docNumber'));
+      if (!form.issueDate) found.issueDate = required(t('messages.content.post.fields.issueDate'));
     }
-    if (showPin && form.pinned === 'Y' && !form.pinOrder) found.pinOrder = required('Pin to Top Order');
-    if (!form.title.trim()) found.title = required(titleLabel);
-    if (config.contentRequired && !form.content.trim()) found.content = required('Content');
+    if (showPin && form.pinned === 'Y' && !form.pinOrder) found.pinOrder = required(t('messages.content.post.fields.pinOrder'));
+    if (!form.title.trim()) {
+      found.title = required(
+        config.legal ? t('messages.content.post.fields.documentName') : t('messages.content.post.fields.title'),
+      );
+    }
+    if (config.contentRequired && !form.content.trim()) found.content = required(t('messages.content.post.fields.content'));
     if (showEnglish && form.english) {
-      if (!form.titleEn.trim()) found.titleEn = required('Title (EN)');
-      if (!form.contentEn.trim()) found.contentEn = required('Content (EN)');
+      if (!form.titleEn.trim()) found.titleEn = required(t('messages.content.post.fields.titleEn'));
+      if (!form.contentEn.trim()) found.contentEn = required(t('messages.content.post.fields.contentEn'));
     }
     return found;
   };
@@ -322,7 +328,7 @@ export default function PostModal({
     }
     try {
       await savePost.mutateAsync(variables);
-      toast.success(isCreate ? 'Registered.' : 'Saved.');
+      toast.success(isCreate ? SYS_MESSAGES.registered : SYS_MESSAGES.saved);
       onClose();
     } catch (e) {
       toast.error(errorMessage(e));
@@ -337,8 +343,8 @@ export default function PostModal({
       // C02: English typed but "Provide English" unchecked.
       if (showEnglish && !form.english && (form.titleEn.trim() || form.contentEn.trim())) {
         dialogs.confirm({
-          content: 'English content will not be saved. Do you want to save?',
-          okText: 'Save',
+          content: t('messages.content.post.englishDropped'),
+          okText: t('messages.dialog.save'),
           onOk: save,
         });
         return;
@@ -350,13 +356,13 @@ export default function PostModal({
   const handleDelete = () => {
     if (!pstNo) return;
     dialogs.confirm({
-      content: 'Are you sure you want to delete?',
-      okText: 'Delete',
+      content: t('messages.content.post.confirmDelete'),
+      okText: SYS_DIALOG_LABELS.delete,
       danger: true,
       onOk: async () => {
         try {
           await deletePosts.mutateAsync([pstNo]);
-          toast.success('Deleted.');
+          toast.success(SYS_MESSAGES.deleted);
           onClose();
         } catch (e) {
           toast.error(errorMessage(e));
@@ -731,7 +737,7 @@ export default function PostModal({
           </SysButton>
         ) : undefined
       }
-      notice={contentLocked ? '※ Content can be edited after the post is set to Unpublished.' : undefined}
+      notice={contentLocked ? t('messages.content.post.contentLockedNotice') : undefined}
     >
       <LoadingSpinner spinning={isFetching}>
         <SysFieldGrid columns={2}>{renderCells(cells)}</SysFieldGrid>

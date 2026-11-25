@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { TableColumnsType } from 'antd';
 import TextArea from '@/components/inputs/TextArea';
 import { useNotify } from '@/hooks/use-notify';
@@ -7,7 +8,7 @@ import type { LabelDetail, LabelKey, LabelLanguage } from '@/api/system/label-ma
 import { SYS_MESSAGES } from '@/config/sys-messages';
 import { SysButton, SysSectionHeader, SysTable } from '@/components/common/sys-ui/SysListUi';
 import { apiErrorCode, errorMessage } from '@/utils/system-utils';
-import { hasTextChanges, LABEL_MESSAGES, storedTexts, variablesMatch } from './label-utils';
+import { hasTextChanges, storedTexts, variablesMatch } from './label-utils';
 import { useUpdateLabel } from './use-labels';
 import styles from './label-management.module.scss';
 
@@ -40,6 +41,7 @@ export default function LabelTextPanel({
   onSaved,
   canWrite,
 }: LabelTextPanelProps) {
+  const { t } = useTranslation();
   const { toast } = useNotify();
   const updateLabel = useUpdateLabel();
   const [editingLang, setEditingLang] = useState<string | null>(null);
@@ -75,9 +77,9 @@ export default function LabelTextPanel({
     if (defaultText === '') next[DEFAULT_LANG_CD] = SYS_MESSAGES.required;
     else {
       texts
-        .filter((t) => t.langCd !== DEFAULT_LANG_CD && !variablesMatch(defaultText, t.trslLtr))
-        .forEach((t) => {
-          next[t.langCd] = LABEL_MESSAGES.variableMismatch;
+        .filter((item) => item.langCd !== DEFAULT_LANG_CD && !variablesMatch(defaultText, item.trslLtr))
+        .forEach((item) => {
+          next[item.langCd] = t('messages.system.label.variableMismatch');
         });
     }
     setErrors(next);
@@ -91,7 +93,7 @@ export default function LabelTextPanel({
     } catch (error) {
       const code = apiErrorCode(error);
       if (code === 'LBL005') setErrors({ [DEFAULT_LANG_CD]: SYS_MESSAGES.required });
-      else if (code === 'LBL006') setErrors({ _: LABEL_MESSAGES.variableMismatch });
+      else if (code === 'LBL006') setErrors({ _: t('messages.system.label.variableMismatch') });
       else toast.error(errorMessage(error));
     }
   };
@@ -122,7 +124,9 @@ export default function LabelTextPanel({
             data-error={errors[row.langCd] ? true : undefined}
             data-editable={canWrite || undefined}
           >
-            {value || <span className={styles.placeholder}>{`(empty — shows ${defaultName})`}</span>}
+            {value || (
+              <span className={styles.placeholder}>{t('messages.system.label.emptyPlaceholder', { defaultName })}</span>
+            )}
           </div>
         ),
     },
@@ -162,18 +166,13 @@ export default function LabelTextPanel({
           dataSource={selected ? rows : []}
           loading={loading}
           locale={{
-            emptyText: <span className={styles.emptyText}>Select a label to see its text by language.</span>,
+            emptyText: <span className={styles.emptyText}>{t('messages.system.label.emptyTextPanel')}</span>,
           }}
           onRowClick={canWrite && selected ? (row) => setEditingLang(row.langCd) : undefined}
           selectedRowKey={editingLang}
         />
         {errorText && <p className={styles.panelError}>{errorText}</p>}
-        {selected && (
-          <p className={styles.panelHint}>
-            Data values use %1, %2 …, line breaks use &lt;br&gt;. Empty languages show the {defaultName} text on user
-            screens.
-          </p>
-        )}
+        {selected && <p className={styles.panelHint}>{t('messages.system.label.textHint', { defaultName })}</p>}
       </div>
     </>
   );

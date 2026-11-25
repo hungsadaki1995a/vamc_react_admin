@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import LoadingSpinner from '@/components/common/loading/LoadingSpinner';
 import AppDatePicker from '@/components/inputs/AppDatePicker';
 import AppSelect from '@/components/inputs/AppSelect';
@@ -14,7 +15,7 @@ import { SYS_DIALOG_LABELS, SYS_MESSAGES } from '@/config/sys-messages';
 import { useFieldErrors } from '@/hooks/use-field-errors';
 import { useSysDialogs } from '@/hooks/use-sys-dialogs';
 import { apiErrorCode, errorMessage } from '@/utils/system-utils';
-import { TERMS_MESSAGES, TERMS_TYPE_OPTIONS } from './terms-constants';
+import { TERMS_TYPE_OPTIONS } from './terms-constants';
 import { useCreateTermsPolicy, useDeleteTermsPolicy, useTermsPolicy, useUpdateTermsPolicy } from './use-terms-policies';
 import styles from './terms-management.module.scss';
 
@@ -33,6 +34,7 @@ interface TermsFormModalProps {
 }
 
 function TermsFormModal({ detail, canWrite, onClose }: TermsFormModalProps) {
+  const { t } = useTranslation();
   const isCreate = detail === null;
   const readOnly = !isCreate && detail.status !== 'SCHEDULED';
   const { toast } = useNotify();
@@ -57,7 +59,7 @@ function TermsFormModal({ detail, canWrite, onClose }: TermsFormModalProps) {
     if (!checkRequired(values, ['type', 'effectiveDate', 'content'])) return;
     const effectiveDate = values.effectiveDate as Dayjs;
     if (!isFromTomorrow(effectiveDate)) {
-      setError('effectiveDate', TERMS_MESSAGES.fromTomorrow);
+      setError('effectiveDate', t('messages.system.terms.fromTomorrow'));
       return;
     }
     const request = {
@@ -76,17 +78,17 @@ function TermsFormModal({ detail, canWrite, onClose }: TermsFormModalProps) {
       onClose();
     } catch (e) {
       const handled = applyApiError(e, {
-        TRM003: ['effectiveDate', TERMS_MESSAGES.duplicateDate],
-        TRM007: ['effectiveDate', TERMS_MESSAGES.fromTomorrow],
+        TRM003: ['effectiveDate', t('messages.system.terms.duplicateDate')],
+        TRM007: ['effectiveDate', t('messages.system.terms.fromTomorrow')],
       });
-      if (!handled) toast.error(apiErrorCode(e) === 'TRM004' ? TERMS_MESSAGES.locked : errorMessage(e));
+      if (!handled) toast.error(apiErrorCode(e) === 'TRM004' ? t('messages.system.terms.locked') : errorMessage(e));
     }
   };
 
   const handleDelete = () => {
     if (!detail) return;
     confirm({
-      content: TERMS_MESSAGES.confirmDelete,
+      content: t('messages.system.terms.confirmDelete'),
       okText: SYS_DIALOG_LABELS.delete,
       danger: true,
       onOk: async () => {
@@ -95,7 +97,7 @@ function TermsFormModal({ detail, canWrite, onClose }: TermsFormModalProps) {
           toast.success(SYS_MESSAGES.deleted);
           onClose();
         } catch (e) {
-          toast.error(apiErrorCode(e) === 'TRM008' ? TERMS_MESSAGES.locked : errorMessage(e));
+          toast.error(apiErrorCode(e) === 'TRM008' ? t('messages.system.terms.locked') : errorMessage(e));
         }
       },
     });
@@ -135,7 +137,7 @@ function TermsFormModal({ detail, canWrite, onClose }: TermsFormModalProps) {
           label="Effective Date"
           required
           error={errors.effectiveDate}
-          hint={editable ? 'From tomorrow; one version per date and type.' : undefined}
+          hint={editable ? t('messages.system.terms.effectiveDateHint') : undefined}
         >
           <AppDatePicker
             className={styles.fullWidth}
@@ -159,7 +161,7 @@ function TermsFormModal({ detail, canWrite, onClose }: TermsFormModalProps) {
           label="Content (EN)"
           span="full"
           error={errors.contentEn}
-          hint={editable ? 'If empty, the VN original is shown on the English user screen.' : undefined}
+          hint={editable ? t('messages.system.terms.contentEnHint') : undefined}
         >
           <TextArea
             rows={7}

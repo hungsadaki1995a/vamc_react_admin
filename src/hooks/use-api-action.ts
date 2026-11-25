@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import type { QueryKey, UseMutationResult } from '@tanstack/react-query';
 import { App } from 'antd';
+import i18n from '@/lib/i18n';
 import { ApiError } from '@/lib/api/error';
 import type { ApiResponse } from '@/lib/api/types';
 
@@ -28,7 +29,7 @@ export function useApiAction<TData, TVariables = void>(
     mutationFn: async (variables) => {
       try {
         const response = await action(variables);
-        if (!response.success) throw new Error(response.message || 'The request could not be processed.');
+        if (!response.success) throw new Error(response.message || i18n.t('messages.api.requestFailed'));
         return response;
       } catch (error) {
         throw ApiError.from(error);

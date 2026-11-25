@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { FileImageOutlined } from '@ant-design/icons';
 import LoadingSpinner from '@/components/common/loading/LoadingSpinner';
 import { useMenuPermission } from '@/hooks/use-menu-permission';
@@ -24,15 +25,8 @@ const BREADCRUMB = ['Content Management', 'Site Display Management', TITLE];
 const LOGO_EXTENSIONS = ['png', 'svg'];
 const LOGO_MAX_BYTES = 2 * 1024 * 1024;
 
-const LOGO_MESSAGES = {
-  /** E01 */
-  required: 'Logo File is required.',
-  /** E03 */
-  invalidImage: 'Only PNG, SVG files of 2MB or less can be uploaded.',
-  loadFailed: 'The logo could not be loaded.',
-} as const;
-
 export default function LogoManagement() {
+  const { t } = useTranslation();
   const { data, isFetching, isError } = useCurrentLogo();
 
   return (
@@ -42,7 +36,7 @@ export default function LogoManagement() {
         <LogoForm key={data.logoId ?? 'new'} logo={data} />
       ) : (
         <LoadingSpinner spinning={isFetching}>
-          <div className={styles.loading}>{isError ? LOGO_MESSAGES.loadFailed : null}</div>
+          <div className={styles.loading}>{isError ? t('messages.content.logo.loadFailed') : null}</div>
         </LoadingSpinner>
       )}
     </SysPage>
@@ -50,6 +44,7 @@ export default function LogoManagement() {
 }
 
 function LogoForm({ logo }: { logo: LogoSetting }) {
+  const { t } = useTranslation();
   const { canWrite } = useMenuPermission();
   const { toast } = useNotify();
   const save = useSaveLogo();
@@ -60,14 +55,14 @@ function LogoForm({ logo }: { logo: LogoSetting }) {
 
   const submit = async () => {
     if (!imageFileId) {
-      setError('imageFileId', LOGO_MESSAGES.required);
+      setError('imageFileId', t('messages.content.logo.required'));
       return;
     }
     try {
       await save.mutateAsync(imageFileId);
       toast.success(SYS_MESSAGES.saved);
     } catch (e) {
-      if (!applyApiError(e, { [SITE_DISPLAY_ERRORS.logoImageInvalid]: ['imageFileId', LOGO_MESSAGES.invalidImage] })) {
+      if (!applyApiError(e, { [SITE_DISPLAY_ERRORS.logoImageInvalid]: ['imageFileId', t('messages.content.logo.invalidImage')] })) {
         toast.error(errorMessage(e));
       }
     }
@@ -95,7 +90,7 @@ function LogoForm({ logo }: { logo: LogoSetting }) {
               initialFileName={logo.imageFileName}
               extensions={LOGO_EXTENSIONS}
               maxBytes={LOGO_MAX_BYTES}
-              invalidMessage={LOGO_MESSAGES.invalidImage}
+              invalidMessage={t('messages.content.logo.invalidImage')}
               disabled={!canWrite}
               upload={upload.mutateAsync}
               uploading={upload.isPending}

@@ -1,3 +1,4 @@
+import i18n from '@/lib/i18n';
 import { apiErrorCode, errorMessage } from '@/utils/system-utils';
 
 // Display / validation helpers of Batch Management (VPA09040401, P01, P02).
@@ -6,20 +7,6 @@ export const BATCH_BREADCRUMB = ['System Operation Management', 'System Manageme
 
 /** Job name of the exchange rate sync batch (Exchange Rate [View All History]). */
 export const EXCHANGE_RATE_SYNC_JOB = 'exchange-rate-sync';
-
-export const BATCH_MESSAGES = {
-  duplicate: 'This job name is already registered.',
-  invalidCron: 'Invalid Cron format. (e.g. 0 0 3 * * ?)',
-  invalidJson: 'Please enter in JSON format.',
-  notice: 'Use and Cron changes are applied to the execution server after [Refresh Schedule] on the list.',
-  confirmRunNow: (jobName: string) => `Run ${jobName} once now?`,
-  confirmRefresh: 'Apply the changed schedule to the execution server?',
-  confirmRerun: 'Run the failed execution again?',
-  runStarted: (jobName: string) => `${jobName} started. Check the result in Execution History.`,
-  refreshed: 'The schedule was applied to the execution server.',
-  inactive: 'An inactive job cannot be run.',
-  alreadyRunning: 'This job is already running.',
-} as const;
 
 /** Maps BTCH_STTS to the ResultBadge values (COMPLETED → SUCCESS). */
 export function toResult(status?: string | null): string | undefined {
@@ -64,7 +51,7 @@ export function isValidJson(value: string): boolean {
 /** Message of a failed Run Now / Rerun (BAT006 inactive, BAT007 already running). */
 export function runErrorMessage(error: unknown): string {
   const code = apiErrorCode(error);
-  if (code === 'BAT006') return BATCH_MESSAGES.inactive;
-  if (code === 'BAT007') return BATCH_MESSAGES.alreadyRunning;
+  if (code === 'BAT006') return i18n.t('messages.system.batch.inactive');
+  if (code === 'BAT007') return i18n.t('messages.system.batch.alreadyRunning');
   return errorMessage(error);
 }
