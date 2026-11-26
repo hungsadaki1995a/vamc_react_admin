@@ -5,7 +5,14 @@
     "collapseMenu": "Collapse menu",
     "expandMenu": "Expand menu",
     "selectMenu": "Please select a menu",
-    "componentNotFound": "Component not found: {{key}}"
+    "componentNotFound": "Component not found: {{key}}",
+    "reset": "Reset",
+    "search": "Search",
+    "searchResults": "Search Results",
+    "total": "Total",
+    "cancel": "Cancel",
+    "close": "Close",
+    "save": "Save"
   },
   "auth": {
     "login": {

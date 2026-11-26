@@ -5,7 +5,14 @@
     "collapseMenu": "Thu gọn menu",
     "expandMenu": "Mở rộng menu",
     "selectMenu": "Vui lòng chọn menu",
-    "componentNotFound": "Không tìm thấy thành phần: {{key}}"
+    "componentNotFound": "Không tìm thấy thành phần: {{key}}",
+    "reset": "Đặt lại",
+    "search": "Tìm kiếm",
+    "searchResults": "Kết quả tìm kiếm",
+    "total": "Tổng",
+    "cancel": "Hủy",
+    "close": "Đóng",
+    "save": "Lưu"
   },
   "auth": {
     "login": {
