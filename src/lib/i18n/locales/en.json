@@ -1326,7 +1326,7 @@
         "paramMapHint": "JSON object variable → ZNS parameter, e.g. {\"mbrNm\":\"customer_name\"}"
       },
       "preview": {
-        "title": "Preview",
+        "title": "Preview on Zalo",
         "button": "Preview",
         "empty": "Press [Preview] to fill the variables with sample data.",
         "missing": "Variables without a value: {{names}}"
@@ -1335,6 +1335,17 @@
         "title": "Test Send",
         "button": "Test Send",
         "hint": "Sends the saved template with the sample data. Demo mode: simulated, see Notification Send History."
+      },
+      "phone": {
+        "label": "Zalo phone preview",
+        "officialAccount": "Official Account",
+        "today": "Today",
+        "loading": "Rendering…",
+        "znsTag": "ZNS notification",
+        "untitled": "(no name)",
+        "open": "Open link",
+        "now": "now",
+        "input": "Message"
       }
     }
   }

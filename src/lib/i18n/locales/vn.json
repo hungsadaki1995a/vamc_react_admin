@@ -1326,7 +1326,7 @@
         "paramMapHint": "Đối tượng JSON biến → tham số ZNS, VD: {\"mbrNm\":\"customer_name\"}"
       },
       "preview": {
-        "title": "Xem trước",
+        "title": "Xem trước trên Zalo",
         "button": "Xem trước",
         "empty": "Bấm [Xem trước] để điền biến bằng dữ liệu mẫu.",
         "missing": "Biến chưa có giá trị: {{names}}"
@@ -1335,6 +1335,17 @@
         "title": "Gửi thử",
         "button": "Gửi thử",
         "hint": "Gửi mẫu đã lưu với dữ liệu mẫu. Chế độ demo: giả lập, xem tại Lịch sử gửi thông báo."
+      },
+      "phone": {
+        "label": "Xem trước trên điện thoại Zalo",
+        "officialAccount": "Tài khoản chính thức",
+        "today": "Hôm nay",
+        "loading": "Đang hiển thị…",
+        "znsTag": "Thông báo ZNS",
+        "untitled": "(chưa đặt tên)",
+        "open": "Mở liên kết",
+        "now": "vừa xong",
+        "input": "Tin nhắn"
       }
     }
   }
