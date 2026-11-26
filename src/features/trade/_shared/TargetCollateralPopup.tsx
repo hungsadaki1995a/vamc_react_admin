@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useCommonCodes } from '@/hooks/use-common-codes';
 import type { Dayjs } from 'dayjs';
 import Popup from '@/components/common/popup/Popup';
 import AppDatePicker from '@/components/inputs/AppDatePicker';
@@ -13,6 +14,7 @@ import styles from './trade-application-popup.module.scss';
 // One collateral typed from a paper consulting application (manual registration, POST only): the same fields as the
 // member's web form (CNSLT_TRGT_CLTR_AST). Category, contract number, contract date and characteristics are required.
 
+// Fallback when the common code group CLTR_AST_LCLSF_CD cannot be loaded.
 const CATEGORY_OPTIONS = (Object.keys(COLLATERAL_CATEGORY_LABELS) as CollateralCategory[]).map((value) => ({
   value,
   label: COLLATERAL_CATEGORY_LABELS[value],
@@ -35,6 +37,8 @@ export interface TargetCollateralPopupProps {
 
 export default function TargetCollateralPopup({ onSubmit, onClose }: TargetCollateralPopupProps) {
   const { t } = useTranslation();
+  const categoryCodes = useCommonCodes('CLTR_AST_LCLSF_CD');
+  const categoryOptions = categoryCodes.length ? categoryCodes : CATEGORY_OPTIONS;
   const [category, setCategory] = useState<CollateralCategory | ''>('');
   const [contractNo, setContractNo] = useState('');
   const [contractDt, setContractDt] = useState<Dayjs | null>(null);
@@ -78,7 +82,7 @@ export default function TargetCollateralPopup({ onSubmit, onClose }: TargetColla
               className={styles.control}
               placeholder="Select the category"
               value={category || undefined}
-              options={CATEGORY_OPTIONS}
+              options={categoryOptions}
               onChange={(v) => setCategory((v as CollateralCategory | undefined) ?? '')}
             />
           </div>
