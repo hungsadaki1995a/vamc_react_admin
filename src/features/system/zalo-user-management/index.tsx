@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { TFunction } from 'i18next';
-import { Alert } from 'antd';
 import type { TableColumnsType } from 'antd';
 import AppSelect from '@/components/inputs/AppSelect';
 import TextInput from '@/components/inputs/TextInput';
@@ -12,7 +11,6 @@ import { usePagedList } from '@/hooks/use-paged-list';
 import type { ZaloLinkStatus, ZaloUser, ZaloUserSearch, ZaloUserType } from '@/api/system/zalo-api';
 import {
   DateTimeText,
-  StatusBadge,
   SysButton,
   SysFilterItem,
   SysFilterPanel,
@@ -25,23 +23,17 @@ import {
 } from '@/components/common/sys-ui/SysListUi';
 import { ALL, SYS_PAGE_SIZE } from '@/config/sys-constants';
 import type { YesNo } from '@/config/sys-constants';
-import { codeLabel } from '@/lib/i18n/code-label';
-import { errorMessage } from '@/utils/system-utils';
+import { errorMessage, rowNumber } from '@/utils/system-utils';
 import ZaloInviteModal from './ZaloInviteModal';
-import ZaloLinkModal from './ZaloLinkModal';
+import ZaloLinkStateBadge from './ZaloLinkStateBadge';
 import ZaloSimulateModal from './ZaloSimulateModal';
+import ZaloUserModal from './ZaloUserModal';
 import { accountText } from './zalo-user-constants';
-import {
-  useRebuildZaloPhoneIndex,
-  useUnlinkZaloUser,
-  useZaloStatus,
-  useZaloUserSummary,
-  useZaloUsers,
-} from './use-zalo-users';
+import { useRebuildZaloPhoneIndex, useZaloStatus, useZaloUsers } from './use-zalo-users';
 import styles from './zalo-user-management.module.scss';
 
-// Zalo Users (menu A09050300): Zalo users who follow the OA, their account links, invitations and,
-// in demo mode only, the simulated OA follow + phone share that drives the automatic link.
+// Zalo Users (menu A09050300): Zalo users who follow the OA and their account links. Row click opens the detail
+// popup (manual link / unlink). [Simulate OA Follow + Phone Share] is shown in demo mode only.
 
 interface UserFilter {
   linkStatus: ZaloLinkStatus | '';
@@ -61,28 +53,37 @@ function toSearch(filter: UserFilter): ZaloUserSearch {
   };
 }
 
-function LinkStateBadge({ user }: { user: ZaloUser }) {
-  if (user.linkStatus !== 'LINKED') return <StatusBadge tone="orange">{codeLabel('zalo.linkState', 'PENDING')}</StatusBadge>;
-  const method = user.linkMthdCd ?? 'MANUAL';
-  return <StatusBadge tone={method === 'AUTO' ? 'green' : 'blue'}>{codeLabel('zalo.linkState', method)}</StatusBadge>;
-}
-
-interface ColumnActions {
-  canWrite: boolean;
-  onLink: (user: ZaloUser) => void;
-  onUnlink: (user: ZaloUser) => void;
-}
-
-function buildColumns(t: TFunction, { canWrite, onLink, onUnlink }: ColumnActions): TableColumnsType<ZaloUser> {
-  const columns: TableColumnsType<ZaloUser> = [
-    { title: t('zalo.users.columns.zaloNm'), dataIndex: 'zaloNm', key: 'zaloNm', width: 160, ellipsis: true, render: (v?: string) => v || '-' },
-    { title: t('zalo.users.columns.telno'), dataIndex: 'telno', key: 'telno', width: 130, render: (v?: string) => v || '-' },
+function buildColumns(t: TFunction, page: number, total: number): TableColumnsType<ZaloUser> {
+  return [
+    {
+      title: 'No',
+      key: 'no',
+      align: 'center',
+      width: 60,
+      render: (_: unknown, __, index) => rowNumber(total, page, SYS_PAGE_SIZE, index),
+    },
     {
       title: t('zalo.users.columns.status'),
       key: 'linkStatus',
       align: 'center',
-      width: 170,
-      render: (_: unknown, row) => <LinkStateBadge user={row} />,
+      width: 140,
+      render: (_: unknown, row) => <ZaloLinkStateBadge user={row} />,
+    },
+    {
+      title: t('zalo.users.columns.zaloNm'),
+      dataIndex: 'zaloNm',
+      key: 'zaloNm',
+      width: 160,
+      ellipsis: true,
+      render: (v?: string) => v || '-',
+    },
+    {
+      title: t('zalo.users.columns.telno'),
+      dataIndex: 'telno',
+      key: 'telno',
+      align: 'center',
+      width: 130,
+      render: (v?: string) => v || '-',
     },
     { title: t('zalo.users.columns.account'), key: 'account', ellipsis: true, render: (_: unknown, row) => accountText(row) },
     {
@@ -90,7 +91,7 @@ function buildColumns(t: TFunction, { canWrite, onLink, onUnlink }: ColumnAction
       dataIndex: 'flwYn',
       key: 'flwYn',
       align: 'center',
-      width: 120,
+      width: 110,
       render: (v?: YesNo) => (v ? t(v === 'Y' ? 'zalo.common.yes' : 'zalo.common.no') : '-'),
     },
     {
@@ -100,37 +101,10 @@ function buildColumns(t: TFunction, { canWrite, onLink, onUnlink }: ColumnAction
       width: 150,
       render: (v?: string) => <DateTimeText value={v} />,
     },
-    {
-      title: t('zalo.users.columns.lstItrctDt'),
-      dataIndex: 'lstItrctDt',
-      key: 'lstItrctDt',
-      width: 150,
-      render: (v?: string) => <DateTimeText value={v} />,
-    },
-  ];
-  if (!canWrite) return columns;
-  return [
-    ...columns,
-    {
-      title: t('zalo.users.columns.actions'),
-      key: 'actions',
-      align: 'center',
-      width: 130,
-      render: (_: unknown, row) =>
-        row.linkStatus === 'LINKED' ? (
-          <SysButton size="small" onClick={() => onUnlink(row)}>
-            {t('zalo.users.buttons.unlink')}
-          </SysButton>
-        ) : (
-          <SysButton size="small" look="outline" onClick={() => onLink(row)}>
-            {t('zalo.users.buttons.link')}
-          </SysButton>
-        ),
-    },
   ];
 }
 
-type ModalState = { type: 'link'; user: ZaloUser } | { type: 'invite' } | { type: 'simulate' } | null;
+type ModalState = { type: 'detail'; user: ZaloUser } | { type: 'invite' } | { type: 'simulate' } | null;
 
 export default function ZaloUserManagement() {
   const { t } = useTranslation();
@@ -140,14 +114,10 @@ export default function ZaloUserManagement() {
   const list = usePagedList<UserFilter>(INITIAL_FILTER);
   const search = toSearch(list.applied);
   const { data, isFetching } = useZaloUsers(search, list.pageQuery);
-  const { data: summary } = useZaloUserSummary();
   const { data: status } = useZaloStatus();
-  const unlink = useUnlinkZaloUser();
   const rebuild = useRebuildZaloPhoneIndex();
   const [modal, setModal] = useState<ModalState>(null);
   const total = data?.totalElements ?? 0;
-  const mockMode = status?.mockMode === true;
-  const indexReady = status?.phoneIndexReady !== false;
 
   const allOption = { value: ALL, label: t('zalo.common.all') } as const;
   const linkStatusOptions = [
@@ -166,22 +136,6 @@ export default function ZaloUserManagement() {
     { value: 'EMP' as const, label: t('zalo.userTypes.EMP') },
   ];
 
-  const handleUnlink = (user: ZaloUser) => {
-    confirm({
-      content: t('messages.zalo.confirmUnlink', { account: user.userNo ?? '-' }),
-      okText: t('zalo.users.buttons.unlink'),
-      danger: true,
-      onOk: async () => {
-        try {
-          await unlink.mutateAsync(user.zaloUserId);
-          toast.success(t('messages.zalo.unlinked'));
-        } catch (error) {
-          toast.error(errorMessage(error));
-        }
-      },
-    });
-  };
-
   const handleRebuild = () => {
     confirm({
       content: t('messages.zalo.confirmRebuild'),
@@ -197,25 +151,12 @@ export default function ZaloUserManagement() {
     });
   };
 
-  const columns = buildColumns(t, {
-    canWrite,
-    onLink: (user) => setModal({ type: 'link', user }),
-    onUnlink: handleUnlink,
-  });
-
   return (
     <SysPage>
       <SysTitleBar
         title={t('zalo.users.title')}
         breadcrumb={[t('zalo.breadcrumb.root'), t('zalo.breadcrumb.notification'), t('zalo.users.title')]}
       />
-      {mockMode && <Alert type="info" showIcon title={t('zalo.common.demoMode')} />}
-      {status && !status.phoneIndexReady && <Alert type="warning" showIcon title={t('zalo.common.phoneIndexMissing')} />}
-      <div className={styles.summary}>
-        <SummaryCard label={t('zalo.users.summary.linked')} value={summary?.linked} tone="linked" />
-        <SummaryCard label={t('zalo.users.summary.pending')} value={summary?.pending} tone="pending" />
-        <SummaryCard label={t('zalo.users.summary.following')} value={summary?.following} tone="following" />
-      </div>
       <SysFilterPanel>
         <SysFilterItem label={t('zalo.users.filter.linkStatus')}>
           <AppSelect<ZaloLinkStatus | ''>
@@ -247,27 +188,22 @@ export default function ZaloUserManagement() {
       </SysFilterPanel>
       <SysSearchActions onReset={list.reset} onSearch={() => list.search()} loading={isFetching} />
       <SysSectionHeader
-        title={t('zalo.common.searchResults')}
         total={total}
         actions={
           canWrite && (
-            <SysButton loading={rebuild.isPending} disabled={!indexReady} onClick={handleRebuild}>
-              {t('zalo.users.buttons.rebuildIndex')}
-            </SysButton>
+            <>
+              <SysButton loading={rebuild.isPending} onClick={handleRebuild}>
+                {t('zalo.users.buttons.rebuildIndex')}
+              </SysButton>
+              {status?.mockMode && <SysButton onClick={() => setModal({ type: 'simulate' })}>{t('zalo.users.buttons.simulate')}</SysButton>}
+            </>
           )
         }
         primaryActions={
           canWrite && (
-            <>
-              {mockMode && (
-                <SysButton look="outline" disabled={!indexReady} onClick={() => setModal({ type: 'simulate' })}>
-                  {t('zalo.users.buttons.simulate')}
-                </SysButton>
-              )}
-              <SysButton look="navy" onClick={() => setModal({ type: 'invite' })}>
-                {t('zalo.users.buttons.invite')}
-              </SysButton>
-            </>
+            <SysButton look="navy" onClick={() => setModal({ type: 'invite' })}>
+              {t('zalo.users.buttons.invite')}
+            </SysButton>
           )
         }
       />
@@ -275,23 +211,16 @@ export default function ZaloUserManagement() {
         rowKey="zaloUserId"
         className={styles.listTable}
         fill
-        columns={columns}
+        tableLayout="fixed"
+        columns={buildColumns(t, list.page, total)}
         dataSource={data?.content ?? []}
         loading={isFetching}
+        onRowClick={(row) => setModal({ type: 'detail', user: row })}
       />
       <SysPager page={list.page} pageSize={SYS_PAGE_SIZE} total={total} onChange={list.setPage} />
-      {modal?.type === 'link' && <ZaloLinkModal user={modal.user} onClose={() => setModal(null)} />}
+      {modal?.type === 'detail' && <ZaloUserModal user={modal.user} canWrite={canWrite} onClose={() => setModal(null)} />}
       {modal?.type === 'invite' && <ZaloInviteModal onClose={() => setModal(null)} />}
       {modal?.type === 'simulate' && <ZaloSimulateModal onClose={() => setModal(null)} />}
     </SysPage>
-  );
-}
-
-function SummaryCard({ label, value, tone }: { label: string; value?: number; tone: 'linked' | 'pending' | 'following' }) {
-  return (
-    <div className={styles.summaryCard} data-tone={tone}>
-      <span className={styles.summaryLabel}>{label}</span>
-      <strong className={styles.summaryValue}>{value === undefined ? '-' : value.toLocaleString('en-US')}</strong>
-    </div>
   );
 }

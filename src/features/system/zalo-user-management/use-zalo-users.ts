@@ -4,7 +4,6 @@ import { useApiAction } from '@/hooks/use-api-action';
 import type { PageQuery, PageResponse } from '@/api/common/api-utils';
 import {
   getZaloStatus,
-  getZaloUserSummary,
   getZaloUsers,
   linkZaloUser,
   rebuildZaloPhoneIndex,
@@ -19,7 +18,6 @@ import type {
   ZaloStatus,
   ZaloUser,
   ZaloUserSearch,
-  ZaloUserSummary,
 } from '@/api/system/zalo-api';
 
 // Data hooks of Zalo Users (menu A09050300).
@@ -27,7 +25,6 @@ import type {
 const ZALO_USER_KEYS = {
   all: ['system', 'zalo-users'] as const,
   list: (search: ZaloUserSearch, query: PageQuery) => ['system', 'zalo-users', 'list', search, query] as const,
-  summary: ['system', 'zalo-users', 'summary'] as const,
   status: ['system', 'zalo-status'] as const,
 };
 
@@ -37,10 +34,6 @@ export function useZaloUsers(search: ZaloUserSearch, query: PageQuery) {
   });
 }
 
-/** Linked / pending / following totals (refetched with the list after every write). */
-export function useZaloUserSummary() {
-  return useApiQuery<ZaloUserSummary>(ZALO_USER_KEYS.summary, getZaloUserSummary);
-}
 
 /** Demo flag and phone index readiness; decides whether [Simulate] is shown. */
 export function useZaloStatus() {

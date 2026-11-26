@@ -129,7 +129,6 @@ test.describe('Zalo demo flow', () => {
     await test.step('send a link invitation', async () => {
       await openMenu(page, USERS);
       const panel = activePanel(page);
-      await expect(panel).toContainText('Demo mode');
       await panel.getByRole('button', { name: 'Send Invitation' }).click();
       const modal = topModal(page);
       await field(modal, 'Mobile Number').locator('input').fill(MEMBER_PHONE);
@@ -159,7 +158,10 @@ test.describe('Zalo demo flow', () => {
       // Newest interaction first: the simulated user is the first row.
       const row = panel.locator('.ant-table-tbody tr.ant-table-row').first();
       await expect(row).toContainText(MEMBER_NO);
-      await row.getByRole('button', { name: 'Unlink' }).click();
+      await row.click();
+      const detail = topModal(page);
+      await expect(detail).toContainText('Linked (auto)');
+      await detail.getByRole('button', { name: 'Unlink' }).click();
       const confirm = page.locator('.ant-modal-confirm').filter({ visible: true });
       await expect(confirm).toContainText(MEMBER_NO);
       await confirm.getByRole('button', { name: 'Unlink' }).click();

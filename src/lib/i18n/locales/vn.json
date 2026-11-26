@@ -1223,9 +1223,7 @@
       "new": "Thêm mới",
       "send": "Gửi",
       "run": "Thực hiện",
-      "close": "Đóng",
-      "demoMode": "Chế độ demo: tin Zalo chỉ được giả lập (mã tin MOCK-…), không gửi tới Zalo.",
-      "phoneIndexMissing": "Chưa cấu hình khoá chỉ mục số điện thoại: không thể tự gắn, giả lập hay dựng lại chỉ mục."
+      "close": "Đóng"
     },
     "channels": {
       "ZNS": "ZNS",
@@ -1250,11 +1248,6 @@
     },
     "users": {
       "title": "Người dùng Zalo",
-      "summary": {
-        "linked": "Đã liên kết",
-        "pending": "Chờ gắn",
-        "following": "Đang quan tâm OA"
-      },
       "filter": {
         "linkStatus": "Trạng thái liên kết",
         "following": "Quan tâm OA",
@@ -1268,8 +1261,7 @@
         "account": "Tài khoản gắn",
         "following": "Quan tâm OA",
         "linkDt": "Ngày gắn",
-        "lstItrctDt": "Tương tác cuối",
-        "actions": "Thao tác"
+        "lstItrctDt": "Tương tác cuối"
       },
       "buttons": {
         "link": "Gắn",
@@ -1279,8 +1271,6 @@
         "simulate": "Giả lập quan tâm OA + chia sẻ SĐT"
       },
       "link": {
-        "title": "Gắn người dùng Zalo",
-        "zaloUser": "Người dùng Zalo",
         "userType": "Loại tài khoản",
         "userNo": "Mã tài khoản",
         "userNoPlaceholder": "VD: TV00000001 hoặc mã nhân viên"
@@ -1295,6 +1285,10 @@
         "title": "Giả lập quan tâm OA + chia sẻ SĐT",
         "zaloNm": "Tên Zalo",
         "notice": "Chỉ dùng cho demo: đóng vai người dùng Zalo quan tâm OA và chia sẻ số này. Nếu đúng một tài khoản có số này thì tự gắn."
+      },
+      "detail": {
+        "title": "Chi tiết người dùng Zalo",
+        "shareAgree": "Đã chia sẻ SĐT"
       }
     },
     "templates": {
