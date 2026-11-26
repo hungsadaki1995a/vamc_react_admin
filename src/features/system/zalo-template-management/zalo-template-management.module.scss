@@ -34,22 +34,6 @@
   color: var(--color-text-tertiary, #6f7b95);
 }
 
-/* Rendered preview text. */
-.previewBox {
-  min-height: 64px;
-  padding: 8px 11px;
-  border: 1px solid var(--color-border-secondary, #e2e5eb);
-  border-radius: 6px;
-  background: var(--color-bg-secondary, #f6f6f9);
-  white-space: pre-wrap;
-  word-break: break-word;
-  line-height: 1.6;
-}
-
-.previewEmpty {
-  color: var(--color-text-tertiary, #6f7b95);
-}
-
 .missingText {
   margin: 6px 0 0;
   color: var(--color-text-negative, #e62e44);
@@ -75,4 +59,43 @@
 /* The list frame runs to the page bottom like the design. */
 .listTable {
   flex: 1 0 auto;
+}
+
+/* Register / Edit popup: form on the left, Zalo phone preview on the right (stacked when narrow). */
+.editorLayout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 316px;
+  gap: 24px;
+  align-items: start;
+
+  @media (max-width: 1100px) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.editorForm {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+
+.editorPhone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.phoneHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 300px;
+}
+
+.phoneTitle {
+  font-size: var(--font-size-b1, 14px);
+  font-weight: 600;
+  color: var(--color-text-primary, #3a404a);
 }

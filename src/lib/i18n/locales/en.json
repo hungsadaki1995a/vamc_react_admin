@@ -1223,9 +1223,7 @@
       "new": "New",
       "send": "Send",
       "run": "Run",
-      "close": "Close",
-      "demoMode": "Demo mode: Zalo sending is simulated (message id MOCK-…), nothing reaches Zalo.",
-      "phoneIndexMissing": "The phone index key is not configured: automatic linking, simulation and index rebuild are unavailable."
+      "close": "Close"
     },
     "channels": {
       "ZNS": "ZNS",
@@ -1250,11 +1248,6 @@
     },
     "users": {
       "title": "Zalo Users",
-      "summary": {
-        "linked": "Linked",
-        "pending": "Pending link",
-        "following": "Following OA"
-      },
       "filter": {
         "linkStatus": "Link Status",
         "following": "Following OA",
@@ -1268,8 +1261,7 @@
         "account": "Linked Account",
         "following": "Following OA",
         "linkDt": "Linked At",
-        "lstItrctDt": "Last Interaction",
-        "actions": "Actions"
+        "lstItrctDt": "Last Interaction"
       },
       "buttons": {
         "link": "Link",
@@ -1279,8 +1271,6 @@
         "simulate": "Simulate OA Follow + Phone Share"
       },
       "link": {
-        "title": "Link Zalo User",
-        "zaloUser": "Zalo User",
         "userType": "Account Type",
         "userNo": "Account No.",
         "userNoPlaceholder": "e.g. TV00000001 or employee no."
@@ -1295,6 +1285,10 @@
         "title": "Simulate OA Follow + Phone Share",
         "zaloNm": "Zalo Name",
         "notice": "Demo only: acts as a Zalo user who follows the OA and shares this phone. When exactly one account has the phone, it is linked automatically."
+      },
+      "detail": {
+        "title": "Zalo User Details",
+        "shareAgree": "Phone Shared"
       }
     },
     "templates": {
@@ -1332,7 +1326,7 @@
         "paramMapHint": "JSON object variable → ZNS parameter, e.g. {\"mbrNm\":\"customer_name\"}"
       },
       "preview": {
-        "title": "Preview",
+        "title": "Preview on Zalo",
         "button": "Preview",
         "empty": "Press [Preview] to fill the variables with sample data.",
         "missing": "Variables without a value: {{names}}"
@@ -1341,6 +1335,17 @@
         "title": "Test Send",
         "button": "Test Send",
         "hint": "Sends the saved template with the sample data. Demo mode: simulated, see Notification Send History."
+      },
+      "phone": {
+        "label": "Zalo phone preview",
+        "officialAccount": "Official Account",
+        "today": "Today",
+        "loading": "Rendering…",
+        "znsTag": "ZNS notification",
+        "untitled": "(no name)",
+        "open": "Open link",
+        "now": "now",
+        "input": "Message"
       }
     }
   }

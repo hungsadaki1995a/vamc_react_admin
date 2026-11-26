@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { SyntheticEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import LoadingSpinner from '@/components/common/loading/LoadingSpinner';
@@ -17,12 +17,17 @@ import { SYS_MESSAGES } from '@/config/sys-messages';
 import { codeLabel } from '@/lib/i18n/code-label';
 import { errorMessage } from '@/utils/system-utils';
 import { sentMessage } from '../_shared/zalo-messages';
+import ZaloPhonePreview from './ZaloPhonePreview';
 import { ZALO_PROCESS_GROUPS, ZALO_TPL_CD_PATTERN, isParamMap } from './zalo-template-constants';
 import { usePreviewZaloTemplate, useSaveZaloTemplate, useTestSendZaloTemplate, useZaloTemplate } from './use-zalo-templates';
 import styles from './zalo-template-management.module.scss';
 
-// Zalo Templates - Register / Edit popup: content with {{variables}}, ZNS parameter map,
-// preview with the server sample data and (edit only) a test send of the saved template.
+// Zalo Templates - Register / Edit popup: content with {{variables}}, ZNS parameter map and (edit only) a test send
+// of the saved template. A phone mock beside the form shows the message as the recipient sees it in Zalo, rendered
+// by the server with sample data and refreshed while typing.
+
+/** Wait after the last keystroke before asking the server for a new preview. */
+const PREVIEW_DELAY_MS = 500;
 
 type FieldKey = 'tplCd' | 'procGrpCd' | 'tplNm' | 'zaloSndMode' | 'znsTplId' | 'useYn' | 'tplCn' | 'paramMapCn' | 'phone';
 
@@ -64,7 +69,7 @@ export default function ZaloTemplateModal({ tplCd, canWrite, onClose }: ZaloTemp
 
   if (tplCd !== null && !detail) {
     return (
-      <SysFormModal width={1200} open title={t('zalo.templates.form.editTitle')} onCancel={onClose}>
+      <SysFormModal width={1280} open title={t('zalo.templates.form.editTitle')} onCancel={onClose}>
         <LoadingSpinner spinning={isFetching}>
           <div className={styles.loading}>{isError ? t('messages.zalo.loadFailed') : null}</div>
         </LoadingSpinner>
@@ -166,6 +171,21 @@ function TemplateForm({ template, canWrite, onClose }: { template: ZaloTemplate 
     }
   };
 
+  // Live phone preview: re-render with the server sample data shortly after the content stops changing.
+  const previewContent = preview.mutateAsync;
+  useEffect(() => {
+    const content = values.tplCn;
+    if (!content.trim()) return undefined;
+    const timer = window.setTimeout(() => {
+      previewContent({ tplCn: content })
+        .then((response) => setPreviewResult(response.data ?? null))
+        .catch(() => undefined);
+    }, PREVIEW_DELAY_MS);
+    return () => window.clearTimeout(timer);
+  }, [values.tplCn, previewContent]);
+  // An empty content shows the empty phone, whatever was rendered before.
+  const shownPreview = values.tplCn.trim() ? previewResult : null;
+
   const handleTestSend = async () => {
     if (!template) return;
     if (!phone.trim()) {
@@ -188,7 +208,7 @@ function TemplateForm({ template, canWrite, onClose }: { template: ZaloTemplate 
 
   return (
     <SysFormModal
-      width={1200}
+      width={1280}
       open
       title={isCreate ? t('zalo.templates.form.registerTitle') : t('zalo.templates.form.editTitle')}
       submitText={isCreate ? t('zalo.common.register') : t('zalo.common.edit')}
@@ -196,142 +216,143 @@ function TemplateForm({ template, canWrite, onClose }: { template: ZaloTemplate 
       submitting={save.isPending}
       onCancel={onClose}
     >
-      <SysFieldGrid columns={3}>
-        <SysField label={t('zalo.templates.form.tplCd')} required={isCreate} error={errors.tplCd} hint={isCreate ? t('zalo.templates.form.tplCdHint') : undefined}>
-          <TextInput
-            value={values.tplCd}
-            maxLength={20}
-            placeholder="MBR_JOIN_WELCOME"
-            disabled={!isCreate || disabled}
-            onChange={(e) => patch('tplCd', { tplCd: e.target.value.toUpperCase() })}
-          />
-        </SysField>
-        <SysField label={t('zalo.templates.form.process')} required error={errors.procGrpCd}>
-          <AppSelect<string>
-            className={styles.fullWidth}
-            value={values.procGrpCd}
-            options={processOptions}
-            disabled={disabled}
-            onChange={(procGrpCd) => patch('procGrpCd', { procGrpCd })}
-          />
-        </SysField>
-        <SysField label={t('zalo.templates.form.use')} required error={errors.useYn}>
-          <AppRadio.Group
-            value={values.useYn}
-            options={[
-              { value: 'Y', label: t('zalo.common.active') },
-              { value: 'N', label: t('zalo.common.inactive') },
-            ]}
-            disabled={disabled}
-            onChange={(e) => patch('useYn', { useYn: e.target.value as YesNo })}
-          />
-        </SysField>
-        <SysField label={t('zalo.templates.form.tplNm')} required error={errors.tplNm}>
-          <TextInput value={values.tplNm} maxLength={255} disabled={disabled} onChange={(e) => patch('tplNm', { tplNm: e.target.value })} />
-        </SysField>
-        <SysField label={t('zalo.templates.form.channel')} required error={errors.zaloSndMode}>
-          <AppRadio.Group
-            value={values.zaloSndMode}
-            options={[
-              { value: 'ZNS', label: t('zalo.channels.ZNS') },
-              { value: 'OA', label: t('zalo.channels.OA') },
-            ]}
-            disabled={disabled}
-            onChange={(e) => {
-              patch('zaloSndMode', { zaloSndMode: e.target.value as ZaloSendMode });
-              clearError('znsTplId');
-            }}
-          />
-        </SysField>
-        <SysField label={t('zalo.templates.form.znsTplId')} error={errors.znsTplId} hint={isZns ? t('zalo.templates.form.znsTplIdHint') : undefined}>
-          <TextInput
-            value={isZns ? values.znsTplId : ''}
-            maxLength={100}
-            disabled={disabled || !isZns}
-            onChange={(e) => patch('znsTplId', { znsTplId: e.target.value })}
-          />
-        </SysField>
-        <SysField label={t('zalo.templates.form.tplCn')} required span="full" error={errors.tplCn}>
-          <div className={styles.contentCell}>
-            <TextArea
-              value={values.tplCn}
-              rows={4}
-              maxLength={4000}
-              placeholder={t('zalo.templates.form.tplCnPlaceholder', { name: '{{mbrNm}}', otp: '{{otp}}' })}
-              disabled={disabled}
-              onChange={(e) => patch('tplCn', { tplCn: e.target.value })}
-              onSelect={trackCaret}
-              onFocus={trackCaret}
-            />
-            <div className={styles.variableBar}>
-              <span className={styles.variableLabel}>{t('zalo.templates.form.insertVariable')}</span>
-              {ZALO_SAMPLE_VARIABLES.map((name) => (
-                <SysButton
-                  key={name}
-                  size="small"
+      <div className={styles.editorLayout}>
+        <div className={styles.editorForm}>
+          <SysFieldGrid columns={2}>
+            <SysField label={t('zalo.templates.form.tplCd')} required={isCreate} error={errors.tplCd} hint={isCreate ? t('zalo.templates.form.tplCdHint') : undefined}>
+              <TextInput
+                value={values.tplCd}
+                maxLength={20}
+                placeholder="MBR_JOIN_WELCOME"
+                disabled={!isCreate || disabled}
+                onChange={(e) => patch('tplCd', { tplCd: e.target.value.toUpperCase() })}
+              />
+            </SysField>
+            <SysField label={t('zalo.templates.form.process')} required error={errors.procGrpCd}>
+              <AppSelect<string>
+                className={styles.fullWidth}
+                value={values.procGrpCd}
+                options={processOptions}
+                disabled={disabled}
+                onChange={(procGrpCd) => patch('procGrpCd', { procGrpCd })}
+              />
+            </SysField>
+            <SysField label={t('zalo.templates.form.tplNm')} required error={errors.tplNm}>
+              <TextInput value={values.tplNm} maxLength={255} disabled={disabled} onChange={(e) => patch('tplNm', { tplNm: e.target.value })} />
+            </SysField>
+            <SysField label={t('zalo.templates.form.use')} required error={errors.useYn}>
+              <AppRadio.Group
+                value={values.useYn}
+                options={[
+                  { value: 'Y', label: t('zalo.common.active') },
+                  { value: 'N', label: t('zalo.common.inactive') },
+                ]}
+                disabled={disabled}
+                onChange={(e) => patch('useYn', { useYn: e.target.value as YesNo })}
+              />
+            </SysField>
+            <SysField label={t('zalo.templates.form.channel')} required error={errors.zaloSndMode}>
+              <AppRadio.Group
+                value={values.zaloSndMode}
+                options={[
+                  { value: 'ZNS', label: t('zalo.channels.ZNS') },
+                  { value: 'OA', label: t('zalo.channels.OA') },
+                ]}
+                disabled={disabled}
+                onChange={(e) => {
+                  patch('zaloSndMode', { zaloSndMode: e.target.value as ZaloSendMode });
+                  clearError('znsTplId');
+                }}
+              />
+            </SysField>
+            <SysField label={t('zalo.templates.form.znsTplId')} error={errors.znsTplId} hint={isZns ? t('zalo.templates.form.znsTplIdHint') : undefined}>
+              <TextInput
+                value={isZns ? values.znsTplId : ''}
+                maxLength={100}
+                disabled={disabled || !isZns}
+                onChange={(e) => patch('znsTplId', { znsTplId: e.target.value })}
+              />
+            </SysField>
+            <SysField label={t('zalo.templates.form.tplCn')} required span="full" error={errors.tplCn}>
+              <div className={styles.contentCell}>
+                <TextArea
+                  value={values.tplCn}
+                  rows={4}
+                  maxLength={4000}
+                  placeholder={t('zalo.templates.form.tplCnPlaceholder', { name: '{{mbrNm}}', otp: '{{otp}}' })}
                   disabled={disabled}
-                  // Keep the caret in the content field.
-                  onMouseDown={(e) => e.preventDefault()}
-                  onClick={() => insertVariable(name)}
-                >
-                  {`{{${name}}}`}
+                  onChange={(e) => patch('tplCn', { tplCn: e.target.value })}
+                  onSelect={trackCaret}
+                  onFocus={trackCaret}
+                />
+                <div className={styles.variableBar}>
+                  <span className={styles.variableLabel}>{t('zalo.templates.form.insertVariable')}</span>
+                  {ZALO_SAMPLE_VARIABLES.map((name) => (
+                    <SysButton
+                      key={name}
+                      size="small"
+                      disabled={disabled}
+                      // Keep the caret in the content field.
+                      onMouseDown={(e) => e.preventDefault()}
+                      onClick={() => insertVariable(name)}
+                    >
+                      {`{{${name}}}`}
+                    </SysButton>
+                  ))}
+                </div>
+              </div>
+            </SysField>
+            <SysField label={t('zalo.templates.form.paramMap')} span="full" error={errors.paramMapCn} hint={t('zalo.templates.form.paramMapHint')}>
+              <TextArea
+                value={values.paramMapCn}
+                rows={2}
+                maxLength={4000}
+                disabled={disabled}
+                onChange={(e) => patch('paramMapCn', { paramMapCn: e.target.value })}
+              />
+            </SysField>
+          </SysFieldGrid>
+
+          {!isCreate && canWrite && (
+            <SysFormSection title={t('zalo.templates.testSend.title')}>
+              <div className={styles.testSendRow}>
+                <TextInput
+                  className={styles.phoneInput}
+                  value={phone}
+                  maxLength={20}
+                  placeholder={t('zalo.common.phonePlaceholder')}
+                  aria-label={t('zalo.common.phone')}
+                  status={errors.phone ? 'error' : undefined}
+                  onChange={(e) => {
+                    setPhone(e.target.value);
+                    clearError('phone');
+                  }}
+                />
+                <SysButton look="outline" loading={testSend.isPending} onClick={() => void handleTestSend()}>
+                  {t('zalo.templates.testSend.button')}
                 </SysButton>
-              ))}
-            </div>
-          </div>
-        </SysField>
-        <SysField label={t('zalo.templates.form.paramMap')} span="full" error={errors.paramMapCn} hint={t('zalo.templates.form.paramMapHint')}>
-          <TextArea
-            value={values.paramMapCn}
-            rows={2}
-            maxLength={4000}
-            disabled={disabled}
-            onChange={(e) => patch('paramMapCn', { paramMapCn: e.target.value })}
-          />
-        </SysField>
-      </SysFieldGrid>
-
-      <SysFormSection
-        title={t('zalo.templates.preview.title')}
-        actions={
-          <SysButton size="small" loading={preview.isPending} onClick={() => void handlePreview()}>
-            {t('zalo.templates.preview.button')}
-          </SysButton>
-        }
-      >
-        <div className={styles.previewBox} data-testid="zalo-preview">
-          {previewResult ? previewResult.text : <span className={styles.previewEmpty}>{t('zalo.templates.preview.empty')}</span>}
+              </div>
+              {errors.phone && <p className={styles.missingText}>{errors.phone}</p>}
+              <p className={styles.hintText}>{t('zalo.templates.testSend.hint')}</p>
+            </SysFormSection>
+          )}
         </div>
-        {previewResult && previewResult.missingVariables.length > 0 && (
-          <p className={styles.missingText}>
-            {t('zalo.templates.preview.missing', { names: previewResult.missingVariables.join(', ') })}
-          </p>
-        )}
-      </SysFormSection>
-
-      {!isCreate && canWrite && (
-        <SysFormSection title={t('zalo.templates.testSend.title')}>
-          <div className={styles.testSendRow}>
-            <TextInput
-              className={styles.phoneInput}
-              value={phone}
-              maxLength={20}
-              placeholder={t('zalo.common.phonePlaceholder')}
-              aria-label={t('zalo.common.phone')}
-              status={errors.phone ? 'error' : undefined}
-              onChange={(e) => {
-                setPhone(e.target.value);
-                clearError('phone');
-              }}
-            />
-            <SysButton look="outline" loading={testSend.isPending} onClick={() => void handleTestSend()}>
-              {t('zalo.templates.testSend.button')}
+        <aside className={styles.editorPhone}>
+          <div className={styles.phoneHeader}>
+            <span className={styles.phoneTitle}>{t('zalo.templates.preview.title')}</span>
+            <SysButton size="small" loading={preview.isPending} onClick={() => void handlePreview()}>
+              {t('zalo.templates.preview.button')}
             </SysButton>
           </div>
-          {errors.phone && <p className={styles.missingText}>{errors.phone}</p>}
-          <p className={styles.hintText}>{t('zalo.templates.testSend.hint')}</p>
-        </SysFormSection>
-      )}
+          <ZaloPhonePreview
+            mode={values.zaloSndMode}
+            title={values.tplNm}
+            text={shownPreview?.text}
+            missingVariables={shownPreview?.missingVariables}
+            loading={preview.isPending}
+          />
+        </aside>
+      </div>
     </SysFormModal>
   );
 }
