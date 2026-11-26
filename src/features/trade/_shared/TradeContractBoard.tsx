@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { TableColumnsType } from 'antd';
 import type { Dayjs } from 'dayjs';
 import ActionButton from '@/components/common/actions/ActionButton';
@@ -14,6 +15,7 @@ import type { TradeAppKind, TradeContractListItem, TradeContractKind, TradeContr
 import { SysPageHeader, SysPagination } from '@/components/common/sys-ui/SystemUi';
 import { useCommonCodes } from '@/hooks/use-common-codes';
 import { useMenuPermission } from '@/hooks/use-menu-permission';
+import { codeLabel } from '@/lib/i18n/code-label';
 import { formatDmy } from '@/utils/date-format';
 import { errorMessage, formatAmount, rowNumber } from '@/utils/system-utils';
 import styles from '@/components/common/sys-ui/system-page.module.scss';
@@ -34,13 +36,10 @@ const APP_KIND: Record<TradeContractKind, TradeAppKind> = {
   'purchase-brokerage-contracts': 'purchase',
   'consulting-contracts': 'consulting',
 };
-const FEE_METHODS: Record<string, string> = { LUMP: '① Full after signing', AFTR: '② After the sale', STAG: '③ Advance + balance' };
-const ANNEX_PURPOSES: Record<string, string> = { EXTN: 'Extension', PRCE: 'Price', POST: 'After sale', ETC: 'Other' };
 type DateRange = [Dayjs | null, Dayjs | null] | null;
-const PERIOD_HELP =
-  'Contracts whose term overlaps the period: concluded (drafts: started or created) on or before the end of the period and ending on or after its start; contracts without an end date match any start.';
 
 export default function TradeContractBoard({ kind, title }: { kind: TradeContractKind; title: string }) {
+  const { t } = useTranslation();
   const [period, setPeriod] = useState<DateRange>(null);
   const [ctrtSttsCd, setCtrtSttsCd] = useState('');
   const [bndLotYn, setBndLotYn] = useState<'' | 'Y' | 'N'>('');
@@ -98,9 +97,9 @@ export default function TradeContractBoard({ kind, title }: { kind: TradeContrac
   };
 
   const columns: TableColumnsType<TradeContractListItem> = [
-    { title: 'No', key: 'no', width: 60, align: 'center', render: (_v, _r, i) => rowNumber(total, page, PAGE_SIZE, i) },
+    { title: t('trade.common.rowNo'), key: 'no', width: 60, align: 'center', render: (_v, _r, i) => rowNumber(total, page, PAGE_SIZE, i) },
     {
-      title: 'Contract No.',
+      title: t('trade.common.contractNo'),
       dataIndex: 'srvcCtrtNo',
       width: 180,
       render: (_v, r) => (
@@ -116,36 +115,39 @@ export default function TradeContractBoard({ kind, title }: { kind: TradeContrac
       ),
     },
     {
-      title: 'Kind',
+      title: t('trade.common.kind'),
       key: 'type',
       width: 130,
-      render: (_v, r) => (r.mstCtrtCd && r.mstCtrtCd !== r.srvcCtrtCd ? `ㄴAnnex ${ANNEX_PURPOSES[r.anxPrpsCd ?? ''] ?? ''}` : 'Contract'),
+      render: (_v, r) =>
+        r.mstCtrtCd && r.mstCtrtCd !== r.srvcCtrtCd
+          ? t('trade.contract.board.annexKind', { purpose: codeLabel('trade.annexPurposes', r.anxPrpsCd, '') })
+          : t('trade.common.contract'),
     },
-    { title: 'Status', dataIndex: 'ctrtSttsNm', width: 150, align: 'center', render: (v?: string, r?: TradeContractListItem) => v || r?.ctrtSttsCd || '-' },
-    { title: 'Member', dataIndex: 'mbrNm', width: 180, render: (v?: string) => v || '-' },
-    { title: 'NPL / LOT', key: 'npl', width: 150, render: (_v, r) => r.bndCd || r.bndLotId || '-' },
-    { title: 'Conclusion Date', dataIndex: 'ctrtCnclsDmy', width: 130, align: 'center', render: (v?: string) => formatDmy(v) },
-    { title: 'End Date', dataIndex: 'ctrtEndDmy', width: 130, align: 'center', render: (v?: string) => formatDmy(v) },
+    { title: t('trade.common.status'), dataIndex: 'ctrtSttsNm', width: 150, align: 'center', render: (v?: string, r?: TradeContractListItem) => v || r?.ctrtSttsCd || '-' },
+    { title: t('trade.common.member'), dataIndex: 'mbrNm', width: 180, render: (v?: string) => v || '-' },
+    { title: t('trade.common.nplLot'), key: 'npl', width: 150, render: (_v, r) => r.bndCd || r.bndLotId || '-' },
+    { title: t('trade.contract.board.conclusionDate'), dataIndex: 'ctrtCnclsDmy', width: 130, align: 'center', render: (v?: string) => formatDmy(v) },
+    { title: t('trade.contract.board.endDate'), dataIndex: 'ctrtEndDmy', width: 130, align: 'center', render: (v?: string) => formatDmy(v) },
     {
-      title: 'Remaining',
+      title: t('trade.contract.board.remaining'),
       dataIndex: 'remainingDays',
       width: 100,
       align: 'center',
       render: (v?: number) => (v === undefined || v === null ? '-' : <span className={v <= 30 ? styles.textDanger : undefined}>D-{v}</span>),
     },
-    { title: 'Price', dataIndex: 'prpPrc', width: 140, align: 'right', render: (v?: number, r?: TradeContractListItem) => (v === undefined ? '-' : `${formatAmount(v)} ${r?.crncCd ?? ''}`) },
-    { title: 'Actual Price', dataIndex: 'rltrPrc', width: 140, align: 'right', render: (v?: number) => formatAmount(v) },
-    { title: 'Fee', dataIndex: 'feeAmt', width: 130, align: 'right', render: (v?: number) => formatAmount(v) },
-    { title: 'Fee Payment', dataIndex: 'feeClclnMthCd', width: 160, render: (v?: string) => (v && FEE_METHODS[v]) || v || '-' },
-    { title: 'Fee Stage', dataIndex: 'feeStage', width: 90, align: 'center', render: (v?: string) => v || '-' },
-    { title: 'Approval', dataIndex: 'latestAtrzSttsCd', width: 110, align: 'center', render: (v?: string) => v || '-' },
-    { title: 'Officer', dataIndex: 'tkcgEmpNm', width: 170, render: (v?: string) => v || '-' },
+    { title: t('trade.common.price'), dataIndex: 'prpPrc', width: 140, align: 'right', render: (v?: number, r?: TradeContractListItem) => (v === undefined ? '-' : `${formatAmount(v)} ${r?.crncCd ?? ''}`) },
+    { title: t('trade.common.actualPrice'), dataIndex: 'rltrPrc', width: 140, align: 'right', render: (v?: number) => formatAmount(v) },
+    { title: t('trade.common.fee'), dataIndex: 'feeAmt', width: 130, align: 'right', render: (v?: number) => formatAmount(v) },
+    { title: t('trade.common.feePayment'), dataIndex: 'feeClclnMthCd', width: 160, render: (v?: string) => codeLabel('trade.feeMethods', v) },
+    { title: t('trade.contract.board.feeStage'), dataIndex: 'feeStage', width: 90, align: 'center', render: (v?: string) => v || '-' },
+    { title: t('trade.common.approval'), dataIndex: 'latestAtrzSttsCd', width: 110, align: 'center', render: (v?: string) => v || '-' },
+    { title: t('trade.common.officer'), dataIndex: 'tkcgEmpNm', width: 170, render: (v?: string) => v || '-' },
   ];
 
   return (
     <div className={styles.container}>
       <SysPageHeader
-        breadcrumb={['Trade Management', 'Contract Management', title]}
+        breadcrumb={[t('trade.breadcrumb.root'), t('trade.breadcrumb.contracts'), title]}
         title={title}
         onReset={handleReset}
         onSearch={handleSearch}
@@ -156,53 +158,53 @@ export default function TradeContractBoard({ kind, title }: { kind: TradeContrac
         <div className={styles.filterCard}>
           <div className={styles.filterGroup}>
             {/* Server rule (R3-02): the contract term [conclusion (draft: start / creation), end] overlaps the period. */}
-            <span className={styles.filterLabel} title={PERIOD_HELP}>
-              Contract Period
+            <span className={styles.filterLabel} title={t('trade.contract.board.periodHelp')}>
+              {t('trade.contract.board.period')}
             </span>
             <AppRangePicker
               format="DD/MM/YYYY"
-              placeholder={['Term from', 'Term to']}
+              placeholder={[t('trade.contract.board.termFrom'), t('trade.contract.board.termTo')]}
               value={period}
               onChange={(d) => setPeriod(d as DateRange)}
               className={styles.w240}
             />
           </div>
           <div className={styles.filterGroup}>
-            <span className={styles.filterLabel}>Status</span>
+            <span className={styles.filterLabel}>{t('trade.common.status')}</span>
             <AppSelect
               className={styles.w150}
               value={ctrtSttsCd}
               onChange={(v) => setCtrtSttsCd(String(v ?? ''))}
-              options={[{ value: '', label: 'All' }, ...statusOptions]}
+              options={[{ value: '', label: t('trade.common.all') }, ...statusOptions]}
             />
           </div>
           <div className={styles.filterGroup}>
-            <span className={styles.filterLabel}>LOT Status</span>
+            <span className={styles.filterLabel}>{t('trade.common.lotStatus')}</span>
             <AppRadio.Group value={bndLotYn} onChange={(e) => setBndLotYn(e.target.value)}>
-              <AppRadio value="">All</AppRadio>
-              <AppRadio value="Y">Yes</AppRadio>
-              <AppRadio value="N">No</AppRadio>
+              <AppRadio value="">{t('trade.common.all')}</AppRadio>
+              <AppRadio value="Y">{t('trade.common.yes')}</AppRadio>
+              <AppRadio value="N">{t('trade.common.no')}</AppRadio>
             </AppRadio.Group>
           </div>
           <div className={styles.filterGroup}>
-            <span className={styles.filterLabel}>Member Code</span>
-            <TextInput className={styles.filterInput} placeholder="Member No" value={mbrNo} onChange={(e) => setMbrNo(e.target.value)} onPressEnter={handleSearch} allowClear />
+            <span className={styles.filterLabel}>{t('trade.common.memberCode')}</span>
+            <TextInput className={styles.filterInput} placeholder={t('trade.common.memberNoPlaceholder')} value={mbrNo} onChange={(e) => setMbrNo(e.target.value)} onPressEnter={handleSearch} allowClear />
           </div>
           <div className={styles.filterGroup}>
-            <span className={styles.filterLabel}>NPL Code</span>
-            <TextInput className={styles.filterInput} placeholder="NPL Code" value={bndCd} onChange={(e) => setBndCd(e.target.value)} onPressEnter={handleSearch} allowClear />
+            <span className={styles.filterLabel}>{t('trade.common.nplCode')}</span>
+            <TextInput className={styles.filterInput} placeholder={t('trade.common.nplCode')} value={bndCd} onChange={(e) => setBndCd(e.target.value)} onPressEnter={handleSearch} allowClear />
           </div>
           <div className={styles.filterGroup}>
-            <span className={styles.filterLabel}>Contract ID</span>
-            <TextInput className={styles.filterInput} placeholder="Contract No. or keyword" value={keyword} onChange={(e) => setKeyword(e.target.value)} onPressEnter={handleSearch} allowClear />
+            <span className={styles.filterLabel}>{t('trade.contract.board.contractId')}</span>
+            <TextInput className={styles.filterInput} placeholder={t('trade.contract.board.contractIdPlaceholder')} value={keyword} onChange={(e) => setKeyword(e.target.value)} onPressEnter={handleSearch} allowClear />
           </div>
         </div>
       )}
       <div className={styles.summaryRow}>
-        <span className={styles.totalCount}>Total ({total})</span>
+        <span className={styles.totalCount}>{t('trade.common.total', { n: total })}</span>
         {consulting && (
           <label className={styles.filterGroup}>
-            <span className={styles.filterLabel}>Follow-up consulting requests</span>
+            <span className={styles.filterLabel}>{t('trade.contract.board.followUp')}</span>
             <AppSwitch
               checked={!!followUpEnabled}
               disabled={!canWrite}
@@ -213,7 +215,9 @@ export default function TradeContractBoard({ kind, title }: { kind: TradeContrac
             />
           </label>
         )}
-        <ActionButton action="excelDownload" size="small" onClick={() => downloadExcel.mutate({ kind, search: applied })}>Excel Download</ActionButton>
+        <ActionButton action="excelDownload" size="small" onClick={() => downloadExcel.mutate({ kind, search: applied })}>
+          {t('trade.common.excelDownload')}
+        </ActionButton>
       </div>
       <div className={styles.tableWrapper}>
         <DataTable<TradeContractListItem> rowKey="srvcCtrtCd" columns={columns} dataSource={rows} loading={isFetching} scroll={{ x: 'max-content' }} />

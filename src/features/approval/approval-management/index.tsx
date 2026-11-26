@@ -1,13 +1,15 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import type { TFunction } from 'i18next';
 import type { TableColumnsType } from 'antd';
 import ActionButton from '@/components/common/actions/ActionButton';
 import DataTable from '@/components/common/table/DataTable';
 import AppSelect from '@/components/inputs/AppSelect';
 import { SysPageHeader, SysPagination } from '@/components/common/sys-ui/SystemUi';
 import { useNotify } from '@/hooks/use-notify';
-import { APPROVAL_STAGE_LABELS, APPROVAL_STEP_LABELS, approvalStageOf } from '@/api/common/approval-api';
+import { approvalStageOf } from '@/api/common/approval-api';
 import type { ApprovalInboxItem, ApprovalInboxKind, ApprovalInboxSummary } from '@/api/common/approval-api';
+import { codeLabel } from '@/lib/i18n/code-label';
 import { formatDateTime } from '@/utils/date-format';
 import { rowNumber } from '@/utils/system-utils';
 import pageStyles from '@/components/common/sys-ui/system-page.module.scss';
@@ -24,45 +26,49 @@ import styles from './approval-management.module.scss';
 
 const PAGE_SIZE = 15;
 
-type KindChip = { key: ApprovalInboxKind | 'all'; label: string; count: (s?: ApprovalInboxSummary) => number };
+type KindChip = { key: ApprovalInboxKind | 'all'; count: (s?: ApprovalInboxSummary) => number };
 
+/** Chip labels: `approval.inbox.kinds.<key>`. */
 const KIND_CHIPS: KindChip[] = [
-  { key: 'all', label: 'All', count: (s) => s?.total ?? 0 },
-  { key: 'member', label: 'Member', count: (s) => s?.member ?? 0 },
-  { key: 'sale', label: 'Sale', count: (s) => s?.sale ?? 0 },
-  { key: 'purchase', label: 'Purchase', count: (s) => s?.purchase ?? 0 },
-  { key: 'consulting', label: 'Consulting', count: (s) => s?.consulting ?? 0 },
+  { key: 'all', count: (s) => s?.total ?? 0 },
+  { key: 'member', count: (s) => s?.member ?? 0 },
+  { key: 'sale', count: (s) => s?.sale ?? 0 },
+  { key: 'purchase', count: (s) => s?.purchase ?? 0 },
+  { key: 'consulting', count: (s) => s?.consulting ?? 0 },
   // Every other process (auction publication, …).
-  { key: 'other', label: 'Other', count: (s) => s?.other ?? 0 },
+  { key: 'other', count: (s) => s?.other ?? 0 },
 ];
-
-const KIND_LABELS: Record<string, string> = {
-  MEMBER: 'Member',
-  SALE: 'Sale',
-  PURCHASE: 'Purchase',
-  CONSULTING: 'Consulting',
-  OTHER: 'Other',
-};
 
 const TRADE_PREFIXES = [
-  { prefix: 'PROC_DSPSL_MDT', label: 'Sale' },
-  { prefix: 'PROC_PUR_MDT', label: 'Purchase' },
-  { prefix: 'PROC_CNSLT', label: 'Consulting' },
-];
+  { prefix: 'PROC_DSPSL_MDT', kind: 'sale' },
+  { prefix: 'PROC_PUR_MDT', kind: 'purchase' },
+  { prefix: 'PROC_CNSLT', kind: 'consulting' },
+] as const;
 const TRADE_STAGES = ['RCPT', 'CTRT', 'SIGN', 'ANX', 'END', 'END_SIGN'] as const;
 
 /** Process filter options: every trade stage per kind, the consulting report, the member sign-up. */
-const PROCESS_OPTIONS = [
-  { value: '', label: 'All processes' },
-  ...TRADE_PREFIXES.flatMap(({ prefix, label }) =>
-    TRADE_STAGES.filter((stage) => !(prefix === 'PROC_CNSLT' && stage === 'ANX')).map((stage) => ({
-      value: `${prefix}_${stage}`,
-      label: `${label} · ${APPROVAL_STAGE_LABELS[stage]}`,
-    })),
-  ),
-  { value: 'PROC_CNSLT_RPTP', label: `Consulting · ${APPROVAL_STAGE_LABELS.RPTP}` },
-  { value: 'PROC_MBR_JOIN', label: 'Member · Sign-up' },
-];
+function processOptions(t: TFunction) {
+  const option = (kind: (typeof TRADE_PREFIXES)[number]['kind'], stage: string) =>
+    t('approval.inbox.processOption', { kind: t(`approval.inbox.kinds.${kind}`), stage: codeLabel('approval.stages', stage) });
+  return [
+    { value: '', label: t('approval.inbox.allProcesses') },
+    ...TRADE_PREFIXES.flatMap(({ prefix, kind }) =>
+      TRADE_STAGES.filter((stage) => !(prefix === 'PROC_CNSLT' && stage === 'ANX')).map((stage) => ({
+        value: `${prefix}_${stage}`,
+        label: option(kind, stage),
+      })),
+    ),
+    { value: 'PROC_CNSLT_RPTP', label: option('consulting', 'RPTP') },
+    { value: 'PROC_MBR_JOIN', label: t('approval.inbox.memberSignup') },
+  ];
+}
+
+/** Label of the server's process kind (MEMBER, SALE, …); an unknown kind is shown as sent. */
+function kindLabel(processKind?: string): string {
+  const code = processKind?.toLowerCase();
+  const label = codeLabel('approval.inbox.kinds', code);
+  return label === code ? (processKind ?? '-') : label;
+}
 
 type PopupState = { kind: 'info'; item: ApprovalInboxItem } | { kind: ApprovalDecision; item: ApprovalInboxItem } | null;
 
@@ -100,24 +106,24 @@ export default function ApprovalManagement() {
   };
 
   const columns: TableColumnsType<ApprovalInboxItem> = [
-    { title: 'No', key: 'no', width: 60, align: 'center', render: (_v, _r, i) => rowNumber(total, page, PAGE_SIZE, i) },
-    { title: 'Kind', dataIndex: 'processKind', width: 100, align: 'center', render: (v?: string) => (v && KIND_LABELS[v]) || v || '-' },
+    { title: t('approval.fields.rowNo'), key: 'no', width: 60, align: 'center', render: (_v, _r, i) => rowNumber(total, page, PAGE_SIZE, i) },
+    { title: t('approval.inbox.kind'), dataIndex: 'processKind', width: 100, align: 'center', render: (v?: string) => kindLabel(v) },
     {
-      title: 'Approval Stage',
+      title: t('approval.fields.approvalStage'),
       dataIndex: 'atrzProcCd',
       width: 200,
       render: (v: string, r) => (
-        <span title={v}>{r.atrzProcNm || APPROVAL_STAGE_LABELS[approvalStageOf(v)]}</span>
+        <span title={v}>{r.atrzProcNm || codeLabel('approval.stages', approvalStageOf(v))}</span>
       ),
     },
-    { title: 'Step', dataIndex: 'stpNm', width: 110, align: 'center', render: (v?: string) => (v && APPROVAL_STEP_LABELS[v]) || v || '-' },
-    { title: 'Target', key: 'target', width: 260, render: (_v, r) => targetOf(r) },
+    { title: t('approval.fields.step'), dataIndex: 'stpNm', width: 110, align: 'center', render: (v?: string) => codeLabel('approval.steps', v) },
+    { title: t('approval.inbox.target'), key: 'target', width: 260, render: (_v, r) => targetOf(r) },
     // Who decided the previous step and so sent the item to this step.
-    { title: 'Requested By', dataIndex: 'requesterEmpNm', width: 180, render: (v?: string, r?: ApprovalInboxItem) => v || r?.requesterEmpNo || '-' },
-    { title: 'Requested At', dataIndex: 'requestedAt', width: 140, align: 'center', render: (v?: string) => formatDateTime(v) },
-    { title: 'Assigned At', dataIndex: 'assignedAt', width: 140, align: 'center', render: (v?: string) => formatDateTime(v) },
+    { title: t('approval.inbox.requestedBy'), dataIndex: 'requesterEmpNm', width: 180, render: (v?: string, r?: ApprovalInboxItem) => v || r?.requesterEmpNo || '-' },
+    { title: t('approval.inbox.requestedAt'), dataIndex: 'requestedAt', width: 140, align: 'center', render: (v?: string) => formatDateTime(v) },
+    { title: t('approval.inbox.assignedAt'), dataIndex: 'assignedAt', width: 140, align: 'center', render: (v?: string) => formatDateTime(v) },
     {
-      title: 'Actions',
+      title: t('approval.inbox.actions'),
       key: 'actions',
       width: 300,
       align: 'center',
@@ -127,20 +133,20 @@ export default function ApprovalManagement() {
         return (
           <span className={styles.rowActions}>
             <ActionButton size="small" intent="quaternary" appearance="outlined" onClick={() => setPopup({ kind: 'info', item })}>
-              Info
+              {t('approval.inbox.info')}
             </ActionButton>
             {canDecide && (
               <ActionButton size="small" intent="primary" appearance="filled" onClick={() => setPopup({ kind: 'approve', item })}>
-                Approve
+                {t('approval.decision.approve')}
               </ActionButton>
             )}
             {canDecide && (
               <ActionButton size="small" intent="danger" appearance="outlined" onClick={() => setPopup({ kind: 'reject', item })}>
-                Reject
+                {t('approval.decision.reject')}
               </ActionButton>
             )}
             <ActionButton size="small" intent="text" onClick={() => handleOpen(item)}>
-              Open
+              {t('approval.inbox.open')}
             </ActionButton>
           </span>
         );
@@ -151,8 +157,8 @@ export default function ApprovalManagement() {
   return (
     <div className={pageStyles.container}>
       <SysPageHeader
-        breadcrumb={['Approval Management']}
-        title="Approval Management"
+        breadcrumb={[t('approval.inbox.title')]}
+        title={t('approval.inbox.title')}
         onReset={() => {
           setProcDraft('');
           setAtrzProcCd('');
@@ -168,12 +174,12 @@ export default function ApprovalManagement() {
       {!filterCollapsed && (
         <div className={pageStyles.filterCard}>
           <div className={pageStyles.filterGroup}>
-            <span className={pageStyles.filterLabel}>Approval Process</span>
-            <AppSelect className={styles.processSelect} value={procDraft} options={PROCESS_OPTIONS} onChange={(v) => setProcDraft(String(v ?? ''))} />
+            <span className={pageStyles.filterLabel}>{t('approval.inbox.process')}</span>
+            <AppSelect className={styles.processSelect} value={procDraft} options={processOptions(t)} onChange={(v) => setProcDraft(String(v ?? ''))} />
           </div>
         </div>
       )}
-      <div className={styles.chips} role="tablist" aria-label="Process kind">
+      <div className={styles.chips} role="tablist" aria-label={t('approval.inbox.processKind')}>
         {KIND_CHIPS.map((chip) => {
           const active = chip.key === kind;
           return (
@@ -186,14 +192,14 @@ export default function ApprovalManagement() {
               data-active={active || undefined}
               onClick={() => selectKind(chip.key)}
             >
-              {chip.label}
+              {t(`approval.inbox.kinds.${chip.key}`)}
               <span className={styles.chipCount}>{chip.count(summary)}</span>
             </button>
           );
         })}
       </div>
       <div className={pageStyles.summaryRow}>
-        <span className={pageStyles.totalCount}>Total ({total})</span>
+        <span className={pageStyles.totalCount}>{t('approval.inbox.total', { n: total })}</span>
       </div>
       <div className={pageStyles.tableWrapper}>
         <DataTable<ApprovalInboxItem>

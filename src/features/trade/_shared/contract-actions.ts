@@ -1,17 +1,9 @@
 import dayjs from 'dayjs';
 import type { TradeAppKind, TradeContractDetail } from '@/api/trade/trade-api';
-import type { FeeMethod } from '@/api/trade/trade-contract-api';
 import { dmyToDayjs } from '@/utils/date-format';
 
 /** The renewal decision opens this many days before the end date (sale.contract.expiry-notice-days). */
 export const RENEWAL_WINDOW_DAYS = 30;
-
-/** Fee payment options of the flows (sale contract step 13 / Mẫu 11 Art. 3). */
-export const FEE_METHOD_LABELS: Record<FeeMethod, string> = {
-  LUMP: '① Full after signing',
-  AFTR: '② Full after the sale',
-  STAG: '③ Advance + balance',
-};
 
 // Actions of the contract popup. The server sends them in `availableActions` (WP8); for an older server they are
 // derived from plan §2.4 (officer = tkcgEmpNo, nothing while an approval is open, approver decides).

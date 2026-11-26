@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import type { TFunction } from 'i18next';
 import type { TableColumnsType } from 'antd';
 import ActionButton from '@/components/common/actions/ActionButton';
 import FileUploadBox from '@/components/common/file-upload/FileUploadBox';
@@ -11,6 +12,7 @@ import type { TradeAdditionalConsultation, TradeContractDetail, TradeFile } from
 import { CONSULTING_REPORT_PROCESS } from '@/api/trade/trade-contract-api';
 import type { ApprovalDetailRow } from '@/features/approval/_shared/ApprovalParts';
 import ApprovalRequestPopup from '@/features/approval/_shared/ApprovalRequestPopup';
+import { codeLabel } from '@/lib/i18n/code-label';
 import { formatDateTime } from '@/utils/date-format';
 import { errorMessage } from '@/utils/system-utils';
 import { useOpenTradeFile } from './use-trade-application-actions';
@@ -27,14 +29,13 @@ import styles from './trade-application-popup.module.scss';
 // draft) → [Complete Report] issues the remaining fee; the report is published (OPEN) when that fee is paid, or at
 // once when nothing is left. Follow-up requests come from the member (My Page): [Receive] → [Answer].
 
-const REPORT_STATUS: Record<string, string> = {
-  DRFT: 'Draft',
-  APRQ: 'In Approval',
-  APRV: 'Approved',
-  RDY: 'Waiting for the remaining fee',
-  OPEN: 'Published',
-};
-const ADDITIONAL_STATUS: Record<string, string> = { RQST: 'Requested', RCPT: 'Received', CMPTN: 'Answered' };
+// Status labels: `trade.report.statuses.<code>` (report), `trade.report.additionalStatuses.<code>` (follow-ups).
+const baseColumns = (t: TFunction): TableColumnsType<TradeAdditionalConsultation> => [
+  { title: t('trade.common.requested'), dataIndex: 'crtDt', width: 140, align: 'center', render: (v?: string) => formatDateTime(v) },
+  { title: t('trade.report.request'), dataIndex: 'rqstCn', render: (v?: string) => v || '-' },
+  { title: t('trade.common.status'), dataIndex: 'adtnSttsCd', width: 110, render: (v?: string) => codeLabel('trade.report.additionalStatuses', v) },
+  { title: t('trade.report.answer'), dataIndex: 'rsltCn', render: (v?: string) => v || '-' },
+];
 
 interface ConsultingReportTabProps {
   detail: TradeContractDetail;
@@ -76,21 +77,18 @@ export default function ConsultingReportTab({ detail, actions, details }: Consul
             <span>{file.fileNm}</span>
             {file.previewUrl && (
               <button type="button" className={styles.officerLink} onClick={() => openFile.mutate(file.previewUrl as string)}>
-                Preview
+                {t('trade.common.preview')}
               </button>
             )}
           </li>
         ))}
       </ul>
     ) : (
-      <div className={styles.notice}>No report file yet.</div>
+      <div className={styles.notice}>{t('trade.report.noFile')}</div>
     );
 
   const columns: TableColumnsType<TradeAdditionalConsultation> = [
-    { title: 'Requested', dataIndex: 'crtDt', width: 140, align: 'center', render: (v?: string) => formatDateTime(v) },
-    { title: 'Request', dataIndex: 'rqstCn', render: (v?: string) => v || '-' },
-    { title: 'Status', dataIndex: 'adtnSttsCd', width: 110, render: (v?: string) => ADDITIONAL_STATUS[v ?? ''] ?? v ?? '-' },
-    { title: 'Answer', dataIndex: 'rsltCn', render: (v?: string) => v || '-' },
+    ...baseColumns(t),
     {
       title: '',
       key: 'actions',
@@ -107,12 +105,12 @@ export default function ConsultingReportTab({ detail, actions, details }: Consul
                 void run(() => additional.mutateAsync({ ctrtCd, adtnId: row.adtnId, complete: false }), t('messages.trade.additionalReceived'))
               }
             >
-              Receive
+              {t('trade.report.receive')}
             </ActionButton>
           )}
           {actions.has('COMPLETE_ADDITIONAL_CONSULTATION') && row.adtnSttsCd === 'RCPT' && (
             <ActionButton size="small" intent="secondary" appearance="filled" onClick={() => setAnswering(row)}>
-              Answer
+              {t('trade.report.answer')}
             </ActionButton>
           )}
         </>
@@ -123,21 +121,23 @@ export default function ConsultingReportTab({ detail, actions, details }: Consul
   return (
     <>
       <section className={styles.section}>
-        <div className={styles.sectionTitle}>Consulting Report — {REPORT_STATUS[detail.cnsltRptpSttsCd ?? ''] ?? 'Not written'}</div>
+        <div className={styles.sectionTitle}>
+          {t('trade.report.title', { status: codeLabel('trade.report.statuses', detail.cnsltRptpSttsCd, t('trade.report.notWritten')) })}
+        </div>
         {fileLinks(detail.reportFiles)}
         {detail.cnsltRptpSmryCn && !actions.has('SAVE_REPORT') && <div className={styles.notice}>{detail.cnsltRptpSmryCn}</div>}
-        {detail.cnsltRptpOpenDt && <div className={styles.fileSize}>Published {formatDateTime(detail.cnsltRptpOpenDt)}</div>}
+        {detail.cnsltRptpOpenDt && <div className={styles.fileSize}>{t('trade.report.published', { date: formatDateTime(detail.cnsltRptpOpenDt) })}</div>}
         {actions.has('SAVE_REPORT') && (
           <div className={styles.checkForm}>
             <FileUploadBox
               accept=".pdf"
               fileName={files[0]?.name}
-              title="Select the consulting report (PDF)"
-              uploadButtonText="Select Report"
+              title={t('trade.report.selectTitle')}
+              uploadButtonText={t('trade.report.selectReport')}
               onFileSelect={setFiles}
               onClear={() => setFiles([])}
             />
-            <TextArea rows={4} maxLength={4000} showCount placeholder="Report summary shown to the member" value={summary} onChange={(e) => setSummary(e.target.value)} />
+            <TextArea rows={4} maxLength={4000} showCount placeholder={t('trade.report.summaryPlaceholder')} value={summary} onChange={(e) => setSummary(e.target.value)} />
             <div className={styles.checkActions}>
               <ActionButton
                 intent="primary"
@@ -152,7 +152,7 @@ export default function ConsultingReportTab({ detail, actions, details }: Consul
                   )
                 }
               >
-                Save Report
+                {t('trade.report.saveReport')}
               </ActionButton>
             </div>
           </div>
@@ -160,7 +160,7 @@ export default function ConsultingReportTab({ detail, actions, details }: Consul
         <div className={styles.checkActions}>
           {actions.has('REQUEST_REPORT_APPROVAL') && (
             <ActionButton intent="secondary" appearance="filled" onClick={() => setRequesting(true)}>
-              Request Report Approval
+              {t('trade.report.requestApproval')}
             </ActionButton>
           )}
           {actions.has('COMPLETE_REPORT') && (
@@ -170,13 +170,13 @@ export default function ConsultingReportTab({ detail, actions, details }: Consul
               loading={complete.isPending}
               onClick={() => void run(() => complete.mutateAsync(ctrtCd), t('messages.trade.reportCompleted'))}
             >
-              Complete Report
+              {t('trade.report.completeReport')}
             </ActionButton>
           )}
         </div>
       </section>
       <section className={styles.section}>
-        <div className={styles.sectionTitle}>Follow-up Consultations</div>
+        <div className={styles.sectionTitle}>{t('trade.report.followUps')}</div>
         <DataTable<TradeAdditionalConsultation> rowKey="adtnId" columns={columns} dataSource={detail.additionalConsultations ?? []} pagination={false} />
       </section>
 
@@ -196,11 +196,11 @@ export default function ConsultingReportTab({ detail, actions, details }: Consul
         <Popup
           open
           width={600}
-          title="Answer Follow-up Consultation"
+          title={t('trade.report.answerTitle')}
           footerAlign="right"
           onCancel={() => setAnswering(null)}
           cancelText={t('messages.dialog.cancel')}
-          confirmText="Send Answer"
+          confirmText={t('trade.report.sendAnswer')}
           confirmLoading={additional.isPending}
           confirmDisabled={!result.trim()}
           onConfirm={() =>
@@ -216,12 +216,12 @@ export default function ConsultingReportTab({ detail, actions, details }: Consul
           }
         >
           <div className={styles.notice}>{answering.rqstCn}</div>
-          <TextArea rows={5} maxLength={4000} showCount placeholder="Answer to the member" value={result} onChange={(e) => setResult(e.target.value)} />
+          <TextArea rows={5} maxLength={4000} showCount placeholder={t('trade.report.answerPlaceholder')} value={result} onChange={(e) => setResult(e.target.value)} />
           <FileUploadBox
             accept=".pdf,.jpg,.jpeg,.png"
             fileName={resultFiles[0]?.name}
-            title="Attachment (optional)"
-            uploadButtonText="Select File"
+            title={t('trade.report.attachment')}
+            uploadButtonText={t('trade.report.selectFile')}
             onFileSelect={setResultFiles}
             onClear={() => setResultFiles([])}
           />

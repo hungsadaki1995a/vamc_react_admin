@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import type { TFunction } from 'i18next';
 import type { TableColumnsType } from 'antd';
 import ActionButton from '@/components/common/actions/ActionButton';
 import FileUploadBox from '@/components/common/file-upload/FileUploadBox';
@@ -14,6 +15,7 @@ import type { TradeAppKind, TradeContractDetail, TradeContractEnd, TradeContract
 import type { EndReason, FeeHandling } from '@/api/trade/trade-contract-api';
 import type { ApprovalDetailRow } from '@/features/approval/_shared/ApprovalParts';
 import ApprovalRequestPopup from '@/features/approval/_shared/ApprovalRequestPopup';
+import { codeLabel } from '@/lib/i18n/code-label';
 import { formatDmy } from '@/utils/date-format';
 import { errorMessage } from '@/utils/system-utils';
 import { useOpenTradeFile } from './use-trade-application-actions';
@@ -30,15 +32,19 @@ import styles from './trade-application-popup.module.scss';
 // [Close Contract]. Reasons by kind: consulting has no Expired; Expired needs an end date. The business guards
 // (sale CMPL only after the sale with no fee open, CNCL not after the sale, …) are the server's: its message is shown.
 
-const REASON_LABELS: Record<EndReason, string> = { CMPL: 'Completed', CNCL: 'Early termination', EXPR: 'Expired' };
-const FEE_HANDLING_LABELS: Record<FeeHandling, string> = { RFND: 'Refund', CLCN: 'Collect', NONE: 'No refund' };
-const END_STATUS_LABELS: Record<string, string> = {
-  PREPR: 'Registered',
-  DRFAPR: 'Approved',
-  SGNWT: 'Awaiting Signature',
-  SGNCP: 'Signed',
-  CMPTN: 'Closed',
-};
+// Labels: `trade.contract.termination.reasons | feeHandlings | statuses.<code>`.
+const FEE_HANDLINGS: FeeHandling[] = ['RFND', 'CLCN', 'NONE'];
+const reasonLabel = (code?: string) => codeLabel('trade.contract.termination.reasons', code);
+
+function terminationColumns(t: TFunction): TableColumnsType<TradeContractEnd> {
+  return [
+    { title: t('trade.contract.termination.reason'), dataIndex: 'endRsnCd', width: 150, render: (v?: string) => reasonLabel(v) },
+    { title: t('trade.contract.termination.feeHandling'), dataIndex: 'feeHndlCd', width: 120, render: (v?: string) => codeLabel('trade.contract.termination.feeHandlings', v) },
+    { title: t('trade.common.status'), dataIndex: 'endSttsCd', width: 150, render: (v?: string) => codeLabel('trade.contract.termination.statuses', v) },
+    { title: t('trade.contract.termination.closedOn'), dataIndex: 'endDmy', width: 110, align: 'center', render: (v?: string) => formatDmy(v) },
+    { title: t('trade.common.note'), dataIndex: 'endRsnCn', render: (v?: string) => v || '-' },
+  ];
+}
 
 interface ContractTerminationTabProps {
   kind: TradeAppKind;
@@ -78,12 +84,12 @@ export default function ContractTerminationTab({ kind, contractKind, detail, act
             <span>{file.fileNm}</span>
             {file.previewUrl && (
               <button type="button" className={styles.officerLink} onClick={() => openFile.mutate(file.previewUrl as string)}>
-                Preview
+                {t('trade.common.preview')}
               </button>
             )}
             {file.downloadUrl && (
               <button type="button" className={styles.officerLink} onClick={() => openFile.mutate(file.downloadUrl as string)}>
-                Download
+                {t('trade.common.download')}
               </button>
             )}
           </li>
@@ -93,35 +99,27 @@ export default function ContractTerminationTab({ kind, contractKind, detail, act
       <div className={styles.notice}>{empty}</div>
     );
 
-  const columns: TableColumnsType<TradeContractEnd> = [
-    { title: 'Reason', dataIndex: 'endRsnCd', width: 150, render: (v?: string) => REASON_LABELS[v as EndReason] ?? v ?? '-' },
-    { title: 'Fee Handling', dataIndex: 'feeHndlCd', width: 120, render: (v?: string) => FEE_HANDLING_LABELS[v as FeeHandling] ?? v ?? '-' },
-    { title: 'Status', dataIndex: 'endSttsCd', width: 150, render: (v?: string) => END_STATUS_LABELS[v ?? ''] ?? v ?? '-' },
-    { title: 'Closed On', dataIndex: 'endDmy', width: 110, align: 'center', render: (v?: string) => formatDmy(v) },
-    { title: 'Note', dataIndex: 'endRsnCn', render: (v?: string) => v || '-' },
-  ];
-
   return (
     <>
       {actions.has('START_TERMINATION') && (
         <div className={styles.checkActions}>
           <ActionButton intent="danger" appearance="filled" onClick={() => setStarting(true)}>
-            Register Termination
+            {t('trade.contract.termination.register')}
           </ActionButton>
         </div>
       )}
-      <DataTable<TradeContractEnd> rowKey="ctrtEndId" columns={columns} dataSource={terminations} pagination={false} />
+      <DataTable<TradeContractEnd> rowKey="ctrtEndId" columns={terminationColumns(t)} dataSource={terminations} pagination={false} />
       {current && (
         <>
           <section className={`${styles.section} ${styles.gridSpaced}`}>
-            <div className={styles.sectionTitle}>Liquidation Minutes</div>
-            {files(current.draftFiles, 'No minutes registered yet.')}
+            <div className={styles.sectionTitle}>{t('trade.contract.termination.minutes')}</div>
+            {files(current.draftFiles, t('trade.contract.termination.noMinutes'))}
             {actions.has('REGISTER_TERMINATION_DRAFT') && (
               <FileUploadBox
                 accept=".pdf,.jpg,.jpeg,.png"
                 disabled={upload.isPending}
-                title="Select the approved liquidation minutes (Mẫu 12) — registering them sends the signature request"
-                uploadButtonText="Register Minutes"
+                title={t('trade.contract.termination.minutesUploadTitle')}
+                uploadButtonText={t('trade.contract.termination.registerMinutes')}
                 onFileSelect={(selected) =>
                   void run(
                     () => upload.mutateAsync({ kind: contractKind, appKind: kind, ctrtCd, files: selected, as: 'draft' }),
@@ -132,14 +130,14 @@ export default function ContractTerminationTab({ kind, contractKind, detail, act
             )}
           </section>
           <section className={styles.section}>
-            <div className={styles.sectionTitle}>Signed Minutes Scan</div>
-            {files(current.scanFiles, 'No signed minutes yet.')}
+            <div className={styles.sectionTitle}>{t('trade.contract.termination.signedMinutes')}</div>
+            {files(current.scanFiles, t('trade.contract.termination.noSignedMinutes'))}
             {actions.has('ATTACH_TERMINATION_SCAN') && (
               <FileUploadBox
                 accept=".pdf,.jpg,.jpeg,.png"
                 disabled={upload.isPending}
-                title="Select the scan of the minutes signed by both parties"
-                uploadButtonText="Upload Signed Minutes"
+                title={t('trade.contract.termination.signedMinutesTitle')}
+                uploadButtonText={t('trade.contract.termination.uploadSignedMinutes')}
                 onFileSelect={(selected) =>
                   void run(
                     () => upload.mutateAsync({ kind: contractKind, appKind: kind, ctrtCd, files: selected, as: 'signed' }),
@@ -152,12 +150,12 @@ export default function ContractTerminationTab({ kind, contractKind, detail, act
           <div className={styles.checkActions}>
             {actions.has('REQUEST_TERMINATION_APPROVAL') && (
               <ActionButton intent="secondary" appearance="filled" onClick={() => setRequesting('approval')}>
-                Request Termination Approval
+                {t('trade.contract.termination.requestApproval')}
               </ActionButton>
             )}
             {actions.has('REQUEST_TERMINATION_SIGNATURE') && (
               <ActionButton intent="secondary" appearance="filled" onClick={() => setRequesting('signature')}>
-                Request Minutes Signature Approval
+                {t('trade.contract.termination.requestSignature')}
               </ActionButton>
             )}
             {(actions.has('COMPLETE_TERMINATION') || (current.endSttsCd === 'SGNCP' && actions.has('ATTACH_TERMINATION_SCAN'))) && (
@@ -168,7 +166,7 @@ export default function ContractTerminationTab({ kind, contractKind, detail, act
                 disabled={!actions.has('COMPLETE_TERMINATION')}
                 onClick={() => void run(() => complete.mutateAsync({ kind: contractKind, ctrtCd }), t('messages.trade.terminated'))}
               >
-                Close Contract
+                {t('trade.contract.termination.closeContract')}
               </ActionButton>
             )}
           </div>
@@ -179,7 +177,7 @@ export default function ContractTerminationTab({ kind, contractKind, detail, act
       {requesting && (
         <ApprovalRequestPopup
           atrzProcCd={tradeProcessCode(kind, requesting === 'approval' ? 'END' : 'END_SIGN')}
-          details={[...details, { label: 'Termination', value: REASON_LABELS[current?.endRsnCd as EndReason] ?? current?.endRsnCd ?? '-' }]}
+          details={[...details, { label: t('trade.contract.termination.termination'), value: reasonLabel(current?.endRsnCd) }]}
           onSubmit={async (body) => {
             const response = await requestApproval.mutateAsync({ kind: contractKind, ctrtCd, step: requesting, body });
             toast.success(response.message || t('messages.approval.requested'));
@@ -237,24 +235,24 @@ function StartTerminationModal({
     <Popup
       open
       width={600}
-      title="Register Termination"
+      title={t('trade.contract.termination.register')}
       footerAlign="right"
       onCancel={onClose}
       cancelText={t('messages.dialog.cancel')}
       onConfirm={() => void handleStart()}
-      confirmText="Register"
+      confirmText={t('trade.common.register')}
       confirmDanger
       confirmLoading={start.isPending}
       confirmDisabled={needsNote && !note.trim()}
     >
       <div className={styles.field}>
-        <span className={`${styles.fieldLabel} ${styles.required}`}>Reason</span>
+        <span className={`${styles.fieldLabel} ${styles.required}`}>{t('trade.contract.termination.reason')}</span>
         <AppRadio.Group
           value={reason}
           onChange={(e) => setReason(e.target.value as EndReason)}
           options={reasons.map((value) => ({
             value,
-            label: REASON_LABELS[value],
+            label: reasonLabel(value),
             // Expired only for a contract with an end date (flow close step 1).
             disabled: value === 'EXPR' && !detail.ctrtEndDmy,
           }))}
@@ -262,21 +260,21 @@ function StartTerminationModal({
       </div>
       {reason !== 'CMPL' && (
         <div className={styles.field}>
-          <span className={styles.fieldLabel}>Fee Handling</span>
+          <span className={styles.fieldLabel}>{t('trade.contract.termination.feeHandling')}</span>
           <AppRadio.Group
             value={feeHandling}
             onChange={(e) => setFeeHandling(e.target.value as FeeHandling)}
-            options={(Object.keys(FEE_HANDLING_LABELS) as FeeHandling[]).map((value) => ({ value, label: FEE_HANDLING_LABELS[value] }))}
+            options={FEE_HANDLINGS.map((value) => ({ value, label: codeLabel('trade.contract.termination.feeHandlings', value) }))}
           />
         </div>
       )}
       {kind === 'purchase' && (
         <AppCheckbox checked={directTrade} onChange={(e) => setDirectTrade(e.target.checked)}>
-          The parties traded directly
+          {t('trade.contract.termination.directTrade')}
         </AppCheckbox>
       )}
       <div className={styles.field}>
-        <span className={`${styles.fieldLabel} ${needsNote ? styles.required : ''}`}>{needsNote ? 'Termination Reason' : 'Note'}</span>
+        <span className={`${styles.fieldLabel} ${needsNote ? styles.required : ''}`}>{needsNote ? t('trade.contract.termination.terminationReason') : t('trade.common.note')}</span>
         <TextArea rows={3} maxLength={1000} showCount value={note} onChange={(e) => setNote(e.target.value)} />
       </div>
       {needsNote && <div className={styles.notice}>{t('messages.trade.cancelNoticeHint')}</div>}

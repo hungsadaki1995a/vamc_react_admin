@@ -6,8 +6,9 @@ import AppCheckbox from '@/components/inputs/AppCheckbox';
 import TextArea from '@/components/inputs/TextArea';
 import { useNotify } from '@/hooks/use-notify';
 import { useAuthStore } from '@/stores/auth-store';
-import { APPROVAL_STAGE_LABELS, approvalStageOf, approverStepOf } from '@/api/common/approval-api';
+import { approvalStageOf, approverStepOf } from '@/api/common/approval-api';
 import type { ApprovalRequestBody } from '@/api/common/approval-api';
+import { codeLabel } from '@/lib/i18n/code-label';
 import { errorMessage } from '@/utils/system-utils';
 import { ApprovalSummary, EmployeePickField } from './ApprovalParts';
 import type { ApprovalDetailRow } from './ApprovalParts';
@@ -50,7 +51,7 @@ export default function ApprovalRequestPopup({
   const [submitting, setSubmitting] = useState(false);
   const [approverError, setApproverError] = useState('');
 
-  const stageLabel = APPROVAL_STAGE_LABELS[approvalStageOf(atrzProcCd)];
+  const stageLabel = codeLabel('approval.stages', approvalStageOf(atrzProcCd));
 
   const handleSubmit = async () => {
     if (!approverEmpNo) {
@@ -71,25 +72,25 @@ export default function ApprovalRequestPopup({
     <Popup
       open
       width={640}
-      title={title ?? `Request ${stageLabel}`}
+      title={title ?? t('approval.request.title', { stage: stageLabel })}
       footerAlign="right"
       onCancel={onClose}
       cancelText={t('messages.dialog.cancel')}
       onConfirm={() => void handleSubmit()}
-      confirmText="Submit"
+      confirmText={t('approval.request.submit')}
       confirmLoading={submitting}
       confirmDisabled={!confirmed || !approverEmpNo}
     >
       {warning && <div className={styles.rejection}>{warning}</div>}
       <ApprovalSummary
         rows={[
-          { label: 'Approval Stage', value: stageLabel },
-          { label: 'Requester', value: me ? `${me.usrNm ?? ''} (${me.usrId})` : '-' },
+          { label: t('approval.fields.approvalStage'), value: stageLabel },
+          { label: t('approval.fields.requester'), value: me ? `${me.usrNm ?? ''} (${me.usrId})` : '-' },
           ...details,
         ]}
       />
       <div className={styles.field}>
-        <label className={`${styles.label} ${styles.required}`}>Approver</label>
+        <label className={`${styles.label} ${styles.required}`}>{t('approval.fields.approver')}</label>
         <EmployeePickField
           value={approverEmpNo}
           onChange={(empNo) => {
@@ -97,13 +98,13 @@ export default function ApprovalRequestPopup({
             setApproverError('');
           }}
           source={{ type: 'candidates', atrzProcCd, stpNo: approverStepOf(atrzProcCd), atrzHstryId }}
-          placeholder="Select the approver"
-          searchTitle="Approver Search"
+          placeholder={t('approval.request.selectApprover')}
+          searchTitle={t('approval.request.approverSearch')}
         />
         {approverError && <div className={styles.error}>{approverError}</div>}
       </div>
       <div className={styles.field}>
-        <label className={styles.label}>Comment</label>
+        <label className={styles.label}>{t('approval.fields.comment')}</label>
         <TextArea rows={3} maxLength={1000} showCount value={comment} onChange={(e) => setComment(e.target.value)} />
       </div>
       <div className={styles.confirmRow}>

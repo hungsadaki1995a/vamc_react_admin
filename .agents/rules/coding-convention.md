@@ -67,7 +67,8 @@ src/api/<domain>/<resource>-api.ts           HTTP calls + request/response types
 
 - Shared components read DB labels through `useComponentLabel()` / `useScreenLabel(sceId)` (`tvt`, `tvb`, …) with an English fallback.
 - Auth pages (outside the admin shell) use `react-i18next` (`useTranslation`) with `src/lib/i18n/locales/{en,vn}.json`.
-- Admin business screens currently use the English texts of the screen design; keep them in constants (`sys-messages.ts`, `*-constants.ts`) rather than scattering literals when the same text is reused.
+- Trade (`features/trade`) and approval (`features/approval`) screens are fully localized with `useTranslation()`: labels under the `trade.*` / `approval.*` namespaces of the locale files, messages under `messages.trade.*` / `messages.approval.*`. Code → label maps are locale groups read with `codeLabel('<group>', code)` (`lib/i18n/code-label.ts`); server-provided names (status / code names) are shown as sent. Both locale files keep the same keys in the same order.
+- Other admin business screens currently use the English texts of the screen design; keep them in constants (`sys-messages.ts`, `*-constants.ts`) rather than scattering literals when the same text is reused.
 
 ## 7. TypeScript and general
 

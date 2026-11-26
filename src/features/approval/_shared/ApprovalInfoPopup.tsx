@@ -1,7 +1,8 @@
 import { useTranslation } from 'react-i18next';
 import LoadingSpinner from '@/components/common/loading/LoadingSpinner';
 import Popup from '@/components/common/popup/Popup';
-import { APPROVAL_STAGE_LABELS, approvalStageOf } from '@/api/common/approval-api';
+import { approvalStageOf } from '@/api/common/approval-api';
+import { codeLabel } from '@/lib/i18n/code-label';
 import { formatDateTime } from '@/utils/date-format';
 import { ApprovalStepsTable, ApprovalSummary, SessionStatusBadge } from './ApprovalParts';
 import { targetSummaryRows } from './approval-target';
@@ -32,7 +33,7 @@ export default function ApprovalInfoPopup({ atrzHstryId, details = [], target, o
     <Popup
       open
       width={820}
-      title="Approval Information"
+      title={t('approval.info.title')}
       footerAlign="right"
       onCancel={onClose}
       hideCancel
@@ -46,22 +47,22 @@ export default function ApprovalInfoPopup({ atrzHstryId, details = [], target, o
           <>
             <ApprovalSummary
               rows={[
-                { label: 'Approval Stage', value: APPROVAL_STAGE_LABELS[approvalStageOf(session.atrzProcCd)] },
-                { label: 'Process', value: session.atrzProcNm || session.atrzProcCd },
-                { label: 'Status', value: <SessionStatusBadge status={session.atrzSttsCd} /> },
-                { label: 'Target', value: session.atrzTrgtNo ?? target ?? session.atrzTrgtId ?? '-' },
+                { label: t('approval.fields.approvalStage'), value: codeLabel('approval.stages', approvalStageOf(session.atrzProcCd)) },
+                { label: t('approval.fields.process'), value: session.atrzProcNm || session.atrzProcCd },
+                { label: t('approval.fields.status'), value: <SessionStatusBadge status={session.atrzSttsCd} /> },
+                { label: t('approval.fields.target'), value: session.atrzTrgtNo ?? target ?? session.atrzTrgtId ?? '-' },
                 {
-                  label: 'Requested',
+                  label: t('approval.fields.requested'),
                   value: session.rtsoEmpNo ? `${requester ?? session.rtsoEmpNo} · ${formatDateTime(session.rtsoDt)}` : '-',
                 },
-                ...(session.atrzCmptnDt ? [{ label: 'Closed At', value: formatDateTime(session.atrzCmptnDt) }] : []),
+                ...(session.atrzCmptnDt ? [{ label: t('approval.fields.closedAt'), value: formatDateTime(session.atrzCmptnDt) }] : []),
                 ...(session.target ? targetSummaryRows(session.target) : details),
               ]}
             />
             <ApprovalStepsTable steps={steps} />
             {rejected?.comment && (
               <div className={styles.field}>
-                <span className={styles.label}>Rejection Reason</span>
+                <span className={styles.label}>{t('approval.fields.rejectionReason')}</span>
                 <div className={styles.rejection}>{rejected.comment}</div>
               </div>
             )}

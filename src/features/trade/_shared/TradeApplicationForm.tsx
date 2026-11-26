@@ -12,7 +12,7 @@ import DataTable from '@/components/common/table/DataTable';
 import { useCommonCodes } from '@/hooks/use-common-codes';
 import { useNotify } from '@/hooks/use-notify';
 import { RECEIPT_OFFICER_STEP } from '@/api/common/approval-api';
-import { COLLATERAL_CATEGORY_LABELS, applicationNo, tradeProcessCode } from '@/api/trade/trade-api';
+import { applicationNo, tradeProcessCode } from '@/api/trade/trade-api';
 import type {
   ConsultingTargetCollateral,
   SaveTradeApplicationRequest,
@@ -22,6 +22,7 @@ import type {
 } from '@/api/trade/trade-api';
 import type { TradeFileItem } from '@/api/trade/trade-file-api';
 import { EmployeePickField } from '@/features/approval/_shared/ApprovalParts';
+import { codeLabel } from '@/lib/i18n/code-label';
 import { errorMessage, formatAmount } from '@/utils/system-utils';
 import TargetCollateralPopup from './TargetCollateralPopup';
 import { CollateralSearchPopup, MemberSearchPopup, NplSearchPopup } from './TradeLookupPopups';
@@ -41,7 +42,6 @@ import styles from './trade-application-popup.module.scss';
 
 type FieldKey = 'member' | 'target' | 'cnsltDmndSeCd' | 'cnsltDmndPrpsCn' | 'officer';
 
-const KIND_LABELS: Record<TradeAppKind, string> = { sale: 'Sale Brokerage', purchase: 'Purchase Brokerage', consulting: 'Consulting' };
 const SCAN_ACCEPT = '.pdf,.jpg,.jpeg,.png';
 const MAX_TARGET_COLLATERALS = 20;
 
@@ -170,39 +170,43 @@ export default function TradeApplicationForm({ kind, detail, onClose, onSaved }:
     <Popup
       open
       width={880}
-      title={isEdit ? `Edit ${KIND_LABELS[kind]} Application — ${applicationNo(detail)}` : `New ${KIND_LABELS[kind]} Application (Manual)`}
+      title={
+        isEdit
+          ? t('trade.application.form.editTitle', { kind: t(`trade.kindServices.${kind}`), no: applicationNo(detail) })
+          : t('trade.application.form.newTitle', { kind: t(`trade.kindServices.${kind}`) })
+      }
       footerAlign="right"
       onCancel={onClose}
       cancelText={t('messages.dialog.cancel')}
       onConfirm={() => void handleSave()}
-      confirmText={isEdit ? 'Save' : 'Register'}
+      confirmText={isEdit ? t('trade.common.save') : t('trade.common.register')}
       confirmLoading={save.isPending}
       confirmDisabled={upload.isPending}
     >
       {!isEdit && <div className={styles.notice}>{t('messages.trade.manualHint')}</div>}
 
       <section className={styles.section}>
-        <div className={styles.sectionTitle}>Applicant (member)</div>
+        <div className={styles.sectionTitle}>{t('trade.application.form.applicantSection')}</div>
         {!isEdit && (
           <div className={styles.pickRow}>
-            <TextInput readOnly placeholder="Search an active member" value={mbrNo ?? ''} />
+            <TextInput readOnly placeholder={t('trade.application.form.memberPlaceholder')} value={mbrNo ?? ''} />
             <ActionButton action="search" intent="quaternary" appearance="outlined" onClick={() => setPicker('member')}>
-              Member Search
+              {t('trade.application.form.memberSearch')}
             </ActionButton>
           </div>
         )}
         {errors.member && <div className={styles.error}>{errors.member}</div>}
         {(isEdit || member) && (
           <div className={`${styles.grid} ${styles.gridSpaced}`}>
-            <div className={styles.cellLabel}>Member No.</div>
+            <div className={styles.cellLabel}>{t('trade.common.memberNo')}</div>
             <div className={styles.cellValue}>{isEdit ? detail.mbrNo : member?.mbrNo}</div>
-            <div className={styles.cellLabel}>Name</div>
+            <div className={styles.cellLabel}>{t('trade.common.name')}</div>
             <div className={styles.cellValue}>{isEdit ? detail.mbrNm : member?.mbrNm || member?.orgnzNm || '-'}</div>
             {!isEdit && (
               <>
-                <div className={styles.cellLabel}>Type</div>
+                <div className={styles.cellLabel}>{t('trade.common.type')}</div>
                 <div className={styles.cellValue}>{member?.mbrTypeNm || member?.mbrTypeCd || '-'}</div>
-                <div className={styles.cellLabel}>Contact</div>
+                <div className={styles.cellLabel}>{t('trade.application.form.contact')}</div>
                 <div className={styles.cellValue}>{[member?.telno, member?.emlAddr].filter(Boolean).join(' · ') || '-'}</div>
               </>
             )}
@@ -211,7 +215,7 @@ export default function TradeApplicationForm({ kind, detail, onClose, onSaved }:
       </section>
 
       <section className={styles.section}>
-        <div className={styles.sectionTitle}>{consulting ? 'Consulting Target NPL (optional)' : 'NPL / LOT'}</div>
+        <div className={styles.sectionTitle}>{consulting ? t('trade.application.form.consultingTargetNpl') : t('trade.common.nplLot')}</div>
         {isEdit ? (
           <div className={styles.notice}>{targetLabel || '-'}</div>
         ) : (
@@ -223,18 +227,18 @@ export default function TradeApplicationForm({ kind, detail, onClose, onSaved }:
                 setTarget(null);
               }}
               options={[
-                { label: 'Single NPL', value: 'npl' },
-                ...(consulting ? [] : [{ label: 'LOT', value: 'lot' }]),
+                { label: t('trade.application.form.singleNpl'), value: 'npl' },
+                ...(consulting ? [] : [{ label: t('trade.common.lot'), value: 'lot' }]),
               ]}
             />
             <div className={styles.pickRow}>
-              <TextInput readOnly placeholder={targetMode === 'lot' ? 'Search a registered LOT' : 'Search a registered NPL'} value={target?.label ?? ''} />
+              <TextInput readOnly placeholder={targetMode === 'lot' ? t('trade.application.form.lotPlaceholder') : t('trade.application.form.nplPlaceholder')} value={target?.label ?? ''} />
               <ActionButton action="search" intent="quaternary" appearance="outlined" onClick={() => setPicker(targetMode)}>
-                {targetMode === 'lot' ? 'LOT Search' : 'NPL Search'}
+                {targetMode === 'lot' ? t('trade.application.form.lotSearch') : t('trade.application.form.nplSearch')}
               </ActionButton>
               {target && (
                 <ActionButton intent="text" onClick={() => setTarget(null)}>
-                  Clear
+                  {t('trade.common.clear')}
                 </ActionButton>
               )}
             </div>
@@ -247,22 +251,22 @@ export default function TradeApplicationForm({ kind, detail, onClose, onSaved }:
 
       {consulting && (
         <section className={styles.section}>
-          <div className={styles.sectionTitle}>Consulting Target Collateral (optional)</div>
+          <div className={styles.sectionTitle}>{t('trade.application.form.consultingTargetCollateral')}</div>
           <div className={styles.field}>
-            <span className={styles.fieldLabel}>Listed Collateral</span>
+            <span className={styles.fieldLabel}>{t('trade.application.form.listedCollateral')}</span>
             <div className={styles.pickRow}>
               <TextInput
                 readOnly
-                placeholder="Search a listed collateral"
+                placeholder={t('trade.application.form.collateralPlaceholder')}
                 value={collateral ? [collateral.cltrAstCd, collateral.cltrAstNm].filter(Boolean).join(' · ') : ''}
               />
               <ActionButton action="search" intent="quaternary" appearance="outlined" onClick={() => setPicker('collateral')}>
-                Collateral Search
+                {t('trade.application.form.collateralSearch')}
               </ActionButton>
               {/* The edit keeps a field left out, so a stored collateral can be changed but not removed. */}
               {collateral && !isEdit && (
                 <ActionButton intent="text" onClick={() => setCollateral(null)}>
-                  Clear
+                  {t('trade.common.clear')}
                 </ActionButton>
               )}
             </div>
@@ -272,9 +276,9 @@ export default function TradeApplicationForm({ kind, detail, onClose, onSaved }:
               <DataTable
                 rowKey={(r) => r.cltrAstCd || `${r.cltrCtrtNo}-${r.astChrcCn}`}
                 columns={[
-                  { title: 'Collateral', dataIndex: 'cltrAstNm', render: (v?: string, r?: { cltrAstCd?: string }) => v || r?.cltrAstCd || '-' },
-                  { title: 'Contract No.', dataIndex: 'cltrCtrtNo', width: 170, render: (v?: string) => v || '-' },
-                  { title: 'Characteristics', dataIndex: 'astChrcCn', render: (v?: string) => v || '-' },
+                  { title: t('trade.common.collateral'), dataIndex: 'cltrAstNm', render: (v?: string, r?: { cltrAstCd?: string }) => v || r?.cltrAstCd || '-' },
+                  { title: t('trade.common.contractNo'), dataIndex: 'cltrCtrtNo', width: 170, render: (v?: string) => v || '-' },
+                  { title: t('trade.common.characteristics'), dataIndex: 'astChrcCn', render: (v?: string) => v || '-' },
                 ]}
                 dataSource={detail.collaterals}
                 pagination={false}
@@ -283,17 +287,22 @@ export default function TradeApplicationForm({ kind, detail, onClose, onSaved }:
           ) : (
             <div className={styles.field}>
               <span className={styles.fieldLabel}>
-                Collaterals from the paper form ({targetCollaterals.length}/{MAX_TARGET_COLLATERALS})
+                {t('trade.application.form.paperCollaterals', { n: targetCollaterals.length, max: MAX_TARGET_COLLATERALS })}
               </span>
               <div className={styles.notice}>{t('messages.trade.collateralHint')}</div>
               {targetCollaterals.length > 0 && (
                 <DataTable<ConsultingTargetCollateral>
                   rowKey={(r) => `${r.cltrCtrtNo}-${r.ctrtDt}-${r.astChrcCn}`}
                   columns={[
-                    { title: 'Category', dataIndex: 'cltrAstLclsfCd', width: 140, render: (v: ConsultingTargetCollateral['cltrAstLclsfCd']) => COLLATERAL_CATEGORY_LABELS[v] ?? v },
-                    { title: 'Contract No.', dataIndex: 'cltrCtrtNo', width: 170 },
-                    { title: 'Contract Date', dataIndex: 'ctrtDt', width: 120, align: 'center', render: (v: string) => v.split('-').reverse().join('/') },
-                    { title: 'Characteristics', dataIndex: 'astChrcCn', ellipsis: true },
+                    {
+                      title: t('trade.application.form.category'),
+                      dataIndex: 'cltrAstLclsfCd',
+                      width: 140,
+                      render: (v: ConsultingTargetCollateral['cltrAstLclsfCd']) => codeLabel('trade.collateralCategories', v),
+                    },
+                    { title: t('trade.common.contractNo'), dataIndex: 'cltrCtrtNo', width: 170 },
+                    { title: t('trade.common.contractDate'), dataIndex: 'ctrtDt', width: 120, align: 'center', render: (v: string) => v.split('-').reverse().join('/') },
+                    { title: t('trade.common.characteristics'), dataIndex: 'astChrcCn', ellipsis: true },
                     {
                       title: '',
                       key: 'remove',
@@ -301,7 +310,7 @@ export default function TradeApplicationForm({ kind, detail, onClose, onSaved }:
                       align: 'center',
                       render: (_v, _r, index) => (
                         <ActionButton size="small" intent="text" onClick={() => setTargetCollaterals((prev) => prev.filter((_, i) => i !== index))}>
-                          Remove
+                          {t('trade.common.remove')}
                         </ActionButton>
                       ),
                     },
@@ -317,7 +326,7 @@ export default function TradeApplicationForm({ kind, detail, onClose, onSaved }:
                   disabled={targetCollaterals.length >= MAX_TARGET_COLLATERALS}
                   onClick={() => setPicker('targetCollateral')}
                 >
-                  Add Collateral
+                  {t('trade.application.form.addCollateral')}
                 </ActionButton>
               </div>
             </div>
@@ -326,17 +335,17 @@ export default function TradeApplicationForm({ kind, detail, onClose, onSaved }:
       )}
 
       <section className={styles.section}>
-        <div className={styles.sectionTitle}>Request</div>
+        <div className={styles.sectionTitle}>{t('trade.application.form.requestSection')}</div>
         {kind === 'sale' && (
           <div className={styles.field}>
-            <span className={styles.fieldLabel}>Contract Kind</span>
+            <span className={styles.fieldLabel}>{t('trade.common.contractKind')}</span>
             {/* BASE_ANX needs a framework agreement, which cannot be created yet (Q3 / N1): locked. */}
             <AppRadio.Group
               value={ctrtKndCd}
               onChange={(e) => setCtrtKndCd(e.target.value as 'MDT' | 'BASE_ANX')}
               options={[
-                { label: 'Brokerage Contract', value: 'MDT' },
-                { label: 'Base Contract Annex (pending Q3)', value: 'BASE_ANX', disabled: detail?.ctrtKndCd !== 'BASE_ANX' },
+                { label: t('trade.application.form.brokerageContract'), value: 'MDT' },
+                { label: t('trade.application.form.baseContractAnnex'), value: 'BASE_ANX', disabled: detail?.ctrtKndCd !== 'BASE_ANX' },
               ]}
             />
           </div>
@@ -344,10 +353,10 @@ export default function TradeApplicationForm({ kind, detail, onClose, onSaved }:
         {consulting ? (
           <>
             <div className={styles.field}>
-              <span className={`${styles.fieldLabel} ${styles.required}`}>Consulting Type</span>
+              <span className={`${styles.fieldLabel} ${styles.required}`}>{t('trade.common.consultingType')}</span>
               <AppSelect
                 className={styles.control}
-                placeholder="Select the consulting type"
+                placeholder={t('trade.application.form.consultingTypePlaceholder')}
                 value={cnsltDmndSeCd || undefined}
                 options={consultingCodes}
                 onChange={(v) => {
@@ -358,7 +367,7 @@ export default function TradeApplicationForm({ kind, detail, onClose, onSaved }:
               {errors.cnsltDmndSeCd && <div className={styles.error}>{errors.cnsltDmndSeCd}</div>}
             </div>
             <div className={styles.field}>
-              <span className={`${styles.fieldLabel} ${styles.required}`}>Consulting Request</span>
+              <span className={`${styles.fieldLabel} ${styles.required}`}>{t('trade.application.form.consultingRequest')}</span>
               <TextArea
                 rows={4}
                 maxLength={4000}
@@ -374,7 +383,7 @@ export default function TradeApplicationForm({ kind, detail, onClose, onSaved }:
           </>
         ) : (
           <div className={styles.field}>
-            <span className={styles.fieldLabel}>{kind === 'sale' ? 'Desired Sale Price' : 'Proposed Purchase Price'}</span>
+            <span className={styles.fieldLabel}>{kind === 'sale' ? t('trade.common.desiredSalePrice') : t('trade.common.proposedPurchasePrice')}</span>
             <div className={styles.pickRow}>
               <AppSelect
                 className={styles.currency}
@@ -399,7 +408,7 @@ export default function TradeApplicationForm({ kind, detail, onClose, onSaved }:
       </section>
 
       <section className={styles.section}>
-        <div className={styles.sectionTitle}>Scanned Request Form and Documents</div>
+        <div className={styles.sectionTitle}>{t('trade.application.form.scansSection')}</div>
         {files.length > 0 && (
           <ul className={styles.files}>
             {files.map((file) => (
@@ -413,15 +422,15 @@ export default function TradeApplicationForm({ kind, detail, onClose, onSaved }:
           accept={SCAN_ACCEPT}
           multiple
           disabled={upload.isPending}
-          title="Select or drag the scans (PDF, JPG, PNG)"
-          uploadButtonText="Upload Scans"
+          title={t('trade.application.form.scansTitle')}
+          uploadButtonText={t('trade.common.uploadScans')}
           onFileSelect={(selected) => void handleUpload(selected)}
         />
       </section>
 
       {!isEdit && (
         <section className={styles.section}>
-          <div className={`${styles.sectionTitle} ${styles.required}`}>Officer in Charge</div>
+          <div className={`${styles.sectionTitle} ${styles.required}`}>{t('trade.common.officerInCharge')}</div>
           <EmployeePickField
             value={officer}
             onChange={(empNo) => {
@@ -429,8 +438,8 @@ export default function TradeApplicationForm({ kind, detail, onClose, onSaved }:
               clearError('officer');
             }}
             source={{ type: 'candidates', atrzProcCd: tradeProcessCode(kind, 'RCPT'), stpNo: RECEIPT_OFFICER_STEP }}
-            placeholder="Select the officer in charge"
-            searchTitle="Officer Search"
+            placeholder={t('trade.common.selectOfficer')}
+            searchTitle={t('trade.common.officerSearch')}
           />
           {errors.officer && <div className={styles.error}>{errors.officer}</div>}
         </section>

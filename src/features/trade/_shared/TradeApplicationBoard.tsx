@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { TableColumnsType } from 'antd';
 import type { Dayjs } from 'dayjs';
 import ActionButton from '@/components/common/actions/ActionButton';
@@ -22,6 +23,7 @@ import { applicationNo } from '@/api/trade/trade-api';
 import { SysPageHeader, SysPagination } from '@/components/common/sys-ui/SystemUi';
 import { EmployeePickField } from '@/features/approval/_shared/ApprovalParts';
 import { useApprovalTargetHandoff } from '@/features/approval/_shared/approval-navigation';
+import { codeLabel } from '@/lib/i18n/code-label';
 import { formatDateTime, formatDmy } from '@/utils/date-format';
 import { formatAmount, rowNumber } from '@/utils/system-utils';
 import styles from '@/components/common/sys-ui/system-page.module.scss';
@@ -38,32 +40,14 @@ type DateRange = [Dayjs | null, Dayjs | null] | null;
 /** Form: null closed, `new` Add New, or the application being edited. */
 type FormState = null | 'new' | TradeApplicationDetail;
 
-const STATUS_OPTIONS: { value: TradeApplicationStatus | ''; label: string }[] = [
-  { value: '', label: 'All' },
-  { value: 'RCPT', label: 'Submitted' },
-  { value: 'PRCS', label: 'Processing' },
-  { value: 'DCIN', label: 'Docs Incomplete' },
-  { value: 'DCOK', label: 'Docs Complete' },
-  { value: 'CMPL', label: 'Completed' },
-  { value: 'CNCL', label: 'Cancelled' },
-];
-
-const STAGE_OPTIONS: { value: TradeApprovalStage | ''; label: string }[] = [
-  { value: '', label: 'All' },
-  { value: 'NOT_RECEIVED', label: 'Not Received' },
-  { value: 'PROCESSING', label: 'Processing' },
-  { value: 'IN_APPROVAL', label: 'In Approval' },
-  { value: 'APPROVED', label: 'Approved' },
-  { value: 'REJECTED', label: 'Rejected' },
-  { value: 'CANCELLED', label: 'Cancelled' },
-];
+const STATUS_CODES: TradeApplicationStatus[] = ['RCPT', 'PRCS', 'DCIN', 'DCOK', 'CMPL', 'CNCL'];
+const STAGE_CODES: TradeApprovalStage[] = ['NOT_RECEIVED', 'PROCESSING', 'IN_APPROVAL', 'APPROVED', 'REJECTED', 'CANCELLED'];
 
 /** Officer filter: every employee holding the processing role (GET /employees/lookup?roleId=PRCS). */
 const OFFICER_SOURCE = { type: 'employees', roleId: 'PRCS' } as const;
 
-const STAGE_LABELS = Object.fromEntries(STAGE_OPTIONS.map((o) => [o.value, o.label])) as Record<string, string>;
-
 export default function TradeApplicationBoard({ kind, title }: { kind: TradeAppKind; title: string }) {
+  const { t } = useTranslation();
   const { canWrite } = useMenuPermission();
   const consultingCodes = useCommonCodes(kind === 'consulting' ? 'CNSLT_DMND_SE_CD' : null);
 
@@ -123,11 +107,20 @@ export default function TradeApplicationBoard({ kind, title }: { kind: TradeAppK
     setPage(1);
   };
 
+  const statusOptions = [
+    { value: '', label: t('trade.common.all') },
+    ...STATUS_CODES.map((value) => ({ value, label: codeLabel('trade.applicationStatus', value) })),
+  ];
+  const stageOptions = [
+    { value: '', label: t('trade.common.all') },
+    ...STAGE_CODES.map((value) => ({ value, label: codeLabel('trade.approvalStages', value) })),
+  ];
+
   const columns: TableColumnsType<TradeApplicationListItem> = [
-    { title: 'No', key: 'no', width: 60, align: 'center', render: (_v, _r, i) => rowNumber(total, page, PAGE_SIZE, i) },
-    { title: 'Status', dataIndex: 'srvcPrcsSttsNm', width: 140, align: 'center', render: (v?: string, r?: TradeApplicationListItem) => v || r?.srvcPrcsSttsCd || '-' },
+    { title: t('trade.common.rowNo'), key: 'no', width: 60, align: 'center', render: (_v, _r, i) => rowNumber(total, page, PAGE_SIZE, i) },
+    { title: t('trade.common.status'), dataIndex: 'srvcPrcsSttsNm', width: 140, align: 'center', render: (v?: string, r?: TradeApplicationListItem) => v || r?.srvcPrcsSttsCd || '-' },
     {
-      title: 'Application No.',
+      title: t('trade.common.applicationNo'),
       dataIndex: 'srvcAplyNo',
       width: 260,
       render: (_v, r) => (
@@ -137,19 +130,19 @@ export default function TradeApplicationBoard({ kind, title }: { kind: TradeAppK
           </a>
           {r.activePurchaseCtrtCd && (
             // Receipt / approval request will be refused while that contract runs (409 TRD021).
-            <span title={`Purchase contract ${r.activePurchaseCtrtNo || r.activePurchaseCtrtCd} is running for the same NPL / LOT`}>
-              <StatusBadge color="red">Contract running</StatusBadge>
+            <span title={t('trade.application.board.contractRunningTitle', { no: r.activePurchaseCtrtNo || r.activePurchaseCtrtCd })}>
+              <StatusBadge color="red">{t('trade.application.board.contractRunning')}</StatusBadge>
             </span>
           )}
         </span>
       ),
     },
-    { title: 'Application Date', dataIndex: 'srvcAplyDmy', width: 120, align: 'center', render: (v?: string) => formatDmy(v) },
-    { title: 'Channel', dataIndex: 'aplyPathCd', width: 80, align: 'center', render: (v?: string) => (v === 'MANL' ? 'Manual' : v === 'WEB' ? 'Web' : '-') },
-    { title: 'Member', dataIndex: 'mbrNm', width: 180, render: (v?: string, r?: TradeApplicationListItem) => (v ? `${v} (${r?.mbrNo ?? ''})` : (r?.mbrNo ?? '-')) },
-    { title: 'Creditor', dataIndex: 'crdtrNm', width: 160, render: (v?: string) => v || '-' },
+    { title: t('trade.application.board.applicationDate'), dataIndex: 'srvcAplyDmy', width: 120, align: 'center', render: (v?: string) => formatDmy(v) },
+    { title: t('trade.application.board.channel'), dataIndex: 'aplyPathCd', width: 80, align: 'center', render: (v?: string) => (v === 'MANL' || v === 'WEB' ? codeLabel('trade.channels', v) : '-') },
+    { title: t('trade.common.member'), dataIndex: 'mbrNm', width: 180, render: (v?: string, r?: TradeApplicationListItem) => (v ? `${v} (${r?.mbrNo ?? ''})` : (r?.mbrNo ?? '-')) },
+    { title: t('trade.common.creditor'), dataIndex: 'crdtrNm', width: 160, render: (v?: string) => v || '-' },
     {
-      title: 'NPL / LOT',
+      title: t('trade.common.nplLot'),
       key: 'npl',
       width: 170,
       render: (_v, r) => {
@@ -160,35 +153,35 @@ export default function TradeApplicationBoard({ kind, title }: { kind: TradeAppK
     ...(kind === 'consulting'
       ? [
           {
-            title: 'Consulting Type',
+            title: t('trade.common.consultingType'),
             dataIndex: 'cnsltDmndSeCd',
             width: 190,
             render: (v?: string) => consultingCodes.find((c) => c.value === v)?.label ?? v ?? '-',
           },
         ]
       : [
-          { title: 'Currency', dataIndex: 'crncCd', width: 80, align: 'center' as const, render: (v?: string) => v || '-' },
-          { title: 'Principal Balance', dataIndex: 'totPrnBlnc', width: 140, align: 'right' as const, render: (v?: number) => formatAmount(v) },
-          { title: 'Appraised Value', dataIndex: 'totEvlAmt', width: 140, align: 'right' as const, render: (v?: number) => formatAmount(v) },
+          { title: t('trade.common.currency'), dataIndex: 'crncCd', width: 80, align: 'center' as const, render: (v?: string) => v || '-' },
+          { title: t('trade.common.principalBalance'), dataIndex: 'totPrnBlnc', width: 140, align: 'right' as const, render: (v?: number) => formatAmount(v) },
+          { title: t('trade.common.appraisedValue'), dataIndex: 'totEvlAmt', width: 140, align: 'right' as const, render: (v?: number) => formatAmount(v) },
           {
-            title: kind === 'sale' ? 'Desired Price' : 'Proposed Price',
+            title: kind === 'sale' ? t('trade.common.desiredPrice') : t('trade.common.proposedPrice'),
             dataIndex: 'prpDsplPrc',
             width: 140,
             align: 'right' as const,
             render: (v?: number) => formatAmount(v),
           },
         ]),
-    { title: 'Receipt Date', dataIndex: 'rcptDt', width: 140, align: 'center', render: (v?: string) => formatDateTime(v) },
-    { title: 'Receiver', dataIndex: 'rcptEmpNm', width: 160, render: (v?: string) => v || '-' },
-    { title: 'Officer', dataIndex: 'tkcgEmpNm', width: 170, render: (v?: string) => v || '-' },
-    { title: 'Approval Stage', dataIndex: 'approvalStage', width: 120, align: 'center', render: (v?: string) => (v && STAGE_LABELS[v]) || v || '-' },
-    { title: 'Contract No.', dataIndex: 'srvcCtrtNo', width: 160, render: (v?: string, r?: TradeApplicationListItem) => v || r?.srvcCtrtCd || '-' },
+    { title: t('trade.application.board.receiptDate'), dataIndex: 'rcptDt', width: 140, align: 'center', render: (v?: string) => formatDateTime(v) },
+    { title: t('trade.common.receiver'), dataIndex: 'rcptEmpNm', width: 160, render: (v?: string) => v || '-' },
+    { title: t('trade.common.officer'), dataIndex: 'tkcgEmpNm', width: 170, render: (v?: string) => v || '-' },
+    { title: t('trade.common.approvalStage'), dataIndex: 'approvalStage', width: 120, align: 'center', render: (v?: string) => codeLabel('trade.approvalStages', v) },
+    { title: t('trade.common.contractNo'), dataIndex: 'srvcCtrtNo', width: 160, render: (v?: string, r?: TradeApplicationListItem) => v || r?.srvcCtrtCd || '-' },
   ];
 
   return (
     <div className={styles.container}>
       <SysPageHeader
-        breadcrumb={['Trade Management', 'Application Management', title]}
+        breadcrumb={[t('trade.breadcrumb.root'), t('trade.breadcrumb.applications'), title]}
         title={title}
         onReset={handleReset}
         onSearch={handleSearch}
@@ -198,57 +191,57 @@ export default function TradeApplicationBoard({ kind, title }: { kind: TradeAppK
       {!filterCollapsed && (
         <div className={styles.filterCard}>
           <div className={styles.filterGroup}>
-            <span className={styles.filterLabel}>Application Period</span>
+            <span className={styles.filterLabel}>{t('trade.application.board.period')}</span>
             <AppRangePicker format="DD/MM/YYYY" value={period} onChange={(d) => setPeriod(d as DateRange)} className={styles.w240} />
           </div>
           <div className={styles.filterGroup}>
-            <span className={styles.filterLabel}>Status</span>
-            <AppSelect className={styles.w150} value={sttsCd} onChange={(v) => setSttsCd((v ?? '') as TradeApplicationStatus | '')} options={STATUS_OPTIONS} />
+            <span className={styles.filterLabel}>{t('trade.common.status')}</span>
+            <AppSelect className={styles.w150} value={sttsCd} onChange={(v) => setSttsCd((v ?? '') as TradeApplicationStatus | '')} options={statusOptions} />
           </div>
           <div className={styles.filterGroup}>
-            <span className={styles.filterLabel}>Approval Stage</span>
-            <AppSelect className={styles.w150} value={stage} onChange={(v) => setStage((v ?? '') as TradeApprovalStage | '')} options={STAGE_OPTIONS} />
+            <span className={styles.filterLabel}>{t('trade.common.approvalStage')}</span>
+            <AppSelect className={styles.w150} value={stage} onChange={(v) => setStage((v ?? '') as TradeApprovalStage | '')} options={stageOptions} />
           </div>
           {kind !== 'consulting' && (
             <div className={styles.filterGroup}>
-              <span className={styles.filterLabel}>LOT Status</span>
+              <span className={styles.filterLabel}>{t('trade.common.lotStatus')}</span>
               <AppRadio.Group value={bndLotYn} onChange={(e) => setBndLotYn(e.target.value)}>
-                <AppRadio value="">All</AppRadio>
-                <AppRadio value="Y">Yes</AppRadio>
-                <AppRadio value="N">No</AppRadio>
+                <AppRadio value="">{t('trade.common.all')}</AppRadio>
+                <AppRadio value="Y">{t('trade.common.yes')}</AppRadio>
+                <AppRadio value="N">{t('trade.common.no')}</AppRadio>
               </AppRadio.Group>
             </div>
           )}
           <div className={styles.filterGroup}>
-            <span className={styles.filterLabel}>Member Code</span>
-            <TextInput className={styles.filterInput} placeholder="Member No" value={mbrNo} onChange={(e) => setMbrNo(e.target.value)} onPressEnter={handleSearch} allowClear />
+            <span className={styles.filterLabel}>{t('trade.common.memberCode')}</span>
+            <TextInput className={styles.filterInput} placeholder={t('trade.common.memberNoPlaceholder')} value={mbrNo} onChange={(e) => setMbrNo(e.target.value)} onPressEnter={handleSearch} allowClear />
           </div>
           <div className={styles.filterGroup}>
-            <span className={styles.filterLabel}>NPL Code</span>
-            <TextInput className={styles.filterInput} placeholder="NPL Code" value={bndCd} onChange={(e) => setBndCd(e.target.value)} onPressEnter={handleSearch} allowClear />
+            <span className={styles.filterLabel}>{t('trade.common.nplCode')}</span>
+            <TextInput className={styles.filterInput} placeholder={t('trade.common.nplCode')} value={bndCd} onChange={(e) => setBndCd(e.target.value)} onPressEnter={handleSearch} allowClear />
           </div>
           <div className={styles.filterGroup}>
-            <span className={styles.filterLabel}>Officer</span>
+            <span className={styles.filterLabel}>{t('trade.common.officer')}</span>
             <div className={styles.w240}>
-              <EmployeePickField value={tkcgEmpNo} onChange={setTkcgEmpNo} source={OFFICER_SOURCE} placeholder="Any officer" searchTitle="Officer Search" />
+              <EmployeePickField value={tkcgEmpNo} onChange={setTkcgEmpNo} source={OFFICER_SOURCE} placeholder={t('trade.common.anyOfficer')} searchTitle={t('trade.common.officerSearch')} />
             </div>
           </div>
           <div className={styles.filterGroup}>
-            <span className={styles.filterLabel}>Keyword</span>
-            <TextInput className={styles.filterInput} placeholder="Application No., name..." value={keyword} onChange={(e) => setKeyword(e.target.value)} onPressEnter={handleSearch} allowClear />
+            <span className={styles.filterLabel}>{t('trade.common.keyword')}</span>
+            <TextInput className={styles.filterInput} placeholder={t('trade.application.board.keywordPlaceholder')} value={keyword} onChange={(e) => setKeyword(e.target.value)} onPressEnter={handleSearch} allowClear />
           </div>
         </div>
       )}
       <div className={styles.summaryRow}>
-        <span className={styles.totalCount}>Total ({total})</span>
+        <span className={styles.totalCount}>{t('trade.common.total', { n: total })}</span>
         <span className={styles.actions}>
           {canWrite && (
             <ActionButton action="register" size="small" onClick={() => setForm('new')}>
-              Add New
+              {t('trade.common.addNew')}
             </ActionButton>
           )}
           <ActionButton action="excelDownload" size="small" onClick={() => downloadExcel.mutate({ kind, search: applied })}>
-            Excel Download
+            {t('trade.common.excelDownload')}
           </ActionButton>
         </span>
       </div>

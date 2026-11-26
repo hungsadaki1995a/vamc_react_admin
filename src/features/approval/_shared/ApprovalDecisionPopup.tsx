@@ -7,7 +7,8 @@ import AppCheckbox from '@/components/inputs/AppCheckbox';
 import TextArea from '@/components/inputs/TextArea';
 import { useNotify } from '@/hooks/use-notify';
 import { useAuthStore } from '@/stores/auth-store';
-import { APPROVAL_STAGE_LABELS, approvalStageOf } from '@/api/common/approval-api';
+import { approvalStageOf } from '@/api/common/approval-api';
+import { codeLabel } from '@/lib/i18n/code-label';
 import { formatDateTime } from '@/utils/date-format';
 import { errorMessage } from '@/utils/system-utils';
 import { ApprovalSummary } from './ApprovalParts';
@@ -47,9 +48,9 @@ export default function ApprovalDecisionPopup({ atrzHstryId, mode, details = [],
   const isReject = decision === 'reject';
   const pending = approve.isPending || reject.isPending;
   const stage = approvalStageOf(session?.atrzProcCd);
-  const stageLabel = APPROVAL_STAGE_LABELS[stage];
+  const stageLabel = codeLabel('approval.stages', stage);
   // Flow docs (contract 13-2, termination): the approver of a signing step confirms with [Signing Complete].
-  const approveText = stage === 'SIGN' || stage === 'END_SIGN' ? 'Signing Complete' : 'Confirm';
+  const approveText = stage === 'SIGN' || stage === 'END_SIGN' ? t('approval.decision.signingComplete') : t('approval.decision.confirm');
   const requester = session?.steps?.find((s) => s.empNo === session.rtsoEmpNo)?.empNm;
 
   const switchTo = (next: ApprovalDecision) => {
@@ -78,7 +79,7 @@ export default function ApprovalDecisionPopup({ atrzHstryId, mode, details = [],
       {!isReject && (
         <span className={styles.footerLeft}>
           <ActionButton intent="danger" appearance="outlined" disabled={pending} onClick={() => switchTo('reject')}>
-            Return
+            {t('approval.decision.return')}
           </ActionButton>
         </span>
       )}
@@ -93,30 +94,30 @@ export default function ApprovalDecisionPopup({ atrzHstryId, mode, details = [],
         disabled={!canSubmit}
         onClick={() => void handleSubmit()}
       >
-        {isReject ? 'Submit' : approveText}
+        {isReject ? t('approval.decision.submit') : approveText}
       </ActionButton>
     </div>
   );
 
   return (
-    <Popup open width={640} title={isReject ? 'Reject' : 'Approve'} onCancel={onClose} footer={footer}>
+    <Popup open width={640} title={isReject ? t('approval.decision.reject') : t('approval.decision.approve')} onCancel={onClose} footer={footer}>
       <LoadingSpinner spinning={isFetching && !session}>
         <ApprovalSummary
           rows={[
-            { label: 'Process', value: session?.atrzProcNm || stageLabel },
-            { label: 'Target', value: session?.atrzTrgtNo ?? target ?? session?.atrzTrgtId ?? '-' },
+            { label: t('approval.fields.process'), value: session?.atrzProcNm || stageLabel },
+            { label: t('approval.fields.target'), value: session?.atrzTrgtNo ?? target ?? session?.atrzTrgtId ?? '-' },
             {
-              label: 'Requester',
+              label: t('approval.fields.requester'),
               value: session?.rtsoEmpNo ? `${requester ?? session.rtsoEmpNo} · ${formatDateTime(session.rtsoDt)}` : '-',
             },
-            { label: 'Approver', value: me ? `${me.usrNm ?? ''} (${me.usrId})` : '-' },
+            { label: t('approval.fields.approver'), value: me ? `${me.usrNm ?? ''} (${me.usrId})` : '-' },
             // Business content of the target from the server; the caller's rows only when it sends none.
             ...(session?.target ? targetSummaryRows(session.target) : details),
           ]}
         />
       </LoadingSpinner>
       <div className={styles.field}>
-        <label className={`${styles.label} ${isReject ? styles.required : ''}`}>{isReject ? 'Rejection Reason' : 'Opinion'}</label>
+        <label className={`${styles.label} ${isReject ? styles.required : ''}`}>{isReject ? t('approval.fields.rejectionReason') : t('approval.fields.opinion')}</label>
         <TextArea
           rows={4}
           maxLength={1000}

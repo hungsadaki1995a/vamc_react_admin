@@ -27,6 +27,10 @@ export interface AssignOfficerPopupProps {
   source?: EmployeeSearchSource;
   /** Field label, default "Officer in Charge". */
   label?: string;
+  /** Select placeholder, default "Select the officer in charge". */
+  placeholder?: string;
+  /** Title of the Employee Search popup, default "Officer Search". */
+  searchTitle?: string;
   submitting: boolean;
   onSubmit: (empNo: string) => void;
   onClose: () => void;
@@ -42,7 +46,9 @@ export default function AssignOfficerPopup({
   currentEmpNo,
   excludeEmpNos = [],
   source,
-  label = 'Officer in Charge',
+  label,
+  placeholder,
+  searchTitle,
   submitting,
   onSubmit,
   onClose,
@@ -73,7 +79,7 @@ export default function AssignOfficerPopup({
     >
       <ApprovalSummary rows={details} />
       <div className={styles.field}>
-        <label className={`${styles.label} ${styles.required}`}>{label}</label>
+        <label className={`${styles.label} ${styles.required}`}>{label ?? t('approval.assign.officerInCharge')}</label>
         <EmployeePickField
           value={officer}
           onChange={(empNo) => {
@@ -82,8 +88,8 @@ export default function AssignOfficerPopup({
           }}
           source={source ?? { type: 'candidates', atrzProcCd, stpNo, atrzHstryId }}
           excludeEmpNos={[...excludeEmpNos, ...(currentEmpNo ? [currentEmpNo] : [])]}
-          placeholder={`Select the ${label.toLowerCase()}`}
-          searchTitle={label === 'Officer in Charge' ? 'Officer Search' : `${label} Search`}
+          placeholder={placeholder ?? t('approval.assign.selectOfficer')}
+          searchTitle={searchTitle ?? t('approval.assign.officerSearch')}
         />
         {error && <div className={styles.error}>{error}</div>}
       </div>

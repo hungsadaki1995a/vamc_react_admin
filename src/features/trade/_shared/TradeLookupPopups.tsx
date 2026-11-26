@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import type { ReactNode } from 'react';
+import { useTranslation } from 'react-i18next';
+import type { TFunction } from 'i18next';
 import type { TableColumnsType } from 'antd';
 import TextInput from '@/components/inputs/TextInput';
 import {
@@ -29,33 +31,33 @@ interface CodeNameFilter {
 
 const INITIAL_FILTER: CodeNameFilter = { code: '', name: '' };
 
-const MEMBER_COLUMNS: TableColumnsType<MemberLookup> = [
-  { title: 'Member No.', dataIndex: 'mbrNo', width: 130, align: 'center' },
-  { title: 'Name', dataIndex: 'mbrNm', render: (v?: string, r?: MemberLookup) => v || r?.orgnzNm || '-' },
-  { title: 'Type', dataIndex: 'mbrTypeNm', width: 120, render: (v?: string) => v || '-' },
-  { title: 'SGDN No.', dataIndex: 'sgdnMbrNo', width: 110, render: (v?: string) => v || '-' },
-  { title: 'Phone', dataIndex: 'telno', width: 130, render: (v?: string) => v || '-' },
+const memberColumns = (t: TFunction): TableColumnsType<MemberLookup> => [
+  { title: t('trade.common.memberNo'), dataIndex: 'mbrNo', width: 130, align: 'center' },
+  { title: t('trade.common.name'), dataIndex: 'mbrNm', render: (v?: string, r?: MemberLookup) => v || r?.orgnzNm || '-' },
+  { title: t('trade.common.type'), dataIndex: 'mbrTypeNm', width: 120, render: (v?: string) => v || '-' },
+  { title: t('trade.lookup.sgdnNo'), dataIndex: 'sgdnMbrNo', width: 110, render: (v?: string) => v || '-' },
+  { title: t('trade.lookup.phone'), dataIndex: 'telno', width: 130, render: (v?: string) => v || '-' },
 ];
 
-const NPL_COLUMNS: TableColumnsType<NplItem> = [
-  { title: 'NPL Code', dataIndex: 'bndCd', width: 130, align: 'center' },
-  { title: 'NPL Name', dataIndex: 'bndNm', ellipsis: true },
-  { title: 'Status', dataIndex: 'bndSttsCd', width: 80, align: 'center', render: (v?: string) => v || '-' },
-  { title: 'LOT', dataIndex: 'bndLotNo', width: 110, render: (v?: string) => v || '-' },
-  { title: 'Appraised Value', dataIndex: 'bndEvlAmt', width: 140, align: 'right', render: (v?: number) => formatAmount(v) },
+const nplColumns = (t: TFunction): TableColumnsType<NplItem> => [
+  { title: t('trade.common.nplCode'), dataIndex: 'bndCd', width: 130, align: 'center' },
+  { title: t('trade.common.nplName'), dataIndex: 'bndNm', ellipsis: true },
+  { title: t('trade.common.status'), dataIndex: 'bndSttsCd', width: 80, align: 'center', render: (v?: string) => v || '-' },
+  { title: t('trade.common.lot'), dataIndex: 'bndLotNo', width: 110, render: (v?: string) => v || '-' },
+  { title: t('trade.common.appraisedValue'), dataIndex: 'bndEvlAmt', width: 140, align: 'right', render: (v?: number) => formatAmount(v) },
 ];
 
-const COLLATERAL_COLUMNS: TableColumnsType<CollateralAssetItem> = [
-  { title: 'Collateral Code', dataIndex: 'cltrAstCd', width: 140, align: 'center' },
-  { title: 'Collateral Name', dataIndex: 'cltrAstNm', ellipsis: true },
-  { title: 'Type', dataIndex: 'cltrAstTypeNm', width: 160, render: (v?: string) => v || '-' },
-  { title: 'NPL', dataIndex: 'rprsBndCd', width: 120, render: (v?: string) => v || '-' },
+const collateralColumns = (t: TFunction): TableColumnsType<CollateralAssetItem> => [
+  { title: t('trade.lookup.collateralCode'), dataIndex: 'cltrAstCd', width: 140, align: 'center' },
+  { title: t('trade.lookup.collateralName'), dataIndex: 'cltrAstNm', ellipsis: true },
+  { title: t('trade.common.type'), dataIndex: 'cltrAstTypeNm', width: 160, render: (v?: string) => v || '-' },
+  { title: t('trade.common.npl'), dataIndex: 'rprsBndCd', width: 120, render: (v?: string) => v || '-' },
 ];
 
-const LOT_COLUMNS: TableColumnsType<NplLotItem> = [
-  { title: 'LOT No.', dataIndex: 'bndLotNo', width: 140, align: 'center' },
-  { title: 'LOT Name', dataIndex: 'bndLotNm', ellipsis: true },
-  { title: 'NPLs', dataIndex: 'nplCnt', width: 80, align: 'center', render: (v?: number) => v ?? '-' },
+const lotColumns = (t: TFunction): TableColumnsType<NplLotItem> => [
+  { title: t('trade.lookup.lotNo'), dataIndex: 'bndLotNo', width: 140, align: 'center' },
+  { title: t('trade.lookup.lotName'), dataIndex: 'bndLotNm', ellipsis: true },
+  { title: t('trade.lookup.nplCount'), dataIndex: 'nplCnt', width: 80, align: 'center', render: (v?: number) => v ?? '-' },
 ];
 
 interface PickerShellProps {
@@ -72,8 +74,9 @@ interface PickerShellProps {
 }
 
 function PickerShell({ title, codeLabel, nameLabel, canSelect, onSelect, onClose, list, loading, total, children }: PickerShellProps) {
+  const { t } = useTranslation();
   return (
-    <SysFormModal open width={820} title={title} submitText="Select" submitDisabled={!canSelect} onSubmit={onSelect} onCancel={onClose}>
+    <SysFormModal open width={820} title={title} submitText={t('trade.common.select')} submitDisabled={!canSelect} onSubmit={onSelect} onCancel={onClose}>
       <SysFilterPanel columns={2}>
         <SysFilterItem label={codeLabel}>
           <TextInput value={list.draft.code} allowClear onChange={(e) => list.setDraft({ code: e.target.value })} onPressEnter={() => list.search()} />
@@ -91,6 +94,7 @@ function PickerShell({ title, codeLabel, nameLabel, canSelect, onSelect, onClose
 }
 
 export function MemberSearchPopup({ onSelect, onClose }: { onSelect: (member: MemberLookup) => void; onClose: () => void }) {
+  const { t } = useTranslation();
   const list = usePagedList<CodeNameFilter>(INITIAL_FILTER);
   const { data, isFetching } = useMemberSearch(
     { mbrNo: list.applied.code.trim() || undefined, mbrNm: list.applied.name.trim() || undefined, mbrSttsCds: [ACTIVE_MEMBER_STATUS] },
@@ -99,9 +103,9 @@ export function MemberSearchPopup({ onSelect, onClose }: { onSelect: (member: Me
   const [picked, setPicked] = useState<MemberLookup | null>(null);
   return (
     <PickerShell
-      title="Member Search (active members)"
-      codeLabel="Member No."
-      nameLabel="Name"
+      title={t('trade.lookup.memberTitle')}
+      codeLabel={t('trade.common.memberNo')}
+      nameLabel={t('trade.common.name')}
       canSelect={!!picked}
       onSelect={() => picked && onSelect(picked)}
       onClose={onClose}
@@ -111,7 +115,7 @@ export function MemberSearchPopup({ onSelect, onClose }: { onSelect: (member: Me
     >
       <SysTable<MemberLookup>
         rowKey="mbrNo"
-        columns={MEMBER_COLUMNS}
+        columns={memberColumns(t)}
         dataSource={data?.content ?? []}
         loading={isFetching}
         scroll={{ y: 320 }}
@@ -125,6 +129,7 @@ export function MemberSearchPopup({ onSelect, onClose }: { onSelect: (member: Me
 export type NplTarget = { type: 'npl'; bndCd: string; label: string } | { type: 'lot'; bndLotId: string; label: string };
 
 export function NplSearchPopup({ mode, onSelect, onClose }: { mode: 'npl' | 'lot'; onSelect: (target: NplTarget) => void; onClose: () => void }) {
+  const { t } = useTranslation();
   const list = usePagedList<CodeNameFilter>(INITIAL_FILTER);
   const code = list.applied.code.trim() || undefined;
   const name = list.applied.name.trim() || undefined;
@@ -141,9 +146,9 @@ export function NplSearchPopup({ mode, onSelect, onClose }: { mode: 'npl' | 'lot
 
   return (
     <PickerShell
-      title={isNpl ? 'NPL Search (registered NPLs)' : 'NPL LOT Search'}
-      codeLabel={isNpl ? 'NPL Code' : 'LOT No.'}
-      nameLabel={isNpl ? 'NPL Name' : 'LOT Name'}
+      title={isNpl ? t('trade.lookup.nplTitle') : t('trade.lookup.lotTitle')}
+      codeLabel={isNpl ? t('trade.common.nplCode') : t('trade.lookup.lotNo')}
+      nameLabel={isNpl ? t('trade.common.nplName') : t('trade.lookup.lotName')}
       canSelect={isNpl ? !!pickedNpl : !!pickedLot}
       onSelect={select}
       onClose={onClose}
@@ -154,7 +159,7 @@ export function NplSearchPopup({ mode, onSelect, onClose }: { mode: 'npl' | 'lot
       {isNpl ? (
         <SysTable<NplItem>
           rowKey="bndCd"
-          columns={NPL_COLUMNS}
+          columns={nplColumns(t)}
           dataSource={npls.data?.content ?? []}
           loading={npls.isFetching}
           scroll={{ y: 320 }}
@@ -164,7 +169,7 @@ export function NplSearchPopup({ mode, onSelect, onClose }: { mode: 'npl' | 'lot
       ) : (
         <SysTable<NplLotItem>
           rowKey="bndLotId"
-          columns={LOT_COLUMNS}
+          columns={lotColumns(t)}
           dataSource={lots.data?.content ?? []}
           loading={lots.isFetching}
           scroll={{ y: 320 }}
@@ -183,6 +188,7 @@ export interface PickedCollateral {
 
 /** Listed collateral (CLTR_AST_INFO, exposed on the market) that a consulting application is about. */
 export function CollateralSearchPopup({ onSelect, onClose }: { onSelect: (collateral: PickedCollateral) => void; onClose: () => void }) {
+  const { t } = useTranslation();
   const list = usePagedList<CodeNameFilter>(INITIAL_FILTER);
   const { data, isFetching } = useCollateralSearch(
     { cltrAstCd: list.applied.code.trim() || undefined, cltrAstNm: list.applied.name.trim() || undefined, expsrYn: 'Y' },
@@ -191,9 +197,9 @@ export function CollateralSearchPopup({ onSelect, onClose }: { onSelect: (collat
   const [picked, setPicked] = useState<CollateralAssetItem | null>(null);
   return (
     <PickerShell
-      title="Collateral Search (listed collaterals)"
-      codeLabel="Collateral Code"
-      nameLabel="Collateral Name"
+      title={t('trade.lookup.collateralTitle')}
+      codeLabel={t('trade.lookup.collateralCode')}
+      nameLabel={t('trade.lookup.collateralName')}
       canSelect={!!picked}
       onSelect={() => picked && onSelect({ cltrAstCd: picked.cltrAstCd, cltrAstNm: picked.cltrAstNm })}
       onClose={onClose}
@@ -203,7 +209,7 @@ export function CollateralSearchPopup({ onSelect, onClose }: { onSelect: (collat
     >
       <SysTable<CollateralAssetItem>
         rowKey="cltrAstCd"
-        columns={COLLATERAL_COLUMNS}
+        columns={collateralColumns(t)}
         dataSource={data?.content ?? []}
         loading={isFetching}
         scroll={{ y: 320 }}
