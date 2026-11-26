@@ -5,35 +5,37 @@ import type { TableColumnsType } from 'antd';
 import AppSelect from '@/components/inputs/AppSelect';
 import TextInput from '@/components/inputs/TextInput';
 import { useMenuPermission } from '@/hooks/use-menu-permission';
-import { useNotify } from '@/hooks/use-notify';
-import { useSysDialogs } from '@/hooks/use-sys-dialogs';
 import { usePagedList } from '@/hooks/use-paged-list';
 import type { ZaloLinkStatus, ZaloUser, ZaloUserSearch, ZaloUserType } from '@/api/system/zalo-api';
 import {
   DateTimeText,
   SysButton,
+  SysExcelButton,
   SysFilterItem,
   SysFilterPanel,
   SysPage,
   SysPager,
   SysSearchActions,
   SysSectionHeader,
+  SysSplit,
   SysTable,
   SysTitleBar,
 } from '@/components/common/sys-ui/SysListUi';
 import { ALL, SYS_PAGE_SIZE } from '@/config/sys-constants';
 import type { YesNo } from '@/config/sys-constants';
-import { errorMessage, rowNumber } from '@/utils/system-utils';
+import { rowNumber } from '@/utils/system-utils';
+import ZaloStatCells from '../_shared/ZaloStatCells';
 import ZaloInviteModal from './ZaloInviteModal';
 import ZaloLinkStateBadge from './ZaloLinkStateBadge';
 import ZaloSimulateModal from './ZaloSimulateModal';
-import ZaloUserModal from './ZaloUserModal';
+import ZaloUserDetail from './ZaloUserDetail';
 import { accountText } from './zalo-user-constants';
-import { useRebuildZaloPhoneIndex, useZaloStatus, useZaloUsers } from './use-zalo-users';
+import { useDownloadZaloUsersExcel, useZaloStatus, useZaloUserSummary, useZaloUsers } from './use-zalo-users';
 import styles from './zalo-user-management.module.scss';
 
-// Zalo Users (menu A09050300): Zalo users who follow the OA and their account links. Row click opens the detail
-// popup (manual link / unlink). [Simulate OA Follow + Phone Share] is shown in demo mode only.
+// Zalo Users (menu A09050300): Zalo users who follow the OA and their account links. List on the left, User Details of
+// the selected row on the right (link / unlink, test message, link history, messages). [Simulate OA Follow + Phone
+// Share] is shown in demo mode only.
 
 interface UserFilter {
   linkStatus: ZaloLinkStatus | '';
@@ -59,21 +61,21 @@ function buildColumns(t: TFunction, page: number, total: number): TableColumnsTy
       title: 'No',
       key: 'no',
       align: 'center',
-      width: 60,
+      width: 50,
       render: (_: unknown, __, index) => rowNumber(total, page, SYS_PAGE_SIZE, index),
     },
     {
       title: t('zalo.users.columns.status'),
       key: 'linkStatus',
       align: 'center',
-      width: 140,
+      width: 124,
       render: (_: unknown, row) => <ZaloLinkStateBadge user={row} />,
     },
     {
       title: t('zalo.users.columns.zaloNm'),
       dataIndex: 'zaloNm',
       key: 'zaloNm',
-      width: 160,
+      width: 150,
       ellipsis: true,
       render: (v?: string) => v || '-',
     },
@@ -82,42 +84,45 @@ function buildColumns(t: TFunction, page: number, total: number): TableColumnsTy
       dataIndex: 'telno',
       key: 'telno',
       align: 'center',
-      width: 130,
+      width: 110,
       render: (v?: string) => v || '-',
     },
     { title: t('zalo.users.columns.account'), key: 'account', ellipsis: true, render: (_: unknown, row) => accountText(row) },
     {
-      title: t('zalo.users.columns.following'),
+      title: t('zalo.users.columns.followingShort'),
       dataIndex: 'flwYn',
       key: 'flwYn',
       align: 'center',
-      width: 110,
+      width: 90,
       render: (v?: YesNo) => (v ? t(v === 'Y' ? 'zalo.common.yes' : 'zalo.common.no') : '-'),
     },
     {
       title: t('zalo.users.columns.linkDt'),
       dataIndex: 'linkDt',
       key: 'linkDt',
-      width: 150,
+      width: 130,
       render: (v?: string) => <DateTimeText value={v} />,
     },
   ];
 }
 
-type ModalState = { type: 'detail'; user: ZaloUser } | { type: 'invite' } | { type: 'simulate' } | null;
+type ModalState = { type: 'invite' } | { type: 'simulate' } | null;
 
 export default function ZaloUserManagement() {
   const { t } = useTranslation();
   const { canWrite } = useMenuPermission();
-  const { toast } = useNotify();
-  const { confirm } = useSysDialogs();
   const list = usePagedList<UserFilter>(INITIAL_FILTER);
   const search = toSearch(list.applied);
   const { data, isFetching } = useZaloUsers(search, list.pageQuery);
+  const { data: summary } = useZaloUserSummary();
   const { data: status } = useZaloStatus();
-  const rebuild = useRebuildZaloPhoneIndex();
+  const excel = useDownloadZaloUsersExcel();
   const [modal, setModal] = useState<ModalState>(null);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const rows = data?.content ?? [];
   const total = data?.totalElements ?? 0;
+  // The design always shows a user: the picked row, else the first row of the page.
+  const selected = rows.find((row) => row.zaloUserId === selectedId) ?? rows[0];
 
   const allOption = { value: ALL, label: t('zalo.common.all') } as const;
   const linkStatusOptions = [
@@ -136,20 +141,22 @@ export default function ZaloUserManagement() {
     { value: 'EMP' as const, label: t('zalo.userTypes.EMP') },
   ];
 
-  const handleRebuild = () => {
-    confirm({
-      content: t('messages.zalo.confirmRebuild'),
-      okText: t('zalo.common.run'),
-      onOk: async () => {
-        try {
-          const response = await rebuild.mutateAsync();
-          toast.success(t('messages.zalo.rebuilt', { members: response.data?.members ?? 0, employees: response.data?.employees ?? 0 }));
-        } catch (error) {
-          toast.error(errorMessage(error));
-        }
-      },
-    });
-  };
+  const invites = summary ? `${summary.invitesToday.toLocaleString('en-US')}` : '-';
+  const stats = [
+    { key: 'linked', label: t('zalo.users.summary.linked'), value: <strong>{summary?.linked ?? '-'}</strong> },
+    { key: 'pending', label: t('zalo.users.summary.pending'), value: <strong>{summary?.pending ?? '-'}</strong> },
+    { key: 'following', label: t('zalo.users.summary.following'), value: <strong>{summary?.following ?? '-'}</strong> },
+    {
+      key: 'invites',
+      label: t('zalo.users.summary.invitesToday'),
+      value: (
+        <span title={summary?.inviteLmtCd ?? undefined}>
+          <strong>{invites}</strong>
+          {summary?.inviteLimit != null && ` / ${summary.inviteLimit.toLocaleString('en-US')}`}
+        </span>
+      ),
+    },
+  ];
 
   return (
     <SysPage>
@@ -157,6 +164,7 @@ export default function ZaloUserManagement() {
         title={t('zalo.users.title')}
         breadcrumb={[t('zalo.breadcrumb.root'), t('zalo.breadcrumb.notification'), t('zalo.users.title')]}
       />
+      <ZaloStatCells items={stats} />
       <SysFilterPanel>
         <SysFilterItem label={t('zalo.users.filter.linkStatus')}>
           <AppSelect<ZaloLinkStatus | ''>
@@ -187,38 +195,51 @@ export default function ZaloUserManagement() {
         </SysFilterItem>
       </SysFilterPanel>
       <SysSearchActions onReset={list.reset} onSearch={() => list.search()} loading={isFetching} />
-      <SysSectionHeader
-        total={total}
-        actions={
-          canWrite && (
-            <>
-              <SysButton loading={rebuild.isPending} onClick={handleRebuild}>
-                {t('zalo.users.buttons.rebuildIndex')}
-              </SysButton>
-              {status?.mockMode && <SysButton onClick={() => setModal({ type: 'simulate' })}>{t('zalo.users.buttons.simulate')}</SysButton>}
-            </>
-          )
+      <SysSplit
+        ratio="minmax(0, 1fr) 440px"
+        left={
+          <div className={styles.pane}>
+            <SysSectionHeader
+              total={total}
+              actions={
+                <>
+                  <SysExcelButton loading={excel.isPending} onClick={() => excel.mutate(search)} />
+                  {canWrite && status?.mockMode && (
+                    <SysButton onClick={() => setModal({ type: 'simulate' })}>{t('zalo.users.buttons.simulate')}</SysButton>
+                  )}
+                </>
+              }
+              primaryActions={
+                canWrite && (
+                  <SysButton look="navy" onClick={() => setModal({ type: 'invite' })}>
+                    {t('zalo.users.buttons.invite')}
+                  </SysButton>
+                )
+              }
+            />
+            <SysTable<ZaloUser>
+              rowKey="zaloUserId"
+              className={styles.listTable}
+              fill
+              tableLayout="fixed"
+              columns={buildColumns(t, list.page, total)}
+              dataSource={rows}
+              loading={isFetching}
+              selectedRowKey={selected?.zaloUserId}
+              onRowClick={(row) => setSelectedId(row.zaloUserId)}
+            />
+            <SysPager page={list.page} pageSize={SYS_PAGE_SIZE} total={total} onChange={list.setPage} />
+          </div>
         }
-        primaryActions={
-          canWrite && (
-            <SysButton look="navy" onClick={() => setModal({ type: 'invite' })}>
-              {t('zalo.users.buttons.invite')}
-            </SysButton>
-          )
+        right={
+          <ZaloUserDetail
+            key={selected?.zaloUserId ?? 'none'}
+            zaloUserId={selected?.zaloUserId ?? null}
+            fallback={selected}
+            canWrite={canWrite}
+          />
         }
       />
-      <SysTable<ZaloUser>
-        rowKey="zaloUserId"
-        className={styles.listTable}
-        fill
-        tableLayout="fixed"
-        columns={buildColumns(t, list.page, total)}
-        dataSource={data?.content ?? []}
-        loading={isFetching}
-        onRowClick={(row) => setModal({ type: 'detail', user: row })}
-      />
-      <SysPager page={list.page} pageSize={SYS_PAGE_SIZE} total={total} onChange={list.setPage} />
-      {modal?.type === 'detail' && <ZaloUserModal user={modal.user} canWrite={canWrite} onClose={() => setModal(null)} />}
       {modal?.type === 'invite' && <ZaloInviteModal onClose={() => setModal(null)} />}
       {modal?.type === 'simulate' && <ZaloSimulateModal onClose={() => setModal(null)} />}
     </SysPage>

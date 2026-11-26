@@ -628,8 +628,6 @@
       "linked": "Đã gắn.",
       "unlinked": "Đã huỷ liên kết.",
       "confirmUnlink": "Huỷ liên kết giữa người dùng Zalo này và {{account}}?",
-      "confirmRebuild": "Tính lại chỉ mục số điện thoại của toàn bộ hội viên và nhân viên?",
-      "rebuilt": "Đã dựng lại chỉ mục: {{members}} hội viên, {{employees}} nhân viên thay đổi.",
       "simulatedLinked": "Đã giả lập quan tâm và tự gắn vào {{account}}.",
       "simulatedNoMatch": "Đã giả lập quan tâm. Không có tài khoản nào có số này: người dùng chờ gắn.",
       "simulatedMany": "Đã giả lập quan tâm. Có {{count}} tài khoản dùng số này: hãy gắn thủ công.",
@@ -1223,7 +1221,11 @@
       "new": "Thêm mới",
       "send": "Gửi",
       "run": "Thực hiện",
-      "close": "Đóng"
+      "close": "Đóng",
+      "bySystem": "hệ thống",
+      "byZalo": "Zalo",
+      "success": "Thành công",
+      "failed": "Thất bại"
     },
     "channels": {
       "ZNS": "ZNS",
@@ -1248,6 +1250,12 @@
     },
     "users": {
       "title": "Người dùng Zalo",
+      "summary": {
+        "linked": "Đã liên kết",
+        "pending": "Chờ liên kết",
+        "following": "Quan tâm OA",
+        "invitesToday": "Lời mời hôm nay"
+      },
       "filter": {
         "linkStatus": "Trạng thái liên kết",
         "following": "Quan tâm OA",
@@ -1260,17 +1268,19 @@
         "status": "Trạng thái",
         "account": "Tài khoản gắn",
         "following": "Quan tâm OA",
+        "followingShort": "Quan tâm",
         "linkDt": "Ngày gắn",
         "lstItrctDt": "Tương tác cuối"
       },
       "buttons": {
         "link": "Gắn",
         "unlink": "Huỷ liên kết",
+        "testMessage": "Gửi tin thử",
         "invite": "Gửi lời mời liên kết",
-        "rebuildIndex": "Dựng lại chỉ mục SĐT",
         "simulate": "Giả lập quan tâm OA + chia sẻ SĐT"
       },
       "link": {
+        "title": "Liên kết với tài khoản",
         "userType": "Loại tài khoản",
         "userNo": "Mã tài khoản",
         "userNoPlaceholder": "VD: TV00000001 hoặc mã nhân viên"
@@ -1279,7 +1289,7 @@
         "title": "Gửi lời mời liên kết",
         "recipientName": "Tên người nhận",
         "recipientNamePlaceholder": "Mặc định: Quý khách",
-        "notice": "Gửi mẫu ZNS MBR_JOIN_WELCOME kèm liên kết quan tâm OA."
+        "notice": "Gửi mẫu ZNS MBR_JOIN_WELCOME kèm liên kết quan tâm OA. Áp dụng quy tắc hạn mức LMT-003 / LMT-004 / LMT-006."
       },
       "simulate": {
         "title": "Giả lập quan tâm OA + chia sẻ SĐT",
@@ -1287,8 +1297,55 @@
         "notice": "Chỉ dùng cho demo: đóng vai người dùng Zalo quan tâm OA và chia sẻ số này. Nếu đúng một tài khoản có số này thì tự gắn."
       },
       "detail": {
-        "title": "Chi tiết người dùng Zalo",
-        "shareAgree": "Đã chia sẻ SĐT"
+        "title": "Chi tiết người dùng",
+        "empty": "Không có người dùng Zalo để hiển thị.",
+        "shareAgree": "Đã chia sẻ SĐT",
+        "followSince": "Có · từ {{at}}",
+        "sharedPhone": "Có · {{phone}}",
+        "terms": "Điều khoản chia sẻ dữ liệu",
+        "termsAgreed": "Đã đồng ý khi đăng ký (điều khoản chia sẻ dữ liệu)",
+        "termsNone": "Chưa có ghi nhận",
+        "linkMethod": "Cách liên kết",
+        "methodAuto": "Tự động (khớp số điện thoại) · {{at}}",
+        "methodManual": "Thủ công · {{at}}",
+        "receive": "Nhận tin Zalo",
+        "receiveOn": "Bật",
+        "receiveNotLinked": "Chưa liên kết"
+      },
+      "tabs": {
+        "general": "Thông tin chung",
+        "links": "Lịch sử liên kết",
+        "messages": "Tin đã gửi ({{count}})"
+      },
+      "history": {
+        "columns": {
+          "at": "Thời gian",
+          "by": "Người thực hiện",
+          "event": "Sự kiện"
+        },
+        "follow": "Đã quan tâm OA",
+        "unfollow": "Đã bỏ quan tâm OA",
+        "sharePhone": "Đã chia sẻ số điện thoại",
+        "linkAuto": "Tự động liên kết với {{account}} (khớp số điện thoại)",
+        "linkManual": "Liên kết thủ công với {{account}}",
+        "unlink": "Huỷ liên kết với {{account}}",
+        "note": "Các sự kiện quan tâm, chia sẻ số điện thoại, liên kết và huỷ liên kết của người dùng Zalo này. Mọi thay đổi đều được ghi vào nhật ký kiểm toán."
+      },
+      "messages": {
+        "columns": {
+          "sentAt": "Thời gian gửi",
+          "template": "Mẫu tin",
+          "channel": "Kênh",
+          "result": "Kết quả"
+        },
+        "empty": "Chưa gửi tin Zalo nào cho người dùng này",
+        "openHistory": "Mở Lịch sử gửi thông báo"
+      },
+      "testMessage": {
+        "title": "Gửi tin thử",
+        "template": "Mẫu tin",
+        "templatePlaceholder": "Chọn mẫu tin đang dùng",
+        "notice": "Gửi mẫu tin với dữ liệu mẫu tới số điện thoại của người dùng này. Tính là tin thử; áp dụng hạn mức gửi."
       }
     },
     "templates": {

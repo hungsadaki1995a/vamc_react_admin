@@ -1,9 +1,10 @@
-import { apiDelete, apiGet, apiPatch, apiPost, apiPut } from '@/api/common/api-utils';
+import { apiDelete, apiDownload, apiGet, apiPatch, apiPost, apiPut } from '@/api/common/api-utils';
 import type { PageQuery, PageResponse } from '@/api/common/api-utils';
 import type { YesNo } from '@/config/sys-constants';
 
 // Zalo API — ZaloStatusController (/api/v1/zalo/status), ZaloUserController (/api/v1/zalo/users, menu A09050300),
-// ZaloTemplateController (/api/v1/zalo/templates, menu A09050400). Tables ZALO_USER / ZALO_TPL_INFO.
+// ZaloTemplateController (/api/v1/zalo/templates, menu A09050400). Tables ZALO_USER / ZALO_TPL_INFO / ZALO_CHG_HSTRY.
+// Sending limits, prices and channel stop: zalo-limit-api.ts; OA connection: zalo-connection-api.ts.
 
 /** ZNS = Zalo Notification Service (by phone), OA = Official Account message (followers only). */
 export type ZaloSendMode = 'ZNS' | 'OA';
@@ -12,6 +13,24 @@ export type ZaloLinkStatus = 'LINKED' | 'PENDING';
 /** MBR = member (MBR_NO), EMP = employee (EMP_NO). */
 export type ZaloUserType = 'MBR' | 'EMP';
 export type ZaloLinkMethod = 'AUTO' | 'MANUAL';
+/** Message type of a template (ZALO_TPL_INFO.ZALO_MSG_TYPE_CD); sets the unit price of a ZNS sending. */
+export type ZaloTemplateMsgType = 'INVITE' | 'OTP' | 'STATUS';
+/** Message type of a sending: TEST = test send, OA = OA message (free), else the template type. */
+export type ZaloMsgType = ZaloTemplateMsgType | 'TEST' | 'OA';
+
+/** One change of a template, limit rule, user link… (ZALO_CHG_HSTRY), newest first. */
+export interface ZaloChangeHistory {
+  /** ISO local date-time. */
+  chgDt: string;
+  /** EMP_NO, `SYSTEM` (automatic) or `ZALO` (event from Zalo). */
+  chgBy?: string;
+  /** Changed item, e.g. `Content`, `Status`; Zalo users: FOLLOW, SHARE_PHONE, LINK_AUTO, LINK_MANUAL, UNLINK. */
+  chgItemNm: string;
+  /** Null when created. */
+  bfrVal?: string | null;
+  /** Null when removed. */
+  aftrVal?: string | null;
+}
 
 export interface ZaloStatus {
   /** Real sending on (`zalo.enabled`). */
@@ -37,6 +56,10 @@ export interface ZaloTemplate {
   /** JSON object variable → ZNS parameter. */
   paramMapCn?: string;
   useYn: YesNo;
+  /** Null for rows older than dev-sync 77. */
+  zaloMsgTypeCd?: ZaloTemplateMsgType | null;
+  /** Unit price in effect today, VND per send; OA templates 0; null when no price is set. */
+  untprc?: number | null;
   /** ISO local date-time. */
   crtDt?: string;
   crtBy?: string;
@@ -63,6 +86,8 @@ export interface ZaloTemplateRequest {
   tplCn: string;
   /** JSON object, ≤ 4000; on update an empty string clears it. */
   paramMapCn?: string;
+  /** Default STATUS. */
+  zaloMsgTypeCd?: ZaloTemplateMsgType;
   useYn?: YesNo;
 }
 
@@ -131,6 +156,22 @@ export interface ZaloUserSummary {
   linked: number;
   pending: number;
   following: number;
+  /** Successful invitations sent today by the signed-in employee. */
+  invitesToday: number;
+  /** Daily invitation limit of the signed-in employee (active SENDER INVITE rule); null = no limit. */
+  inviteLimit?: number | null;
+  inviteLmtCd?: string | null;
+}
+
+/** Zalo message sent to a user (LOG_NOTI_SNDNG, 20 newest); the content is never returned. */
+export interface ZaloUserMessage {
+  logId: string;
+  sentAt: string;
+  tplCd?: string;
+  mode?: ZaloSendMode;
+  success: boolean;
+  /** Phone and secrets masked. */
+  failRsn?: string;
 }
 
 export interface LinkZaloUserRequest {
@@ -160,12 +201,7 @@ export interface ZaloSimulateResult {
   matchCount: number;
 }
 
-export interface ZaloPhoneIndexResult {
-  members: number;
-  employees: number;
-}
-
-/** Server error codes the screens react to (ZAL001–ZAL015). */
+/** Server error codes the screens react to (ZAL001–ZAL024). */
 export const ZALO_ERRORS = {
   templateNotFound: 'ZAL001',
   templateDuplicate: 'ZAL002',
@@ -182,6 +218,17 @@ export const ZALO_ERRORS = {
   sendFailed: 'ZAL013',
   recipientNotReachable: 'ZAL014',
   invalidPhone: 'ZAL015',
+  /** Sending stopped on Zalo Sending Limits; the message was logged as held. */
+  channelStopped: 'ZAL016',
+  /** Blocked by a limit rule; the server message names the rule (LMT-…). */
+  limitExceeded: 'ZAL017',
+  limitRuleNotFound: 'ZAL018',
+  limitExceptionScope: 'ZAL019',
+  limitExceptionNotFound: 'ZAL020',
+  channelAlreadyStopped: 'ZAL021',
+  channelNotStopped: 'ZAL022',
+  oaPriceNotZero: 'ZAL023',
+  limitRuleInvalid: 'ZAL024',
 } as const;
 
 const BASE = '/api/v1/zalo';
@@ -201,6 +248,12 @@ export const createZaloTemplate = (request: CreateZaloTemplateRequest) => apiPos
 export const updateZaloTemplate = (tplCd: string, request: ZaloTemplateRequest) =>
   apiPut<ZaloTemplate>(`${TEMPLATES}/${encodeURIComponent(tplCd)}`, request);
 
+export const getZaloTemplateHistory = (tplCd: string) =>
+  apiGet<ZaloChangeHistory[]>(`${TEMPLATES}/${encodeURIComponent(tplCd)}/history`);
+
+export const downloadZaloTemplatesExcel = (search: ZaloTemplateSearch) =>
+  apiDownload(`${TEMPLATES}/excel`, 'zalo-templates.xlsx', search);
+
 export const changeZaloTemplateUse = (tplCd: string, useYn: YesNo) =>
   apiPatch<ZaloTemplate>(`${TEMPLATES}/${encodeURIComponent(tplCd)}/use`, { useYn });
 
@@ -215,6 +268,22 @@ export const getZaloUsers = (search: ZaloUserSearch, query: PageQuery) =>
 
 export const getZaloUserSummary = () => apiGet<ZaloUserSummary>(`${USERS}/summary`);
 
+/** Masked like the list. */
+export const downloadZaloUsersExcel = (search: ZaloUserSearch) => apiDownload(`${USERS}/excel`, 'zalo-users.xlsx', search);
+
+export const getZaloUser = (zaloUserId: string) => apiGet<ZaloUser>(`${USERS}/${encodeURIComponent(zaloUserId)}`);
+
+/** Follow, phone share, link and unlink events (50 newest). */
+export const getZaloUserHistory = (zaloUserId: string) =>
+  apiGet<ZaloChangeHistory[]>(`${USERS}/${encodeURIComponent(zaloUserId)}/history`);
+
+export const getZaloUserMessages = (zaloUserId: string) =>
+  apiGet<ZaloUserMessage[]>(`${USERS}/${encodeURIComponent(zaloUserId)}/messages`);
+
+/** Sends a template in use to this user with the sample data, counted as TEST (limit rules apply). */
+export const sendZaloUserTestMessage = (zaloUserId: string, tplCd: string) =>
+  apiPost<ZaloSendResult>(`${USERS}/${encodeURIComponent(zaloUserId)}/test-message`, { tplCd });
+
 export const linkZaloUser = (zaloUserId: string, request: LinkZaloUserRequest) =>
   apiPut<ZaloUser>(`${USERS}/${encodeURIComponent(zaloUserId)}/link`, request);
 
@@ -222,8 +291,6 @@ export const unlinkZaloUser = (zaloUserId: string) => apiDelete<ZaloUser>(`${USE
 
 /** ZNS template MBR_JOIN_WELCOME with the OA follow link. */
 export const sendZaloInvitation = (request: ZaloInvitationRequest) => apiPost<ZaloSendResult>(`${USERS}/invitations`, request);
-
-export const rebuildZaloPhoneIndex = () => apiPost<ZaloPhoneIndexResult>(`${USERS}/phone-index/rebuild`);
 
 /** Demo mode only (404 ZAL011 otherwise): follow + phone share, auto link on a single match. */
 export const simulateZaloFollow = (request: SimulateZaloFollowRequest) =>

@@ -1,11 +1,46 @@
 /* Zalo Users (A09050300) — screen-specific layout only. */
 
-/* The list frame runs to the page bottom like the design. */
-.listTable {
-  flex: 1 0 auto;
+/* List pane: header, table that fills the height, pager. */
+.pane {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 0;
 }
 
-/* Read-only value box in the detail popup (same as Notification Send History). */
-.readOnly {
-  background: var(--color-bg-secondary, #f6f6f9);
+.listTable {
+  flex: 1 1 auto;
+  min-height: 360px;
+}
+
+.fullWidth {
+  width: 100%;
+}
+
+/* Tables inside the detail panel keep their natural height. */
+.panelTable {
+  flex: 0 0 auto;
+}
+
+.note {
+  margin: 0;
+  font-size: var(--font-size-b2, 12px);
+  line-height: var(--line-height-b2, 16px);
+  color: var(--color-text-tertiary, #6f7b95);
+}
+
+/* "Open Notification Send History" reads as a link. */
+.linkButton {
+  align-self: flex-start;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: var(--font-size-b2, 12px);
+  color: var(--color-text-brand, #1764ff);
+  cursor: pointer;
+
+  &:hover {
+    text-decoration: underline;
+  }
 }

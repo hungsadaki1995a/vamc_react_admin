@@ -1,0 +1,141 @@
+/* Shared look of the Zalo screens (Users, Templates, Sending Limits): header cells and the detail panel. */
+
+$border: var(--color-border-secondary, #eaeaf1);
+$border-strong: var(--color-border-primary, #d1d1e0);
+$label-bg: var(--color-bg-secondary, #f6f6f9);
+$surface: var(--color-bg-primary, #ffffff);
+$text: var(--color-text-primary, #3a404a);
+$text-sub: var(--color-text-tertiary, #6f7b95);
+$fs-h4: var(--font-size-h4, 14px);
+$fs-b1: var(--font-size-b1, 13px);
+$fs-b2: var(--font-size-b2, 12px);
+
+/* Header cells: label | value pairs in one bordered row. */
+.statCells {
+  display: grid;
+  grid-template-columns: repeat(var(--stat-count, 4), minmax(0, 1fr));
+  border: 1px solid $border-strong;
+  border-radius: 4px;
+  background: $surface;
+
+  @media (max-width: 1100px) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.statCell {
+  display: grid;
+  grid-template-columns: 130px minmax(0, 1fr);
+  min-width: 0;
+
+  & + & {
+    border-left: 1px solid $border-strong;
+  }
+}
+
+.statLabel {
+  padding: 8px 10px;
+  background: $label-bg;
+  font-size: $fs-b1;
+  color: $text;
+}
+
+.statValue {
+  padding: 8px 10px;
+  overflow: hidden;
+  text-align: right;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: $fs-b1;
+  color: $text;
+
+  strong {
+    font-weight: 700;
+  }
+}
+
+/* Detail panel beside a list: header, tabs, scrolling body, action bar. */
+.panel {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 480px;
+  border: 1px solid $border-strong;
+  border-radius: 4px;
+  background: $surface;
+}
+
+.panelHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px 12px;
+  border-bottom: 1px solid $border-strong;
+}
+
+.panelTitle {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: $fs-h4;
+  font-weight: 700;
+  color: $text;
+}
+
+.panelSubtitle {
+  font-size: $fs-b1;
+  font-weight: 700;
+}
+
+.panelSep {
+  margin: 0 6px;
+  color: $border-strong;
+}
+
+.panelTabs {
+  padding: 0 12px;
+  border-bottom: 1px solid $border-strong;
+}
+
+.panelBody {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 0;
+  padding: 12px;
+  overflow: auto;
+}
+
+.panelFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px 12px;
+  border-top: 1px solid $border-strong;
+}
+
+.panelFooterGroup {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.panelNote {
+  margin: 0;
+  font-size: $fs-b2;
+  color: $text-sub;
+}
+
+/* Small change-history table inside the detail panel. */
+.historyTable {
+  flex: 0 0 auto;
+}
+
+.changeArrow {
+  margin: 0 4px;
+  color: $text-sub;
+}

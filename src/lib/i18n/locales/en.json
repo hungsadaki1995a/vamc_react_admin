@@ -628,8 +628,6 @@
       "linked": "Linked.",
       "unlinked": "Link removed.",
       "confirmUnlink": "Remove the link between this Zalo user and {{account}}?",
-      "confirmRebuild": "Recompute the phone index of all members and employees?",
-      "rebuilt": "Phone index rebuilt: {{members}} members, {{employees}} employees changed.",
       "simulatedLinked": "Follow simulated and linked automatically to {{account}}.",
       "simulatedNoMatch": "Follow simulated. No account has this phone: the user waits for a link.",
       "simulatedMany": "Follow simulated. {{count}} accounts have this phone: link it manually.",
@@ -1223,7 +1221,11 @@
       "new": "New",
       "send": "Send",
       "run": "Run",
-      "close": "Close"
+      "close": "Close",
+      "bySystem": "system",
+      "byZalo": "Zalo",
+      "success": "Success",
+      "failed": "Failed"
     },
     "channels": {
       "ZNS": "ZNS",
@@ -1248,6 +1250,12 @@
     },
     "users": {
       "title": "Zalo Users",
+      "summary": {
+        "linked": "Linked",
+        "pending": "Pending Link",
+        "following": "Following OA",
+        "invitesToday": "Invitations Today"
+      },
       "filter": {
         "linkStatus": "Link Status",
         "following": "Following OA",
@@ -1260,17 +1268,19 @@
         "status": "Status",
         "account": "Linked Account",
         "following": "Following OA",
+        "followingShort": "Following",
         "linkDt": "Linked At",
         "lstItrctDt": "Last Interaction"
       },
       "buttons": {
         "link": "Link",
         "unlink": "Unlink",
+        "testMessage": "Send Test Message",
         "invite": "Send Invitation",
-        "rebuildIndex": "Rebuild Phone Index",
         "simulate": "Simulate OA Follow + Phone Share"
       },
       "link": {
+        "title": "Link to an Account",
         "userType": "Account Type",
         "userNo": "Account No.",
         "userNoPlaceholder": "e.g. TV00000001 or employee no."
@@ -1279,7 +1289,7 @@
         "title": "Send Link Invitation",
         "recipientName": "Recipient Name",
         "recipientNamePlaceholder": "Default: Quý khách",
-        "notice": "Sends the ZNS template MBR_JOIN_WELCOME with the OA follow link."
+        "notice": "Sends the ZNS template MBR_JOIN_WELCOME with the OA follow link. Limit rules LMT-003 / LMT-004 / LMT-006 apply."
       },
       "simulate": {
         "title": "Simulate OA Follow + Phone Share",
@@ -1287,8 +1297,55 @@
         "notice": "Demo only: acts as a Zalo user who follows the OA and shares this phone. When exactly one account has the phone, it is linked automatically."
       },
       "detail": {
-        "title": "Zalo User Details",
-        "shareAgree": "Phone Shared"
+        "title": "User Details",
+        "empty": "No Zalo user to show.",
+        "shareAgree": "Phone Shared",
+        "followSince": "Yes · since {{at}}",
+        "sharedPhone": "Yes · {{phone}}",
+        "terms": "Data-Sharing Terms",
+        "termsAgreed": "Agreed at sign-up (data-sharing terms)",
+        "termsNone": "Not on record yet",
+        "linkMethod": "Link Method",
+        "methodAuto": "Automatic (phone match) · {{at}}",
+        "methodManual": "Manual · {{at}}",
+        "receive": "Receive Zalo",
+        "receiveOn": "On",
+        "receiveNotLinked": "Not linked"
+      },
+      "tabs": {
+        "general": "General",
+        "links": "Link History",
+        "messages": "Messages ({{count}})"
+      },
+      "history": {
+        "columns": {
+          "at": "Time",
+          "by": "By",
+          "event": "Event"
+        },
+        "follow": "Followed the OA",
+        "unfollow": "Unfollowed the OA",
+        "sharePhone": "Shared phone number",
+        "linkAuto": "Linked automatically to {{account}} (phone match)",
+        "linkManual": "Linked manually to {{account}}",
+        "unlink": "Unlinked from {{account}}",
+        "note": "Follow, phone share, link and unlink events of this Zalo user. Every change is also written to the audit log."
+      },
+      "messages": {
+        "columns": {
+          "sentAt": "Sent At",
+          "template": "Template",
+          "channel": "Channel",
+          "result": "Result"
+        },
+        "empty": "No Zalo message sent to this user yet",
+        "openHistory": "Open Notification Send History"
+      },
+      "testMessage": {
+        "title": "Send Test Message",
+        "template": "Template",
+        "templatePlaceholder": "Select a template in use",
+        "notice": "Sends the template with sample data to this user's phone. Counted as a test message; sending limits apply."
       }
     },
     "templates": {
