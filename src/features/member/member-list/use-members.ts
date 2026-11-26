@@ -122,6 +122,32 @@ function formatDate(val?: string): string {
 }
 
 /**
+ * Minimal MemberItem for opening MemberDetailModal from another screen (trade popups): the modal loads the member
+ * detail itself (GET /api/v1/members/{mbrNo}) and only falls back to these fields.
+ */
+export function memberItemFor(mbrNo: string, memberName?: string): MemberItem {
+  return {
+    id: mbrNo,
+    no: 0,
+    memberClassification: 'Verified',
+    memberCode: mbrNo,
+    applicationId: '',
+    memberType: 'General',
+    memberName: memberName ?? '',
+    approvalStatus: 'Approved',
+    assignee: '',
+    applicationDate: '',
+    receivedDate: '',
+    attachments: 0,
+    companyName: '',
+    approvalDate: '',
+    phone: '',
+    email: '',
+    accountStatus: 'Active',
+  };
+}
+
+/**
  * Maps MemberResponse from OpenAPI to frontend MemberItem interface
  */
 export function mapMemberResponseToItem(res: MemberResponse, index: number): MemberItem {

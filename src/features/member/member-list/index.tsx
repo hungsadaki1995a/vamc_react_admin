@@ -29,7 +29,8 @@ import type {
   ApprovalStatus,
   AccountStatus,
 } from './member.types';
-import { useMembers, useExportMembers } from './use-members';
+import { memberItemFor, useMembers, useExportMembers } from './use-members';
+import { useApprovalTargetHandoff } from '@/features/approval/_shared/approval-navigation';
 import { SysPagination } from '@/components/common/sys-ui/SystemUi';
 import MemberDetailModal from './MemberDetailModal';
 import MemberApprovalModal from './MemberApprovalModal';
@@ -138,6 +139,12 @@ export default function MemberList() {
 
   const [approvalModalVisible, setApprovalModalVisible] = useState(false);
   const [approvalMember, setApprovalMember] = useState<MemberItem | null>(null);
+  // Opened from Approval Management: show the sign-up approval of the inbox row.
+  useApprovalTargetHandoff((item) => {
+    if (!item.mbrNo) return;
+    setApprovalMember(memberItemFor(item.mbrNo));
+    setApprovalModalVisible(true);
+  });
 
   const [newMemberModalVisible, setNewMemberModalVisible] = useState(false);
   const [memberFormMode, setMemberFormMode] = useState<'register' | 'edit'>('register');

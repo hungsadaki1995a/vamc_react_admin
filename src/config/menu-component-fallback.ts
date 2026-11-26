@@ -7,8 +7,8 @@
 const MENU_COMPONENT_FALLBACK: Record<string, string> = {
   // Home (IA v1.03)
   A01000000: 'Dashboard',
-  // Approval Management (IA v1.03, VPA10000001): no screen yet
-  A10000000: 'ScreenPending',
+  // Approval Management (IA v1.04, VPA10000001): inbox of the signed-in employee (no screen design, Q-U1)
+  A10000000: 'ApprovalManagement',
   // Member Management
   A03010000: 'MemberList',
   // Trade Management

@@ -97,5 +97,5 @@ export const SCREENS: ScreenEntry[] = [
   s('A09050100', 'System Operation Management > Notification Management > Notification Message Management', 'NotificationMessageManagement'),
   s('A09050200', 'System Operation Management > Notification Management > Notification Send History', 'NotificationHistoryManagement'),
   // Approval Management
-  s('A10000000', 'Approval Management', 'ScreenPending', 'pending'),
+  s('A10000000', 'Approval Management', 'ApprovalManagement'),
 ];

@@ -92,6 +92,8 @@ export interface EmployeeLookupSearch {
   /** Both must be set to hide employees already assigned to that role. */
   excludeRoleGroupId?: string;
   excludeRoleId?: string;
+  /** Only employees holding this role in any role group (PRCS officer, RCPT receiver). */
+  roleId?: string;
 }
 
 const BASE = '/api/v1/employees';
@@ -119,6 +121,9 @@ export const resetEmployeePassword = (empNo: string) =>
 /** Hard delete. Errors: CANNOT_DELETE_SELF, EMP003 (has references), EMP004 (last admin), EMP009. */
 export const deleteEmployee = (empNo: string) => apiDelete<void>(`${BASE}/${empNo}`);
 
-/** Employed (H) staff only. */
+/**
+ * Employed (H) staff only, no contact data. Open to User Management / Role Group readers and to readers of the
+ * trade application / contract menus (A0501xxxx, A0502xxxx).
+ */
 export const lookupEmployees = (search: EmployeeLookupSearch, query: PageQuery) =>
   apiGet<PageResponse<EmployeeLookup>>(`${BASE}/lookup`, { ...search, ...query });

@@ -1,0 +1,54 @@
+// Approval Management (VPA10000001): kind chips and row actions; the rest comes from system-page.module.scss.
+
+.processSelect {
+  width: 320px;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 12px 0 4px;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border: 1px solid var(--color-border, #e2e8f0);
+  border-radius: 999px;
+  background: var(--color-bg-container, #fff);
+  color: var(--color-text-primary, #1f2937);
+  cursor: pointer;
+
+  &:hover:not(:disabled) {
+    border-color: var(--color-primary, #0b4fd1);
+  }
+
+  &:disabled {
+    cursor: default;
+    color: var(--color-text-secondary, #64748b);
+  }
+
+  &[data-active] {
+    border-color: var(--color-primary, #0b4fd1);
+    background: var(--color-primary, #0b4fd1);
+    color: var(--color-white, #fff);
+  }
+}
+
+.chipCount {
+  min-width: 20px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: var(--color-bg-subtle, #f1f5f9);
+  color: var(--color-text-primary, #1f2937);
+  font-size: var(--font-size-b3, 12px);
+  text-align: center;
+}
+
+.rowActions {
+  display: inline-flex;
+  gap: 4px;
+}

@@ -57,6 +57,46 @@ The exit code is Playwright's (0 = all passed), so the same command works in CI.
 
 Using another backend: the Vite proxy sends `Origin` = the backend's own address (`127.0.0.1` → `localhost`), so that origin must be in the backend's `cors.allowed-origins`. The `local` profile already allows `http://localhost:7200`; for any other port start the backend with e.g. `CORS_ALLOWED_ORIGINS=http://localhost:17200,http://localhost:13000`.
 
+## Workflow suite (writes data)
+
+`e2e/workflow/*.spec.ts` drive the trade workflow end to end with the four staff accounts and **change the database**
+(receipts, approvals, contracts, fees, terminations). Run them only against a local / disposable backend. The project
+exists only when `E2E_WORKFLOW=1`:
+
+```bash
+E2E_WORKFLOW=1 E2E_WORKFLOW_PASS=… E2E_API_TARGET=http://127.0.0.1:27200 pnpm e2e --project workflow
+E2E_WORKFLOW=1 … pnpm e2e --project workflow e2e/workflow/wp1-approval.spec.ts   # one package
+```
+
+| Variable | Default | |
+|----------|---------|--|
+| `E2E_WORKFLOW` | — | `1` defines the `workflow-setup` + `workflow` projects |
+| `E2E_WORKFLOW_PASS` | — | password of `rcpt01` / `prcs01` / `appr01` / `admin` (required) |
+| `E2E_RCPT01_LOGIN` … `E2E_ADMIN_LOGIN` | seed e-mails | UI login ids (the login page accepts e-mail / phone only) |
+| `E2E_CLIENT_API_TARGET` | `http://127.0.0.1:7100` | client backend, for the member's follow-up request (WP7) |
+| `E2E_SHOT_DIR` | — | folder for step screenshots (keep it outside the repo) |
+
+- `workflow.setup.ts` logs the four accounts in through the UI → `e2e/.auth/wf-<account>.json`; each step opens its
+  own context (`staffPage(browser, 'prcs01')`). The second officer `prcs02` (dev-sync optional 70) is only picked as
+  officer: it has no e-mail and the login page accepts only an e-mail or phone number.
+- Keep your own artefacts: `--output <dir>` moves test results, `E2E_REPORT_DIR` the HTML report, `E2E_SHOT_DIR` the
+  step screenshots.
+- Records are picked **by status at run time** through the admin API (`support/trade-setup.ts`: `pickReceivable`,
+  `prepareApprovalRequest`, `preparePreparingContract`, `prepareContractInProgress`, …); missing data is built with
+  the same API chain as `docs/simulator/flow.py` (purchase / consulting contracts, fee schedule items of the kind).
+- Each test adds a `record` annotation with the ids it changed (JSON reporter / HTML report).
+
+| Spec | Covers |
+|------|--------|
+| `wp0-receipt` | receipt with officer (3 kinds), contract list period (term overlap) / status filter, `dd/MM/yyyy`, single NPL code, member detail from the applicant |
+| `wp1-approval` | approval request → reject with reason / approve from Approval Management (requester, business summary, menu badge, [Open], "Other" chip), approval information in Vietnam time, history names |
+| `wp2-application` | processing popup: scans, documents incomplete / complete, request approval, approve, cancel, officer change to `prcs02`, officer filter by role, running purchase contract warning |
+| `wp3-manual` | manual registration (member / NPL pickers, scan, officer; consulting: listed + typed collaterals) and edit sending only the changed field, 3 kinds |
+| `wp4-contract-core` | contract draft (fee schedule item) → draft approval → draft registration → signature approval → signed scan → conclusion, 3 kinds |
+| `wp5-execution` | fees (amount > 0), sale completion, EXTN annex lifecycle, renewal decision only within D-30 (409 TRD053 earlier), purchase agreement + delivery |
+| `wp6-termination` | termination chain (CMPL / CNCL, server guard shown), consulting without Expired |
+| `wp7-consulting` | consultant, report → approval → publication, member follow-up request → receive → answer |
+
 ## Troubleshooting
 
 | Message | Fix |
@@ -86,6 +126,10 @@ e2e/
   support/shell.ts            menu navigation, active tab / panel, popup helpers, error watcher
   support/guard.ts            blocks write calls (tests are read-only)
   support/session.ts          credentials, English UI, UI login
+  workflow.setup.ts           (E2E_WORKFLOW=1) logs in rcpt01 / prcs01 / appr01 / admin → e2e/.auth/wf-*.json
+  workflow/wp*.spec.ts        workflow suite (writes data)
+  support/trade-setup.ts      staff accounts, admin API calls per account, record pickers and fixtures
+  support/workflow-ui.ts      per-account contexts, menu paths, popup / select / upload helpers
 ```
 
 Artefacts (`e2e/.auth`, `e2e/.results`, `e2e/.report`) are git-ignored — `.auth` holds a live token.
