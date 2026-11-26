@@ -1,0 +1,78 @@
+/* Zalo Templates (A09050400) — screen-specific layout only. */
+
+.loading {
+  min-height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-secondary, #6f7b95);
+}
+
+.fullWidth {
+  width: 100%;
+}
+
+/* Content with the Insert Variable chips under it (same as Notification Message Management). */
+.contentCell {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.variableBar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.variableLabel {
+  margin-right: 2px;
+  font-size: var(--font-size-b2, 12px);
+  line-height: var(--line-height-b2, 16px);
+  color: var(--color-text-tertiary, #6f7b95);
+}
+
+/* Rendered preview text. */
+.previewBox {
+  min-height: 64px;
+  padding: 8px 11px;
+  border: 1px solid var(--color-border-secondary, #e2e5eb);
+  border-radius: 6px;
+  background: var(--color-bg-secondary, #f6f6f9);
+  white-space: pre-wrap;
+  word-break: break-word;
+  line-height: 1.6;
+}
+
+.previewEmpty {
+  color: var(--color-text-tertiary, #6f7b95);
+}
+
+.missingText {
+  margin: 6px 0 0;
+  color: var(--color-text-negative, #e62e44);
+}
+
+.testSendRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.phoneInput {
+  width: 260px;
+}
+
+.hintText {
+  margin: 6px 0 0;
+  font-size: var(--font-size-b2, 12px);
+  line-height: var(--line-height-b2, 16px);
+  color: var(--color-text-tertiary, #6f7b95);
+}
+
+/* The list frame runs to the page bottom like the design. */
+.listTable {
+  flex: 1 0 auto;
+}

@@ -607,6 +607,27 @@
       "noCandidates": "Không có nhân viên nào giữ vai trò của bước này.",
       "noItems": "Không có việc nào chờ bạn phê duyệt.",
       "noScreen": "Bạn không có quyền vào màn hình của mục này."
+    },
+    "zalo": {
+      "loadFailed": "Không tải được dữ liệu. Vui lòng thử lại.",
+      "invalidPhone": "Nhập số di động dạng 0xxxxxxxxx hoặc 84xxxxxxxxx.",
+      "invalidTplCd": "Chỉ dùng A-Z, 0-9 và _, 3–20 ký tự.",
+      "duplicateTplCd": "Mã mẫu này đã được đăng ký.",
+      "invalidParamMap": "Nhập đối tượng JSON, VD: {\"mbrNm\":\"customer_name\"}.",
+      "znsTplIdRequired": "Mẫu ZNS đang dùng cần Mã mẫu ZNS khi gửi thật.",
+      "useChanged": "Đã đổi trạng thái sử dụng.",
+      "sent": "Đã gửi. Mã tin: {{id}}",
+      "sentMock": "Đã gửi (giả lập). Mã tin: {{id}} — xem Lịch sử gửi thông báo.",
+      "linked": "Đã gắn.",
+      "unlinked": "Đã huỷ liên kết.",
+      "confirmUnlink": "Huỷ liên kết giữa người dùng Zalo này và {{account}}?",
+      "confirmRebuild": "Tính lại chỉ mục số điện thoại của toàn bộ hội viên và nhân viên?",
+      "rebuilt": "Đã dựng lại chỉ mục: {{members}} hội viên, {{employees}} nhân viên thay đổi.",
+      "simulatedLinked": "Đã giả lập quan tâm và tự gắn vào {{account}}.",
+      "simulatedNoMatch": "Đã giả lập quan tâm. Không có tài khoản nào có số này: người dùng chờ gắn.",
+      "simulatedMany": "Đã giả lập quan tâm. Có {{count}} tài khoản dùng số này: hãy gắn thủ công.",
+      "accountNotFound": "Không có tài khoản với mã này.",
+      "accountAlreadyLinked": "Tài khoản này đã gắn với người dùng Zalo khác."
     }
   },
   "trade": {
@@ -1173,6 +1194,147 @@
       "info": "Thông tin",
       "open": "Mở",
       "total": "Tổng ({{n}})"
+    }
+  },
+  "zalo": {
+    "breadcrumb": {
+      "root": "Quản lý vận hành hệ thống",
+      "notification": "Quản lý thông báo"
+    },
+    "common": {
+      "all": "Tất cả",
+      "yes": "Có",
+      "no": "Không",
+      "searchResults": "Kết quả tìm kiếm",
+      "keyword": "Từ khoá",
+      "phone": "Số di động",
+      "phonePlaceholder": "0xxxxxxxxx hoặc 84xxxxxxxxx",
+      "active": "Đang dùng",
+      "inactive": "Ngừng dùng",
+      "register": "Đăng ký",
+      "edit": "Sửa",
+      "new": "Thêm mới",
+      "send": "Gửi",
+      "run": "Thực hiện",
+      "close": "Đóng",
+      "demoMode": "Chế độ demo: tin Zalo chỉ được giả lập (mã tin MOCK-…), không gửi tới Zalo.",
+      "phoneIndexMissing": "Chưa cấu hình khoá chỉ mục số điện thoại: không thể tự gắn, giả lập hay dựng lại chỉ mục."
+    },
+    "channels": {
+      "ZNS": "ZNS",
+      "OA": "Tin OA"
+    },
+    "userTypes": {
+      "MBR": "Hội viên",
+      "EMP": "Nhân viên"
+    },
+    "linkStatus": {
+      "LINKED": "Đã liên kết",
+      "PENDING": "Chờ gắn"
+    },
+    "linkState": {
+      "AUTO": "Đã liên kết (tự động)",
+      "MANUAL": "Đã liên kết (thủ công)",
+      "PENDING": "Chờ gắn"
+    },
+    "processes": {
+      "MBR_JOIN": "Đăng ký hội viên",
+      "AUTH": "Xác thực"
+    },
+    "users": {
+      "title": "Người dùng Zalo",
+      "summary": {
+        "linked": "Đã liên kết",
+        "pending": "Chờ gắn",
+        "following": "Đang quan tâm OA"
+      },
+      "filter": {
+        "linkStatus": "Trạng thái liên kết",
+        "following": "Quan tâm OA",
+        "userType": "Loại tài khoản",
+        "keywordPlaceholder": "Tên Zalo hoặc mã hội viên / nhân viên"
+      },
+      "columns": {
+        "zaloNm": "Tên Zalo",
+        "telno": "Số di động",
+        "status": "Trạng thái",
+        "account": "Tài khoản gắn",
+        "following": "Quan tâm OA",
+        "linkDt": "Ngày gắn",
+        "lstItrctDt": "Tương tác cuối",
+        "actions": "Thao tác"
+      },
+      "buttons": {
+        "link": "Gắn",
+        "unlink": "Huỷ liên kết",
+        "invite": "Gửi lời mời liên kết",
+        "rebuildIndex": "Dựng lại chỉ mục SĐT",
+        "simulate": "Giả lập quan tâm OA + chia sẻ SĐT"
+      },
+      "link": {
+        "title": "Gắn người dùng Zalo",
+        "zaloUser": "Người dùng Zalo",
+        "userType": "Loại tài khoản",
+        "userNo": "Mã tài khoản",
+        "userNoPlaceholder": "VD: TV00000001 hoặc mã nhân viên"
+      },
+      "invite": {
+        "title": "Gửi lời mời liên kết",
+        "recipientName": "Tên người nhận",
+        "recipientNamePlaceholder": "Mặc định: Quý khách",
+        "notice": "Gửi mẫu ZNS MBR_JOIN_WELCOME kèm liên kết quan tâm OA."
+      },
+      "simulate": {
+        "title": "Giả lập quan tâm OA + chia sẻ SĐT",
+        "zaloNm": "Tên Zalo",
+        "notice": "Chỉ dùng cho demo: đóng vai người dùng Zalo quan tâm OA và chia sẻ số này. Nếu đúng một tài khoản có số này thì tự gắn."
+      }
+    },
+    "templates": {
+      "title": "Mẫu tin Zalo",
+      "filter": {
+        "process": "Quy trình",
+        "channel": "Kênh",
+        "use": "Sử dụng",
+        "keywordPlaceholder": "Mã hoặc tên mẫu"
+      },
+      "columns": {
+        "use": "Sử dụng",
+        "tplCd": "Mã mẫu",
+        "process": "Quy trình",
+        "tplNm": "Tên mẫu",
+        "channel": "Kênh",
+        "znsTplId": "Mã mẫu ZNS",
+        "mdfcnDt": "Ngày sửa"
+      },
+      "form": {
+        "registerTitle": "Đăng ký mẫu tin Zalo",
+        "editTitle": "Sửa mẫu tin Zalo",
+        "tplCd": "Mã mẫu",
+        "tplCdHint": "A-Z, 0-9 và _, 3–20 ký tự; không đổi được sau khi đăng ký.",
+        "process": "Quy trình",
+        "tplNm": "Tên mẫu",
+        "channel": "Kênh",
+        "znsTplId": "Mã mẫu ZNS",
+        "znsTplIdHint": "Do Zalo cấp; bắt buộc khi gửi ZNS thật.",
+        "use": "Sử dụng",
+        "tplCn": "Nội dung",
+        "tplCnPlaceholder": "VD: Chào {{name}}, mã xác thực: {{otp}}",
+        "insertVariable": "Chèn biến",
+        "paramMap": "Ánh xạ tham số",
+        "paramMapHint": "Đối tượng JSON biến → tham số ZNS, VD: {\"mbrNm\":\"customer_name\"}"
+      },
+      "preview": {
+        "title": "Xem trước",
+        "button": "Xem trước",
+        "empty": "Bấm [Xem trước] để điền biến bằng dữ liệu mẫu.",
+        "missing": "Biến chưa có giá trị: {{names}}"
+      },
+      "testSend": {
+        "title": "Gửi thử",
+        "button": "Gửi thử",
+        "hint": "Gửi mẫu đã lưu với dữ liệu mẫu. Chế độ demo: giả lập, xem tại Lịch sử gửi thông báo."
+      }
     }
   }
 }

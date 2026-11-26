@@ -1,7 +1,7 @@
 import i18n from '@/lib/i18n';
 
 /** Locale groups that map a code to its label, e.g. `trade.applicationStatus` → `{ RCPT: 'Submitted', … }`. */
-export type CodeLabelGroup = `trade.${string}` | `approval.${string}`;
+export type CodeLabelGroup = `trade.${string}` | `approval.${string}` | `zalo.${string}`;
 
 /**
  * Label of `code` in a locale group (`<group>.<code>`), or the code itself when the group has no entry for it.

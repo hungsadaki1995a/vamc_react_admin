@@ -607,6 +607,27 @@
       "noCandidates": "No employee holds the role of this step.",
       "noItems": "No approval is waiting for you.",
       "noScreen": "You have no access to the screen of this item."
+    },
+    "zalo": {
+      "loadFailed": "Could not load the data. Please try again.",
+      "invalidPhone": "Enter a mobile number 0xxxxxxxxx or 84xxxxxxxxx.",
+      "invalidTplCd": "Use A-Z, 0-9 and _ only, 3–20 characters.",
+      "duplicateTplCd": "This template code is already registered.",
+      "invalidParamMap": "Enter a JSON object, e.g. {\"mbrNm\":\"customer_name\"}.",
+      "znsTplIdRequired": "A ZNS template in use needs its ZNS template ID while real sending is on.",
+      "useChanged": "Use changed.",
+      "sent": "Sent. Message id: {{id}}",
+      "sentMock": "Sent (simulated). Message id: {{id}} — see Notification Send History.",
+      "linked": "Linked.",
+      "unlinked": "Link removed.",
+      "confirmUnlink": "Remove the link between this Zalo user and {{account}}?",
+      "confirmRebuild": "Recompute the phone index of all members and employees?",
+      "rebuilt": "Phone index rebuilt: {{members}} members, {{employees}} employees changed.",
+      "simulatedLinked": "Follow simulated and linked automatically to {{account}}.",
+      "simulatedNoMatch": "Follow simulated. No account has this phone: the user waits for a link.",
+      "simulatedMany": "Follow simulated. {{count}} accounts have this phone: link it manually.",
+      "accountNotFound": "No account with this number.",
+      "accountAlreadyLinked": "This account is already linked to another Zalo user."
     }
   },
   "trade": {
@@ -1173,6 +1194,147 @@
       "info": "Info",
       "open": "Open",
       "total": "Total ({{n}})"
+    }
+  },
+  "zalo": {
+    "breadcrumb": {
+      "root": "System Operation Management",
+      "notification": "Notification Management"
+    },
+    "common": {
+      "all": "All",
+      "yes": "Yes",
+      "no": "No",
+      "searchResults": "Search Results",
+      "keyword": "Keyword",
+      "phone": "Mobile Number",
+      "phonePlaceholder": "0xxxxxxxxx or 84xxxxxxxxx",
+      "active": "Active",
+      "inactive": "Inactive",
+      "register": "Register",
+      "edit": "Edit",
+      "new": "New",
+      "send": "Send",
+      "run": "Run",
+      "close": "Close",
+      "demoMode": "Demo mode: Zalo sending is simulated (message id MOCK-…), nothing reaches Zalo.",
+      "phoneIndexMissing": "The phone index key is not configured: automatic linking, simulation and index rebuild are unavailable."
+    },
+    "channels": {
+      "ZNS": "ZNS",
+      "OA": "OA message"
+    },
+    "userTypes": {
+      "MBR": "Member",
+      "EMP": "Employee"
+    },
+    "linkStatus": {
+      "LINKED": "Linked",
+      "PENDING": "Pending link"
+    },
+    "linkState": {
+      "AUTO": "Linked (auto)",
+      "MANUAL": "Linked (manual)",
+      "PENDING": "Pending link"
+    },
+    "processes": {
+      "MBR_JOIN": "Member sign-up",
+      "AUTH": "Authentication"
+    },
+    "users": {
+      "title": "Zalo Users",
+      "summary": {
+        "linked": "Linked",
+        "pending": "Pending link",
+        "following": "Following OA"
+      },
+      "filter": {
+        "linkStatus": "Link Status",
+        "following": "Following OA",
+        "userType": "Account Type",
+        "keywordPlaceholder": "Zalo name or member / employee no."
+      },
+      "columns": {
+        "zaloNm": "Zalo Name",
+        "telno": "Mobile Number",
+        "status": "Status",
+        "account": "Linked Account",
+        "following": "Following OA",
+        "linkDt": "Linked At",
+        "lstItrctDt": "Last Interaction",
+        "actions": "Actions"
+      },
+      "buttons": {
+        "link": "Link",
+        "unlink": "Unlink",
+        "invite": "Send Invitation",
+        "rebuildIndex": "Rebuild Phone Index",
+        "simulate": "Simulate OA Follow + Phone Share"
+      },
+      "link": {
+        "title": "Link Zalo User",
+        "zaloUser": "Zalo User",
+        "userType": "Account Type",
+        "userNo": "Account No.",
+        "userNoPlaceholder": "e.g. TV00000001 or employee no."
+      },
+      "invite": {
+        "title": "Send Link Invitation",
+        "recipientName": "Recipient Name",
+        "recipientNamePlaceholder": "Default: Quý khách",
+        "notice": "Sends the ZNS template MBR_JOIN_WELCOME with the OA follow link."
+      },
+      "simulate": {
+        "title": "Simulate OA Follow + Phone Share",
+        "zaloNm": "Zalo Name",
+        "notice": "Demo only: acts as a Zalo user who follows the OA and shares this phone. When exactly one account has the phone, it is linked automatically."
+      }
+    },
+    "templates": {
+      "title": "Zalo Templates",
+      "filter": {
+        "process": "Process",
+        "channel": "Channel",
+        "use": "Use",
+        "keywordPlaceholder": "Template code or name"
+      },
+      "columns": {
+        "use": "Use",
+        "tplCd": "Code",
+        "process": "Process",
+        "tplNm": "Name",
+        "channel": "Channel",
+        "znsTplId": "ZNS Template ID",
+        "mdfcnDt": "Modified At"
+      },
+      "form": {
+        "registerTitle": "Register Zalo Template",
+        "editTitle": "Edit Zalo Template",
+        "tplCd": "Template Code",
+        "tplCdHint": "A-Z, 0-9 and _, 3–20 characters; cannot be changed later.",
+        "process": "Process",
+        "tplNm": "Template Name",
+        "channel": "Channel",
+        "znsTplId": "ZNS Template ID",
+        "znsTplIdHint": "Given by Zalo; required to send ZNS for real.",
+        "use": "Use",
+        "tplCn": "Content",
+        "tplCnPlaceholder": "e.g. Chào {{name}}, mã xác thực: {{otp}}",
+        "insertVariable": "Insert Variable",
+        "paramMap": "Parameter Map",
+        "paramMapHint": "JSON object variable → ZNS parameter, e.g. {\"mbrNm\":\"customer_name\"}"
+      },
+      "preview": {
+        "title": "Preview",
+        "button": "Preview",
+        "empty": "Press [Preview] to fill the variables with sample data.",
+        "missing": "Variables without a value: {{names}}"
+      },
+      "testSend": {
+        "title": "Test Send",
+        "button": "Test Send",
+        "hint": "Sends the saved template with the sample data. Demo mode: simulated, see Notification Send History."
+      }
     }
   }
 }
