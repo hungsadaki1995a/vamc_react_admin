@@ -616,13 +616,13 @@
       "noScreen": "You have no access to the screen of this item."
     },
     "zalo": {
-      "loadFailed": "Could not load the data. Please try again.",
       "invalidPhone": "Enter a mobile number 0xxxxxxxxx or 84xxxxxxxxx.",
       "invalidTplCd": "Use A-Z, 0-9 and _ only, 3–20 characters.",
       "duplicateTplCd": "This template code is already registered.",
       "invalidParamMap": "Enter a JSON object, e.g. {\"mbrNm\":\"customer_name\"}.",
       "znsTplIdRequired": "A ZNS template in use needs its ZNS template ID while real sending is on.",
-      "useChanged": "Use changed.",
+      "activated": "Template activated.",
+      "deactivated": "Template deactivated.",
       "sent": "Sent. Message id: {{id}}",
       "sentMock": "Sent (simulated). Message id: {{id}} — see Notification Send History.",
       "linked": "Linked.",
@@ -1210,14 +1210,12 @@
       "all": "All",
       "yes": "Yes",
       "no": "No",
-      "searchResults": "Search Results",
       "keyword": "Keyword",
       "phone": "Mobile Number",
       "phonePlaceholder": "0xxxxxxxxx or 84xxxxxxxxx",
       "active": "Active",
       "inactive": "Inactive",
       "register": "Register",
-      "edit": "Edit",
       "new": "New",
       "send": "Send",
       "run": "Run",
@@ -1248,6 +1246,21 @@
       "MBR_JOIN": "Member sign-up",
       "AUTH": "Authentication"
     },
+    "msgTypes": {
+      "INVITE": "Invitation",
+      "OTP": "Verification code",
+      "STATUS": "Status notice",
+      "TEST": "Test",
+      "OA": "OA message"
+    },
+    "history": {
+      "columns": {
+        "chgDt": "Changed At",
+        "chgBy": "By",
+        "item": "Field",
+        "change": "Before → After"
+      }
+    },
     "users": {
       "title": "Zalo Users",
       "summary": {
@@ -1269,8 +1282,7 @@
         "account": "Linked Account",
         "following": "Following OA",
         "followingShort": "Following",
-        "linkDt": "Linked At",
-        "lstItrctDt": "Last Interaction"
+        "linkDt": "Linked At"
       },
       "buttons": {
         "link": "Link",
@@ -1350,24 +1362,21 @@
     },
     "templates": {
       "title": "Zalo Templates",
+      "listTitle": "Templates",
       "filter": {
         "process": "Process",
         "channel": "Channel",
-        "use": "Use",
+        "use": "Status",
         "keywordPlaceholder": "Template code or name"
       },
       "columns": {
-        "use": "Use",
-        "tplCd": "Code",
-        "process": "Process",
-        "tplNm": "Name",
-        "channel": "Channel",
-        "znsTplId": "ZNS Template ID",
-        "mdfcnDt": "Modified At"
+        "status": "Status",
+        "codeName": "Code / Name",
+        "channel": "Channel"
       },
       "form": {
         "registerTitle": "Register Zalo Template",
-        "editTitle": "Edit Zalo Template",
+        "copyTitle": "Copy Zalo Template",
         "tplCd": "Template Code",
         "tplCdHint": "A-Z, 0-9 and _, 3–20 characters; cannot be changed later.",
         "process": "Process",
@@ -1375,17 +1384,39 @@
         "channel": "Channel",
         "znsTplId": "ZNS Template ID",
         "znsTplIdHint": "Given by Zalo; required to send ZNS for real.",
-        "use": "Use",
         "tplCn": "Content",
         "tplCnPlaceholder": "e.g. Chào {{name}}, mã xác thực: {{otp}}",
         "insertVariable": "Insert Variable",
         "paramMap": "Parameter Map",
         "paramMapHint": "JSON object variable → ZNS parameter, e.g. {\"mbrNm\":\"customer_name\"}"
       },
+      "detail": {
+        "title": "Template Details",
+        "empty": "No template to show.",
+        "msgType": "Message Type",
+        "price": "{{price}} ₫ per send",
+        "free": "Free",
+        "priceUnknown": "Price by message type, see Zalo Sending Limits",
+        "priceNone": "No unit price set",
+        "znsIdNotUsed": "Not used for OA messages",
+        "lastModified": "Last Modified",
+        "modifiedBy": "{{at}} · {{by}}",
+        "historyNote": "A saved change takes effect on the next send. Every change is also written to the audit log."
+      },
+      "tabs": {
+        "general": "General",
+        "history": "Change History ({{count}})"
+      },
+      "buttons": {
+        "activate": "Activate",
+        "deactivate": "Deactivate",
+        "copy": "Copy",
+        "save": "Save"
+      },
       "preview": {
         "title": "Preview on Zalo",
-        "button": "Preview",
-        "empty": "Press [Preview] to fill the variables with sample data.",
+        "sample": "sample data",
+        "empty": "Enter the content to see it on Zalo with sample data.",
         "missing": "Variables without a value: {{names}}"
       },
       "testSend": {

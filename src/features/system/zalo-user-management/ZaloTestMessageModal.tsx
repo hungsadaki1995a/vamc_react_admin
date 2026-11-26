@@ -3,20 +3,16 @@ import { useTranslation } from 'react-i18next';
 import AppSelect from '@/components/inputs/AppSelect';
 import { useNotify } from '@/hooks/use-notify';
 import { useSysDialogs } from '@/hooks/use-sys-dialogs';
-import { ZALO_ERRORS } from '@/api/system/zalo-api';
 import type { ZaloUser } from '@/api/system/zalo-api';
 import { SysField, SysFieldGrid, SysFormModal } from '@/components/common/sys-ui/SysFormUi';
 import { SYS_MESSAGES } from '@/config/sys-messages';
-import { apiErrorCode, errorMessage } from '@/utils/system-utils';
-import { sentMessage } from '../_shared/zalo-messages';
+import { errorMessage } from '@/utils/system-utils';
+import { isBlockedSend, sentMessage } from '../_shared/zalo-messages';
 import { useActiveZaloTemplates, useSendZaloUserTestMessage } from './use-zalo-users';
 import styles from './zalo-user-management.module.scss';
 
 // Zalo Users - [Send Test Message]: one template in use, sent to this user with the sample data (type TEST,
 // sender = signed-in employee; sending limits and a channel stop apply).
-
-/** Errors that block the sending: shown as a dialog so the rule code stays readable. */
-const BLOCKING_ERRORS: string[] = [ZALO_ERRORS.channelStopped, ZALO_ERRORS.limitExceeded];
 
 interface ZaloTestMessageModalProps {
   user: ZaloUser;
@@ -44,8 +40,7 @@ export default function ZaloTestMessageModal({ user, onClose }: ZaloTestMessageM
       toast.success(sentMessage(response.data));
       onClose();
     } catch (failure) {
-      const code = apiErrorCode(failure);
-      if (code && BLOCKING_ERRORS.includes(code)) alert(errorMessage(failure));
+      if (isBlockedSend(failure)) alert(errorMessage(failure));
       else toast.error(errorMessage(failure));
     }
   };

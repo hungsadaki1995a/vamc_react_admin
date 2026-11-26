@@ -616,13 +616,13 @@
       "noScreen": "Bạn không có quyền vào màn hình của mục này."
     },
     "zalo": {
-      "loadFailed": "Không tải được dữ liệu. Vui lòng thử lại.",
       "invalidPhone": "Nhập số di động dạng 0xxxxxxxxx hoặc 84xxxxxxxxx.",
       "invalidTplCd": "Chỉ dùng A-Z, 0-9 và _, 3–20 ký tự.",
       "duplicateTplCd": "Mã mẫu này đã được đăng ký.",
       "invalidParamMap": "Nhập đối tượng JSON, VD: {\"mbrNm\":\"customer_name\"}.",
       "znsTplIdRequired": "Mẫu ZNS đang dùng cần Mã mẫu ZNS khi gửi thật.",
-      "useChanged": "Đã đổi trạng thái sử dụng.",
+      "activated": "Đã bật mẫu tin.",
+      "deactivated": "Đã tắt mẫu tin.",
       "sent": "Đã gửi. Mã tin: {{id}}",
       "sentMock": "Đã gửi (giả lập). Mã tin: {{id}} — xem Lịch sử gửi thông báo.",
       "linked": "Đã gắn.",
@@ -1210,14 +1210,12 @@
       "all": "Tất cả",
       "yes": "Có",
       "no": "Không",
-      "searchResults": "Kết quả tìm kiếm",
       "keyword": "Từ khoá",
       "phone": "Số di động",
       "phonePlaceholder": "0xxxxxxxxx hoặc 84xxxxxxxxx",
       "active": "Đang dùng",
       "inactive": "Ngừng dùng",
       "register": "Đăng ký",
-      "edit": "Sửa",
       "new": "Thêm mới",
       "send": "Gửi",
       "run": "Thực hiện",
@@ -1248,6 +1246,21 @@
       "MBR_JOIN": "Đăng ký hội viên",
       "AUTH": "Xác thực"
     },
+    "msgTypes": {
+      "INVITE": "Lời mời",
+      "OTP": "Mã xác thực",
+      "STATUS": "Thông báo trạng thái",
+      "TEST": "Tin thử",
+      "OA": "Tin OA"
+    },
+    "history": {
+      "columns": {
+        "chgDt": "Thời gian sửa",
+        "chgBy": "Người sửa",
+        "item": "Trường",
+        "change": "Trước → Sau"
+      }
+    },
     "users": {
       "title": "Người dùng Zalo",
       "summary": {
@@ -1269,8 +1282,7 @@
         "account": "Tài khoản gắn",
         "following": "Quan tâm OA",
         "followingShort": "Quan tâm",
-        "linkDt": "Ngày gắn",
-        "lstItrctDt": "Tương tác cuối"
+        "linkDt": "Ngày gắn"
       },
       "buttons": {
         "link": "Gắn",
@@ -1350,24 +1362,21 @@
     },
     "templates": {
       "title": "Mẫu tin Zalo",
+      "listTitle": "Mẫu tin",
       "filter": {
         "process": "Quy trình",
         "channel": "Kênh",
-        "use": "Sử dụng",
+        "use": "Trạng thái",
         "keywordPlaceholder": "Mã hoặc tên mẫu"
       },
       "columns": {
-        "use": "Sử dụng",
-        "tplCd": "Mã mẫu",
-        "process": "Quy trình",
-        "tplNm": "Tên mẫu",
-        "channel": "Kênh",
-        "znsTplId": "Mã mẫu ZNS",
-        "mdfcnDt": "Ngày sửa"
+        "status": "Trạng thái",
+        "codeName": "Mã / Tên",
+        "channel": "Kênh"
       },
       "form": {
         "registerTitle": "Đăng ký mẫu tin Zalo",
-        "editTitle": "Sửa mẫu tin Zalo",
+        "copyTitle": "Sao chép mẫu tin Zalo",
         "tplCd": "Mã mẫu",
         "tplCdHint": "A-Z, 0-9 và _, 3–20 ký tự; không đổi được sau khi đăng ký.",
         "process": "Quy trình",
@@ -1375,17 +1384,39 @@
         "channel": "Kênh",
         "znsTplId": "Mã mẫu ZNS",
         "znsTplIdHint": "Do Zalo cấp; bắt buộc khi gửi ZNS thật.",
-        "use": "Sử dụng",
         "tplCn": "Nội dung",
         "tplCnPlaceholder": "VD: Chào {{name}}, mã xác thực: {{otp}}",
         "insertVariable": "Chèn biến",
         "paramMap": "Ánh xạ tham số",
         "paramMapHint": "Đối tượng JSON biến → tham số ZNS, VD: {\"mbrNm\":\"customer_name\"}"
       },
+      "detail": {
+        "title": "Chi tiết mẫu tin",
+        "empty": "Không có mẫu tin để hiển thị.",
+        "msgType": "Loại tin",
+        "price": "{{price}} ₫ mỗi lượt gửi",
+        "free": "Miễn phí",
+        "priceUnknown": "Giá theo loại tin, xem Hạn mức gửi Zalo",
+        "priceNone": "Chưa có đơn giá",
+        "znsIdNotUsed": "Không dùng cho tin OA",
+        "lastModified": "Sửa lần cuối",
+        "modifiedBy": "{{at}} · {{by}}",
+        "historyNote": "Thay đổi đã lưu áp dụng từ lượt gửi tiếp theo. Mọi thay đổi đều được ghi vào nhật ký kiểm toán."
+      },
+      "tabs": {
+        "general": "Thông tin chung",
+        "history": "Lịch sử thay đổi ({{count}})"
+      },
+      "buttons": {
+        "activate": "Bật",
+        "deactivate": "Tắt",
+        "copy": "Sao chép",
+        "save": "Lưu"
+      },
       "preview": {
         "title": "Xem trước trên Zalo",
-        "button": "Xem trước",
-        "empty": "Bấm [Xem trước] để điền biến bằng dữ liệu mẫu.",
+        "sample": "dữ liệu mẫu",
+        "empty": "Nhập nội dung để xem trên Zalo với dữ liệu mẫu.",
         "missing": "Biến chưa có giá trị: {{names}}"
       },
       "testSend": {
