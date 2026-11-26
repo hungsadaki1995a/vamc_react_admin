@@ -94,13 +94,14 @@ export function SysSearchActions({
   onSearch: () => void;
   loading?: boolean;
 }) {
+  const { t } = useTranslation();
   return (
     <div className={styles.searchActions}>
       <ActionButton action="reset" intent="primary" appearance="outlined" onClick={onReset}>
-        Reset
+        {t('common.reset')}
       </ActionButton>
       <ActionButton action="search" intent="primary" appearance="filled" loading={loading} onClick={onSearch}>
-        Search
+        {t('common.search')}
       </ActionButton>
     </div>
   );
@@ -118,16 +119,18 @@ interface SysSectionHeaderProps {
 }
 
 /** "Search Results | Total n" with list actions on the right. */
-export function SysSectionHeader({ title = 'Search Results', total, actions, primaryActions }: SysSectionHeaderProps) {
+export function SysSectionHeader({ title, total, actions, primaryActions }: SysSectionHeaderProps) {
+  const { t } = useTranslation();
+  const heading = title ?? t('common.searchResults');
   return (
     <div className={styles.sectionHeader}>
       <div className={styles.sectionTitle}>
-        <span className={styles.sectionTitleText} title={typeof title === 'string' ? title : undefined}>
-          {title}
+        <span className={styles.sectionTitleText} title={typeof heading === 'string' ? heading : undefined}>
+          {heading}
         </span>
         {total !== undefined && (
           <span className={styles.sectionTotal}>
-            Total <strong>{total.toLocaleString('en-US')}</strong>
+            {t('common.total')} <strong>{total.toLocaleString('en-US')}</strong>
           </span>
         )}
       </div>

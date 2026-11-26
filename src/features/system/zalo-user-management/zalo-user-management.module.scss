@@ -1,0 +1,48 @@
+/* Zalo Users (A09050300) — screen-specific layout only. */
+
+/* Linked · Pending · Following totals above the filter. */
+.summary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.summaryCard {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border: 1px solid var(--color-border-secondary, #e2e5eb);
+  border-left-width: 4px;
+  border-radius: 6px;
+  background: var(--color-bg-primary, #fff);
+
+  &[data-tone='linked'] {
+    border-left-color: var(--color-text-success, #1f9d55);
+  }
+
+  &[data-tone='pending'] {
+    border-left-color: var(--color-orange-500, #f08c00);
+  }
+
+  &[data-tone='following'] {
+    border-left-color: var(--color-text-brand, #2f6bff);
+  }
+}
+
+.summaryLabel {
+  font-size: var(--font-size-b2, 12px);
+  line-height: var(--line-height-b2, 16px);
+  color: var(--color-text-secondary, #6f7b95);
+}
+
+.summaryValue {
+  font-size: var(--font-size-h4, 18px);
+  line-height: var(--line-height-h4, 24px);
+  color: var(--color-text-primary, #1b1f29);
+}
+
+/* The list frame runs to the page bottom like the design. */
+.listTable {
+  flex: 1 0 auto;
+}

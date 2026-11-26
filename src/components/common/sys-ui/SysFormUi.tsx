@@ -1,4 +1,5 @@
 import type { CSSProperties, ReactNode } from 'react';
+import { useTranslation } from 'react-i18next';
 import ActionButton from '@/components/common/actions/ActionButton';
 import Popup from '@/components/common/popup/Popup';
 import styles from './sys-ui.module.scss';
@@ -39,7 +40,7 @@ export function SysFormModal({
   children,
   onCancel,
   onSubmit,
-  submitText = 'Save',
+  submitText,
   submitting = false,
   submitDisabled = false,
   extraActions,
@@ -47,6 +48,7 @@ export function SysFormModal({
   notice,
   width = 960,
 }: SysFormModalProps) {
+  const { t } = useTranslation();
   const footer = (
     <div className={styles.modalFooter}>
       {leftActions && <div className={styles.modalFooterLeft}>{leftActions}</div>}
@@ -55,7 +57,7 @@ export function SysFormModal({
         <>
           {/* Design: [Cancel] is the outlined blue button next to the filled submit. */}
           <ActionButton action="cancel" intent="primary" appearance="outlined" onClick={onCancel}>
-            Cancel
+            {t('common.cancel')}
           </ActionButton>
           <ActionButton
             action="confirm"
@@ -65,12 +67,12 @@ export function SysFormModal({
             disabled={submitDisabled}
             onClick={onSubmit}
           >
-            {submitText}
+            {submitText ?? t('common.save')}
           </ActionButton>
         </>
       ) : (
         <ActionButton intent="primary" appearance="filled" onClick={onCancel}>
-          Close
+          {t('common.close')}
         </ActionButton>
       )}
     </div>
