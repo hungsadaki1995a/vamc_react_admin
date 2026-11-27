@@ -1,14 +1,16 @@
-import { useState } from 'react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import LoadingSpinner from '@/components/common/loading/LoadingSpinner';
+import type { TFunction } from 'i18next';
+import { Controller, useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import { useMenuPermission } from '@/hooks/use-menu-permission';
 import { useNotify } from '@/hooks/use-notify';
 import type { AboutOverview } from '@/api/contents/about-page-api';
 import { SysButton, SysPage, SysTitleBar } from '@/components/common/sys-ui/SysListUi';
 import { SysField, SysFieldGrid } from '@/components/common/sys-ui/SysFormUi';
 import { SYS_MESSAGES } from '@/config/sys-messages';
-import { errorMessage } from '@/utils/system-utils';
-import { useFieldErrors } from '@/hooks/use-field-errors';
+import { apiValidationErrors, errorMessage } from '@/utils/system-utils';
 import RichTextEditor from '../_shared/RichTextEditor';
 import { useAboutOverview, useSaveAboutOverview } from './use-overview';
 import styles from './overview-management.module.scss';
@@ -19,20 +21,27 @@ import styles from './overview-management.module.scss';
 const TITLE = 'Overview Management';
 const BREADCRUMB = ['Content Management', 'About VAMC Management', TITLE];
 
+function createOverviewSchema(t: TFunction) {
+  return z.object({
+    bodyVn: z.string().trim().min(1, t('messages.content.overview.bodyVnRequired')),
+    bodyEn: z.string(),
+  });
+}
+
+type OverviewFormValues = z.infer<ReturnType<typeof createOverviewSchema>>;
+
 export default function OverviewManagement() {
   const { t } = useTranslation();
-  const { data, isFetching, isError } = useAboutOverview();
+  const { data, isError } = useAboutOverview();
 
   return (
     <SysPage>
       <SysTitleBar title={TITLE} breadcrumb={BREADCRUMB} />
       {data ? (
         <OverviewForm key={data.pstNo ?? 'new'} overview={data} />
-      ) : (
-        <LoadingSpinner spinning={isFetching}>
-          <div className={styles.loading}>{isError ? t('messages.content.overview.loadFailed') : null}</div>
-        </LoadingSpinner>
-      )}
+      ) : isError ? (
+        <div>{t('messages.content.overview.loadFailed')}</div>
+      ) : null}
     </SysPage>
   );
 }
@@ -42,52 +51,86 @@ function OverviewForm({ overview }: { overview: AboutOverview }) {
   const { canWrite } = useMenuPermission();
   const { toast } = useNotify();
   const save = useSaveAboutOverview();
-  const { errors, setError, clearError, applyApiError } = useFieldErrors<'bodyVn' | 'bodyEn'>();
-  const [bodyVn, setBodyVn] = useState(overview.bodyVn ?? '');
-  const [bodyEn, setBodyEn] = useState(overview.bodyEn ?? '');
+  const schema = useMemo(() => createOverviewSchema(t), [t]);
 
-  const submit = async () => {
-    // E01 under the field
-    if (!bodyVn.trim()) {
-      setError('bodyVn', t('messages.content.overview.bodyVnRequired'));
-      return;
-    }
+  const {
+    control,
+    handleSubmit,
+    setError,
+    formState: { errors },
+  } = useForm<OverviewFormValues>({
+    resolver: zodResolver(schema),
+    defaultValues: {
+      bodyVn: overview.bodyVn ?? '',
+      bodyEn: overview.bodyEn ?? '',
+    },
+  });
+
+  const onValidSubmit = async (values: OverviewFormValues) => {
     try {
-      await save.mutateAsync({ bodyVn, bodyEn: bodyEn || undefined });
+      await save.mutateAsync({
+        bodyVn: values.bodyVn,
+        bodyEn: values.bodyEn || undefined,
+      });
       toast.success(SYS_MESSAGES.saved);
     } catch (error) {
-      if (!applyApiError(error)) toast.error(errorMessage(error));
+      const validation = apiValidationErrors(error);
+      if (validation) {
+        let mapped = false;
+        (['bodyVn', 'bodyEn'] as const).forEach((key) => {
+          const message = validation[key];
+          if (message) {
+            setError(key, { type: 'server', message });
+            mapped = true;
+          }
+        });
+        if (mapped) return;
+      }
+      toast.error(errorMessage(error));
     }
   };
 
   return (
-    <>
-      <form className={styles.form} noValidate onSubmit={(e) => e.preventDefault()}>
-        <SysFieldGrid columns={1}>
-          <SysField label="Body (VN)" required error={errors.bodyVn}>
-            <RichTextEditor
-              ariaLabel="Body (VN)"
-              value={bodyVn}
-              disabled={!canWrite}
-              invalid={!!errors.bodyVn}
-              onChange={(html) => {
-                setBodyVn(html);
-                clearError('bodyVn');
-              }}
-            />
-          </SysField>
-          <SysField label="Body (EN)" error={errors.bodyEn}>
-            <RichTextEditor ariaLabel="Body (EN)" value={bodyEn} disabled={!canWrite} onChange={setBodyEn} />
-          </SysField>
-        </SysFieldGrid>
-      </form>
+    <form className={styles.form} noValidate onSubmit={(e) => e.preventDefault()}>
+      <SysFieldGrid columns={1}>
+        <SysField label="Body (VN)" required error={errors.bodyVn?.message}>
+          <Controller
+            name="bodyVn"
+            control={control}
+            render={({ field }) => (
+              <RichTextEditor
+                ariaLabel="Body (VN)"
+                value={field.value}
+                disabled={!canWrite}
+                invalid={!!errors.bodyVn}
+                onChange={field.onChange}
+              />
+            )}
+          />
+        </SysField>
+        <SysField label="Body (EN)" error={errors.bodyEn?.message}>
+          <Controller
+            name="bodyEn"
+            control={control}
+            render={({ field }) => (
+              <RichTextEditor
+                ariaLabel="Body (EN)"
+                value={field.value}
+                disabled={!canWrite}
+                invalid={!!errors.bodyEn}
+                onChange={field.onChange}
+              />
+            )}
+          />
+        </SysField>
+      </SysFieldGrid>
       {canWrite && (
         <div className={styles.footer}>
-          <SysButton look="primary" loading={save.isPending} onClick={submit}>
-            Save
+          <SysButton look="primary" disabled={save.isPending} onClick={() => void handleSubmit(onValidSubmit)()}>
+            {t('common.save')}
           </SysButton>
         </div>
       )}
-    </>
+    </form>
   );
 }

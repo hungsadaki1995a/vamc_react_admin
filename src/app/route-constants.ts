@@ -25,6 +25,7 @@ export const ROUTE_MENU_CODES: Record<string, readonly string[]> = {
   '/content/banner': ['A07060100'],
   '/content/logo': ['A07060200'],
   '/content/slogan': ['A07060300'],
+  '/content/about/overview': ['A07100400'],
   '/system-operation/npl-platform/menu-settings': ['A09010100'],
   '/system-operation/npl-platform/form': ['A09010200'],
   '/system-operation/npl-platform/fee': ['A09010300'],
