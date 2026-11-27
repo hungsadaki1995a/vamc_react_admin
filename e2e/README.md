@@ -99,13 +99,17 @@ E2E_WORKFLOW=1 … pnpm e2e --project workflow e2e/workflow/wp1-approval.spec.ts
 
 ## Zalo demo flow (writes data)
 
-`e2e/screens/zalo-demo.spec.ts` drives the Zalo screens end to end: register / edit a template → preview → test send
-→ link invitation → simulated OA follow + phone share of an existing member → "Linked (auto)" → unlink. It runs only
-with `E2E_ZALO_DEMO=1`, against a local backend in demo mode (`ZALO_ENABLED` unset) started with
-`NOTIFICATION_ADDRESS_HASH_KEY`; otherwise it is skipped.
+`e2e/screens/zalo-demo.spec.ts` drives the Zalo screens end to end: register a template → edit it in Template Details
+with the phone preview → test send → link invitation → simulated OA follow + phone share of an existing member →
+"Linked (auto)" in User Details → unlink. A second invitation to the same phone on the same day is blocked by the
+seed limit rule LMT-003 (LMT-004 after three in a month); the spec accepts that "blocked by sending limit" dialog.
+`e2e/screens/zalo-erp.spec.ts` covers Zalo Sending Limits (rule tabs, a Warn At edit of `LMT-001` or
+`E2E_ZALO_RULE`, Unit Prices, Cost Summary, channel stop with a reason → resume) and Zalo OA Connection in demo mode.
+Both run only with `E2E_ZALO_DEMO=1`, against a local backend in demo mode (`ZALO_ENABLED` unset) started with
+`NOTIFICATION_ADDRESS_HASH_KEY`; otherwise they are skipped.
 
 ```bash
-E2E_ZALO_DEMO=1 E2E_API_TARGET=http://127.0.0.1:17200 pnpm e2e e2e/screens/zalo-demo.spec.ts
+E2E_ZALO_DEMO=1 E2E_API_TARGET=http://127.0.0.1:17200 pnpm e2e e2e/screens/zalo-demo.spec.ts e2e/screens/zalo-erp.spec.ts
 ```
 
 | Variable | Default | |
@@ -115,7 +119,8 @@ E2E_ZALO_DEMO=1 E2E_API_TARGET=http://127.0.0.1:17200 pnpm e2e e2e/screens/zalo-
 
 The spec unlinks the member and switches its template (`E2E_ZL_<n>`) off through the API. The API cannot delete
 templates, Zalo users or send logs: on a disposable DB remove `ZALO_TPL_INFO` rows `E2E_ZL_%`, the `ZALO_USER` row it
-created and the `LOG_NOTI_SNDNG` rows with `NOTI_MEDIA_SE = 'ZALO'` of the run.
+created and the `LOG_NOTI_SNDNG` rows with `NOTI_MEDIA_SE = 'ZALO'` of the run. `zalo-erp.spec.ts` puts the edited
+rule back and resumes the channel through the API; its `ZALO_CHG_HSTRY` and audit rows stay.
 
 ## Troubleshooting
 
@@ -143,13 +148,14 @@ e2e/
   screens/menu-settings.spec.ts  M-*  tree screens
   screens/shell.spec.ts       SH-* tabs, flyout, language, routes
   screens/zalo-demo.spec.ts   (E2E_ZALO_DEMO=1) Zalo demo flow, writes data
-  support/screens.ts          manifest of the 61 leaf menus (update when T-01 fails)
+  screens/zalo-erp.spec.ts    (E2E_ZALO_DEMO=1) Zalo Sending Limits + OA Connection, writes data
+  support/screens.ts          manifest of the 67 leaf menus (update when T-01 fails)
   support/shell.ts            menu navigation, active tab / panel, popup helpers, error watcher
   support/guard.ts            blocks write calls (tests are read-only)
   support/session.ts          credentials, English UI, UI login
   workflow.setup.ts           (E2E_WORKFLOW=1) logs in rcpt01 / prcs01 / appr01 / admin → e2e/.auth/wf-*.json
   workflow/wp*.spec.ts        workflow suite (writes data)
-  support/zalo-setup.ts       admin API calls of the Zalo demo spec
+  support/zalo-setup.ts       admin API calls of the Zalo specs
   support/trade-setup.ts      staff accounts, admin API calls per account, record pickers and fixtures
   support/workflow-ui.ts      per-account contexts, menu paths, popup / select / upload helpers
 ```

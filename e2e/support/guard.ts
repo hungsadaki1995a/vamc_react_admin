@@ -1,8 +1,8 @@
 import type { Page } from '@playwright/test';
 
 const WRITE_METHODS = new Set(['POST', 'PUT', 'PATCH', 'DELETE']);
-// Calls that are reads or session handling even though they are POST.
-const ALLOWED = [/^\/api\/auth\//, /search/i, /\/list$/];
+// Calls that are reads or session handling even though they are POST (preview renders, nothing is saved).
+const ALLOWED = [/^\/api\/auth\//, /search/i, /\/list$/, /\/preview$/];
 
 /**
  * Aborts every write call to `/api` so a scenario can press [Save] / [Register] safely.

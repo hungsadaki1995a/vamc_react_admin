@@ -616,25 +616,52 @@
       "noScreen": "Bạn không có quyền vào màn hình của mục này."
     },
     "zalo": {
-      "loadFailed": "Không tải được dữ liệu. Vui lòng thử lại.",
       "invalidPhone": "Nhập số di động dạng 0xxxxxxxxx hoặc 84xxxxxxxxx.",
       "invalidTplCd": "Chỉ dùng A-Z, 0-9 và _, 3–20 ký tự.",
       "duplicateTplCd": "Mã mẫu này đã được đăng ký.",
       "invalidParamMap": "Nhập đối tượng JSON, VD: {\"mbrNm\":\"customer_name\"}.",
       "znsTplIdRequired": "Mẫu ZNS đang dùng cần Mã mẫu ZNS khi gửi thật.",
-      "useChanged": "Đã đổi trạng thái sử dụng.",
+      "activated": "Đã bật mẫu tin.",
+      "deactivated": "Đã tắt mẫu tin.",
       "sent": "Đã gửi. Mã tin: {{id}}",
       "sentMock": "Đã gửi (giả lập). Mã tin: {{id}} — xem Lịch sử gửi thông báo.",
       "linked": "Đã gắn.",
       "unlinked": "Đã huỷ liên kết.",
       "confirmUnlink": "Huỷ liên kết giữa người dùng Zalo này và {{account}}?",
-      "confirmRebuild": "Tính lại chỉ mục số điện thoại của toàn bộ hội viên và nhân viên?",
-      "rebuilt": "Đã dựng lại chỉ mục: {{members}} hội viên, {{employees}} nhân viên thay đổi.",
       "simulatedLinked": "Đã giả lập quan tâm và tự gắn vào {{account}}.",
       "simulatedNoMatch": "Đã giả lập quan tâm. Không có tài khoản nào có số này: người dùng chờ gắn.",
       "simulatedMany": "Đã giả lập quan tâm. Có {{count}} tài khoản dùng số này: hãy gắn thủ công.",
       "accountNotFound": "Không có tài khoản với mã này.",
-      "accountAlreadyLinked": "Tài khoản này đã gắn với người dùng Zalo khác."
+      "accountAlreadyLinked": "Tài khoản này đã gắn với người dùng Zalo khác.",
+      "limits": {
+        "required": "Bắt buộc nhập.",
+        "warnRange": "Nhập tỷ lệ từ 1 đến 100.",
+        "endBeforeStart": "Ngày kết thúc không được trước ngày bắt đầu.",
+        "oaNoCost": "Tin OA miễn phí: dùng Số tin cho quy tắc OA.",
+        "created": "Đã đăng ký quy tắc {{code}}.",
+        "activated": "Đã kích hoạt quy tắc.",
+        "deactivated": "Đã ngừng dùng quy tắc.",
+        "confirmDeleteException": "Xoá ngoại lệ của {{account}}? Tài khoản này sẽ áp dụng lại hạn mức của quy tắc.",
+        "priceDateRequired": "Chọn ngày áp dụng của đơn giá mới.",
+        "priceRequired": "Nhập đơn giá cho mọi dòng đã đổi.",
+        "pricesSaved": "Đã lưu đơn giá, áp dụng từ {{date}}.",
+        "oaPriceNotZero": "Tin OA miễn phí: đơn giá phải giữ là 0.",
+        "selectReason": "Chọn lý do.",
+        "stopped": "Đã dừng gửi Zalo.",
+        "resumed": "Đã mở lại gửi Zalo."
+      },
+      "connection": {
+        "testDemo": "Chế độ demo: không gọi tới Zalo.",
+        "testOk": "Kết nối OK.",
+        "testFailed": "Kiểm tra kết nối thất bại.",
+        "refreshed": "Đã làm mới token.",
+        "refreshDemo": "Chế độ demo: không có token để làm mới.",
+        "refreshLater": "Làm mới token sẽ có khi tích hợp thật.",
+        "autoOn": "Đã bật tự làm mới.",
+        "autoOff": "Đã tắt tự làm mới.",
+        "urlCopied": "Đã sao chép Webhook URL.",
+        "copyFailed": "Không sao chép được."
+      }
     }
   },
   "trade": {
@@ -1212,18 +1239,20 @@
       "all": "Tất cả",
       "yes": "Có",
       "no": "Không",
-      "searchResults": "Kết quả tìm kiếm",
       "keyword": "Từ khoá",
       "phone": "Số di động",
       "phonePlaceholder": "0xxxxxxxxx hoặc 84xxxxxxxxx",
       "active": "Đang dùng",
       "inactive": "Ngừng dùng",
       "register": "Đăng ký",
-      "edit": "Sửa",
       "new": "Thêm mới",
       "send": "Gửi",
       "run": "Thực hiện",
-      "close": "Đóng"
+      "close": "Đóng",
+      "bySystem": "hệ thống",
+      "byZalo": "Zalo",
+      "success": "Thành công",
+      "failed": "Thất bại"
     },
     "channels": {
       "ZNS": "ZNS",
@@ -1246,8 +1275,29 @@
       "MBR_JOIN": "Đăng ký hội viên",
       "AUTH": "Xác thực"
     },
+    "msgTypes": {
+      "INVITE": "Lời mời",
+      "OTP": "Mã xác thực",
+      "STATUS": "Thông báo trạng thái",
+      "TEST": "Tin thử",
+      "OA": "Tin OA"
+    },
+    "history": {
+      "columns": {
+        "chgDt": "Thời gian sửa",
+        "chgBy": "Người sửa",
+        "item": "Trường",
+        "change": "Trước → Sau"
+      }
+    },
     "users": {
       "title": "Người dùng Zalo",
+      "summary": {
+        "linked": "Đã liên kết",
+        "pending": "Chờ liên kết",
+        "following": "Quan tâm OA",
+        "invitesToday": "Lời mời hôm nay"
+      },
       "filter": {
         "linkStatus": "Trạng thái liên kết",
         "following": "Quan tâm OA",
@@ -1260,17 +1310,18 @@
         "status": "Trạng thái",
         "account": "Tài khoản gắn",
         "following": "Quan tâm OA",
-        "linkDt": "Ngày gắn",
-        "lstItrctDt": "Tương tác cuối"
+        "followingShort": "Quan tâm",
+        "linkDt": "Ngày gắn"
       },
       "buttons": {
         "link": "Gắn",
         "unlink": "Huỷ liên kết",
+        "testMessage": "Gửi tin thử",
         "invite": "Gửi lời mời liên kết",
-        "rebuildIndex": "Dựng lại chỉ mục SĐT",
         "simulate": "Giả lập quan tâm OA + chia sẻ SĐT"
       },
       "link": {
+        "title": "Liên kết với tài khoản",
         "userType": "Loại tài khoản",
         "userNo": "Mã tài khoản",
         "userNoPlaceholder": "VD: TV00000001 hoặc mã nhân viên"
@@ -1279,7 +1330,7 @@
         "title": "Gửi lời mời liên kết",
         "recipientName": "Tên người nhận",
         "recipientNamePlaceholder": "Mặc định: Quý khách",
-        "notice": "Gửi mẫu ZNS MBR_JOIN_WELCOME kèm liên kết quan tâm OA."
+        "notice": "Gửi mẫu ZNS MBR_JOIN_WELCOME kèm liên kết quan tâm OA. Áp dụng quy tắc hạn mức LMT-003 / LMT-004 / LMT-006."
       },
       "simulate": {
         "title": "Giả lập quan tâm OA + chia sẻ SĐT",
@@ -1287,30 +1338,74 @@
         "notice": "Chỉ dùng cho demo: đóng vai người dùng Zalo quan tâm OA và chia sẻ số này. Nếu đúng một tài khoản có số này thì tự gắn."
       },
       "detail": {
-        "title": "Chi tiết người dùng Zalo",
-        "shareAgree": "Đã chia sẻ SĐT"
+        "title": "Chi tiết người dùng",
+        "empty": "Không có người dùng Zalo để hiển thị.",
+        "shareAgree": "Đã chia sẻ SĐT",
+        "followSince": "Có · từ {{at}}",
+        "sharedPhone": "Có · {{phone}}",
+        "terms": "Điều khoản chia sẻ dữ liệu",
+        "termsAgreed": "Đã đồng ý khi đăng ký (điều khoản chia sẻ dữ liệu)",
+        "termsNone": "Chưa có ghi nhận",
+        "linkMethod": "Cách liên kết",
+        "methodAuto": "Tự động (khớp số điện thoại) · {{at}}",
+        "methodManual": "Thủ công · {{at}}",
+        "receive": "Nhận tin Zalo",
+        "receiveOn": "Bật",
+        "receiveNotLinked": "Chưa liên kết"
+      },
+      "tabs": {
+        "general": "Thông tin chung",
+        "links": "Lịch sử liên kết",
+        "messages": "Tin đã gửi ({{count}})"
+      },
+      "history": {
+        "columns": {
+          "at": "Thời gian",
+          "by": "Người thực hiện",
+          "event": "Sự kiện"
+        },
+        "follow": "Đã quan tâm OA",
+        "unfollow": "Đã bỏ quan tâm OA",
+        "sharePhone": "Đã chia sẻ số điện thoại",
+        "linkAuto": "Tự động liên kết với {{account}} (khớp số điện thoại)",
+        "linkManual": "Liên kết thủ công với {{account}}",
+        "unlink": "Huỷ liên kết với {{account}}",
+        "note": "Các sự kiện quan tâm, chia sẻ số điện thoại, liên kết và huỷ liên kết của người dùng Zalo này. Mọi thay đổi đều được ghi vào nhật ký kiểm toán."
+      },
+      "messages": {
+        "columns": {
+          "sentAt": "Thời gian gửi",
+          "template": "Mẫu tin",
+          "channel": "Kênh",
+          "result": "Kết quả"
+        },
+        "empty": "Chưa gửi tin Zalo nào cho người dùng này",
+        "openHistory": "Mở Lịch sử gửi thông báo"
+      },
+      "testMessage": {
+        "title": "Gửi tin thử",
+        "template": "Mẫu tin",
+        "templatePlaceholder": "Chọn mẫu tin đang dùng",
+        "notice": "Gửi mẫu tin với dữ liệu mẫu tới số điện thoại của người dùng này. Tính là tin thử; áp dụng hạn mức gửi."
       }
     },
     "templates": {
       "title": "Mẫu tin Zalo",
+      "listTitle": "Mẫu tin",
       "filter": {
         "process": "Quy trình",
         "channel": "Kênh",
-        "use": "Sử dụng",
+        "use": "Trạng thái",
         "keywordPlaceholder": "Mã hoặc tên mẫu"
       },
       "columns": {
-        "use": "Sử dụng",
-        "tplCd": "Mã mẫu",
-        "process": "Quy trình",
-        "tplNm": "Tên mẫu",
-        "channel": "Kênh",
-        "znsTplId": "Mã mẫu ZNS",
-        "mdfcnDt": "Ngày sửa"
+        "status": "Trạng thái",
+        "codeName": "Mã / Tên",
+        "channel": "Kênh"
       },
       "form": {
         "registerTitle": "Đăng ký mẫu tin Zalo",
-        "editTitle": "Sửa mẫu tin Zalo",
+        "copyTitle": "Sao chép mẫu tin Zalo",
         "tplCd": "Mã mẫu",
         "tplCdHint": "A-Z, 0-9 và _, 3–20 ký tự; không đổi được sau khi đăng ký.",
         "process": "Quy trình",
@@ -1318,17 +1413,39 @@
         "channel": "Kênh",
         "znsTplId": "Mã mẫu ZNS",
         "znsTplIdHint": "Do Zalo cấp; bắt buộc khi gửi ZNS thật.",
-        "use": "Sử dụng",
         "tplCn": "Nội dung",
         "tplCnPlaceholder": "VD: Chào {{name}}, mã xác thực: {{otp}}",
         "insertVariable": "Chèn biến",
         "paramMap": "Ánh xạ tham số",
         "paramMapHint": "Đối tượng JSON biến → tham số ZNS, VD: {\"mbrNm\":\"customer_name\"}"
       },
+      "detail": {
+        "title": "Chi tiết mẫu tin",
+        "empty": "Không có mẫu tin để hiển thị.",
+        "msgType": "Loại tin",
+        "price": "{{price}} ₫ mỗi lượt gửi",
+        "free": "Miễn phí",
+        "priceUnknown": "Giá theo loại tin, xem Hạn mức gửi Zalo",
+        "priceNone": "Chưa có đơn giá",
+        "znsIdNotUsed": "Không dùng cho tin OA",
+        "lastModified": "Sửa lần cuối",
+        "modifiedBy": "{{at}} · {{by}}",
+        "historyNote": "Thay đổi đã lưu áp dụng từ lượt gửi tiếp theo. Mọi thay đổi đều được ghi vào nhật ký kiểm toán."
+      },
+      "tabs": {
+        "general": "Thông tin chung",
+        "history": "Lịch sử thay đổi ({{count}})"
+      },
+      "buttons": {
+        "activate": "Bật",
+        "deactivate": "Tắt",
+        "copy": "Sao chép",
+        "save": "Lưu"
+      },
       "preview": {
         "title": "Xem trước trên Zalo",
-        "button": "Xem trước",
-        "empty": "Bấm [Xem trước] để điền biến bằng dữ liệu mẫu.",
+        "sample": "dữ liệu mẫu",
+        "empty": "Nhập nội dung để xem trên Zalo với dữ liệu mẫu.",
         "missing": "Biến chưa có giá trị: {{names}}"
       },
       "testSend": {
@@ -1346,6 +1463,309 @@
         "open": "Mở liên kết",
         "now": "vừa xong",
         "input": "Tin nhắn"
+      }
+    },
+    "limitScopes": {
+      "SYSTEM": "Toàn hệ thống",
+      "RECIPIENT": "Theo người nhận (SĐT)",
+      "SENDER": "Theo người gửi (nhân viên)"
+    },
+    "limitMsgTypes": {
+      "ALL": "Mọi tin nhắn",
+      "ZNS": "Mọi tin ZNS (trả phí)",
+      "INVITE": "Lời mời liên kết",
+      "OTP": "Mã xác thực",
+      "STATUS": "Tin trạng thái",
+      "TEST": "Gửi thử",
+      "OA": "Tin OA"
+    },
+    "limitPeriods": {
+      "DAY": "Ngày",
+      "MONTH": "Tháng"
+    },
+    "limitPeriodUnits": {
+      "DAY": "ngày",
+      "MONTH": "tháng"
+    },
+    "limitMeasures": {
+      "COUNT": "Số tin",
+      "COST": "Chi phí (₫)"
+    },
+    "limitActions": {
+      "BLOCK": "Chặn",
+      "WARN": "Chỉ cảnh báo"
+    },
+    "stopScopes": {
+      "ALL": "Mọi tin Zalo (ZNS + OA)",
+      "ZNS": "Chỉ ZNS trả phí"
+    },
+    "resumeMethods": {
+      "MANUAL": "Thủ công",
+      "HOUR": "Sau 1 giờ",
+      "DAY": "00:00 ngày mai"
+    },
+    "limits": {
+      "title": "Hạn mức gửi Zalo",
+      "summary": {
+        "sentToday": "Đã gửi hôm nay",
+        "costToday": "Chi phí hôm nay",
+        "costMonth": "Chi phí tháng này",
+        "channel": "Kênh Zalo"
+      },
+      "pages": {
+        "rules": "Quy tắc hạn mức",
+        "prices": "Đơn giá",
+        "cost": "Tổng hợp chi phí"
+      },
+      "filter": {
+        "scope": "Phạm vi",
+        "msgType": "Loại tin",
+        "status": "Trạng thái",
+        "effectiveOn": "Hiệu lực ngày"
+      },
+      "listTitle": "Quy tắc hạn mức",
+      "columns": {
+        "status": "Trạng thái",
+        "code": "Mã quy tắc",
+        "scope": "Phạm vi",
+        "msgType": "Loại tin",
+        "period": "Kỳ",
+        "measure": "Đo theo",
+        "limit": "Hạn mức",
+        "peak": "Mức dùng cao nhất"
+      },
+      "evaluationOrder": "Thứ tự xét: trạng thái kênh → quy tắc người nhận → quy tắc người gửi → quy tắc hệ thống. Quy tắc chặn đầu tiên dừng lượt gửi; lượt gửi được ghi thất bại kèm mã quy tắc.",
+      "units": {
+        "count": "tin",
+        "cost": "₫"
+      },
+      "fields": {
+        "scope": "Phạm vi",
+        "msgType": "Loại tin",
+        "period": "Kỳ",
+        "measure": "Đo theo",
+        "limit": "Hạn mức",
+        "warnAt": "Cảnh báo tại",
+        "warnAtSuffix": "% hạn mức → {{value}} {{unit}}",
+        "action": "Khi vượt",
+        "effective": "Thời gian hiệu lực",
+        "effectiveFrom": "Hiệu lực từ",
+        "effectiveTo": "Hiệu lực đến",
+        "openEnded": "không thời hạn",
+        "note": "Ghi chú",
+        "lastModified": "Sửa lần cuối",
+        "peakUsage": "Mức dùng cao nhất"
+      },
+      "detail": {
+        "title": "Chi tiết quy tắc",
+        "empty": "Không có quy tắc hạn mức để hiển thị.",
+        "modifiedBy": "{{at}} · {{by}}",
+        "peakUsage": "{{used}} trong kỳ hiện tại ({{pct}}%)",
+        "historyNote": "Mọi thay đổi cũng được ghi vào nhật ký kiểm toán."
+      },
+      "tabs": {
+        "general": "Chung",
+        "exceptions": "Ngoại lệ ({{count}})",
+        "history": "Lịch sử thay đổi"
+      },
+      "explain": {
+        "headCount": "{{scope}} · {{type}}: tối đa {{limit}} tin mỗi {{period}}. Cảnh báo khi đạt {{warnAt}} {{unit}};",
+        "headCost": "{{scope}} · {{type}}: tối đa {{limit}} mỗi {{period}}. Cảnh báo khi đạt {{warnAt}} {{unit}};",
+        "block": "vượt hạn mức thì lượt gửi bị chặn và ghi thất bại với {{code}}.",
+        "blockCost": "vượt hạn mức thì lượt gửi bị chặn và ghi thất bại với {{code}} (mã xác thực không bao giờ bị chặn bởi quy tắc ngân sách).",
+        "warnOnly": "vượt hạn mức thì tin vẫn được gửi và đánh dấu cảnh báo."
+      },
+      "exceptions": {
+        "note": "Ngoại lệ thay hạn mức của quy tắc này cho một tài khoản cho tới khi hết hạn.",
+        "systemNote": "Ngoại lệ chỉ áp dụng cho quy tắc người gửi và người nhận; quy tắc toàn hệ thống không có ngoại lệ.",
+        "accountSender": "Tài khoản = mã nhân viên người gửi. Hạn mức 0 thì nhân viên này không gửi được.",
+        "accountRecipient": "Tài khoản = mã hội viên hoặc mã nhân viên người nhận.",
+        "empty": "Quy tắc này chưa có ngoại lệ",
+        "expired": "Hết hạn",
+        "columns": {
+          "account": "Tài khoản",
+          "limit": "Hạn mức",
+          "expires": "Hết hạn",
+          "reason": "Lý do"
+        },
+        "addTitle": "Thêm ngoại lệ · {{code}}",
+        "editTitle": "Sửa ngoại lệ · {{code}}",
+        "senderPlaceholder": "Mã nhân viên, vd. rcpt01",
+        "recipientPlaceholder": "Mã hội viên hoặc mã nhân viên",
+        "limitHint": "Hạn mức quy tắc: {{limit}}"
+      },
+      "form": {
+        "registerTitle": "Đăng ký quy tắc hạn mức",
+        "copyTitle": "Sao chép quy tắc {{code}}",
+        "newCode": "mã quy tắc mới",
+        "notice": "Mã LMT-### kế tiếp được cấp khi lưu. Phạm vi và loại tin không đổi được sau đó; ngoại lệ không được sao chép."
+      },
+      "buttons": {
+        "stop": "Dừng",
+        "resume": "Mở lại",
+        "activate": "Kích hoạt",
+        "deactivate": "Ngừng dùng",
+        "copy": "Sao chép",
+        "save": "Lưu",
+        "add": "Thêm",
+        "delete": "Xoá"
+      },
+      "prices": {
+        "title": "Đơn giá",
+        "subtitle": "VND mỗi tin, chưa gồm VAT · Áp dụng từ",
+        "effective": "Ngày áp dụng",
+        "columns": {
+          "msgType": "Loại tin",
+          "channel": "Kênh",
+          "price": "Đơn giá (₫)",
+          "sent": "Đã gửi tháng này",
+          "amount": "Thành tiền (₫)",
+          "templates": "Mẫu tin"
+        },
+        "priceOf": "Đơn giá {{type}}",
+        "total": "Tổng",
+        "note": "Đơn giá của mỗi lượt gửi được lưu cùng lượt gửi tại thời điểm gửi, nên đổi giá sau đó không làm thay đổi chi phí đã phát sinh. Giá theo bảng giá ZNS trong hợp đồng của VAMC; tin OA miễn phí."
+      },
+      "cost": {
+        "title": "Tổng hợp chi phí",
+        "month": "Tháng",
+        "budget": "Ngân sách tháng ({{code}})",
+        "noBudget": "Chưa có quy tắc ngân sách tháng",
+        "spent": "Đã chi tới nay",
+        "remaining": "Còn lại",
+        "projected": "Dự kiến cuối tháng",
+        "withinBudget": "trong ngân sách",
+        "overBudget": "vượt ngân sách {{amount}} ₫",
+        "byType": "Theo loại tin",
+        "topSenders": "Người gửi nhiều nhất (ZNS)",
+        "columns": {
+          "msgType": "Loại tin",
+          "sent": "Đã gửi",
+          "price": "Đơn giá",
+          "amount": "Thành tiền (₫)",
+          "sender": "Người gửi",
+          "share": "Tỷ lệ"
+        },
+        "systemSender": "Hệ thống (tự động)",
+        "noSenders": "Tháng này chưa có tin trả phí",
+        "note": "Số liệu nội bộ từ Lịch sử gửi thông báo, chỉ là ước tính cho tới khi đối soát với hoá đơn Zalo hằng tháng; lượt gửi thất bại hoặc bị chặn không tính phí."
+      },
+      "stop": {
+        "title": "Dừng gửi Zalo",
+        "submit": "Dừng gửi",
+        "scope": "Dừng",
+        "otp": "Mã xác thực",
+        "otpKeep": "Vẫn gửi",
+        "otpStop": "Dừng luôn",
+        "resume": "Mở lại",
+        "reason": "Lý do",
+        "reasons": {
+          "budget": "Vượt ngân sách",
+          "content": "Nội dung mẫu sai",
+          "incident": "Sự cố phía Zalo",
+          "abuse": "Nghi lạm dụng"
+        },
+        "effectAll": "Ngay khi xác nhận, không tin Zalo nào rời hệ thống trên mọi máy chủ",
+        "effectZns": "Ngay khi xác nhận, không tin ZNS trả phí nào rời hệ thống trên mọi máy chủ",
+        "effectKeepOtp": "trừ mã xác thực.",
+        "effectStopOtp": "kể cả mã xác thực.",
+        "effectHeld": "Mỗi lượt bị giữ được ghi thất bại (kênh đã dừng); thông báo nào có mẫu e-mail thì e-mail vẫn được gửi.",
+        "effectManual": "Kênh dừng cho tới khi có người mở lại.",
+        "effectAuto": "Kênh tự mở lại: {{when}}."
+      },
+      "channel": {
+        "title": "Trạng thái kênh Zalo",
+        "status": "Trạng thái",
+        "sending": "Đang gửi",
+        "allStopped": "Đã dừng",
+        "znsStopped": "Đã dừng ZNS",
+        "stopped": "Dừng lúc",
+        "otpSent": "Vẫn gửi",
+        "otpStopped": "Dừng luôn",
+        "held": "Bị giữ từ khi dừng",
+        "heldNote": "lượt không được gửi (ghi thất bại: kênh đã dừng). Các lượt này không được gửi lại khi mở kênh.",
+        "resumeNow": "Mở lại kênh"
+      }
+    },
+    "connection": {
+      "title": "Kết nối Zalo OA",
+      "summary": {
+        "mode": "Chế độ",
+        "connection": "Kết nối",
+        "token": "Access Token",
+        "webhook": "Webhook gần nhất"
+      },
+      "mode": {
+        "demo": "Demo (mô phỏng)",
+        "live": "Thật"
+      },
+      "state": {
+        "connected": "Đã kết nối",
+        "notConnected": "Chưa kết nối"
+      },
+      "notSet": "Chưa cấu hình trên máy chủ",
+      "buttons": {
+        "test": "Kiểm tra kết nối",
+        "refresh": "Làm mới token ngay",
+        "copyUrl": "Sao chép URL"
+      },
+      "oa": {
+        "title": "Official Account",
+        "oaId": "OA ID",
+        "oaName": "Tên OA",
+        "appId": "Zalo App ID",
+        "secret": "App Secret / OA Secret",
+        "secretSet": "Đã cấu hình trên máy chủ · không bao giờ hiển thị hay lưu ở đây",
+        "secretNotSet": "Chưa cấu hình trên máy chủ · không bao giờ hiển thị hay lưu ở đây",
+        "followLink": "Link theo dõi OA",
+        "lastCheck": "Kiểm tra gần nhất",
+        "notChecked": "Chưa kiểm tra trong phiên này",
+        "checkDemo": "{{at}} · Chế độ demo, không gọi Zalo",
+        "checkOk": "{{at}} · OK, truy cập được OA \"{{name}}\" ({{ms}} ms)",
+        "checkFailed": "{{at}} · Thất bại: {{message}}"
+      },
+      "token": {
+        "title": "Token OA",
+        "access": "Access Token",
+        "refresh": "Refresh Token",
+        "expires": "Hết hạn {{at}}",
+        "notUsed": "Không dùng ở chế độ demo",
+        "none": "Chưa có token",
+        "expired": "Đã hết hạn",
+        "hoursLeft": "còn {{count}} giờ",
+        "auto": "Tự làm mới",
+        "autoOn": "Bật · 1 giờ trước khi access token hết hạn",
+        "autoOff": "Tắt · ngừng gửi khi access token hết hạn",
+        "lastRefreshed": "Làm mới lần cuối",
+        "alert": "Cảnh báo trước hạn",
+        "alertText": "Gửi e-mail cho quản trị hệ thống khi refresh token còn dưới 7 ngày hoặc làm mới thất bại"
+      },
+      "webhook": {
+        "title": "Webhook",
+        "url": "Webhook URL",
+        "urlPlaceholder": "Chưa triển khai · https://[TÊN MIỀN]/api/public/zalo/webhook",
+        "signature": "Kiểm tra chữ ký",
+        "signatureOn": "Bật · từ chối yêu cầu không có X-ZEvent-Signature hợp lệ",
+        "signatureOff": "Tắt",
+        "events": "Sự kiện xử lý",
+        "lastEvent": "Sự kiện gần nhất",
+        "none": "Chưa có",
+        "noneDemo": "Không có (chế độ demo)"
+      },
+      "log": {
+        "title": "Nhật ký kết nối",
+        "columns": {
+          "at": "Thời gian",
+          "event": "Sự kiện",
+          "result": "Kết quả",
+          "detail": "Chi tiết"
+        },
+        "empty": "Chưa có sự kiện kết nối",
+        "emptyDemo": "Không có sự kiện kết nối ở chế độ demo"
+      },
+      "footnote": {
+        "demo": "Chế độ demo: không gì được gửi tới Zalo, mỗi lượt gửi nhận mã MOCK-…. Chuyển sang chế độ thật trên máy chủ (ZALO_ENABLED) khi VAMC cung cấp OA, ứng dụng và hợp đồng ZNS.",
+        "live": "Chế độ thật. Làm mới token thất bại hoặc 3 lần webhook bị từ chối trong 10 phút sẽ gửi e-mail cho quản trị hệ thống."
       }
     }
   }

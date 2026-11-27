@@ -3,19 +3,22 @@ import { useTranslation } from 'react-i18next';
 import TextInput from '@/components/inputs/TextInput';
 import { useNotify } from '@/hooks/use-notify';
 import { useFieldErrors } from '@/hooks/use-field-errors';
+import { useSysDialogs } from '@/hooks/use-sys-dialogs';
 import { ZALO_ERRORS } from '@/api/system/zalo-api';
 import { SysField, SysFieldGrid, SysFormModal } from '@/components/common/sys-ui/SysFormUi';
 import { errorMessage } from '@/utils/system-utils';
-import { sentMessage } from '../_shared/zalo-messages';
+import { isBlockedSend, sentMessage } from '../_shared/zalo-messages';
 import { useSendZaloInvitation } from './use-zalo-users';
 
-// Zalo Users - link invitation popup (ZNS template MBR_JOIN_WELCOME with the OA follow link).
+// Zalo Users - link invitation popup (ZNS template MBR_JOIN_WELCOME with the OA follow link). A channel stop (ZAL016)
+// or a limit rule (ZAL017, the server message names the rule) blocks it.
 
 type FieldKey = 'phone' | 'recipientName';
 
 export default function ZaloInviteModal({ onClose }: { onClose: () => void }) {
   const { t } = useTranslation();
   const { toast } = useNotify();
+  const { alert } = useSysDialogs();
   const invite = useSendZaloInvitation();
   const { errors, clearError, checkRequired, applyApiError } = useFieldErrors<FieldKey>();
   const [values, setValues] = useState({ phone: '', recipientName: '' });
@@ -36,7 +39,9 @@ export default function ZaloInviteModal({ onClose }: { onClose: () => void }) {
       onClose();
     } catch (error) {
       const handled = applyApiError(error, { [ZALO_ERRORS.invalidPhone]: ['phone', t('messages.zalo.invalidPhone')] });
-      if (!handled) toast.error(errorMessage(error));
+      if (handled) return;
+      if (isBlockedSend(error)) alert(errorMessage(error));
+      else toast.error(errorMessage(error));
     }
   };
 
