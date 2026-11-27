@@ -632,7 +632,24 @@
       "simulatedNoMatch": "Follow simulated. No account has this phone: the user waits for a link.",
       "simulatedMany": "Follow simulated. {{count}} accounts have this phone: link it manually.",
       "accountNotFound": "No account with this number.",
-      "accountAlreadyLinked": "This account is already linked to another Zalo user."
+      "accountAlreadyLinked": "This account is already linked to another Zalo user.",
+      "limits": {
+        "required": "Required.",
+        "warnRange": "Enter a percentage from 1 to 100.",
+        "endBeforeStart": "The end date cannot be before the start date.",
+        "oaNoCost": "OA messages are free: use Messages for an OA rule.",
+        "created": "Rule {{code}} registered.",
+        "activated": "Rule activated.",
+        "deactivated": "Rule deactivated.",
+        "confirmDeleteException": "Delete the exception of {{account}}? The rule limit applies to this account again.",
+        "priceDateRequired": "Select the effective date of the new prices.",
+        "priceRequired": "Enter a unit price for every changed row.",
+        "pricesSaved": "Unit prices saved, effective {{date}}.",
+        "oaPriceNotZero": "OA messages are free: their unit price must stay 0.",
+        "selectReason": "Select a reason.",
+        "stopped": "Zalo sending stopped.",
+        "resumed": "Zalo sending resumed."
+      }
     }
   },
   "trade": {
@@ -1434,6 +1451,228 @@
         "open": "Open link",
         "now": "now",
         "input": "Message"
+      }
+    },
+    "limitScopes": {
+      "SYSTEM": "Whole system",
+      "RECIPIENT": "Per recipient (phone)",
+      "SENDER": "Per sender (employee)"
+    },
+    "limitMsgTypes": {
+      "ALL": "All messages",
+      "ZNS": "All ZNS (paid)",
+      "INVITE": "Link invitation",
+      "OTP": "Verification code",
+      "STATUS": "Status message",
+      "TEST": "Test send",
+      "OA": "OA message"
+    },
+    "limitPeriods": {
+      "DAY": "Day",
+      "MONTH": "Month"
+    },
+    "limitPeriodUnits": {
+      "DAY": "day",
+      "MONTH": "month"
+    },
+    "limitMeasures": {
+      "COUNT": "Messages",
+      "COST": "Cost (₫)"
+    },
+    "limitActions": {
+      "BLOCK": "Block",
+      "WARN": "Warn only"
+    },
+    "stopScopes": {
+      "ALL": "All Zalo sends (ZNS + OA)",
+      "ZNS": "Paid ZNS only"
+    },
+    "resumeMethods": {
+      "MANUAL": "Manually",
+      "HOUR": "After 1 hour",
+      "DAY": "Tomorrow 00:00"
+    },
+    "limits": {
+      "title": "Zalo Sending Limits",
+      "summary": {
+        "sentToday": "Sent Today",
+        "costToday": "Cost Today",
+        "costMonth": "Cost This Month",
+        "channel": "Zalo Channel"
+      },
+      "pages": {
+        "rules": "Limit Rules",
+        "prices": "Unit Prices",
+        "cost": "Cost Summary"
+      },
+      "filter": {
+        "scope": "Scope",
+        "msgType": "Message Type",
+        "status": "Status",
+        "effectiveOn": "Effective On"
+      },
+      "listTitle": "Limit Rules",
+      "columns": {
+        "status": "Status",
+        "code": "Rule Code",
+        "scope": "Scope",
+        "msgType": "Message Type",
+        "period": "Period",
+        "measure": "Measure",
+        "limit": "Limit",
+        "peak": "Peak Usage"
+      },
+      "evaluationOrder": "Evaluation order: channel status → recipient rules → sender rules → system rules. The first rule that blocks stops the send; the send is logged as failed with the rule code.",
+      "units": {
+        "count": "messages",
+        "cost": "₫"
+      },
+      "fields": {
+        "scope": "Scope",
+        "msgType": "Message Type",
+        "period": "Period",
+        "measure": "Measure",
+        "limit": "Limit",
+        "warnAt": "Warn At",
+        "warnAtSuffix": "% of the limit → {{value}} {{unit}}",
+        "action": "When Exceeded",
+        "effective": "Effective Period",
+        "effectiveFrom": "Effective from",
+        "effectiveTo": "Effective to",
+        "openEnded": "open-ended",
+        "note": "Note",
+        "lastModified": "Last Modified",
+        "peakUsage": "Peak Usage"
+      },
+      "detail": {
+        "title": "Rule Details",
+        "empty": "No limit rule to show.",
+        "modifiedBy": "{{at}} · {{by}}",
+        "peakUsage": "{{used}} in the current period ({{pct}}%)",
+        "historyNote": "Every change is also written to the audit log."
+      },
+      "tabs": {
+        "general": "General",
+        "exceptions": "Exceptions ({{count}})",
+        "history": "Change History"
+      },
+      "explain": {
+        "headCount": "{{scope}} · {{type}}: at most {{limit}} messages per {{period}}. A warning is raised at {{warnAt}} {{unit}};",
+        "headCost": "{{scope}} · {{type}}: at most {{limit}} per {{period}}. A warning is raised at {{warnAt}} {{unit}};",
+        "block": "above the limit the send is blocked and logged as failed with {{code}}.",
+        "blockCost": "above the limit the send is blocked and logged as failed with {{code}} (verification codes are never blocked by a budget rule).",
+        "warnOnly": "above the limit the send is still sent and flagged."
+      },
+      "exceptions": {
+        "note": "An exception replaces the limit of this rule for one account until it expires.",
+        "systemNote": "Exceptions apply to sender and recipient rules only; a whole-system rule has none.",
+        "accountSender": "Account = employee no. of the sender. A limit of 0 stops this employee from sending.",
+        "accountRecipient": "Account = member no. or employee no. of the recipient.",
+        "empty": "No exceptions for this rule",
+        "expired": "Expired",
+        "columns": {
+          "account": "Account",
+          "limit": "Limit",
+          "expires": "Expires",
+          "reason": "Reason"
+        },
+        "addTitle": "Add Exception · {{code}}",
+        "editTitle": "Edit Exception · {{code}}",
+        "senderPlaceholder": "Employee no., e.g. rcpt01",
+        "recipientPlaceholder": "Member no. or employee no.",
+        "limitHint": "Rule limit: {{limit}}"
+      },
+      "form": {
+        "registerTitle": "Register Limit Rule",
+        "copyTitle": "Copy Limit Rule {{code}}",
+        "newCode": "the new rule code",
+        "notice": "The next LMT-### code is assigned on save. Scope and message type cannot be changed later; exceptions are not copied."
+      },
+      "buttons": {
+        "stop": "Stop",
+        "resume": "Resume",
+        "activate": "Activate",
+        "deactivate": "Deactivate",
+        "copy": "Copy",
+        "save": "Save",
+        "add": "Add",
+        "delete": "Delete"
+      },
+      "prices": {
+        "title": "Unit Prices",
+        "subtitle": "VND per message, excluding VAT · Effective",
+        "effective": "Effective date",
+        "columns": {
+          "msgType": "Message Type",
+          "channel": "Channel",
+          "price": "Unit Price (₫)",
+          "sent": "Sent This Month",
+          "amount": "Amount (₫)",
+          "templates": "Templates"
+        },
+        "priceOf": "Unit price {{type}}",
+        "total": "Total",
+        "note": "The price of each send is stored with the send at the moment it goes out, so a later price change does not rewrite past costs. Prices follow the ZNS price list of the VAMC contract; OA messages are free."
+      },
+      "cost": {
+        "title": "Cost Summary",
+        "month": "Month",
+        "budget": "Monthly Budget ({{code}})",
+        "noBudget": "No monthly budget rule",
+        "spent": "Spent To Date",
+        "remaining": "Remaining",
+        "projected": "Projected Month-End",
+        "withinBudget": "within budget",
+        "overBudget": "over budget by {{amount}} ₫",
+        "byType": "By Message Type",
+        "topSenders": "Top Senders (ZNS)",
+        "columns": {
+          "msgType": "Message Type",
+          "sent": "Sent",
+          "price": "Unit Price",
+          "amount": "Amount (₫)",
+          "sender": "Sender",
+          "share": "Share"
+        },
+        "systemSender": "System (automatic)",
+        "noSenders": "No paid messages this month",
+        "note": "Internal figures from Notification Send History. They are an estimate until reconciled with the monthly Zalo statement; failed and blocked sends cost nothing."
+      },
+      "stop": {
+        "title": "Stop Zalo Sending",
+        "submit": "Stop Sending",
+        "scope": "Stop",
+        "otp": "Verification Codes",
+        "otpKeep": "Keep sending",
+        "otpStop": "Stop too",
+        "resume": "Resume",
+        "reason": "Reason",
+        "reasons": {
+          "budget": "Budget exceeded",
+          "content": "Wrong template content",
+          "incident": "Incident at Zalo",
+          "abuse": "Suspected abuse"
+        },
+        "effectAll": "From the moment you confirm, no Zalo message leaves the system on any server",
+        "effectZns": "From the moment you confirm, no paid ZNS message leaves the system on any server",
+        "effectKeepOtp": "except verification codes.",
+        "effectStopOtp": "verification codes included.",
+        "effectHeld": "Each held send is logged as failed (channel stopped); where the same notice has an e-mail template, the e-mail is still sent.",
+        "effectManual": "Sending stays off until someone resumes it.",
+        "effectAuto": "Sending resumes automatically: {{when}}."
+      },
+      "channel": {
+        "title": "Zalo Channel Status",
+        "status": "Status",
+        "sending": "Sending",
+        "allStopped": "Stopped",
+        "znsStopped": "ZNS stopped",
+        "stopped": "Stopped",
+        "otpSent": "Still sent",
+        "otpStopped": "Stopped too",
+        "held": "Held Since Stop",
+        "heldNote": "sends not delivered (logged as failed: channel stopped). They are not sent again on resume.",
+        "resumeNow": "Resume Sending"
       }
     }
   }
