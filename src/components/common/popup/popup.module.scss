@@ -1,4 +1,20 @@
 .wrap {
+  &:global(.ant-modal-centered) {
+    display: flex;
+    padding: 16px;
+
+    &::before {
+      display: none;
+    }
+
+    :global(.ant-modal) {
+      top: 0;
+      margin: auto;
+      padding-bottom: 0;
+      max-width: 100%;
+    }
+  }
+
   :global(.ant-modal) {
     padding-bottom: 0;
   }
@@ -96,6 +112,8 @@
 }
 
 .messageText {
+  max-width: 100%;
+  overflow-wrap: anywhere;
   font-size: var(--font-size-h4, 14px);
   line-height: var(--line-height-h4, 20px);
   font-weight: 500;

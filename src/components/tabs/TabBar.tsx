@@ -310,7 +310,7 @@ export default function TabBar() {
       key: `goto-${t.key}`,
       label: getTabLabel(t),
       onClick: () => startTransition(() => setActiveTab(t.key)),
-      style: t.key === activeTabKey ? { fontWeight: 600, color: '#1677ff' } : {},
+      style: t.key === activeTabKey ? { fontWeight: 600, color: 'var(--color-text-brand, #005be2)' } : {},
     })),
   ], [tabs, activeTabKey, closeTab, closeOtherTabs, closeRightTabs, closeAllTabs, setActiveTab, getTabLabel, tvb]);
 

@@ -12,7 +12,11 @@
     "total": "Tổng",
     "cancel": "Hủy",
     "close": "Đóng",
-    "save": "Lưu"
+    "save": "Lưu",
+    "new": "Thêm mới",
+    "register": "Đăng ký",
+    "edit": "Sửa",
+    "delete": "Xóa"
   },
   "auth": {
     "login": {

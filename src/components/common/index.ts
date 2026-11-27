@@ -12,6 +12,7 @@ export { default as ProgressBar } from './loading/ProgressBar';
 export type { ProgressBarProps, ProgressStatus } from './loading/ProgressBar';
 export { default as Pagination } from './pagination/Pagination';
 export type { PaginationProps, PaginationVariant } from './pagination/Pagination';
+export { default as AppDialogHost } from './popup/AppDialogHost';
 export { default as Popup } from './popup/Popup';
 export type { PopupProps, PopupStatus } from './popup/Popup';
 export { default as ProgressStepper } from './progress-stepper/ProgressStepper';

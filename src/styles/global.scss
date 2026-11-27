@@ -860,9 +860,9 @@ body,
   height: var(--tab-bar-height);
   min-height: var(--tab-bar-height);
   display: flex;
-  align-items: stretch;
-  background: var(--color-bg-tertiary);
-  border-bottom: 1px solid var(--color-border-primary);
+  align-items: flex-end;
+  background: var(--color-navy-100, #eaeaf1);
+  border-bottom: 1px solid var(--color-navy-200, #d1d1e0);
   padding: 0 0 0 4px;
   user-select: none;
 }
@@ -870,6 +870,7 @@ body,
 .tab-scroll-container {
   flex: 1;
   min-width: 0;
+  height: 30px;
   display: flex;
   align-items: flex-end;
   overflow: hidden;
@@ -877,8 +878,10 @@ body,
 }
 
 .tab-actions {
+  align-self: stretch;
   display: flex;
   align-items: center;
+  justify-content: center;
   padding: 0 8px;
   gap: 2px;
   flex-shrink: 0;
@@ -888,6 +891,8 @@ body,
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  width: 20px;
+  height: 20px;
   padding: 4px;
   border-radius: 4px;
   border: none;
@@ -896,7 +901,7 @@ body,
   transition: background-color 0.15s, opacity 0.15s;
 
   &:hover {
-    background: var(--color-navy-200);
+    background: var(--color-navy-200, #d1d1e0);
   }
 
   &.disabled,
@@ -914,28 +919,32 @@ body,
   gap: 4px;
   width: 168px;
   height: 28px;
-  padding: 0 8px 0 12px;
+  padding: 0 12px;
   border-radius: 8px 8px 0 0;
-  background: var(--color-bg-tertiary);
-  border: 1px solid var(--color-border-primary);
+  background: var(--color-navy-100, #eaeaf1);
+  border: 1px solid var(--color-navy-200, #d1d1e0);
   border-bottom: none;
   cursor: pointer;
   white-space: nowrap;
   user-select: none;
   transition: background-color 0.15s, color 0.15s;
-  color: var(--color-text-secondary);
+  color: var(--color-gray-800, #545c6d);
   flex-shrink: 0;
 
   &:hover {
-    background: var(--color-bg-secondary);
+    background: var(--color-navy-50, #f6f6f9);
   }
 
   &.active {
-    background: var(--color-bg-primary);
-    border-color: var(--color-border-primary);
+    background: var(--color-white, #ffffff);
+    border-color: var(--color-navy-200, #d1d1e0);
     height: 29px;
     margin-bottom: -1px;
-    padding-bottom: 1px;
+    padding: 0 8px 1px 12px;
+
+    &:hover {
+      background: var(--color-white, #ffffff);
+    }
   }
 
   &.drop-target {

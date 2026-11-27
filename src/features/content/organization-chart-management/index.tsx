@@ -1,6 +1,9 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import LoadingSpinner from '@/components/common/loading/LoadingSpinner';
+import type { TFunction } from 'i18next';
+import { Controller, useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import { useMenuPermission } from '@/hooks/use-menu-permission';
 import { useNotify } from '@/hooks/use-notify';
 import { ABOUT_PAGE_ERRORS } from '@/api/contents/about-page-api';
@@ -9,8 +12,7 @@ import { originalFileName, useUploadContentImage } from '@/features/content/_sha
 import { SysButton, SysPage, SysTitleBar } from '@/components/common/sys-ui/SysListUi';
 import { SysField, SysFieldGrid } from '@/components/common/sys-ui/SysFormUi';
 import { SYS_MESSAGES } from '@/config/sys-messages';
-import { errorMessage } from '@/utils/system-utils';
-import { useFieldErrors } from '@/hooks/use-field-errors';
+import { apiErrorCode, apiValidationErrors, errorMessage } from '@/utils/system-utils';
 import RichTextEditor from '../_shared/RichTextEditor';
 import { isValidChartImage } from './chart-image';
 import ChartImageField from './ChartImageField';
@@ -23,28 +25,31 @@ import styles from './organization-chart-management.module.scss';
 const TITLE = 'Organization Chart Management';
 const BREADCRUMB = ['Content Management', 'About VAMC Management', TITLE];
 
-type FieldKey = 'chartImageVnFileId' | 'chartImageEnFileId' | 'bodyVn' | 'bodyEn';
 type ImageKey = 'chartImageVnFileId' | 'chartImageEnFileId';
 
-interface ChartImage {
-  fileId?: string;
-  fileName?: string;
+function createOrgChartSchema(t: TFunction) {
+  return z.object({
+    chartImageVnFileId: z.string().min(1, t('messages.content.orgChart.imageVnRequired')),
+    chartImageEnFileId: z.string(),
+    bodyVn: z.string().trim().min(1, t('messages.content.orgChart.bodyVnRequired')),
+    bodyEn: z.string(),
+  });
 }
+
+type OrgChartFormValues = z.infer<ReturnType<typeof createOrgChartSchema>>;
 
 export default function OrganizationChartManagement() {
   const { t } = useTranslation();
-  const { data, isFetching, isError } = useAboutOrgChart();
+  const { data, isError } = useAboutOrgChart();
 
   return (
     <SysPage>
       <SysTitleBar title={TITLE} breadcrumb={BREADCRUMB} />
       {data ? (
         <OrgChartForm key={data.pstNo ?? 'new'} chart={data} />
-      ) : (
-        <LoadingSpinner spinning={isFetching}>
-          <div className={styles.loading}>{isError ? t('messages.content.orgChart.loadFailed') : null}</div>
-        </LoadingSpinner>
-      )}
+      ) : isError ? (
+        <div>{t('messages.content.orgChart.loadFailed')}</div>
+      ) : null}
     </SysPage>
   );
 }
@@ -56,40 +61,47 @@ function OrgChartForm({ chart }: { chart: AboutOrgChart }) {
   const save = useSaveAboutOrgChart();
   const upload = useUploadContentImage('ABOUT');
   const preview = useImagePreviewUrl();
-  const { errors, setError, clearError, applyApiError } = useFieldErrors<FieldKey>();
-  const [uploadingKey, setUploadingKey] = useState<ImageKey | null>(null);
-  const [images, setImages] = useState<Record<ImageKey, ChartImage>>({
-    chartImageVnFileId: {
-      fileId: chart.chartImageVnFileId,
-      fileName: chart.chartImageVn ? originalFileName(chart.chartImageVn.fileNm) : undefined,
-    },
-    chartImageEnFileId: {
-      fileId: chart.chartImageEnFileId,
-      fileName: chart.chartImageEn ? originalFileName(chart.chartImageEn.fileNm) : undefined,
+  const schema = useMemo(() => createOrgChartSchema(t), [t]);
+  const [fileNames, setFileNames] = useState<Record<ImageKey, string>>({
+    chartImageVnFileId: chart.chartImageVn ? originalFileName(chart.chartImageVn.fileNm) : '',
+    chartImageEnFileId: chart.chartImageEn ? originalFileName(chart.chartImageEn.fileNm) : '',
+  });
+
+  const {
+    control,
+    handleSubmit,
+    setValue,
+    setError,
+    clearErrors,
+    getValues,
+    formState: { errors },
+  } = useForm<OrgChartFormValues>({
+    resolver: zodResolver(schema),
+    defaultValues: {
+      chartImageVnFileId: chart.chartImageVnFileId ?? '',
+      chartImageEnFileId: chart.chartImageEnFileId ?? '',
+      bodyVn: chart.bodyVn ?? '',
+      bodyEn: chart.bodyEn ?? '',
     },
   });
-  const [bodyVn, setBodyVn] = useState(chart.bodyVn ?? '');
-  const [bodyEn, setBodyEn] = useState(chart.bodyEn ?? '');
 
   const uploadImage = async (key: ImageKey, file: File) => {
     if (!isValidChartImage(file)) {
-      setError(key, t('messages.content.orgChart.invalidImage'));
+      setError(key, { type: 'manual', message: t('messages.content.orgChart.invalidImage') });
       return;
     }
-    clearError(key);
-    setUploadingKey(key);
+    clearErrors(key);
     try {
       const fileId = await upload.mutateAsync(file);
-      setImages((prev) => ({ ...prev, [key]: { fileId, fileName: file.name } }));
+      setValue(key, fileId, { shouldDirty: true, shouldValidate: true });
+      setFileNames((prev) => ({ ...prev, [key]: file.name }));
     } catch (error) {
       toast.error(errorMessage(error));
-    } finally {
-      setUploadingKey(null);
     }
   };
 
   const openPreview = async (key: ImageKey) => {
-    const fileId = images[key].fileId;
+    const fileId = getValues(key);
     if (!fileId) return;
     // Open the window in the click handler so the popup is not blocked, then load the image
     const win = window.open('', '_blank');
@@ -102,83 +114,106 @@ function OrgChartForm({ chart }: { chart: AboutOrgChart }) {
     }
   };
 
-  const submit = async () => {
-    let valid = true;
-    if (!images.chartImageVnFileId.fileId) {
-      setError('chartImageVnFileId', t('messages.content.orgChart.imageVnRequired'));
-      valid = false;
-    }
-    if (!bodyVn.trim()) {
-      setError('bodyVn', t('messages.content.orgChart.bodyVnRequired'));
-      valid = false;
-    }
-    if (!valid) return;
+  const onValidSubmit = async (values: OrgChartFormValues) => {
     try {
       await save.mutateAsync({
-        chartImageVnFileId: images.chartImageVnFileId.fileId as string,
-        chartImageEnFileId: images.chartImageEnFileId.fileId,
-        bodyVn,
-        bodyEn: bodyEn || undefined,
+        chartImageVnFileId: values.chartImageVnFileId,
+        chartImageEnFileId: values.chartImageEnFileId || undefined,
+        bodyVn: values.bodyVn,
+        bodyEn: values.bodyEn || undefined,
       });
       toast.success(SYS_MESSAGES.saved);
     } catch (error) {
-      if (
-        !applyApiError(error, {
-          [ABOUT_PAGE_ERRORS.imageInvalid]: ['chartImageVnFileId', t('messages.content.orgChart.invalidImage')],
-        })
-      ) {
-        toast.error(errorMessage(error));
+      if (apiErrorCode(error) === ABOUT_PAGE_ERRORS.imageInvalid) {
+        setError('chartImageVnFileId', { type: 'server', message: t('messages.content.orgChart.invalidImage') });
+        return;
       }
+      const validation = apiValidationErrors(error);
+      if (validation) {
+        let mapped = false;
+        (['chartImageVnFileId', 'chartImageEnFileId', 'bodyVn', 'bodyEn'] as const).forEach((key) => {
+          const message = validation[key];
+          if (message) {
+            setError(key, { type: 'server', message });
+            mapped = true;
+          }
+        });
+        if (mapped) return;
+      }
+      toast.error(errorMessage(error));
     }
   };
 
   const imageField = (key: ImageKey, label: string) => (
-    <ChartImageField
-      ariaLabel={label}
-      fileName={images[key].fileName}
-      hasFile={!!images[key].fileId}
-      disabled={!canWrite}
-      uploading={uploadingKey === key}
-      previewing={preview.isPending && preview.variables === images[key].fileId}
-      onFile={(file) => uploadImage(key, file)}
-      onPreview={() => openPreview(key)}
+    <Controller
+      name={key}
+      control={control}
+      render={({ field }) => (
+        <ChartImageField
+          ariaLabel={label}
+          fileName={fileNames[key]}
+          hasFile={!!field.value}
+          disabled={!canWrite}
+          uploading={upload.isPending}
+          previewing={preview.isPending}
+          onFile={(file) => void uploadImage(key, file)}
+          onPreview={() => void openPreview(key)}
+        />
+      )}
     />
   );
 
   return (
-    <>
-      <form className={styles.form} noValidate onSubmit={(e) => e.preventDefault()}>
-        <SysFieldGrid columns={1} labelWidth={130}>
-          <SysField label="Chart Image (VN)" required error={errors.chartImageVnFileId}>
-            {imageField('chartImageVnFileId', 'Chart Image (VN)')}
-          </SysField>
-          <SysField label="Chart Image (EN)" error={errors.chartImageEnFileId}>
-            {imageField('chartImageEnFileId', 'Chart Image (EN)')}
-          </SysField>
-          <SysField label="Body (VN)" required error={errors.bodyVn}>
-            <RichTextEditor
-              ariaLabel="Body (VN)"
-              value={bodyVn}
-              disabled={!canWrite}
-              invalid={!!errors.bodyVn}
-              onChange={(html) => {
-                setBodyVn(html);
-                clearError('bodyVn');
-              }}
-            />
-          </SysField>
-          <SysField label="Body (EN)" error={errors.bodyEn}>
-            <RichTextEditor ariaLabel="Body (EN)" value={bodyEn} disabled={!canWrite} onChange={setBodyEn} />
-          </SysField>
-        </SysFieldGrid>
-      </form>
+    <form className={styles.form} noValidate onSubmit={(e) => e.preventDefault()}>
+      <SysFieldGrid columns={1} labelWidth={130}>
+        <SysField label="Chart Image (VN)" required error={errors.chartImageVnFileId?.message}>
+          {imageField('chartImageVnFileId', 'Chart Image (VN)')}
+        </SysField>
+        <SysField label="Chart Image (EN)" error={errors.chartImageEnFileId?.message}>
+          {imageField('chartImageEnFileId', 'Chart Image (EN)')}
+        </SysField>
+        <SysField label="Body (VN)" required error={errors.bodyVn?.message}>
+          <Controller
+            name="bodyVn"
+            control={control}
+            render={({ field }) => (
+              <RichTextEditor
+                ariaLabel="Body (VN)"
+                value={field.value}
+                disabled={!canWrite}
+                invalid={!!errors.bodyVn}
+                onChange={field.onChange}
+              />
+            )}
+          />
+        </SysField>
+        <SysField label="Body (EN)" error={errors.bodyEn?.message}>
+          <Controller
+            name="bodyEn"
+            control={control}
+            render={({ field }) => (
+              <RichTextEditor
+                ariaLabel="Body (EN)"
+                value={field.value}
+                disabled={!canWrite}
+                invalid={!!errors.bodyEn}
+                onChange={field.onChange}
+              />
+            )}
+          />
+        </SysField>
+      </SysFieldGrid>
       {canWrite && (
         <div className={styles.footer}>
-          <SysButton look="primary" loading={save.isPending} onClick={submit}>
-            Save
+          <SysButton
+            look="primary"
+            disabled={save.isPending || upload.isPending}
+            onClick={() => void handleSubmit(onValidSubmit)()}
+          >
+            {t('common.save')}
           </SysButton>
         </div>
       )}
-    </>
+    </form>
   );
 }

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { TableColumnsType } from 'antd';
 import { useMenuPermission } from '@/hooks/use-menu-permission';
 import type { AboutHistory } from '@/api/contents/about-page-api';
@@ -77,9 +78,10 @@ const columns: TableColumnsType<AboutHistory> = [
 type ModalState = { pstNo: string | null } | null;
 
 export default function HistoryManagement() {
+  const { t } = useTranslation();
   const { canWrite } = useMenuPermission();
   const list = usePagedList<Record<string, never>>({}, { defaultSort: DEFAULT_SORT });
-  const { data, isFetching } = useAboutHistories(list.pageQuery);
+  const { data } = useAboutHistories(list.pageQuery);
   const [modal, setModal] = useState<ModalState>(null);
   const total = data?.totalElements ?? 0;
 
@@ -91,7 +93,7 @@ export default function HistoryManagement() {
         primaryActions={
           canWrite && (
             <SysButton look="navy" onClick={() => setModal({ pstNo: null })}>
-              New
+              {t('common.new')}
             </SysButton>
           )
         }
@@ -104,12 +106,13 @@ export default function HistoryManagement() {
           tableLayout="fixed"
           columns={columns}
           dataSource={data?.content ?? []}
-          loading={isFetching}
           onRowClick={(row) => setModal({ pstNo: row.pstNo })}
           sort={list.sort}
           onSortChange={(sort) => list.setSort(sort ?? DEFAULT_SORT)}
         />
-        <SysPager page={list.page} pageSize={SYS_PAGE_SIZE} total={total} onChange={list.setPage} />
+        {total > SYS_PAGE_SIZE && (
+          <SysPager page={list.page} pageSize={SYS_PAGE_SIZE} total={total} onChange={list.setPage} />
+        )}
       </div>
       {modal && (
         <HistoryModal

@@ -11,6 +11,7 @@ export const APP_THEME: ThemeConfig = {
     colorTextSecondary: '#6f7b95',
     colorTextPlaceholder: '#a8b2c8',
     colorBorder: '#d1d1e0',
+    colorBgMask: 'rgba(0, 0, 0, 0.6)',
     colorBgContainerDisabled: '#f6f6f9',
     colorTextDisabled: '#a8b2c8',
     borderRadius: 4,

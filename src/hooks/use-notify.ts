@@ -2,12 +2,13 @@ import { useCallback, useMemo } from 'react';
 import { App } from 'antd';
 import type { ModalFuncProps } from 'antd';
 import { useLabelStore } from '@/stores/label-store';
+import { useDialogStore, type DialogType } from '@/stores/dialog-store';
 
 // ── Notify i18n config ────────────────────────────────────────────────────────
 
 type NotifyType = 'success' | 'error' | 'warning' | 'info';
 
-// Notification & dialog titles — use shared component labels.
+// Notification titles — use shared component labels.
 //
 // Previously MESSAGE.SCRIPT.TEXT_* was never registered in DB, so the fallback
 // (lowercase English like 'success') appeared as the title in every language. Because the MESSAGE namespace
@@ -24,21 +25,6 @@ type NotifyOptions = Parameters<ReturnType<typeof App.useApp>['notification']['s
 /** String → auto-mapped to description. Object → passed as-is. */
 type NotifyArg = string | NotifyOptions;
 
-// ── Dialog i18n config ────────────────────────────────────────────────────────
-
-type DialogType = 'confirm' | 'info' | 'warning' | 'error';
-
-const DIALOG_CONFIG: Record<DialogType, {
-  titleKey: string;
-  titleFallback: string;
-  danger: boolean;
-}> = {
-  confirm: { titleKey: 'COMPONENT.VIEW.TITLE_confirm', titleFallback: 'Confirm', danger: false },
-  info:    { titleKey: 'COMPONENT.VIEW.TITLE_info',    titleFallback: 'Info',    danger: false },
-  warning: { titleKey: 'COMPONENT.VIEW.TITLE_warning', titleFallback: 'Warning', danger: true  },
-  error:   { titleKey: 'COMPONENT.VIEW.TITLE_error',   titleFallback: 'Error',   danger: true  },
-};
-
 // Dialog OK/Cancel buttons — use shared component labels directly.
 // Previously MESSAGE.SCRIPT.BTN_* was never registered in DB, so the
 // 'OK'/'CANCEL' fallback below appeared in every language.
@@ -52,7 +38,7 @@ function withFallback(value: string, key: string, fallback: string): string {
 // ── Hook ──────────────────────────────────────────────────────────────────────
 
 /**
- * Unified notification hook — wraps antd message / notification / modal in one place.
+ * Unified notification hook — wraps antd message / notification and design-system Popup dialogs in one place.
  *
  * ```
  * const { toast, notify, dialog } = useNotify();
@@ -65,26 +51,23 @@ function withFallback(value: string, key: string, fallback: string): string {
  * notify.success('Operation completed.');                        // title: i18n 'Success'
  * notify.error({ title: 'Error', description: 'Details' });    // object as-is (message also accepted, auto-mapped to title)
  *
- * // Dialog (modal) — i18n defaults: title / okText / cancelText / okButtonProps.danger
+ * // Dialog (Figma Popup 4042:25841) — centered message layout, i18n OK/Cancel defaults
  * dialog.confirm({ content: 'Save changes?', onOk: handleSave });
  * dialog.warning({ title: 'Delete Data', content: 'Cannot be undone.', okText: 'Delete', onOk: handleDelete });
  * dialog.error({ content: 'A server error occurred.' });
  * ```
  *
  * Label keys (all in COMPONENT namespace — register in the multilingual label management screen):
- *   Title    COMPONENT.VIEW.TITLE_success / _error / _warning / _info / _confirm
+ *   Title    COMPONENT.VIEW.TITLE_success / _error / _warning / _info
  *   Button   COMPONENT.VIEW.BTN_ok / BTN_cancel
- *
- * Dialog type defaults:
- *   confirm  — danger: false
- *   info     — danger: false
- *   warning  — danger: true
- *   error    — danger: true
  */
 export function useNotify() {
-  const { message, notification, modal } = App.useApp();
+  const { message, notification } = App.useApp();
   const labelsVersion = useLabelStore((s) => s.labelsVersion);
   const t = useLabelStore((s) => s.t);
+  const openStoreDialog = useDialogStore((s) => s.open);
+  const updateStoreDialog = useDialogStore((s) => s.update);
+  const closeStoreDialog = useDialogStore((s) => s.close);
 
   // ── toast: antd message API (auto-dismiss toast) ──────────────────────────
   const toast = useMemo(() => message, [message]);
@@ -113,27 +96,46 @@ export function useNotify() {
     info:    (arg: NotifyArg) => openNotify('info',    arg),
   }), [openNotify]);
 
-  // ── dialog: modal with i18n defaults ─────────────────────────────────────
+  // ── dialog: Figma Popup (4042:25841) hosted by AppDialogHost ──────────────
   const openDialog = useCallback(
-    (type: DialogType, { okButtonProps: callerOkBtnProps, ...rest }: ModalFuncProps) => {
-      const cfg = DIALOG_CONFIG[type];
-      const defaultTitle  = withFallback(t(cfg.titleKey), cfg.titleKey, cfg.titleFallback);
-      const defaultOkText = withFallback(t(OK_KEY),       OK_KEY,       'OK');
-      const defaultCancel = withFallback(t(CANCEL_KEY),   CANCEL_KEY,   'CANCEL');
+    (type: DialogType, options: ModalFuncProps) => {
+      const defaultOkText = withFallback(t(OK_KEY),     OK_KEY,     'OK');
+      const defaultCancel = withFallback(t(CANCEL_KEY), CANCEL_KEY, 'CANCEL');
+      const maskClosable =
+        typeof options.mask === 'object' && options.mask !== null
+          ? options.mask.closable
+          : options.maskClosable;
 
-      return modal[type]({
-        title:      defaultTitle,
-        okText:     defaultOkText,
-        cancelText: defaultCancel,
-        ...rest,
-        okButtonProps: {
-          ...(cfg.danger ? { danger: true } : {}),
-          ...callerOkBtnProps,
-        },
+      const id = openStoreDialog({
+        type,
+        title: options.title ?? '',
+        content: options.content,
+        icon: options.icon,
+        width: options.width,
+        okText: options.okText ?? defaultOkText,
+        cancelText: options.cancelText ?? defaultCancel,
+        okCancel: options.okCancel,
+        okDisabled: options.okButtonProps?.disabled,
+        maskClosable,
+        onOk: options.onOk,
+        onCancel: options.onCancel,
       });
+
+      return {
+        destroy: () => closeStoreDialog(id),
+        update: (next: ModalFuncProps) =>
+          updateStoreDialog(id, {
+            ...(next.title !== undefined ? { title: next.title } : {}),
+            ...(next.content !== undefined ? { content: next.content } : {}),
+            ...(next.okText !== undefined ? { okText: next.okText } : {}),
+            ...(next.cancelText !== undefined ? { cancelText: next.cancelText } : {}),
+            ...(next.okCancel !== undefined ? { okCancel: next.okCancel } : {}),
+            ...(next.okButtonProps !== undefined ? { okDisabled: next.okButtonProps.disabled } : {}),
+          }),
+      };
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [modal, labelsVersion],
+    [openStoreDialog, updateStoreDialog, closeStoreDialog, labelsVersion],
   );
 
   const dialog = useMemo(() => ({

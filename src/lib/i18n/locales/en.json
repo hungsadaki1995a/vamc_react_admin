@@ -12,7 +12,11 @@
     "total": "Total",
     "cancel": "Cancel",
     "close": "Close",
-    "save": "Save"
+    "save": "Save",
+    "new": "New",
+    "register": "Register",
+    "edit": "Edit",
+    "delete": "Delete"
   },
   "auth": {
     "login": {

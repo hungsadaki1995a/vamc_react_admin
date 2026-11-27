@@ -65,11 +65,11 @@ export default function ChartImageField({
         value={fileName ?? ''}
         placeholder="Please attach a file."
       />
-      <SysButton disabled={!hasFile} loading={previewing} onClick={onPreview}>
+      <SysButton disabled={!hasFile || previewing} onClick={onPreview}>
         Preview
       </SysButton>
       {!disabled && (
-        <SysButton loading={uploading} onClick={() => inputRef.current?.click()}>
+        <SysButton disabled={uploading} onClick={() => inputRef.current?.click()}>
           Upload File
         </SysButton>
       )}

@@ -4,6 +4,7 @@ import { APP_THEME } from '@/config/theme-config';
 import { apiNotify } from '@/lib/api/api-notify';
 import { useRestoreSession } from '@/hooks/use-restore-session';
 import { useAppSync } from '@/hooks/use-app-sync';
+import AppDialogHost from '@/components/common/popup/AppDialogHost';
 import GlobalLoadingSpinner from '@/components/common/feedback/GlobalLoadingSpinner';
 import AppRoutes from './AppRoutes';
 
@@ -22,9 +23,10 @@ export default function App() {
   const { antLocale } = useAppSync();
 
   return (
-    <ConfigProvider locale={antLocale} theme={APP_THEME}>
+    <ConfigProvider locale={antLocale} theme={APP_THEME} modal={{ centered: true, mask: { blur: false } }}>
       <AntApp>
         <GlobalLoadingSpinner />
+        <AppDialogHost />
         <ApiNotifyBridge />
         <AppRoutes />
       </AntApp>

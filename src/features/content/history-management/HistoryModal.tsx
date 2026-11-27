@@ -1,15 +1,17 @@
-import { useState } from 'react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import LoadingSpinner from '@/components/common/loading/LoadingSpinner';
+import type { TFunction } from 'i18next';
+import { Controller, useForm, useWatch } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import TextArea from '@/components/inputs/TextArea';
 import TextInput from '@/components/inputs/TextInput';
 import { useNotify } from '@/hooks/use-notify';
 import type { AboutHistory, AboutHistoryRequest } from '@/api/contents/about-page-api';
 import { SysButton } from '@/components/common/sys-ui/SysListUi';
 import { SysField, SysFieldGrid, SysFormModal } from '@/components/common/sys-ui/SysFormUi';
-import { SYS_DIALOG_LABELS, SYS_MESSAGES } from '@/config/sys-messages';
-import { errorMessage } from '@/utils/system-utils';
-import { useFieldErrors } from '@/hooks/use-field-errors';
+import { SYS_MESSAGES } from '@/config/sys-messages';
+import { apiValidationErrors, errorMessage } from '@/utils/system-utils';
 import { useSysDialogs } from '@/hooks/use-sys-dialogs';
 import { useAboutHistory, useDeleteAboutHistory, useSaveAboutHistory } from './use-history';
 import styles from './history-management.module.scss';
@@ -17,36 +19,34 @@ import styles from './history-management.module.scss';
 // History Management - Register / Edit popup (VPA071002P01).
 // Register: [Cancel] [Register]; Edit: [Delete] [Cancel] [Edit]. Saved items apply to the user timeline at once.
 
-type FieldKey = 'year' | 'periodVn' | 'periodEn' | 'contentVn' | 'contentEn';
-type FormState = Record<FieldKey, string>;
-
-const EMPTY: FormState = { year: '', periodVn: '', periodEn: '', contentVn: '', contentEn: '' };
 const PERIOD_MAX = 30;
 const CONTENT_MAX = 300;
 
-const REQUIRED_KEYS = {
-  year: 'messages.content.history.yearRequired',
-  periodVn: 'messages.content.history.periodVnRequired',
-  contentVn: 'messages.content.history.contentVnRequired',
-} as const;
-
-function toState(item: AboutHistory): FormState {
-  return {
-    year: item.year ?? '',
-    periodVn: item.periodVn ?? '',
-    periodEn: item.periodEn ?? '',
-    contentVn: item.contentVn ?? '',
-    contentEn: item.contentEn ?? '',
-  };
+function createHistorySchema(t: TFunction) {
+  return z.object({
+    year: z
+      .string()
+      .trim()
+      .min(1, t('messages.content.history.yearRequired'))
+      .regex(/^\d{4}$/, t('messages.content.history.yearFormat')),
+    periodVn: z.string().trim().min(1, t('messages.content.history.periodVnRequired')).max(PERIOD_MAX),
+    periodEn: z.string().trim().max(PERIOD_MAX),
+    contentVn: z.string().trim().min(1, t('messages.content.history.contentVnRequired')).max(CONTENT_MAX),
+    contentEn: z.string().trim().max(CONTENT_MAX),
+  });
 }
 
-function toRequest(values: FormState): AboutHistoryRequest {
+type HistoryFormValues = z.infer<ReturnType<typeof createHistorySchema>>;
+
+const HISTORY_FIELDS: (keyof HistoryFormValues)[] = ['year', 'periodVn', 'periodEn', 'contentVn', 'contentEn'];
+
+function toRequest(values: HistoryFormValues): AboutHistoryRequest {
   return {
-    year: values.year.trim(),
-    periodVn: values.periodVn.trim(),
-    periodEn: values.periodEn.trim() || undefined,
-    contentVn: values.contentVn.trim(),
-    contentEn: values.contentEn.trim() || undefined,
+    year: values.year,
+    periodVn: values.periodVn,
+    periodEn: values.periodEn || undefined,
+    contentVn: values.contentVn,
+    contentEn: values.contentEn || undefined,
   };
 }
 
@@ -60,14 +60,12 @@ interface HistoryModalProps {
 /** Loads the item in edit mode, then mounts the form with it. */
 export default function HistoryModal({ pstNo, canWrite, onClose }: HistoryModalProps) {
   const { t } = useTranslation();
-  const { data, isFetching, isError } = useAboutHistory(pstNo);
+  const { data, isError } = useAboutHistory(pstNo);
 
   if (pstNo !== null && !data) {
     return (
       <SysFormModal width={1200} open title="Edit History" onCancel={onClose}>
-        <LoadingSpinner spinning={isFetching}>
-          <div className={styles.loading}>{isError ? t('messages.content.history.loadFailed') : null}</div>
-        </LoadingSpinner>
+        {isError ? <div>{t('messages.content.history.loadFailed')}</div> : null}
       </SysFormModal>
     );
   }
@@ -81,38 +79,45 @@ function HistoryForm({ item, canWrite, onClose }: { item: AboutHistory | null; c
   const { confirm } = useSysDialogs();
   const save = useSaveAboutHistory();
   const remove = useDeleteAboutHistory();
-  const { errors, setError, clearError, clearAll, applyApiError } = useFieldErrors<FieldKey>();
-  const [values, setValues] = useState<FormState>(() => (item ? toState(item) : EMPTY));
+  const schema = useMemo(() => createHistorySchema(t), [t]);
 
-  const patch = (key: FieldKey, value: string) => {
-    setValues((prev) => ({ ...prev, [key]: value }));
-    clearError(key);
-  };
+  const {
+    control,
+    handleSubmit,
+    setError,
+    formState: { errors },
+  } = useForm<HistoryFormValues>({
+    resolver: zodResolver(schema),
+    defaultValues: {
+      year: item?.year ?? '',
+      periodVn: item?.periodVn ?? '',
+      periodEn: item?.periodEn ?? '',
+      contentVn: item?.contentVn ?? '',
+      contentEn: item?.contentEn ?? '',
+    },
+  });
 
-  const validate = (): boolean => {
-    clearAll();
-    let valid = true;
-    (Object.keys(REQUIRED_KEYS) as (keyof typeof REQUIRED_KEYS)[]).forEach((key) => {
-      if (!values[key].trim()) {
-        setError(key, t(REQUIRED_KEYS[key]));
-        valid = false;
-      }
-    });
-    if (values.year.trim() && !/^\d{4}$/.test(values.year.trim())) {
-      setError('year', t('messages.content.history.yearFormat'));
-      valid = false;
-    }
-    return valid;
-  };
+  const [contentVn, contentEn] = useWatch({ control, name: ['contentVn', 'contentEn'] });
 
-  const submit = async () => {
-    if (!validate()) return;
+  const onValidSubmit = async (values: HistoryFormValues) => {
     try {
       await save.mutateAsync({ pstNo: item?.pstNo ?? null, request: toRequest(values) });
       toast.success(isCreate ? SYS_MESSAGES.registered : SYS_MESSAGES.updated);
       onClose();
     } catch (error) {
-      if (!applyApiError(error)) toast.error(errorMessage(error));
+      const validation = apiValidationErrors(error);
+      if (validation) {
+        let mapped = false;
+        HISTORY_FIELDS.forEach((key) => {
+          const message = validation[key];
+          if (message) {
+            setError(key, { type: 'server', message });
+            mapped = true;
+          }
+        });
+        if (mapped) return;
+      }
+      toast.error(errorMessage(error));
     }
   };
 
@@ -120,7 +125,7 @@ function HistoryForm({ item, canWrite, onClose }: { item: AboutHistory | null; c
     if (!item) return;
     confirm({
       content: t('messages.content.history.confirmDelete'),
-      okText: SYS_DIALOG_LABELS.delete,
+      okText: t('common.delete'),
       danger: true,
       onOk: async () => {
         try {
@@ -134,7 +139,7 @@ function HistoryForm({ item, canWrite, onClose }: { item: AboutHistory | null; c
     });
   };
 
-  const counter = (value: string) => (
+  const counter = (value = '') => (
     <span className={styles.counter}>
       {value.length} / {CONTENT_MAX} characters
     </span>
@@ -148,69 +153,104 @@ function HistoryForm({ item, canWrite, onClose }: { item: AboutHistory | null; c
       open
       title={title}
       onCancel={onClose}
-      onSubmit={canWrite ? submit : undefined}
-      submitText={isCreate ? 'Register' : 'Edit'}
-      submitting={save.isPending}
+      onSubmit={canWrite ? () => void handleSubmit(onValidSubmit)() : undefined}
+      submitText={isCreate ? t('common.register') : t('common.edit')}
+      submitDisabled={save.isPending || remove.isPending}
       leftActions={
         !isCreate && canWrite ? (
-          <SysButton look="danger" loading={remove.isPending} onClick={askDelete}>
-            Delete
+          <SysButton look="danger" disabled={remove.isPending || save.isPending} onClick={askDelete}>
+            {t('common.delete')}
           </SysButton>
         ) : undefined
       }
     >
       <SysFieldGrid columns={1}>
-        <SysField label="Year" required error={errors.year}>
-          <TextInput
-            aria-label="Year"
-            value={values.year}
-            maxLength={4}
-            inputMode="numeric"
-            placeholder="e.g. 2014"
-            disabled={!canWrite}
-            onChange={(e) => patch('year', e.target.value.replace(/\D/g, ''))}
+        <SysField label="Year" required error={errors.year?.message}>
+          <Controller
+            name="year"
+            control={control}
+            render={({ field }) => (
+              <TextInput
+                aria-label="Year"
+                value={field.value}
+                maxLength={4}
+                inputMode="numeric"
+                placeholder="e.g. 2014"
+                disabled={!canWrite}
+                onChange={(e) => field.onChange(e.target.value.replace(/\D/g, ''))}
+                onBlur={field.onBlur}
+              />
+            )}
           />
         </SysField>
-        <SysField label="Period Label (VN)" required error={errors.periodVn}>
-          <TextInput
-            aria-label="Period Label (VN)"
-            value={values.periodVn}
-            maxLength={PERIOD_MAX}
-            placeholder="e.g. Năm 2013"
-            disabled={!canWrite}
-            onChange={(e) => patch('periodVn', e.target.value)}
+        <SysField label="Period Label (VN)" required error={errors.periodVn?.message}>
+          <Controller
+            name="periodVn"
+            control={control}
+            render={({ field }) => (
+              <TextInput
+                aria-label="Period Label (VN)"
+                value={field.value}
+                maxLength={PERIOD_MAX}
+                placeholder="e.g. Năm 2013"
+                disabled={!canWrite}
+                onChange={field.onChange}
+                onBlur={field.onBlur}
+              />
+            )}
           />
         </SysField>
-        <SysField label="Period Label (EN)" error={errors.periodEn}>
-          <TextInput
-            aria-label="Period Label (EN)"
-            value={values.periodEn}
-            maxLength={PERIOD_MAX}
-            placeholder="e.g. 2013"
-            disabled={!canWrite}
-            onChange={(e) => patch('periodEn', e.target.value)}
+        <SysField label="Period Label (EN)" error={errors.periodEn?.message}>
+          <Controller
+            name="periodEn"
+            control={control}
+            render={({ field }) => (
+              <TextInput
+                aria-label="Period Label (EN)"
+                value={field.value}
+                maxLength={PERIOD_MAX}
+                placeholder="e.g. 2013"
+                disabled={!canWrite}
+                onChange={field.onChange}
+                onBlur={field.onBlur}
+              />
+            )}
           />
         </SysField>
-        <SysField label="Content (VN)" required error={errors.contentVn} hint={counter(values.contentVn)}>
-          <TextArea
-            aria-label="Content (VN)"
-            className={styles.content}
-            rows={3}
-            value={values.contentVn}
-            maxLength={CONTENT_MAX}
-            disabled={!canWrite}
-            onChange={(e) => patch('contentVn', e.target.value)}
+        <SysField label="Content (VN)" required error={errors.contentVn?.message} hint={counter(contentVn)}>
+          <Controller
+            name="contentVn"
+            control={control}
+            render={({ field }) => (
+              <TextArea
+                aria-label="Content (VN)"
+                className={styles.content}
+                rows={3}
+                value={field.value}
+                maxLength={CONTENT_MAX}
+                disabled={!canWrite}
+                onChange={field.onChange}
+                onBlur={field.onBlur}
+              />
+            )}
           />
         </SysField>
-        <SysField label="Content (EN)" error={errors.contentEn} hint={counter(values.contentEn)}>
-          <TextArea
-            aria-label="Content (EN)"
-            className={styles.content}
-            rows={3}
-            value={values.contentEn}
-            maxLength={CONTENT_MAX}
-            disabled={!canWrite}
-            onChange={(e) => patch('contentEn', e.target.value)}
+        <SysField label="Content (EN)" error={errors.contentEn?.message} hint={counter(contentEn)}>
+          <Controller
+            name="contentEn"
+            control={control}
+            render={({ field }) => (
+              <TextArea
+                aria-label="Content (EN)"
+                className={styles.content}
+                rows={3}
+                value={field.value}
+                maxLength={CONTENT_MAX}
+                disabled={!canWrite}
+                onChange={field.onChange}
+                onBlur={field.onBlur}
+              />
+            )}
           />
         </SysField>
       </SysFieldGrid>
