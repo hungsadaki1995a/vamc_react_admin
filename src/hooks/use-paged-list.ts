@@ -1,10 +1,13 @@
 import { useCallback, useMemo, useState } from 'react';
 import type { PageQuery, SortDirection } from '@/api/common/api-utils';
 import { SYS_PAGE_SIZE } from '@/config/sys-constants';
+import { isSameQuery } from '@/utils/query-utils';
 
 // Search / paging / sort state of a v0.8 list screen.
 // The filter panel edits `draft`; [Search] copies it to `applied` and returns to page 1.
 // Page moves keep the applied filter and the sort ("Search conditions and sort are kept").
+// [Search] / [Reset] return false when the query key stays the same (same filter, already page 1): the screen
+// then refetches, so pressing the button again always reloads — `if (!list.search()) void refetch();`.
 
 export interface SortState {
   sortBy: string;
@@ -21,10 +24,10 @@ export interface PagedListState<F> {
   /** `page` / `size` / `sortBy` / `sortDirection` for the list call. */
   pageQuery: PageQuery;
   setDraft: (patch: Partial<F>) => void;
-  /** [Search]: applies the draft (optionally patched first) and goes to page 1. */
-  search: (patch?: Partial<F>) => void;
-  /** [Reset]: restores the initial filter, page 1, default sort. */
-  reset: () => void;
+  /** [Search]: applies the draft (optionally patched first) and goes to page 1. False = query unchanged, refetch it. */
+  search: (patch?: Partial<F>) => boolean;
+  /** [Reset]: restores the initial filter, page 1, default sort. False = query unchanged, refetch it. */
+  reset: () => boolean;
   setPage: (page: number) => void;
   setSort: (sort?: SortState) => void;
 }
@@ -53,8 +56,9 @@ export function usePagedList<F>(
       if (patch) setDraftState(next);
       setApplied(next);
       setPage(1);
+      return page !== 1 || !isSameQuery(next, applied);
     },
-    [draft],
+    [draft, applied, page],
   );
 
   const reset = useCallback(() => {
@@ -62,7 +66,8 @@ export function usePagedList<F>(
     setApplied(initial);
     setPage(1);
     setSortState(defaultSort);
-  }, [initial, defaultSort]);
+    return page !== 1 || !isSameQuery(initial, applied) || !isSameQuery(defaultSort, sort);
+  }, [initial, defaultSort, applied, page, sort]);
 
   const setSort = useCallback((next?: SortState) => {
     setSortState(next);

@@ -55,7 +55,7 @@ export default function RegionCodeManagement() {
   const [modalItem, setModalItem] = useState<ProvinceItem | null | undefined>(undefined);
   const dirty = useRef(false);
 
-  const { data, isFetching } = useProvinces(list.applied, list.pageQuery);
+  const { data, isFetching, refetch } = useProvinces(list.applied, list.pageQuery);
   const districtsQuery = useDistricts(selected?.mctpvCd ?? null);
   const saveDistricts = useBatchSaveDistricts();
   const excel = useDownloadProvincesExcel();
@@ -153,7 +153,7 @@ export default function RegionCodeManagement() {
             value={list.draft.mctpvCd}
             allowClear
             onChange={(e) => list.setDraft({ mctpvCd: e.target.value })}
-            onPressEnter={() => list.search()}
+            onPressEnter={() => { if (!list.search()) void refetch(); }}
           />
         </SysFilterItem>
         <SysFilterItem label="Province / City Name">
@@ -161,11 +161,11 @@ export default function RegionCodeManagement() {
             value={list.draft.mctpvNm}
             allowClear
             onChange={(e) => list.setDraft({ mctpvNm: e.target.value })}
-            onPressEnter={() => list.search()}
+            onPressEnter={() => { if (!list.search()) void refetch(); }}
           />
         </SysFilterItem>
       </SysFilterPanel>
-      <SysSearchActions onReset={list.reset} onSearch={() => list.search()} loading={isFetching} />
+      <SysSearchActions onReset={() => { if (!list.reset()) void refetch(); }} onSearch={() => { if (!list.search()) void refetch(); }} loading={isFetching} />
 
       <SysSplit
         ratio="1fr 1fr"

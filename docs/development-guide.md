@@ -59,7 +59,7 @@ export default function FeeManagement() {
   const { canWrite } = useMenuPermission();
   const list = usePagedList<FeeFilter>(INITIAL_FILTER);
   const search = toSearch(list.applied);
-  const { data, isFetching } = useFees(search, list.pageQuery);
+  const { data, isFetching, refetch } = useFees(search, list.pageQuery);
   const excel = useDownloadFeeExcel();
   const [modal, setModal] = useState<ModalState>(null);
   const total = data?.totalElements ?? 0;
@@ -75,10 +75,10 @@ export default function FeeManagement() {
         <SysFilterItem label="Item/Content">
           <TextInput value={list.draft.keyword} allowClear
             onChange={(e) => list.setDraft({ keyword: e.target.value })}
-            onPressEnter={() => list.search()} />
+            onPressEnter={() => { if (!list.search()) void refetch(); }} />
         </SysFilterItem>
       </SysFilterPanel>
-      <SysSearchActions onReset={list.reset} onSearch={() => list.search()} loading={isFetching} />
+      <SysSearchActions onReset={() => { if (!list.reset()) void refetch(); }} onSearch={() => { if (!list.search()) void refetch(); }} loading={isFetching} />
       <SysSectionHeader
         total={total}
         actions={<SysExcelButton onClick={() => excel.mutate(search)} loading={excel.isPending} />}

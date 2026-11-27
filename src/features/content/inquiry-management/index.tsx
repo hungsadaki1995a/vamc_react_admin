@@ -188,7 +188,7 @@ export default function InquiryManagement() {
       alert(t('messages.content.inquiry.periodBoth'));
       return;
     }
-    list.search({ keyword: list.draft.keyword.trim(), period: from && to ? [from, to] : null });
+    if (!list.search({ keyword: list.draft.keyword.trim(), period: from && to ? [from, to] : null })) void refetch();
   };
 
   const filtered =
@@ -237,7 +237,7 @@ export default function InquiryManagement() {
           />
         </SysFilterItem>
       </SysFilterPanel>
-      <SysSearchActions onReset={list.reset} onSearch={handleSearch} loading={isFetching} />
+      <SysSearchActions onReset={() => { if (!list.reset()) void refetch(); }} onSearch={handleSearch} loading={isFetching} />
       <SysSectionHeader
         total={total}
         actions={

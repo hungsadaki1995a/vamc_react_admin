@@ -46,7 +46,7 @@ const TRADE_PREFIXES = [
 ] as const;
 const TRADE_STAGES = ['RCPT', 'CTRT', 'SIGN', 'ANX', 'END', 'END_SIGN'] as const;
 
-/** Process filter options: every trade stage per kind, the consulting report, the member sign-up. */
+/** Process filter options: every trade stage per kind, the consulting report, the member and auction processes. */
 function processOptions(t: TFunction) {
   const option = (kind: (typeof TRADE_PREFIXES)[number]['kind'], stage: string) =>
     t('approval.inbox.processOption', { kind: t(`approval.inbox.kinds.${kind}`), stage: codeLabel('approval.stages', stage) });
@@ -60,6 +60,9 @@ function processOptions(t: TFunction) {
     ),
     { value: 'PROC_CNSLT_RPTP', label: option('consulting', 'RPTP') },
     { value: 'PROC_MBR_JOIN', label: t('approval.inbox.memberSignup') },
+    { value: 'PROC_MBR_LOSS', label: t('approval.inbox.memberLoss') },
+    { value: 'PROC_MBR_RSTR', label: t('approval.inbox.memberRestore') },
+    { value: 'PROC_AUCTN_PBANC', label: t('approval.inbox.auctionNotice') },
   ];
 }
 
@@ -88,7 +91,15 @@ export default function ApprovalManagement() {
   const [popup, setPopup] = useState<PopupState>(null);
 
   const search = { kind: kind === 'all' ? undefined : kind, atrzProcCd: atrzProcCd || undefined };
-  const { data, isFetching } = useApprovalInbox(search, { page, size: PAGE_SIZE });
+  const { data, isFetching, refetch } = useApprovalInbox(search, { page, size: PAGE_SIZE });
+
+  /** Same process + kind on page 1 keeps the query key, so reload it explicitly (the button always searches). */
+  const applyFilter = (nextKind: ApprovalInboxKind | 'all', nextProc: string) => {
+    if (page === 1 && nextKind === kind && nextProc === atrzProcCd) void refetch();
+    setKind(nextKind);
+    setAtrzProcCd(nextProc);
+    setPage(1);
+  };
   const { data: summary } = useApprovalInboxSummary();
   const canWriteMenu = useMenuWriteCheck();
   const openTarget = useOpenApprovalTarget();
@@ -161,13 +172,9 @@ export default function ApprovalManagement() {
         title={t('approval.inbox.title')}
         onReset={() => {
           setProcDraft('');
-          setAtrzProcCd('');
-          selectKind('all');
+          applyFilter('all', '');
         }}
-        onSearch={() => {
-          setAtrzProcCd(procDraft);
-          setPage(1);
-        }}
+        onSearch={() => applyFilter(kind, procDraft)}
         filterCollapsed={filterCollapsed}
         onToggleFilter={() => setFilterCollapsed((v) => !v)}
       />

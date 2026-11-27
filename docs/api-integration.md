@@ -23,7 +23,7 @@ headers          Content-Type / Accept: application/json
 | `Accept-Language` | ISO tag of the locale | always |
 | `X-Menu-Cd` | active tab key, if it is a 9-char menu code | for audit log `MENU_CD` |
 
-Also: removes `Content-Type` for `FormData`, increments `loading-store` (global spinner), and binds the request to the active tab so closing the tab aborts it (except auth/menu/label/code calls).
+Also: removes `Content-Type` for `FormData`, increments `loading-store` (reads → top progress bar only; writes and blob downloads → full-screen spinner; override per request with `blockUi: true | false`), and binds the request to the active tab so closing the tab aborts it (except auth/menu/label/code calls).
 
 ### Response interceptor
 

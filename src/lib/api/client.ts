@@ -9,6 +9,7 @@ import { useLocaleStore } from '@/stores/locale-store';
 import { toIsoLangTag } from '@/utils/locale-storage';
 import { useLabelStore } from '@/stores/label-store';
 import { useLoadingStore } from '@/stores/loading-store';
+import type { LoadingKind } from '@/stores/loading-store';
 import { useTabStore } from '@/stores/tab-store';
 import { PUBLIC_ROUTES, buildLoginRedirectUrl } from '@/app/route-constants';
 import { registerTabRequest, unregisterTabRequest } from './tab-request-registry';
@@ -18,12 +19,36 @@ interface RetryableConfig extends InternalAxiosRequestConfig {
   _retry?: boolean;
   __tabKey?: string;
   __tabCtrl?: AbortController;
+  /** Loading counter this request incremented; cleared once decremented (retries count once). */
+  __loading?: LoadingKind;
   skipErrorToast?: boolean;
+}
+
+/** Reads only show the top progress bar; writes and file downloads block the screen against double submits. */
+function loadingKindOf(config: RetryableConfig): LoadingKind {
+  if (config.blockUi !== undefined) return config.blockUi ? 'blocking' : 'background';
+  const method = (config.method ?? 'get').toLowerCase();
+  return method !== 'get' || config.responseType === 'blob' ? 'blocking' : 'background';
+}
+
+function startLoading(config: RetryableConfig) {
+  if (config.__loading) return;
+  config.__loading = loadingKindOf(config);
+  useLoadingStore.getState().increment(config.__loading);
+}
+
+function stopLoading(config: InternalAxiosRequestConfig | undefined) {
+  const cfg = config as RetryableConfig | undefined;
+  if (!cfg?.__loading) return;
+  useLoadingStore.getState().decrement(cfg.__loading);
+  cfg.__loading = undefined;
 }
 
 declare module 'axios' {
   interface AxiosRequestConfig {
     skipErrorToast?: boolean;
+    /** Force (true) or skip (false) the full-screen overlay; default: writes and downloads block, reads do not. */
+    blockUi?: boolean;
   }
 }
 
@@ -110,7 +135,7 @@ apiClient.interceptors.request.use((config) => {
     delete config.headers['Content-Type'];
   }
 
-  useLoadingStore.getState().increment();
+  startLoading(config as RetryableConfig);
 
   // Tab binding: register active tab's requests in the registry so they can be batch-aborted on tab close
   const cfg = config as RetryableConfig;
@@ -135,13 +160,13 @@ apiClient.interceptors.request.use((config) => {
 apiClient.interceptors.response.use(
   (response) => {
     cleanupTabBinding(response.config);
-    useLoadingStore.getState().decrement();
+    stopLoading(response.config);
     return response;
   },
 
   async (error: AxiosError) => {
     cleanupTabBinding(error.config);
-    useLoadingStore.getState().decrement();
+    stopLoading(error.config);
     const config = error.config as RetryableConfig | undefined;
 
     // Pass through requests canceled by tab close etc. silently (no toast/conversion)

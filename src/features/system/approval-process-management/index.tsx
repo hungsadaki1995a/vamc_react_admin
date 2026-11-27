@@ -40,7 +40,7 @@ export default function ApprovalProcessManagement() {
   const list = usePagedList<ApprovalProcessSearch>(INITIAL_FILTER);
   // undefined = closed, null = register, string = row opened.
   const [openId, setOpenId] = useState<string | null | undefined>(undefined);
-  const { data, isFetching } = useApprovalProcesses(list.applied, list.pageQuery);
+  const { data, isFetching, refetch } = useApprovalProcesses(list.applied, list.pageQuery);
   const updateStatus = useUpdateApprovalProcessStatus();
 
   const changeStatus = (row: ApprovalProcessItem, active: boolean) => {
@@ -99,14 +99,14 @@ export default function ApprovalProcessManagement() {
             placeholder="Process code or name"
             value={list.draft.keyword}
             onChange={(e) => list.setDraft({ keyword: e.target.value })}
-            onPressEnter={() => list.search()}
+            onPressEnter={() => { if (!list.search()) void refetch(); }}
           />
         </SysFilterItem>
         <SysFilterItem label="Use">
           <AppSelect options={USE_YN_FILTER_OPTIONS} value={list.draft.useYn} onChange={(useYn) => list.setDraft({ useYn })} />
         </SysFilterItem>
       </SysFilterPanel>
-      <SysSearchActions onReset={list.reset} onSearch={() => list.search()} loading={isFetching} />
+      <SysSearchActions onReset={() => { if (!list.reset()) void refetch(); }} onSearch={() => { if (!list.search()) void refetch(); }} loading={isFetching} />
 
       <SysSectionHeader
         total={data?.totalElements ?? 0}

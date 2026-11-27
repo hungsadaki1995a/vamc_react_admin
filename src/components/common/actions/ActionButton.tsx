@@ -28,12 +28,14 @@ const INTENT_CLASSES: Record<ActionButtonIntent, string> = {
 
 type ActionDefaults = {
   intent: ActionButtonIntent;
+  appearance?: ActionButtonAppearance;
   icon?: ButtonProps['icon'];
 };
 
 const ACTION_DEFAULTS: Record<ActionButtonAction, ActionDefaults> = {
-  reset: { intent: 'quaternary', icon: <ReloadOutlined /> },
-  search: { intent: 'quaternary', icon: <SearchOutlined /> },
+  // Filter [Reset] / [Search]: one look on every screen — set the colour here, never per call site.
+  reset: { intent: 'primary', appearance: 'outlined', icon: <ReloadOutlined /> },
+  search: { intent: 'primary', appearance: 'filled', icon: <SearchOutlined /> },
   copy: { intent: 'quaternary' },
   addRow: { intent: 'quaternary' },
   deleteRow: { intent: 'danger' },
@@ -68,7 +70,9 @@ export default function ActionButton({
 }: ActionButtonProps) {
   const defaults = action ? ACTION_DEFAULTS[action] : undefined;
   const resolvedIntent = intent ?? defaults?.intent ?? 'quaternary';
-  const resolvedAppearance = appearance ?? resolveDefaultAppearance(resolvedIntent);
+  // An explicit intent brings its own default appearance; otherwise the action's.
+  const resolvedAppearance =
+    appearance ?? (intent ? undefined : defaults?.appearance) ?? resolveDefaultAppearance(resolvedIntent);
   const resolvedType =
     type ??
     (resolvedIntent === 'primary' && resolvedAppearance === 'filled'

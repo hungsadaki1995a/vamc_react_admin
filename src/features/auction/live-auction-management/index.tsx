@@ -13,6 +13,7 @@ import { DateTimeCell, SysPageHeader, SysPagination } from '@/components/common/
 import { SYS_MESSAGES } from '@/config/sys-messages';
 import { errorMessage, rowNumber } from '@/utils/system-utils';
 import styles from '@/components/common/sys-ui/system-page.module.scss';
+import { isSameQuery } from '@/utils/query-utils';
 import { useCloseLiveAuction, useLiveAuction, useLiveAuctions, useStartLiveAuction } from './use-live-auctions';
 import type { LiveAuctionSearch } from './use-live-auctions';
 
@@ -29,7 +30,14 @@ export default function LiveAuctionManagement() {
   const [page, setPage] = useState(1);
   const [detailId, setDetailId] = useState<string | null>(null);
 
-  const { data, isFetching } = useLiveAuctions(applied, page, PAGE_SIZE);
+  const { data, isFetching, refetch } = useLiveAuctions(applied, page, PAGE_SIZE);
+
+  /** Same query on page 1 keeps the key, so reload it explicitly (the button always searches). */
+  const applySearch = (next: LiveAuctionSearch) => {
+    if (page === 1 && isSameQuery(next, applied)) void refetch();
+    setApplied(next);
+    setPage(1);
+  };
   const { data: detail } = useLiveAuction(detailId);
   const startLiveAuction = useStartLiveAuction();
   const closeLiveAuction = useCloseLiveAuction();
@@ -78,13 +86,13 @@ export default function LiveAuctionManagement() {
       <SysPageHeader
         breadcrumb={['Auction Management', 'Live Online Auction Management']}
         title="Live Online Auction Management"
-        onReset={() => { setKeyword(''); setApplied({}); setPage(1); }}
-        onSearch={() => { setApplied({ keyword: keyword.trim() || undefined }); setPage(1); }}
+        onReset={() => { setKeyword(''); applySearch({}); }}
+        onSearch={() => applySearch({ keyword: keyword.trim() || undefined })}
       />
       <div className={styles.filterCard}>
         <div className={styles.filterGroup}>
           <span className={styles.filterLabel}>Keyword</span>
-          <TextInput className={styles.filterInput} placeholder="Auction no or name" value={keyword} onChange={(e) => setKeyword(e.target.value)} onPressEnter={() => { setApplied({ keyword: keyword.trim() || undefined }); setPage(1); }} allowClear />
+          <TextInput className={styles.filterInput} placeholder="Auction no or name" value={keyword} onChange={(e) => setKeyword(e.target.value)} onPressEnter={() => applySearch({ keyword: keyword.trim() || undefined })} allowClear />
         </div>
       </div>
       <div className={styles.summaryRow}><span className={styles.totalCount}>Total ({total})</span></div>

@@ -10,6 +10,7 @@ import type { CollateralAssetItem, CollateralSearch } from '@/api/npl/npl-api';
 import { SysPageHeader, SysPagination } from '@/components/common/sys-ui/SystemUi';
 import { rowNumber } from '@/utils/system-utils';
 import styles from '@/components/common/sys-ui/system-page.module.scss';
+import { isSameQuery } from '@/utils/query-utils';
 import { useCollateralAsset, useCollateralAssets, useDownloadCollateralAssetsExcel } from './use-collateral-assets';
 
 const PAGE_SIZE = 15;
@@ -25,21 +26,26 @@ export default function CollateralAssetManagement() {
   const [filterCollapsed, setFilterCollapsed] = useState(false);
   const [detailId, setDetailId] = useState<string | null>(null);
 
-  const { data, isFetching } = useCollateralAssets(applied, page, PAGE_SIZE);
+  const { data, isFetching, refetch } = useCollateralAssets(applied, page, PAGE_SIZE);
   const { data: detail } = useCollateralAsset(detailId);
   const downloadExcel = useDownloadCollateralAssetsExcel();
 
   const rows = data?.content ?? [];
   const total = data?.totalElements ?? 0;
 
+  /** Same query on page 1 keeps the key, so reload it explicitly (the button always searches). */
+  const applySearch = (next: CollateralSearch) => {
+    if (page === 1 && isSameQuery(next, applied)) void refetch();
+    setApplied(next);
+    setPage(1);
+  };
   const handleSearch = () => {
-    setApplied({
+    applySearch({
       expsrYn: expsrYn || undefined,
       notarYn: notarYn || undefined,
       cltrAstCd: cltrAstCd.trim() || undefined,
       cltrAstNm: cltrAstNm.trim() || undefined,
     });
-    setPage(1);
   };
 
   const handleReset = () => {
@@ -47,8 +53,7 @@ export default function CollateralAssetManagement() {
     setNotarYn('');
     setCltrAstCd('');
     setCltrAstNm('');
-    setApplied({});
-    setPage(1);
+    applySearch({});
   };
 
   const columns: TableColumnsType<CollateralAssetItem> = [

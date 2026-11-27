@@ -87,7 +87,7 @@ export default function LabelManagement() {
 
   const list = usePagedList<LabelFilter>(INITIAL_FILTER);
   const search = useMemo(() => toSearch(list.applied), [list.applied]);
-  const { data, isFetching } = useLabels(search, list.pageQuery);
+  const { data, isFetching, refetch } = useLabels(search, list.pageQuery);
   const { data: languages = [] } = useLabelLanguages();
 
   const [selected, setSelected] = useState<LabelKey | null>(null);
@@ -267,7 +267,7 @@ export default function LabelManagement() {
             maxLength={100}
             allowClear
             onChange={(e) => list.setDraft({ lblKey: e.target.value })}
-            onPressEnter={() => guarded(() => list.search())}
+            onPressEnter={() => guarded(() => { if (!list.search()) void refetch(); })}
           />
         </SysFilterItem>
         <SysFilterItem label="Text">
@@ -276,7 +276,7 @@ export default function LabelManagement() {
             maxLength={100}
             allowClear
             onChange={(e) => list.setDraft({ keyword: e.target.value })}
-            onPressEnter={() => guarded(() => list.search())}
+            onPressEnter={() => guarded(() => { if (!list.search()) void refetch(); })}
           />
         </SysFilterItem>
         <SysFilterItem label="Translation Status">
@@ -290,8 +290,8 @@ export default function LabelManagement() {
         </SysFilterItem>
       </SysFilterPanel>
       <SysSearchActions
-        onReset={() => guarded(list.reset)}
-        onSearch={() => guarded(() => list.search())}
+        onReset={() => guarded(() => { if (!list.reset()) void refetch(); })}
+        onSearch={() => guarded(() => { if (!list.search()) void refetch(); })}
         loading={isFetching}
       />
 

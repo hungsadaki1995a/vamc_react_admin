@@ -33,7 +33,10 @@ Button with design presets. `action` picks icon + default look, `intent` / `appe
 | …antd `ButtonProps` | |
 
 ```tsx
-<ActionButton action="search" intent="primary" appearance="filled" onClick={onSearch}>Search</ActionButton>
+// Filter buttons take their look from the action (search = blue filled, reset = blue outlined): never pass intent/appearance.
+<ActionButton action="search" onClick={onSearch}>Search</ActionButton>
+// Field lookup (opens a picker popup) is a different role: grey outlined.
+<ActionButton action="search" intent="quaternary" appearance="outlined" onClick={openPicker}>Search</ActionButton>
 
 <ActionButtonGroup preset="gridEdit" canWrite={canWrite} items={[
   { key: 'add', action: 'addRow', label: 'Add Row', onClick: addRow },
@@ -98,7 +101,7 @@ antd `Table` with design tokens; defaults `size="small"`, `pagination={false}` (
 | `ProgressStepper` | `steps: { key, label, status? }[]`, `current` |
 | `AppTooltip` | antd `Tooltip` + `variant` (`default` \| `information` \| `coachmark`), `title`, `description`, `closable` |
 | `TreeView<T>` | tree list — `nodes`, `selectedKey`, `expandedKeys`/`defaultExpandedKeys`, `onSelect`, `onToggleExpand`, drag handlers, `renderExtra` |
-| `GlobalLoadingSpinner` | mounted once in `App.tsx`, follows `loading-store` |
+| `GlobalLoadingSpinner` | mounted once in `App.tsx`, follows `loading-store`: reads → thin top bar (after 150 ms, screen stays usable); writes / downloads → full-screen spinner (after 300 ms) |
 | `LanguageSelector` | `en` / `vn` switcher bound to `locale-store` |
 
 ---
@@ -140,7 +143,7 @@ All wrap the antd control and keep its props; `className` is merged with the des
 | `Header`, `IconRail`, `FlyoutPanel` | app shell — used by `AppLayout` only |
 
 ```tsx
-<FilterPanel onSearch={() => list.search()} onReset={list.reset}>
+<FilterPanel onSearch={() => { if (!list.search()) void refetch(); }} onReset={() => { if (!list.reset()) void refetch(); }}>
   <TextInput value={list.draft.keyword} onChange={(e) => list.setDraft({ keyword: e.target.value })} />
 </FilterPanel>
 <GridToolbar totalCount={total} actions={canWrite && <ActionButton action="register" onClick={openNew}>Register</ActionButton>} />

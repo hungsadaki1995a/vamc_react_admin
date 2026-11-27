@@ -88,7 +88,7 @@ export default function BatchManagement() {
   const { canWrite } = useMenuPermission();
 
   const list = usePagedList<BatchJobSearch>({ useYn: '', btchGroup: '', btchJobNm: '' });
-  const { data, isFetching } = useBatchJobs(list.applied, list.pageQuery);
+  const { data, isFetching, refetch } = useBatchJobs(list.applied, list.pageQuery);
   const download = useDownloadBatchJobs();
   const refresh = useRefreshBatchSchedules();
 
@@ -128,7 +128,7 @@ export default function BatchManagement() {
             maxLength={50}
             allowClear
             onChange={(e) => list.setDraft({ btchGroup: e.target.value })}
-            onPressEnter={() => list.search()}
+            onPressEnter={() => { if (!list.search()) void refetch(); }}
           />
         </SysFilterItem>
         <SysFilterItem label="Job Name">
@@ -137,11 +137,11 @@ export default function BatchManagement() {
             maxLength={100}
             allowClear
             onChange={(e) => list.setDraft({ btchJobNm: e.target.value })}
-            onPressEnter={() => list.search()}
+            onPressEnter={() => { if (!list.search()) void refetch(); }}
           />
         </SysFilterItem>
       </SysFilterPanel>
-      <SysSearchActions onReset={list.reset} onSearch={() => list.search()} loading={isFetching} />
+      <SysSearchActions onReset={() => { if (!list.reset()) void refetch(); }} onSearch={() => { if (!list.search()) void refetch(); }} loading={isFetching} />
       <SysSectionHeader
         total={total}
         actions={

@@ -60,7 +60,7 @@ main.tsx → <QueryClientProvider> → App.tsx
                              reload common codes, menus (if logged in), labels
     <ConfigProvider theme={APP_THEME} locale={antLocale}>
       <AntApp>
-        GlobalLoadingSpinner   driven by loading-store (request counter)
+        GlobalLoadingSpinner   driven by loading-store (top bar for reads, overlay for writes)
         ApiNotifyBridge        wires axios interceptor toasts to antd message
         AppRoutes              /login, /find-id, /find-password, private routes → AuthGuard → AppLayout
 ```
@@ -87,7 +87,7 @@ TabContent            → componentRegistry[tab.componentKey] (lazy) inside <Tab
 | `label-store` | DB label map + `t()` | IndexedDB cache, 5 min TTL |
 | `common-code-store` | all common codes + `getOptions` / `getCodeName` | IndexedDB cache, 5 min TTL |
 | `settings-store` | personal settings (home menu key) | ✅ `vamc-settings` |
-| `loading-store` | global request counter for the spinner | ❌ |
+| `loading-store` | request counters: `background` (reads → top bar), `blocking` (writes / downloads → overlay) | ❌ |
 
 Stores hold app-wide client state only. Business data from the server goes through React Query hooks, not stores.
 

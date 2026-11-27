@@ -55,7 +55,7 @@ export default function FinanceCodeManagement() {
   const [modalItem, setModalItem] = useState<InstitutionItem | null | undefined>(undefined);
   const dirty = useRef(false);
 
-  const { data, isFetching } = useInstitutions(list.applied, list.pageQuery);
+  const { data, isFetching, refetch } = useInstitutions(list.applied, list.pageQuery);
   const branchesQuery = useBranches(selected?.fnstCd ?? null);
   const saveBranches = useBatchSaveBranches();
   const excel = useDownloadInstitutionsExcel();
@@ -173,7 +173,7 @@ export default function FinanceCodeManagement() {
             value={list.draft.fnstCd}
             allowClear
             onChange={(e) => list.setDraft({ fnstCd: e.target.value })}
-            onPressEnter={() => list.search()}
+            onPressEnter={() => { if (!list.search()) void refetch(); }}
           />
         </SysFilterItem>
         <SysFilterItem label="Institution Name">
@@ -181,11 +181,11 @@ export default function FinanceCodeManagement() {
             value={list.draft.fnstNm}
             allowClear
             onChange={(e) => list.setDraft({ fnstNm: e.target.value })}
-            onPressEnter={() => list.search()}
+            onPressEnter={() => { if (!list.search()) void refetch(); }}
           />
         </SysFilterItem>
       </SysFilterPanel>
-      <SysSearchActions onReset={list.reset} onSearch={() => list.search()} loading={isFetching} />
+      <SysSearchActions onReset={() => { if (!list.reset()) void refetch(); }} onSearch={() => { if (!list.search()) void refetch(); }} loading={isFetching} />
 
       <SysSplit
         ratio="1fr 1fr"
