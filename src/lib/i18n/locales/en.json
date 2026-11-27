@@ -649,6 +649,18 @@
         "selectReason": "Select a reason.",
         "stopped": "Zalo sending stopped.",
         "resumed": "Zalo sending resumed."
+      },
+      "connection": {
+        "testDemo": "Demo mode: no call was made to Zalo.",
+        "testOk": "Connection OK.",
+        "testFailed": "Connection test failed.",
+        "refreshed": "Token refreshed.",
+        "refreshDemo": "Demo mode: there is no token to refresh.",
+        "refreshLater": "Token refresh arrives with the live integration.",
+        "autoOn": "Automatic refresh turned on.",
+        "autoOff": "Automatic refresh turned off.",
+        "urlCopied": "Webhook URL copied.",
+        "copyFailed": "Could not copy to the clipboard."
       }
     }
   },
@@ -1673,6 +1685,87 @@
         "held": "Held Since Stop",
         "heldNote": "sends not delivered (logged as failed: channel stopped). They are not sent again on resume.",
         "resumeNow": "Resume Sending"
+      }
+    },
+    "connection": {
+      "title": "Zalo OA Connection",
+      "summary": {
+        "mode": "Mode",
+        "connection": "Connection",
+        "token": "Access Token",
+        "webhook": "Last Webhook"
+      },
+      "mode": {
+        "demo": "Demo (simulated)",
+        "live": "Live"
+      },
+      "state": {
+        "connected": "Connected",
+        "notConnected": "Not connected"
+      },
+      "notSet": "Not set on the server",
+      "buttons": {
+        "test": "Test Connection",
+        "refresh": "Refresh Token Now",
+        "copyUrl": "Copy URL"
+      },
+      "oa": {
+        "title": "Official Account",
+        "oaId": "OA ID",
+        "oaName": "OA Name",
+        "appId": "Zalo App ID",
+        "secret": "App Secret / OA Secret",
+        "secretSet": "Set on the server · never shown or stored here",
+        "secretNotSet": "Not set on the server · never shown or stored here",
+        "followLink": "OA Follow Link",
+        "lastCheck": "Last Check",
+        "notChecked": "Not checked in this session",
+        "checkDemo": "{{at}} · Demo mode, no call made",
+        "checkOk": "{{at}} · OK, OA \"{{name}}\" reachable ({{ms}} ms)",
+        "checkFailed": "{{at}} · Failed: {{message}}"
+      },
+      "token": {
+        "title": "OA Token",
+        "access": "Access Token",
+        "refresh": "Refresh Token",
+        "expires": "Expires {{at}}",
+        "notUsed": "Not used in demo mode",
+        "none": "No token stored",
+        "expired": "Expired",
+        "hoursLeft": "{{count}} hours left",
+        "auto": "Automatic Refresh",
+        "autoOn": "On · 1 hour before the access token expires",
+        "autoOff": "Off · sending stops when the access token expires",
+        "lastRefreshed": "Last Refreshed",
+        "alert": "Alert Before Expiry",
+        "alertText": "E-mail the system administrators when the refresh token has under 7 days left or a refresh fails"
+      },
+      "webhook": {
+        "title": "Webhook",
+        "url": "Webhook URL",
+        "urlPlaceholder": "Not deployed yet · https://[YOUR DOMAIN]/api/public/zalo/webhook",
+        "signature": "Signature Check",
+        "signatureOn": "On · requests without a valid X-ZEvent-Signature are rejected",
+        "signatureOff": "Off",
+        "events": "Events Handled",
+        "lastEvent": "Last Event",
+        "none": "None yet",
+        "noneDemo": "None (demo mode)"
+      },
+      "log": {
+        "title": "Connection Log",
+        "columns": {
+          "at": "Time",
+          "event": "Event",
+          "result": "Result",
+          "detail": "Detail"
+        },
+        "empty": "No connection events yet",
+        "emptyDemo": "No connection events in demo mode"
+      },
+      "footnote": {
+        "demo": "Demo mode: nothing reaches Zalo, every send gets a MOCK-… id. Switch to Live on the server (ZALO_ENABLED) once VAMC provides the OA, the app and the ZNS contract.",
+        "live": "Live mode. A failed token refresh or 3 rejected webhook calls in 10 minutes e-mails the system administrators."
       }
     }
   }

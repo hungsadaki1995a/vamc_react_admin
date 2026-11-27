@@ -649,6 +649,18 @@
         "selectReason": "Chọn lý do.",
         "stopped": "Đã dừng gửi Zalo.",
         "resumed": "Đã mở lại gửi Zalo."
+      },
+      "connection": {
+        "testDemo": "Chế độ demo: không gọi tới Zalo.",
+        "testOk": "Kết nối OK.",
+        "testFailed": "Kiểm tra kết nối thất bại.",
+        "refreshed": "Đã làm mới token.",
+        "refreshDemo": "Chế độ demo: không có token để làm mới.",
+        "refreshLater": "Làm mới token sẽ có khi tích hợp thật.",
+        "autoOn": "Đã bật tự làm mới.",
+        "autoOff": "Đã tắt tự làm mới.",
+        "urlCopied": "Đã sao chép Webhook URL.",
+        "copyFailed": "Không sao chép được."
       }
     }
   },
@@ -1673,6 +1685,87 @@
         "held": "Bị giữ từ khi dừng",
         "heldNote": "lượt không được gửi (ghi thất bại: kênh đã dừng). Các lượt này không được gửi lại khi mở kênh.",
         "resumeNow": "Mở lại kênh"
+      }
+    },
+    "connection": {
+      "title": "Kết nối Zalo OA",
+      "summary": {
+        "mode": "Chế độ",
+        "connection": "Kết nối",
+        "token": "Access Token",
+        "webhook": "Webhook gần nhất"
+      },
+      "mode": {
+        "demo": "Demo (mô phỏng)",
+        "live": "Thật"
+      },
+      "state": {
+        "connected": "Đã kết nối",
+        "notConnected": "Chưa kết nối"
+      },
+      "notSet": "Chưa cấu hình trên máy chủ",
+      "buttons": {
+        "test": "Kiểm tra kết nối",
+        "refresh": "Làm mới token ngay",
+        "copyUrl": "Sao chép URL"
+      },
+      "oa": {
+        "title": "Official Account",
+        "oaId": "OA ID",
+        "oaName": "Tên OA",
+        "appId": "Zalo App ID",
+        "secret": "App Secret / OA Secret",
+        "secretSet": "Đã cấu hình trên máy chủ · không bao giờ hiển thị hay lưu ở đây",
+        "secretNotSet": "Chưa cấu hình trên máy chủ · không bao giờ hiển thị hay lưu ở đây",
+        "followLink": "Link theo dõi OA",
+        "lastCheck": "Kiểm tra gần nhất",
+        "notChecked": "Chưa kiểm tra trong phiên này",
+        "checkDemo": "{{at}} · Chế độ demo, không gọi Zalo",
+        "checkOk": "{{at}} · OK, truy cập được OA \"{{name}}\" ({{ms}} ms)",
+        "checkFailed": "{{at}} · Thất bại: {{message}}"
+      },
+      "token": {
+        "title": "Token OA",
+        "access": "Access Token",
+        "refresh": "Refresh Token",
+        "expires": "Hết hạn {{at}}",
+        "notUsed": "Không dùng ở chế độ demo",
+        "none": "Chưa có token",
+        "expired": "Đã hết hạn",
+        "hoursLeft": "còn {{count}} giờ",
+        "auto": "Tự làm mới",
+        "autoOn": "Bật · 1 giờ trước khi access token hết hạn",
+        "autoOff": "Tắt · ngừng gửi khi access token hết hạn",
+        "lastRefreshed": "Làm mới lần cuối",
+        "alert": "Cảnh báo trước hạn",
+        "alertText": "Gửi e-mail cho quản trị hệ thống khi refresh token còn dưới 7 ngày hoặc làm mới thất bại"
+      },
+      "webhook": {
+        "title": "Webhook",
+        "url": "Webhook URL",
+        "urlPlaceholder": "Chưa triển khai · https://[TÊN MIỀN]/api/public/zalo/webhook",
+        "signature": "Kiểm tra chữ ký",
+        "signatureOn": "Bật · từ chối yêu cầu không có X-ZEvent-Signature hợp lệ",
+        "signatureOff": "Tắt",
+        "events": "Sự kiện xử lý",
+        "lastEvent": "Sự kiện gần nhất",
+        "none": "Chưa có",
+        "noneDemo": "Không có (chế độ demo)"
+      },
+      "log": {
+        "title": "Nhật ký kết nối",
+        "columns": {
+          "at": "Thời gian",
+          "event": "Sự kiện",
+          "result": "Kết quả",
+          "detail": "Chi tiết"
+        },
+        "empty": "Chưa có sự kiện kết nối",
+        "emptyDemo": "Không có sự kiện kết nối ở chế độ demo"
+      },
+      "footnote": {
+        "demo": "Chế độ demo: không gì được gửi tới Zalo, mỗi lượt gửi nhận mã MOCK-…. Chuyển sang chế độ thật trên máy chủ (ZALO_ENABLED) khi VAMC cung cấp OA, ứng dụng và hợp đồng ZNS.",
+        "live": "Chế độ thật. Làm mới token thất bại hoặc 3 lần webhook bị từ chối trong 10 phút sẽ gửi e-mail cho quản trị hệ thống."
       }
     }
   }

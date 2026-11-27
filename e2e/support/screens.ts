@@ -98,6 +98,8 @@ export const SCREENS: ScreenEntry[] = [
   s('A09050200', 'System Operation Management > Notification Management > Notification Send History', 'NotificationHistoryManagement'),
   s('A09050300', 'System Operation Management > Notification Management > Zalo Users', 'ZaloUserManagement'),
   s('A09050400', 'System Operation Management > Notification Management > Zalo Templates', 'ZaloTemplateManagement'),
+  s('A09050500', 'System Operation Management > Notification Management > Zalo Sending Limits', 'ZaloLimitManagement'),
+  s('A09050600', 'System Operation Management > Notification Management > Zalo OA Connection', 'ZaloConnection'),
   // Approval Management
   s('A10000000', 'Approval Management', 'ApprovalManagement'),
 ];

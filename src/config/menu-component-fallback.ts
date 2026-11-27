@@ -78,6 +78,7 @@ const MENU_COMPONENT_FALLBACK: Record<string, string> = {
   A09050300: 'ZaloUserManagement',
   A09050400: 'ZaloTemplateManagement',
   A09050500: 'ZaloLimitManagement',
+  A09050600: 'ZaloConnection',
   // Auction Management
   A06010000: 'AuctionManagement',
   A06020000: 'BidderManagement',
