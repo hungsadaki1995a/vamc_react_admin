@@ -616,25 +616,52 @@
       "noScreen": "You have no access to the screen of this item."
     },
     "zalo": {
-      "loadFailed": "Could not load the data. Please try again.",
       "invalidPhone": "Enter a mobile number 0xxxxxxxxx or 84xxxxxxxxx.",
       "invalidTplCd": "Use A-Z, 0-9 and _ only, 3–20 characters.",
       "duplicateTplCd": "This template code is already registered.",
       "invalidParamMap": "Enter a JSON object, e.g. {\"mbrNm\":\"customer_name\"}.",
       "znsTplIdRequired": "A ZNS template in use needs its ZNS template ID while real sending is on.",
-      "useChanged": "Use changed.",
+      "activated": "Template activated.",
+      "deactivated": "Template deactivated.",
       "sent": "Sent. Message id: {{id}}",
       "sentMock": "Sent (simulated). Message id: {{id}} — see Notification Send History.",
       "linked": "Linked.",
       "unlinked": "Link removed.",
       "confirmUnlink": "Remove the link between this Zalo user and {{account}}?",
-      "confirmRebuild": "Recompute the phone index of all members and employees?",
-      "rebuilt": "Phone index rebuilt: {{members}} members, {{employees}} employees changed.",
       "simulatedLinked": "Follow simulated and linked automatically to {{account}}.",
       "simulatedNoMatch": "Follow simulated. No account has this phone: the user waits for a link.",
       "simulatedMany": "Follow simulated. {{count}} accounts have this phone: link it manually.",
       "accountNotFound": "No account with this number.",
-      "accountAlreadyLinked": "This account is already linked to another Zalo user."
+      "accountAlreadyLinked": "This account is already linked to another Zalo user.",
+      "limits": {
+        "required": "Required.",
+        "warnRange": "Enter a percentage from 1 to 100.",
+        "endBeforeStart": "The end date cannot be before the start date.",
+        "oaNoCost": "OA messages are free: use Messages for an OA rule.",
+        "created": "Rule {{code}} registered.",
+        "activated": "Rule activated.",
+        "deactivated": "Rule deactivated.",
+        "confirmDeleteException": "Delete the exception of {{account}}? The rule limit applies to this account again.",
+        "priceDateRequired": "Select the effective date of the new prices.",
+        "priceRequired": "Enter a unit price for every changed row.",
+        "pricesSaved": "Unit prices saved, effective {{date}}.",
+        "oaPriceNotZero": "OA messages are free: their unit price must stay 0.",
+        "selectReason": "Select a reason.",
+        "stopped": "Zalo sending stopped.",
+        "resumed": "Zalo sending resumed."
+      },
+      "connection": {
+        "testDemo": "Demo mode: no call was made to Zalo.",
+        "testOk": "Connection OK.",
+        "testFailed": "Connection test failed.",
+        "refreshed": "Token refreshed.",
+        "refreshDemo": "Demo mode: there is no token to refresh.",
+        "refreshLater": "Token refresh arrives with the live integration.",
+        "autoOn": "Automatic refresh turned on.",
+        "autoOff": "Automatic refresh turned off.",
+        "urlCopied": "Webhook URL copied.",
+        "copyFailed": "Could not copy to the clipboard."
+      }
     }
   },
   "trade": {
@@ -1212,18 +1239,20 @@
       "all": "All",
       "yes": "Yes",
       "no": "No",
-      "searchResults": "Search Results",
       "keyword": "Keyword",
       "phone": "Mobile Number",
       "phonePlaceholder": "0xxxxxxxxx or 84xxxxxxxxx",
       "active": "Active",
       "inactive": "Inactive",
       "register": "Register",
-      "edit": "Edit",
       "new": "New",
       "send": "Send",
       "run": "Run",
-      "close": "Close"
+      "close": "Close",
+      "bySystem": "system",
+      "byZalo": "Zalo",
+      "success": "Success",
+      "failed": "Failed"
     },
     "channels": {
       "ZNS": "ZNS",
@@ -1246,8 +1275,29 @@
       "MBR_JOIN": "Member sign-up",
       "AUTH": "Authentication"
     },
+    "msgTypes": {
+      "INVITE": "Invitation",
+      "OTP": "Verification code",
+      "STATUS": "Status notice",
+      "TEST": "Test",
+      "OA": "OA message"
+    },
+    "history": {
+      "columns": {
+        "chgDt": "Changed At",
+        "chgBy": "By",
+        "item": "Field",
+        "change": "Before → After"
+      }
+    },
     "users": {
       "title": "Zalo Users",
+      "summary": {
+        "linked": "Linked",
+        "pending": "Pending Link",
+        "following": "Following OA",
+        "invitesToday": "Invitations Today"
+      },
       "filter": {
         "linkStatus": "Link Status",
         "following": "Following OA",
@@ -1260,17 +1310,18 @@
         "status": "Status",
         "account": "Linked Account",
         "following": "Following OA",
-        "linkDt": "Linked At",
-        "lstItrctDt": "Last Interaction"
+        "followingShort": "Following",
+        "linkDt": "Linked At"
       },
       "buttons": {
         "link": "Link",
         "unlink": "Unlink",
+        "testMessage": "Send Test Message",
         "invite": "Send Invitation",
-        "rebuildIndex": "Rebuild Phone Index",
         "simulate": "Simulate OA Follow + Phone Share"
       },
       "link": {
+        "title": "Link to an Account",
         "userType": "Account Type",
         "userNo": "Account No.",
         "userNoPlaceholder": "e.g. TV00000001 or employee no."
@@ -1279,7 +1330,7 @@
         "title": "Send Link Invitation",
         "recipientName": "Recipient Name",
         "recipientNamePlaceholder": "Default: Quý khách",
-        "notice": "Sends the ZNS template MBR_JOIN_WELCOME with the OA follow link."
+        "notice": "Sends the ZNS template MBR_JOIN_WELCOME with the OA follow link. Limit rules LMT-003 / LMT-004 / LMT-006 apply."
       },
       "simulate": {
         "title": "Simulate OA Follow + Phone Share",
@@ -1287,30 +1338,74 @@
         "notice": "Demo only: acts as a Zalo user who follows the OA and shares this phone. When exactly one account has the phone, it is linked automatically."
       },
       "detail": {
-        "title": "Zalo User Details",
-        "shareAgree": "Phone Shared"
+        "title": "User Details",
+        "empty": "No Zalo user to show.",
+        "shareAgree": "Phone Shared",
+        "followSince": "Yes · since {{at}}",
+        "sharedPhone": "Yes · {{phone}}",
+        "terms": "Data-Sharing Terms",
+        "termsAgreed": "Agreed at sign-up (data-sharing terms)",
+        "termsNone": "Not on record yet",
+        "linkMethod": "Link Method",
+        "methodAuto": "Automatic (phone match) · {{at}}",
+        "methodManual": "Manual · {{at}}",
+        "receive": "Receive Zalo",
+        "receiveOn": "On",
+        "receiveNotLinked": "Not linked"
+      },
+      "tabs": {
+        "general": "General",
+        "links": "Link History",
+        "messages": "Messages ({{count}})"
+      },
+      "history": {
+        "columns": {
+          "at": "Time",
+          "by": "By",
+          "event": "Event"
+        },
+        "follow": "Followed the OA",
+        "unfollow": "Unfollowed the OA",
+        "sharePhone": "Shared phone number",
+        "linkAuto": "Linked automatically to {{account}} (phone match)",
+        "linkManual": "Linked manually to {{account}}",
+        "unlink": "Unlinked from {{account}}",
+        "note": "Follow, phone share, link and unlink events of this Zalo user. Every change is also written to the audit log."
+      },
+      "messages": {
+        "columns": {
+          "sentAt": "Sent At",
+          "template": "Template",
+          "channel": "Channel",
+          "result": "Result"
+        },
+        "empty": "No Zalo message sent to this user yet",
+        "openHistory": "Open Notification Send History"
+      },
+      "testMessage": {
+        "title": "Send Test Message",
+        "template": "Template",
+        "templatePlaceholder": "Select a template in use",
+        "notice": "Sends the template with sample data to this user's phone. Counted as a test message; sending limits apply."
       }
     },
     "templates": {
       "title": "Zalo Templates",
+      "listTitle": "Templates",
       "filter": {
         "process": "Process",
         "channel": "Channel",
-        "use": "Use",
+        "use": "Status",
         "keywordPlaceholder": "Template code or name"
       },
       "columns": {
-        "use": "Use",
-        "tplCd": "Code",
-        "process": "Process",
-        "tplNm": "Name",
-        "channel": "Channel",
-        "znsTplId": "ZNS Template ID",
-        "mdfcnDt": "Modified At"
+        "status": "Status",
+        "codeName": "Code / Name",
+        "channel": "Channel"
       },
       "form": {
         "registerTitle": "Register Zalo Template",
-        "editTitle": "Edit Zalo Template",
+        "copyTitle": "Copy Zalo Template",
         "tplCd": "Template Code",
         "tplCdHint": "A-Z, 0-9 and _, 3–20 characters; cannot be changed later.",
         "process": "Process",
@@ -1318,17 +1413,39 @@
         "channel": "Channel",
         "znsTplId": "ZNS Template ID",
         "znsTplIdHint": "Given by Zalo; required to send ZNS for real.",
-        "use": "Use",
         "tplCn": "Content",
         "tplCnPlaceholder": "e.g. Chào {{name}}, mã xác thực: {{otp}}",
         "insertVariable": "Insert Variable",
         "paramMap": "Parameter Map",
         "paramMapHint": "JSON object variable → ZNS parameter, e.g. {\"mbrNm\":\"customer_name\"}"
       },
+      "detail": {
+        "title": "Template Details",
+        "empty": "No template to show.",
+        "msgType": "Message Type",
+        "price": "{{price}} ₫ per send",
+        "free": "Free",
+        "priceUnknown": "Price by message type, see Zalo Sending Limits",
+        "priceNone": "No unit price set",
+        "znsIdNotUsed": "Not used for OA messages",
+        "lastModified": "Last Modified",
+        "modifiedBy": "{{at}} · {{by}}",
+        "historyNote": "A saved change takes effect on the next send. Every change is also written to the audit log."
+      },
+      "tabs": {
+        "general": "General",
+        "history": "Change History ({{count}})"
+      },
+      "buttons": {
+        "activate": "Activate",
+        "deactivate": "Deactivate",
+        "copy": "Copy",
+        "save": "Save"
+      },
       "preview": {
         "title": "Preview on Zalo",
-        "button": "Preview",
-        "empty": "Press [Preview] to fill the variables with sample data.",
+        "sample": "sample data",
+        "empty": "Enter the content to see it on Zalo with sample data.",
         "missing": "Variables without a value: {{names}}"
       },
       "testSend": {
@@ -1346,6 +1463,309 @@
         "open": "Open link",
         "now": "now",
         "input": "Message"
+      }
+    },
+    "limitScopes": {
+      "SYSTEM": "Whole system",
+      "RECIPIENT": "Per recipient (phone)",
+      "SENDER": "Per sender (employee)"
+    },
+    "limitMsgTypes": {
+      "ALL": "All messages",
+      "ZNS": "All ZNS (paid)",
+      "INVITE": "Link invitation",
+      "OTP": "Verification code",
+      "STATUS": "Status message",
+      "TEST": "Test send",
+      "OA": "OA message"
+    },
+    "limitPeriods": {
+      "DAY": "Day",
+      "MONTH": "Month"
+    },
+    "limitPeriodUnits": {
+      "DAY": "day",
+      "MONTH": "month"
+    },
+    "limitMeasures": {
+      "COUNT": "Messages",
+      "COST": "Cost (₫)"
+    },
+    "limitActions": {
+      "BLOCK": "Block",
+      "WARN": "Warn only"
+    },
+    "stopScopes": {
+      "ALL": "All Zalo sends (ZNS + OA)",
+      "ZNS": "Paid ZNS only"
+    },
+    "resumeMethods": {
+      "MANUAL": "Manually",
+      "HOUR": "After 1 hour",
+      "DAY": "Tomorrow 00:00"
+    },
+    "limits": {
+      "title": "Zalo Sending Limits",
+      "summary": {
+        "sentToday": "Sent Today",
+        "costToday": "Cost Today",
+        "costMonth": "Cost This Month",
+        "channel": "Zalo Channel"
+      },
+      "pages": {
+        "rules": "Limit Rules",
+        "prices": "Unit Prices",
+        "cost": "Cost Summary"
+      },
+      "filter": {
+        "scope": "Scope",
+        "msgType": "Message Type",
+        "status": "Status",
+        "effectiveOn": "Effective On"
+      },
+      "listTitle": "Limit Rules",
+      "columns": {
+        "status": "Status",
+        "code": "Rule Code",
+        "scope": "Scope",
+        "msgType": "Message Type",
+        "period": "Period",
+        "measure": "Measure",
+        "limit": "Limit",
+        "peak": "Peak Usage"
+      },
+      "evaluationOrder": "Evaluation order: channel status → recipient rules → sender rules → system rules. The first rule that blocks stops the send; the send is logged as failed with the rule code.",
+      "units": {
+        "count": "messages",
+        "cost": "₫"
+      },
+      "fields": {
+        "scope": "Scope",
+        "msgType": "Message Type",
+        "period": "Period",
+        "measure": "Measure",
+        "limit": "Limit",
+        "warnAt": "Warn At",
+        "warnAtSuffix": "% of the limit → {{value}} {{unit}}",
+        "action": "When Exceeded",
+        "effective": "Effective Period",
+        "effectiveFrom": "Effective from",
+        "effectiveTo": "Effective to",
+        "openEnded": "open-ended",
+        "note": "Note",
+        "lastModified": "Last Modified",
+        "peakUsage": "Peak Usage"
+      },
+      "detail": {
+        "title": "Rule Details",
+        "empty": "No limit rule to show.",
+        "modifiedBy": "{{at}} · {{by}}",
+        "peakUsage": "{{used}} in the current period ({{pct}}%)",
+        "historyNote": "Every change is also written to the audit log."
+      },
+      "tabs": {
+        "general": "General",
+        "exceptions": "Exceptions ({{count}})",
+        "history": "Change History"
+      },
+      "explain": {
+        "headCount": "{{scope}} · {{type}}: at most {{limit}} messages per {{period}}. A warning is raised at {{warnAt}} {{unit}};",
+        "headCost": "{{scope}} · {{type}}: at most {{limit}} per {{period}}. A warning is raised at {{warnAt}} {{unit}};",
+        "block": "above the limit the send is blocked and logged as failed with {{code}}.",
+        "blockCost": "above the limit the send is blocked and logged as failed with {{code}} (verification codes are never blocked by a budget rule).",
+        "warnOnly": "above the limit the send is still sent and flagged."
+      },
+      "exceptions": {
+        "note": "An exception replaces the limit of this rule for one account until it expires.",
+        "systemNote": "Exceptions apply to sender and recipient rules only; a whole-system rule has none.",
+        "accountSender": "Account = employee no. of the sender. A limit of 0 stops this employee from sending.",
+        "accountRecipient": "Account = member no. or employee no. of the recipient.",
+        "empty": "No exceptions for this rule",
+        "expired": "Expired",
+        "columns": {
+          "account": "Account",
+          "limit": "Limit",
+          "expires": "Expires",
+          "reason": "Reason"
+        },
+        "addTitle": "Add Exception · {{code}}",
+        "editTitle": "Edit Exception · {{code}}",
+        "senderPlaceholder": "Employee no., e.g. rcpt01",
+        "recipientPlaceholder": "Member no. or employee no.",
+        "limitHint": "Rule limit: {{limit}}"
+      },
+      "form": {
+        "registerTitle": "Register Limit Rule",
+        "copyTitle": "Copy Limit Rule {{code}}",
+        "newCode": "the new rule code",
+        "notice": "The next LMT-### code is assigned on save. Scope and message type cannot be changed later; exceptions are not copied."
+      },
+      "buttons": {
+        "stop": "Stop",
+        "resume": "Resume",
+        "activate": "Activate",
+        "deactivate": "Deactivate",
+        "copy": "Copy",
+        "save": "Save",
+        "add": "Add",
+        "delete": "Delete"
+      },
+      "prices": {
+        "title": "Unit Prices",
+        "subtitle": "VND per message, excluding VAT · Effective",
+        "effective": "Effective date",
+        "columns": {
+          "msgType": "Message Type",
+          "channel": "Channel",
+          "price": "Unit Price (₫)",
+          "sent": "Sent This Month",
+          "amount": "Amount (₫)",
+          "templates": "Templates"
+        },
+        "priceOf": "Unit price {{type}}",
+        "total": "Total",
+        "note": "The price of each send is stored with the send at the moment it goes out, so a later price change does not rewrite past costs. Prices follow the ZNS price list of the VAMC contract; OA messages are free."
+      },
+      "cost": {
+        "title": "Cost Summary",
+        "month": "Month",
+        "budget": "Monthly Budget ({{code}})",
+        "noBudget": "No monthly budget rule",
+        "spent": "Spent To Date",
+        "remaining": "Remaining",
+        "projected": "Projected Month-End",
+        "withinBudget": "within budget",
+        "overBudget": "over budget by {{amount}} ₫",
+        "byType": "By Message Type",
+        "topSenders": "Top Senders (ZNS)",
+        "columns": {
+          "msgType": "Message Type",
+          "sent": "Sent",
+          "price": "Unit Price",
+          "amount": "Amount (₫)",
+          "sender": "Sender",
+          "share": "Share"
+        },
+        "systemSender": "System (automatic)",
+        "noSenders": "No paid messages this month",
+        "note": "Internal figures from Notification Send History. They are an estimate until reconciled with the monthly Zalo statement; failed and blocked sends cost nothing."
+      },
+      "stop": {
+        "title": "Stop Zalo Sending",
+        "submit": "Stop Sending",
+        "scope": "Stop",
+        "otp": "Verification Codes",
+        "otpKeep": "Keep sending",
+        "otpStop": "Stop too",
+        "resume": "Resume",
+        "reason": "Reason",
+        "reasons": {
+          "budget": "Budget exceeded",
+          "content": "Wrong template content",
+          "incident": "Incident at Zalo",
+          "abuse": "Suspected abuse"
+        },
+        "effectAll": "From the moment you confirm, no Zalo message leaves the system on any server",
+        "effectZns": "From the moment you confirm, no paid ZNS message leaves the system on any server",
+        "effectKeepOtp": "except verification codes.",
+        "effectStopOtp": "verification codes included.",
+        "effectHeld": "Each held send is logged as failed (channel stopped); where the same notice has an e-mail template, the e-mail is still sent.",
+        "effectManual": "Sending stays off until someone resumes it.",
+        "effectAuto": "Sending resumes automatically: {{when}}."
+      },
+      "channel": {
+        "title": "Zalo Channel Status",
+        "status": "Status",
+        "sending": "Sending",
+        "allStopped": "Stopped",
+        "znsStopped": "ZNS stopped",
+        "stopped": "Stopped",
+        "otpSent": "Still sent",
+        "otpStopped": "Stopped too",
+        "held": "Held Since Stop",
+        "heldNote": "sends not delivered (logged as failed: channel stopped). They are not sent again on resume.",
+        "resumeNow": "Resume Sending"
+      }
+    },
+    "connection": {
+      "title": "Zalo OA Connection",
+      "summary": {
+        "mode": "Mode",
+        "connection": "Connection",
+        "token": "Access Token",
+        "webhook": "Last Webhook"
+      },
+      "mode": {
+        "demo": "Demo (simulated)",
+        "live": "Live"
+      },
+      "state": {
+        "connected": "Connected",
+        "notConnected": "Not connected"
+      },
+      "notSet": "Not set on the server",
+      "buttons": {
+        "test": "Test Connection",
+        "refresh": "Refresh Token Now",
+        "copyUrl": "Copy URL"
+      },
+      "oa": {
+        "title": "Official Account",
+        "oaId": "OA ID",
+        "oaName": "OA Name",
+        "appId": "Zalo App ID",
+        "secret": "App Secret / OA Secret",
+        "secretSet": "Set on the server · never shown or stored here",
+        "secretNotSet": "Not set on the server · never shown or stored here",
+        "followLink": "OA Follow Link",
+        "lastCheck": "Last Check",
+        "notChecked": "Not checked in this session",
+        "checkDemo": "{{at}} · Demo mode, no call made",
+        "checkOk": "{{at}} · OK, OA \"{{name}}\" reachable ({{ms}} ms)",
+        "checkFailed": "{{at}} · Failed: {{message}}"
+      },
+      "token": {
+        "title": "OA Token",
+        "access": "Access Token",
+        "refresh": "Refresh Token",
+        "expires": "Expires {{at}}",
+        "notUsed": "Not used in demo mode",
+        "none": "No token stored",
+        "expired": "Expired",
+        "hoursLeft": "{{count}} hours left",
+        "auto": "Automatic Refresh",
+        "autoOn": "On · 1 hour before the access token expires",
+        "autoOff": "Off · sending stops when the access token expires",
+        "lastRefreshed": "Last Refreshed",
+        "alert": "Alert Before Expiry",
+        "alertText": "E-mail the system administrators when the refresh token has under 7 days left or a refresh fails"
+      },
+      "webhook": {
+        "title": "Webhook",
+        "url": "Webhook URL",
+        "urlPlaceholder": "Not deployed yet · https://[YOUR DOMAIN]/api/public/zalo/webhook",
+        "signature": "Signature Check",
+        "signatureOn": "On · requests without a valid X-ZEvent-Signature are rejected",
+        "signatureOff": "Off",
+        "events": "Events Handled",
+        "lastEvent": "Last Event",
+        "none": "None yet",
+        "noneDemo": "None (demo mode)"
+      },
+      "log": {
+        "title": "Connection Log",
+        "columns": {
+          "at": "Time",
+          "event": "Event",
+          "result": "Result",
+          "detail": "Detail"
+        },
+        "empty": "No connection events yet",
+        "emptyDemo": "No connection events in demo mode"
+      },
+      "footnote": {
+        "demo": "Demo mode: nothing reaches Zalo, every send gets a MOCK-… id. Switch to Live on the server (ZALO_ENABLED) once VAMC provides the OA, the app and the ZNS contract.",
+        "live": "Live mode. A failed token refresh or 3 rejected webhook calls in 10 minutes e-mails the system administrators."
       }
     }
   }

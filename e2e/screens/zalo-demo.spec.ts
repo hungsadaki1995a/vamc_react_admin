@@ -7,8 +7,10 @@ import type { ZaloStatusBody } from '../support/zalo-setup';
 
 // Zalo demo flow (menus A09050400 Zalo Templates, A09050300 Zalo Users) — WRITES data, so it runs only with
 // E2E_ZALO_DEMO=1 against a local backend in demo mode (ZALO_ENABLED unset) with NOTIFICATION_ADDRESS_HASH_KEY set:
-// create / edit a template → preview → test send → invitation → simulated OA follow + phone share of an existing
-// member → "Linked (auto)" → unlink. The member defaults to the local seed TV00000001 / 0909000001.
+// create a template → edit it in Template Details with the live phone preview → test send → invitation → simulated OA
+// follow + phone share of an existing member → "Linked (auto)" in User Details → unlink. The member defaults to the local
+// seed TV00000001 / 0909000001. Sending limit LMT-003 (one invitation per phone per day) or LMT-004 (three per month)
+// blocks a repeated invitation to that phone: the step then accepts the "blocked by sending limit" dialog.
 // Clean-up through the API: the member link is removed and the test template switched off. The API has no delete for
 // templates, Zalo users or send logs: remove them from a disposable DB afterwards (see e2e/README.md).
 
@@ -74,6 +76,9 @@ test.describe('Zalo demo flow', () => {
       await openMenu(page, TEMPLATES);
       const panel = activePanel(page);
       await expect(panel.locator('.ant-table-tbody tr.ant-table-row').first()).toBeVisible();
+      // Channel column shows the code label, never the raw OA code.
+      const channels = await panel.locator('.ant-table-tbody tr.ant-table-row td:last-child').allInnerTexts();
+      for (const channel of channels) expect(channel.trim()).toMatch(/^(ZNS|OA message)$/);
       await panel.getByRole('button', { name: 'New' }).click();
       const modal = topModal(page);
       await expect(modal).toContainText('Register Zalo Template');
@@ -86,39 +91,35 @@ test.describe('Zalo demo flow', () => {
       await expect(modal).toBeHidden();
     });
 
-    await test.step('edit it and preview with the sample data', async () => {
+    await test.step('edit it in Template Details and preview with the sample data', async () => {
       const panel = activePanel(page);
       await filter(panel, 'Keyword').locator('input').fill(TPL_CD);
       await panel.getByRole('button', { name: /(^|\s)Search$/ }).click();
       const row = panel.locator('.ant-table-tbody tr.ant-table-row').filter({ hasText: TPL_CD });
       await expect(row).toHaveCount(1);
-      await row.locator('td').nth(3).click();
-      const modal = topModal(page);
-      await expect(modal).toContainText('Edit Zalo Template');
-      await field(modal, 'Template Name').locator('input').fill('E2E welcome (edited)');
-      await field(modal, 'Content').locator('textarea').fill('Xin chào {{mbrNm}}, mã hồ sơ {{mbrNo}}, ghi chú {{e2eNote}}.');
-      await modal.getByRole('button', { name: 'Preview', exact: true }).click();
-      const preview = modal.getByTestId('zalo-preview');
+      await row.click();
+      await expect(panel).toContainText(`Template Details|${TPL_CD}`);
+      await field(panel, 'Template Name').locator('input').fill('E2E welcome (edited)');
+      await field(panel, 'Content').locator('textarea').fill('Xin chào {{mbrNm}}, mã hồ sơ {{mbrNo}}, ghi chú {{e2eNote}}.');
+      const preview = panel.getByTestId('zalo-preview');
       await expect(preview).toContainText('Xin chào');
       await expect(preview).not.toContainText('{{mbrNm}}');
-      await expect(modal).toContainText('Variables without a value: e2eNote');
+      await expect(panel).toContainText('Variables without a value: e2eNote');
       await shot(page, 'zalo-template-edit');
-      await modal.getByRole('button', { name: 'Edit', exact: true }).click();
+      await panel.getByRole('button', { name: 'Save', exact: true }).click();
       await expect(toast(page)).toContainText('Updated');
-      await expect(modal).toBeHidden();
       await expect(row).toContainText('E2E welcome (edited)');
     });
 
     await test.step('test send the saved template (simulated)', async () => {
       const panel = activePanel(page);
-      await panel.locator('.ant-table-tbody tr.ant-table-row').filter({ hasText: TPL_CD }).locator('td').nth(3).click();
+      await panel.getByRole('button', { name: 'Test Send' }).click();
       const modal = topModal(page);
       await expect(modal).toContainText('Test Send');
       await modal.getByRole('textbox', { name: 'Mobile Number' }).fill(MEMBER_PHONE);
       await modal.getByRole('button', { name: 'Test Send' }).click();
       await expect(toast(page)).toContainText('Sent (simulated)');
       await expect(toast(page)).toContainText('MOCK-');
-      await modal.getByRole('button', { name: 'Cancel' }).click();
       await expect(modal).toBeHidden();
       await filter(panel, 'Keyword').locator('input').fill('');
       await panel.getByRole('button', { name: /(^|\s)Search$/ }).click();
@@ -130,11 +131,23 @@ test.describe('Zalo demo flow', () => {
       await openMenu(page, USERS);
       const panel = activePanel(page);
       await panel.getByRole('button', { name: 'Send Invitation' }).click();
-      const modal = topModal(page);
+      const modal = page.locator('.ant-modal-wrap').filter({ visible: true, hasText: 'Send Link Invitation' });
       await field(modal, 'Mobile Number').locator('input').fill(MEMBER_PHONE);
       await field(modal, 'Recipient Name').locator('input').fill('E2E');
+      // The toast of the test send must be gone, or it would pass for the invitation result.
+      await expect(page.locator('.ant-message-notice')).toHaveCount(0, { timeout: 15_000 });
       await modal.getByRole('button', { name: 'Send', exact: true }).click();
-      await expect(toast(page)).toContainText('Sent (simulated)');
+      // A repeated invitation to the same phone is blocked by LMT-003 / LMT-004 (ZAL017): both outcomes are valid.
+      const sent = toast(page).filter({ hasText: 'Sent (simulated)' });
+      const blocked = page.locator('.ant-modal-confirm').filter({ visible: true, hasText: 'blocked by sending limit' });
+      await expect(sent.or(blocked).first()).toBeVisible();
+      if (await blocked.isVisible()) {
+        await expect(blocked).toContainText(/LMT-00[34]/);
+        await blocked.getByRole('button', { name: 'OK' }).click();
+        await expect(blocked).toBeHidden();
+        await modal.getByRole('button', { name: 'Cancel' }).click();
+        testInfo.annotations.push({ type: 'invitation', description: 'blocked by a sending limit (repeat run)' });
+      }
       await expect(modal).toBeHidden();
     });
 
@@ -153,15 +166,15 @@ test.describe('Zalo demo flow', () => {
       await shot(page, 'zalo-users');
     });
 
-    await test.step('unlink', async () => {
+    await test.step('User Details → unlink', async () => {
       const panel = activePanel(page);
       // Newest interaction first: the simulated user is the first row.
       const row = panel.locator('.ant-table-tbody tr.ant-table-row').first();
       await expect(row).toContainText(MEMBER_NO);
       await row.click();
-      const detail = topModal(page);
-      await expect(detail).toContainText('Linked (auto)');
-      await detail.getByRole('button', { name: 'Unlink' }).click();
+      await expect(panel).toContainText('User Details');
+      await expect(field(panel, 'Linked Account')).toContainText(MEMBER_NO);
+      await panel.getByRole('button', { name: 'Unlink' }).click();
       const confirm = page.locator('.ant-modal-confirm').filter({ visible: true });
       await expect(confirm).toContainText(MEMBER_NO);
       await confirm.getByRole('button', { name: 'Unlink' }).click();
@@ -171,7 +184,9 @@ test.describe('Zalo demo flow', () => {
     });
 
     expect.soft(problems.pageErrors, 'uncaught page errors').toEqual([]);
-    expect.soft(problems.failedApi, 'failed /api calls').toEqual([]);
+    // The only expected failure: an invitation blocked by a sending limit (429).
+    const failedApi = problems.failedApi.filter((call) => !/^POST \/api\/v1\/zalo\/users\/invitations → 429$/.test(call));
+    expect.soft(failedApi, 'failed /api calls').toEqual([]);
     testInfo.annotations.push({ type: 'record', description: JSON.stringify({ tplCd: TPL_CD, memberNo: MEMBER_NO }) });
   });
 });
