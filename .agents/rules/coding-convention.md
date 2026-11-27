@@ -52,8 +52,10 @@ src/api/<domain>/<resource>-api.ts           HTTP calls + request/response types
   - list screens in other domains (member, content, npl, trade, auction): `SysPageHeader` + `SysPagination` from `@/components/common/sys-ui/SystemUi` with `DataTable` / `Popup`, plus the domain's `_shared/` boards (`PostBoard`, `TradeApplicationBoard`, …);
   - inputs: `AppSelect`, `TextInput`, `AppDatePicker`/`AppRangePicker`, `AppCheckbox`, `AppRadio`, `AppSwitch`, `Spinbox`, `TextArea`, `CommonCodeSelect` from `@/components/inputs`;
   - common UI: `Popup`, `DataTable`, `Pagination`, `StatusBadge`, `ActionButton`, `FileUploadBox`, `TreeView`, … from `@/components/common`.
+  - filter [Search] / [Reset]: `<ActionButton action="search">` / `action="reset"` with no `intent` / `appearance` / `className` — the colour lives in `ACTION_DEFAULTS` (blue filled / blue outlined). Field lookups that open a picker use `intent="quaternary" appearance="outlined"`.
 - Keep pure helpers (`toSearch(filter)`, column definitions, option lists) at module level outside the component; static `columns` arrays are module constants.
 - List-screen state goes through `usePagedList(INITIAL_FILTER)` (`draft` for inputs, `applied` for the query, `pageQuery` for paging/sort).
+- [Search] / [Reset] must always reload: `list.search()` / `list.reset()` return `false` when the query key is unchanged, so write `if (!list.search()) void refetch();`. Screens with their own `applied` state compare with `isSameQuery` (`@/utils/query-utils`) and call `refetch()` when it is the same query on page 1.
 - Modal state as a discriminated value, e.g. `type ModalState = { feeId: string | null } | null` (closed / register / edit).
 
 ## 5. Feedback, errors, permissions

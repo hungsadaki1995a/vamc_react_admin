@@ -29,6 +29,7 @@ import { ALL, API_DATE_DMY, SYS_DATE_FORMAT } from '@/config/sys-constants';
 import { errorMessage } from '@/utils/system-utils';
 import { useSysDialogs } from '@/hooks/use-sys-dialogs';
 import type { SortState } from '@/hooks/use-paged-list';
+import { isSameQuery } from '@/utils/query-utils';
 import type { BoardConfig, CategoryOption } from './board-config';
 import PostModal from './PostModal';
 import { useDownloadPostExcel, useLegalOptions, usePosts } from './use-posts';
@@ -135,7 +136,7 @@ export default function PostBoard({ config }: { config: BoardConfig }) {
   const [modalPstNo, setModalPstNo] = useState<string | null | undefined>(undefined);
 
   const query = useMemo<PostSearch>(() => ({ ...applied, ...sort }), [applied, sort]);
-  const { data, isFetching } = usePosts(config, query, page, PAGE_SIZE);
+  const { data, isFetching, refetch } = usePosts(config, query, page, PAGE_SIZE);
   const downloadExcel = useDownloadPostExcel(config);
   const rows = (data?.content ?? []) as PostRow[];
   const total = data?.totalElements ?? 0;
@@ -160,14 +161,18 @@ export default function PostBoard({ config }: { config: BoardConfig }) {
       issueFromDate: filter.issuePeriod?.[0]?.format(API_DATE_DMY),
       issueToDate: filter.issuePeriod?.[1]?.format(API_DATE_DMY),
     };
+    // Same query on page 1 keeps the key, so reload it explicitly (the button always searches).
+    if (page === 1 && isSameQuery(search, applied)) void refetch();
     setApplied(search);
     setFiltered(Object.entries(search).some(([key, value]) => value !== undefined && !(key === 'category' && value === scopedCategory(''))));
     setPage(1);
   };
 
   const handleReset = () => {
+    const next: PostSearch = { category: scopedCategory('') };
+    if (page === 1 && !sort && isSameQuery(next, applied)) void refetch();
     setFilter(initialFilter);
-    setApplied({ category: scopedCategory('') });
+    setApplied(next);
     setFiltered(false);
     setSort(undefined);
     setPage(1);

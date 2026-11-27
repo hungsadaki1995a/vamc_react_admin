@@ -16,6 +16,7 @@ import { SysPageHeader, SysPagination } from '@/components/common/sys-ui/SystemU
 import { SYS_MESSAGES } from '@/config/sys-messages';
 import { errorMessage, rowNumber } from '@/utils/system-utils';
 import styles from '@/components/common/sys-ui/system-page.module.scss';
+import { isSameQuery } from '@/utils/query-utils';
 import { useDebtor, useDebtors, useDeleteDebtors, useDownloadDebtorsExcel } from './use-debtors';
 
 const PAGE_SIZE = 15;
@@ -39,7 +40,7 @@ export default function DebtorManagement() {
   const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
   const [detailId, setDetailId] = useState<string | null>(null);
 
-  const { data, isFetching } = useDebtors(applied, page, PAGE_SIZE);
+  const { data, isFetching, refetch } = useDebtors(applied, page, PAGE_SIZE);
   const { data: detail } = useDebtor(detailId);
   const deleteDebtors = useDeleteDebtors();
   const downloadExcel = useDownloadDebtorsExcel();
@@ -47,8 +48,14 @@ export default function DebtorManagement() {
   const rows = data?.content ?? [];
   const total = data?.totalElements ?? 0;
 
+  /** Same query on page 1 keeps the key, so reload it explicitly (the button always searches). */
+  const applySearch = (next: DebtorSearch) => {
+    if (page === 1 && isSameQuery(next, applied)) void refetch();
+    setApplied(next);
+    setPage(1);
+  };
   const handleSearch = () => {
-    setApplied({
+    applySearch({
       crtFromDt: period?.[0]?.format('YYYY-MM-DD'),
       crtToDt: period?.[1]?.format('YYYY-MM-DD'),
       dbtrTypeCd: dbtrTypeCd || undefined,
@@ -57,7 +64,6 @@ export default function DebtorManagement() {
       dbtrNm: dbtrNm.trim() || undefined,
       cicCd: cicCd.trim() || undefined,
     });
-    setPage(1);
   };
 
   const handleReset = () => {
@@ -67,8 +73,7 @@ export default function DebtorManagement() {
     setDbtrCd('');
     setDbtrNm('');
     setCicCd('');
-    setApplied({});
-    setPage(1);
+    applySearch({});
   };
 
   const handleDelete = () => {

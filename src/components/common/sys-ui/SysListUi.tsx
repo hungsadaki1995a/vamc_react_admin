@@ -97,10 +97,10 @@ export function SysSearchActions({
   const { t } = useTranslation();
   return (
     <div className={styles.searchActions}>
-      <ActionButton action="reset" intent="primary" appearance="outlined" onClick={onReset}>
+      <ActionButton action="reset" onClick={onReset}>
         {t('common.reset')}
       </ActionButton>
-      <ActionButton action="search" intent="primary" appearance="filled" loading={loading} onClick={onSearch}>
+      <ActionButton action="search" loading={loading} onClick={onSearch}>
         {t('common.search')}
       </ActionButton>
     </div>

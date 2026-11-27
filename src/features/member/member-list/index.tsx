@@ -13,8 +13,6 @@ import type { TableProps, TableColumnsType } from 'antd';
 import type { SortOrder } from 'antd/es/table/interface';
 import type { CheckboxChangeEvent } from 'antd/es/checkbox';
 import {
-  SearchOutlined,
-  ReloadOutlined,
   HomeOutlined,
 } from '@ant-design/icons';
 import dayjs from 'dayjs';
@@ -766,18 +764,11 @@ export default function MemberList() {
         {/* Filter Action Buttons */}
         <div className={styles.filterActionRow}>
           <div className={styles.filterActionButtons}>
-            <ActionButton action="reset" intent="primary" appearance="outlined" className={styles.btnReset} icon={<ReloadOutlined />} onClick={handleReset}>
-              Reset
+            <ActionButton action="reset" onClick={handleReset}>
+              {t('common.reset')}
             </ActionButton>
-            <ActionButton
-              action="search"
-              intent="primary"
-              appearance="filled"
-              className={styles.btnSearch}
-              icon={<SearchOutlined />}
-              onClick={handleSearch}
-            >
-              Search
+            <ActionButton action="search" onClick={handleSearch}>
+              {t('common.search')}
             </ActionButton>
           </div>
         </div>

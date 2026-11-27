@@ -27,6 +27,7 @@ import { codeLabel } from '@/lib/i18n/code-label';
 import { formatDateTime, formatDmy } from '@/utils/date-format';
 import { formatAmount, rowNumber } from '@/utils/system-utils';
 import styles from '@/components/common/sys-ui/system-page.module.scss';
+import { isSameQuery } from '@/utils/query-utils';
 import TradeApplicationForm from './TradeApplicationForm';
 import TradeApplicationPopup from './TradeApplicationPopup';
 import { useDownloadTradeApplicationsExcel, useTradeApplications } from './use-trade-applications';
@@ -73,14 +74,21 @@ export default function TradeApplicationBoard({ kind, title }: { kind: TradeAppK
     }
   });
 
-  const { data, isFetching } = useTradeApplications(kind, applied, page, PAGE_SIZE);
+  const { data, isFetching, refetch } = useTradeApplications(kind, applied, page, PAGE_SIZE);
   const downloadExcel = useDownloadTradeApplicationsExcel();
 
   const rows = data?.content ?? [];
   const total = data?.totalElements ?? 0;
 
+  /** Same query on page 1 keeps the key, so reload it explicitly (the button always searches). */
+  const applySearch = (next: TradeApplicationSearch) => {
+    if (page === 1 && isSameQuery(next, applied)) void refetch();
+    setApplied(next);
+    setPage(1);
+  };
+
   const handleSearch = () => {
-    setApplied({
+    applySearch({
       aplyFromDt: period?.[0]?.format('YYYY-MM-DD'),
       aplyToDt: period?.[1]?.format('YYYY-MM-DD'),
       sttsCds: sttsCd ? [sttsCd] : undefined,
@@ -91,7 +99,6 @@ export default function TradeApplicationBoard({ kind, title }: { kind: TradeAppK
       keyword: keyword.trim() || undefined,
       tkcgEmpNo: tkcgEmpNo || undefined,
     });
-    setPage(1);
   };
 
   const handleReset = () => {
@@ -103,8 +110,7 @@ export default function TradeApplicationBoard({ kind, title }: { kind: TradeAppK
     setBndCd('');
     setKeyword('');
     setTkcgEmpNo('');
-    setApplied({});
-    setPage(1);
+    applySearch({});
   };
 
   const statusOptions = [

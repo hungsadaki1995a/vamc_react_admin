@@ -10,6 +10,7 @@ import { SysPageHeader, SysPagination } from '@/components/common/sys-ui/SystemU
 import { SYS_MESSAGES } from '@/config/sys-messages';
 import { errorMessage } from '@/utils/system-utils';
 import styles from '@/components/common/sys-ui/system-page.module.scss';
+import { isSameQuery } from '@/utils/query-utils';
 import { useApproveBidder, useBidderAuctions, useBidders, useRejectBidder } from './use-bidders';
 import type { BidderAuctionSearch } from './use-bidders';
 
@@ -26,7 +27,14 @@ export default function BidderManagement() {
   const [selectedAuction, setSelectedAuction] = useState<string | null>(null);
   const [bidderPage, setBidderPage] = useState(1);
 
-  const { data: auctData, isFetching: auctLoading } = useBidderAuctions(applied, page, PAGE_SIZE);
+  const { data: auctData, isFetching: auctLoading, refetch } = useBidderAuctions(applied, page, PAGE_SIZE);
+
+  /** Same query on page 1 keeps the key, so reload it explicitly (the button always searches). */
+  const applySearch = (next: BidderAuctionSearch) => {
+    if (page === 1 && isSameQuery(next, applied)) void refetch();
+    setApplied(next);
+    setPage(1);
+  };
   const { data: bidderData, isFetching: bidderLoading } = useBidders(selectedAuction, bidderPage, PAGE_SIZE);
   const approveBidder = useApproveBidder();
   const rejectBidder = useRejectBidder();
@@ -76,13 +84,13 @@ export default function BidderManagement() {
       <SysPageHeader
         breadcrumb={['Auction Management', 'Bidder Management']}
         title="Bidder Management"
-        onReset={() => { setKeyword(''); setApplied({}); setPage(1); }}
-        onSearch={() => { setApplied({ keyword: keyword.trim() || undefined }); setPage(1); }}
+        onReset={() => { setKeyword(''); applySearch({}); }}
+        onSearch={() => applySearch({ keyword: keyword.trim() || undefined })}
       />
       <div className={styles.filterCard}>
         <div className={styles.filterGroup}>
           <span className={styles.filterLabel}>Auction</span>
-          <TextInput className={styles.filterInput} placeholder="Auction no or name" value={keyword} onChange={(e) => setKeyword(e.target.value)} onPressEnter={() => { setApplied({ keyword: keyword.trim() || undefined }); setPage(1); }} allowClear />
+          <TextInput className={styles.filterInput} placeholder="Auction no or name" value={keyword} onChange={(e) => setKeyword(e.target.value)} onPressEnter={() => applySearch({ keyword: keyword.trim() || undefined })} allowClear />
         </div>
       </div>
 

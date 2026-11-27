@@ -56,7 +56,7 @@ export default function FilterPanel({
             </ActionButton>
           )}
           {onSearch && (
-            <ActionButton action="search" intent="primary" appearance="filled" onClick={onSearch}>
+            <ActionButton action="search" onClick={onSearch}>
               {tvb('search', 'Search')}
             </ActionButton>
           )}

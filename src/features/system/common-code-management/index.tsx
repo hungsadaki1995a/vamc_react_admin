@@ -53,7 +53,7 @@ export default function CommonCodeManagement() {
   const [modalItem, setModalItem] = useState<CodeGroupItem | null | undefined>(undefined);
   const dirty = useRef(false);
 
-  const { data: groups = [], isFetching } = useCodeGroups(list.applied, list.sort);
+  const { data: groups = [], isFetching, refetch } = useCodeGroups(list.applied, list.sort);
   const codesQuery = useCodes(selected?.groupCd ?? null);
   const saveCodes = useBatchSaveCodes();
   const excel = useDownloadCodeGroupsExcel();
@@ -148,7 +148,7 @@ export default function CommonCodeManagement() {
             value={list.draft.groupCd}
             allowClear
             onChange={(e) => list.setDraft({ groupCd: e.target.value })}
-            onPressEnter={() => list.search()}
+            onPressEnter={() => { if (!list.search()) void refetch(); }}
           />
         </SysFilterItem>
         <SysFilterItem label="Group Name">
@@ -156,11 +156,11 @@ export default function CommonCodeManagement() {
             value={list.draft.groupNm}
             allowClear
             onChange={(e) => list.setDraft({ groupNm: e.target.value })}
-            onPressEnter={() => list.search()}
+            onPressEnter={() => { if (!list.search()) void refetch(); }}
           />
         </SysFilterItem>
       </SysFilterPanel>
-      <SysSearchActions onReset={list.reset} onSearch={() => list.search()} loading={isFetching} />
+      <SysSearchActions onReset={() => { if (!list.reset()) void refetch(); }} onSearch={() => { if (!list.search()) void refetch(); }} loading={isFetching} />
 
       <SysSplit
         ratio="1fr 1fr"

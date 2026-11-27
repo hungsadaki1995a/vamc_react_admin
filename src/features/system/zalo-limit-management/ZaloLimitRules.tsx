@@ -23,6 +23,7 @@ import {
 import { ALL, API_DATE_ISO, SYS_DATE_FORMAT } from '@/config/sys-constants';
 import type { YesNo } from '@/config/sys-constants';
 import { codeLabel } from '@/lib/i18n/code-label';
+import { isSameQuery } from '@/utils/query-utils';
 import ZaloLimitRuleDetail from './ZaloLimitRuleDetail';
 import ZaloLimitRuleModal from './ZaloLimitRuleModal';
 import { LIMIT_MSG_TYPES, LIMIT_SCOPES, limitText, usageLevel } from './zalo-limit-constants';
@@ -127,7 +128,13 @@ export default function ZaloLimitRules({ canWrite }: { canWrite: boolean }) {
   const [draft, setDraft] = useState<RuleFilter>(initialFilter);
   const [applied, setApplied] = useState<RuleFilter>(draft);
   const search = toSearch(applied);
-  const { data, isFetching } = useZaloLimitRules(search);
+  const { data, isFetching, refetch } = useZaloLimitRules(search);
+
+  /** Same filter keeps the query key, so reload it explicitly (the button always searches). */
+  const applyFilter = (next: RuleFilter) => {
+    if (isSameQuery(toSearch(next), search)) void refetch();
+    setApplied(next);
+  };
   const excel = useDownloadZaloLimitRulesExcel();
   const [modal, setModal] = useState<ModalState>(null);
   const [selectedCd, setSelectedCd] = useState<string | null>(null);
@@ -192,10 +199,10 @@ export default function ZaloLimitRules({ canWrite }: { canWrite: boolean }) {
           leaveDetail(() => {
             const reset = initialFilter();
             setDraft(reset);
-            setApplied(reset);
+            applyFilter(reset);
           })
         }
-        onSearch={() => leaveDetail(() => setApplied(draft))}
+        onSearch={() => leaveDetail(() => applyFilter(draft))}
         loading={isFetching}
       />
       <SysSplit

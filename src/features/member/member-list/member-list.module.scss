@@ -200,33 +200,6 @@
   padding: 0 4px;
 }
 
-.btnReset {
-  @include btn-base(0 12px, 4px);
-  border: 1px solid #005be2;
-  background: #ffffff;
-  color: #005be2;
-  box-shadow: none;
-
-  &:hover {
-    background: #f0f6ff !important;
-    color: #0046b3 !important;
-    border-color: #0046b3 !important;
-  }
-}
-
-.btnSearch {
-  @include btn-base(0 16px, 4px);
-  background: #005be2;
-  color: #ffffff;
-  border: none;
-  box-shadow: none;
-
-  &:hover {
-    background: #0046b3 !important;
-    color: #ffffff !important;
-  }
-}
-
 /* Results Toolbar */
 .resultsToolbar {
   display: flex;

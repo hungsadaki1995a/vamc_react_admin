@@ -42,7 +42,7 @@ export default function StaffSearchModal({ roleGroupId, roleId, saving, onClose,
     excludeRoleGroupId: roleGroupId,
     excludeRoleId: roleId,
   };
-  const { data, isFetching } = useEmployeeLookup(search, list.pageQuery);
+  const { data, isFetching, refetch } = useEmployeeLookup(search, list.pageQuery);
   // Kept across pages.
   const [picked, setPicked] = useState<string[]>([]);
 
@@ -72,7 +72,7 @@ export default function StaffSearchModal({ roleGroupId, roleId, saving, onClose,
             maxLength={10}
             allowClear
             onChange={(e) => list.setDraft({ empNo: e.target.value })}
-            onPressEnter={() => list.search()}
+            onPressEnter={() => { if (!list.search()) void refetch(); }}
           />
         </SysFilterItem>
         <SysFilterItem label="Name">
@@ -81,11 +81,11 @@ export default function StaffSearchModal({ roleGroupId, roleId, saving, onClose,
             maxLength={100}
             allowClear
             onChange={(e) => list.setDraft({ empNm: e.target.value })}
-            onPressEnter={() => list.search()}
+            onPressEnter={() => { if (!list.search()) void refetch(); }}
           />
         </SysFilterItem>
       </SysFilterPanel>
-      <SysSearchActions onReset={list.reset} onSearch={() => list.search()} loading={isFetching} />
+      <SysSearchActions onReset={() => { if (!list.reset()) void refetch(); }} onSearch={() => { if (!list.search()) void refetch(); }} loading={isFetching} />
       <SysSectionHeader total={total} actions={picked.length > 0 ? <span>{picked.length} selected</span> : undefined} />
       <SysTable<EmployeeLookup>
         rowKey="empNo"

@@ -144,7 +144,7 @@ export default function NotificationHistoryManagement() {
   // The period picker may be cleared while editing; the applied filter always has both dates.
   const [draftPeriod, setDraftPeriod] = useState<DraftPeriod>(list.draft.period);
   const search = toSearch(list.applied);
-  const { data, isFetching, error } = useNotificationHistories(search, list.pageQuery);
+  const { data, isFetching, error, refetch } = useNotificationHistories(search, list.pageQuery);
   const excel = useDownloadNotificationHistoriesExcel();
   const [detailId, setDetailId] = useState<string | null>(null);
   const total = data?.totalElements ?? 0;
@@ -159,11 +159,11 @@ export default function NotificationHistoryManagement() {
       alert(t('messages.system.notificationHistory.periodRange', { days: NOTI_HISTORY_MAX_DAYS }));
       return;
     }
-    list.search({ period: [from, to] });
+    if (!list.search({ period: [from, to] })) void refetch();
   };
 
   const handleReset = () => {
-    list.reset();
+    if (!list.reset()) void refetch();
     setDraftPeriod(initialFilter().period);
   };
 

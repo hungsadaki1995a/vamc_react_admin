@@ -13,6 +13,7 @@ import type { NplItem, NplSearch } from '@/api/npl/npl-api';
 import { SysPageHeader, SysPagination } from '@/components/common/sys-ui/SystemUi';
 import { rowNumber } from '@/utils/system-utils';
 import styles from '@/components/common/sys-ui/system-page.module.scss';
+import { isSameQuery } from '@/utils/query-utils';
 import { useNpl, useNpls } from './use-npls';
 
 const PAGE_SIZE = 15;
@@ -32,14 +33,20 @@ export default function NplManagement() {
   const [filterCollapsed, setFilterCollapsed] = useState(false);
   const [detailId, setDetailId] = useState<string | null>(null);
 
-  const { data, isFetching } = useNpls(applied, page, PAGE_SIZE);
+  const { data, isFetching, refetch } = useNpls(applied, page, PAGE_SIZE);
   const { data: detail } = useNpl(detailId);
 
   const rows = data?.content ?? [];
   const total = data?.totalElements ?? 0;
 
+  /** Same query on page 1 keeps the key, so reload it explicitly (the button always searches). */
+  const applySearch = (next: NplSearch) => {
+    if (page === 1 && isSameQuery(next, applied)) void refetch();
+    setApplied(next);
+    setPage(1);
+  };
   const handleSearch = () => {
-    setApplied({
+    applySearch({
       loanFromDt: period?.[0]?.format('YYYYMMDD'),
       loanToDt: period?.[1]?.format('YYYYMMDD'),
       expsrYn: expsrYn || undefined,
@@ -49,7 +56,6 @@ export default function NplManagement() {
       bndNm: bndNm.trim() || undefined,
       dbtrCd: dbtrCd.trim() || undefined,
     });
-    setPage(1);
   };
 
   const handleReset = () => {
@@ -60,8 +66,7 @@ export default function NplManagement() {
     setBndCd('');
     setBndNm('');
     setDbtrCd('');
-    setApplied({});
-    setPage(1);
+    applySearch({});
   };
 
   const columns: TableColumnsType<NplItem> = [

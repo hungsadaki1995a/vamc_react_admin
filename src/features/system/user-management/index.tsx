@@ -43,7 +43,7 @@ export default function UserManagement() {
   const { canWrite } = useMenuPermission();
   const list = usePagedList<EmployeeSearch>(INITIAL_FILTER);
   const search = trimSearch(list.applied);
-  const { data, isFetching } = useEmployees(search, list.pageQuery);
+  const { data, isFetching, refetch } = useEmployees(search, list.pageQuery);
   const excel = useEmployeesExcel();
 
   const [target, setTarget] = useState<ModalTarget>(undefined);
@@ -111,7 +111,7 @@ export default function UserManagement() {
             maxLength={10}
             allowClear
             onChange={(e) => list.setDraft({ empNo: e.target.value })}
-            onPressEnter={() => list.search()}
+            onPressEnter={() => { if (!list.search()) void refetch(); }}
           />
         </SysFilterItem>
         <SysFilterItem label="Staff Name">
@@ -120,11 +120,11 @@ export default function UserManagement() {
             maxLength={100}
             allowClear
             onChange={(e) => list.setDraft({ empNm: e.target.value })}
-            onPressEnter={() => list.search()}
+            onPressEnter={() => { if (!list.search()) void refetch(); }}
           />
         </SysFilterItem>
       </SysFilterPanel>
-      <SysSearchActions onReset={list.reset} onSearch={() => list.search()} loading={isFetching} />
+      <SysSearchActions onReset={() => { if (!list.reset()) void refetch(); }} onSearch={() => { if (!list.search()) void refetch(); }} loading={isFetching} />
 
       {detail.error && (
         <Alert type="error" showIcon closable title={t('messages.system.user.loadFailed')} description={detail.error.message} />

@@ -90,7 +90,7 @@ export default function ZaloTemplateManagement() {
   const { guardDiscard } = useSysDialogs();
   const list = usePagedList<TemplateFilter>(INITIAL_FILTER);
   const search = toSearch(list.applied);
-  const { data, isFetching } = useZaloTemplates(search, list.pageQuery);
+  const { data, isFetching, refetch } = useZaloTemplates(search, list.pageQuery);
   const excel = useDownloadZaloTemplatesExcel();
   const [modal, setModal] = useState<ModalState>(null);
   const [selectedCd, setSelectedCd] = useState<string | null>(null);
@@ -152,11 +152,11 @@ export default function ZaloTemplateManagement() {
             allowClear
             maxLength={100}
             onChange={(e) => list.setDraft({ keyword: e.target.value })}
-            onPressEnter={() => leaveDetail(() => list.search())}
+            onPressEnter={() => leaveDetail(() => { if (!list.search()) void refetch(); })}
           />
         </SysFilterItem>
       </SysFilterPanel>
-      <SysSearchActions onReset={() => leaveDetail(list.reset)} onSearch={() => leaveDetail(() => list.search())} loading={isFetching} />
+      <SysSearchActions onReset={() => leaveDetail(() => { if (!list.reset()) void refetch(); })} onSearch={() => leaveDetail(() => { if (!list.search()) void refetch(); })} loading={isFetching} />
       <SysSplit
         ratio="384px minmax(0, 1fr)"
         left={

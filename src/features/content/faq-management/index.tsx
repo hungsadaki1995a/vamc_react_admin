@@ -169,7 +169,9 @@ export default function FaqManagement() {
   );
   const [modal, setModal] = useState<ModalState>(null);
 
-  const handleSearch = () => list.search({ keyword: list.draft.keyword.trim() });
+  const handleSearch = () => {
+    if (!list.search({ keyword: list.draft.keyword.trim() })) void refetch();
+  };
   const filtered =
     list.applied.published !== ALL || list.applied.category !== ALL || Boolean(list.applied.keyword);
 
@@ -201,7 +203,7 @@ export default function FaqManagement() {
           />
         </SysFilterItem>
       </SysFilterPanel>
-      <SysSearchActions onReset={list.reset} onSearch={handleSearch} loading={isFetching} />
+      <SysSearchActions onReset={() => { if (!list.reset()) void refetch(); }} onSearch={handleSearch} loading={isFetching} />
       <SysSectionHeader
         total={total}
         actions={

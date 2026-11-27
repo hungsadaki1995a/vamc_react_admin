@@ -13,6 +13,7 @@ import { DateTimeCell, FormField, SysPageHeader, SysPagination } from '@/compone
 import { SYS_MESSAGES } from '@/config/sys-messages';
 import { errorMessage, rowNumber } from '@/utils/system-utils';
 import styles from '@/components/common/sys-ui/system-page.module.scss';
+import { isSameQuery } from '@/utils/query-utils';
 import { useDeleteNplLot, useDownloadNplLotsExcel, useNplLots, useSaveNplLot } from './use-npl-lots';
 
 const PAGE_SIZE = 15;
@@ -30,25 +31,29 @@ export default function NplLotManagement() {
   const [filterCollapsed, setFilterCollapsed] = useState(false);
   const [modalItem, setModalItem] = useState<NplLotItem | null | undefined>(undefined);
 
-  const { data, isFetching } = useNplLots(applied, page, PAGE_SIZE);
+  const { data, isFetching, refetch } = useNplLots(applied, page, PAGE_SIZE);
   const deleteNplLot = useDeleteNplLot();
   const downloadExcel = useDownloadNplLotsExcel();
   const rows = data?.content ?? [];
   const total = data?.totalElements ?? 0;
 
+  /** Same query on page 1 keeps the key, so reload it explicitly (the button always searches). */
+  const applySearch = (next: NplLotSearch) => {
+    if (page === 1 && isSameQuery(next, applied)) void refetch();
+    setApplied(next);
+    setPage(1);
+  };
   const handleSearch = () => {
-    setApplied({
+    applySearch({
       bndLotNo: bndLotNo.trim() || undefined,
       bndLotNm: bndLotNm.trim() || undefined,
     });
-    setPage(1);
   };
 
   const handleReset = () => {
     setBndLotNo('');
     setBndLotNm('');
-    setApplied({});
-    setPage(1);
+    applySearch({});
   };
 
   const handleDelete = (bndLotId: string) => {

@@ -76,7 +76,7 @@ export default function FormManagement() {
   const { canWrite } = useMenuPermission();
   const list = usePagedList<FormFilter>({ useYn: ALL, langCd: ALL, formNm: '' });
   const search = toSearch(list.applied);
-  const { data, isFetching } = useForms(search, list.pageQuery);
+  const { data, isFetching, refetch } = useForms(search, list.pageQuery);
   const excel = useDownloadFormExcel();
   const [modal, setModal] = useState<ModalState>(null);
   const total = data?.totalElements ?? 0;
@@ -107,11 +107,11 @@ export default function FormManagement() {
             value={list.draft.formNm}
             allowClear
             onChange={(e) => list.setDraft({ formNm: e.target.value })}
-            onPressEnter={() => list.search()}
+            onPressEnter={() => { if (!list.search()) void refetch(); }}
           />
         </SysFilterItem>
       </SysFilterPanel>
-      <SysSearchActions onReset={list.reset} onSearch={() => list.search()} loading={isFetching} />
+      <SysSearchActions onReset={() => { if (!list.reset()) void refetch(); }} onSearch={() => { if (!list.search()) void refetch(); }} loading={isFetching} />
       <SysSectionHeader
         total={total}
         actions={

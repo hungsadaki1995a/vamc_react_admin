@@ -113,7 +113,7 @@ export default function ZaloUserManagement() {
   const { canWrite } = useMenuPermission();
   const list = usePagedList<UserFilter>(INITIAL_FILTER);
   const search = toSearch(list.applied);
-  const { data, isFetching } = useZaloUsers(search, list.pageQuery);
+  const { data, isFetching, refetch } = useZaloUsers(search, list.pageQuery);
   const { data: summary } = useZaloUserSummary();
   const { data: status } = useZaloStatus();
   const excel = useDownloadZaloUsersExcel();
@@ -190,11 +190,11 @@ export default function ZaloUserManagement() {
             allowClear
             maxLength={100}
             onChange={(e) => list.setDraft({ keyword: e.target.value })}
-            onPressEnter={() => list.search()}
+            onPressEnter={() => { if (!list.search()) void refetch(); }}
           />
         </SysFilterItem>
       </SysFilterPanel>
-      <SysSearchActions onReset={list.reset} onSearch={() => list.search()} loading={isFetching} />
+      <SysSearchActions onReset={() => { if (!list.reset()) void refetch(); }} onSearch={() => { if (!list.search()) void refetch(); }} loading={isFetching} />
       <SysSplit
         ratio="minmax(0, 1fr) 440px"
         left={

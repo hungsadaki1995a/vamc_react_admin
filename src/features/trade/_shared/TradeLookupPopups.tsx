@@ -69,23 +69,28 @@ interface PickerShellProps {
   onClose: () => void;
   list: PagedListState<CodeNameFilter>;
   loading: boolean;
+  /** Reloads the list when [Search] / [Reset] keep the same query. */
+  refetch: () => void;
   total: number;
   children: ReactNode;
 }
 
-function PickerShell({ title, codeLabel, nameLabel, canSelect, onSelect, onClose, list, loading, total, children }: PickerShellProps) {
+function PickerShell({ title, codeLabel, nameLabel, canSelect, onSelect, onClose, list, loading, refetch, total, children }: PickerShellProps) {
   const { t } = useTranslation();
+  const search = () => {
+    if (!list.search()) refetch();
+  };
   return (
     <SysFormModal open width={820} title={title} submitText={t('trade.common.select')} submitDisabled={!canSelect} onSubmit={onSelect} onCancel={onClose}>
       <SysFilterPanel columns={2}>
         <SysFilterItem label={codeLabel}>
-          <TextInput value={list.draft.code} allowClear onChange={(e) => list.setDraft({ code: e.target.value })} onPressEnter={() => list.search()} />
+          <TextInput value={list.draft.code} allowClear onChange={(e) => list.setDraft({ code: e.target.value })} onPressEnter={search} />
         </SysFilterItem>
         <SysFilterItem label={nameLabel}>
-          <TextInput value={list.draft.name} allowClear onChange={(e) => list.setDraft({ name: e.target.value })} onPressEnter={() => list.search()} />
+          <TextInput value={list.draft.name} allowClear onChange={(e) => list.setDraft({ name: e.target.value })} onPressEnter={search} />
         </SysFilterItem>
       </SysFilterPanel>
-      <SysSearchActions onReset={list.reset} onSearch={() => list.search()} loading={loading} />
+      <SysSearchActions onReset={() => { if (!list.reset()) refetch(); }} onSearch={search} loading={loading} />
       <SysSectionHeader total={total} />
       {children}
       <SysPager page={list.page} pageSize={SYS_PAGE_SIZE} total={total} onChange={list.setPage} />
@@ -96,7 +101,7 @@ function PickerShell({ title, codeLabel, nameLabel, canSelect, onSelect, onClose
 export function MemberSearchPopup({ onSelect, onClose }: { onSelect: (member: MemberLookup) => void; onClose: () => void }) {
   const { t } = useTranslation();
   const list = usePagedList<CodeNameFilter>(INITIAL_FILTER);
-  const { data, isFetching } = useMemberSearch(
+  const { data, isFetching, refetch } = useMemberSearch(
     { mbrNo: list.applied.code.trim() || undefined, mbrNm: list.applied.name.trim() || undefined, mbrSttsCds: [ACTIVE_MEMBER_STATUS] },
     list.pageQuery,
   );
@@ -111,6 +116,7 @@ export function MemberSearchPopup({ onSelect, onClose }: { onSelect: (member: Me
       onClose={onClose}
       list={list}
       loading={isFetching}
+      refetch={() => void refetch()}
       total={data?.totalElements ?? 0}
     >
       <SysTable<MemberLookup>
@@ -154,6 +160,7 @@ export function NplSearchPopup({ mode, onSelect, onClose }: { mode: 'npl' | 'lot
       onClose={onClose}
       list={list}
       loading={isNpl ? npls.isFetching : lots.isFetching}
+      refetch={() => void (isNpl ? npls.refetch() : lots.refetch())}
       total={(isNpl ? npls.data?.totalElements : lots.data?.totalElements) ?? 0}
     >
       {isNpl ? (
@@ -190,7 +197,7 @@ export interface PickedCollateral {
 export function CollateralSearchPopup({ onSelect, onClose }: { onSelect: (collateral: PickedCollateral) => void; onClose: () => void }) {
   const { t } = useTranslation();
   const list = usePagedList<CodeNameFilter>(INITIAL_FILTER);
-  const { data, isFetching } = useCollateralSearch(
+  const { data, isFetching, refetch } = useCollateralSearch(
     { cltrAstCd: list.applied.code.trim() || undefined, cltrAstNm: list.applied.name.trim() || undefined, expsrYn: 'Y' },
     list.pageQuery,
   );
@@ -205,6 +212,7 @@ export function CollateralSearchPopup({ onSelect, onClose }: { onSelect: (collat
       onClose={onClose}
       list={list}
       loading={isFetching}
+      refetch={() => void refetch()}
       total={data?.totalElements ?? 0}
     >
       <SysTable<CollateralAssetItem>

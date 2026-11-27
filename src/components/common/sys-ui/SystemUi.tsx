@@ -60,7 +60,7 @@ export function SysPageHeader({
             </ActionButton>
           )}
           {onSearch && (
-            <ActionButton action="search" intent="secondary" appearance="filled" onClick={onSearch}>
+            <ActionButton action="search" onClick={onSearch}>
               {searchLabel}
             </ActionButton>
           )}

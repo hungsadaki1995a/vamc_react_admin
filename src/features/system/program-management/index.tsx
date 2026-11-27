@@ -37,7 +37,7 @@ export default function ProgramManagement() {
   const { canWrite } = useMenuPermission();
   const list = usePagedList<ProgramSearch>(INITIAL_FILTER);
   const [modalItem, setModalItem] = useState<ProgramItem | null | undefined>(undefined);
-  const { data, isFetching } = usePrograms(list.applied, list.pageQuery);
+  const { data, isFetching, refetch } = usePrograms(list.applied, list.pageQuery);
   const excel = useDownloadProgramsExcel();
 
   const columns: TableColumnsType<ProgramItem> = [
@@ -98,7 +98,7 @@ export default function ProgramManagement() {
             value={list.draft.prgrmCd}
             allowClear
             onChange={(e) => list.setDraft({ prgrmCd: e.target.value })}
-            onPressEnter={() => list.search()}
+            onPressEnter={() => { if (!list.search()) void refetch(); }}
           />
         </SysFilterItem>
         <SysFilterItem label="Program Name">
@@ -106,11 +106,11 @@ export default function ProgramManagement() {
             value={list.draft.prgrmNm}
             allowClear
             onChange={(e) => list.setDraft({ prgrmNm: e.target.value })}
-            onPressEnter={() => list.search()}
+            onPressEnter={() => { if (!list.search()) void refetch(); }}
           />
         </SysFilterItem>
       </SysFilterPanel>
-      <SysSearchActions onReset={list.reset} onSearch={() => list.search()} loading={isFetching} />
+      <SysSearchActions onReset={() => { if (!list.reset()) void refetch(); }} onSearch={() => { if (!list.search()) void refetch(); }} loading={isFetching} />
 
       <SysSectionHeader
         total={data?.totalElements ?? 0}

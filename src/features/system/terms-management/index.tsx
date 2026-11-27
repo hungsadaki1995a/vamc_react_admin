@@ -32,7 +32,7 @@ export default function TermsManagement() {
   const list = usePagedList<TermsPolicySearch>(INITIAL_FILTER);
   // undefined = closed, null = register, string = row opened.
   const [openId, setOpenId] = useState<string | null | undefined>(undefined);
-  const { data, isFetching } = useTermsPolicies(list.applied, list.pageQuery);
+  const { data, isFetching, refetch } = useTermsPolicies(list.applied, list.pageQuery);
 
   const columns: TableColumnsType<TermsPolicyItem> = [
     {
@@ -89,7 +89,7 @@ export default function TermsManagement() {
           />
         </SysFilterItem>
       </SysFilterPanel>
-      <SysSearchActions onReset={list.reset} onSearch={() => list.search()} loading={isFetching} />
+      <SysSearchActions onReset={() => { if (!list.reset()) void refetch(); }} onSearch={() => { if (!list.search()) void refetch(); }} loading={isFetching} />
 
       <SysSectionHeader
         total={data?.totalElements ?? 0}

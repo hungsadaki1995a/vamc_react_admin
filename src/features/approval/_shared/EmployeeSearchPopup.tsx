@@ -91,6 +91,11 @@ export default function EmployeeSearchPopup({
   const rows = excludeEmpNos?.length ? sourceRows.filter((row) => !excludeEmpNos.includes(row.empNo)) : sourceRows;
   const total = isCandidates ? rows.length : (directory.data?.totalElements ?? 0);
   const loading = isCandidates ? candidates.isFetching : directory.isFetching;
+  // Same query keeps the key: reload it so [Search] / [Reset] always hit the server.
+  const refetch = () => void (isCandidates ? candidates.refetch() : directory.refetch());
+  const search = () => {
+    if (!list.search()) refetch();
+  };
 
   return (
     <SysFormModal
@@ -109,7 +114,7 @@ export default function EmployeeSearchPopup({
             maxLength={10}
             allowClear
             onChange={(e) => list.setDraft({ empNo: e.target.value })}
-            onPressEnter={() => list.search()}
+            onPressEnter={search}
           />
         </SysFilterItem>
         <SysFilterItem label={t('approval.picker.name')}>
@@ -118,11 +123,11 @@ export default function EmployeeSearchPopup({
             maxLength={100}
             allowClear
             onChange={(e) => list.setDraft({ empNm: e.target.value })}
-            onPressEnter={() => list.search()}
+            onPressEnter={search}
           />
         </SysFilterItem>
       </SysFilterPanel>
-      <SysSearchActions onReset={list.reset} onSearch={() => list.search()} loading={loading} />
+      <SysSearchActions onReset={() => { if (!list.reset()) refetch(); }} onSearch={search} loading={loading} />
       <SysSectionHeader total={total} />
       <SysTable<PickedEmployee>
         rowKey="empNo"

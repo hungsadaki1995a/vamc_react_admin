@@ -58,7 +58,7 @@ export default function NotificationMessageManagement() {
   const { canWrite } = useMenuPermission();
   const list = usePagedList<MessageFilter>(INITIAL_FILTER);
   const search = toSearch(list.applied);
-  const { data, isFetching } = useNotificationMessages(search, list.pageQuery);
+  const { data, isFetching, refetch } = useNotificationMessages(search, list.pageQuery);
   const excel = useDownloadNotificationMessagesExcel();
   const [modal, setModal] = useState<ModalState>(null);
   const total = data?.totalElements ?? 0;
@@ -158,11 +158,11 @@ export default function NotificationMessageManagement() {
             allowClear
             maxLength={100}
             onChange={(e) => list.setDraft({ no: e.target.value })}
-            onPressEnter={() => list.search()}
+            onPressEnter={() => { if (!list.search()) void refetch(); }}
           />
         </SysFilterItem>
       </SysFilterPanel>
-      <SysSearchActions onReset={list.reset} onSearch={() => list.search()} loading={isFetching} />
+      <SysSearchActions onReset={() => { if (!list.reset()) void refetch(); }} onSearch={() => { if (!list.search()) void refetch(); }} loading={isFetching} />
       <SysSectionHeader
         total={total}
         actions={
