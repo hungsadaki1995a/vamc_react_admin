@@ -1,3 +1,4 @@
+import i18n from '@/lib/i18n';
 import { useApiQuery } from '@/hooks/use-api-query';
 import { useApiAction, useApiTask } from '@/hooks/use-api-action';
 import type { ApprovalRequestBody } from '@/api/common/approval-api';
@@ -187,7 +188,7 @@ export function useSaveConsultingReport() {
   return useApiTask(
     async ({ ctrtCd, files, fileUnqId, summary }: { ctrtCd: string; files: File[]; fileUnqId?: string; summary: string }) => {
       const groupId = files.length ? (await uploadTradeFiles('consulting', 'contract', files)).fileUnqId : fileUnqId;
-      if (!groupId) throw new Error('Report file missing');
+      if (!groupId) throw new Error(i18n.t('trade.report.fileMissing'));
       return saveConsultingReport(ctrtCd, groupId, summary);
     },
     { invalidate: AFTER_WRITE },

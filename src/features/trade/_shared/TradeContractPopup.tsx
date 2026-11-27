@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import type { TFunction } from 'i18next';
 import { Tabs } from 'antd';
 import type { TableColumnsType } from 'antd';
 import dayjs from 'dayjs';
@@ -14,7 +15,7 @@ import DataTable from '@/components/common/table/DataTable';
 import AppDatePicker from '@/components/inputs/AppDatePicker';
 import { useNotify } from '@/hooks/use-notify';
 import { useAuthStore } from '@/stores/auth-store';
-import { APPROVAL_STAGE_LABELS, RECEIPT_OFFICER_STEP, approvalStageOf } from '@/api/common/approval-api';
+import { RECEIPT_OFFICER_STEP, approvalStageOf } from '@/api/common/approval-api';
 import { TRADE_CONTRACT_KIND, contractNo, tradeProcessCode } from '@/api/trade/trade-api';
 import type { TradeAppKind, TradeContractDetail, TradeContractFee, TradeContractListItem, TradeFile, TradeNpl } from '@/api/trade/trade-api';
 import type { ContractApprovalHistory } from '@/api/trade/trade-contract-api';
@@ -26,6 +27,7 @@ import ApprovalRequestPopup from '@/features/approval/_shared/ApprovalRequestPop
 import AssignOfficerPopup from '@/features/approval/_shared/AssignOfficerPopup';
 import MemberDetailModal from '@/features/member/member-list/MemberDetailModal';
 import { memberItemFor } from '@/features/member/member-list/use-members';
+import { codeLabel } from '@/lib/i18n/code-label';
 import { formatDateTime, formatDmy } from '@/utils/date-format';
 import { errorMessage, formatAmount } from '@/utils/system-utils';
 import ContractDraftForm from './ContractDraftForm';
@@ -60,17 +62,15 @@ type SubPopup =
   | null;
 
 const LIFECYCLE = ['PREPR', 'DRFAPR', 'SGNWT', 'SGNCP', 'PROGS', 'ENDING', 'CMPTN'];
-const LIFECYCLE_LABELS = ['Preparing', 'Draft Approved', 'Awaiting Signature', 'Signed', 'In Effect', 'Terminating', 'Closed'];
-const ANNEX_LABELS: Record<string, string> = { EXTN: 'Term extension', PRCE: 'Price change', POST: 'After the sale', ETC: 'Other' };
 const SCAN_ACCEPT = '.pdf,.jpg,.jpeg,.png';
 
-const NPL_COLUMNS: TableColumnsType<TradeNpl> = [
-  { title: 'NPL Code', dataIndex: 'bndCd', width: 130, render: (v?: string, r?: TradeNpl) => v || r?.cnsltTrgtNplId || '-' },
-  { title: 'NPL Name', dataIndex: 'bndNm', render: (v?: string) => v || '-' },
-  { title: 'Creditor', dataIndex: 'crdtrNm', width: 170, render: (v?: string) => v || '-' },
-  { title: 'Principal Balance', dataIndex: 'prnBlnc', width: 140, align: 'right', render: (v?: number) => formatAmount(v) },
-  { title: 'Listed', dataIndex: 'expsrYn', width: 70, align: 'center', render: (v?: string) => v || '-' },
-  { title: 'Status', dataIndex: 'bndSttsCd', width: 70, align: 'center', render: (v?: string) => v || '-' },
+const nplColumns = (t: TFunction): TableColumnsType<TradeNpl> => [
+  { title: t('trade.common.nplCode'), dataIndex: 'bndCd', width: 130, render: (v?: string, r?: TradeNpl) => v || r?.cnsltTrgtNplId || '-' },
+  { title: t('trade.common.nplName'), dataIndex: 'bndNm', render: (v?: string) => v || '-' },
+  { title: t('trade.common.creditor'), dataIndex: 'crdtrNm', width: 170, render: (v?: string) => v || '-' },
+  { title: t('trade.common.principalBalance'), dataIndex: 'prnBlnc', width: 140, align: 'right', render: (v?: number) => formatAmount(v) },
+  { title: t('trade.contract.popup.listed'), dataIndex: 'expsrYn', width: 70, align: 'center', render: (v?: string) => v || '-' },
+  { title: t('trade.common.status'), dataIndex: 'bndSttsCd', width: 70, align: 'center', render: (v?: string) => v || '-' },
 ];
 
 function isAnnexOf(detail: TradeContractDetail): boolean {
@@ -158,11 +158,11 @@ function ContractView({ kind, detail, initialTab, title, canWrite, onClose, onOp
   const stepIndex = Math.max(0, LIFECYCLE.indexOf(status === 'CNCLN' ? 'CMPTN' : status));
   const draftProcess = tradeProcessCode(kind, isAnnex ? 'ANX' : 'CTRT');
   const details: ApprovalDetailRow[] = [
-    { label: isAnnex ? 'Annex No.' : 'Contract No.', value: contractNo(detail) },
-    { label: 'Member', value: detail.mbrNm ? `${detail.mbrNm} (${detail.mbrNo ?? '-'})` : (detail.mbrNo ?? '-') },
-    { label: 'NPL', value: (detail.npls ?? []).map((n) => n.bndCd).filter(Boolean).join(', ') || '-' },
-    { label: 'Price', value: detail.prpPrc !== undefined ? `${formatAmount(detail.prpPrc)} ${detail.crncCd ?? ''}` : '-' },
-    { label: 'Fee', value: detail.feeAmt !== undefined ? formatAmount(detail.feeAmt) : '-' },
+    { label: isAnnex ? t('trade.common.annexNo') : t('trade.common.contractNo'), value: contractNo(detail) },
+    { label: t('trade.common.member'), value: detail.mbrNm ? `${detail.mbrNm} (${detail.mbrNo ?? '-'})` : (detail.mbrNo ?? '-') },
+    { label: t('trade.common.npl'), value: (detail.npls ?? []).map((n) => n.bndCd).filter(Boolean).join(', ') || '-' },
+    { label: t('trade.common.price'), value: detail.prpPrc !== undefined ? `${formatAmount(detail.prpPrc)} ${detail.crncCd ?? ''}` : '-' },
+    { label: t('trade.common.fee'), value: detail.feeAmt !== undefined ? formatAmount(detail.feeAmt) : '-' },
   ];
 
   const run = async (task: () => Promise<{ message?: string } | unknown>, success: string) => {
@@ -185,12 +185,12 @@ function ContractView({ kind, detail, initialTab, title, canWrite, onClose, onOp
             <span>{file.fileNm}</span>
             {file.previewUrl && (
               <button type="button" className={styles.officerLink} onClick={() => open(file.previewUrl)}>
-                Preview
+                {t('trade.common.preview')}
               </button>
             )}
             {file.downloadUrl && (
               <button type="button" className={styles.officerLink} onClick={() => open(file.downloadUrl)}>
-                Download
+                {t('trade.common.download')}
               </button>
             )}
           </li>
@@ -201,14 +201,20 @@ function ContractView({ kind, detail, initialTab, title, canWrite, onClose, onOp
     );
 
   const feeColumns: TableColumnsType<TradeContractFee> = [
-    { title: 'No', dataIndex: 'feeSeq', width: 50, align: 'center' },
-    { title: 'Type', dataIndex: 'feeSeCd', width: 100, render: (v?: string) => (v === 'PRAMT' ? 'Advance' : v === 'BALNC' ? 'Balance' : v || '-') },
-    { title: 'Amount', dataIndex: 'fee', width: 140, align: 'right', render: (v?: number, r?: TradeContractFee) => `${formatAmount(v)} ${r?.crncCd ?? ''}` },
-    { title: 'Due', dataIndex: 'feePayTermDmy', width: 110, align: 'center', render: (v?: string) => formatDmy(v) },
-    { title: 'Paid', dataIndex: 'feeRcptYn', width: 70, align: 'center', render: (v?: string) => (v === 'Y' ? 'Paid' : 'Unpaid') },
-    { title: 'Paid On', dataIndex: 'feeRcptIdntyDmy', width: 110, align: 'center', render: (v?: string) => formatDmy(v) },
-    { title: 'Received', dataIndex: 'rcptAmt', width: 130, align: 'right', render: (v?: number) => formatAmount(v) },
-    { title: 'Refund', dataIndex: 'rfndSttsCd', width: 110, render: (v?: string, r?: TradeContractFee) => (v ? `${v === 'RFPL' ? 'Planned' : 'Refunded'} ${r?.rfndAmt ? formatAmount(r.rfndAmt) : ''}` : '-') },
+    { title: t('trade.common.rowNo'), dataIndex: 'feeSeq', width: 50, align: 'center' },
+    { title: t('trade.common.type'), dataIndex: 'feeSeCd', width: 100, render: (v?: string) => codeLabel('trade.feeTypes', v) },
+    { title: t('trade.contract.popup.amount'), dataIndex: 'fee', width: 140, align: 'right', render: (v?: number, r?: TradeContractFee) => `${formatAmount(v)} ${r?.crncCd ?? ''}` },
+    { title: t('trade.contract.popup.due'), dataIndex: 'feePayTermDmy', width: 110, align: 'center', render: (v?: string) => formatDmy(v) },
+    { title: t('trade.contract.popup.paid'), dataIndex: 'feeRcptYn', width: 70, align: 'center', render: (v?: string) => (v === 'Y' ? t('trade.contract.popup.paid') : t('trade.contract.popup.unpaid')) },
+    { title: t('trade.contract.popup.paidOn'), dataIndex: 'feeRcptIdntyDmy', width: 110, align: 'center', render: (v?: string) => formatDmy(v) },
+    { title: t('trade.contract.popup.received'), dataIndex: 'rcptAmt', width: 130, align: 'right', render: (v?: number) => formatAmount(v) },
+    {
+      title: t('trade.contract.popup.refund'),
+      dataIndex: 'rfndSttsCd',
+      width: 110,
+      render: (v?: string, r?: TradeContractFee) =>
+        v ? `${v === 'RFPL' ? t('trade.contract.popup.refundPlanned') : t('trade.contract.popup.refunded')} ${r?.rfndAmt ? formatAmount(r.rfndAmt) : ''}` : '-',
+    },
     {
       title: '',
       key: 'actions',
@@ -218,12 +224,12 @@ function ContractView({ kind, detail, initialTab, title, canWrite, onClose, onOp
         <>
           {actions.has('CONFIRM_FEE') && fee.feeRcptYn !== 'Y' && (
             <ActionButton size="small" intent="primary" appearance="filled" onClick={() => setSub({ type: 'fee', fee, refund: false })}>
-              Confirm
+              {t('trade.common.confirm')}
             </ActionButton>
           )}
           {actions.has('REFUND_FEE') && fee.rfndSttsCd === 'RFPL' && (
             <ActionButton size="small" intent="danger" appearance="outlined" onClick={() => setSub({ type: 'fee', fee, refund: true })}>
-              Refund
+              {t('trade.contract.popup.refund')}
             </ActionButton>
           )}
         </>
@@ -233,7 +239,7 @@ function ContractView({ kind, detail, initialTab, title, canWrite, onClose, onOp
 
   const annexColumns: TableColumnsType<TradeContractListItem> = [
     {
-      title: 'Annex',
+      title: t('trade.contract.popup.annex'),
       dataIndex: 'srvcCtrtNo',
       render: (_v, r) => (
         <button type="button" className={styles.officerLink} onClick={() => onOpen(r.srvcCtrtCd)}>
@@ -241,26 +247,26 @@ function ContractView({ kind, detail, initialTab, title, canWrite, onClose, onOp
         </button>
       ),
     },
-    { title: 'Purpose', dataIndex: 'anxPrpsCd', width: 140, render: (v?: string) => (v && ANNEX_LABELS[v]) || v || '-' },
-    { title: 'Status', dataIndex: 'ctrtSttsNm', width: 150, render: (v?: string, r?: TradeContractListItem) => v || r?.ctrtSttsCd || '-' },
-    { title: 'Concluded', dataIndex: 'ctrtCnclsDmy', width: 110, align: 'center', render: (v?: string) => formatDmy(v) },
+    { title: t('trade.contract.popup.purpose'), dataIndex: 'anxPrpsCd', width: 140, render: (v?: string) => codeLabel('trade.annexPurposes', v) },
+    { title: t('trade.common.status'), dataIndex: 'ctrtSttsNm', width: 150, render: (v?: string, r?: TradeContractListItem) => v || r?.ctrtSttsCd || '-' },
+    { title: t('trade.contract.popup.concluded'), dataIndex: 'ctrtCnclsDmy', width: 110, align: 'center', render: (v?: string) => formatDmy(v) },
   ];
 
   const historyColumns: TableColumnsType<ContractApprovalHistory> = [
-    { title: 'Stage', dataIndex: 'atrzProcCd', width: 210, render: (v?: string) => APPROVAL_STAGE_LABELS[approvalStageOf(v)] },
-    { title: 'Status', dataIndex: 'atrzSttsCd', width: 110, align: 'center', render: (v?: string) => <SessionStatusBadge status={v} /> },
-    { title: 'Requester', dataIndex: 'requesterEmpNo', width: 100, render: (v?: string) => v || '-' },
-    { title: 'Approver', dataIndex: 'approverEmpNm', width: 170, render: (v?: string, r?: ContractApprovalHistory) => v || r?.approverEmpNo || '-' },
-    { title: 'Requested', dataIndex: 'requestedAt', width: 130, align: 'center', render: (v?: string) => formatDateTime(v) },
-    { title: 'Decided', dataIndex: 'decidedAt', width: 130, align: 'center', render: (v?: string) => formatDateTime(v) },
-    { title: 'Comment', dataIndex: 'comment', render: (v?: string) => v || '-' },
+    { title: t('trade.contract.popup.stage'), dataIndex: 'atrzProcCd', width: 210, render: (v?: string) => codeLabel('approval.stages', approvalStageOf(v)) },
+    { title: t('trade.common.status'), dataIndex: 'atrzSttsCd', width: 110, align: 'center', render: (v?: string) => <SessionStatusBadge status={v} /> },
+    { title: t('trade.contract.popup.requester'), dataIndex: 'requesterEmpNo', width: 100, render: (v?: string) => v || '-' },
+    { title: t('trade.contract.popup.approver'), dataIndex: 'approverEmpNm', width: 170, render: (v?: string, r?: ContractApprovalHistory) => v || r?.approverEmpNo || '-' },
+    { title: t('trade.common.requested'), dataIndex: 'requestedAt', width: 130, align: 'center', render: (v?: string) => formatDateTime(v) },
+    { title: t('trade.contract.popup.decided'), dataIndex: 'decidedAt', width: 130, align: 'center', render: (v?: string) => formatDateTime(v) },
+    { title: t('trade.common.comment'), dataIndex: 'comment', render: (v?: string) => v || '-' },
     {
       title: '',
       key: 'info',
       width: 70,
       render: (_v, row) => (
         <ActionButton size="small" intent="text" onClick={() => setSub({ type: 'info', atrzHstryId: row.atrzHstryId })}>
-          Info
+          {t('trade.common.info')}
         </ActionButton>
       ),
     },
@@ -269,16 +275,16 @@ function ContractView({ kind, detail, initialTab, title, canWrite, onClose, onOp
   const tabs = [
     {
       key: 'contract',
-      label: 'Contract',
+      label: t('trade.contract.tabs.contract'),
       children: (
         <>
           <section className={styles.section}>
-            <div className={styles.sectionTitle}>Parties</div>
+            <div className={styles.sectionTitle}>{t('trade.contract.popup.parties')}</div>
             <div className={styles.grid}>
-              <div className={styles.cellLabel}>Customer</div>
+              <div className={styles.cellLabel}>{t('trade.contract.popup.customer')}</div>
               <div className={styles.cellValue}>
                 {detail.mbrNo ? (
-                  <button type="button" className={styles.officerLink} title="Open the member detail" onClick={() => setSub({ type: 'member' })}>
+                  <button type="button" className={styles.officerLink} title={t('trade.common.openMember')} onClick={() => setSub({ type: 'member' })}>
                     {member?.mbrNm || member?.orgnzNm || detail.mbrNm || '-'} ({detail.mbrNo})
                   </button>
                 ) : (
@@ -286,27 +292,29 @@ function ContractView({ kind, detail, initialTab, title, canWrite, onClose, onOp
                 )}{' '}
                 · {member?.mbrTypeNm ?? '-'}
               </div>
-              <div className={styles.cellLabel}>Customer Contact</div>
+              <div className={styles.cellLabel}>{t('trade.contract.popup.customerContact')}</div>
               <div className={styles.cellValue}>{[member?.telno, member?.emlAddr].filter(Boolean).join(' · ') || '-'}</div>
-              <div className={styles.cellLabel}>Broker</div>
+              <div className={styles.cellLabel}>{t('trade.contract.popup.broker')}</div>
               {/* Q-U3 / §6.2: VAMC representative, POA number and fee account have no column yet (WP8). */}
-              <div className={`${styles.cellValue} ${styles.wide}`}>VAMC — representative, authorisation and fee account from the system settings (pending Q-U3)</div>
+              <div className={`${styles.cellValue} ${styles.wide}`}>{t('trade.contract.popup.brokerValue')}</div>
             </div>
           </section>
           {(detail.npls?.length ?? 0) > 0 && (
             <section className={styles.section}>
-              <div className={styles.sectionTitle}>NPLs</div>
-              <DataTable<TradeNpl> rowKey={(r) => r.bndCd || r.cnsltTrgtNplId || ''} columns={NPL_COLUMNS} dataSource={detail.npls} pagination={false} />
+              <div className={styles.sectionTitle}>{t('trade.common.npls')}</div>
+              <DataTable<TradeNpl> rowKey={(r) => r.bndCd || r.cnsltTrgtNplId || ''} columns={nplColumns(t)} dataSource={detail.npls} pagination={false} />
             </section>
           )}
           <section className={styles.section}>
-            <div className={styles.sectionTitle}>{isAnnex ? `Annex Terms — ${ANNEX_LABELS[detail.anxPrpsCd ?? ''] ?? detail.anxPrpsCd ?? ''}` : 'Contract Terms'}</div>
+            <div className={styles.sectionTitle}>{isAnnex
+                ? t('trade.contract.popup.annexTerms', { purpose: codeLabel('trade.annexPurposes', detail.anxPrpsCd, '') })
+                : t('trade.contract.popup.contractTerms')}</div>
             <ContractDraftForm kind={kind} contractKind={contractKind} detail={detail} isAnnex={isAnnex} editable={actions.has('UPDATE_DRAFT')} />
             {(detail.trdCnclsDmy || detail.dlvrCmptnDmy) && (
               <div className={`${styles.grid} ${styles.gridSpaced}`}>
-                <div className={styles.cellLabel}>{kind === 'sale' ? 'Sale Completed' : 'Agreement Signed'}</div>
+                <div className={styles.cellLabel}>{kind === 'sale' ? t('trade.contract.popup.saleCompleted') : t('trade.contract.popup.agreementSigned')}</div>
                 <div className={styles.cellValue}>{formatDmy(detail.trdCnclsDmy)}</div>
-                <div className={styles.cellLabel}>Delivery</div>
+                <div className={styles.cellLabel}>{t('trade.contract.popup.delivery')}</div>
                 <div className={styles.cellValue}>
                   {formatDmy(detail.dlvrCmptnDmy)} {detail.dlvrCn ?? ''}
                 </div>
@@ -318,18 +326,18 @@ function ContractView({ kind, detail, initialTab, title, canWrite, onClose, onOp
     },
     {
       key: 'documents',
-      label: 'Documents',
+      label: t('trade.contract.tabs.documents'),
       children: (
         <>
           <section className={styles.section}>
-            <div className={styles.sectionTitle}>Draft Contract</div>
-            {fileList(detail.draftFiles, 'No draft registered yet.')}
+            <div className={styles.sectionTitle}>{t('trade.contract.popup.draftContract')}</div>
+            {fileList(detail.draftFiles, t('trade.contract.popup.noDraft'))}
             {actions.has('REGISTER_DRAFT') && (
               <FileUploadBox
                 accept={SCAN_ACCEPT}
                 disabled={uploadDocument.isPending}
-                title="Select the approved draft (PDF) — registering it sends the signature request to the customer"
-                uploadButtonText="Register Draft"
+                title={t('trade.contract.popup.draftUploadTitle')}
+                uploadButtonText={t('trade.contract.popup.registerDraft')}
                 onFileSelect={(files) =>
                   void run(
                     () => uploadDocument.mutateAsync({ kind: contractKind, appKind: kind, ctrtCd, files, as: 'draft' }),
@@ -340,14 +348,14 @@ function ContractView({ kind, detail, initialTab, title, canWrite, onClose, onOp
             )}
           </section>
           <section className={styles.section}>
-            <div className={styles.sectionTitle}>Signed Contract Scan</div>
-            {fileList(detail.scanFiles, 'No signed scan yet.')}
+            <div className={styles.sectionTitle}>{t('trade.contract.popup.signedScan')}</div>
+            {fileList(detail.scanFiles, t('trade.contract.popup.noSignedScan'))}
             {actions.has('ATTACH_SIGNED_SCAN') && (
               <FileUploadBox
                 accept={SCAN_ACCEPT}
                 disabled={uploadDocument.isPending}
-                title="Select the scan of the contract signed by both parties"
-                uploadButtonText="Upload Signed Scan"
+                title={t('trade.contract.popup.signedUploadTitle')}
+                uploadButtonText={t('trade.contract.popup.uploadSignedScan')}
                 onFileSelect={(files) =>
                   void run(
                     () => uploadDocument.mutateAsync({ kind: contractKind, appKind: kind, ctrtCd, files, as: 'signed' }),
@@ -358,7 +366,7 @@ function ContractView({ kind, detail, initialTab, title, canWrite, onClose, onOp
             )}
             {(actions.has('CONCLUDE') || (status === 'SGNCP' && actions.has('ATTACH_SIGNED_SCAN'))) && (
               <div className={`${styles.inlineForm} ${styles.gridSpaced}`}>
-                <span className={styles.fieldLabel}>Conclusion Date</span>
+                <span className={styles.fieldLabel}>{t('trade.contract.popup.conclusionDate')}</span>
                 <AppDatePicker format="DD/MM/YYYY" value={cnclsDt} onChange={(d) => setCnclsDt(d)} />
                 <ActionButton
                   intent="primary"
@@ -372,7 +380,7 @@ function ContractView({ kind, detail, initialTab, title, canWrite, onClose, onOp
                     )
                   }
                 >
-                  Complete Signing
+                  {t('trade.contract.popup.completeSigning')}
                 </ActionButton>
               </div>
             )}
@@ -382,20 +390,20 @@ function ContractView({ kind, detail, initialTab, title, canWrite, onClose, onOp
     },
     {
       key: 'fees',
-      label: `Fees (${detail.fees?.length ?? 0})`,
+      label: t('trade.contract.tabs.fees', { n: detail.fees?.length ?? 0 }),
       children: <DataTable<TradeContractFee> rowKey="feeId" columns={feeColumns} dataSource={detail.fees ?? []} pagination={false} />,
     },
     ...(kind !== 'consulting' && !isAnnex
       ? [
           {
             key: 'annexes',
-            label: `Annexes (${detail.annexes?.length ?? 0})`,
+            label: t('trade.contract.tabs.annexes', { n: detail.annexes?.length ?? 0 }),
             children: (
               <>
                 {actions.has('CREATE_ANNEX') && (
                   <div className={styles.checkActions}>
                     <ActionButton intent="secondary" appearance="filled" onClick={() => setSub({ type: 'annex' })}>
-                      Create Annex
+                      {t('trade.contract.popup.createAnnex')}
                     </ActionButton>
                   </div>
                 )}
@@ -409,7 +417,7 @@ function ContractView({ kind, detail, initialTab, title, canWrite, onClose, onOp
       ? [
           {
             key: 'report',
-            label: `Report & Follow-up (${detail.additionalConsultations?.length ?? 0})`,
+            label: t('trade.contract.tabs.report', { n: detail.additionalConsultations?.length ?? 0 }),
             children: <ConsultingReportTab detail={detail} actions={actions} details={details} />,
           },
         ]
@@ -418,14 +426,14 @@ function ContractView({ kind, detail, initialTab, title, canWrite, onClose, onOp
       ? [
           {
             key: 'termination',
-            label: `Termination (${detail.terminations?.length ?? 0})`,
+            label: t('trade.contract.tabs.termination', { n: detail.terminations?.length ?? 0 }),
             children: <ContractTerminationTab kind={kind} contractKind={contractKind} detail={detail} actions={actions} details={details} />,
           },
         ]
       : []),
     {
       key: 'approvals',
-      label: 'Approval History',
+      label: t('trade.contract.tabs.approvals'),
       children: <DataTable<ContractApprovalHistory> rowKey="atrzHstryId" columns={historyColumns} dataSource={histories} pagination={false} />,
     },
   ];
@@ -435,47 +443,47 @@ function ContractView({ kind, detail, initialTab, title, canWrite, onClose, onOp
       <span className={styles.footerLeft}>
         {onBack && (
           <ActionButton intent="quaternary" appearance="outlined" onClick={onBack}>
-            Back to Contract
+            {t('trade.contract.popup.backToContract')}
           </ActionButton>
         )}
         {openSession && (
           <ActionButton intent="quaternary" appearance="outlined" onClick={() => setSub({ type: 'info', atrzHstryId: openSession })}>
-            Approval Info
+            {t('trade.common.approvalInfo')}
           </ActionButton>
         )}
         {actions.has('DECIDE_RENEWAL') && (
           <ActionButton intent="quaternary" appearance="outlined" onClick={() => setSub({ type: 'renewal' })}>
-            Renewal Decision
+            {t('trade.contract.popup.renewalDecision')}
           </ActionButton>
         )}
       </span>
       {actions.has('REQUEST_DRAFT_APPROVAL') && (
         <ActionButton intent="secondary" appearance="filled" onClick={() => setSub({ type: 'requestDraft' })}>
-          Request Draft Approval
+          {t('trade.contract.popup.requestDraftApproval')}
         </ActionButton>
       )}
       {actions.has('REQUEST_SIGNATURE_APPROVAL') && (
         <ActionButton intent="secondary" appearance="filled" onClick={() => setSub({ type: 'requestSignature' })}>
-          Request Signature Approval
+          {t('trade.contract.popup.requestSignatureApproval')}
         </ActionButton>
       )}
       {(actions.has('COMPLETE_SALE') || actions.has('CONCLUDE_TRADE')) && (
         <ActionButton intent="secondary" appearance="filled" onClick={() => setSub({ type: 'trade' })}>
-          {kind === 'sale' ? 'Sale Completion' : 'Sale and Purchase Agreement'}
+          {kind === 'sale' ? t('trade.contract.popup.saleCompletion') : t('trade.contract.popup.purchaseAgreement')}
         </ActionButton>
       )}
       {actions.has('RECORD_DELIVERY') && (
         <ActionButton intent="secondary" appearance="filled" onClick={() => setSub({ type: 'delivery' })}>
-          Record Delivery
+          {t('trade.contract.popup.recordDelivery')}
         </ActionButton>
       )}
       {actions.has('DECIDE') && openSession && (
         <>
           <ActionButton intent="danger" appearance="outlined" onClick={() => setSub({ type: 'reject' })}>
-            Reject
+            {t('trade.common.reject')}
           </ActionButton>
           <ActionButton intent="primary" appearance="filled" onClick={() => setSub({ type: 'approve' })}>
-            Approve
+            {t('trade.common.approve')}
           </ActionButton>
         </>
       )}
@@ -487,49 +495,49 @@ function ContractView({ kind, detail, initialTab, title, canWrite, onClose, onOp
 
   return (
     <>
-      <Popup open width={1080} title={`${title} — ${isAnnex ? 'Annex ' : ''}${contractNo(detail)}`} onCancel={onClose} footer={footer}>
+      <Popup open width={1080} title={isAnnex ? t('trade.contract.popup.titleAnnex', { title, no: contractNo(detail) }) : `${title} — ${contractNo(detail)}`} onCancel={onClose} footer={footer}>
         {/* Record key for tests and hand-offs; screens show the readable number only. */}
         <span hidden data-record-key={ctrtCd} />
         <ProgressStepper
           className={styles.stepper}
           current={stepIndex}
-          steps={LIFECYCLE_LABELS.map((label, index) => ({ key: LIFECYCLE[index], label: index === 6 && status === 'CNCLN' ? 'Cancelled' : label }))}
+          steps={LIFECYCLE.map((code, index) => ({ key: code, label: codeLabel('trade.contract.lifecycle', index === 6 && status === 'CNCLN' ? 'CNCLN' : code) }))}
         />
         <div className={styles.header}>
           <div className={styles.headerItem}>
-            <span className={styles.headerLabel}>Status</span>
+            <span className={styles.headerLabel}>{t('trade.common.status')}</span>
             <span>
               <StatusBadge color={status === 'PROGS' ? 'green' : status === 'CNCLN' ? 'gray' : 'blue'}>{detail.ctrtSttsNm || status}</StatusBadge>
             </span>
           </div>
           <div className={styles.headerItem}>
-            <span className={styles.headerLabel}>Application</span>
+            <span className={styles.headerLabel}>{t('trade.common.application')}</span>
             <span className={styles.headerValue}>{detail.srvcAplyNo || detail.srvcAplyId || '-'}</span>
           </div>
           <div className={styles.headerItem}>
-            <span className={styles.headerLabel}>Officer in Charge</span>
+            <span className={styles.headerLabel}>{t('trade.common.officerInCharge')}</span>
             {actions.has('CHANGE_OFFICER') ? (
-              <button type="button" className={styles.officerLink} title="Change the officer in charge" onClick={() => setSub({ type: 'officer' })}>
-                {detail.tkcgEmpNm || detail.tkcgEmpNo || 'Assign'}
+              <button type="button" className={styles.officerLink} title={t('trade.common.changeOfficer')} onClick={() => setSub({ type: 'officer' })}>
+                {detail.tkcgEmpNm || detail.tkcgEmpNo || t('trade.common.assign')}
               </button>
             ) : (
               <span className={styles.headerValue}>{detail.tkcgEmpNm || detail.tkcgEmpNo || '-'}</span>
             )}
           </div>
           <div className={styles.headerItem}>
-            <span className={styles.headerLabel}>Approval</span>
+            <span className={styles.headerLabel}>{t('trade.common.approval')}</span>
             <span className={styles.headerValue}>
               {detail.openApproval
-                ? `${APPROVAL_STAGE_LABELS[approvalStageOf(detail.openApproval.atrzProcCd)]} → ${detail.openApproval.approverEmpNm ?? detail.openApproval.approverEmpNo ?? '-'}`
+                ? `${codeLabel('approval.stages', approvalStageOf(detail.openApproval.atrzProcCd))} → ${detail.openApproval.approverEmpNm ?? detail.openApproval.approverEmpNo ?? '-'}`
                 : '-'}
             </span>
           </div>
           {kind === 'consulting' && (
             <div className={styles.headerItem}>
-              <span className={styles.headerLabel}>Consultant</span>
+              <span className={styles.headerLabel}>{t('trade.common.consultant')}</span>
               {actions.has('ASSIGN_CONSULTANT') ? (
-                <button type="button" className={styles.officerLink} title="Assign the consultant" onClick={() => setSub({ type: 'consultant' })}>
-                  {detail.cnsltEmpNm || detail.cnsltEmpNo || 'Assign'}
+                <button type="button" className={styles.officerLink} title={t('trade.contract.popup.assignConsultant')} onClick={() => setSub({ type: 'consultant' })}>
+                  {detail.cnsltEmpNm || detail.cnsltEmpNo || t('trade.common.assign')}
                 </button>
               ) : (
                 <span className={styles.headerValue}>{detail.cnsltEmpNm || detail.cnsltEmpNo || '-'}</span>
@@ -538,7 +546,7 @@ function ContractView({ kind, detail, initialTab, title, canWrite, onClose, onOp
           )}
           {isAnnex && (
             <div className={styles.headerItem}>
-              <span className={styles.headerLabel}>Main Contract</span>
+              <span className={styles.headerLabel}>{t('trade.contract.popup.mainContract')}</span>
               <span className={styles.headerValue}>{detail.mstCtrtNo || detail.mstCtrtCd}</span>
             </div>
           )}
@@ -553,9 +561,9 @@ function ContractView({ kind, detail, initialTab, title, canWrite, onClose, onOp
         <AssignOfficerPopup
           atrzProcCd={tradeProcessCode(kind, 'RCPT')}
           stpNo={RECEIPT_OFFICER_STEP}
-          title="Change Officer in Charge"
-          confirmText="Change"
-          details={[...details, { label: 'Current Officer', value: detail.tkcgEmpNm || detail.tkcgEmpNo || '-' }]}
+          title={t('trade.common.changeOfficerTitle')}
+          confirmText={t('trade.common.change')}
+          details={[...details, { label: t('trade.common.currentOfficer'), value: detail.tkcgEmpNm || detail.tkcgEmpNo || '-' }]}
           currentEmpNo={detail.tkcgEmpNo}
           submitting={changeOfficer.isPending}
           onSubmit={(empNo) =>
@@ -571,10 +579,12 @@ function ContractView({ kind, detail, initialTab, title, canWrite, onClose, onOp
           // Any employed staff member except the officer; the backend only requires a hired employee (Q-U7: the
           // flow lets the approver assign).
           source={{ type: 'employees' }}
-          label="Consultant"
-          title="Assign Consultant"
-          confirmText="Assign"
-          details={[...details, { label: 'Officer in Charge', value: detail.tkcgEmpNm || detail.tkcgEmpNo || '-' }]}
+          label={t('trade.common.consultant')}
+          placeholder={t('trade.contract.popup.selectConsultant')}
+          searchTitle={t('trade.contract.popup.consultantSearch')}
+          title={t('trade.contract.popup.assignConsultantTitle')}
+          confirmText={t('trade.common.assign')}
+          details={[...details, { label: t('trade.common.officerInCharge'), value: detail.tkcgEmpNm || detail.tkcgEmpNo || '-' }]}
           currentEmpNo={detail.cnsltEmpNo}
           // The consultant must differ from the officer (backend 409 TRD001).
           excludeEmpNos={detail.tkcgEmpNo ? [detail.tkcgEmpNo] : []}

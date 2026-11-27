@@ -1,0 +1,11 @@
+/* Zalo Users (A09050300) — screen-specific layout only. */
+
+/* The list frame runs to the page bottom like the design. */
+.listTable {
+  flex: 1 0 auto;
+}
+
+/* Read-only value box in the detail popup (same as Notification Send History). */
+.readOnly {
+  background: var(--color-bg-secondary, #f6f6f9);
+}

@@ -1,13 +1,15 @@
 import { useState } from 'react';
 import type { ReactNode } from 'react';
+import { useTranslation } from 'react-i18next';
+import type { TFunction } from 'i18next';
 import type { TableColumnsType } from 'antd';
 import ActionButton from '@/components/common/actions/ActionButton';
 import StatusBadge from '@/components/common/badge/StatusBadge';
 import type { StatusBadgeColor } from '@/components/common/badge/StatusBadge';
 import DataTable from '@/components/common/table/DataTable';
 import AppSelect from '@/components/inputs/AppSelect';
-import { APPROVAL_STEP_LABELS } from '@/api/common/approval-api';
 import type { ApprovalStep } from '@/api/common/approval-api';
+import { codeLabel } from '@/lib/i18n/code-label';
 import { formatDateTime } from '@/utils/date-format';
 import EmployeeSearchPopup from './EmployeeSearchPopup';
 import type { EmployeeSearchSource, PickedEmployee } from './EmployeeSearchPopup';
@@ -42,41 +44,29 @@ function SummaryCells({ row }: { row: ApprovalDetailRow }) {
   );
 }
 
-const SESSION_BADGE: Record<string, { label: string; color: StatusBadgeColor }> = {
-  INPROGRESS: { label: 'In Approval', color: 'blue' },
-  COMPLETED: { label: 'Approved', color: 'green' },
-  REJECTED: { label: 'Rejected', color: 'red' },
-};
+const SESSION_COLORS: Record<string, StatusBadgeColor> = { INPROGRESS: 'blue', COMPLETED: 'green', REJECTED: 'red' };
 
-const STEP_BADGE: Record<string, { label: string; color: StatusBadgeColor }> = {
-  WAITING: { label: 'Waiting', color: 'gray' },
-  INPROGRESS: { label: 'In Progress', color: 'blue' },
-  APPROVED: { label: 'Done', color: 'green' },
-  REJECTED: { label: 'Rejected', color: 'red' },
-};
+const STEP_COLORS: Record<string, StatusBadgeColor> = { WAITING: 'gray', INPROGRESS: 'blue', APPROVED: 'green', REJECTED: 'red' };
 
 export function SessionStatusBadge({ status }: { status?: string }) {
-  const badge = (status && SESSION_BADGE[status]) || { label: status || '-', color: 'gray' as StatusBadgeColor };
-  return <StatusBadge color={badge.color}>{badge.label}</StatusBadge>;
+  useTranslation();
+  return <StatusBadge color={(status && SESSION_COLORS[status]) || 'gray'}>{codeLabel('approval.sessionStatus', status)}</StatusBadge>;
 }
 
-const STEP_COLUMNS: TableColumnsType<ApprovalStep> = [
-  { title: 'No', dataIndex: 'stpNo', width: 50, align: 'center' },
-  { title: 'Step', dataIndex: 'stpNm', width: 140, render: (v: string) => APPROVAL_STEP_LABELS[v] ?? v },
-  { title: 'Employee', dataIndex: 'empNm', width: 180, render: (v?: string, r?: ApprovalStep) => v || r?.empNo || '-' },
+const stepColumns = (t: TFunction): TableColumnsType<ApprovalStep> => [
+  { title: t('approval.fields.rowNo'), dataIndex: 'stpNo', width: 50, align: 'center' },
+  { title: t('approval.fields.step'), dataIndex: 'stpNm', width: 140, render: (v: string) => codeLabel('approval.steps', v, v) },
+  { title: t('approval.fields.employee'), dataIndex: 'empNm', width: 180, render: (v?: string, r?: ApprovalStep) => v || r?.empNo || '-' },
   {
-    title: 'Status',
+    title: t('approval.fields.status'),
     dataIndex: 'status',
     width: 110,
     align: 'center',
-    render: (v: string) => {
-      const badge = STEP_BADGE[v] ?? { label: v, color: 'gray' as StatusBadgeColor };
-      return <StatusBadge color={badge.color}>{badge.label}</StatusBadge>;
-    },
+    render: (v: string) => <StatusBadge color={STEP_COLORS[v] ?? 'gray'}>{codeLabel('approval.stepStatus', v, v)}</StatusBadge>,
   },
-  { title: 'Processed At', dataIndex: 'processedAt', width: 140, align: 'center', render: (v?: string) => formatDateTime(v) },
+  { title: t('approval.fields.processedAt'), dataIndex: 'processedAt', width: 140, align: 'center', render: (v?: string) => formatDateTime(v) },
   {
-    title: 'Comment',
+    title: t('approval.fields.comment'),
     dataIndex: 'comment',
     render: (v?: string) => <span className={styles.stepComment}>{v || '-'}</span>,
   },
@@ -84,9 +74,10 @@ const STEP_COLUMNS: TableColumnsType<ApprovalStep> = [
 
 /** Steps timeline of a session (who, when, comment). */
 export function ApprovalStepsTable({ steps }: { steps: ApprovalStep[] }) {
+  const { t } = useTranslation();
   return (
     <div className={styles.steps}>
-      <DataTable<ApprovalStep> rowKey="stpNo" columns={STEP_COLUMNS} dataSource={steps} pagination={false} />
+      <DataTable<ApprovalStep> rowKey="stpNo" columns={stepColumns(t)} dataSource={steps} pagination={false} />
     </div>
   );
 }
@@ -115,11 +106,12 @@ export function EmployeePickField({
   value,
   onChange,
   source,
-  placeholder = 'Select an employee',
+  placeholder,
   searchTitle,
   excludeEmpNos,
   disabled,
 }: EmployeePickFieldProps) {
+  const { t } = useTranslation();
   const [searching, setSearching] = useState(false);
   const [picked, setPicked] = useState<PickedEmployee | null>(null);
   const { data: candidates = NO_CANDIDATES } = useApprovalCandidates(
@@ -142,7 +134,7 @@ export function EmployeePickField({
     <div className={styles.pickRow}>
       <AppSelect
         className={styles.pickSelect}
-        placeholder={placeholder}
+        placeholder={placeholder ?? t('approval.picker.selectEmployee')}
         value={value || undefined}
         options={options}
         disabled={disabled}
@@ -151,7 +143,7 @@ export function EmployeePickField({
         onChange={(v) => onChange(v ? String(v) : '')}
       />
       <ActionButton action="search" intent="quaternary" appearance="outlined" disabled={disabled} onClick={() => setSearching(true)}>
-        Search
+        {t('approval.picker.search')}
       </ActionButton>
       {searching && (
         <EmployeeSearchPopup

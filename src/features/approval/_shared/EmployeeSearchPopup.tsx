@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import type { TFunction } from 'i18next';
 import type { TableColumnsType } from 'antd';
 import TextInput from '@/components/inputs/TextInput';
 import {
@@ -47,20 +49,21 @@ interface Filter {
 const INITIAL_FILTER: Filter = { empNo: '', empNm: '' };
 const NO_ROWS: PickedEmployee[] = [];
 
-const COLUMNS: TableColumnsType<PickedEmployee> = [
-  { title: 'Employee No.', dataIndex: 'empNo', width: 140, align: 'center' },
-  { title: 'Name', dataIndex: 'empNm', ellipsis: true },
-  { title: 'Position', dataIndex: 'jbpsNm', width: 170, ellipsis: true, render: (v?: string) => v || '-' },
-  { title: 'Role', dataIndex: 'roleNm', width: 170, ellipsis: true, render: (v?: string) => v || '-' },
+const columns = (t: TFunction): TableColumnsType<PickedEmployee> => [
+  { title: t('approval.picker.employeeNo'), dataIndex: 'empNo', width: 140, align: 'center' },
+  { title: t('approval.picker.name'), dataIndex: 'empNm', ellipsis: true },
+  { title: t('approval.picker.position'), dataIndex: 'jbpsNm', width: 170, ellipsis: true, render: (v?: string) => v || '-' },
+  { title: t('approval.picker.role'), dataIndex: 'roleNm', width: 170, ellipsis: true, render: (v?: string) => v || '-' },
 ];
 
 export default function EmployeeSearchPopup({
   source,
-  title = 'Employee Search',
+  title,
   excludeEmpNos,
   onSelect,
   onClose,
 }: EmployeeSearchPopupProps) {
+  const { t } = useTranslation();
   const list = usePagedList<Filter>(INITIAL_FILTER);
   const empNo = list.applied.empNo.trim();
   const empNm = list.applied.empNm.trim();
@@ -93,14 +96,14 @@ export default function EmployeeSearchPopup({
     <SysFormModal
       open
       width={760}
-      title={title}
-      submitText="Select"
+      title={title ?? t('approval.picker.employeeSearch')}
+      submitText={t('approval.picker.select')}
       submitDisabled={!picked}
       onSubmit={() => picked && onSelect(picked)}
       onCancel={onClose}
     >
       <SysFilterPanel columns={2}>
-        <SysFilterItem label="Employee No.">
+        <SysFilterItem label={t('approval.picker.employeeNo')}>
           <TextInput
             value={list.draft.empNo}
             maxLength={10}
@@ -109,7 +112,7 @@ export default function EmployeeSearchPopup({
             onPressEnter={() => list.search()}
           />
         </SysFilterItem>
-        <SysFilterItem label="Name">
+        <SysFilterItem label={t('approval.picker.name')}>
           <TextInput
             value={list.draft.empNm}
             maxLength={100}
@@ -123,7 +126,7 @@ export default function EmployeeSearchPopup({
       <SysSectionHeader total={total} />
       <SysTable<PickedEmployee>
         rowKey="empNo"
-        columns={COLUMNS}
+        columns={columns(t)}
         dataSource={rows}
         loading={loading}
         scroll={{ y: 320 }}

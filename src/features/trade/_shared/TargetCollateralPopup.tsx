@@ -1,32 +1,31 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useCommonCodes } from '@/hooks/use-common-codes';
 import type { Dayjs } from 'dayjs';
 import Popup from '@/components/common/popup/Popup';
 import AppDatePicker from '@/components/inputs/AppDatePicker';
 import AppSelect from '@/components/inputs/AppSelect';
 import TextArea from '@/components/inputs/TextArea';
 import TextInput from '@/components/inputs/TextInput';
-import { COLLATERAL_CATEGORY_LABELS } from '@/api/trade/trade-api';
 import type { CollateralCategory, ConsultingTargetCollateral } from '@/api/trade/trade-api';
+import { codeLabel } from '@/lib/i18n/code-label';
 import styles from './trade-application-popup.module.scss';
 
 // One collateral typed from a paper consulting application (manual registration, POST only): the same fields as the
 // member's web form (CNSLT_TRGT_CLTR_AST). Category, contract number, contract date and characteristics are required.
 
-const CATEGORY_OPTIONS = (Object.keys(COLLATERAL_CATEGORY_LABELS) as CollateralCategory[]).map((value) => ({
-  value,
-  label: COLLATERAL_CATEGORY_LABELS[value],
-}));
+// Fallback when the common code group CLTR_AST_LCLSF_CD cannot be loaded.
+const CATEGORY_CODES: CollateralCategory[] = ['REST', 'PERS', 'FNRT', 'TSBDK'];
 
 type OptionalField = 'lglSttsCn' | 'loanTtmCltrWrthCn' | 'rcntCltrWrthCn' | 'cltrAplcnScpCn' | 'prstCn';
 
-const OPTIONAL_FIELDS: { key: OptionalField; label: string }[] = [
-  { key: 'lglSttsCn', label: 'Legal Status' },
-  { key: 'loanTtmCltrWrthCn', label: 'Value at the Loan Date' },
-  { key: 'rcntCltrWrthCn', label: 'Recent Value' },
-  { key: 'cltrAplcnScpCn', label: 'Secured Scope' },
-  { key: 'prstCn', label: 'Current State' },
-];
+const OPTIONAL_FIELDS = [
+  { key: 'lglSttsCn', label: 'trade.targetCollateral.legalStatus' },
+  { key: 'loanTtmCltrWrthCn', label: 'trade.targetCollateral.loanValue' },
+  { key: 'rcntCltrWrthCn', label: 'trade.targetCollateral.recentValue' },
+  { key: 'cltrAplcnScpCn', label: 'trade.targetCollateral.securedScope' },
+  { key: 'prstCn', label: 'trade.targetCollateral.currentState' },
+] as const satisfies readonly { key: OptionalField; label: string }[];
 
 export interface TargetCollateralPopupProps {
   onSubmit: (collateral: ConsultingTargetCollateral) => void;
@@ -35,6 +34,10 @@ export interface TargetCollateralPopupProps {
 
 export default function TargetCollateralPopup({ onSubmit, onClose }: TargetCollateralPopupProps) {
   const { t } = useTranslation();
+  const categoryCodes = useCommonCodes('CLTR_AST_LCLSF_CD');
+  const categoryOptions = categoryCodes.length
+    ? categoryCodes
+    : CATEGORY_CODES.map((value) => ({ value, label: codeLabel('trade.collateralCategories', value) }));
   const [category, setCategory] = useState<CollateralCategory | ''>('');
   const [contractNo, setContractNo] = useState('');
   const [contractDt, setContractDt] = useState<Dayjs | null>(null);
@@ -63,41 +66,41 @@ export default function TargetCollateralPopup({ onSubmit, onClose }: TargetColla
     <Popup
       open
       width={720}
-      title="Add Target Collateral"
+      title={t('trade.targetCollateral.title')}
       footerAlign="right"
       onCancel={onClose}
       cancelText={t('messages.dialog.cancel')}
       onConfirm={handleConfirm}
-      confirmText="Add"
+      confirmText={t('trade.common.add')}
     >
       <div className={styles.checkForm}>
         <div className={styles.formRow}>
           <div className={styles.field}>
-            <span className={`${styles.fieldLabel} ${styles.required}`}>Category</span>
+            <span className={`${styles.fieldLabel} ${styles.required}`}>{t('trade.application.form.category')}</span>
             <AppSelect
               className={styles.control}
-              placeholder="Select the category"
+              placeholder={t('trade.targetCollateral.categoryPlaceholder')}
               value={category || undefined}
-              options={CATEGORY_OPTIONS}
+              options={categoryOptions}
               onChange={(v) => setCategory((v as CollateralCategory | undefined) ?? '')}
             />
           </div>
           <div className={styles.field}>
-            <span className={`${styles.fieldLabel} ${styles.required}`}>Collateral Contract No.</span>
+            <span className={`${styles.fieldLabel} ${styles.required}`}>{t('trade.targetCollateral.contractNo')}</span>
             <TextInput maxLength={25} value={contractNo} onChange={(e) => setContractNo(e.target.value)} />
           </div>
           <div className={styles.field}>
-            <span className={`${styles.fieldLabel} ${styles.required}`}>Contract Date</span>
+            <span className={`${styles.fieldLabel} ${styles.required}`}>{t('trade.common.contractDate')}</span>
             <AppDatePicker format="DD/MM/YYYY" value={contractDt} onChange={(d) => setContractDt(d)} />
           </div>
         </div>
         <div className={styles.field}>
-          <span className={`${styles.fieldLabel} ${styles.required}`}>Characteristics</span>
+          <span className={`${styles.fieldLabel} ${styles.required}`}>{t('trade.common.characteristics')}</span>
           <TextArea rows={3} maxLength={1000} showCount value={characteristics} onChange={(e) => setCharacteristics(e.target.value)} />
         </div>
         {OPTIONAL_FIELDS.map(({ key, label }) => (
           <div key={key} className={styles.field}>
-            <span className={styles.fieldLabel}>{label}</span>
+            <span className={styles.fieldLabel}>{t(label)}</span>
             <TextInput maxLength={1000} value={optional[key] ?? ''} onChange={(e) => setOptional((prev) => ({ ...prev, [key]: e.target.value }))} />
           </div>
         ))}

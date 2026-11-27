@@ -10,6 +10,7 @@ import TextArea from '@/components/inputs/TextArea';
 import { useNotify } from '@/hooks/use-notify';
 import type { TradeContractDetail, TradeContractFee, TradeContractKind } from '@/api/trade/trade-api';
 import type { AnnexPurpose, RenewalDecision } from '@/api/trade/trade-contract-api';
+import { codeLabel } from '@/lib/i18n/code-label';
 import { formatDmy } from '@/utils/date-format';
 import { errorMessage, formatAmount } from '@/utils/system-utils';
 import {
@@ -59,7 +60,7 @@ export function FeeReceiptModal({ kind, detail, fee, refund, onClose }: BaseProp
     <Popup
       open
       width={520}
-      title={refund ? 'Record Refund' : 'Confirm Fee Payment'}
+      title={refund ? t('trade.contract.execution.recordRefund') : t('trade.contract.execution.confirmFee')}
       footerAlign="right"
       onCancel={onClose}
       cancelText={t('messages.dialog.cancel')}
@@ -76,27 +77,27 @@ export function FeeReceiptModal({ kind, detail, fee, refund, onClose }: BaseProp
           t(refund ? 'messages.trade.feeRefunded' : 'messages.trade.feeConfirmed'),
         )
       }
-      confirmText="Confirm"
+      confirmText={t('trade.common.confirm')}
       confirmLoading={action.isPending}
       confirmDisabled={invalid}
     >
       <div className={styles.grid}>
-        <div className={styles.cellLabel}>Installment</div>
+        <div className={styles.cellLabel}>{t('trade.contract.execution.installment')}</div>
         <div className={styles.cellValue}>
-          {fee.feeSeq} · {fee.feeSeCd === 'PRAMT' ? 'Advance' : fee.feeSeCd === 'BALNC' ? 'Balance' : (fee.feeSeCd ?? '-')}
+          {fee.feeSeq} · {codeLabel('trade.feeTypes', fee.feeSeCd)}
         </div>
-        <div className={styles.cellLabel}>Amount Due</div>
+        <div className={styles.cellLabel}>{t('trade.contract.execution.amountDue')}</div>
         <div className={styles.cellValue}>
-          {formatAmount(fee.fee)} {fee.crncCd ?? ''} · due {formatDmy(fee.feePayTermDmy)}
+          {formatAmount(fee.fee)} {fee.crncCd ?? ''} · {t('trade.contract.execution.dueOn', { date: formatDmy(fee.feePayTermDmy) })}
         </div>
       </div>
       <div className={styles.formRow}>
         <div className={styles.field}>
-          <span className={`${styles.fieldLabel} ${styles.required}`}>{refund ? 'Refund Date' : 'Transfer Date'}</span>
+          <span className={`${styles.fieldLabel} ${styles.required}`}>{refund ? t('trade.contract.execution.refundDate') : t('trade.contract.execution.transferDate')}</span>
           <AppDatePicker format="DD/MM/YYYY" value={date} onChange={(d) => setDate(d)} />
         </div>
         <div className={styles.field}>
-          <span className={`${styles.fieldLabel} ${styles.required}`}>Amount</span>
+          <span className={`${styles.fieldLabel} ${styles.required}`}>{t('trade.contract.popup.amount')}</span>
           <Spinbox className={styles.control} value={amount} formatter={amountFormatter} parser={amountParser} onChange={(v) => setAmount(v ?? null)} />
           {amount !== null && amount <= 0 && <div className={styles.error}>{t('messages.trade.amountPositive')}</div>}
         </div>
@@ -118,7 +119,7 @@ export function TradeCompletionModal({ kind, detail, onClose }: BaseProps) {
     <Popup
       open
       width={560}
-      title={sale ? 'Sale Completion' : 'Sale and Purchase Agreement'}
+      title={sale ? t('trade.contract.popup.saleCompletion') : t('trade.contract.popup.purchaseAgreement')}
       footerAlign="right"
       onCancel={onClose}
       cancelText={t('messages.dialog.cancel')}
@@ -133,27 +134,27 @@ export function TradeCompletionModal({ kind, detail, onClose }: BaseProps) {
           t(sale ? 'messages.trade.saleCompleted' : 'messages.trade.tradeConcluded'),
         )
       }
-      confirmText="Save"
+      confirmText={t('trade.common.save')}
       confirmLoading={action.isPending}
       confirmDisabled={!date || price === null || price <= 0}
     >
       <div className={styles.notice}>
         {sale
-          ? 'After the officer confirms the sale agreement and the handover: the NPL becomes Sold and the remaining fee is issued.'
-          : 'Signing of the sale and purchase agreement: the remaining fee is issued; the delivery is recorded next.'}
+          ? t('trade.contract.execution.saleNotice')
+          : t('trade.contract.execution.purchaseNotice')}
       </div>
       <div className={styles.formRow}>
         <div className={styles.field}>
-          <span className={`${styles.fieldLabel} ${styles.required}`}>Agreement Signing Date</span>
+          <span className={`${styles.fieldLabel} ${styles.required}`}>{t('trade.contract.execution.signingDate')}</span>
           <AppDatePicker format="DD/MM/YYYY" value={date} onChange={(d) => setDate(d)} />
         </div>
         <div className={styles.field}>
-          <span className={`${styles.fieldLabel} ${styles.required}`}>Actual Price</span>
+          <span className={`${styles.fieldLabel} ${styles.required}`}>{t('trade.common.actualPrice')}</span>
           <Spinbox className={styles.control} min={0} value={price} formatter={amountFormatter} parser={amountParser} onChange={(v) => setPrice(v ?? null)} />
         </div>
       </div>
       <div className={styles.field}>
-        <span className={styles.fieldLabel}>Final Fee (manual, Q5)</span>
+        <span className={styles.fieldLabel}>{t('trade.contract.execution.finalFee')}</span>
         <Spinbox className={styles.control} min={0} value={finalFee} formatter={amountFormatter} parser={amountParser} onChange={(v) => setFinalFee(v ?? null)} />
       </div>
     </Popup>
@@ -170,7 +171,7 @@ export function DeliveryModal({ detail, onClose }: BaseProps) {
     <Popup
       open
       width={520}
-      title="Record Delivery"
+      title={t('trade.contract.popup.recordDelivery')}
       footerAlign="right"
       onCancel={onClose}
       cancelText={t('messages.dialog.cancel')}
@@ -180,30 +181,26 @@ export function DeliveryModal({ detail, onClose }: BaseProps) {
           t('messages.trade.deliveryRecorded'),
         )
       }
-      confirmText="Save"
+      confirmText={t('trade.common.save')}
       confirmLoading={action.isPending}
       confirmDisabled={!date}
     >
       <div className={styles.field}>
-        <span className={`${styles.fieldLabel} ${styles.required}`}>Delivery Date</span>
+        <span className={`${styles.fieldLabel} ${styles.required}`}>{t('trade.contract.execution.deliveryDate')}</span>
         <AppDatePicker format="DD/MM/YYYY" value={date} onChange={(d) => setDate(d)} />
       </div>
       <div className={styles.field}>
-        <span className={styles.fieldLabel}>Delivery Note</span>
+        <span className={styles.fieldLabel}>{t('trade.contract.execution.deliveryNote')}</span>
         <TextArea rows={3} maxLength={1000} showCount value={note} onChange={(e) => setNote(e.target.value)} />
       </div>
     </Popup>
   );
 }
 
-const ANNEX_PURPOSES: Record<'sale' | 'purchase', { value: AnnexPurpose; label: string }[]> = {
-  sale: [
-    { value: 'EXTN', label: 'Extend the term' },
-    { value: 'PRCE', label: 'Change the price' },
-    { value: 'POST', label: 'After the sale' },
-    { value: 'ETC', label: 'Other' },
-  ],
-  purchase: [{ value: 'EXTN', label: 'Extend the term' }],
+/** Annex purposes per kind; labels `trade.contract.execution.annexOptions.<code>`. */
+const ANNEX_PURPOSES: Record<'sale' | 'purchase', AnnexPurpose[]> = {
+  sale: ['EXTN', 'PRCE', 'POST', 'ETC'],
+  purchase: ['EXTN'],
 };
 
 /** Annex of the contract (sale EXTN / PRCE / POST / ETC, purchase EXTN); then the draft lifecycle of the annex. */
@@ -211,8 +208,9 @@ export function CreateAnnexModal({ kind, detail, onClose, onCreated }: BaseProps
   const { t } = useTranslation();
   const { toast } = useNotify();
   const action = useCreateAnnex();
-  const options = ANNEX_PURPOSES[kind === 'sale-brokerage-contracts' ? 'sale' : 'purchase'];
-  const [purpose, setPurpose] = useState<AnnexPurpose>(options[0].value);
+  const purposes = ANNEX_PURPOSES[kind === 'sale-brokerage-contracts' ? 'sale' : 'purchase'];
+  const options = purposes.map((value) => ({ value, label: codeLabel('trade.contract.execution.annexOptions', value) }));
+  const [purpose, setPurpose] = useState<AnnexPurpose>(purposes[0]);
   const [endDate, setEndDate] = useState<Dayjs | null>(null);
   const [price, setPrice] = useState<number | null>(null);
   const [content, setContent] = useState('');
@@ -241,46 +239,43 @@ export function CreateAnnexModal({ kind, detail, onClose, onCreated }: BaseProps
     <Popup
       open
       width={560}
-      title="Create Annex"
+      title={t('trade.contract.popup.createAnnex')}
       footerAlign="right"
       onCancel={onClose}
       cancelText={t('messages.dialog.cancel')}
       onConfirm={() => void handleCreate()}
-      confirmText="Create"
+      confirmText={t('trade.common.create')}
       confirmLoading={action.isPending}
       confirmDisabled={missing}
     >
       <div className={styles.field}>
-        <span className={`${styles.fieldLabel} ${styles.required}`}>Purpose</span>
+        <span className={`${styles.fieldLabel} ${styles.required}`}>{t('trade.contract.popup.purpose')}</span>
         <AppRadio.Group value={purpose} onChange={(e) => setPurpose(e.target.value as AnnexPurpose)} options={options} />
       </div>
       {purpose === 'EXTN' && (
         <div className={styles.field}>
-          <span className={`${styles.fieldLabel} ${styles.required}`}>New End Date</span>
+          <span className={`${styles.fieldLabel} ${styles.required}`}>{t('trade.contract.execution.newEndDate')}</span>
           <AppDatePicker format="DD/MM/YYYY" value={endDate} onChange={(d) => setEndDate(d)} />
-          <span className={styles.fileSize}>Current end date: {formatDmy(detail.ctrtEndDmy)}</span>
+          <span className={styles.fileSize}>{t('trade.contract.execution.currentEndDate', { date: formatDmy(detail.ctrtEndDmy) })}</span>
         </div>
       )}
       {purpose === 'PRCE' && (
         <div className={styles.field}>
-          <span className={`${styles.fieldLabel} ${styles.required}`}>New Price</span>
+          <span className={`${styles.fieldLabel} ${styles.required}`}>{t('trade.contract.execution.newPrice')}</span>
           <Spinbox className={styles.control} min={0} value={price} formatter={amountFormatter} parser={amountParser} onChange={(v) => setPrice(v ?? null)} />
-          <span className={styles.fileSize}>Current price: {formatAmount(detail.prpPrc)}</span>
+          <span className={styles.fileSize}>{t('trade.contract.execution.currentPrice', { amount: formatAmount(detail.prpPrc) })}</span>
         </div>
       )}
       <div className={styles.field}>
-        <span className={styles.fieldLabel}>Annex Content</span>
+        <span className={styles.fieldLabel}>{t('trade.contract.draft.annexContent')}</span>
         <TextArea rows={3} maxLength={1000} showCount value={content} onChange={(e) => setContent(e.target.value)} />
       </div>
     </Popup>
   );
 }
 
-const RENEWAL_OPTIONS: { value: RenewalDecision; label: string }[] = [
-  { value: 'EXTEND_ANNEX', label: 'Extend by annex' },
-  { value: 'NEW_CONTRACT', label: 'New contract' },
-  { value: 'NO_EXTEND', label: 'Do not extend' },
-];
+/** Renewal decisions; labels `trade.contract.execution.renewalOptions.<code>`. */
+const RENEWAL_DECISIONS: RenewalDecision[] = ['EXTEND_ANNEX', 'NEW_CONTRACT', 'NO_EXTEND'];
 
 /** X2: decision near the end date (D-30 notice). */
 export function RenewalDecisionModal({ kind, detail, onClose }: BaseProps) {
@@ -294,7 +289,7 @@ export function RenewalDecisionModal({ kind, detail, onClose }: BaseProps) {
     <Popup
       open
       width={560}
-      title="Renewal Decision"
+      title={t('trade.contract.popup.renewalDecision')}
       footerAlign="right"
       onCancel={onClose}
       cancelText={t('messages.dialog.cancel')}
@@ -311,25 +306,25 @@ export function RenewalDecisionModal({ kind, detail, onClose }: BaseProps) {
           t('messages.trade.renewalDecided'),
         )
       }
-      confirmText="Save"
+      confirmText={t('trade.common.save')}
       confirmLoading={action.isPending}
       confirmDisabled={decision === 'EXTEND_ANNEX' && !endDate}
     >
       <div className={styles.notice}>
-        Contract end date: {formatDmy(detail.ctrtEndDmy)}. {t('messages.trade.renewalWindowHint')}
+        {t('trade.contract.execution.endDateNotice', { date: formatDmy(detail.ctrtEndDmy) })} {t('messages.trade.renewalWindowHint')}
       </div>
       <div className={styles.field}>
-        <AppRadio.Group value={decision} onChange={(e) => setDecision(e.target.value as RenewalDecision)} options={RENEWAL_OPTIONS} />
+        <AppRadio.Group value={decision} onChange={(e) => setDecision(e.target.value as RenewalDecision)} options={RENEWAL_DECISIONS.map((value) => ({ value, label: codeLabel('trade.contract.execution.renewalOptions', value) }))} />
       </div>
       {decision === 'EXTEND_ANNEX' && (
         <div className={styles.field}>
-          <span className={`${styles.fieldLabel} ${styles.required}`}>New End Date</span>
+          <span className={`${styles.fieldLabel} ${styles.required}`}>{t('trade.contract.execution.newEndDate')}</span>
           <AppDatePicker format="DD/MM/YYYY" value={endDate} onChange={(d) => setEndDate(d)} />
         </div>
       )}
       {decision === 'NO_EXTEND' && <div className={styles.warning}>{t('messages.trade.noExtendHint')}</div>}
       <div className={styles.field}>
-        <span className={styles.fieldLabel}>Note</span>
+        <span className={styles.fieldLabel}>{t('trade.common.note')}</span>
         <TextArea rows={3} maxLength={1000} showCount value={note} onChange={(e) => setNote(e.target.value)} />
       </div>
     </Popup>

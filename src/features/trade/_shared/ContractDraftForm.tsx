@@ -12,9 +12,9 @@ import { useNotify } from '@/hooks/use-notify';
 import type { TradeAppKind, TradeContractDetail, TradeContractKind } from '@/api/trade/trade-api';
 import type { FeeMethod, UpdateContractDraftRequest } from '@/api/trade/trade-contract-api';
 import type { Fee } from '@/api/system/fee-api';
+import { codeLabel } from '@/lib/i18n/code-label';
 import { dmyToDayjs, formatDmy } from '@/utils/date-format';
 import { errorMessage, formatAmount } from '@/utils/system-utils';
-import { FEE_METHOD_LABELS } from './contract-actions';
 import { useContractFeeItems, useUpdateContractDraft } from './use-trade-contract-actions';
 import styles from './trade-application-popup.module.scss';
 
@@ -22,6 +22,7 @@ import styles from './trade-application-popup.module.scss';
 // end date = start + 1 year by default (editable), or open-ended until the trade ends; fee ① full after signing
 // (LUMP), ② full after the sale (AFTR), ③ advance + balance (STAG, advance rate entered by the officer).
 // Purchase / consulting: end date optional, fee LUMP or STAG. Annexes: annex content, fee terms optional.
+// Fee payment labels (sale contract step 13 / Mẫu 11 Art. 3): `trade.feeMethods.<code>`.
 
 const FEE_METHODS: Record<TradeAppKind, FeeMethod[]> = {
   sale: ['LUMP', 'AFTR', 'STAG'],
@@ -29,7 +30,11 @@ const FEE_METHODS: Record<TradeAppKind, FeeMethod[]> = {
   consulting: ['STAG', 'LUMP'],
 };
 
-const PRICE_LABELS: Record<TradeAppKind, string> = { sale: 'Desired Sale Price', purchase: 'Proposed Purchase Price', consulting: 'Consulting Fee' };
+const PRICE_LABELS = {
+  sale: 'trade.common.desiredSalePrice',
+  purchase: 'trade.common.proposedPurchasePrice',
+  consulting: 'trade.common.consultingFee',
+} as const satisfies Record<TradeAppKind, string>;
 
 export interface ContractDraftFormProps {
   kind: TradeAppKind;
@@ -74,32 +79,32 @@ export default function ContractDraftForm({ kind, contractKind, detail, isAnnex,
   if (!editable) {
     return (
       <div className={styles.grid}>
-        <div className={styles.cellLabel}>Contract Start</div>
+        <div className={styles.cellLabel}>{t('trade.contract.draft.start')}</div>
         <div className={styles.cellValue}>{formatDmy(detail.ctrtBgngDmy)}</div>
-        <div className={styles.cellLabel}>Contract End</div>
-        <div className={styles.cellValue}>{detail.ctrtEndDmy ? formatDmy(detail.ctrtEndDmy) : detail.ctrtBgngDmy && saleMain ? 'Until the trade ends' : '-'}</div>
-        <div className={styles.cellLabel}>{PRICE_LABELS[kind]}</div>
+        <div className={styles.cellLabel}>{t('trade.contract.draft.end')}</div>
+        <div className={styles.cellValue}>{detail.ctrtEndDmy ? formatDmy(detail.ctrtEndDmy) : detail.ctrtBgngDmy && saleMain ? t('trade.common.noTermEnd') : '-'}</div>
+        <div className={styles.cellLabel}>{t(PRICE_LABELS[kind])}</div>
         <div className={styles.cellValue}>{detail.prpPrc !== undefined ? `${formatAmount(detail.prpPrc)} ${detail.crncCd ?? ''}` : '-'}</div>
-        <div className={styles.cellLabel}>Actual Price</div>
+        <div className={styles.cellLabel}>{t('trade.common.actualPrice')}</div>
         <div className={styles.cellValue}>{detail.rltrPrc !== undefined ? formatAmount(detail.rltrPrc) : '-'}</div>
-        <div className={styles.cellLabel}>Fee Payment</div>
-        <div className={styles.cellValue}>{detail.feeClclnMthCd ? FEE_METHOD_LABELS[detail.feeClclnMthCd as FeeMethod] ?? detail.feeClclnMthCd : '-'}</div>
-        <div className={styles.cellLabel}>Fee Amount</div>
+        <div className={styles.cellLabel}>{t('trade.common.feePayment')}</div>
+        <div className={styles.cellValue}>{codeLabel('trade.feeMethods', detail.feeClclnMthCd)}</div>
+        <div className={styles.cellLabel}>{t('trade.contract.draft.feeAmount')}</div>
         <div className={styles.cellValue}>
           {formatAmount(detail.feeAmt)}
-          {detail.prAmtRt !== undefined ? ` (advance ${detail.prAmtRt}%)` : ''}
+          {detail.prAmtRt !== undefined ? t('trade.contract.draft.advanceSuffix', { rate: detail.prAmtRt }) : ''}
         </div>
-        <div className={styles.cellLabel}>Fee Schedule Item</div>
+        <div className={styles.cellLabel}>{t('trade.contract.draft.feeItem')}</div>
         <div className={styles.cellValue}>
           {storedFeeItem ? feeItemLabel(storedFeeItem) : detail.feeMngId || '-'}
         </div>
-        <div className={styles.cellLabel}>Auto Termination</div>
-        <div className={styles.cellValue}>{detail.autoTrmnYn === 'Y' ? 'Yes' : 'No'}</div>
-        <div className={styles.cellLabel}>Signed / Concluded</div>
+        <div className={styles.cellLabel}>{t('trade.contract.draft.autoTermination')}</div>
+        <div className={styles.cellValue}>{detail.autoTrmnYn === 'Y' ? t('trade.common.yes') : t('trade.common.no')}</div>
+        <div className={styles.cellLabel}>{t('trade.contract.draft.signedConcluded')}</div>
         <div className={styles.cellValue}>{formatDmy(detail.ctrtCnclsDmy)}</div>
         {isAnnex && (
           <>
-            <div className={styles.cellLabel}>Annex Content</div>
+            <div className={styles.cellLabel}>{t('trade.contract.draft.annexContent')}</div>
             <div className={`${styles.cellValue} ${styles.wide}`}>{detail.anxCn || '-'}</div>
           </>
         )}
@@ -149,7 +154,7 @@ export default function ContractDraftForm({ kind, contractKind, detail, isAnnex,
     <div className={styles.checkForm}>
       <div className={styles.formRow}>
         <div className={styles.field}>
-          <span className={`${styles.fieldLabel} ${styles.required}`}>Contract Start</span>
+          <span className={`${styles.fieldLabel} ${styles.required}`}>{t('trade.contract.draft.start')}</span>
           <AppDatePicker
             format="DD/MM/YYYY"
             value={start}
@@ -161,17 +166,17 @@ export default function ContractDraftForm({ kind, contractKind, detail, isAnnex,
           />
         </div>
         <div className={styles.field}>
-          <span className={styles.fieldLabel}>Contract End</span>
+          <span className={styles.fieldLabel}>{t('trade.contract.draft.end')}</span>
           <AppDatePicker format="DD/MM/YYYY" value={openEnded ? null : end} disabled={openEnded} onChange={(d) => setEnd(d)} />
           {saleMain && (
             <AppCheckbox checked={openEnded} onChange={(e) => setOpenEnded(e.target.checked)}>
-              Until the trade ends (no end date)
+              {t('trade.contract.draft.openEnded')}
             </AppCheckbox>
           )}
         </div>
       </div>
       <div className={styles.field}>
-        <span className={styles.fieldLabel}>{PRICE_LABELS[kind]}</span>
+        <span className={styles.fieldLabel}>{t(PRICE_LABELS[kind])}</span>
         <div className={styles.pickRow}>
           <AppSelect
             className={styles.currency}
@@ -186,18 +191,18 @@ export default function ContractDraftForm({ kind, contractKind, detail, isAnnex,
         </div>
       </div>
       <div className={styles.field}>
-        <span className={`${styles.fieldLabel} ${isAnnex ? '' : styles.required}`}>Fee Payment</span>
+        <span className={`${styles.fieldLabel} ${isAnnex ? '' : styles.required}`}>{t('trade.common.feePayment')}</span>
         <AppRadio.Group
           value={method}
           onChange={(e) => setMethod(e.target.value as FeeMethod)}
-          options={FEE_METHODS[kind].map((value) => ({ value, label: FEE_METHOD_LABELS[value] }))}
+          options={FEE_METHODS[kind].map((value) => ({ value, label: codeLabel('trade.feeMethods', value) }))}
         />
       </div>
       <div className={styles.field}>
-        <span className={styles.fieldLabel}>Fee Schedule Item</span>
+        <span className={styles.fieldLabel}>{t('trade.contract.draft.feeItem')}</span>
         <AppSelect
           className={styles.control}
-          placeholder="Default item of the schedule"
+          placeholder={t('trade.contract.draft.feeItemPlaceholder')}
           allowClear
           value={feeMngId || undefined}
           options={[
@@ -211,30 +216,30 @@ export default function ContractDraftForm({ kind, contractKind, detail, isAnnex,
       </div>
       <div className={styles.formRow}>
         <div className={styles.field}>
-          <span className={styles.fieldLabel}>Fee Amount</span>
+          <span className={styles.fieldLabel}>{t('trade.contract.draft.feeAmount')}</span>
           <Spinbox className={styles.control} min={0} value={feeAmt} formatter={amountFormatter} parser={amountParser} onChange={(v) => setFeeAmt(v ?? null)} />
         </div>
         {method === 'STAG' && (
           <div className={styles.field}>
-            <span className={`${styles.fieldLabel} ${styles.required}`}>Advance Rate (%)</span>
+            <span className={`${styles.fieldLabel} ${styles.required}`}>{t('trade.contract.draft.advanceRate')}</span>
             <Spinbox className={styles.control} min={0} max={100} value={rate} onChange={(v) => setRate(v ?? null)} />
-            <span className={styles.fileSize}>Advance: {advance === null ? '-' : formatAmount(advance)}</span>
+            <span className={styles.fileSize}>{t('trade.contract.draft.advanceAmount', { amount: advance === null ? '-' : formatAmount(advance) })}</span>
           </div>
         )}
       </div>
       <AppCheckbox checked={autoTrmn} onChange={(e) => setAutoTrmn(e.target.checked)}>
-        Terminate automatically when the trade ends
+        {t('trade.contract.draft.autoTerminate')}
       </AppCheckbox>
       {isAnnex && (
         <div className={styles.field}>
-          <span className={styles.fieldLabel}>Annex Content</span>
+          <span className={styles.fieldLabel}>{t('trade.contract.draft.annexContent')}</span>
           <TextArea rows={3} maxLength={1000} showCount value={anxCn} onChange={(e) => setAnxCn(e.target.value)} />
         </div>
       )}
       {error && <div className={styles.error}>{error}</div>}
       <div className={styles.checkActions}>
         <ActionButton intent="primary" appearance="filled" loading={save.isPending} onClick={() => void handleSave()}>
-          Save Draft
+          {t('trade.contract.draft.saveDraft')}
         </ActionButton>
       </div>
     </div>

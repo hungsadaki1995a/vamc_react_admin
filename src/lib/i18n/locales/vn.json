@@ -5,7 +5,14 @@
     "collapseMenu": "Thu gọn menu",
     "expandMenu": "Mở rộng menu",
     "selectMenu": "Vui lòng chọn menu",
-    "componentNotFound": "Không tìm thấy thành phần: {{key}}"
+    "componentNotFound": "Không tìm thấy thành phần: {{key}}",
+    "reset": "Đặt lại",
+    "search": "Tìm kiếm",
+    "searchResults": "Kết quả tìm kiếm",
+    "total": "Tổng",
+    "cancel": "Hủy",
+    "close": "Đóng",
+    "save": "Lưu"
   },
   "auth": {
     "login": {
@@ -607,6 +614,739 @@
       "noCandidates": "Không có nhân viên nào giữ vai trò của bước này.",
       "noItems": "Không có việc nào chờ bạn phê duyệt.",
       "noScreen": "Bạn không có quyền vào màn hình của mục này."
+    },
+    "zalo": {
+      "loadFailed": "Không tải được dữ liệu. Vui lòng thử lại.",
+      "invalidPhone": "Nhập số di động dạng 0xxxxxxxxx hoặc 84xxxxxxxxx.",
+      "invalidTplCd": "Chỉ dùng A-Z, 0-9 và _, 3–20 ký tự.",
+      "duplicateTplCd": "Mã mẫu này đã được đăng ký.",
+      "invalidParamMap": "Nhập đối tượng JSON, VD: {\"mbrNm\":\"customer_name\"}.",
+      "znsTplIdRequired": "Mẫu ZNS đang dùng cần Mã mẫu ZNS khi gửi thật.",
+      "useChanged": "Đã đổi trạng thái sử dụng.",
+      "sent": "Đã gửi. Mã tin: {{id}}",
+      "sentMock": "Đã gửi (giả lập). Mã tin: {{id}} — xem Lịch sử gửi thông báo.",
+      "linked": "Đã gắn.",
+      "unlinked": "Đã huỷ liên kết.",
+      "confirmUnlink": "Huỷ liên kết giữa người dùng Zalo này và {{account}}?",
+      "confirmRebuild": "Tính lại chỉ mục số điện thoại của toàn bộ hội viên và nhân viên?",
+      "rebuilt": "Đã dựng lại chỉ mục: {{members}} hội viên, {{employees}} nhân viên thay đổi.",
+      "simulatedLinked": "Đã giả lập quan tâm và tự gắn vào {{account}}.",
+      "simulatedNoMatch": "Đã giả lập quan tâm. Không có tài khoản nào có số này: người dùng chờ gắn.",
+      "simulatedMany": "Đã giả lập quan tâm. Có {{count}} tài khoản dùng số này: hãy gắn thủ công.",
+      "accountNotFound": "Không có tài khoản với mã này.",
+      "accountAlreadyLinked": "Tài khoản này đã gắn với người dùng Zalo khác."
+    }
+  },
+  "trade": {
+    "common": {
+      "all": "Tất cả",
+      "yes": "Có",
+      "no": "Không",
+      "rowNo": "STT",
+      "total": "Tổng ({{n}})",
+      "addNew": "Thêm mới",
+      "excelDownload": "Tải Excel",
+      "edit": "Sửa",
+      "save": "Lưu",
+      "register": "Đăng ký",
+      "add": "Thêm",
+      "create": "Tạo",
+      "confirm": "Xác nhận",
+      "submit": "Gửi",
+      "change": "Thay đổi",
+      "assign": "Chỉ định",
+      "clear": "Xóa chọn",
+      "remove": "Xóa",
+      "select": "Chọn",
+      "preview": "Xem trước",
+      "download": "Tải xuống",
+      "info": "Thông tin",
+      "note": "Ghi chú",
+      "status": "Trạng thái",
+      "kind": "Loại",
+      "type": "Loại",
+      "name": "Tên",
+      "member": "Hội viên",
+      "memberNo": "Mã hội viên",
+      "memberCode": "Mã hội viên",
+      "memberNoPlaceholder": "Mã hội viên",
+      "openMember": "Mở chi tiết hội viên",
+      "npl": "NPL",
+      "lot": "LOT",
+      "nplLot": "NPL / LOT",
+      "npls": "Danh sách NPL",
+      "nplCode": "Mã NPL",
+      "nplName": "Tên NPL",
+      "lotStatus": "Theo LOT",
+      "creditor": "Bên cho vay",
+      "officer": "Cán bộ phụ trách",
+      "officerInCharge": "Cán bộ phụ trách",
+      "currentOfficer": "Cán bộ phụ trách hiện tại",
+      "changeOfficer": "Đổi cán bộ phụ trách",
+      "changeOfficerTitle": "Đổi cán bộ phụ trách",
+      "anyOfficer": "Tất cả cán bộ",
+      "officerSearch": "Tìm cán bộ phụ trách",
+      "selectOfficer": "Chọn cán bộ phụ trách",
+      "consultant": "Cán bộ tư vấn",
+      "receiver": "Người tiếp nhận",
+      "applicationNo": "Số yêu cầu",
+      "contractNo": "Số hợp đồng",
+      "annexNo": "Số phụ lục",
+      "contract": "Hợp đồng",
+      "application": "Yêu cầu",
+      "keyword": "Từ khóa",
+      "currency": "Tiền tệ",
+      "principalBalance": "Dư nợ gốc",
+      "appraisedValue": "Giá trị định giá",
+      "price": "Giá",
+      "actualPrice": "Giá thực tế",
+      "fee": "Phí",
+      "feePayment": "Cách thu phí",
+      "desiredPrice": "Giá bán đề xuất",
+      "proposedPrice": "Giá mua đề xuất",
+      "desiredSalePrice": "Giá bán đề xuất",
+      "proposedPurchasePrice": "Giá mua đề xuất",
+      "consultingFee": "Phí tư vấn",
+      "consultingType": "Loại tư vấn",
+      "contractKind": "Loại hợp đồng",
+      "baseContract": "Hợp đồng nguyên tắc",
+      "collateral": "Tài sản bảo đảm",
+      "collaterals": "Tài sản bảo đảm",
+      "contractDate": "Ngày hợp đồng",
+      "characteristics": "Đặc điểm tài sản",
+      "approvalStage": "Giai đoạn phê duyệt",
+      "approval": "Phê duyệt",
+      "approvalInfo": "Thông tin phê duyệt",
+      "approve": "Phê duyệt",
+      "reject": "Từ chối",
+      "requestApproval": "Yêu cầu phê duyệt",
+      "requested": "Ngày yêu cầu",
+      "comment": "Ý kiến",
+      "uploadScans": "Tải bản quét lên",
+      "noTermEnd": "Đến khi kết thúc giao dịch"
+    },
+    "kinds": {
+      "sale": "Bán",
+      "purchase": "Mua",
+      "consulting": "Tư vấn"
+    },
+    "kindServices": {
+      "sale": "Môi giới bán",
+      "purchase": "Môi giới mua",
+      "consulting": "Tư vấn"
+    },
+    "titles": {
+      "saleApplication": "Yêu cầu môi giới bán",
+      "purchaseApplication": "Yêu cầu môi giới mua",
+      "consultingApplication": "Yêu cầu tư vấn",
+      "saleContract": "Quản lý hợp đồng môi giới bán",
+      "purchaseContract": "Quản lý hợp đồng môi giới mua",
+      "consultingContract": "Quản lý hợp đồng tư vấn"
+    },
+    "breadcrumb": {
+      "root": "Quản lý giao dịch",
+      "applications": "Quản lý yêu cầu",
+      "contracts": "Quản lý hợp đồng"
+    },
+    "applicationStatus": {
+      "RCPT": "Đã nộp",
+      "PRCS": "Đang xử lý",
+      "DCIN": "Hồ sơ chưa đầy đủ",
+      "DCOK": "Hồ sơ đầy đủ",
+      "CMPL": "Hoàn tất",
+      "CNCL": "Đã hủy"
+    },
+    "approvalStages": {
+      "NOT_RECEIVED": "Chưa tiếp nhận",
+      "PROCESSING": "Đang xử lý",
+      "IN_APPROVAL": "Đang phê duyệt",
+      "APPROVED": "Đã phê duyệt",
+      "REJECTED": "Bị từ chối",
+      "CANCELLED": "Đã hủy"
+    },
+    "channels": {
+      "MANL": "Thủ công",
+      "WEB": "Web"
+    },
+    "feeMethods": {
+      "LUMP": "① Toàn bộ sau khi ký",
+      "AFTR": "② Toàn bộ sau khi bán",
+      "STAG": "③ Tạm ứng + phần còn lại"
+    },
+    "annexPurposes": {
+      "EXTN": "Gia hạn thời hạn",
+      "PRCE": "Thay đổi giá",
+      "POST": "Sau khi bán",
+      "ETC": "Khác"
+    },
+    "feeTypes": {
+      "PRAMT": "Tạm ứng",
+      "BALNC": "Phần còn lại"
+    },
+    "collateralCategories": {
+      "REST": "Bất động sản",
+      "PERS": "Động sản",
+      "FNRT": "Quyền tài sản",
+      "TSBDK": "Tài sản bảo đảm khác"
+    },
+    "application": {
+      "board": {
+        "period": "Thời gian nộp",
+        "keywordPlaceholder": "Số yêu cầu, tên...",
+        "contractRunning": "Hợp đồng đang hiệu lực",
+        "contractRunningTitle": "Hợp đồng môi giới mua {{no}} đang hiệu lực cho cùng NPL / LOT",
+        "applicationDate": "Ngày nộp",
+        "channel": "Kênh",
+        "receiptDate": "Ngày tiếp nhận"
+      },
+      "popup": {
+        "cancelApplication": "Hủy yêu cầu",
+        "receipt": "Tiếp nhận",
+        "channelDate": "Kênh / Ngày nộp",
+        "applicant": "Người nộp",
+        "purchaseRunning": "Hợp đồng môi giới mua cho cùng đối tượng vẫn đang hiệu lực ({{no}}); việc tiếp nhận và yêu cầu phê duyệt sẽ bị từ chối.",
+        "purchaseRunningRequest": "Hợp đồng môi giới mua {{no}} vẫn đang hiệu lực cho cùng NPL / LOT: yêu cầu sẽ bị từ chối cho đến khi hợp đồng kết thúc.",
+        "cancellationReason": "Lý do hủy: {{reason}}",
+        "rejectionReason": "Lý do từ chối: {{reason}}",
+        "sourceInquiry": "Câu hỏi gốc",
+        "request": "Nội dung yêu cầu",
+        "consultingTargets": "Đối tượng tư vấn",
+        "documents": "Hồ sơ",
+        "documentsCheck": "Kiểm tra hồ sơ",
+        "complete": "Đầy đủ",
+        "incomplete": "Chưa đầy đủ",
+        "notChecked": "Chưa kiểm tra",
+        "checkedAt": "Thời điểm kiểm tra",
+        "missingDocuments": "Hồ sơ còn thiếu",
+        "scanUploadTitle": "Chọn hoặc kéo thả bản quét hồ sơ (PDF, JPG, PNG)",
+        "documentsCompleteOption": "Hồ sơ đầy đủ",
+        "documentsIncompleteOption": "Hồ sơ chưa đầy đủ",
+        "missingPlaceholder": "Hồ sơ còn thiếu (đã báo cho người nộp qua điện thoại / email / Zalo)",
+        "markComplete": "Xác nhận hồ sơ đầy đủ",
+        "markIncomplete": "Xác nhận hồ sơ chưa đầy đủ",
+        "approvalProgress": "Tiến trình phê duyệt",
+        "processingHistory": "Lịch sử xử lý",
+        "processedAt": "Thời điểm xử lý",
+        "processedBy": "Người xử lý",
+        "loanContract": "Hợp đồng tín dụng",
+        "cancelReasonPlaceholder": "Lý do hủy (bắt buộc)",
+        "noScans": "Chưa có bản quét hồ sơ."
+      },
+      "form": {
+        "editTitle": "Sửa yêu cầu {{kind}} — {{no}}",
+        "newTitle": "Đăng ký yêu cầu {{kind}} (thủ công)",
+        "applicantSection": "Người nộp (hội viên)",
+        "memberPlaceholder": "Tìm hội viên đang hoạt động",
+        "memberSearch": "Tìm hội viên",
+        "contact": "Liên hệ",
+        "consultingTargetNpl": "NPL cần tư vấn (không bắt buộc)",
+        "singleNpl": "Một NPL",
+        "lotPlaceholder": "Tìm LOT đã đăng ký",
+        "nplPlaceholder": "Tìm NPL đã đăng ký",
+        "lotSearch": "Tìm LOT",
+        "nplSearch": "Tìm NPL",
+        "consultingTargetCollateral": "Tài sản bảo đảm cần tư vấn (không bắt buộc)",
+        "listedCollateral": "Tài sản bảo đảm đang niêm yết",
+        "collateralPlaceholder": "Tìm tài sản bảo đảm đang niêm yết",
+        "collateralSearch": "Tìm tài sản bảo đảm",
+        "paperCollaterals": "Tài sản bảo đảm theo đơn giấy ({{n}}/{{max}})",
+        "category": "Nhóm tài sản",
+        "addCollateral": "Thêm tài sản bảo đảm",
+        "requestSection": "Nội dung yêu cầu",
+        "brokerageContract": "Hợp đồng môi giới",
+        "baseContractAnnex": "Phụ lục hợp đồng nguyên tắc (chờ Q3)",
+        "consultingTypePlaceholder": "Chọn loại tư vấn",
+        "consultingRequest": "Nội dung yêu cầu tư vấn",
+        "scansSection": "Bản quét đơn yêu cầu và hồ sơ",
+        "scansTitle": "Chọn hoặc kéo thả bản quét (PDF, JPG, PNG)"
+      }
+    },
+    "lookup": {
+      "memberTitle": "Tìm hội viên (đang hoạt động)",
+      "sgdnNo": "Mã SGDN",
+      "phone": "Điện thoại",
+      "nplTitle": "Tìm NPL (đã đăng ký)",
+      "lotTitle": "Tìm LOT NPL",
+      "lotNo": "Mã LOT",
+      "lotName": "Tên LOT",
+      "nplCount": "Số NPL",
+      "collateralTitle": "Tìm tài sản bảo đảm (đang niêm yết)",
+      "collateralCode": "Mã tài sản bảo đảm",
+      "collateralName": "Tên tài sản bảo đảm"
+    },
+    "targetCollateral": {
+      "title": "Thêm tài sản bảo đảm cần tư vấn",
+      "categoryPlaceholder": "Chọn nhóm tài sản",
+      "contractNo": "Số hợp đồng bảo đảm",
+      "legalStatus": "Tình trạng pháp lý",
+      "loanValue": "Giá trị tại thời điểm vay",
+      "recentValue": "Giá trị gần nhất",
+      "securedScope": "Phạm vi bảo đảm",
+      "currentState": "Hiện trạng"
+    },
+    "contract": {
+      "board": {
+        "annexKind": "ㄴPhụ lục {{purpose}}",
+        "conclusionDate": "Ngày ký kết",
+        "endDate": "Ngày kết thúc",
+        "remaining": "Còn lại",
+        "feeStage": "Giai đoạn thu phí",
+        "period": "Thời hạn hợp đồng",
+        "periodHelp": "Hợp đồng có thời hạn giao với khoảng thời gian: ký kết (dự thảo: bắt đầu hoặc tạo) từ ngày cuối khoảng trở về trước và kết thúc từ ngày đầu khoảng trở về sau; hợp đồng không có ngày kết thúc khớp với mọi ngày bắt đầu.",
+        "termFrom": "Từ ngày",
+        "termTo": "Đến ngày",
+        "contractId": "Mã hợp đồng",
+        "contractIdPlaceholder": "Số hợp đồng hoặc từ khóa",
+        "followUp": "Yêu cầu tư vấn bổ sung"
+      },
+      "lifecycle": {
+        "PREPR": "Đang chuẩn bị",
+        "DRFAPR": "Dự thảo đã duyệt",
+        "SGNWT": "Chờ ký",
+        "SGNCP": "Đã ký",
+        "PROGS": "Đang hiệu lực",
+        "ENDING": "Đang thanh lý",
+        "CMPTN": "Đã thanh lý",
+        "CNCLN": "Đã hủy"
+      },
+      "tabs": {
+        "contract": "Hợp đồng",
+        "documents": "Tài liệu",
+        "fees": "Phí ({{n}})",
+        "annexes": "Phụ lục ({{n}})",
+        "report": "Báo cáo & tư vấn bổ sung ({{n}})",
+        "termination": "Thanh lý ({{n}})",
+        "approvals": "Lịch sử phê duyệt"
+      },
+      "popup": {
+        "titleAnnex": "{{title}} — Phụ lục {{no}}",
+        "listed": "Niêm yết",
+        "amount": "Số tiền",
+        "due": "Hạn nộp",
+        "paid": "Đã nộp",
+        "unpaid": "Chưa nộp",
+        "paidOn": "Ngày nộp",
+        "received": "Đã nhận",
+        "refund": "Hoàn phí",
+        "refundPlanned": "Dự kiến",
+        "refunded": "Đã hoàn",
+        "annex": "Phụ lục",
+        "purpose": "Mục đích",
+        "concluded": "Ngày ký kết",
+        "stage": "Giai đoạn",
+        "requester": "Người yêu cầu",
+        "approver": "Người phê duyệt",
+        "decided": "Ngày quyết định",
+        "parties": "Các bên",
+        "customer": "Khách hàng",
+        "customerContact": "Liên hệ khách hàng",
+        "broker": "Bên môi giới",
+        "brokerValue": "VAMC — người đại diện, giấy ủy quyền và tài khoản thu phí lấy từ cấu hình hệ thống (chờ Q-U3)",
+        "annexTerms": "Điều khoản phụ lục — {{purpose}}",
+        "contractTerms": "Điều khoản hợp đồng",
+        "saleCompleted": "Hoàn tất bán",
+        "agreementSigned": "Đã ký hợp đồng mua bán",
+        "delivery": "Bàn giao",
+        "draftContract": "Dự thảo hợp đồng",
+        "noDraft": "Chưa đăng ký dự thảo.",
+        "draftUploadTitle": "Chọn dự thảo đã được duyệt (PDF) — khi đăng ký, yêu cầu ký sẽ được gửi cho khách hàng",
+        "registerDraft": "Đăng ký dự thảo",
+        "signedScan": "Bản quét hợp đồng đã ký",
+        "noSignedScan": "Chưa có bản quét đã ký.",
+        "signedUploadTitle": "Chọn bản quét hợp đồng đã được hai bên ký",
+        "uploadSignedScan": "Tải bản quét đã ký lên",
+        "conclusionDate": "Ngày ký kết",
+        "completeSigning": "Hoàn tất ký kết",
+        "createAnnex": "Tạo phụ lục",
+        "backToContract": "Quay lại hợp đồng",
+        "renewalDecision": "Quyết định gia hạn",
+        "requestDraftApproval": "Yêu cầu phê duyệt dự thảo",
+        "requestSignatureApproval": "Yêu cầu phê duyệt ký kết",
+        "saleCompletion": "Hoàn tất bán",
+        "purchaseAgreement": "Hợp đồng mua bán",
+        "recordDelivery": "Ghi nhận bàn giao",
+        "assignConsultant": "Chỉ định cán bộ tư vấn",
+        "assignConsultantTitle": "Chỉ định cán bộ tư vấn",
+        "selectConsultant": "Chọn cán bộ tư vấn",
+        "consultantSearch": "Tìm cán bộ tư vấn",
+        "mainContract": "Hợp đồng chính"
+      },
+      "draft": {
+        "start": "Ngày bắt đầu hợp đồng",
+        "end": "Ngày kết thúc hợp đồng",
+        "openEnded": "Đến khi kết thúc giao dịch (không có ngày kết thúc)",
+        "feeAmount": "Số tiền phí",
+        "advanceSuffix": " (tạm ứng {{rate}}%)",
+        "feeItem": "Mục biểu phí",
+        "feeItemPlaceholder": "Mục mặc định của biểu phí",
+        "autoTermination": "Tự động thanh lý",
+        "signedConcluded": "Ngày ký / ký kết",
+        "annexContent": "Nội dung phụ lục",
+        "advanceRate": "Tỷ lệ tạm ứng (%)",
+        "advanceAmount": "Tạm ứng: {{amount}}",
+        "autoTerminate": "Tự động thanh lý khi giao dịch kết thúc",
+        "saveDraft": "Lưu dự thảo"
+      },
+      "execution": {
+        "recordRefund": "Ghi nhận hoàn phí",
+        "confirmFee": "Xác nhận nộp phí",
+        "installment": "Kỳ phí",
+        "amountDue": "Số tiền phải nộp",
+        "dueOn": "hạn {{date}}",
+        "refundDate": "Ngày hoàn phí",
+        "transferDate": "Ngày chuyển khoản",
+        "saleNotice": "Sau khi cán bộ phụ trách xác nhận hợp đồng mua bán và việc bàn giao: NPL chuyển sang Đã bán và phần phí còn lại được phát hành.",
+        "purchaseNotice": "Ký hợp đồng mua bán: phần phí còn lại được phát hành; sau đó ghi nhận bàn giao.",
+        "signingDate": "Ngày ký hợp đồng mua bán",
+        "finalFee": "Phí cuối cùng (nhập tay, Q5)",
+        "deliveryDate": "Ngày bàn giao",
+        "deliveryNote": "Ghi chú bàn giao",
+        "annexOptions": {
+          "EXTN": "Gia hạn thời hạn",
+          "PRCE": "Thay đổi giá",
+          "POST": "Sau khi bán",
+          "ETC": "Khác"
+        },
+        "newEndDate": "Ngày kết thúc mới",
+        "currentEndDate": "Ngày kết thúc hiện tại: {{date}}",
+        "newPrice": "Giá mới",
+        "currentPrice": "Giá hiện tại: {{amount}}",
+        "renewalOptions": {
+          "EXTEND_ANNEX": "Gia hạn bằng phụ lục",
+          "NEW_CONTRACT": "Ký hợp đồng mới",
+          "NO_EXTEND": "Không gia hạn"
+        },
+        "endDateNotice": "Ngày kết thúc hợp đồng: {{date}}."
+      },
+      "termination": {
+        "reasons": {
+          "CMPL": "Hoàn tất",
+          "CNCL": "Chấm dứt trước hạn",
+          "EXPR": "Hết hạn"
+        },
+        "feeHandlings": {
+          "RFND": "Hoàn phí",
+          "CLCN": "Thu phí",
+          "NONE": "Không hoàn phí"
+        },
+        "statuses": {
+          "PREPR": "Đã đăng ký",
+          "DRFAPR": "Đã phê duyệt",
+          "SGNWT": "Chờ ký",
+          "SGNCP": "Đã ký",
+          "CMPTN": "Đã thanh lý"
+        },
+        "reason": "Lý do",
+        "feeHandling": "Xử lý phí",
+        "closedOn": "Ngày thanh lý",
+        "register": "Đăng ký thanh lý",
+        "minutes": "Biên bản thanh lý",
+        "noMinutes": "Chưa đăng ký biên bản.",
+        "minutesUploadTitle": "Chọn biên bản thanh lý đã được duyệt (Mẫu 12) — khi đăng ký, yêu cầu ký sẽ được gửi",
+        "registerMinutes": "Đăng ký biên bản",
+        "signedMinutes": "Bản quét biên bản đã ký",
+        "noSignedMinutes": "Chưa có biên bản đã ký.",
+        "signedMinutesTitle": "Chọn bản quét biên bản đã được hai bên ký",
+        "uploadSignedMinutes": "Tải biên bản đã ký lên",
+        "requestApproval": "Yêu cầu phê duyệt thanh lý",
+        "requestSignature": "Yêu cầu phê duyệt ký biên bản",
+        "closeContract": "Thanh lý hợp đồng",
+        "termination": "Thanh lý",
+        "directTrade": "Các bên đã giao dịch trực tiếp",
+        "terminationReason": "Lý do chấm dứt"
+      }
+    },
+    "report": {
+      "statuses": {
+        "DRFT": "Bản nháp",
+        "APRQ": "Đang phê duyệt",
+        "APRV": "Đã phê duyệt",
+        "RDY": "Chờ nộp phần phí còn lại",
+        "OPEN": "Đã công bố"
+      },
+      "additionalStatuses": {
+        "RQST": "Đã yêu cầu",
+        "RCPT": "Đã tiếp nhận",
+        "CMPTN": "Đã trả lời"
+      },
+      "noFile": "Chưa có tệp báo cáo.",
+      "request": "Nội dung yêu cầu",
+      "answer": "Trả lời",
+      "receive": "Tiếp nhận",
+      "title": "Báo cáo tư vấn — {{status}}",
+      "notWritten": "Chưa lập",
+      "published": "Công bố lúc {{date}}",
+      "selectTitle": "Chọn báo cáo tư vấn (PDF)",
+      "selectReport": "Chọn báo cáo",
+      "summaryPlaceholder": "Tóm tắt báo cáo hiển thị cho hội viên",
+      "saveReport": "Lưu báo cáo",
+      "requestApproval": "Yêu cầu phê duyệt báo cáo",
+      "completeReport": "Hoàn tất báo cáo",
+      "followUps": "Tư vấn bổ sung",
+      "answerTitle": "Trả lời tư vấn bổ sung",
+      "sendAnswer": "Gửi trả lời",
+      "answerPlaceholder": "Nội dung trả lời hội viên",
+      "attachment": "Tệp đính kèm (không bắt buộc)",
+      "selectFile": "Chọn tệp",
+      "fileMissing": "Thiếu tệp báo cáo"
+    }
+  },
+  "approval": {
+    "stages": {
+      "RCPT": "Phê duyệt yêu cầu",
+      "CTRT": "Phê duyệt dự thảo hợp đồng",
+      "SIGN": "Phê duyệt ký kết",
+      "ANX": "Phê duyệt phụ lục",
+      "END": "Phê duyệt thanh lý",
+      "END_SIGN": "Phê duyệt ký biên bản thanh lý",
+      "RPTP": "Phê duyệt báo cáo tư vấn",
+      "OTHER": "Phê duyệt"
+    },
+    "steps": {
+      "RCPT": "Tiếp nhận",
+      "PRCS": "Cán bộ phụ trách",
+      "1ST_ATRZ": "Phê duyệt"
+    },
+    "sessionStatus": {
+      "INPROGRESS": "Đang phê duyệt",
+      "COMPLETED": "Đã phê duyệt",
+      "REJECTED": "Bị từ chối"
+    },
+    "stepStatus": {
+      "WAITING": "Chờ xử lý",
+      "INPROGRESS": "Đang xử lý",
+      "APPROVED": "Hoàn tất",
+      "REJECTED": "Bị từ chối"
+    },
+    "fields": {
+      "rowNo": "STT",
+      "step": "Bước",
+      "employee": "Nhân viên",
+      "status": "Trạng thái",
+      "processedAt": "Thời điểm xử lý",
+      "comment": "Ý kiến",
+      "approvalStage": "Giai đoạn phê duyệt",
+      "process": "Quy trình",
+      "target": "Đối tượng",
+      "requested": "Yêu cầu",
+      "closedAt": "Thời điểm kết thúc",
+      "requester": "Người yêu cầu",
+      "approver": "Người phê duyệt",
+      "opinion": "Ý kiến",
+      "rejectionReason": "Lý do từ chối"
+    },
+    "target": {
+      "applicationNo": "Số yêu cầu",
+      "mainContract": "Hợp đồng chính",
+      "member": "Hội viên",
+      "lot": "LOT",
+      "npl": "NPL",
+      "totalEvaluation": "Tổng giá trị định giá",
+      "price": "Giá",
+      "fee": "Phí"
+    },
+    "picker": {
+      "selectEmployee": "Chọn nhân viên",
+      "search": "Tìm kiếm",
+      "employeeSearch": "Tìm nhân viên",
+      "employeeNo": "Mã nhân viên",
+      "name": "Họ tên",
+      "position": "Chức vụ",
+      "role": "Vai trò",
+      "select": "Chọn"
+    },
+    "info": {
+      "title": "Thông tin phê duyệt"
+    },
+    "assign": {
+      "officerInCharge": "Cán bộ phụ trách",
+      "selectOfficer": "Chọn cán bộ phụ trách",
+      "officerSearch": "Tìm cán bộ phụ trách"
+    },
+    "request": {
+      "title": "Yêu cầu {{stage}}",
+      "submit": "Gửi",
+      "selectApprover": "Chọn người phê duyệt",
+      "approverSearch": "Tìm người phê duyệt"
+    },
+    "decision": {
+      "approve": "Phê duyệt",
+      "reject": "Từ chối",
+      "return": "Trả về",
+      "submit": "Gửi",
+      "confirm": "Xác nhận",
+      "signingComplete": "Hoàn tất ký"
+    },
+    "inbox": {
+      "title": "Quản lý phê duyệt",
+      "kinds": {
+        "all": "Tất cả",
+        "member": "Hội viên",
+        "sale": "Bán",
+        "purchase": "Mua",
+        "consulting": "Tư vấn",
+        "other": "Khác"
+      },
+      "allProcesses": "Tất cả quy trình",
+      "processOption": "{{kind}} · {{stage}}",
+      "memberSignup": "Hội viên · Đăng ký",
+      "process": "Quy trình phê duyệt",
+      "processKind": "Loại quy trình",
+      "kind": "Loại",
+      "target": "Đối tượng",
+      "requestedBy": "Người yêu cầu",
+      "requestedAt": "Thời điểm yêu cầu",
+      "assignedAt": "Thời điểm giao",
+      "actions": "Thao tác",
+      "info": "Thông tin",
+      "open": "Mở",
+      "total": "Tổng ({{n}})"
+    }
+  },
+  "zalo": {
+    "breadcrumb": {
+      "root": "Quản lý vận hành hệ thống",
+      "notification": "Quản lý thông báo"
+    },
+    "common": {
+      "all": "Tất cả",
+      "yes": "Có",
+      "no": "Không",
+      "searchResults": "Kết quả tìm kiếm",
+      "keyword": "Từ khoá",
+      "phone": "Số di động",
+      "phonePlaceholder": "0xxxxxxxxx hoặc 84xxxxxxxxx",
+      "active": "Đang dùng",
+      "inactive": "Ngừng dùng",
+      "register": "Đăng ký",
+      "edit": "Sửa",
+      "new": "Thêm mới",
+      "send": "Gửi",
+      "run": "Thực hiện",
+      "close": "Đóng"
+    },
+    "channels": {
+      "ZNS": "ZNS",
+      "OA": "Tin OA"
+    },
+    "userTypes": {
+      "MBR": "Hội viên",
+      "EMP": "Nhân viên"
+    },
+    "linkStatus": {
+      "LINKED": "Đã liên kết",
+      "PENDING": "Chờ gắn"
+    },
+    "linkState": {
+      "AUTO": "Đã liên kết (tự động)",
+      "MANUAL": "Đã liên kết (thủ công)",
+      "PENDING": "Chờ gắn"
+    },
+    "processes": {
+      "MBR_JOIN": "Đăng ký hội viên",
+      "AUTH": "Xác thực"
+    },
+    "users": {
+      "title": "Người dùng Zalo",
+      "filter": {
+        "linkStatus": "Trạng thái liên kết",
+        "following": "Quan tâm OA",
+        "userType": "Loại tài khoản",
+        "keywordPlaceholder": "Tên Zalo hoặc mã hội viên / nhân viên"
+      },
+      "columns": {
+        "zaloNm": "Tên Zalo",
+        "telno": "Số di động",
+        "status": "Trạng thái",
+        "account": "Tài khoản gắn",
+        "following": "Quan tâm OA",
+        "linkDt": "Ngày gắn",
+        "lstItrctDt": "Tương tác cuối"
+      },
+      "buttons": {
+        "link": "Gắn",
+        "unlink": "Huỷ liên kết",
+        "invite": "Gửi lời mời liên kết",
+        "rebuildIndex": "Dựng lại chỉ mục SĐT",
+        "simulate": "Giả lập quan tâm OA + chia sẻ SĐT"
+      },
+      "link": {
+        "userType": "Loại tài khoản",
+        "userNo": "Mã tài khoản",
+        "userNoPlaceholder": "VD: TV00000001 hoặc mã nhân viên"
+      },
+      "invite": {
+        "title": "Gửi lời mời liên kết",
+        "recipientName": "Tên người nhận",
+        "recipientNamePlaceholder": "Mặc định: Quý khách",
+        "notice": "Gửi mẫu ZNS MBR_JOIN_WELCOME kèm liên kết quan tâm OA."
+      },
+      "simulate": {
+        "title": "Giả lập quan tâm OA + chia sẻ SĐT",
+        "zaloNm": "Tên Zalo",
+        "notice": "Chỉ dùng cho demo: đóng vai người dùng Zalo quan tâm OA và chia sẻ số này. Nếu đúng một tài khoản có số này thì tự gắn."
+      },
+      "detail": {
+        "title": "Chi tiết người dùng Zalo",
+        "shareAgree": "Đã chia sẻ SĐT"
+      }
+    },
+    "templates": {
+      "title": "Mẫu tin Zalo",
+      "filter": {
+        "process": "Quy trình",
+        "channel": "Kênh",
+        "use": "Sử dụng",
+        "keywordPlaceholder": "Mã hoặc tên mẫu"
+      },
+      "columns": {
+        "use": "Sử dụng",
+        "tplCd": "Mã mẫu",
+        "process": "Quy trình",
+        "tplNm": "Tên mẫu",
+        "channel": "Kênh",
+        "znsTplId": "Mã mẫu ZNS",
+        "mdfcnDt": "Ngày sửa"
+      },
+      "form": {
+        "registerTitle": "Đăng ký mẫu tin Zalo",
+        "editTitle": "Sửa mẫu tin Zalo",
+        "tplCd": "Mã mẫu",
+        "tplCdHint": "A-Z, 0-9 và _, 3–20 ký tự; không đổi được sau khi đăng ký.",
+        "process": "Quy trình",
+        "tplNm": "Tên mẫu",
+        "channel": "Kênh",
+        "znsTplId": "Mã mẫu ZNS",
+        "znsTplIdHint": "Do Zalo cấp; bắt buộc khi gửi ZNS thật.",
+        "use": "Sử dụng",
+        "tplCn": "Nội dung",
+        "tplCnPlaceholder": "VD: Chào {{name}}, mã xác thực: {{otp}}",
+        "insertVariable": "Chèn biến",
+        "paramMap": "Ánh xạ tham số",
+        "paramMapHint": "Đối tượng JSON biến → tham số ZNS, VD: {\"mbrNm\":\"customer_name\"}"
+      },
+      "preview": {
+        "title": "Xem trước trên Zalo",
+        "button": "Xem trước",
+        "empty": "Bấm [Xem trước] để điền biến bằng dữ liệu mẫu.",
+        "missing": "Biến chưa có giá trị: {{names}}"
+      },
+      "testSend": {
+        "title": "Gửi thử",
+        "button": "Gửi thử",
+        "hint": "Gửi mẫu đã lưu với dữ liệu mẫu. Chế độ demo: giả lập, xem tại Lịch sử gửi thông báo."
+      },
+      "phone": {
+        "label": "Xem trước trên điện thoại Zalo",
+        "officialAccount": "Tài khoản chính thức",
+        "today": "Hôm nay",
+        "loading": "Đang hiển thị…",
+        "znsTag": "Thông báo ZNS",
+        "untitled": "(chưa đặt tên)",
+        "open": "Mở liên kết",
+        "now": "vừa xong",
+        "input": "Tin nhắn"
+      }
     }
   }
 }
