@@ -76,6 +76,9 @@ test.describe('Zalo demo flow', () => {
       await openMenu(page, TEMPLATES);
       const panel = activePanel(page);
       await expect(panel.locator('.ant-table-tbody tr.ant-table-row').first()).toBeVisible();
+      // Channel column shows the code label, never the raw OA code.
+      const channels = await panel.locator('.ant-table-tbody tr.ant-table-row td:last-child').allInnerTexts();
+      for (const channel of channels) expect(channel.trim()).toMatch(/^(ZNS|OA message)$/);
       await panel.getByRole('button', { name: 'New' }).click();
       const modal = topModal(page);
       await expect(modal).toContainText('Register Zalo Template');

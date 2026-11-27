@@ -75,8 +75,8 @@ function buildColumns(t: TFunction): TableColumnsType<ZaloTemplate> {
       dataIndex: 'zaloSndMode',
       key: 'zaloSndMode',
       align: 'center',
-      width: 70,
-      
+      width: 120,
+      render: (v: ZaloSendMode) => codeLabel('zalo.channels', v),
     },
   ];
 }
