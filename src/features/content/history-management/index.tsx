@@ -110,9 +110,7 @@ export default function HistoryManagement() {
           sort={list.sort}
           onSortChange={(sort) => list.setSort(sort ?? DEFAULT_SORT)}
         />
-        {total > SYS_PAGE_SIZE && (
-          <SysPager page={list.page} pageSize={SYS_PAGE_SIZE} total={total} onChange={list.setPage} />
-        )}
+        <SysPager page={list.page} pageSize={SYS_PAGE_SIZE} total={total} onChange={list.setPage} />
       </div>
       {modal && (
         <HistoryModal

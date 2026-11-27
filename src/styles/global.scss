@@ -993,14 +993,12 @@ body,
   flex: 1;
   min-height: 0;
   overflow: hidden;
-  padding: 6px 8px;
-  background: var(--content-bg);
+  background: var(--content-header-bg);
 }
 
 .tab-content-panel {
   height: 100%;
   background: var(--content-header-bg);
-  border-radius: 6px;
   overflow: auto;
   display: flex;
   flex-direction: column;
